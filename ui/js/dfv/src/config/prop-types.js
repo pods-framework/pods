@@ -220,16 +220,17 @@ export const FIELD_PROP_TYPE = {
 
 	// Date/Time fields
 	datetime_allow_empty: BOOLEAN_ALL_TYPES,
+	datetime_date_format_moment_js: PropTypes.string,
 	datetime_format: PropTypes.string,
 	datetime_format_custom: PropTypes.string,
 	datetime_format_custom_js: PropTypes.string,
-	datetime_format_moment_js: PropTypes.string,
 	datetime_html5: BOOLEAN_ALL_TYPES,
 	datetime_repeatable: BOOLEAN_ALL_TYPES,
 	datetime_time_format: PropTypes.string,
 	datetime_time_format_24: PropTypes.string,
 	datetime_time_format_custom: PropTypes.string,
 	datetime_time_format_custom_js: PropTypes.string,
+	datetime_time_format_moment_js: PropTypes.string,
 	datetime_time_type: PropTypes.string,
 	datetime_type: PropTypes.string,
 	datetime_year_range_custom: PropTypes.string,

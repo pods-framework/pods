@@ -29,9 +29,9 @@ const checkForHTML5BrowserSupport = ( fieldType ) => {
 };
 
 // Determine date and time formats based on the field's config values.
-const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom, formatMomentJS ) => {
-	if ( formatMomentJS ) {
-		return formatMomentJS;
+const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom, dateFormatMomentJS ) => {
+	if ( dateFormatMomentJS ) {
+		return dateFormatMomentJS;
 	}
 
 	// eslint-disable-next-line camelcase
@@ -56,9 +56,9 @@ const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCust
 	return format;
 };
 
-const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, formatMomentJS ) => {
-	if ( formatMomentJS ) {
-		return formatMomentJS;
+const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, timeFormatMomentJS ) => {
+	if ( timeFormatMomentJS ) {
+		return timeFormatMomentJS;
 	}
 
 	// eslint-disable-next-line camelcase
@@ -97,15 +97,16 @@ const DateTime = ( {
 		htmlAttr: htmlAttributes = {},
 		name,
 		type = 'datetime', // 'datetime', 'time', or 'date'
+		datetime_date_format_moment_js: dateFormatMomentJS,
 		datetime_format: podsFormat,
 		datetime_format_custom: formatCustom,
 		datetime_format_custom_js: formatCustomJS,
-		datetime_format_moment_js: formatMomentJS,
 		datetime_html5: html5,
 		datetime_time_format: podsTimeFormat,
 		datetime_time_format_24: podsTimeFormat24,
 		datetime_time_format_custom: timeFormatCustom,
 		datetime_time_format_custom_js: timeFormatCustomJS,
+		datetime_time_format_moment_js: timeFormatMomentJS,
 		datetime_time_type: timeFormatType = 'wp', // 'wp, '12', '24', or 'custom'
 		datetime_type: dateFormatType = 'wp', // 'wp', 'format', or 'custom'
 		datetime_year_range_custom: yearRangeCustom,
@@ -126,13 +127,13 @@ const DateTime = ( {
 	);
 
 	const momentDateFormat = useMemo(
-		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom, formatMomentJS ),
-		[ dateFormatType, podsFormat, formatCustomJS, formatCustom, formatMomentJS ]
+		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom, dateFormatMomentJS ),
+		[ dateFormatType, podsFormat, formatCustomJS, formatCustom, dateFormatMomentJS ]
 	);
 
 	const momentTimeFormat = useMemo(
-		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, formatMomentJS ),
-		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, formatMomentJS ]
+		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, timeFormatMomentJS ),
+		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, timeFormatMomentJS ]
 	);
 
 	const getDBFormat = () => {
@@ -181,7 +182,7 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
-			if ( 'c' === podsFormat || formatMomentJS ) {
+			if ( 'c' === podsFormat ) {
 				return momentDateFormat;
 			}
 
@@ -189,10 +190,6 @@ const DateTime = ( {
 		} else if ( includeTimeField ) {
 			return momentTimeFormat;
 		} else if ( includeDateField ) {
-			return momentDateFormat;
-		}
-
-		if ( formatMomentJS ) {
 			return momentDateFormat;
 		}
 

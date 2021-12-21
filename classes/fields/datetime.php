@@ -1015,7 +1015,8 @@ class PodsField_DateTime extends PodsField {
 				'type'   => 'time',
 			] );
 
-			$options[ static::$type . '_format_moment_js' ] = $date_format_moment_js . ' ' . $time_format_moment_js;
+			$options[ static::$type . '_date_format_moment_js' ] = $date_format_moment_js;
+			$options[ static::$type . '_time_format_moment_js' ] = $time_format_moment_js;
 		} elseif ( 'date' === static::$type ) {
 			$date_format = $this->get_format_from_options_for_type( $options, static::$type, '', true );
 

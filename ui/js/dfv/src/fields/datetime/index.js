@@ -29,7 +29,11 @@ const checkForHTML5BrowserSupport = ( fieldType ) => {
 };
 
 // Determine date and time formats based on the field's config values.
-const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom ) => {
+const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom, dateFormatMomentJS ) => {
+	if ( dateFormatMomentJS ) {
+		return dateFormatMomentJS;
+	}
+
 	// eslint-disable-next-line camelcase
 	const wpDefaultFormat = window?.podsDFVConfig?.datetime?.date_format || 'F j, Y';
 
@@ -52,7 +56,11 @@ const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCust
 	return format;
 };
 
-const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ) => {
+const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, timeFormatMomentJS ) => {
+	if ( timeFormatMomentJS ) {
+		return timeFormatMomentJS;
+	}
+
 	// eslint-disable-next-line camelcase
 	const wpDefaultFormat = window?.podsDFVConfig?.datetime?.time_format || 'g:i a';
 
@@ -89,6 +97,7 @@ const DateTime = ( {
 		htmlAttr: htmlAttributes = {},
 		name,
 		type = 'datetime', // 'datetime', 'time', or 'date'
+		datetime_date_format_moment_js: dateFormatMomentJS,
 		datetime_format: podsFormat,
 		datetime_format_custom: formatCustom,
 		datetime_format_custom_js: formatCustomJS,
@@ -97,6 +106,7 @@ const DateTime = ( {
 		datetime_time_format_24: podsTimeFormat24,
 		datetime_time_format_custom: timeFormatCustom,
 		datetime_time_format_custom_js: timeFormatCustomJS,
+		datetime_time_format_moment_js: timeFormatMomentJS,
 		datetime_time_type: timeFormatType = 'wp', // 'wp, '12', '24', or 'custom'
 		datetime_type: dateFormatType = 'wp', // 'wp', 'format', or 'custom'
 		datetime_year_range_custom: yearRangeCustom,
@@ -117,13 +127,13 @@ const DateTime = ( {
 	);
 
 	const momentDateFormat = useMemo(
-		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom ),
-		[ dateFormatType, podsFormat, formatCustomJS, formatCustom ]
+		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom, dateFormatMomentJS ),
+		[ dateFormatType, podsFormat, formatCustomJS, formatCustom, dateFormatMomentJS ]
 	);
 
 	const momentTimeFormat = useMemo(
-		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ),
-		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ]
+		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, timeFormatMomentJS ),
+		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, timeFormatMomentJS ]
 	);
 
 	const getDBFormat = () => {
@@ -190,6 +200,10 @@ const DateTime = ( {
 		if ( ! momentObject.isValid() ) {
 			return defaultValue;
 		}
+
+		const userLocale = window?.podsDFVConfig?.userLocale ?? 'en';
+
+		momentObject.locale( userLocale );
 
 		return momentObject.format( getFullFormat() );
 	};

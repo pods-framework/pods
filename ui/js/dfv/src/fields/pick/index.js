@@ -262,7 +262,10 @@ const Pick = ( props ) => {
 
 			setModifiedFieldItemData( ( prevData ) => [
 				...prevData,
-				newData,
+				{
+					...newData,
+					id: newData.id?.toString(),
+				},
 			] );
 
 			setValueWithLimit( [
@@ -310,7 +313,7 @@ const Pick = ( props ) => {
 				} else if ( Array.isArray( value ) ) {
 					formattedValue = value;
 				} else if ( 'string' === typeof value ) {
-					formattedValue = (value || '').split( ',' );
+					formattedValue = ( value || '' ).split( ',' );
 				} else {
 					formattedValue = [];
 				}
@@ -458,8 +461,6 @@ const Pick = ( props ) => {
 
 								if ( null === newOption ) {
 									setValueWithLimit( '' );
-
-									return;
 								} else if ( isMulti ) {
 									setValueWithLimit( newOption.map(
 										( selection ) => selection.value )

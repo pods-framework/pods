@@ -310,7 +310,7 @@ const Pick = ( props ) => {
 				} else if ( Array.isArray( value ) ) {
 					formattedValue = value;
 				} else if ( 'string' === typeof value ) {
-					formattedValue = (value || '').split( ',' );
+					formattedValue = ( value || '' ).split( ',' );
 				} else {
 					formattedValue = [];
 				}
@@ -348,126 +348,54 @@ const Pick = ( props ) => {
 				value: item.id,
 			} ) );
 
-			if ( taggable ) {
-				return (
-					<>
-						<AsyncCreatableSelect
+			const onChange = ( newOption ) => {
+				// The new value(s) may have been loaded by ajax, if it was, then it wasn't
+				// in our array of dataOptions, and we should add it, so we can keep track of
+				// the label.
+				setModifiedFieldItemData( ( prevData ) => {
+					const prevDataValues = prevData.map( ( option ) => option.id );
+					const updatedData = [ ...prevData ];
+					const newOptions = isMulti ? newOption : [ newOption ];
+
+					newOptions.forEach( ( option ) => {
+						if ( prevDataValues.includes( option.value ) ) {
+							return;
+						}
+
+						updatedData.push( {
+							id: option.value,
+							name: option.label,
+						} );
+					} );
+
+					return updatedData;
+				} );
+
+				if ( null === newOption ) {
+					setValueWithLimit( '' );
+				} else if ( isMulti ) {
+					setValueWithLimit( newOption.map(
+						( selection ) => selection.value )
+					);
+				} else {
+					setValueWithLimit( newOption.value );
+				}
+			};
+
+			const AsyncSelectComponent = taggable ? AsyncCreatableSelect : AsyncSelect;
+
+			return (
+				<>
+					{ ( taggable || ajaxData?.ajax ) ? (
+						<AsyncSelectComponent
 							controlShouldRenderValue={ ! isListSelect }
 							defaultOptions={ formattedOptions }
 							loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
 							placeholder={ fieldPlaceholder }
 							isMulti={ isMulti }
-							onChange={ ( newOption ) => {
-								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
-								// in our array of dataOptions, and we should add it, so we can keep track of
-								// the label.
-								setModifiedFieldItemData( ( prevData ) => {
-									const prevDataValues = prevData.map( ( option ) => option.id );
-									const updatedData = [ ...prevData ];
-									const newOptions = isMulti ? newOption : [ newOption ];
-
-									newOptions.forEach( ( option ) => {
-										if ( prevDataValues.includes( option.value ) ) {
-											return;
-										}
-
-										updatedData.push( {
-											id: option.value,
-											name: option.label,
-										} );
-									} );
-
-									return updatedData;
-								} );
-
-								if ( isMulti ) {
-									setValueWithLimit( newOption.map(
-										( selection ) => selection.value )
-									);
-								} else {
-									setValueWithLimit( newOption.value );
-								}
-							} }
-							readOnly={ !! readOnly }
-						/>
-
-						{ isListSelect ? (
-							<ListSelectValues
-								fieldName={ name }
-								value={ formattedValue }
-								setValue={ setValueWithLimit }
-								fieldItemData={ modifiedFieldItemData }
-								setFieldItemData={ setModifiedFieldItemData }
-								isMulti={ isMulti }
-								limit={ parseInt( limit, 10 ) || 0 }
-								defaultIcon={ defaultIcon }
-								showIcon={ toBool( showIcon ) }
-								showViewLink={ toBool( showViewLink ) }
-								showEditLink={ toBool( showEditLink ) }
-								editIframeTitle={ editIframeTitle }
-								readOnly={ !! readOnly }
-							/>
-						) : null }
-
-						{ formattedValue.map( ( selectedValue, index ) => (
-							<input
-								name={ `${ name }[${ index }]` }
-								key={ `${ name }-${ selectedValue.value }` }
-								type="hidden"
-								value={ selectedValue.value }
-							/>
-						) ) }
-					</>
-				);
-			}
-
-			return (
-				<>
-					{ ajaxData?.ajax ? (
-						<AsyncSelect
-							controlShouldRenderValue={ ! isListSelect }
-							defaultOptions={ formattedOptions }
-							loadOptions={ loadAjaxOptions( ajaxData ) }
-							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ fieldPlaceholder }
-							isMulti={ isMulti }
-							isClearable={ ! toBool( isRequired ) }
-							onChange={ ( newOption ) => {
-								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
-								// in our array of dataOptions, and we should add it, so we can keep track of
-								// the label.
-								setModifiedFieldItemData( ( prevData ) => {
-									const prevDataValues = prevData.map( ( option ) => option.id );
-									const updatedData = [ ...prevData ];
-									const newOptions = isMulti ? newOption : [ newOption ];
-
-									newOptions.forEach( ( option ) => {
-										if ( prevDataValues.includes( option.value ) ) {
-											return;
-										}
-
-										updatedData.push( {
-											id: option.value,
-											name: option.label,
-										} );
-									} );
-
-									return updatedData;
-								} );
-
-								if ( null === newOption ) {
-									setValueWithLimit( '' );
-
-									return;
-								} else if ( isMulti ) {
-									setValueWithLimit( newOption.map(
-										( selection ) => selection.value )
-									);
-								} else {
-									setValueWithLimit( newOption.value );
-								}
-							} }
+							isClearable={ ! taggable && ! toBool( isRequired ) }
+							onChange={ onChange }
 							readOnly={ !! readOnly }
 						/>
 					) : (

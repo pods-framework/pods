@@ -47,6 +47,7 @@ class WP_Query_Integration {
 		if (
 			! empty( $query->query_vars['suppress_filters'] )
 			|| ! $query->is_main_query()
+			|| $query->is_404()
 			|| (
 				! $query->is_category()
 				&& ! $query->is_tag()

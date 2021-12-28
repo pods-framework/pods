@@ -55,7 +55,13 @@ class WP_Query_Integration {
 			return;
 		}
 
-		$taxonomy = $query->get_queried_object()->taxonomy;
+		$object = $query->get_queried_object();
+
+		if ( ! isset( $object->taxonomy ) ) {
+			return;
+		}
+
+		$taxonomy = $object->taxonomy;
 
 		// Find all CPT that have this taxonomy set.
 		$api = pods_api();

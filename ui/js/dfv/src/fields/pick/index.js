@@ -341,7 +341,7 @@ const Pick = ( props ) => {
 				value: item.id,
 			} ) );
 
-			const onChange = ( newOption ) => {
+			const addNewItem = ( newOption ) => {
 				// The new value(s) may have been loaded by ajax, if it was, then it wasn't
 				// in our array of dataOptions, and we should add it, so we can keep track of
 				// the label.
@@ -383,7 +383,8 @@ const Pick = ( props ) => {
 						shouldRenderValue={ ! isListSelect }
 						formattedOptions={ formattedOptions }
 						value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-						onChange={ onChange }
+						setValue={ setValueWithLimit }
+						addNewItem={ addNewItem }
 						placeholder={ fieldPlaceholder }
 						isMulti={ isMulti }
 						isClearable={ ! isTaggable && ! toBool( isRequired ) }

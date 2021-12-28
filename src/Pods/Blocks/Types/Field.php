@@ -136,7 +136,7 @@ class Field extends Base {
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
 		$attributes = $this->attributes( $attributes );
-		$attributes = array_map( 'trim', $attributes );
+		$attributes = array_map( 'pods_trim', $attributes );
 
 		if ( empty( $attributes['field'] ) ) {
 			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {

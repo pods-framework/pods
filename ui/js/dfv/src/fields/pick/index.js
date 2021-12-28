@@ -2,9 +2,6 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import AsyncSelect from 'react-select/async';
-import AsyncCreatableSelect from 'react-select/async-creatable';
 import PropTypes from 'prop-types';
 
 /**
@@ -16,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Other Pods dependencies
  */
+import FullSelect from './full-select';
 import SimpleSelect from './simple-select';
 import RadioSelect from './radio-select';
 import CheckboxSelect from './checkbox-select';
@@ -24,7 +22,6 @@ import ListSelectValues from './list-select-values';
 import IframeModal from 'dfv/src/components/iframe-modal';
 
 import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
-import loadAjaxOptions from '../../helpers/loadAjaxOptions';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
@@ -161,7 +158,7 @@ const Pick = ( props ) => {
 			// pick_table,
 			// pick_table_id,
 			// pick_table_index,
-			pick_taggable: taggable,
+			pick_taggable: isTaggable,
 			// pick_user_role,
 			// pick_val: pickValue,
 			// rest_pick_depth: pickDepth,
@@ -178,12 +175,8 @@ const Pick = ( props ) => {
 		allPodValues,
 	} = props;
 
-	let fieldPlaceholder = pickPlaceholder;
-
-	if ( null === fieldPlaceholder || '' === fieldPlaceholder ) {
-		// translators: %s is the field label.
-		fieldPlaceholder = sprintf( __( 'Search %s…', 'pods' ), label );
-	}
+	// translators: %s is the field label.
+	const fieldPlaceholder = pickPlaceholder || sprintf( __( 'Search %s…', 'pods' ), label );
 
 	const isSingle = 'single' === formatType;
 	const isMulti = 'multi' === formatType;
@@ -382,44 +375,20 @@ const Pick = ( props ) => {
 				}
 			};
 
-			const AsyncSelectComponent = taggable ? AsyncCreatableSelect : AsyncSelect;
-
 			return (
 				<>
-					{ ( taggable || ajaxData?.ajax ) ? (
-						<AsyncSelectComponent
-							controlShouldRenderValue={ ! isListSelect }
-							defaultOptions={ formattedOptions }
-							loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
-							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ fieldPlaceholder }
-							isMulti={ isMulti }
-							isClearable={ ! taggable && ! toBool( isRequired ) }
-							onChange={ onChange }
-							readOnly={ !! readOnly }
-						/>
-					) : (
-						<Select
-							controlShouldRenderValue={ ! isListSelect }
-							options={ formattedOptions }
-							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ fieldPlaceholder }
-							isMulti={ isMulti }
-							isClearable={ ! toBool( isRequired ) }
-							onChange={ ( newOption ) => {
-								if ( null === newOption ) {
-									setValueWithLimit( '' );
-								} else if ( isMulti ) {
-									setValueWithLimit( newOption.map(
-										( selection ) => selection.value )
-									);
-								} else {
-									setValueWithLimit( newOption.value );
-								}
-							} }
-							readOnly={ !! readOnly }
-						/>
-					) }
+					<FullSelect
+						isTaggable={ isTaggable }
+						ajaxData={ ajaxData }
+						shouldRenderValue={ ! isListSelect }
+						formattedOptions={ formattedOptions }
+						value={ isMulti ? formattedValue : formattedValue[ 0 ] }
+						onChange={ onChange }
+						placeholder={ fieldPlaceholder }
+						isMulti={ isMulti }
+						isClearable={ ! isTaggable && ! toBool( isRequired ) }
+						isReadOnly={ toBool( readOnly ) }
+					/>
 
 					{ isListSelect ? (
 						<ListSelectValues

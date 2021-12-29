@@ -41,12 +41,13 @@ const SortableMultiValue = ( props ) => {
 		setNodeRef,
 		transform,
 		transition,
-		// isDragging,
+		isDragging,
 	} = useSortable( { id: props.data.value } );
 
 	const style = {
 		transform: CSS.Translate.toString( transform ),
 		transition,
+		cursor: isDragging ? 'grabbing' : 'grab',
 	};
 
 	return (

@@ -372,7 +372,7 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
 			}
 
 			if ( $return_fields ) {
-				$visible_fields[] = $field;
+				$visible_fields[ $field['name'] ] = $field;
 
 				continue;
 			}
@@ -386,7 +386,7 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
 			continue;
 		}
 
-		$visible_groups[] = $group;
+		$visible_groups[ $group['name'] ] = $group;
 	}
 
 	if ( $return_fields ) {
@@ -489,12 +489,11 @@ function pods_form_save_submitted_fields( $name, $object_id, $is_new_item = fals
 function pods_form_get_submitted_field_values( $name, array $options = [] ) {
 	// Get the submitted fields.
 	$fields = pods_form_get_submitted_fields( $name, $options );
+	$fields = array_keys( $fields );
 
 	$data = [];
 
-	foreach ( $fields as $field ) {
-		$field_name = $field['name'];
-
+	foreach ( $fields as $field_name ) {
 		$data[ $field_name ] = pods_form_get_submitted_field_value( $field_name );
 	}
 

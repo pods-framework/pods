@@ -8693,6 +8693,10 @@ class PodsAPI {
 
 		$fields = pods_config_merge_fields( $fields, $object_fields );
 
+		if ( ! isset( $fields[ $field ] ) ) {
+			return pods_error( sprintf( __( '"%s" is not a valid field', 'pods' ), $field ), $this );
+		}
+
 		$options = $fields[ $field ];
 
 		if ( is_array( $params ) ) {

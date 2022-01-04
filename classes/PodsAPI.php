@@ -8705,7 +8705,7 @@ class PodsAPI {
 
 		$id = 0;
 
-		if ( is_object( $params ) ) {
+		if ( is_object( $params ) && isset( $params->id ) ) {
 			$id = $params->id;
 		} elseif ( $pod instanceof Pods ) {
 			$id = $pod->id();

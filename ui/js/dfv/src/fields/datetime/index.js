@@ -154,14 +154,14 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
-			return 'YYYY-MM-DD[T]kk:mm:ss';
+			return 'YYYY-MM-DD[T]HH:mm:ss';
 		} else if ( includeTimeField ) {
-			return 'kk:mm:ss';
+			return 'HH:mm:ss';
 		} else if ( includeDateField ) {
 			return 'YYYY-MM-DD';
 		}
 
-		return 'YYYY-MM-DD[T]kk:mm:ss';
+		return 'YYYY-MM-DD[T]HH:mm:ss';
 	};
 
 	const formatValueForHTML5Field = ( stringValue ) => {
@@ -300,7 +300,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ useHTML5Field ? formatValueForHTML5Field( value ) : localStringValue }
+				value={ formatValueForHTML5Field( value ) }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>
@@ -319,7 +319,7 @@ const DateTime = ( {
 			renderInput={ ( props ) => (
 				<input
 					{ ...props }
-					value={ useHTML5Field ? formatValueForHTML5Field( value ) : localStringValue }
+					value={ localStringValue }
 					onChange={ ( event ) => {
 						// Track local values, but don't change actual value
 						// until blur event.

@@ -255,7 +255,10 @@ const Pick = ( props ) => {
 
 			setModifiedFieldItemData( ( prevData ) => [
 				...prevData,
-				newData,
+				{
+					...newData,
+					id: newData.id?.toString(),
+				},
 			] );
 
 			setValueWithLimit( [

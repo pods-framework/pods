@@ -15,7 +15,6 @@ const isFieldRepeatable = ( fieldConfig ) => {
 		'password',
 		'paragraph',
 		'wysiwyg',
-		'code',
 		'datetime',
 		'date',
 		'time',

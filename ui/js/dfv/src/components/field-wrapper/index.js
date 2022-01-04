@@ -115,7 +115,9 @@ export const FieldWrapper = ( props ) => {
 	// State
 	const [ hasBlurred, setHasBlurred ] = useState( false );
 
-	const setValue = ( newValue ) => setOptionValue( name, newValue );
+	const setValue = ( newValue ) => {
+		setOptionValue( name, newValue );
+	};
 
 	// Calculate dependencies.
 	const meetsDependencies = useDependencyCheck(

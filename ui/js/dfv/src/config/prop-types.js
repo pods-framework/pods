@@ -48,6 +48,17 @@ export const HTML_ATTR = PropTypes.shape( {
 	name_clean: PropTypes.string,
 } );
 
+export const AJAX_DATA = PropTypes.shape( {
+	ajax: BOOLEAN_ALL_TYPES,
+	delay: NUMBER_OR_NUMBER_AS_STRING,
+	minimum_input_length: NUMBER_OR_NUMBER_AS_STRING,
+	pod: NUMBER_OR_NUMBER_AS_STRING,
+	field: NUMBER_OR_NUMBER_AS_STRING,
+	id: NUMBER_OR_NUMBER_AS_STRING,
+	uri: PropTypes.string,
+	_wpnonce: PropTypes.string,
+} );
+
 export const FIELD_PROP_TYPE = {
 	// Used in multiple fields
 	admin_only: BOOLEAN_ALL_TYPES,
@@ -438,16 +449,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	view_name: PropTypes.string,
-	ajax_data: PropTypes.shape( {
-		ajax: BOOLEAN_ALL_TYPES,
-		delay: NUMBER_OR_NUMBER_AS_STRING,
-		minimum_input_length: NUMBER_OR_NUMBER_AS_STRING,
-		pod: NUMBER_OR_NUMBER_AS_STRING,
-		field: NUMBER_OR_NUMBER_AS_STRING,
-		id: NUMBER_OR_NUMBER_AS_STRING,
-		uri: PropTypes.string,
-		_wpnonce: PropTypes.string,
-	} ),
+	ajax_data: AJAX_DATA,
 	select2_overrides: PropTypes.any,
 	supports_thumbnails: BOOLEAN_ALL_TYPES,
 	optgroup: PropTypes.any,

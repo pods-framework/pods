@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"596b5bc882bf494bdeea3fef69fb4119"}
+=======
+{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"fba1374625c29de6421e1c43952d3850"}
+>>>>>>> release/2.8.9

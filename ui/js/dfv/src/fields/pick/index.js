@@ -2,9 +2,6 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import AsyncSelect from 'react-select/async';
-import AsyncCreatableSelect from 'react-select/async-creatable';
 import PropTypes from 'prop-types';
 
 /**
@@ -16,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Other Pods dependencies
  */
+import FullSelect from './full-select';
 import SimpleSelect from './simple-select';
 import RadioSelect from './radio-select';
 import CheckboxSelect from './checkbox-select';
@@ -24,7 +22,6 @@ import ListSelectValues from './list-select-values';
 import IframeModal from 'dfv/src/components/iframe-modal';
 
 import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
-import loadAjaxOptions from '../../helpers/loadAjaxOptions';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
@@ -161,7 +158,7 @@ const Pick = ( props ) => {
 			// pick_table,
 			// pick_table_id,
 			// pick_table_index,
-			pick_taggable: taggable,
+			pick_taggable: isTaggable,
 			// pick_user_role,
 			// pick_val: pickValue,
 			// rest_pick_depth: pickDepth,
@@ -178,12 +175,8 @@ const Pick = ( props ) => {
 		allPodValues,
 	} = props;
 
-	let fieldPlaceholder = pickPlaceholder;
-
-	if ( null === fieldPlaceholder || '' === fieldPlaceholder ) {
-		// translators: %s is the field label.
-		fieldPlaceholder = sprintf( __( 'Search %s…', 'pods' ), label );
-	}
+	// translators: %s is the field label.
+	const fieldPlaceholder = pickPlaceholder || sprintf( __( 'Search %s…', 'pods' ), label );
 
 	const isSingle = 'single' === formatType;
 	const isMulti = 'multi' === formatType;
@@ -351,148 +344,55 @@ const Pick = ( props ) => {
 				value: item.id,
 			} ) );
 
-			if ( taggable ) {
-				return (
-					<>
-						<AsyncCreatableSelect
-							controlShouldRenderValue={ ! isListSelect }
-							defaultOptions={ formattedOptions }
-							loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
-							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ fieldPlaceholder }
-							isMulti={ isMulti }
-							onChange={ ( newOption ) => {
-								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
-								// in our array of dataOptions, and we should add it, so we can keep track of
-								// the label.
-								setModifiedFieldItemData( ( prevData ) => {
-									const prevDataValues = prevData.map( ( option ) => option.id );
-									const updatedData = [ ...prevData ];
-									const newOptions = isMulti ? newOption : [ newOption ];
+			const addNewItem = ( newOption ) => {
+				// The new value(s) may have been loaded by ajax, if it was, then it wasn't
+				// in our array of dataOptions, and we should add it, so we can keep track of
+				// the label.
+				setModifiedFieldItemData( ( prevData ) => {
+					const prevDataValues = prevData.map( ( option ) => option.id );
+					const updatedData = [ ...prevData ];
+					const newOptions = isMulti ? newOption : [ newOption ];
 
-									newOptions.forEach( ( option ) => {
-										if ( prevDataValues.includes( option.value ) ) {
-											return;
-										}
+					newOptions.forEach( ( option ) => {
+						if ( prevDataValues.includes( option.value ) ) {
+							return;
+						}
 
-										updatedData.push( {
-											id: option.value,
-											name: option.label,
-										} );
-									} );
+						updatedData.push( {
+							id: option.value,
+							name: option.label,
+						} );
+					} );
 
-									return updatedData;
-								} );
+					return updatedData;
+				} );
 
-								if ( isMulti ) {
-									setValueWithLimit( newOption.map(
-										( selection ) => selection.value )
-									);
-								} else {
-									setValueWithLimit( newOption.value );
-								}
-							} }
-							readOnly={ !! readOnly }
-						/>
-
-						{ isListSelect ? (
-							<ListSelectValues
-								fieldName={ name }
-								value={ formattedValue }
-								setValue={ setValueWithLimit }
-								fieldItemData={ modifiedFieldItemData }
-								setFieldItemData={ setModifiedFieldItemData }
-								isMulti={ isMulti }
-								limit={ parseInt( limit, 10 ) || 0 }
-								defaultIcon={ defaultIcon }
-								showIcon={ toBool( showIcon ) }
-								showViewLink={ toBool( showViewLink ) }
-								showEditLink={ toBool( showEditLink ) }
-								editIframeTitle={ editIframeTitle }
-								readOnly={ !! readOnly }
-							/>
-						) : null }
-
-						{ formattedValue.map( ( selectedValue, index ) => (
-							<input
-								name={ `${ name }[${ index }]` }
-								key={ `${ name }-${ selectedValue.value }` }
-								type="hidden"
-								value={ selectedValue.value }
-							/>
-						) ) }
-					</>
-				);
-			}
+				if ( null === newOption ) {
+					setValueWithLimit( '' );
+				} else if ( isMulti ) {
+					setValueWithLimit( newOption.map(
+						( selection ) => selection.value )
+					);
+				} else {
+					setValueWithLimit( newOption.value );
+				}
+			};
 
 			return (
 				<>
-					{ ajaxData?.ajax ? (
-						<AsyncSelect
-							controlShouldRenderValue={ ! isListSelect }
-							defaultOptions={ formattedOptions }
-							loadOptions={ loadAjaxOptions( ajaxData ) }
-							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ fieldPlaceholder }
-							isMulti={ isMulti }
-							isClearable={ ! toBool( isRequired ) }
-							onChange={ ( newOption ) => {
-								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
-								// in our array of dataOptions, and we should add it, so we can keep track of
-								// the label.
-								setModifiedFieldItemData( ( prevData ) => {
-									const prevDataValues = prevData.map( ( option ) => option.id );
-									const updatedData = [ ...prevData ];
-									const newOptions = isMulti ? newOption : [ newOption ];
-
-									newOptions.forEach( ( option ) => {
-										if ( prevDataValues.includes( option.value ) ) {
-											return;
-										}
-
-										updatedData.push( {
-											id: option.value,
-											name: option.label,
-										} );
-									} );
-
-									return updatedData;
-								} );
-
-								if ( null === newOption ) {
-									setValueWithLimit( '' );
-								} else if ( isMulti ) {
-									setValueWithLimit( newOption.map(
-										( selection ) => selection.value )
-									);
-								} else {
-									setValueWithLimit( newOption.value );
-								}
-							} }
-							readOnly={ !! readOnly }
-						/>
-					) : (
-						<Select
-							controlShouldRenderValue={ ! isListSelect }
-							options={ formattedOptions }
-							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ fieldPlaceholder }
-							isMulti={ isMulti }
-							isClearable={ ! toBool( isRequired ) }
-							onChange={ ( newOption ) => {
-								if ( null === newOption ) {
-									setValueWithLimit( '' );
-								} else if ( isMulti ) {
-									setValueWithLimit( newOption.map(
-										( selection ) => selection.value )
-									);
-								} else {
-									setValueWithLimit( newOption.value );
-								}
-							} }
-							readOnly={ !! readOnly }
-						/>
-					) }
+					<FullSelect
+						isTaggable={ isTaggable }
+						ajaxData={ ajaxData }
+						shouldRenderValue={ ! isListSelect }
+						formattedOptions={ formattedOptions }
+						value={ isMulti ? formattedValue : formattedValue[ 0 ] }
+						setValue={ setValueWithLimit }
+						addNewItem={ addNewItem }
+						placeholder={ fieldPlaceholder }
+						isMulti={ isMulti }
+						isClearable={ ! isTaggable && ! toBool( isRequired ) }
+						isReadOnly={ toBool( readOnly ) }
+					/>
 
 					{ isListSelect ? (
 						<ListSelectValues

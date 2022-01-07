@@ -2597,6 +2597,10 @@ class PodsMeta {
 				'_edit_lock'           => true,
 				'_thumbnail_id'        => true,
 				'_wp_.*'               => true,
+				'term_id'              => true,
+				'taxonomy'             => true,
+				// Disable for all protected meta keys.
+				'_.*'                  => true,
 				// Optimize for Duplicate Post plugin.
 				'_dp_.*'               => true,
 				// Optimize for Elementor plugin.
@@ -2607,6 +2611,13 @@ class PodsMeta {
 				// Optimize for WooCommerce.
 				'_product_.*'          => true,
 				'_downloadable_files'  => true,
+				'_currency'            => true,
+				'_bundled_cart_item'   => true,
+				'saswp_review_details' => true,
+			],
+			'taxonomy'  => [
+				// Disable for all protected meta keys.
+				'_.*' => true,
 			],
 			'user'      => [
 				'admin_color'                        => true,
@@ -2635,6 +2646,8 @@ class PodsMeta {
 				'user_level'                         => true,
 				'user-settings'                      => true,
 				'dashboard_quick_press_last_post_id' => true,
+				// Disable for all protected meta keys.
+				'_.*'                                => true,
 				// Optimize for Tribe Common.
 				'tribe-dismiss-notice'               => true,
 				'tribe-dismiss-notice-.*'            => true,

@@ -2592,6 +2592,9 @@ class PodsMeta {
 		// These are the keys we want to exclude from any additional queries/checks on within Pods.
 		$keys_not_covered = [
 			'post_type' => [
+				// Disable for all protected meta keys.
+				'_.*'                  => true,
+				// WP core keys.
 				'_additional_settings' => true,
 				'_edit_last'           => true,
 				'_edit_lock'           => true,
@@ -2599,8 +2602,6 @@ class PodsMeta {
 				'_wp_.*'               => true,
 				'term_id'              => true,
 				'taxonomy'             => true,
-				// Disable for all protected meta keys.
-				'_.*'                  => true,
 				// Optimize for Duplicate Post plugin.
 				'_dp_.*'               => true,
 				// Optimize for Elementor plugin.
@@ -2620,6 +2621,9 @@ class PodsMeta {
 				'_.*' => true,
 			],
 			'user'      => [
+				// Disable for all protected meta keys.
+				'_.*'                                => true,
+				// WP core keys.
 				'admin_color'                        => true,
 				'capabilities'                       => true,
 				'closedpostboxes_.*'                 => true,
@@ -2646,8 +2650,6 @@ class PodsMeta {
 				'user_level'                         => true,
 				'user-settings'                      => true,
 				'dashboard_quick_press_last_post_id' => true,
-				// Disable for all protected meta keys.
-				'_.*'                                => true,
 				// Optimize for Tribe Common.
 				'tribe-dismiss-notice'               => true,
 				'tribe-dismiss-notice-.*'            => true,

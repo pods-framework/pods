@@ -128,6 +128,11 @@ class Field extends Whatsit {
 	 * @return string|null The related object type, or null if not found.
 	 */
 	public function get_related_object_type() {
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
 		$type = $this->get_type();
 
 		// File field types are always related to the media object type.
@@ -160,15 +165,26 @@ class Field extends Whatsit {
 	 * @return string|null The related object name, or null if not found.
 	 */
 	public function get_related_object_name() {
-		$type = $this->get_type();
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
+		$is_simple_relationship = $this->is_simple_relationship();
+
+		// Only continue if this is not a simple relationship field.
+		if ( null === $is_simple_relationship || true === $is_simple_relationship ) {
+			return false;
+		}
 
 		$related_type = $this->get_related_object_type();
 
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
-
-		if ( null === $related_type || in_array( $related_type, $simple_tableless_objects, true ) ) {
+		// Only continue if we have a related object type.
+		if ( null === $related_type ) {
 			return null;
 		}
+
+		$type = $this->get_type();
 
 		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type, true ), true );
 
@@ -193,6 +209,11 @@ class Field extends Whatsit {
 	 * @return array|null The related object data, or null if not found.
 	 */
 	public function get_related_object_data() {
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
 		return PodsForm::field_method( $this->args['type'], 'data', $this->args['name'], null, $this->args, null, null, true );
 	}
 
@@ -204,6 +225,11 @@ class Field extends Whatsit {
 	 * @return Whatsit|array|null The related object, or null if not found.
 	 */
 	public function get_related_object() {
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
 		$table_info = $this->get_table_info();
 
 		// Check if the pod was found.
@@ -212,6 +238,46 @@ class Field extends Whatsit {
 		}
 
 		return $table_info['pod'];
+	}
+
+	/**
+	 * Determine whether this is a relationship field (pick/file/etc).
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return bool Whether this is a relationship field (pick/file/etc).
+	 */
+	public function is_relationship() {
+		$type = $this->get_type();
+
+		$tableless_field_types = PodsForm::tableless_field_types();
+
+		return in_array( $type, $tableless_field_types, true );
+	}
+
+	/**
+	 * Determine whether the relationship field is a simple relationship.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return bool|null Whether the relationship field is a simple relationship, or null if not a relationship field.
+	 */
+	public function is_simple_relationship() {
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
+		$related_type = $this->get_related_object_type();
+
+		// Only continue if this is related to an object.
+		if ( null === $related_type ) {
+			return null;
+		}
+
+		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+		return in_array( $related_type, $simple_tableless_objects, true );
 	}
 
 	/**

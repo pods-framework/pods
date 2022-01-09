@@ -7817,13 +7817,13 @@ class PodsAPI {
 
 		if ( isset( $params['pod'] ) ) {
 			if ( empty( $params['parent'] ) ) {
-				$params['parent'] = 0;
+				$pod = $this->load_pod( $params['pod'] );
 
-				$pod = $this->load_pod( $params['pod'], false );
-
-				if ( $pod ) {
-					$params['parent'] = $pod->get_id();
+				if ( ! $pod ) {
+					return [];
 				}
+
+				$params['parent'] = $pod->get_id();
 			}
 
 			unset( $params['pod'] );
@@ -7998,13 +7998,13 @@ class PodsAPI {
 
 		if ( isset( $params['pod'] ) ) {
 			if ( empty( $params['parent'] ) ) {
-				$params['parent'] = 0;
+				$pod = $this->load_pod( $params['pod'] );
 
-				$pod = $this->load_pod( $params['pod'], false );
-
-				if ( $pod ) {
-					$params['parent'] = $pod->get_id();
+				if ( ! $pod ) {
+					return [];
 				}
+
+				$params['parent'] = $pod->get_id();
 			}
 
 			unset( $params['pod'] );
@@ -8128,13 +8128,13 @@ class PodsAPI {
 
 		if ( isset( $params['pod'] ) ) {
 			if ( empty( $params['parent'] ) ) {
-				$params['parent'] = 0;
+				$pod = $this->load_pod( $params['pod'] );
 
-				$pod = $this->load_pod( $params['pod'], false );
-
-				if ( $pod ) {
-					$params['parent'] = $pod->get_id();
+				if ( ! $pod ) {
+					return [];
 				}
+
+				$params['parent'] = $pod->get_id();
 			}
 
 			unset( $params['pod'] );
@@ -8214,13 +8214,13 @@ class PodsAPI {
 
 		if ( isset( $params['pod'] ) ) {
 			if ( empty( $params['parent'] ) ) {
-				$params['parent'] = 0;
+				$pod = $this->load_pod( $params['pod'] );
 
-				$pod = $this->load_pod( $params['pod'], false );
-
-				if ( $pod ) {
-					$params['parent'] = $pod->get_id();
+				if ( ! $pod ) {
+					return [];
 				}
+
+				$params['parent'] = $pod->get_id();
 			}
 
 			unset( $params['pod'] );

@@ -2501,11 +2501,13 @@ function pods_is_plugin_active( $plugin ) {
 }
 
 /**
- * Check if Pods no conflict is on or not
+ * Check if Pods no conflict is on or not.
  *
- * @param string $object_type
+ * Note: $object_type in the future may be default to null instead of 'post'.
  *
- * @return bool
+ * @param string|null $object_type The object type to check if no conflict is on for.
+ *
+ * @return bool Whether no conflict is on.
  *
  * @since 2.3.0
  */
@@ -2518,6 +2520,10 @@ function pods_no_conflict_check( $object_type = 'post' ) {
 
 	if ( ! class_exists( 'PodsInit' ) ) {
 		pods_init();
+	}
+
+	if ( empty( $object_type ) ) {
+		return ! empty( PodsInit::$no_conflict );
 	}
 
 	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {

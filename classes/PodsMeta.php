@@ -2615,6 +2615,9 @@ class PodsMeta {
 				'_currency'            => true,
 				'_bundled_cart_item'   => true,
 				'saswp_review_details' => true,
+				// Optimize for SEOPress.
+				'seopress_.*'          => true,
+				'edit_seopress_.*'     => true,
 			],
 			'taxonomy'  => [
 				// Disable for all protected meta keys.
@@ -2663,6 +2666,9 @@ class PodsMeta {
 				'woocommerce_.*'                     => true,
 				'_woocommerce_.*'                    => true,
 				'wc_.*'                              => true,
+				// Optimize for SEOPress.
+				'seopress_.*'          => true,
+				'edit_seopress_.*'     => true,
 			],
 			'settings'  => [
 				'fileupload_maxk'                       => true,
@@ -2674,6 +2680,8 @@ class PodsMeta {
 				'duplicate_post_title_prefix'           => true,
 				// Optimize for WooCommerce.
 				'woocommerce_.*'                        => true,
+				// Optimize for SEOPress.
+				'seopress_.*'                           => true,
 			],
 		];
 

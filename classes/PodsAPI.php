@@ -7467,12 +7467,13 @@ class PodsAPI {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param int|array   $related_id    ID(s) for items to save.
-		 * @param int|array   $id            ID(s) to remove.
+		 * @param int         $related_id    ID for item to save.
+		 * @param int         $id            ID to remove.
 		 * @param array|Pod   $related_pod   The related Pod object.
 		 * @param array|Field $related_field The related Field object.
+		 * @param array       $related_ids   The full list of related IDs for the item, with the related item already removed.
 		 */
-		do_action( 'pods_api_delete_relationships', $related_id, $id, $related_field, $related_pod );
+		do_action( 'pods_api_delete_relationships', $related_id, $id, $related_field, $related_pod, $related_ids );
 
 		if ( ! $no_conflict ) {
 			pods_no_conflict_off( $related_pod['type'] );

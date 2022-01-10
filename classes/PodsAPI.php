@@ -8791,11 +8791,11 @@ class PodsAPI {
 	/**
 	 * Find items related to a parent field
 	 *
-	 * @param int   $field_id The Field ID
-	 * @param int   $pod_id   The Pod ID
-	 * @param mixed $ids      A comma-separated string (or array) of item IDs
-	 * @param array $field    Field data array
-	 * @param array $pod      Pod data array
+	 * @param int|array $field_id The Field ID or the list of all parameters.
+	 * @param int       $pod_id   The Pod ID
+	 * @param mixed     $ids      A comma-separated string (or array) of item IDs
+	 * @param array     $field    Field data array
+	 * @param array     $pod      Pod data array
 	 *
 	 * @return int[]
 	 *
@@ -8803,26 +8803,42 @@ class PodsAPI {
 	 *
 	 * @uses  pods_query()
 	 */
-	public function lookup_related_items( $field_id, $pod_id, $ids, $field = null, $pod = null, $force_meta = true ) {
+	public function lookup_related_items( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
+		$params = [
+			'field_id'    => $field_id,
+			'pod_id'      => $pod_id,
+			'ids'         => $ids,
+			'field'       => $field,
+			'pod'         => $pod,
+			'force_meta'  => false,
+			'pods_object' => null,
+		];
+
+		if ( is_array( $field_id ) && isset( $field_id['field_id'] ) ) {
+			$params['field_id'] = $field_id['field_id'];
+
+			$params = array_merge( $params, $field_id );
+		}
+
+		$params = (object) $params;
 
 		$related_ids = array();
 
-		if ( ! is_array( $ids ) ) {
-			$ids = explode( ',', $ids );
+		if ( ! is_array( $params->ids ) ) {
+			$params->ids = explode( ',', $params->ids );
 		}
 
-		$ids = array_map( 'absint', $ids );
+		$params->ids = array_map( 'absint', $params->ids );
+		$params->ids = array_unique( array_filter( $params->ids ) );
 
-		$ids = array_unique( array_filter( $ids ) );
-
-		$idstring = implode( ',', $ids );
+		$idstring = implode( ',', $params->ids );
 
 		$static_cache = tribe( Static_Cache::class );
 
-		$cache_key = $pod_id . '|' . $field_id;
+		$cache_key = $params->pod_id . '|' . $params->field_id;
 
 		// Check cache first, no point in running the same query multiple times
-		if ( $pod_id && $field_id ) {
+		if ( $params->pod_id && $params->field_id ) {
 			$cache_value = $static_cache->get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
 
 			if ( isset( $cache_value[ $idstring ] ) && is_array( $cache_value[ $idstring ] ) ) {
@@ -8832,46 +8848,56 @@ class PodsAPI {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
-		$field_type = pods_v( 'type', $field );
+		if ( empty( $params->field ) ) {
+			$load_params = array(
+				'parent' => $params->pod_id,
+			);
 
-		if ( empty( $ids ) || ! in_array( $field_type, $tableless_field_types, true ) ) {
+			if ( ! empty( $params->field_id ) ) {
+				$load_params['id'] = $params->field_id;
+			}
+
+			$params->field = $this->load_field( $load_params );
+		}
+
+		$field_type = pods_v( 'type', $params->field );
+
+		if ( empty( $params->ids ) || ! in_array( $field_type, $tableless_field_types, true ) ) {
 			return array();
 		}
 
 		$related_pick_limit = 0;
 
-		if ( empty( $field ) ) {
-			$load_params = array(
-				'parent' => $pod_id,
-			);
+		if ( ! empty( $params->field ) ) {
+			$params->field_id = $params->field['id'];
 
-			if ( ! empty( $field_id ) ) {
-				$load_params['id'] = $field_id;
+			if ( $params->field instanceof Field && empty( $params->pod ) ) {
+				$params->pod = $params->field->get_parent_object();
 			}
 
-			$field = $this->load_field( $load_params );
-		}
-
-		if ( ! empty( $field ) ) {
-			$related_pick_limit = (int) pods_v( $field_type . '_limit', $field, 0 );
-
-			if ( 'single' === pods_v( $field_type . '_format_type', $field ) ) {
-				$related_pick_limit = 1;
+			if ( ! empty( $params->pod ) ) {
+				$params->pod_id = $params->pod['id'];
 			}
 
-			// Temporary hack until there's some better handling here
-			$related_pick_limit = $related_pick_limit * count( $ids );
+			$related_pick_limit = 1;
+
+			if ( 'multi' === pods_v( $field_type . '_format_type', $params->field, 'single' ) ) {
+				$related_pick_limit = (int) pods_v( $field_type . '_limit', $params->field, 0 );
+			}
+
+			// Temporary hack until there's some better handling here.
+			$related_pick_limit = max( count( $params->ids ), $related_pick_limit );
 		}
 
 		if ( 'taxonomy' === $field_type ) {
-			$related = wp_get_object_terms( $ids, pods_v( 'name', $field ), array( 'fields' => 'ids' ) );
+			$related = wp_get_object_terms( $params->ids, pods_v( 'name', $params->field ), array( 'fields' => 'ids' ) );
 
 			if ( ! is_wp_error( $related ) ) {
 				$related_ids = $related;
 			}
 		} elseif ( 'comment' === $field_type ) {
 			$comment_args = array(
-				'post__in' => $ids,
+				'post__in' => $params->ids,
 				'fields'   => 'ids',
 			);
 
@@ -8880,11 +8906,11 @@ class PodsAPI {
 			if ( ! is_wp_error( $related ) ) {
 				$related_ids = $related;
 			}
-		} elseif ( ! pods_tableless() && pods_podsrel_enabled() ) {
-			$ids = implode( ', ', $ids );
+		} elseif ( ! $params->force_meta && ! pods_tableless() && pods_podsrel_enabled() ) {
+			$ids = implode( ', ', $params->ids );
 
-			$field_id  = (int) $field_id;
-			$sister_id = pods_v( 'sister_id', $field, 0 );
+			$params->field_id  = (int) $params->field_id;
+			$sister_id = pods_v( 'sister_id', $params->field, 0 );
 
 			if ( is_numeric( $sister_id ) ) {
 				$sister_id = (int) $sister_id;
@@ -8896,7 +8922,7 @@ class PodsAPI {
 				SELECT item_id, related_item_id, related_field_id
 				FROM `@wp_podsrel`
 				WHERE
-					`field_id` = {$field_id}
+					`field_id` = {$params->field_id}
 					AND `item_id` IN ( {$ids} )
 				ORDER BY `weight`
 			";
@@ -8907,17 +8933,17 @@ class PodsAPI {
 				foreach ( $relationships as $relation ) {
 					if ( ! in_array( $relation->related_item_id, $related_ids ) ) {
 						$related_ids[] = (int) $relation->related_item_id;
-					} elseif ( 0 < $sister_id && $field_id == $relation->related_field_id && ! in_array( $relation->item_id, $related_ids ) ) {
+					} elseif ( 0 < $sister_id && $params->field_id == $relation->related_field_id && ! in_array( $relation->item_id, $related_ids ) ) {
 						$related_ids[] = (int) $relation->item_id;
 					}
 				}
 			}
 		} else {
-			if ( ! ( is_array( $pod ) || $pod instanceof Pods\Whatsit ) ) {
-				$pod = $this->load_pod( array( 'id' => $pod_id ), false );
+			if ( ! ( is_array( $params->pod ) || $params->pod instanceof Pods\Whatsit ) ) {
+				$params->pod = $this->load_pod( array( 'id' => $params->pod_id ), false );
 			}
 
-			if ( ! empty( $pod ) && in_array( $pod['type'], array(
+			if ( ! empty( $params->pod ) && in_array( $params->pod['type'], array(
 					'post_type',
 					'media',
 					'taxonomy',
@@ -8925,7 +8951,7 @@ class PodsAPI {
 					'comment',
 					'settings'
 				) ) ) {
-				$meta_type = $pod['type'];
+				$meta_type = $params->pod['type'];
 
 				if ( in_array( $meta_type, array( 'post_type', 'media' ), true ) ) {
 					$meta_type = 'post';
@@ -8939,12 +8965,14 @@ class PodsAPI {
 					pods_no_conflict_on( ( 'term' === $meta_type ? 'taxonomy' : $meta_type ) );
 				}
 
-				foreach ( $ids as $id ) {
+				$meta_storage_enabled = pods_relationship_meta_storage_enabled( $params->field, $params->pod );
+
+				foreach ( $params->ids as $id ) {
 					if ( 'settings' === $meta_type ) {
-						$related_id = get_option( '_pods_' . $pod['name'] . '_' . $field['name'] );
+						$related_id = get_option( '_pods_' . $params->pod['name'] . '_' . $params->field['name'] );
 
 						if ( empty( $related_id ) ) {
-							$related_id = get_option( $pod['name'] . '_' . $field['name'] );
+							$related_id = get_option( $params->pod['name'] . '_' . $params->field['name'] );
 						}
 
 						if ( is_array( $related_id ) && ! empty( $related_id ) ) {
@@ -8962,11 +8990,11 @@ class PodsAPI {
 								}
 							}
 						}
-					} elseif ( pods_relationship_meta_storage_enabled( $field, $pod ) ) {
-						$related_id = get_metadata( $meta_type, $id, '_pods_' . $field['name'], true );
+					} elseif ( $meta_storage_enabled ) {
+						$related_id = get_metadata( $meta_type, $id, '_pods_' . $params->field['name'], true );
 
 						if ( empty( $related_id ) ) {
-							$related_id = get_metadata( $meta_type, $id, $field['name'] );
+							$related_id = get_metadata( $meta_type, $id, $params->field['name'] );
 						}
 
 						if ( is_array( $related_id ) && ! empty( $related_id ) ) {
@@ -8988,6 +9016,18 @@ class PodsAPI {
 								}
 							}
 						}
+					} else {
+						/**
+						 * Allow filtering the related IDs for an ID.
+						 *
+						 * @since 2.8.9
+						 *
+						 * @param array  $related_ids The list of related IDs found.
+						 * @param int    $id          The object ID.
+						 * @param string $meta_type   The meta type.
+						 * @param object $params      The parameters object for the method.
+						 */
+						$related_ids = (array) apply_filters( 'pods_api_lookup_related_items_related_ids_for_id', $related_ids, $id, $meta_type, $params );
 					}
 				}
 
@@ -9005,8 +9045,8 @@ class PodsAPI {
 			}
 		}
 
-		if ( 0 != $pod_id && 0 != $field_id && ! empty( $related_ids ) ) {
-			// Only cache if $pod_id and $field_id were passed
+		if ( 0 != $params->pod_id && 0 != $params->field_id && ! empty( $related_ids ) ) {
+			// Only cache if $params->pod_id and $params->field_id were passed
 			$cache_value = $static_cache->get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
 
 			$cache_value[ $idstring ] = $related_ids;

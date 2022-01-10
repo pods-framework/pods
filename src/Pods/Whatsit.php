@@ -1308,6 +1308,23 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Get the pod table name for object.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return string|null The Pod table name for object or null if not set.
+	 */
+	public function get_pod_table_name() {
+		$table_info = $this->get_table_info();
+
+		if ( ! empty( $table_info['pod_table'] ) ) {
+			return $table_info['pod_table'];
+		}
+
+		return null;
+	}
+
+	/**
 	 * Get the full data from the object.
 	 *
 	 * @param array $args List of arguments.

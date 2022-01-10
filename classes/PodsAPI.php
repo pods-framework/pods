@@ -8879,14 +8879,14 @@ class PodsAPI {
 				$params->pod_id = $params->pod['id'];
 			}
 
-			$related_pick_limit = 1;
-
 			if ( 'multi' === pods_v( $field_type . '_format_type', $params->field, 'single' ) ) {
 				$related_pick_limit = (int) pods_v( $field_type . '_limit', $params->field, 0 );
+			} else {
+				$related_pick_limit = 1;
 			}
 
 			// Temporary hack until there's some better handling here.
-			$related_pick_limit = max( count( $params->ids ), $related_pick_limit );
+			$related_pick_limit *= count( $params->ids );
 		}
 
 		if ( 'taxonomy' === $field_type ) {

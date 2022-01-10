@@ -1333,6 +1333,10 @@ class PodsInit {
 				$cpt_label    = esc_html( pods_v( 'label', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'name', $post_type ) ) ), true ) );
 				$cpt_singular = esc_html( pods_v( 'label_singular', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'label', $post_type, $post_type_name, true ) ) ), true ) );
 
+				// Since 2.8.9: Fix single quote from esc_html().
+				$cpt_label    = str_replace( '&#039;', "'", $cpt_label );
+				$cpt_singular = str_replace( '&#039;', "'", $cpt_singular );
+
 				$cpt_labels                             = array();
 				$cpt_labels['name']                     = $cpt_label;
 				$cpt_labels['singular_name']            = $cpt_singular;

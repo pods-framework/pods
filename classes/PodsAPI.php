@@ -8943,14 +8943,7 @@ class PodsAPI {
 				$params->pod = $this->load_pod( array( 'id' => $params->pod_id ), false );
 			}
 
-			if ( ! empty( $params->pod ) && in_array( $params->pod['type'], array(
-					'post_type',
-					'media',
-					'taxonomy',
-					'user',
-					'comment',
-					'settings'
-				) ) ) {
+			if ( ! empty( $params->pod ) ) {
 				$meta_type = $params->pod['type'];
 
 				if ( in_array( $meta_type, array( 'post_type', 'media' ), true ) ) {
@@ -8965,7 +8958,15 @@ class PodsAPI {
 					pods_no_conflict_on( ( 'term' === $meta_type ? 'taxonomy' : $meta_type ) );
 				}
 
-				$meta_storage_enabled = pods_relationship_meta_storage_enabled( $params->field, $params->pod );
+				$meta_storage_types = [
+					'post_type',
+					'media',
+					'taxonomy',
+					'user',
+					'comment',
+				];
+
+				$meta_storage_enabled = in_array( $params->pod['type'], $meta_storage_types, true ) && pods_relationship_meta_storage_enabled( $params->field, $params->pod );
 
 				foreach ( $params->ids as $id ) {
 					if ( 'settings' === $meta_type ) {

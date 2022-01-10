@@ -9017,19 +9017,19 @@ class PodsAPI {
 								}
 							}
 						}
-					} else {
-						/**
-						 * Allow filtering the related IDs for an ID.
-						 *
-						 * @since 2.8.9
-						 *
-						 * @param array  $related_ids The list of related IDs found.
-						 * @param int    $id          The object ID.
-						 * @param string $meta_type   The meta type.
-						 * @param object $params      The parameters object for the method.
-						 */
-						$related_ids = (array) apply_filters( 'pods_api_lookup_related_items_related_ids_for_id', $related_ids, $id, $meta_type, $params );
 					}
+
+					/**
+					 * Allow filtering the related IDs for an ID.
+					 *
+					 * @since 2.8.9
+					 *
+					 * @param array  $related_ids The list of related IDs found.
+					 * @param int    $id          The object ID.
+					 * @param string $meta_type   The meta type.
+					 * @param object $params      The parameters object for the method.
+					 */
+					$related_ids = (array) apply_filters( 'pods_api_lookup_related_items_related_ids_for_id', $related_ids, $id, $meta_type, $params );
 				}
 
 				if ( ! $no_conflict ) {

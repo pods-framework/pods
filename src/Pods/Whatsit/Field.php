@@ -46,6 +46,21 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Get the type-specific object argument value.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @param string     $arg     Argument name.
+	 * @param mixed|null $default Default to use if not set.
+	 * @param bool       $strict  Whether to check only normal arguments and not special arguments.
+	 *
+	 * @return null|mixed Argument value, or null if not set.
+	 */
+	public function get_type_arg( $arg, $default = null, $strict = false ) {
+		return $this->get_arg( $this->get_type() . '_' . $arg, $default, $strict );
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function get_arg( $arg, $default = null, $strict = false ) {

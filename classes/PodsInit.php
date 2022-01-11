@@ -278,6 +278,9 @@ class PodsInit {
 				/** @var Tribe__Assets_Pipeline $assets_pipeline */
 				$assets_pipeline = tribe( 'assets.pipeline' );
 				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
+
+				// Disable the Debug Bar panels.
+				add_filter( 'tribe_debug_bar_panels', '__return_empty_array', 15 );
 			}
 		}
 	}

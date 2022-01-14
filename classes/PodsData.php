@@ -2003,7 +2003,17 @@ class PodsData {
 			}//end if
 		}//end if
 
-		if ( null !== $row || ( $this->pod_data && 'settings' === $this->pod_data['type'] ) ) {
+		/**
+		 * Allow filtering whether to fetch the full row.
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param bool     $fetch_full Whether to fetch the full row.
+		 * @param PodsData $pods_data  The PodsData object.
+		 */
+		$fetch_full = (bool) apply_filters( 'pods_data_fetch_full', true, $this );
+
+		if ( $fetch_full && ( null !== $row || ( $this->pod_data && 'settings' === $this->pod_data['type'] ) ) ) {
 			if ( $explicit_set ) {
 				$this->row_number = - 1;
 			}

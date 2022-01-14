@@ -36,7 +36,7 @@ class API {
 		wp_set_script_translations( 'pods-blocks-api', 'pods' );
 
 		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', [
-			'blocks'      => $js_blocks ,
+			'blocks'      => $js_blocks,
 			// No custom collections to register directly with JS right now.
 			'collections' => [],
 		] );

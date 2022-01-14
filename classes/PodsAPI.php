@@ -8723,8 +8723,17 @@ class PodsAPI {
 		$label = $options['label'];
 		$label = empty( $label ) ? $field : $label;
 
+		/**
+		 * Allow filtering whether to check the required fields for values.
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param bool $check_required Whether to check the required fields for values.
+		 */
+		$check_required = apply_filters( 'pods_api_handle_field_validation_check_required', true );
+
 		// Verify required fields
-		if ( 'slug' !== $type && 1 === (int) pods_v( 'required', $options, 0 ) ) {
+		if ( $check_required && 'slug' !== $type && 1 === (int) pods_v( 'required', $options, 0 ) ) {
 			if ( '' === $value || null === $value || array() === $value ) {
 				return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
 			}

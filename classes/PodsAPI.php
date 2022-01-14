@@ -247,44 +247,59 @@ class PodsAPI {
 		}
 
 		foreach ( $meta as $meta_key => $meta_value ) {
+			$original_meta_value = $meta_value;
+
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
 
 			// Enforce boolean integer values.
 			$meta_value = pods_bool_to_int( $meta_value );
 
-			if ( null === $meta_value || ( $strict && '' === $meta[ $meta_key ] ) ) {
-				$old_meta_value = '';
+			$simple    = false;
+			$is_single = false;
 
-				if ( isset( $existing_meta[ $meta_key ] ) ) {
-					$old_meta_value = $existing_meta[ $meta_key ];
-				}
+			if ( isset( $fields[ $meta_key ] ) ) {
+				$field_data = $fields[ $meta_key ];
 
-				delete_metadata( $meta_type, $id, $meta_key, $old_meta_value );
-			} else {
-				$simple = false;
-
-				if ( isset( $fields[ $meta_key ] ) ) {
-					$field_data = $fields[ $meta_key ];
-
-					$simple = ( 'pick' === pods_v( 'type', $field_data ) && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true ) );
-				}
+				$simple = ( 'pick' === pods_v( 'type', $field_data ) && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true ) );
 
 				if ( $simple ) {
-					delete_metadata( $meta_type, $id, $meta_key );
-
-					update_metadata( $meta_type, $id, '_pods_' . $meta_key, $meta_value );
-
-					if ( ! is_array( $meta_value ) ) {
-						$meta_value = [ $meta_value ];
-					}
-
-					foreach ( $meta_value as $value ) {
-						add_metadata( $meta_type, $id, $meta_key, $value );
-					}
-				} else {
-					update_metadata( $meta_type, $id, $meta_key, $meta_value );
+					$is_single = 'single' === pods_v( 'pick_format_type', $field_data, 'single' );
 				}
+			}
+
+			if ( null === $original_meta_value || ( $strict && '' === $original_meta_value ) ) {
+				if ( $simple ) {
+					delete_metadata( $meta_type, $id, $meta_key );
+					delete_metadata( $meta_type, $id, '_pods_' . $meta_key );
+				} else {
+					$old_meta_value = '';
+
+					if ( isset( $existing_meta[ $meta_key ] ) ) {
+						$old_meta_value = $existing_meta[ $meta_key ];
+					}
+
+					delete_metadata( $meta_type, $id, $meta_key, $old_meta_value );
+				}
+			} elseif ( $simple ) {
+				delete_metadata( $meta_type, $id, $meta_key );
+
+				if ( ! is_array( $meta_value ) ) {
+					$meta_value = [ $meta_value ];
+				}
+
+				if ( $is_single ) {
+					// Delete it because it is not needed for single values.
+					delete_metadata( $meta_type, $id, '_pods_' . $meta_key );
+				} else {
+					update_metadata( $meta_type, $id, '_pods_' . $meta_key, $meta_value );
+				}
+
+				foreach ( $meta_value as $value ) {
+					add_metadata( $meta_type, $id, $meta_key, $value );
+				}
+			} else {
+				update_metadata( $meta_type, $id, $meta_key, $meta_value );
 			}
 		}
 
@@ -4840,6 +4855,7 @@ class PodsAPI {
 
 		$object_data    = array();
 		$object_meta    = array();
+		$simple_rel     = array();
 		$post_term_data = array();
 
 		if ( 'settings' === $object_type ) {
@@ -4849,6 +4865,15 @@ class PodsAPI {
 		}
 
 		$fields_active = array_unique( $fields_active );
+
+		/**
+		 * Allow filtering whether to save data to the associated table (if the Pod is using table storage).
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param bool $save_to_table Whether to save data to the associated table (if the Pod is using table storage).
+		 */
+		$save_to_table = (bool) apply_filters( 'pods_api_save_pod_item_save_to_table', true );
 
 		// Loop through each active field, validating and preparing the table data
 		foreach ( $fields_active as $field ) {
@@ -5007,13 +5032,22 @@ class PodsAPI {
 						}
 					}
 
-					$table_data[ $field ] = str_replace( array( '{prefix}', '@wp_' ), array(
-						'{/prefix/}',
-						'{prefix}'
-					), $value ); // Fix for pods_query
-					$table_formats[]      = PodsForm::prepare( $type, $options );
+					// Check if we should save to the table, and then check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to the table.
+					if ( $save_to_table && ( ! $simple || ! pods_relationship_table_storage_enabled_for_simple_relationships( $options, $pod ) ) ) {
+						$table_data[ $field ] = str_replace( [ '{prefix}', '@wp_' ], [
+							'{/prefix/}',
+							'{prefix}'
+						], $value ); // Fix for pods_query
+						$table_formats[]      = PodsForm::prepare( $type, $options );
+					}
 
-					$object_meta[ $field ] = $value;
+					if ( $simple ) {
+						// Optionally save simple relationships elsewhere.
+						$simple_rel[ $field ] = $value;
+					} else {
+						// Save fields to meta.
+						$object_meta[ $field ] = $value;
+					}
 				} else {
 					// Store relational field data to be looped through later
 					// Convert values from a comma-separated string into an array
@@ -5046,8 +5080,17 @@ class PodsAPI {
 		if ( ! in_array( $pod['type'], array( 'pod', 'table', '' ) ) ) {
 			$meta_fields = array();
 
-			if ( 'meta' === $pod['storage'] || 'settings' === $pod['type'] || ( 'taxonomy' === $pod['type'] && 'none' === $pod['storage'] ) ) {
+			if ( 'meta' === $pod['storage'] || 'settings' === $pod['type'] ) {
 				$meta_fields = $object_meta;
+			}
+
+			// Maybe add simple relationship data to the meta directly.
+			foreach ( $simple_rel as $simple_rel_field => $simple_rel_value ) {
+				if ( ! isset( $fields[ $simple_rel_field ] ) || ! pods_relationship_meta_storage_enabled_for_simple_relationships( $fields[ $simple_rel_field ], $pod ) ) {
+					continue;
+				}
+
+				$meta_fields[ $simple_rel_field ] = $simple_rel_value;
 			}
 
 			if ( $allow_custom_fields && ! empty( $custom_data ) ) {
@@ -5070,7 +5113,16 @@ class PodsAPI {
 
 			$meta_fields = pods_sanitize( $meta_fields );
 
-			$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, false, true, $fields_to_send );
+			/**
+			 * Allow filtering whether to delete values if values are passed as an empty '' string.
+			 *
+			 * @since 2.8.9
+			 *
+			 * @param bool $strict_meta_save Whether to delete values if values are passed as an empty '' string.
+			 */
+			$strict_meta_save = (bool) apply_filters( 'pods_api_save_pod_item_strict_meta_save', false );
+
+			$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, $strict_meta_save, true, $fields_to_send );
 
 			if ( ! empty( $params->id ) && 'settings' === $pod['type'] ) {
 				$params->id = $pod['id'];

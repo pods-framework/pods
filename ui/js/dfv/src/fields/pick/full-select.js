@@ -126,7 +126,7 @@ const FullSelect = ( {
 			] }
 		>
 			<SortableContext
-				items={ Array.isArray( value ) ? value.map( ( item ) => item.value ) : [ value ] }
+				items={ Array.isArray( value ) ? value.map( ( item ) => item.value ) : [] }
 				strategy={ horizontalListSortingStrategy }
 			>
 				{ useAsyncSelectComponent ? (

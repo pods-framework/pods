@@ -309,6 +309,16 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		return;
 	}
 
+	if ( defined( 'WP_CLI' ) ) {
+		if ( ! is_string( $debug ) ) {
+			$debug = var_export( $debug, true );
+		}
+
+		WP_CLI::debug( $debug );
+
+		return;
+	}
+
 	ob_start();
 
 	if ( '_null' !== $prefix ) {
@@ -445,7 +455,7 @@ function pods_podsrel_enabled() {
 	 *
 	 * @param bool $enabled Whether the wp_podsrel table is enabled.
 	 */
-	return apply_filters( 'pods_podsrel_enabled', true );
+	return (bool) apply_filters( 'pods_podsrel_enabled', true );
 }
 
 /**
@@ -468,7 +478,53 @@ function pods_relationship_meta_storage_enabled( $field = null, $pod = null ) {
 	 * @param null|array|Field $field   The field object.
 	 * @param null|array|Pod   $pod     The pod object.
 	 */
-	return apply_filters( 'pods_relationship_meta_storage_enabled', true, $field, $pod );
+	return (bool) apply_filters( 'pods_relationship_meta_storage_enabled', true, $field, $pod );
+}
+
+/**
+ * Determine whether relationship meta storage is enabled for simple relationships.
+ *
+ * @since 2.8.9
+ *
+ * @param null|array|Field $field The field object.
+ * @param null|array|Pod   $pod   The pod object.
+ *
+ * @return bool Whether relationship meta storage is enabled.
+ */
+function pods_relationship_meta_storage_enabled_for_simple_relationships( $field = null, $pod = null ) {
+	/**
+	 * Allow filtering of whether relationship meta storage is enabled for simple relationships.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @param bool             $enabled Whether relationship meta storage table is enabled for simple relationships.
+	 * @param null|array|Field $field   The field object.
+	 * @param null|array|Pod   $pod     The pod object.
+	 */
+	return (bool) apply_filters( 'pods_relationship_meta_storage_enabled_for_simple_relationships', false, $field, $pod );
+}
+
+/**
+ * Determine whether relationship table storage is enabled for simple relationships.
+ *
+ * @since 2.8.9
+ *
+ * @param null|array|Field $field The field object.
+ * @param null|array|Pod   $pod   The pod object.
+ *
+ * @return bool Whether relationship table storage is enabled.
+ */
+function pods_relationship_table_storage_enabled_for_simple_relationships( $field = null, $pod = null ) {
+	/**
+	 * Allow filtering of whether relationship table storage is enabled for simple relationships.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @param bool             $enabled Whether relationship table storage table is enabled for simple relationships.
+	 * @param null|array|Field $field   The field object.
+	 * @param null|array|Pod   $pod     The pod object.
+	 */
+	return (bool) apply_filters( 'pods_relationship_table_storage_enabled_for_simple_relationships', true, $field, $pod );
 }
 
 /**

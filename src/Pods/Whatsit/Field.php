@@ -189,7 +189,7 @@ class Field extends Whatsit {
 
 		// Only continue if this is not a simple relationship field.
 		if ( null === $is_simple_relationship || true === $is_simple_relationship ) {
-			return false;
+			return null;
 		}
 
 		$related_type = $this->get_related_object_type();

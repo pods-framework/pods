@@ -2779,7 +2779,12 @@ class PodsData {
 								$table = $the_field->get_table_info();
 
 								if ( ! empty( $table ) ) {
-									$field_cast = "`{$field_name}`.`" . $table['field_id'] . '`';
+									if ( is_int( $field_value ) ) {
+										$field_cast = "`{$field_name}`.`" . $table['field_id'] . '`';
+									} else {
+										// Prior to 2.8 this was the default query, retain backwards compatibility
+										$field_cast = "`{$field_name}`.`" . $table['field_index'] . '`';
+									}
 								}
 							}
 						} elseif ( ! in_array( $pod['type'], [ 'pod', 'table' ], true ) ) {

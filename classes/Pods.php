@@ -3263,6 +3263,10 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/filters/
 	 */
 	public function filters( $params = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
 
 		$defaults = array(
 			'fields' => $params,
@@ -3693,6 +3697,11 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
+
 		// Check for anonymous submissions.
 		if ( ! is_user_logged_in() ) {
 			$session_auto_start = pods_session_auto_start();

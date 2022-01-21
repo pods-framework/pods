@@ -348,6 +348,11 @@ class PodsField {
 	 * }
 	 */
 	public function render_input_script( $args ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
+
 		pods_form_enqueue_script( 'pods-dfv' );
 
 		if ( is_array( $args ) ) {

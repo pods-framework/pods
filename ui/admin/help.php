@@ -238,9 +238,9 @@
 
 		<div class="note">
 			<h3>Are you looking for help with Pods Pro by SKCDEV?</h3>
-			<p>Pods Pro by SKCDEV is separate from Pods. You can get support on the
+			<p>Pods Pro by SKCDEV is separate from Pods. You can get support by logging into the
 				<a href="https://pods-pro.skc.dev/" target="_blank" rel="noopener noreferrer">Pods Pro by SKCDEV site</a>
-				by logging in and going to your Dashboard area.
+				and going to your Dashboard area.
 			</p>
 		</div>
 	</div>

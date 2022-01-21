@@ -46,21 +46,32 @@
 			<tbody>
 				<tr>
 					<td>
-						<a href="https://wordpress.org/plugins/pods/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">
-							<img width="50" height="50" src="https://ps.w.org/pods/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" >
+						<a href="https://wordpress.org/plugins/pods/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							<img width="50" height="50" src="https://ps.w.org/pods/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="Pods Framework" loading="lazy" >
 						</a>
 					</td>
 					<td>
-						<a href="https://wordpress.org/plugins/pods/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">Pods Framework</a>
+						<a href="https://wordpress.org/plugins/pods/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							Pods Framework
+						</a>
 					</td>
 					<td>
-						<a href="https://downloads.wordpress.org/plugin/pods.zip" class="small-button" target="_blank" rel="noopener noreferrer">Download</a> |
-						<a href="https://wordpress.org/support/plugin/pods/" class="small-button" target="_blank" rel="noopener noreferrer" title="Support Forums">Support</a>
-
-						| <a href="https://docs.pods.io/" title="Documentation">Docs</a>
-
-						|
-						<a href="https://github.com/pods-framework/pods" class="small-button" target="_blank" rel="noopener noreferrer">GitHub</a>
+						<a href="https://downloads.wordpress.org/plugin/pods.zip" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'Download' ); ?>
+						</a> |
+						<a href="https://wordpress.org/support/plugin/pods/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Support Forums', 'pods' ); ?>">
+							<?php esc_html_e( 'Support', 'pods' ); ?>
+						</a> |
+						<a href="https://docs.pods.io/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Documentation', 'pods' ); ?>">
+							<?php esc_html_e( 'Docs', 'pods' ); ?>
+						</a> |
+						<a href="https://github.com/pods-framework/pods" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'GitHub', 'pods' ); ?>
+						</a>
 					</td>
 				</tr>
 			</tbody>
@@ -78,97 +89,148 @@
 			<tbody>
 				<tr>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">
+						<a href="https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
 							<img width="50" height="50" src="https://ps.w.org/pods-beaver-builder-themer-add-on/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="Pods Beaver Themer Add-On" loading="lazy" >
 						</a>
 					</td>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">Pods Beaver Themer Add-On</a>
-					</td>
-					<td>
-						<a href="https://downloads.wordpress.org/plugin/pods-beaver-builder-themer-add-on.zip" class="small-button" target="_blank" rel="noopener noreferrer">Download</a> |
-						<a href="https://wordpress.org/support/plugin/pods-beaver-builder-themer-add-on/" class="small-button" target="_blank" rel="noopener noreferrer" title="Support Forums">Support</a>
-
-						| <a href="https://docs.pods.io/plugins/pods-beaver-themer-add-on/" title="Documentation">Docs</a>
-
-						|
-						<a href="https://github.com/pods-framework/pods-beaver-builder-themer-add-on" class="small-button" target="_blank" rel="noopener noreferrer">GitHub</a>
-					</td>
-				</tr>
-
-				<tr>
-					<td>
-						<a href="https://wordpress.org/plugins/pods-gravity-forms/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">
-							<img width="50" height="50" src="https://ps.w.org/pods-gravity-forms/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" >
+						<a href="https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							Pods Beaver Themer Add-On
 						</a>
 					</td>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-gravity-forms/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">Pods Gravity Forms Add-on</a>
-					</td>
-					<td>
-						<a href="https://downloads.wordpress.org/plugin/pods-gravity-forms.zip" class="small-button" target="_blank" rel="noopener noreferrer">Download</a> |
-						<a href="https://wordpress.org/support/plugin/pods-gravity-forms/" class="small-button" target="_blank" rel="noopener noreferrer" title="Support Forums">Support</a>
-
-						| <a href="https://docs.pods.io/plugins/pods-gravity-forms-add-on/" title="Documentation">Docs</a>
-
-						|
-						<a href="https://github.com/pods-framework/pods-gravity-forms" class="small-button" target="_blank" rel="noopener noreferrer">GitHub</a>
+						<a href="https://downloads.wordpress.org/plugin/pods-beaver-builder-themer-add-on.zip" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'Download' ); ?>
+						</a> |
+						<a href="https://wordpress.org/support/plugin/pods-beaver-builder-themer-add-on/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Support Forums', 'pods' ); ?>">
+							<?php esc_html_e( 'Support', 'pods' ); ?>
+						</a> |
+						<a href="https://docs.pods.io/plugins/pods-beaver-themer-add-on/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Documentation', 'pods' ); ?>">
+							<?php esc_html_e( 'Docs', 'pods' ); ?>
+						</a> |
+						<a href="https://github.com/pods-framework/pods-beaver-builder-themer-add-on" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'GitHub', 'pods' ); ?>
+						</a>
 					</td>
 				</tr>
 
 				<tr>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-alternative-cache/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">
+						<a href="https://wordpress.org/plugins/pods-gravity-forms/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>'">
+							<img width="50" height="50" src="https://ps.w.org/pods-gravity-forms/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="Pods Gravity Forms Add-on" loading="lazy" >
+						</a>
+					</td>
+					<td>
+						<a href="https://wordpress.org/plugins/pods-gravity-forms/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							Pods Gravity Forms Add-on
+						</a>
+					</td>
+					<td>
+						<a href="https://downloads.wordpress.org/plugin/pods-gravity-forms.zip" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'Download' ); ?>
+						</a> |
+						<a href="https://wordpress.org/support/plugin/pods-gravity-forms/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Support Forums', 'pods' ); ?>">
+							<?php esc_html_e( 'Support', 'pods' ); ?>
+						</a> |
+						<a href="https://docs.pods.io/plugins/pods-gravity-forms-add-on/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Documentation', 'pods' ); ?>">
+							<?php esc_html_e( 'Docs', 'pods' ); ?>
+						</a> |
+						<a href="https://github.com/pods-framework/pods-gravity-forms" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'GitHub', 'pods' ); ?>
+						</a>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<a href="https://wordpress.org/plugins/pods-alternative-cache/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
 							<img width="50" height="50" src="https://ps.w.org/pods-alternative-cache/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="Pods Alternative Cache" loading="lazy" >
 						</a>
 					</td>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-alternative-cache/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">Pods Alternative Cache</a>
+						<a href="https://wordpress.org/plugins/pods-alternative-cache/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							Pods Alternative Cache
+						</a>
 					</td>
 					<td>
-						<a href="https://downloads.wordpress.org/plugin/pods-alternative-cache.zip" class="small-button" target="_blank" rel="noopener noreferrer">Download</a> |
-						<a href="https://wordpress.org/support/plugin/pods-alternative-cache/" class="small-button" target="_blank" rel="noopener noreferrer" title="Support Forums">Support</a>
-
-						| <a href="https://docs.pods.io/plugins/pods-alternative-cache/" title="Documentation">Docs</a>
-
-						|
-						<a href="https://github.com/pods-framework/pods-alternative-cache" class="small-button" target="_blank" rel="noopener noreferrer">GitHub</a>
+						<a href="https://downloads.wordpress.org/plugin/pods-alternative-cache.zip" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'Download' ); ?>
+						</a> |
+						<a href="https://wordpress.org/support/plugin/pods-alternative-cache/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Support Forums', 'pods' ); ?>">
+							<?php esc_html_e( 'Support', 'pods' ); ?>
+						</a> |
+						<a href="https://docs.pods.io/plugins/pods-alternative-cache/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Documentation', 'pods' ); ?>">
+							<?php esc_html_e( 'Docs', 'pods' ); ?>
+						</a> |
+						<a href="https://github.com/pods-framework/pods-alternative-cache" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'GitHub', 'pods' ); ?>
+						</a>
 					</td>
 				</tr>
 
 				<tr>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-seo/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">
+						<a href="https://wordpress.org/plugins/pods-seo/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
 							<img width="50" height="50" src="https://ps.w.org/pods-seo/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="Pods SEO" loading="lazy" >
 						</a>
 					</td>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-seo/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">Pods SEO</a>
+						<a href="https://wordpress.org/plugins/pods-seo/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							Pods SEO
+						</a>
 					</td>
 					<td>
-						<a href="https://downloads.wordpress.org/plugin/pods-seo.zip" class="small-button" target="_blank" rel="noopener noreferrer">Download</a> |
-						<a href="https://wordpress.org/support/plugin/pods-seo/" class="small-button" target="_blank" rel="noopener noreferrer" title="Support Forums">Support</a>
-
-						|
-						<a href="https://github.com/pods-framework/pods-seo" class="small-button" target="_blank" rel="noopener noreferrer">GitHub</a>
+						<a href="https://downloads.wordpress.org/plugin/pods-seo.zip" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'Download' ); ?>
+						</a> |
+						<a href="https://wordpress.org/support/plugin/pods-seo/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Support Forums', 'pods' ); ?>">
+							<?php esc_html_e( 'Support', 'pods' ); ?>
+						</a> |
+						<a href="https://github.com/pods-framework/pods-seo" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'GitHub', 'pods' ); ?>
+						</a>
 					</td>
 				</tr>
 
 				<tr>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-ajax-views/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">
-							<img width="50" height="50" src="https://ps.w.org/pods-ajax-views/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" >
+						<a href="https://wordpress.org/plugins/pods-ajax-views/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							<img width="50" height="50" src="https://ps.w.org/pods-ajax-views/assets/icon-256x256.png" class="attachment-thumbnail size-thumbnail" alt="Pods AJAX Views" loading="lazy" >
 						</a>
 					</td>
 					<td>
-						<a href="https://wordpress.org/plugins/pods-ajax-views/" target="_blank" rel="noopener noreferrer" title="View plugin on WordPress.org">Pods AJAX Views</a>
+						<a href="https://wordpress.org/plugins/pods-ajax-views/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'View plugin on WordPress.org', 'pods' ); ?>">
+							Pods AJAX Views
+						</a>
 					</td>
 					<td>
-						<a href="https://downloads.wordpress.org/plugin/pods-ajax-views.zip" class="small-button" target="_blank" rel="noopener noreferrer">Download</a> |
-						<a href="https://wordpress.org/support/plugin/pods-ajax-views/" class="small-button" target="_blank" rel="noopener noreferrer" title="Support Forums">Support</a>
-
-						|
-						<a href="https://github.com/pods-framework/pods-ajax-views" class="small-button" target="_blank" rel="noopener noreferrer">GitHub</a>
+						<a href="https://downloads.wordpress.org/plugin/pods-ajax-views.zip" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'Download' ); ?>
+						</a> |
+						<a href="https://wordpress.org/support/plugin/pods-ajax-views/" target="_blank" rel="noopener noreferrer"
+							title="<?php esc_attr_e( 'Support Forums', 'pods' ); ?>">
+							<?php esc_html_e( 'Support', 'pods' ); ?>
+						</a> |
+						<a href="https://github.com/pods-framework/pods-ajax-views" target="_blank" rel="noopener noreferrer">
+							<?php esc_html_e( 'GitHub', 'pods' ); ?>
+						</a>
 					</td>
 				</tr>
 			</tbody>

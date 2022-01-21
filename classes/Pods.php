@@ -3085,7 +3085,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function import( $import_data, $numeric_mode = false, $format = null ) {
-
 		return $this->data->api->import( $import_data, $numeric_mode, $format );
 	}
 
@@ -3104,7 +3103,6 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
-
 		$params = array(
 			'pod'     => $this->pod,
 			'id'      => $id,
@@ -3156,7 +3154,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function export_data( $params = null ) {
-
 		$defaults = array(
 			'fields' => null,
 			'depth'  => 2,

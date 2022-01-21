@@ -66,7 +66,7 @@
 			</tbody>
 		</table>
 
-		<h2>Free Add-Ons</h2>
+		<h2><?php esc_html_e( 'Official Free Add-Ons', 'pods' ); ?></h2>
 		<table class="pods-admin-help-info widefat">
 			<thead>
 				<tr>

@@ -3393,6 +3393,8 @@ function pods_config_merge_fields( $configs_to_merge_into, $configs_to_merge_fro
 function pods_config_get_all_fields( $pod ) {
 	if ( $pod instanceof Pod ) {
 		return $pod->get_all_fields();
+	} elseif ( $pod instanceof Pods ) {
+		return $pod->pod_data->get_all_fields();
 	}
 
 	$fields        = (array) pods_v( 'fields', $pod, [] );

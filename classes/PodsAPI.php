@@ -28,18 +28,32 @@ class PodsAPI {
 	public $display_errors = false;
 
 	/**
-	 * @var array|bool|mixed|null
+	 * The pod object.
+	 *
+	 * @var array|Pod
 	 */
 	public $pod_data;
 
 	/**
-	 * @var
+	 * The pod name (deprecated).
+	 *
+	 * @var string
+	 * @deprecated 2.8.0
+	 */
+	public $pod;
+
+	/**
+	 * The format type (deprecated).
+	 *
+	 * @var string
 	 * @deprecated 2.0.0
 	 */
 	public $format = null;
 
 	/**
-	 * @var
+	 * Deprecated property, not really used.
+	 *
+	 * @deprecated 2.8.9
 	 */
 	private $deprecated;
 
@@ -10067,13 +10081,19 @@ class PodsAPI {
 			$import_data = array( $import_data );
 		}
 
-		$pod = $this->load_pod( array( 'name' => $this->pod ), false );
+		if ( ! empty( $this->pod_data ) ) {
+			$pod = $this->pod_data;
+		} elseif ( ! empty( $this->pod ) ) {
+			$pod = $this->load_pod( [ 'name' => $this->pod ], false );
+		}
 
 		if ( false === $pod ) {
 			return pods_error( __( 'Pod not found', 'pods' ), $this );
 		}
 
-		$fields = array_merge( $pod['fields'], $pod['object_fields'] );
+		$pod_name = $pod['name'];
+
+		$fields = pods_config_merge_fields( $pod['fields'], $pod['object_fields'] );
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
@@ -10206,7 +10226,7 @@ class PodsAPI {
 
 			if ( ! empty( $data ) ) {
 				$params = array(
-					'pod'  => $this->pod,
+					'pod'  => $pod_name,
 					'data' => $data
 				);
 
@@ -10227,9 +10247,16 @@ class PodsAPI {
 	 * @since 1.7.1
 	 */
 	public function export( $pod = null, $params = null ) {
+		if ( empty( $pod ) ) {
+			if ( ! empty( $this->pod_data ) ) {
+				$pod = $this->pod_data;
+			} elseif ( ! empty( $this->pod ) ) {
+				$pod = $this->load_pod( [ 'name' => $this->pod ], false );
+			}
+		}
 
 		if ( empty( $pod ) ) {
-			$pod = $this->pod;
+			return [];
 		}
 
 		$find = array(

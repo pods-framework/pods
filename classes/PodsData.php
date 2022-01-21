@@ -417,7 +417,7 @@ class PodsData {
 		 */
 		global $wpdb;
 
-		if ( strlen( $table ) < 1 || empty( $data ) || ! is_array( $data ) ) {
+		if ( '' === $table || empty( $data ) || ! is_array( $data ) ) {
 			return false;
 		}
 
@@ -517,7 +517,7 @@ class PodsData {
 		 */
 		global $wpdb;
 
-		if ( strlen( $table ) < 1 || empty( $data ) || ! is_array( $data ) ) {
+		if ( '' === $table || empty( $data ) || ! is_array( $data ) ) {
 			return false;
 		}
 
@@ -594,7 +594,7 @@ class PodsData {
 		 */
 		global $wpdb;
 
-		if ( strlen( $table ) < 1 || empty( $where ) || ! is_array( $where ) ) {
+		if ( '' === $table || empty( $where ) || ! is_array( $where ) ) {
 			return false;
 		}
 
@@ -1098,7 +1098,7 @@ class PodsData {
 			foreach ( $theselects as $selected ) {
 				$selected = trim( $selected );
 
-				if ( strlen( $selected ) < 1 ) {
+				if ( '' === $selected ) {
 					continue;
 				}
 
@@ -1275,67 +1275,16 @@ class PodsData {
 
 				$field = pods_v( 'name', $attributes, $filter, true );
 
-				$filterfield = '`' . $field . '`';
+				$db_field_params = array_merge( [
+					'field_name'               => $field,
+					'field'                    => $attributes,
+					'is_pod_meta_storage'      => $is_pod_meta_storage,
+					'simple_tableless_objects' => $simple_tableless_objects,
+					'file_field_types'         => $file_field_types,
+					'aliases'                  => $this->aliases,
+				], (array) $params );
 
-				$use_pod_meta_storage_for_field = $is_pod_meta_storage;
-
-				/**
-				 * Allow filtering whether to use meta storage for this field.
-				 *
-				 * @since 2.8.9
-				 *
-				 * @param bool        $use_pod_meta_storage_for_field Whether to use meta storage for this field.
-				 * @param string      $field                          The field name.
-				 * @param array|Field $attributes                     The field options.
-				 * @param object      $params                         The list of build parameters.
-				 */
-				$use_pod_meta_storage_for_field = apply_filters( 'pods_data_build_filter_use_meta_for_field', $use_pod_meta_storage_for_field, $field, $attributes, $params );
-
-				if ( 'pick' === $attributes['type'] && ! in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
-					if ( empty( $attributes['table_info'] ) ) {
-						$attributes['table_info'] = $this->api->get_table_info( pods_v( 'pick_object', $attributes ), pods_v( 'pick_val', $attributes ) );
-					}
-
-					if ( empty( $attributes['table_info']['field_index'] ) ) {
-						continue;
-					}
-
-					$filterfield = $filterfield . '.`' . $attributes['table_info']['field_index'] . '`';
-				} elseif ( 'taxonomy' === $attributes['type'] ) {
-					$filterfield = $filterfield . '.`term_id`';
-				} elseif ( in_array( $attributes['type'], $file_field_types, true ) ) {
-					$filterfield = $filterfield . '.`post_title`';
-				} elseif ( isset( $params->fields[ $field ] ) && $params->fields[ $field ] instanceof Object_Field ) {
-					if ( $params->meta_fields && $is_pod_meta_storage ) {
-						$filterfield = $filterfield . '.`meta_value`';
-					} else {
-						$filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
-					}
-				} elseif ( ! isset( $params->fields[ $field ] ) || $use_pod_meta_storage_for_field ) {
-					$filterfield = $filterfield . '.`meta_value`';
-				} else {
-					$filterfield = '`t`.' . $filterfield;
-				}//end if
-
-				/**
-				 * Allow filtering what to use when referencing the field from the database.
-				 *
-				 * @since 2.8.9
-				 *
-				 * @param string      $filterfield What to use when referencing the field from the database.
-				 * @param string      $field       The field name.
-				 * @param array|Field $attributes  The field options.
-				 * @param object      $params      The list of build parameters.
-				 */
-				$filterfield = apply_filters( 'pods_data_build_filter_field_name', $filterfield, $field, $attributes, $params );
-
-				if ( isset( $this->aliases[ $field ] ) ) {
-					$filterfield = '`' . $this->aliases[ $field ] . '`';
-				}
-
-				if ( ! empty( $attributes['real_name'] ) ) {
-					$filterfield = $attributes['real_name'];
-				}
+				$filterfield = self::get_db_field( $db_field_params );
 
 				if ( 'pick' === $attributes['type'] ) {
 					$filter_value = pods_v( 'filter_' . $field );
@@ -1346,7 +1295,7 @@ class PodsData {
 
 					foreach ( $filter_value as $filter_v ) {
 						if ( in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
-							if ( strlen( $filter_v ) < 1 ) {
+							if ( '' === $filter_v ) {
 								continue;
 							}
 
@@ -1358,16 +1307,22 @@ class PodsData {
 						} else {
 							$filter_v = (int) $filter_v;
 
-							if ( empty( $filter_v ) || empty( $attributes['table_info'] ) || empty( $attributes['table_info']['field_id'] ) ) {
+							if ( empty( $filter_v ) ) {
 								continue;
 							}
 
-							$filterfield = '`' . $field . '`.`' . $attributes['table_info']['field_id'] . '`';
+							$db_field_params['use_field_id'] = true;
+
+							$filterfield_id = $this->get_db_field( $db_field_params );
+
+							if ( empty( $filterfield_id ) ) {
+								continue;
+							}
 
 							if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
-								$having[] = "{$filterfield} = {$filter_v}";
+								$having[] = "{$filterfield_id} = {$filter_v}";
 							} else {
-								$where[] = "{$filterfield} = {$filter_v}";
+								$where[] = "{$filterfield_id} = {$filter_v}";
 							}
 						}//end if
 					}//end foreach
@@ -1416,9 +1371,9 @@ class PodsData {
 						}
 					}
 				} else {
-					$filter_value = pods_v( 'filter_' . $field, 'get', '' );
+					$filter_value = (string) pods_v( 'filter_' . $field, 'get', '' );
 
-					if ( strlen( $filter_value ) < 1 ) {
+					if ( '' === $filter_value ) {
 						continue;
 					}
 
@@ -2800,6 +2755,8 @@ class PodsData {
 					if ( $the_field ) {
 						$field_name = $the_field->get_name();
 
+						// @todo Implement get_db_field here in the future.
+
 						if ( $the_field instanceof Object_Field ) {
 							$field_cast = "`t`.`{$field_name}`";
 						} elseif ( in_array( $the_field['type'], $tableless_field_types, true ) ) {
@@ -3681,6 +3638,117 @@ class PodsData {
 		$sql = str_replace( '{/prefix/}', '{prefix}', $sql );
 
 		return $sql;
+	}
+
+	/**
+	 * Get the db field to use in SQL queries.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @param array|object $params The parameters.
+	 *
+	 * @return string|false The db field to use in SQL queries, or false if not found/invalid.
+	 */
+	public static function get_db_field( $params ) {
+		if ( is_object( $params ) ) {
+			$params = get_object_vars( $params );
+		}
+
+		$params = (object) array_merge( [
+			'field_name'          => null,
+			'field'               => [],
+			'fields'              => [],
+			'aliases'             => [],
+			'use_field_id'        => false,
+			'is_pod_meta_storage' => false,
+			'meta_fields'         => false,
+			'pod_table_prefix'    => 't',
+		], $params );
+
+		if ( empty( $params->field_name ) ) {
+			$params->field_name = pods_v( 'name', $params->field );
+		}
+
+		if ( empty( $params->field_name ) || empty( $params->field ) ) {
+			return false;
+		}
+
+		$real_name = pods_v( 'real_name', $params->field );
+
+		if ( ! empty( $real_name ) ) {
+			return $real_name;
+		}
+
+		$db_field = '`' . $params->field_name . '`';
+
+		$use_pod_meta_storage_for_field = $params->is_pod_meta_storage;
+
+		/**
+		 * Allow filtering whether to use meta storage for this field.
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param bool        $use_pod_meta_storage_for_field Whether to use meta storage for this field.
+		 * @param string      $field_name The field name.
+		 * @param array|Field $field      The field options.
+		 * @param object      $params     The list of additional parameters.
+		 */
+		$use_pod_meta_storage_for_field = apply_filters( 'pods_data_get_db_field_use_pod_meta_storage_for_field', $use_pod_meta_storage_for_field, $params->field_name, $params->field, $params );
+
+		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+		$file_field_types         = PodsForm::file_field_types();
+
+		if ( 'pick' === $params->field['type'] && ! in_array( pods_v( 'pick_object', $params->field ), $simple_tableless_objects, true ) ) {
+			$table_info = pods_v( 'table_info', $params->field );
+
+			if ( ! $params->field instanceof Field && empty( $table_info ) ) {
+				$table_info = pods_api()->get_table_info( pods_v( 'pick_object', $params->field ), pods_v( 'pick_val', $params->field ) );
+			}
+
+			if ( empty( $table_info['field_id'] ) || empty( $table_info['field_index'] ) ) {
+				return false;
+			}
+
+			if ( $params->use_field_id ) {
+				$db_field = $db_field . '.`' . $table_info['field_id'] . '`';
+			} else {
+				$db_field = $db_field . '.`' . $table_info['field_index'] . '`';
+			}
+		} elseif ( 'taxonomy' === $params->field['type'] ) {
+			$db_field = $db_field . '.`term_id`';
+		} elseif ( in_array( $params->field['type'], $file_field_types, true ) ) {
+			if ( $params->use_field_id ) {
+				$db_field = $db_field . '.`ID`';
+			} else {
+				$db_field = $db_field . '.`post_title`';
+			}
+		} elseif ( isset( $params->fields[ $params->field_name ] ) && $params->fields[ $params->field_name ] instanceof Object_Field ) {
+			if ( $params->meta_fields && $use_pod_meta_storage_for_field ) {
+				$db_field = $db_field . '.`meta_value`';
+			} else {
+				$db_field = '`' . $params->pod_table_prefix . '`.' . $db_field;
+			}
+		} elseif ( ! isset( $params->fields[ $params->field_name ] ) || $use_pod_meta_storage_for_field ) {
+			$db_field = $db_field . '.`meta_value`';
+		} else {
+			$db_field = '`t`.' . $db_field;
+		}//end if
+
+		if ( isset( $params->aliases[ $params->field_name ] ) ) {
+			$db_field = '`' . $params->aliases[ $params->field_name ] . '`';
+		}
+
+		/**
+		 * Allow filtering what to use when referencing the field from the database.
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param string      $db_field   What to use when referencing the field from the database.
+		 * @param string      $field_name The field name.
+		 * @param array|Field $field      The field options.
+		 * @param object      $params     The list of additional parameters.
+		 */
+		return apply_filters( 'pods_data_get_db_field', $db_field, $params->field_name, $params->field, $params );
 	}
 
 	/**

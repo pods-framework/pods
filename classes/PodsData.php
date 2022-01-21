@@ -1277,6 +1277,20 @@ class PodsData {
 
 				$filterfield = '`' . $field . '`';
 
+				$use_pod_meta_storage_for_field = $is_pod_meta_storage;
+
+				/**
+				 * Allow filtering whether to use meta storage for this field.
+				 *
+				 * @since 2.8.9
+				 *
+				 * @param bool        $use_pod_meta_storage_for_field Whether to use meta storage for this field.
+				 * @param string      $field                          The field name.
+				 * @param array|Field $attributes                     The field options.
+				 * @param object      $params                         The list of build parameters.
+				 */
+				$use_pod_meta_storage_for_field = apply_filters( 'pods_data_build_filter_use_meta_for_field', $use_pod_meta_storage_for_field, $field, $attributes, $params );
+
 				if ( 'pick' === $attributes['type'] && ! in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
 					if ( empty( $attributes['table_info'] ) ) {
 						$attributes['table_info'] = $this->api->get_table_info( pods_v( 'pick_object', $attributes ), pods_v( 'pick_val', $attributes ) );
@@ -1297,11 +1311,23 @@ class PodsData {
 					} else {
 						$filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
 					}
-				} elseif ( ! isset( $params->fields[ $field ] ) && $is_pod_meta_storage ) {
+				} elseif ( ! isset( $params->fields[ $field ] ) || $use_pod_meta_storage_for_field ) {
 					$filterfield = $filterfield . '.`meta_value`';
 				} else {
 					$filterfield = '`t`.' . $filterfield;
 				}//end if
+
+				/**
+				 * Allow filtering what to use when referencing the field from the database.
+				 *
+				 * @since 2.8.9
+				 *
+				 * @param string      $filterfield What to use when referencing the field from the database.
+				 * @param string      $field       The field name.
+				 * @param array|Field $attributes  The field options.
+				 * @param object      $params      The list of build parameters.
+				 */
+				$filterfield = apply_filters( 'pods_data_build_filter_field_name', $filterfield, $field, $attributes, $params );
 
 				if ( isset( $this->aliases[ $field ] ) ) {
 					$filterfield = '`' . $this->aliases[ $field ] . '`';

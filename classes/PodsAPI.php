@@ -4556,6 +4556,10 @@ class PodsAPI {
 			$params->track_changed_fields = false;
 		}
 
+		if ( ! isset( $params->podsmeta_direct ) ) {
+			$params->podsmeta_direct = false;
+		}
+
 		$pod_name = $params->pod;
 		/**
 		 * Override $params['track_changed_fields']
@@ -4867,13 +4871,17 @@ class PodsAPI {
 			$object_ID = $pod['pod_field_id'];
 		}
 
-		$object_data    = array();
-		$object_meta    = array();
-		$simple_rel     = array();
-		$post_term_data = array();
+		$has_object_data_to_save = false;
+
+		$object_data    = [];
+		$object_meta    = [];
+		$simple_rel     = [];
+		$post_term_data = [];
 
 		if ( 'settings' === $object_type ) {
 			$object_data['option_id'] = $pod['name'];
+
+			$params->id = $pod['name'];
 		} elseif ( ! empty( $params->id ) ) {
 			$object_data[ $object_ID ] = $params->id;
 		}
@@ -4943,6 +4951,8 @@ class PodsAPI {
 					$post_term_data[ $field ] = $value;
 				} else {
 					$object_data[ $field ] = $value;
+
+					$has_object_data_to_save = true;
 				}
 			} else {
 				$simple = ( 'pick' === $type && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects ) );
@@ -5055,12 +5065,14 @@ class PodsAPI {
 						$table_formats[]      = PodsForm::prepare( $type, $options );
 					}
 
-					if ( $simple ) {
-						// Optionally save simple relationships elsewhere.
-						$simple_rel[ $field ] = $value;
-					} else {
-						// Save fields to meta.
-						$object_meta[ $field ] = $value;
+					if ( ! $params->podsmeta_direct ) {
+						if ( $simple ) {
+							// Optionally save simple relationships elsewhere.
+							$simple_rel[ $field ] = $value;
+						} else {
+							// Save fields to meta.
+							$object_meta[ $field ] = $value;
+						}
 					}
 				} else {
 					// Store relational field data to be looped through later
@@ -5089,6 +5101,8 @@ class PodsAPI {
 			}
 
 			$object_data[ $object_name_field ] = $object_name;
+
+			$has_object_data_to_save = true;
 		}
 
 		if ( ! in_array( $pod['type'], array( 'pod', 'table', '' ) ) ) {
@@ -5136,7 +5150,9 @@ class PodsAPI {
 			 */
 			$strict_meta_save = (bool) apply_filters( 'pods_api_save_pod_item_strict_meta_save', false );
 
-			$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, $strict_meta_save, true, $fields_to_send );
+			if ( $has_object_data_to_save && ! empty( $meta_fields ) ) {
+				$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, $strict_meta_save, true, $fields_to_send );
+			}
 
 			if ( ! empty( $params->id ) && 'settings' === $pod['type'] ) {
 				$params->id = $pod['id'];

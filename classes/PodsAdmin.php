@@ -523,29 +523,40 @@ class PodsAdmin {
 				}
 			}
 
+			$edit_pods_title = null;
+
+			if ( 'pods' === pods_v( 'page' ) && 'edit' === pods_v( 'action' ) ) {
+				$edit_pods_title = __( 'Edit Pod', 'pods' );
+			}
+
 			$admin_menus = array(
 				'pods'            => array(
 					'label'    => __( 'Edit Pods', 'pods' ),
+					'title'    => $edit_pods_title,
 					'function' => array( $this, 'admin_setup' ),
 					'access'   => 'pods',
 				),
 				'pods-add-new'    => array(
 					'label'    => __( 'Add New', 'pods' ),
+					'title'    => __( 'Add New Pod', 'pods' ),
 					'function' => array( $this, 'admin_setup' ),
 					'access'   => 'pods',
 				),
 				'pods-components' => array(
 					'label'    => __( 'Components', 'pods' ),
+					'title'    => __( 'Pods Components', 'pods' ),
 					'function' => array( $this, 'admin_components' ),
 					'access'   => 'pods_components',
 				),
 				'pods-settings'   => array(
 					'label'    => __( 'Settings', 'pods' ),
+					'title'    => __( 'Pods Settings', 'pods' ),
 					'function' => array( $this, 'admin_settings' ),
 					'access'   => 'pods_settings',
 				),
 				'pods-help'       => array(
 					'label'    => __( 'Help', 'pods' ),
+					'title'    => __( 'Pods Help', 'pods' ),
 					'function' => array( $this, 'admin_help' ),
 				),
 			);
@@ -560,11 +571,13 @@ class PodsAdmin {
 				),
 				'pods-settings' => array(
 					'label'    => __( 'Settings', 'pods' ),
+					'title'    => __( 'Pods Settings', 'pods' ),
 					'function' => array( $this, 'admin_settings' ),
 					'access'   => 'pods_settings',
 				),
 				'pods-help'     => array(
 					'label'    => __( 'Help', 'pods' ),
+					'title'    => __( 'Pods Help', 'pods' ),
 					'function' => array( $this, 'admin_help' ),
 				),
 			);
@@ -599,8 +612,12 @@ class PodsAdmin {
 					continue;
 				}
 
-				if ( ! isset( $menu_item['label'] ) ) {
+				if ( empty( $menu_item['label'] ) ) {
 					$menu_item['label'] = $page;
+				}
+
+				if ( empty( $menu_item['title'] ) ) {
+					$menu_item['title'] = $menu_item['label'];
 				}
 
 				if ( false === $parent ) {
@@ -615,7 +632,7 @@ class PodsAdmin {
 					add_menu_page( $menu, $menu, 'read', $parent, null, pods_svg_icon( 'pods' ) );
 				}
 
-				add_submenu_page( $parent, $menu_item['label'], $menu_item['label'], 'read', $page, $menu_item['function'] );
+				add_submenu_page( $parent, $menu_item['title'], $menu_item['label'], 'read', $page, $menu_item['function'] );
 
 				if ( 'pods-components' === $page && is_object( PodsInit::$components ) ) {
 					PodsInit::$components->menu( $parent );

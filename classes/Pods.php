@@ -2531,7 +2531,7 @@ class Pods implements Iterator {
 	 * @param null|int $offset Offset of rows.
 	 * @param null|int $total  Total rows.
 	 *
-	 * @return int Number of pages
+	 * @return int Number of pages.
 	 * @since 2.3.10
 	 */
 	public function total_pages( $limit = null, $offset = null, $total = null ) {
@@ -2550,7 +2550,12 @@ class Pods implements Iterator {
 			$total = $this->total_found();
 		}
 
-		return ceil( ( $total - $offset ) / $limit );
+		// No limit means one page.
+		if ( $limit < 1 ) {
+			return 1;
+		}
+
+		return (int) ceil( ( $total - $offset ) / $limit );
 
 	}
 

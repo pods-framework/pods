@@ -343,6 +343,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 			$pod['fields'] = self::import_pod_setup_objects( $pod['fields'], $existing_fields );
 		}
 
+		// Force 2.8 orphan field check.
+		$pod['_migrated_28'] = false;
+
 		$pod['overwrite'] = $replace;
 
 		self::$api->save_pod( $pod );

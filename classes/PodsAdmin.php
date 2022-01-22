@@ -1332,17 +1332,39 @@ class PodsAdmin {
 	public function admin_setup_edit( $duplicate, $obj ) {
 		$api = pods_api();
 
-		$pod = $api->load_pod( [ 'id' => $obj->id ] );
+		$pod = $obj->row;
 
 		if ( ! $pod instanceof Pod ) {
 			$obj->id = null;
 			$obj->row = [];
 			$obj->action = 'manage';
 
-			$obj->error( __( 'Invalid Pod configuration detected.' ) );
+			$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
 			$obj->manage();
 
 			return null;
+		}
+
+		if ( 'post_type' !== $pod->get_object_storage_type() ) {
+			$obj->id = null;
+			$obj->row = [];
+			$obj->action = 'manage';
+
+			// translators: %s: The pod label.
+			$obj->error( sprintf( __( 'Unable to edit the "%s" Pod configuration.', 'pods' ), $pod->get_label() ) );
+			$obj->manage();
+
+			return null;
+		}
+
+		$original_field_count = 0;
+
+		foreach ( $obj->data as $row ) {
+			if ( $row['id'] === $obj->id ) {
+				$original_field_count = $row['field_count'];
+
+				break;
+			}
 		}
 
 		$find_orphan_fields = (
@@ -1350,34 +1372,62 @@ class PodsAdmin {
 			&& pods_is_admin( array( 'pods' ) )
 		);
 
+		$migrated = false;
+
 		if ( $find_orphan_fields || 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
 			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+			$migrated = true;
 
 			// Maybe redirect the page to reload it fresh.
 			if ( $find_orphan_fields ) {
 				pods_redirect( pods_query_arg( [ 'pods_debug_find_orphan_fields' => null ] ) );
 				die();
 			}
+
+			// Check again in case the pod migrated wrong.
+			if ( ! $pod instanceof Pod ) {
+				$obj->id = null;
+				$obj->row = [];
+				$obj->action = 'manage';
+
+				$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
+				$obj->manage();
+
+				return null;
+			}
 		}
 
-		// Check again in case the pod migrated wrong.
-		if ( ! $pod instanceof Pod ) {
-			$obj->id = null;
-			$obj->row = [];
-			$obj->action = 'manage';
+		$current_pod = $pod->export( [
+			'include_groups'       => true,
+			'include_group_fields' => true,
+			'include_fields'       => false,
+		] );
 
-			$obj->error( __( 'Invalid Pod configuration detected.' ) );
-			$obj->manage();
+		if ( ! $migrated ) {
+			$group_field_count = wp_list_pluck( $current_pod['groups'], 'fields' );
+			$group_field_count = array_map( 'count', $group_field_count );
+			$group_field_count = array_sum( $group_field_count );
 
-			return null;
+			if ( $original_field_count !== $group_field_count ) {
+				$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+				// Check again in case the pod migrated wrong.
+				if ( ! $pod instanceof Pod ) {
+					$obj->id = null;
+					$obj->row = [];
+					$obj->action = 'manage';
+
+					$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
+					$obj->manage();
+
+					return null;
+				}
+			}
 		}
 
 		$config = [
-			'currentPod'     => $pod->export( [
-				'include_groups'       => true,
-				'include_group_fields' => true,
-				'include_fields'       => false,
-			] ),
+			'currentPod'     => $current_pod,
 			'global'         => $this->get_global_config( $pod ),
 			'fieldTypes'     => PodsForm::field_types(),
 			'relatedObjects' => $this->get_field_related_objects(),

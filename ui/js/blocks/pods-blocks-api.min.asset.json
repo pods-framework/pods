@@ -1,9 +1,1 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-{"dependencies":["wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"112cabed5a09cba8f994c32754641336"}
-=======
-{"dependencies":["lodash","react","react-dom","wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"6875d536d2280acefea84684a08696a0"}
->>>>>>> 7bf538dca... Update build process dependencies, require node v16, update webpack config to support v5, remove a few unused packages
-=======
-{"dependencies":["lodash","react","react-dom","wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"2d9de6f604c32dc90f19a7811f5c9953"}
->>>>>>> c5c43cdf9... Fix Jest with updates
+{"dependencies":["lodash","react","react-dom","wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"1333394ec793de25a292e297db7825dc"}

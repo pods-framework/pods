@@ -948,11 +948,17 @@ class PodsMeta {
 				}
 
 				$groups[] = [
-					'pod'      => $pod,
-					'label'    => $group['label'],
-					'fields'   => $group['fields'],
-					'context'  => pods_v( 'meta_box_context', $group, 'normal', true ),
-					'priority' => pods_v( 'meta_box_priority', $group, 'default', true ),
+					'pod'                 => $pod,
+					'label'               => $group['label'],
+					'fields'              => $group['fields'],
+					'context'             => pods_v( 'meta_box_context', $group, 'normal', true ),
+					'priority'            => pods_v( 'meta_box_priority', $group, 'default', true ),
+					'logged_in'           => (int) pods_v( 'logged_in', $group, 0 ),
+					'admin_only'          => (int) pods_v( 'admin_only', $group, 0 ),
+					'restrict_role'       => (int) pods_v( 'restrict_role', $group, 0 ),
+					'restrict_capability' => (int) pods_v( 'restrict_capability', $group, 0 ),
+					'roles_allowed'       => pods_v( 'roles_allowed', $group, 'administrator' ),
+					'capability_allowed'  => pods_v( 'capability_allowed', $group, '' ),
 				];
 			}
 
@@ -965,11 +971,17 @@ class PodsMeta {
 
 		if ( empty( $groups ) && ! empty( $fields ) ) {
 			$groups[] = [
-				'pod'      => $pod,
-				'label'    => $title,
-				'fields'   => $fields,
-				'context'  => 'normal',
-				'priority' => 'default',
+				'pod'                 => $pod,
+				'label'               => $title,
+				'fields'              => $fields,
+				'context'             => 'normal',
+				'priority'            => 'default',
+				'logged_in'           => 0,
+				'admin_only'          => 0,
+				'restrict_role'       => 0,
+				'restrict_capability' => 0,
+				'roles_allowed'       => 'administrator',
+				'capability_allowed'  => '',
 			];
 		}
 

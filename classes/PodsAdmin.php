@@ -874,7 +874,7 @@ class PodsAdmin {
 		}
 
 		if ( 'pods' === $_GET['page'] && empty( $pods ) ) {
-			pods_ui_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
+			pods_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
 		}
 
 		// @codingStandardsIgnoreLine

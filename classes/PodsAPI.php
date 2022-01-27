@@ -4873,10 +4873,10 @@ class PodsAPI {
 
 		$has_object_data_to_save = false;
 
-		$object_data    = [];
-		$object_meta    = [];
-		$simple_rel     = [];
-		$post_term_data = [];
+		$object_data     = [];
+		$object_meta     = [];
+		$simple_rel_meta = [];
+		$post_term_data  = [];
 
 		if ( 'settings' === $object_type ) {
 			$object_data['option_id'] = $pod['name'];
@@ -5025,17 +5025,12 @@ class PodsAPI {
 						$value = array_slice( $value, 0, $pick_limit );
 					}
 
-					// Don't save an empty array, just make it an empty string
 					if ( empty( $value ) ) {
+						// Don't save an empty array, just make it an empty string
 						$value = '';
-					} elseif ( is_array( $value ) ) {
-						if ( 1 === $pick_limit || 1 === count( $value ) ) {
-							// If there's just one item, don't save as an array, save the string
-							$value = implode( '', $value );
-						} elseif ( 'table' === pods_v( 'storage', $pod ) ) {
-							// If storage is set to table, json encode, otherwise WP will serialize automatically
-							$value = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $value, JSON_UNESCAPED_UNICODE ) : json_encode( $value );
-						}
+					} elseif ( is_array( $value ) && ( 1 === $pick_limit || 1 === count( $value ) ) ) {
+						// If there's just one item, don't save as an array, save the string
+						$value = implode( '', $value );
 					}
 				}
 
@@ -5045,33 +5040,41 @@ class PodsAPI {
 						// Don't save an empty array, just make it an empty string
 						if ( empty( $value ) ) {
 							$value = '';
-						} elseif ( is_array( $value ) ) {
-							if ( 1 === count( $value ) ) {
-								// If there's just one item, don't save as an array, save the string
-								$value = implode( '', $value );
-							} elseif ( 'table' === pods_v( 'storage', $pod ) ) {
-								// If storage is set to table, json encode, otherwise WP will serialize automatically
-								$value = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $value, JSON_UNESCAPED_UNICODE ) : json_encode( $value );
-							}
+						} elseif ( is_array( $value ) && 1 === count( $value ) ) {
+							// If there's just one item, don't save as an array, save the string
+							$value = implode( '', $value );
 						}
 					}
 
+					$save_simple_to_table = $simple && pods_relationship_table_storage_enabled_for_simple_relationships( $options, $pod );
+					$save_simple_to_meta  = $simple && pods_relationship_meta_storage_enabled_for_simple_relationships( $options, $pod );
+
 					// Check if we should save to the table, and then check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to the table.
-					if ( $save_to_table && ( ! $simple || ! pods_relationship_table_storage_enabled_for_simple_relationships( $options, $pod ) ) ) {
+					if ( $save_to_table && ( ! $simple || $save_simple_to_table ) ) {
+						$table_data[ $field ] = $value;
+
+						// Enforce JSON values for objects/arrays.
+						if ( is_object( $table_data[ $field ] ) || is_array( $table_data[ $field ] ) ) {
+							$table_data[ $field ] = json_encode( $table_data[ $field ], JSON_UNESCAPED_UNICODE );
+						}
+
+						// Fix for pods_query replacements.
 						$table_data[ $field ] = str_replace( [ '{prefix}', '@wp_' ], [
 							'{/prefix/}',
 							'{prefix}'
-						], $value ); // Fix for pods_query
-						$table_formats[]      = PodsForm::prepare( $type, $options );
+						], $table_data[ $field ] );
+
+						$table_formats[] = PodsForm::prepare( $type, $options );
 					}
 
 					if ( ! $params->podsmeta_direct ) {
-						if ( $simple ) {
-							// Optionally save simple relationships elsewhere.
-							$simple_rel[ $field ] = $value;
-						} else {
+						// Check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to meta.
+						if ( ! $simple ) {
 							// Save fields to meta.
 							$object_meta[ $field ] = $value;
+						} elseif ( $save_simple_to_meta ) {
+							// Save simple to meta.
+							$simple_rel_meta[ $field ] = $value;
 						}
 					}
 				} else {
@@ -5112,13 +5115,9 @@ class PodsAPI {
 				$meta_fields = $object_meta;
 			}
 
-			// Maybe add simple relationship data to the meta directly.
-			foreach ( $simple_rel as $simple_rel_field => $simple_rel_value ) {
-				if ( ! isset( $fields[ $simple_rel_field ] ) || ! pods_relationship_meta_storage_enabled_for_simple_relationships( $fields[ $simple_rel_field ], $pod ) ) {
-					continue;
-				}
-
-				$meta_fields[ $simple_rel_field ] = $simple_rel_value;
+			// Maybe add simple relationship data to the meta directly regardless if pod is table-based.
+			if ( ! empty( $simple_rel_meta ) ) {
+				$meta_fields = array_merge( $meta_fields, $simple_rel_meta );
 			}
 
 			if ( $allow_custom_fields && ! empty( $custom_data ) ) {
@@ -5150,7 +5149,7 @@ class PodsAPI {
 			 */
 			$strict_meta_save = (bool) apply_filters( 'pods_api_save_pod_item_strict_meta_save', false );
 
-			if ( $has_object_data_to_save && ! empty( $meta_fields ) ) {
+			if ( empty( $params->id ) || $has_object_data_to_save || ! empty( $meta_fields ) ) {
 				$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, $strict_meta_save, true, $fields_to_send );
 			}
 

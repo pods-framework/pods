@@ -364,9 +364,28 @@ class Post_Type extends Collection {
 			$post_objects = false;
 
 			if ( empty( $args['bypass_post_type_find'] ) ) {
+				$no_conflict_post = pods_no_conflict_check( 'post' );
+				$no_conflict_user = pods_no_conflict_check( 'user' );
+
+				if ( ! $no_conflict_post ) {
+					pods_no_conflict_on( 'post' );
+				}
+
+				if ( ! $no_conflict_user ) {
+					pods_no_conflict_on( 'user' );
+				}
+
 				$query = new WP_Query();
 
 				$posts = $query->query( $post_args );
+
+				if ( ! $no_conflict_post ) {
+					pods_no_conflict_off( 'post' );
+				}
+
+				if ( ! $no_conflict_user ) {
+					pods_no_conflict_off( 'user' );
+				}
 
 				// We only receive the first post, so let's just override the posts with the count.
 				if ( ! empty( $args['count'] ) ) {

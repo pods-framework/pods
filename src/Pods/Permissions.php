@@ -251,12 +251,19 @@ class Permissions {
 				$capability_allowed = explode( ',', $capability_allowed );
 			}
 
+			// Force all to lowercase.
+			$capability_allowed = array_map( 'strtolower', $capability_allowed );
+
+			// Get unique list of capabilities.
 			$capability_allowed = array_unique( $capability_allowed );
 
 			foreach ( $capability_allowed as $k => $capability ) {
 				if ( ! is_array( $capability ) ) {
 					$capability = explode( '&&', $capability );
 				}
+
+				// Force all to lowercase.
+				$capability = array_map( 'strtolower', $capability );
 
 				$capability = array_unique( array_filter( $capability ) );
 

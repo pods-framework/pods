@@ -311,6 +311,10 @@ class Store {
 				$id = $object['id'];
 			}
 
+			if ( empty( $object['name'] ) && ! empty( $object['namespace'] ) && ! empty( $object['object_type'] ) && 'block-collection' === $object['object_type'] ) {
+			    $object['name'] = $object['namespace'];
+			}
+
 			if ( ! empty( $object['object_storage_type'] ) ) {
 				$storage_type = $object['object_storage_type'];
 			}

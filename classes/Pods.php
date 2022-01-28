@@ -2531,7 +2531,7 @@ class Pods implements Iterator {
 	 * @param null|int $offset Offset of rows.
 	 * @param null|int $total  Total rows.
 	 *
-	 * @return int Number of pages
+	 * @return int Number of pages.
 	 * @since 2.3.10
 	 */
 	public function total_pages( $limit = null, $offset = null, $total = null ) {
@@ -2550,7 +2550,12 @@ class Pods implements Iterator {
 			$total = $this->total_found();
 		}
 
-		return ceil( ( $total - $offset ) / $limit );
+		// No limit means one page.
+		if ( $limit < 1 ) {
+			return 1;
+		}
+
+		return (int) ceil( ( $total - $offset ) / $limit );
 
 	}
 
@@ -3085,7 +3090,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function import( $import_data, $numeric_mode = false, $format = null ) {
-
 		return $this->data->api->import( $import_data, $numeric_mode, $format );
 	}
 
@@ -3104,7 +3108,6 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
-
 		$params = array(
 			'pod'     => $this->pod,
 			'id'      => $id,
@@ -3156,7 +3159,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function export_data( $params = null ) {
-
 		$defaults = array(
 			'fields' => null,
 			'depth'  => 2,
@@ -3263,6 +3265,10 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/filters/
 	 */
 	public function filters( $params = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
 
 		$defaults = array(
 			'fields' => $params,
@@ -3693,6 +3699,11 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
+
 		// Check for anonymous submissions.
 		if ( ! is_user_logged_in() ) {
 			$session_auto_start = pods_session_auto_start();

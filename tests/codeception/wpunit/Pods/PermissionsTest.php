@@ -256,7 +256,8 @@ class PermissionsTest extends WPTestCase {
 
 		$object = [
 			'restrict_capability' => 1,
-			'capability_allowed'  => 'delete_users',
+			// Expect Pods will normalize to lowercase.
+			'capability_allowed'  => 'Delete_Users',
 		];
 
 		// This is returned as an array of arrays.

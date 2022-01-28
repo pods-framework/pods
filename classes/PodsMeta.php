@@ -948,11 +948,17 @@ class PodsMeta {
 				}
 
 				$groups[] = [
-					'pod'      => $pod,
-					'label'    => $group['label'],
-					'fields'   => $group['fields'],
-					'context'  => pods_v( 'meta_box_context', $group, 'normal', true ),
-					'priority' => pods_v( 'meta_box_priority', $group, 'default', true ),
+					'pod'                 => $pod,
+					'label'               => $group['label'],
+					'fields'              => $group['fields'],
+					'context'             => pods_v( 'meta_box_context', $group, 'normal', true ),
+					'priority'            => pods_v( 'meta_box_priority', $group, 'default', true ),
+					'logged_in'           => (int) pods_v( 'logged_in', $group, 0 ),
+					'admin_only'          => (int) pods_v( 'admin_only', $group, 0 ),
+					'restrict_role'       => (int) pods_v( 'restrict_role', $group, 0 ),
+					'restrict_capability' => (int) pods_v( 'restrict_capability', $group, 0 ),
+					'roles_allowed'       => pods_v( 'roles_allowed', $group, 'administrator' ),
+					'capability_allowed'  => pods_v( 'capability_allowed', $group, '' ),
 				];
 			}
 
@@ -965,11 +971,17 @@ class PodsMeta {
 
 		if ( empty( $groups ) && ! empty( $fields ) ) {
 			$groups[] = [
-				'pod'      => $pod,
-				'label'    => $title,
-				'fields'   => $fields,
-				'context'  => 'normal',
-				'priority' => 'default',
+				'pod'                 => $pod,
+				'label'               => $title,
+				'fields'              => $fields,
+				'context'             => 'normal',
+				'priority'            => 'default',
+				'logged_in'           => 0,
+				'admin_only'          => 0,
+				'restrict_role'       => 0,
+				'restrict_capability' => 0,
+				'roles_allowed'       => 'administrator',
+				'capability_allowed'  => '',
 			];
 		}
 
@@ -2592,11 +2604,16 @@ class PodsMeta {
 		// These are the keys we want to exclude from any additional queries/checks on within Pods.
 		$keys_not_covered = [
 			'post_type' => [
+				// Disable for all protected meta keys.
+				'_.*'                  => true,
+				// WP core keys.
 				'_additional_settings' => true,
 				'_edit_last'           => true,
 				'_edit_lock'           => true,
 				'_thumbnail_id'        => true,
 				'_wp_.*'               => true,
+				'term_id'              => true,
+				'taxonomy'             => true,
 				// Optimize for Duplicate Post plugin.
 				'_dp_.*'               => true,
 				// Optimize for Elementor plugin.
@@ -2604,43 +2621,66 @@ class PodsMeta {
 				// Optimize for Divi.
 				'_et_pb_.*'            => true,
 				'_et_builder_version'  => true,
+				// Optimize for WooCommerce.
+				'_product_.*'          => true,
+				'_downloadable_files'  => true,
+				'_currency'            => true,
+				'_bundled_cart_item'   => true,
+				'saswp_review_details' => true,
+				// Optimize for SEOPress.
+				'seopress_.*'          => true,
+				'edit_seopress_.*'     => true,
+			],
+			'taxonomy'  => [
+				// Disable for all protected meta keys.
+				'_.*' => true,
 			],
 			'user'      => [
-				'admin_color'                                      => true,
-				'capabilities'                                     => true,
-				'closedpostboxes_.*'                               => true,
-				'comment_shortcuts'                                => true,
-				'default_password_nag'                             => true,
-				'description'                                      => true,
-				'dismissed_wp_pointers'                            => true,
-				'first_name'                                       => true,
-				'last_name'                                        => true,
-				'locale'                                           => true,
-				'metaboxhidden_'                                   => true,
-				'metaboxhidden_.*'                                 => true,
-				'nav_menu_recently_edited'                         => true,
-				'nickname'                                         => true,
-				'primary_blog'                                     => true,
-				'rich_editing'                                     => true,
-				'session_tokens'                                   => true,
-				'show_admin_bar_admin'                             => true,
-				'show_admin_bar_front'                             => true,
-				'show_per_page'                                    => true,
-				'show_welcome_panel'                               => true,
-				'syntax_highlighting'                              => true,
-				'use_ssl'                                          => true,
-				'user_level'                                       => true,
-				'user-settings'                                    => true,
-				'dashboard_quick_press_last_post_id'               => true,
+				// Disable for all protected meta keys.
+				'_.*'                                => true,
+				// WP core keys.
+				'admin_color'                        => true,
+				'capabilities'                       => true,
+				'closedpostboxes_.*'                 => true,
+				'comment_shortcuts'                  => true,
+				'default_password_nag'               => true,
+				'description'                        => true,
+				'dismissed_wp_pointers'              => true,
+				'first_name'                         => true,
+				'last_name'                          => true,
+				'locale'                             => true,
+				'metaboxhidden_'                     => true,
+				'metaboxhidden_.*'                   => true,
+				'nav_menu_recently_edited'           => true,
+				'nickname'                           => true,
+				'primary_blog'                       => true,
+				'rich_editing'                       => true,
+				'session_tokens'                     => true,
+				'show_admin_bar_admin'               => true,
+				'show_admin_bar_front'               => true,
+				'show_per_page'                      => true,
+				'show_welcome_panel'                 => true,
+				'syntax_highlighting'                => true,
+				'use_ssl'                            => true,
+				'user_level'                         => true,
+				'user-settings'                      => true,
+				'dashboard_quick_press_last_post_id' => true,
 				// Optimize for Tribe Common.
-				'tribe-dismiss-notice'                             => true,
-				'tribe-dismiss-notice-.*'                          => true,
+				'tribe-dismiss-notice'               => true,
+				'tribe-dismiss-notice-.*'            => true,
 				// Optimize for Beaver Builder.
-				'_fl_builder_launched'                             => true,
+				'_fl_builder_launched'               => true,
 				// Optimize for Gravity Forms.
-				'gform_recent_forms'                               => true,
+				'gform_recent_forms'                 => true,
 				// Optimize for WooCommerce.
-				'woocommerce_admin_activity_panel_inbox_last_read' => true,
+				'paying_customer'                    => true,
+				'last_update'                        => true,
+				'woocommerce_.*'                     => true,
+				'_woocommerce_.*'                    => true,
+				'wc_.*'                              => true,
+				// Optimize for SEOPress.
+				'seopress_.*'          => true,
+				'edit_seopress_.*'     => true,
 			],
 			'settings'  => [
 				'fileupload_maxk'                       => true,
@@ -2650,6 +2690,10 @@ class PodsMeta {
 				'duplicate_post_increase_menu_order_by' => true,
 				'duplicate_post_show_notice'            => true,
 				'duplicate_post_title_prefix'           => true,
+				// Optimize for WooCommerce.
+				'woocommerce_.*'                        => true,
+				// Optimize for SEOPress.
+				'seopress_.*'                           => true,
 			],
 		];
 

@@ -1404,6 +1404,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 		$return = pods_wrap_html( $return, $tags );
 
+		if ( $blog_is_switched ) {
+			restore_current_blog();
+		}
+
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
 		 *
@@ -1438,11 +1442,11 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$return = do_shortcode( $return );
 		}
 
+		$return = pods_wrap_html( $return, $tags );
+
 		if ( $blog_is_switched ) {
 			restore_current_blog();
 		}
-
-		$return = pods_wrap_html( $return, $tags );
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -1475,6 +1479,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
 		}
+
+		$return = pods_wrap_html( $return, $tags );
 
 		if ( $blog_is_switched ) {
 			restore_current_blog();
@@ -1555,6 +1561,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 	if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 		$return = do_shortcode( $return );
 	}
+
+	$return = pods_wrap_html( $return, $tags );
 
 	if ( $blog_is_switched ) {
 		restore_current_blog();

@@ -998,11 +998,21 @@ function pods_wrap_html( $html, $attributes = [] ) {
 
 	$container = [];
 
-	// Handle support for anchor and class.
-	if ( ! empty( $attributes['class'] ) ) {
-		$container['class'] = $attributes['class'];
+	// Handle support for className.
+	if ( ! empty( $attributes['className'] ) ) {
+		$container['class'] = trim( $attributes['className'] );
 	}
 
+	// Handle align support.
+	if ( ! empty( $attributes['align'] ) ) {
+		if ( empty( $container['class'] ) ) {
+			$container['class'] = '';
+		}
+
+        $container['class'] = trim( 'align' . $attributes['align'] . ' ' . $container['class'] );
+    }
+
+	// Handle support for anchor.
 	if ( ! empty( $attributes['anchor'] ) ) {
 		$container['id'] = $attributes['anchor'];
 	}
@@ -1091,8 +1101,9 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'cache_mode'       => 'none',
 		'expires'          => 0,
 		'shortcodes'       => false,
-		'class'            => null,
+		'className'        => null,
 		'anchor'           => null,
+		'align'            => null,
 	];
 
 	$defaults = array_merge( $default_other_tags, $default_query_tags );

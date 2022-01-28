@@ -920,6 +920,45 @@ function pods_shortcode( $tags, $content = null ) {
 }
 
 /**
+ * Wrap the HTML using attributes for the element.
+ *
+ * This is used to support Blocks and other elements that use custom attributes like class and anchor.
+ *
+ * @since 2.8.9
+ *
+ * @param string $html      The HTML to wrap.
+ * @param array $attributes List of attributes for the element.
+ *
+ * @return string The wrapped HTML.
+ */
+function pods_wrap_html( $html, $attributes = [] ) {
+	if ( empty( $attributes ) ) {
+		return $html;
+	}
+
+	$container = [];
+
+	// Handle support for anchor and class.
+	if ( ! empty( $attributes['class'] ) ) {
+		$container['class'] = $attributes['class'];
+	}
+
+	if ( ! empty( $attributes['anchor'] ) ) {
+		$container['id'] = $attributes['anchor'];
+	}
+
+	if ( empty( $container ) ) {
+		return $html;
+	}
+
+	ob_start();
+	PodsForm::attributes( $container, '_pods_wrap', '_pods_wrap', $attributes );
+	$html_attributes = ob_get_clean();
+
+	return sprintf( '<div%1$s>%2$s</div>', $html_attributes, $html );
+}
+
+/**
  * Shortcode support for use anywhere that support WP Shortcodes.
  *
  * @since 2.7.13
@@ -992,6 +1031,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'cache_mode'       => 'none',
 		'expires'          => 0,
 		'shortcodes'       => false,
+		'class'            => null,
+		'anchor'           => null,
 	];
 
 	$defaults = array_merge( $default_other_tags, $default_query_tags );
@@ -1023,6 +1064,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$return = do_shortcode( $return );
 			}
 		}
+
+		$return = pods_wrap_html( $return, $tags );
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -1288,6 +1331,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 		$return = $pod->form( $form_params );
 
+		$return = pods_wrap_html( $return, $tags );
+
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
 		 *
@@ -1325,6 +1370,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		if ( $blog_is_switched ) {
 			restore_current_blog();
 		}
+
+		$return = pods_wrap_html( $return, $tags );
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.

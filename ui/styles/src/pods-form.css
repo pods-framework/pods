@@ -233,10 +233,11 @@ p.pods-add-file {
   margin: 0;
 }
 
+#side-sortables .form-table tr.pods-field__container > td,
 #side-sortables .form-table tr.pods-field > td {
   display: block;
   line-height: inherit;
-  padding: 0;
+  padding: 0 0 20px;
   margin: 0;
 }
 
@@ -553,7 +554,6 @@ ul.pods-dfv-list li.pods-dfv-list-remove a {
 }
 
 ul.pods-dfv-list li.pods-dfv-list-name {
-  position: absolute;
   left: 80px;
   right: 105px;
   /* needed for action buttons */

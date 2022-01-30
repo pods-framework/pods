@@ -1222,7 +1222,6 @@ ul.pods-dfv-list li.pods-dfv-list-remove a {
 }
 
 ul.pods-dfv-list li.pods-dfv-list-name {
-  position: absolute;
   left: 80px;
   right: 105px;
   /* needed for action buttons */

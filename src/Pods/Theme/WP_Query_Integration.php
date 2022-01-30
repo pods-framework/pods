@@ -45,7 +45,8 @@ class WP_Query_Integration {
 
 		// Skip if not on the archive we want.
 		if (
-			! empty( $query->query_vars['suppress_filters'] )
+			empty( $query->get_queried_object() )
+			|| ! empty( $query->query_vars['suppress_filters'] )
 			|| ! $query->is_main_query()
 			|| (
 				! $query->is_category()

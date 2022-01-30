@@ -46,7 +46,12 @@ module.exports = {
 					// translates CSS into CommonJS
 					{ loader: 'css-loader' },
 					// compiles Sass to CSS
-					{ loader: 'sass-loader' },
+					{
+						loader: 'sass-loader',
+						options: {
+							implementation: require( 'sass' ),
+						},
+					},
 				],
 			},
 			{

@@ -133,7 +133,7 @@ class Pods implements Iterator {
 			$pod = get_queried_object();
 		}
 
-		if ( $pod && ! is_string( $pod ) ) {
+		if ( $pod && ! is_string( $pod ) && ! $pod instanceof Pod ) {
 			if ( $pod instanceof WP_Post ) {
 				// Post Type Singular.
 				$pod       = $pod->post_type;
@@ -2490,7 +2490,38 @@ class Pods implements Iterator {
 
 		$this->data->total_found();
 
-		return $this->data->total_found;
+		return (int) $this->data->total_found;
+	}
+
+	/**
+	 * Get the total count of all rows in a simple find() across the whole Pod. This will perform a new find() request
+	 * and then return the total number of rows found.
+	 *
+	 * This method is non-destructive and it will not alter the current Pod object.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return int The total count of all rows in a simple find() across the whole Pod.
+	 */
+	public function total_all_rows() {
+		$field_id = pods_v( 'field_id', $this->pod_data );
+
+		if ( empty( $field_id ) ) {
+			return 0;
+		}
+
+		$pod = clone $this;
+
+		// Make a simple request so we can perform a total_found() SQL request.
+		$params = [
+			'distinct' => false,
+			'select'   => 't.' . $this->pod_data['field_id'],
+			'limit'    => 1,
+		];
+
+		$pod->find( $params );
+
+		return $pod->total_found();
 	}
 
 	/**
@@ -2500,7 +2531,7 @@ class Pods implements Iterator {
 	 * @param null|int $offset Offset of rows.
 	 * @param null|int $total  Total rows.
 	 *
-	 * @return int Number of pages
+	 * @return int Number of pages.
 	 * @since 2.3.10
 	 */
 	public function total_pages( $limit = null, $offset = null, $total = null ) {
@@ -2519,7 +2550,12 @@ class Pods implements Iterator {
 			$total = $this->total_found();
 		}
 
-		return ceil( ( $total - $offset ) / $limit );
+		// No limit means one page.
+		if ( $limit < 1 ) {
+			return 1;
+		}
+
+		return (int) ceil( ( $total - $offset ) / $limit );
 
 	}
 
@@ -3054,7 +3090,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function import( $import_data, $numeric_mode = false, $format = null ) {
-
 		return $this->data->api->import( $import_data, $numeric_mode, $format );
 	}
 
@@ -3073,7 +3108,6 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
-
 		$params = array(
 			'pod'     => $this->pod,
 			'id'      => $id,
@@ -3125,7 +3159,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function export_data( $params = null ) {
-
 		$defaults = array(
 			'fields' => null,
 			'depth'  => 2,
@@ -3232,6 +3265,10 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/filters/
 	 */
 	public function filters( $params = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
 
 		$defaults = array(
 			'fields' => $params,
@@ -3662,6 +3699,11 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
+
 		// Check for anonymous submissions.
 		if ( ! is_user_logged_in() ) {
 			$session_auto_start = pods_session_auto_start();

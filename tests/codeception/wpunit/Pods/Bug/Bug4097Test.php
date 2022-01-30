@@ -58,8 +58,8 @@ class Bug_4097Test extends Pods_UnitTestCase {
 	 *
 	 * @dataProvider setup_providers
 	 */
-	public function test_setups( $type, $storage ) {
-		$pod_name = $this->setup_pod( $type, $storage );
+	public function test_setups( $storage, $type ) {
+		$pod_name = $this->setup_pod( $storage, $type );
 
 		codecept_debug( 'Test setup: ' . $type . ' | ' . $storage );
 

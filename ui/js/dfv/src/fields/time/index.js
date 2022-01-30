@@ -24,6 +24,7 @@ const Time = ( props ) => {
 		datetime_time_format_24: fieldConfig.time_format_24,
 		datetime_time_format_custom: fieldConfig.time_format_custom,
 		datetime_time_format_custom_js: fieldConfig.time_format_custom_js,
+		datetime_time_format_moment_js: fieldConfig.time_format_moment_js,
 		datetime_time_type: fieldConfig.time_type,
 		datetime_type: 'time',
 	};

@@ -47,6 +47,7 @@ class WP_Query_Integration {
 		if (
 			! empty( $query->query_vars['suppress_filters'] )
 			|| ! $query->is_main_query()
+			|| $query->is_404()
 			|| (
 				! $query->is_category()
 				&& ! $query->is_tag()
@@ -55,7 +56,13 @@ class WP_Query_Integration {
 			return;
 		}
 
-		$taxonomy = $query->get_queried_object()->taxonomy;
+		$object = $query->get_queried_object();
+
+		if ( ! isset( $object->taxonomy ) ) {
+			return;
+		}
+
+		$taxonomy = $object->taxonomy;
 
 		// Find all CPT that have this taxonomy set.
 		$api = pods_api();

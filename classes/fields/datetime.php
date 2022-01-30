@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Static_Cache;
+use Pods\Whatsit\Field;
 
 /**
  * @package Pods\Fields
@@ -315,6 +316,9 @@ class PodsField_DateTime extends PodsField {
 		if ( ! empty( $options['disable_dfv'] ) ) {
 			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 		}
+
+		// Convert the date/time formats to MomentJS.
+	    $options = $this->prepare_options_for_moment_js( $options );
 
 		$type = pods_v( 'type', $options, static::$type );
 
@@ -987,7 +991,282 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
+	 * Prepare the date/datetime/time field object or options for MomentJS formatting.
+	 *
+	 * @since TBD
+	 *
+	 * @param array|Field $options The field object or options.
+	 *
+	 * @return array|Field The field object or options.
+	 */
+	public function prepare_options_for_moment_js( $options ) {
+		// Handle time formats for datetime.
+		if ( 'datetime' === static::$type ) {
+			$date_format = $this->get_format_from_options_for_type( $options, static::$type, '', true );
+			$time_format = $this->get_format_from_options_for_type( $options, static::$type, '_time', true );
+
+			$date_format_moment_js = $this->convert_format_to_moment_js( $date_format['format'], [
+				'source' => $date_format['is_js'] ? 'jquery_ui' : 'php',
+				'type'   => 'date',
+			] );
+			$time_format_moment_js = $this->convert_format_to_moment_js( $time_format['format'], [
+				'source' => $time_format['is_js'] ? 'jquery_ui' : 'php',
+				'type'   => 'time',
+			] );
+
+			$options[ static::$type . '_date_format_moment_js' ] = $date_format_moment_js;
+			$options[ static::$type . '_time_format_moment_js' ] = $time_format_moment_js;
+		} elseif ( 'date' === static::$type ) {
+			$date_format = $this->get_format_from_options_for_type( $options, static::$type, '', true );
+
+			$date_format_moment_js = $this->convert_format_to_moment_js( $date_format['format'], [
+				'source' => $date_format['is_js'] ? 'jquery_ui' : 'php',
+				'type'   => 'date',
+			] );
+
+			$options[ static::$type . '_format_moment_js' ] = $date_format_moment_js;
+		} elseif ( 'time' === static::$type ) {
+			$time_format = $this->get_format_from_options_for_type( $options, static::$type, '', true );
+
+			$time_format_moment_js = $this->convert_format_to_moment_js( $time_format['format'], [
+				'source' => $time_format['is_js'] ? 'jquery_ui' : 'php',
+				'type'   => 'time',
+			] );
+
+			$options[ static::$type . '_format_moment_js' ] = $time_format_moment_js;
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Get the format from the options for a specific type (date/datetime/time).
+	 *
+	 * @since TBD
+	 *
+	 * @param array|Field $options The field object or options.
+	 * @param string      $type    The specific field type.
+	 * @param string      $prefix  The prefix to use on the format options if needed (like "_time" in datetime_time_format).
+	 * @param bool        $js      Whether we want to get the format in the JS context.
+	 *
+	 * @return array The format information including if found/using the JS context option and the format.
+	 */
+	public function get_format_from_options_for_type( $options, $type, $prefix = '', $js = false ) {
+		$format_type = pods_v( $type . $prefix . '_type', $options );
+
+		$is_date_format = (
+			'date' === $type
+			|| (
+				'datetime' === $type
+				&& '' === $prefix
+			)
+		);
+
+		$is_24_hour = '24' === $format_type;
+
+		if ( '12' === $format_type || $is_24_hour ) {
+			$format_type = 'format';
+		}
+
+		// Get the format from the field setting.
+		if ( 'format' === $format_type ) {
+			if ( $is_date_format ) {
+				// Get the format for date.
+				$formats = $this->get_date_formats();
+			} elseif ( $is_24_hour ) {
+				// Get the format for time (24-hour).
+				$formats = $this->get_time_formats_24();
+			} else {
+				// Get the format for time (12-hour).
+				$formats = $this->get_time_formats();
+			}
+
+			$format = pods_v( $type . $prefix . '_format', $options );
+
+			// Get 24-hour format.
+			if ( $is_24_hour ) {
+				$format = pods_v( $type . $prefix . '_format_24', $options );
+			}
+
+			// Check if format is registered.
+			if ( ! empty( $formats[ $format ] ) ) {
+				return [
+					'is_js'  => false,
+					'format' => $formats[ $format ],
+				];
+			}
+		}
+
+		// Get the custom format from the field setting.
+		if ( 'custom' === $format_type ) {
+			$format_custom = pods_v( $type . $prefix . '_format_custom', $options );
+
+			$is_js = false;
+
+			if ( $js ) {
+				$format_custom_js = pods_v( $type . $prefix . '_format_custom_js', $options );
+
+				if ( ! empty( $format_custom_js ) ) {
+					$is_js = true;
+
+					$format_custom = $format_custom_js;
+				}
+			}
+
+			// Check if there's a custom format.
+			if ( ! empty( $format_custom ) ) {
+				return [
+					'is_js'  => $is_js,
+					'format' => $format_custom,
+				];
+			}
+		}
+
+		// Fallback to wp format.
+		$options[ $type . $prefix . '_type' ] = 'wp';
+
+		// Maybe get the date format from WordPress.
+		if ( $is_date_format ) {
+			return [
+				'is_js'  => false,
+				'format' => get_option( 'date_format' ),
+			];
+		}
+
+		// Get the time format from WordPress.
+		return [
+			'is_js'  => false,
+			'format' => get_option( 'time_format' ),
+		];
+	}
+
+	/**
+	 * Convert the source format to MomentJS format for PHP / jQuery UI formats.
+	 *
+	 * @since TBD
+	 *
+	 * @param string|mixed $source_format The source format.
+	 * @param array        $args          The list of format arguments including source (php/jquery_ui) and type (date/time).
+	 *
+	 * @return string|mixed The converted MomentJS format.
+	 */
+	public function convert_format_to_moment_js( $source_format, $args = array() ) {
+		if ( ! is_string( $source_format ) || '' === trim( $source_format ) ) {
+			return $source_format;
+		}
+
+		$defaults = [
+			'source' => 'php', // php or jquery_ui.
+			'type'   => 'date', // date or time.
+		];
+
+		$args = array_merge( $defaults, $args );
+
+		// For PHP symbols, see https://www.php.net/manual/en/datetime.format.php
+		// For Moment.js symbols, see https://momentjs.com/docs/#/displaying/format/
+		$php_replacements = [
+			'A' => 'A', // for the sake of escaping below
+			'a' => 'a', // for the sake of escaping below
+			'B' => '', // Swatch internet time (.beats), no equivalent
+			'c' => 'YYYY-MM-DD[T]HH:mm:ssZ', // ISO 8601
+			'D' => 'ddd',
+			'd' => 'DD',
+			'e' => 'zz', // deprecated since version 1.6.0 of moment.js
+			'F' => 'MMMM',
+			'G' => 'H',
+			'g' => 'h',
+			'H' => 'HH',
+			'h' => 'hh',
+			'I' => '', // Daylight Saving Time? => moment().isDST();
+			'i' => 'mm',
+			'j' => 'D',
+			'L' => '', // Leap year? => moment().isLeapYear();
+			'l' => 'dddd',
+			'M' => 'MMM',
+			'm' => 'MM',
+			'N' => 'E',
+			'n' => 'M',
+			'O' => 'ZZ',
+			'o' => 'YYYY',
+			'P' => 'Z',
+			'r' => 'ddd, DD MMM YYYY HH:mm:ss ZZ', // RFC 2822
+			'S' => 'o',
+			's' => 'ss',
+			'T' => 'z', // deprecated since version 1.6.0 of moment.js
+			't' => '', // days in the month => moment().daysInMonth();
+			'U' => 'X',
+			'u' => 'SSSSSS', // microseconds
+			'v' => 'SSS', // milliseconds (from PHP 7.0.0)
+			'W' => 'W', // for the sake of escaping below
+			'w' => 'e',
+			'Y' => 'YYYY',
+			'y' => 'YY',
+			'Z' => '', // time zone offset in minutes => moment().zone();
+			'z' => 'DDD',
+		];
+
+		// For jQuery symbols, see https://api.jqueryui.com/datepicker/#utility-formatDate
+		// For Moment.js symbols, see https://momentjs.com/docs/#/displaying/format/
+		$jquery_ui_date_replacements = [
+			'dd' => 'DD', // day of month (two digit)
+			'd'  => 'D', // day of month (no leading zero)
+			'oo' => 'DDDD', // day of the year (three digit)
+			'o'  => 'DDD', // day of the year (no leading zeros)
+			'DD' => 'dddd', // day name long
+			'D'  => 'dd', // day name short
+			'mm' => 'MM', // month of year (two digit)
+			'm'  => 'M', // month of year (no leading zero)
+			'MM' => 'MMMM', // month name long
+			'M'  => 'MMM', // month name short
+			'yy' => 'YYYY', // year (four digit)
+			'y'  => 'YY', // year (two digit)
+			'@'  => 'X', // Unix timestamp (ms since 01/01/1970)
+			'!'  => '', // Windows ticks (100ns since 01/01/0001), no equivalent
+		];
+
+		// For jQuery symbols, see http://trentrichardson.com/examples/timepicker/#tp-formatting
+		// For Moment.js symbols, see https://momentjs.com/docs/#/displaying/format/
+		$jquery_ui_time_replacements = [
+			'HH' => 'HH', // Hour with leading 0 (24 hour)
+			'H'  => 'H', // Hour with no leading 0 (24 hour)
+			'hh' => 'hh', // Hour with leading 0 (12 hour)
+			'h'  => 'h', // Hour with no leading 0 (12 hour)
+			'mm' => 'mm', // Minute with leading 0
+			'm'  => 'm', // Minute with no leading 0
+			'i'  => 'mm', // In case they got confused with PHP time format
+			'ss' => 'ss', // Second with leading 0
+			's'  => 's', // Second with no leading 0
+			'l'  => 'SSS', // Milliseconds always with leading 0
+			'c'  => 'SSSSSS', // Microseconds always with leading 0
+			't'  => 'a', // a or p for AM/PM, no equivalent, switches to am/pm
+			'TT' => 'A', // AM or PM for AM/PM
+			'tt' => 'a', // am or pm for AM/PM
+			'T'  => 'A', // A or P for AM/PM, no equivalent, switches to AM/PM
+			'z'  => '', // Timezone as defined by timezoneList => moment().zone();
+			'Z'  => '', // Timezone in Iso 8601 format (+04:45) => moment().zone();
+		];
+
+		// Handle PHP first since it only has one replacement logic.
+		if ( 'php' === $args['source'] ) {
+			return pods_replace_keys_to_values( $source_format, $php_replacements );
+		}
+
+		// Handle jQuery UI replacements.
+		if ( 'jquery_ui' === $args['source'] ) {
+			if ( 'date' === $args['type'] ) {
+				return pods_replace_keys_to_values( $source_format, $jquery_ui_date_replacements );
+			} elseif ( 'time' === $args['type'] ) {
+				return pods_replace_keys_to_values( $source_format, $jquery_ui_time_replacements );
+			}
+		}
+
+		return $source_format;
+	}
+
+	/**
 	 * Enqueue the i18n files for jquery date/timepicker
+	 *
+	 * @deprecated since 2.8.0
 	 *
 	 * @since 2.7.0
 	 */

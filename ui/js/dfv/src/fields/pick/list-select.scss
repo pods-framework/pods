@@ -1,3 +1,10 @@
+ul.pods-dfv-list li.pods-dfv-list-col.pods-list-select-drag-handle {
+	width: 30px;
+	flex: 0 0 30px;
+	opacity: .2;
+	padding: 4px 0;
+}
+
 .pods-list-select-move-buttons {
 	display: flex;
 	flex-flow: column nowrap;

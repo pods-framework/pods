@@ -4,6 +4,8 @@
  * @category Utilities
  */
 
+use Pods\Whatsit\Pod;
+
 /**
  * Include and Init the Pods class
  *
@@ -84,9 +86,8 @@ function pods_api( $pod = null, $format = null ) {
  */
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
 	if ( $unique ) {
-		if ( $pod instanceof Pods ) {
-			// instance has to be unique, $pod->data returns a reference and has a circular reference to Pod
-			return new PodsData( clone $pod->pod_data, $id, $strict );
+		if ( $pod instanceof Pod || $pod instanceof Pods ) {
+			return new PodsData( $pod, $id, $strict );
 		}
 
 		if ( ! in_array( $pod, array( null, false ), true ) ) {

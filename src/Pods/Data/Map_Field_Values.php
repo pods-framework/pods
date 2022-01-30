@@ -282,6 +282,7 @@ class Map_Field_Values {
 			'_position',
 			'_total',
 			'_total_found',
+			'_total_all_rows',
 			'_total_pages',
 		];
 
@@ -307,6 +308,10 @@ class Map_Field_Values {
 				break;
 			case '_total_found':
 				$value = $obj->total_found();
+
+				break;
+			case '_total_all_rows':
+				$value = $obj->total_all_rows();
 
 				break;
 			case '_total_pages':

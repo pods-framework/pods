@@ -2,6 +2,8 @@
 
 namespace Pods\Blocks\Types;
 
+use WP_Block;
+
 /**
  * Item_List block functionality class.
  *
@@ -367,7 +369,7 @@ class Item_List extends Base {
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
 		$attributes = $this->attributes( $attributes );
-		$attributes = array_map( 'trim', $attributes );
+		$attributes = array_map( 'pods_trim', $attributes );
 
 		if ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
 			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
@@ -377,6 +379,11 @@ class Item_List extends Base {
 				);
 			}
 
+			return '';
+		}
+
+		// Check whether we should preload the block.
+		if ( $this->is_preloading_block() && ! $this->should_preload_block( $attributes, $block ) ) {
 			return '';
 		}
 

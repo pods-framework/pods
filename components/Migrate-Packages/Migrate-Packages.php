@@ -275,6 +275,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 		$found = apply_filters( 'pods_packages_import', $found, $data, $replace );
 
 		if ( ! empty( $found ) ) {
+			self::$api->cache_flush_pods();
+
 			return $found;
 		}
 
@@ -342,6 +344,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 		} elseif ( ! empty( $pod['fields'] ) ) {
 			$pod['fields'] = self::import_pod_setup_objects( $pod['fields'], $existing_fields );
 		}
+
+		// Force 2.8 orphan field check.
+		$pod['_migrated_28'] = false;
 
 		$pod['overwrite'] = $replace;
 

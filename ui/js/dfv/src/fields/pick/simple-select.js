@@ -53,7 +53,7 @@ const SimpleSelect = ( {
 		>
 			<>
 				{ options.map( ( { name: optionLabel, id: optionValue } ) => {
-					if ( 'string' === typeof optionValue ) {
+					if ( 'string' === typeof optionValue || 'number' === typeof optionValue ) {
 						return (
 							<option key={ optionValue } value={ optionValue }>
 								{ optionLabel }

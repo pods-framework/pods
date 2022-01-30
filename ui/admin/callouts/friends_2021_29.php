@@ -3,6 +3,8 @@
  * @var bool $force_callouts Whether to force the callouts.
  */
 
+$callout = 'friends_2021_29';
+
 $donor_count    = 18;
 $donor_goal     = 100;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
@@ -26,7 +28,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 
 <div class="pods-admin_friends-callout_container">
 	<?php if ( ! $force_callouts ) : ?>
-		<a href="<?php echo esc_url( add_query_arg( 'pods_callout_dismiss', 'friends_2021' ) ); ?>" class="pods-admin_friends-callout_close">
+		<a href="<?php echo esc_url( add_query_arg( 'pods_callout_dismiss', $callout ) ); ?>" class="pods-admin_friends-callout_close">
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 125" enable-background="new 0 0 100 100" xml:space="preserve"><polygon points="95,17 83,5 50,38 17,5 5,17 38,50 5,83 17,95 50,62 83,95 95,83 62,50 "/></svg>
 		</a>
 	<?php endif; ?>
@@ -66,6 +68,13 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
+			☑︎️&nbsp;
+			<?php
+				esc_html_e( 'Donors get to vote on the next feature we work on, they decide what we do next.', 'pods' );
+			?>
+		</p>
+		<?php /*
+		<p class="pods-admin_friends-callout_text">
 			<?php
 				printf(
 					'<strong>%s</strong>',
@@ -78,6 +87,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 				<?php echo esc_attr( ceil( $progress_width ) ); ?>%
 			</div>
 		</div>
+ 		*/ ?>
 		<div class="pods-admin_friends-callout_button-group">
 			<a href="<?php echo esc_url( $learn_more_link ); ?>"
 				target="_blank" rel="noreferrer"

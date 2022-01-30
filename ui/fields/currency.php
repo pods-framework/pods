@@ -29,11 +29,13 @@ $currency = 'usd';
 
 $currency_format_sign = pods_v( 'currency_format_sign', $options, $currency );
 
-if ( isset( PodsField_Currency::$currencies[ $currency_format_sign ] ) ) {
+$currencies = PodsField_Currency::data_currencies();
+
+if ( isset( $currencies[ $currency_format_sign ] ) ) {
 	$currency = $currency_format_sign;
 }
 
-$currency_sign = PodsField_Currency::$currencies[ $currency ]['sign'];
+$currency_sign = $currencies[ $currency ]['sign'];
 ?>
 <div class="pods-currency-container">
 	<code class="pods-currency-sign pods-hidden"><?php echo $currency_sign; ?></code>

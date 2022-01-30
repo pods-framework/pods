@@ -154,6 +154,7 @@ class PodsField_Pick extends PodsField {
 				'label'                 => __( 'Selection Type', 'pods' ),
 				'help'                  => $fallback_help,
 				'default'               => 'single',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'single' => __( 'Single Select', 'pods' ),
@@ -169,6 +170,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'single',
 				],
 				'default'               => 'dropdown',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [
 					'dropdown'     => __( 'Drop Down', 'pods' ),
@@ -186,6 +188,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'checkbox',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
 					'checkbox'     => __( 'Checkboxes', 'pods' ),
@@ -203,6 +206,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'default',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
@@ -524,23 +528,14 @@ class PodsField_Pick extends PodsField {
 			 */
 			$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
 
+			$pods_meta = pods_meta();
+
 			// Public Post Types for relationships.
 			$post_types = get_post_types( [ 'public' => true ] );
 			asort( $post_types );
 
-			$ignored_post_types = [
-				'attachment',
-				'revision',
-				'nav_menu_item',
-				'custom_css',
-				'customize_changeset',
-				'oembed_cache',
-				'user_request',
-				'wp_template',
-			];
-
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -564,7 +559,7 @@ class PodsField_Pick extends PodsField {
 			asort( $post_types );
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -587,15 +582,8 @@ class PodsField_Pick extends PodsField {
 			$taxonomies = get_taxonomies();
 			asort( $taxonomies );
 
-			$ignored_taxonomies = [
-				'nav_menu',
-				'post_format',
-				'wp_theme',
-			];
-
 			foreach ( $taxonomies as $taxonomy => $label ) {
-
-				if ( empty( $taxonomy ) || in_array( $taxonomy, $ignored_taxonomies, true ) ) {
+				if ( empty( $taxonomy ) || ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;
@@ -1025,6 +1013,7 @@ class PodsField_Pick extends PodsField {
 		$field_options['select2_overrides'] = null;
 
 		if ( 'select2' === $field_options['view_name'] ) {
+			// @todo Revisit this, they probably aren't used anymore now since this is DFV.
 			wp_enqueue_style( 'pods-select2' );
 			wp_enqueue_script( 'pods-select2' );
 
@@ -1736,7 +1725,7 @@ class PodsField_Pick extends PodsField {
 
 		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
-		if ( ! empty( $related_data ) ) {
+		if ( ! empty( $related_data ) && isset( $related_data['current_ids_' . $id ], $related_data['remove_ids_' . $id ] ) ) {
 			$related_pod        = $related_data['related_pod'];
 			$related_field      = $related_data['related_field'];
 			$related_pick_limit = $related_data['related_pick_limit'];
@@ -1947,11 +1936,31 @@ class PodsField_Pick extends PodsField {
 			$data = $this->get_object_data( $object_params );
 		}
 
+		/**
+		 * Allow filtering whether to always show default select text for the Single select Dropdown field even if
+		 * the field is required.
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param bool            $always_show_default_select_text Whether to always show default select text.
+		 * @param array           $data                            The object data.
+		 * @param string|null     $name                            Field name.
+		 * @param mixed|null      $value                           Current value.
+		 * @param array|null      $options                         Field options.
+		 * @param array|null      $pod                             Pod information.
+		 * @param int|string|null $id                              Current item ID.
+		 */
+		$always_show_default_select_text = (bool) apply_filters( 'pods_field_pick_always_show_default_select_text', false, $data, $name, $value, $options, $pod, $id );
+
 		if (
 			'single' === pods_v( static::$type . '_format_type', $options, 'single' )
 			&& 'dropdown' === pods_v( static::$type . '_format_single', $options, 'dropdown' )
 			//&& 0 !== (int) pods_v( static::$type . '_show_select_text', $options, 1 )
-			&& 0 === (int) pods_v( 'required', $options, 0 )
+			&& (
+				$always_show_default_select_text
+				|| empty( $value )
+				|| 0 === (int) pods_v( 'required', $options, 0 )
+			)
 		) {
 			$default_select = [
 				'' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ),
@@ -2025,7 +2034,7 @@ class PodsField_Pick extends PodsField {
 					$val = array();
 
 					foreach ( $value as $k => $v ) {
-						if ( isset( $data[ $v ] ) ) {
+						if ( is_scalar( $v ) && isset( $data[ $v ] ) ) {
 							if ( false === $raw ) {
 								$k = $v;
 								$v = $data[ $v ];

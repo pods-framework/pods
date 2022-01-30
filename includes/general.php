@@ -309,6 +309,16 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		return;
 	}
 
+	if ( defined( 'WP_CLI' ) ) {
+		if ( ! is_string( $debug ) ) {
+			$debug = var_export( $debug, true );
+		}
+
+		WP_CLI::debug( $debug );
+
+		return;
+	}
+
 	ob_start();
 
 	if ( '_null' !== $prefix ) {
@@ -323,7 +333,7 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	$debug = ob_get_clean();
 
-	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) && ( ! ini_get( 'xdebug.overload_var_dump' ) && ! ini_get( 'html_errors' ) ) ) {
+	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) ) {
 		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 			$debug = esc_html( $debug );
 		}
@@ -445,7 +455,7 @@ function pods_podsrel_enabled() {
 	 *
 	 * @param bool $enabled Whether the wp_podsrel table is enabled.
 	 */
-	return apply_filters( 'pods_podsrel_enabled', true );
+	return (bool) apply_filters( 'pods_podsrel_enabled', true );
 }
 
 /**
@@ -468,7 +478,57 @@ function pods_relationship_meta_storage_enabled( $field = null, $pod = null ) {
 	 * @param null|array|Field $field   The field object.
 	 * @param null|array|Pod   $pod     The pod object.
 	 */
-	return apply_filters( 'pods_relationship_meta_storage_enabled', true, $field, $pod );
+	return (bool) apply_filters( 'pods_relationship_meta_storage_enabled', true, $field, $pod );
+}
+
+/**
+ * Determine whether relationship meta storage is enabled for simple relationships.
+ *
+ * @since 2.8.9
+ *
+ * @param null|array|Field $field The field object.
+ * @param null|array|Pod   $pod   The pod object.
+ *
+ * @return bool Whether relationship meta storage is enabled.
+ */
+function pods_relationship_meta_storage_enabled_for_simple_relationships( $field = null, $pod = null ) {
+	$enabled = null === $pod || 'meta' === $pod['storage'] || 'settings' === $pod['storage'];
+
+	/**
+	 * Allow filtering of whether relationship meta storage is enabled for simple relationships.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @param bool             $enabled Whether relationship meta storage table is enabled for simple relationships.
+	 * @param null|array|Field $field   The field object.
+	 * @param null|array|Pod   $pod     The pod object.
+	 */
+	return (bool) apply_filters( 'pods_relationship_meta_storage_enabled_for_simple_relationships', $enabled, $field, $pod );
+}
+
+/**
+ * Determine whether relationship table storage is enabled for simple relationships.
+ *
+ * @since 2.8.9
+ *
+ * @param null|array|Field $field The field object.
+ * @param null|array|Pod   $pod   The pod object.
+ *
+ * @return bool Whether relationship table storage is enabled.
+ */
+function pods_relationship_table_storage_enabled_for_simple_relationships( $field = null, $pod = null ) {
+	$enabled = null === $pod || 'table' === $pod['storage'];
+
+	/**
+	 * Allow filtering of whether relationship table storage is enabled for simple relationships.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @param bool             $enabled Whether relationship table storage table is enabled for simple relationships.
+	 * @param null|array|Field $field   The field object.
+	 * @param null|array|Pod   $pod     The pod object.
+	 */
+	return (bool) apply_filters( 'pods_relationship_table_storage_enabled_for_simple_relationships', $enabled, $field, $pod );
 }
 
 /**
@@ -636,9 +696,9 @@ function pods_help( $text, $url = null ) {
 			'jquery',
 			'jquery-qtip2',
 		), PODS_VERSION );
-		wp_enqueue_script( 'pods-qtip-init' );
+		pods_form_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
-		wp_enqueue_script( 'pods-qtip-init' );
+		pods_form_enqueue_script( 'pods-qtip-init' );
 	}
 
 	if ( is_array( $text ) ) {
@@ -920,6 +980,55 @@ function pods_shortcode( $tags, $content = null ) {
 }
 
 /**
+ * Wrap the HTML using attributes for the element.
+ *
+ * This is used to support Blocks and other elements that use custom attributes like class and anchor.
+ *
+ * @since 2.8.9
+ *
+ * @param string $html      The HTML to wrap.
+ * @param array $attributes List of attributes for the element.
+ *
+ * @return string The wrapped HTML.
+ */
+function pods_wrap_html( $html, $attributes = [] ) {
+	if ( empty( $attributes ) ) {
+		return $html;
+	}
+
+	$container = [];
+
+	// Handle support for className.
+	if ( ! empty( $attributes['className'] ) ) {
+		$container['class'] = trim( $attributes['className'] );
+	}
+
+	// Handle align support.
+	if ( ! empty( $attributes['align'] ) ) {
+		if ( empty( $container['class'] ) ) {
+			$container['class'] = '';
+		}
+
+        $container['class'] = trim( 'align' . $attributes['align'] . ' ' . $container['class'] );
+    }
+
+	// Handle support for anchor.
+	if ( ! empty( $attributes['anchor'] ) ) {
+		$container['id'] = $attributes['anchor'];
+	}
+
+	if ( empty( $container ) ) {
+		return $html;
+	}
+
+	ob_start();
+	PodsForm::attributes( $container, '_pods_wrap', '_pods_wrap', $attributes );
+	$html_attributes = ob_get_clean();
+
+	return sprintf( '<div%1$s>%2$s</div>', $html_attributes, $html );
+}
+
+/**
  * Shortcode support for use anywhere that support WP Shortcodes.
  *
  * @since 2.7.13
@@ -992,6 +1101,9 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'cache_mode'       => 'none',
 		'expires'          => 0,
 		'shortcodes'       => false,
+		'className'        => null,
+		'anchor'           => null,
+		'align'            => null,
 	];
 
 	$defaults = array_merge( $default_other_tags, $default_query_tags );
@@ -1023,6 +1135,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$return = do_shortcode( $return );
 			}
 		}
+
+		$return = pods_wrap_html( $return, $tags );
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -1288,6 +1402,12 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 		$return = $pod->form( $form_params );
 
+		$return = pods_wrap_html( $return, $tags );
+
+		if ( $blog_is_switched ) {
+			restore_current_blog();
+		}
+
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
 		 *
@@ -1321,6 +1441,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
 		}
+
+		$return = pods_wrap_html( $return, $tags );
 
 		if ( $blog_is_switched ) {
 			restore_current_blog();
@@ -1357,6 +1479,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
 		}
+
+		$return = pods_wrap_html( $return, $tags );
 
 		if ( $blog_is_switched ) {
 			restore_current_blog();
@@ -1438,6 +1562,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		$return = do_shortcode( $return );
 	}
 
+	$return = pods_wrap_html( $return, $tags );
+
 	if ( $blog_is_switched ) {
 		restore_current_blog();
 	}
@@ -1484,12 +1610,13 @@ function pods_shortcode_form( $tags, $content = null ) {
  * @uses  $shortcode_tags
  * @uses  get_shortcode_regex() Gets the search pattern for searching shortcodes.
  *
- * @param string $content    Content to search for shortcodes
- * @param array  $shortcodes Array of shortcodes to run
+ * @param string $content            Content to search for shortcodes.
+ * @param array  $shortcodes         Array of shortcodes to run.
+ * @param array  $ignored_shortcodes Array of shortcodes to ignore.
  *
  * @return string Content with shortcodes filtered out.
  */
-function pods_do_shortcode( $content, $shortcodes ) {
+function pods_do_shortcode( $content, $shortcodes = [], $ignored_shortcodes = [] ) {
 	global $shortcode_tags;
 
 	// No shortcodes in content
@@ -1502,16 +1629,25 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		return $content;
 	}
 
-	if ( ! empty( $shortcodes ) ) {
-		$temp_shortcode_filter = function ( $return, $tag, $attr, $m ) use ( $shortcodes ) {
-			if ( in_array( $m[2], $shortcodes, true ) ) {
-				// If shortcode being called is in list, return false to allow it to run
+	$only_shortcodes   = ! empty( $shortcodes );
+	$ignore_shortcodes = ! empty( $ignored_shortcodes );
+
+	if ( $only_shortcodes || $ignore_shortcodes ) {
+		$temp_shortcode_filter = static function ( $return, $tag, $attr, $m ) use ( $only_shortcodes, $shortcodes, $ignore_shortcodes, $ignored_shortcodes ) {
+			if ( $only_shortcodes && in_array( $m[2], $shortcodes, true ) ) {
+				// If shortcode being called is in list, return false to allow it to run.
+				return false;
+			}
+
+			if ( $ignore_shortcodes && ! in_array( $m[2], $ignored_shortcodes, true ) ) {
+				// If shortcode being called is not in ignore list, return false to allow it to run.
 				return false;
 			}
 
 			// Return original shortcode string if we aren't going to handle at this time
 			return $m[0];
 		};
+
 		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 
@@ -2452,13 +2588,6 @@ function pods_require_component( $component ) {
  * @link  https://docs.pods.io/code/general-functions/pods-group-add/
  */
 function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
-	if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit && null !== $type ) {
-		$pod = array(
-			'name' => $pod,
-			'type' => $type,
-		);
-	}
-
 	pods_meta()->group_add( $pod, $label, $fields, $context, $priority );
 }
 
@@ -2498,11 +2627,13 @@ function pods_is_plugin_active( $plugin ) {
 }
 
 /**
- * Check if Pods no conflict is on or not
+ * Check if Pods no conflict is on or not.
  *
- * @param string $object_type
+ * Note: $object_type in the future may be default to null instead of 'post'.
  *
- * @return bool
+ * @param string|null $object_type The object type to check if no conflict is on for.
+ *
+ * @return bool Whether no conflict is on.
  *
  * @since 2.3.0
  */
@@ -2515,6 +2646,10 @@ function pods_no_conflict_check( $object_type = 'post' ) {
 
 	if ( ! class_exists( 'PodsInit' ) ) {
 		pods_init();
+	}
+
+	if ( empty( $object_type ) ) {
+		return ! empty( PodsInit::$no_conflict );
 	}
 
 	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
@@ -2877,56 +3012,21 @@ function pods_no_conflict_off( $object_type = 'post', $object = null, $force = f
  * @return array
  */
 function pods_reserved_keywords( $context = null ) {
-	// WordPress keywords.
-	$wp_keywords = [
+	// WordPress Post keywords.
+	$wp_post_keywords = [
 		'id',
 		'ID',
 		'attachment',
 		'attachment_id',
 		'author',
 		'author_name',
-		'calendar',
-		'cat',
 		'category',
-		'category__and',
-		'category__in',
-		'category__not_in',
-		'category_name',
-		'comments_per_page',
-		'comments_popup',
-		'custom',
-		'customize_messenger_channel',
-		'customized',
-		'cpage',
-		'day',
-		'debug',
-		'embed',
-		'error',
-		'exact',
-		'feed',
-		'hour',
 		'link_category',
-		'm',
-		'minute',
-		'monthnum',
-		'more',
 		'name',
-		'nav_menu',
-		'nonce',
-		'nopaging',
-		'offset',
-		'order',
-		'orderby',
 		'p',
 		'page',
-		'page_id',
 		'paged',
-		'pagename',
-		'pb',
-		'perm',
 		'post',
-		'post__in',
-		'post__not_in',
 		'post_format',
 		'post_mime_type',
 		'post_status',
@@ -2934,33 +3034,72 @@ function pods_reserved_keywords( $context = null ) {
 		'post_thumbnail',
 		'post_thumbnail_url',
 		'post_type',
+		's',
+		'search',
+		'tag',
+		'taxonomy',
+		'term',
+		'terms',
+		'title',
+		'type',
+	];
+
+	// WordPress keywords.
+	$wp_keywords = [
+		'calendar',
+		'cat',
+		'category__and',
+		'category__in',
+		'category__not_in',
+		'category_name',
+		'comments_per_page',
+		'comments_popup',
+		'cpage',
+		'custom',
+		'customize_messenger_channel',
+		'customized',
+		'day',
+		'debug',
+		'embed',
+		'error',
+		'exact',
+		'feed',
+		'hour',
+		'm',
+		'minute',
+		'monthnum',
+		'more',
+		'nav_menu',
+		'nonce',
+		'nopaging',
+		'offset',
+		'order',
+		'orderby',
+		'page_id',
+		'pagename',
+		'pb',
+		'perm',
+		'post__in',
+		'post__not_in',
 		'posts',
 		'posts_per_archive_page',
 		'posts_per_page',
 		'preview',
 		'robots',
-		's',
-		'search',
 		'second',
 		'sentence',
 		'showposts',
 		'static',
 		'subpost',
 		'subpost_id',
-		'tag',
 		'tag__and',
 		'tag__in',
 		'tag__not_in',
 		'tag_id',
 		'tag_slug__and',
 		'tag_slug__in',
-		'taxonomy',
 		'tb',
-		'term',
-		'terms',
 		'theme',
-		'title',
-		'type',
 		'w',
 		'withcomments',
 		'withoutcomments',
@@ -2975,10 +3114,17 @@ function pods_reserved_keywords( $context = null ) {
 
 	$keywords = [];
 
+	// Add keywords for WP context.
 	if ( in_array( $context, [ null, 'wp' ], true ) ) {
 		$keywords = array_merge( $keywords, $wp_keywords );
 	}
 
+	// Add keywords for WP Post contexts (also applies to WP context).
+	if ( in_array( $context, [ null, 'wp', 'wp-post' ], true ) ) {
+		$keywords = array_merge( $keywords, $wp_post_keywords );
+	}
+
+	// Add keywords for Pods context.
 	if ( in_array( $context, [ null, 'pods' ], true ) ) {
 		$keywords = array_merge( $keywords, $pods_keywords );
 	}
@@ -3317,6 +3463,8 @@ function pods_config_merge_fields( $configs_to_merge_into, $configs_to_merge_fro
 function pods_config_get_all_fields( $pod ) {
 	if ( $pod instanceof Pod ) {
 		return $pod->get_all_fields();
+	} elseif ( $pod instanceof Pods ) {
+		return $pod->pod_data->get_all_fields();
 	}
 
 	$fields        = (array) pods_v( 'fields', $pod, [] );

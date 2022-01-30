@@ -523,29 +523,40 @@ class PodsAdmin {
 				}
 			}
 
+			$edit_pods_title = null;
+
+			if ( 'pods' === pods_v( 'page' ) && 'edit' === pods_v( 'action' ) ) {
+				$edit_pods_title = __( 'Edit Pod', 'pods' );
+			}
+
 			$admin_menus = array(
 				'pods'            => array(
 					'label'    => __( 'Edit Pods', 'pods' ),
+					'title'    => $edit_pods_title,
 					'function' => array( $this, 'admin_setup' ),
 					'access'   => 'pods',
 				),
 				'pods-add-new'    => array(
 					'label'    => __( 'Add New', 'pods' ),
+					'title'    => __( 'Add New Pod', 'pods' ),
 					'function' => array( $this, 'admin_setup' ),
 					'access'   => 'pods',
 				),
 				'pods-components' => array(
 					'label'    => __( 'Components', 'pods' ),
+					'title'    => __( 'Pods Components', 'pods' ),
 					'function' => array( $this, 'admin_components' ),
 					'access'   => 'pods_components',
 				),
 				'pods-settings'   => array(
 					'label'    => __( 'Settings', 'pods' ),
+					'title'    => __( 'Pods Settings', 'pods' ),
 					'function' => array( $this, 'admin_settings' ),
 					'access'   => 'pods_settings',
 				),
 				'pods-help'       => array(
 					'label'    => __( 'Help', 'pods' ),
+					'title'    => __( 'Pods Help', 'pods' ),
 					'function' => array( $this, 'admin_help' ),
 				),
 			);
@@ -560,11 +571,13 @@ class PodsAdmin {
 				),
 				'pods-settings' => array(
 					'label'    => __( 'Settings', 'pods' ),
+					'title'    => __( 'Pods Settings', 'pods' ),
 					'function' => array( $this, 'admin_settings' ),
 					'access'   => 'pods_settings',
 				),
 				'pods-help'     => array(
 					'label'    => __( 'Help', 'pods' ),
+					'title'    => __( 'Pods Help', 'pods' ),
 					'function' => array( $this, 'admin_help' ),
 				),
 			);
@@ -599,8 +612,12 @@ class PodsAdmin {
 					continue;
 				}
 
-				if ( ! isset( $menu_item['label'] ) ) {
+				if ( empty( $menu_item['label'] ) ) {
 					$menu_item['label'] = $page;
+				}
+
+				if ( empty( $menu_item['title'] ) ) {
+					$menu_item['title'] = $menu_item['label'];
 				}
 
 				if ( false === $parent ) {
@@ -615,7 +632,7 @@ class PodsAdmin {
 					add_menu_page( $menu, $menu, 'read', $parent, null, pods_svg_icon( 'pods' ) );
 				}
 
-				add_submenu_page( $parent, $menu_item['label'], $menu_item['label'], 'read', $page, $menu_item['function'] );
+				add_submenu_page( $parent, $menu_item['title'], $menu_item['label'], 'read', $page, $menu_item['function'] );
 
 				if ( 'pods-components' === $page && is_object( PodsInit::$components ) ) {
 					PodsInit::$components->menu( $parent );
@@ -857,7 +874,7 @@ class PodsAdmin {
 		}
 
 		if ( 'pods' === $_GET['page'] && empty( $pods ) ) {
-			pods_ui_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
+			pods_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
 		}
 
 		// @codingStandardsIgnoreLine
@@ -899,6 +916,8 @@ class PodsAdmin {
 
 		$pod_types_found = array();
 
+		$include_row_counts = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
+
 		$fields = [
 			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
 			'name'        => [ 'label' => __( 'Name', 'pods' ) ],
@@ -917,8 +936,29 @@ class PodsAdmin {
 			],
 		];
 
-		$total_groups = 0;
-		$total_fields = 0;
+		if ( $include_row_counts ) {
+			$fields['row_count'] = [
+				'label' => __( 'Data Rows', 'pods' ),
+				'width' => '8%',
+			];
+
+			$fields['row_meta_count'] = [
+				'label' => __( 'Meta Rows', 'pods' ),
+				'width' => '8%',
+			];
+
+			$fields['podsrel_count'] = [
+				// translators: "PodsRel" references the name of the Pods relationships table in the database.
+				'label' => __( 'PodsRel Rows', 'pods' ),
+				'width' => '10%',
+			];
+		}
+
+		$total_groups       = 0;
+		$total_fields       = 0;
+		$total_rows         = 0;
+		$total_row_meta     = 0;
+		$total_podsrel_rows = 0;
 
 		/**
 		 * Filters whether to extend internal Pods.
@@ -931,10 +971,14 @@ class PodsAdmin {
 
 		$pod_list = array();
 
+		$is_tableless = pods_tableless();
+
 		foreach ( $pods as $k => $pod ) {
 			$pod_type       = $pod['type'];
 			$pod_type_label = null;
 			$pod_storage    = $pod['storage'];
+
+			$show_meta_count = 'meta' === $pod_storage || in_array( $pod['type'], [ 'post_type', 'taxonomy', 'user', 'comment' ], true );
 
 			if ( ! empty( $pod['internal'] ) ) {
 				// Don't show internal if we aren't extending them.
@@ -999,7 +1043,25 @@ class PodsAdmin {
 				$row = $pod;
 			}
 
-			$pod = array(
+			$group_count    = $pod->count_groups();
+			$field_count    = $pod->count_fields();
+			$row_count      = 0;
+			$row_meta_count = 0;
+			$podsrel_count  = 0;
+
+			if ( $include_row_counts ) {
+				$row_count      = $pod->count_rows();
+
+				if ( $show_meta_count ) {
+					$row_meta_count = $pod->count_row_meta();
+				}
+
+				if ( ! $is_tableless ) {
+					$podsrel_count = $pod->count_podsrel_rows();
+				}
+			}
+
+			$pod = [
 				'id'          => $pod['id'],
 				'label'       => pods_v( 'label', $pod ),
 				'name'        => pods_v( 'name', $pod ),
@@ -1007,12 +1069,33 @@ class PodsAdmin {
 				'type'        => $pod_type,
 				'real_type'   => $pod_real_type,
 				'storage'     => $storage_type_label,
-				'group_count' => $pod->count_groups(),
-				'field_count' => $pod->count_fields(),
-			);
+				'group_count' => number_format_i18n( $group_count ),
+				'field_count' => number_format_i18n( $field_count ),
+			];
 
-			$total_groups += $pod['group_count'];
-			$total_fields += $pod['field_count'];
+			$total_groups += $group_count;
+			$total_fields += $field_count;
+
+			if ( $include_row_counts ) {
+				$pod['row_count'] = number_format_i18n( $row_count );
+
+				$total_rows += $row_count;
+
+				$pod['row_meta_count'] = 'n/a';
+				$pod['podsrel_count']  = 'n/a';
+
+				if ( $show_meta_count ) {
+					$pod['row_meta_count'] = number_format_i18n( $row_meta_count );
+
+					$total_row_meta += $row_meta_count;
+				}
+
+				if ( ! $is_tableless ) {
+					$pod['podsrel_count'] = number_format_i18n( $podsrel_count );
+
+					$total_podsrel_rows += $podsrel_count;
+				}
+			}
 
 			$pod_list[] = $pod;
 		}//end foreach
@@ -1025,6 +1108,27 @@ class PodsAdmin {
 		}
 
 		$total_pods = count( $pod_list );
+
+		$extra_total_text = sprintf(
+			', %1$s %2$s, %3$s %4$s',
+			number_format_i18n( $total_groups ),
+			_n( 'group', 'groups', $total_groups, 'pods' ),
+			number_format_i18n( $total_fields ),
+			_n( 'field', 'fields', $total_fields, 'pods' )
+		);
+
+		if ( $include_row_counts ) {
+			$extra_total_text .= sprintf(
+			', %1$s %2$s, %3$s %4$s, %5$s %6$s',
+				number_format_i18n( $total_rows ),
+				_n( 'data row', 'data rows', $total_rows, 'pods' ),
+				number_format_i18n( $total_row_meta ),
+				_n( 'meta row', 'meta rows', $total_row_meta, 'pods' ),
+				number_format_i18n( $total_podsrel_rows ),
+				// translators: "podsrel" references the name of the Pods relationships table in the database.
+				_n( 'podsrel row', 'podsrel rows', $total_podsrel_rows, 'pods' )
+			);
+		}
 
 		$ui = [
 			'data'             => $pod_list,
@@ -1078,9 +1182,7 @@ class PodsAdmin {
 			'sortable'         => true,
 			'pagination'       => false,
 			'extra'            => [
-				'total' =>
-					', ' . number_format_i18n( $total_groups ) . ' ' . _n( 'group', 'groups', $total_groups, 'pods' )
-					. ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
+				'total' => $extra_total_text,
 			],
 		];
 
@@ -1158,8 +1260,8 @@ class PodsAdmin {
 		$disable_pods = pods_v( 'pods_callout_dismiss' );
 
 		// Disable Friends of Pods 2021 callout.
-		if ( 'friends_2021' === $disable_pods ) {
-			$callouts['friends_2021'] = 0;
+		if ( 'friends_2021_29' === $disable_pods ) {
+			$callouts['friends_2021_29'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
 		} elseif ( 'reset' === $disable_pods ) {
@@ -1230,41 +1332,102 @@ class PodsAdmin {
 	public function admin_setup_edit( $duplicate, $obj ) {
 		$api = pods_api();
 
-		$pod = $api->load_pod( [ 'id' => $obj->id ] );
+		$pod = $obj->row;
 
 		if ( ! $pod instanceof Pod ) {
 			$obj->id = null;
 			$obj->row = [];
 			$obj->action = 'manage';
 
-			$obj->error( __( 'Invalid Pod configuration detected.' ) );
+			$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
 			$obj->manage();
 
 			return null;
 		}
 
-		if ( 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
+		if ( 'post_type' !== $pod->get_object_storage_type() ) {
+			$obj->id = null;
+			$obj->row = [];
+			$obj->action = 'manage';
+
+			// translators: %s: The pod label.
+			$obj->error( sprintf( __( 'Unable to edit the "%s" Pod configuration.', 'pods' ), $pod->get_label() ) );
+			$obj->manage();
+
+			return null;
+		}
+
+		$original_field_count = 0;
+
+		foreach ( $obj->data as $row ) {
+			if ( $row['id'] === $obj->id ) {
+				$original_field_count = $row['field_count'];
+
+				break;
+			}
+		}
+
+		$find_orphan_fields = (
+			1 === (int) pods_v( 'pods_debug_find_orphan_fields', 'get', 0 )
+			&& pods_is_admin( array( 'pods' ) )
+		);
+
+		$migrated = false;
+
+		if ( $find_orphan_fields || 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
 			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+			$migrated = true;
+
+			// Maybe redirect the page to reload it fresh.
+			if ( $find_orphan_fields ) {
+				pods_redirect( pods_query_arg( [ 'pods_debug_find_orphan_fields' => null ] ) );
+				die();
+			}
+
+			// Check again in case the pod migrated wrong.
+			if ( ! $pod instanceof Pod ) {
+				$obj->id = null;
+				$obj->row = [];
+				$obj->action = 'manage';
+
+				$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
+				$obj->manage();
+
+				return null;
+			}
 		}
 
-		// Check again in case the pod migrated wrong.
-		if ( ! $pod instanceof Pod ) {
-			$obj->id = null;
-			$obj->row = [];
-			$obj->action = 'manage';
+		$current_pod = $pod->export( [
+			'include_groups'       => true,
+			'include_group_fields' => true,
+			'include_fields'       => false,
+		] );
 
-			$obj->error( __( 'Invalid Pod configuration detected.' ) );
-			$obj->manage();
+		if ( ! $migrated ) {
+			$group_field_count = wp_list_pluck( $current_pod['groups'], 'fields' );
+			$group_field_count = array_map( 'count', $group_field_count );
+			$group_field_count = array_sum( $group_field_count );
 
-			return null;
+			if ( $original_field_count !== $group_field_count ) {
+				$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+				// Check again in case the pod migrated wrong.
+				if ( ! $pod instanceof Pod ) {
+					$obj->id = null;
+					$obj->row = [];
+					$obj->action = 'manage';
+
+					$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
+					$obj->manage();
+
+					return null;
+				}
+			}
 		}
 
 		$config = [
-			'currentPod'     => $pod->export( [
-				'include_groups'       => true,
-				'include_group_fields' => true,
-				'include_fields'       => false,
-			] ),
+			'currentPod'     => $current_pod,
 			'global'         => $this->get_global_config( $pod ),
 			'fieldTypes'     => PodsForm::field_types(),
 			'relatedObjects' => $this->get_field_related_objects(),
@@ -1272,7 +1435,8 @@ class PodsAdmin {
 			'storageTypes'   => $api->get_storage_types(),
 			// @todo SKC: Remove these below and replace any references to podsDFVConfig
 			'wp_locale'      => $GLOBALS['wp_locale'],
-			'currencies'     => PodsField_Currency::$currencies,
+			'userLocale'     => str_replace( '_', '-', get_user_locale() ),
+			'currencies'     => PodsField_Currency::data_currencies(),
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
 				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
@@ -1397,6 +1561,7 @@ class PodsAdmin {
 			$groups = wp_list_pluck( $groups, 'id' );
 			$groups = array_filter( $groups );
 
+			// Get the first group ID.
 			if ( ! empty( $groups ) ) {
 				$group_id = reset( $groups );
 			}
@@ -2833,6 +2998,8 @@ class PodsAdmin {
 
 		$auto_start = pods_v( $auto_start, $fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
+		global $wpdb;
+
 		$info['pods'] = [
 			'label'       => 'Pods',
 			'description' => __( 'Debug information for Pods installations.', 'pods' ),
@@ -2953,6 +3120,10 @@ class PodsAdmin {
 					'label' => __( 'Pods Can Use Sessions' ),
 					'value' => ( pods_can_use_sessions( true ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
+				'pods-relationship-table-status'              => [
+					'label' => __( 'Pods Relationship Table Count' ),
+					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
+				],
 			],
 		];
 
@@ -2991,31 +3162,6 @@ class PodsAdmin {
 						'description' => sprintf( '<p>%s</p>', __( 'You are not using an external object cache for this site. Pods Alternative Cache is usually useful for Pods installs that use Shared Hosting with limited Object Cache capabilities.', 'pods' ) ),
 						'actions'     => sprintf( '<p><a href="%s">%s</a></p>', esc_url( $plugin_search_url . urlencode( 'Pods Alternative Cache' ) ), __( 'Install Pods Alternative Cache', 'pods' ) ),
 						'test'        => 'pods_alternative_cache',
-					];
-				},
-			];
-		}
-
-		// Check if any of the Pods Pro Page Builder Toolkit plugins are active.
-		$bb_active     = defined( 'FL_BUILDER_VERSION' );
-		$divi_active   = defined( 'ET_BUILDER_PRODUCT_VERSION' );
-		$oxygen_active = defined( 'CT_VERSION' );
-		$pods_pro_pbtk_active = class_exists( '\Pods_Pro\Page_Builder_Toolkit\Plugin' );
-
-		if ( ! $pods_pro_pbtk_active && ( $bb_active || $divi_active || $oxygen_active ) ) {
-			$tests['direct']['pods_pro_page_builder_toolkit'] = [
-				'label' => __( 'Pods Pro Page Builder Toolkit', 'pods' ),
-				'test'  => static function () {
-					return [
-						'label'       => __( 'The Pods Team recommends you use the Pods Pro Page Builder Toolkit by SKCDEV', 'pods' ),
-						'status'      => 'recommended',
-						'badge'       => [
-							'label' => __( 'Page Builder', 'pods' ),
-							'color' => 'blue',
-						],
-						'description' => sprintf( '<p>%s</p>', __( 'Pods Pro Page Builder Toolkit by SKCDEV integrates Pods directly with Beaver Builder Themer, Divi, and Oxygen Builder.', 'pods' ) ),
-						'actions'     => sprintf( '<p><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></p>', esc_url( 'https://pods-pro.skc.dev/?utm_source=pods_plugin_site_health_callout&utm_medium=link&utm_campaign=friends_of_pods_2021' ), __( 'Get Pods Pro by SKCDEV', 'pods' ) ),
-						'test'        => 'pods_pro_page_builder_toolkit',
 					];
 				},
 			];

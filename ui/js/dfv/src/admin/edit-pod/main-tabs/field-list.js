@@ -4,16 +4,13 @@ import classnames from 'classnames';
 import { omit } from 'lodash';
 import {
 	DndContext,
+	DragOverlay,
 	closestCenter,
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core';
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis,
-} from '@dnd-kit/modifiers';
 import {
 	arrayMove,
 	SortableContext,
@@ -35,6 +32,7 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
  * Internal dependencies
  */
 import SettingsModal from './settings-modal';
+import DraggableFieldListItem from './draggable-field-list-item';
 import FieldListItem from './field-list-item';
 
 import './field-list.scss';
@@ -61,6 +59,7 @@ const FieldList = ( {
 	const [ newFieldIndex, setNewFieldIndex ] = useState( null );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
 	const [ movedFieldIDs, setMovedFieldIDs ] = useState( [] );
+	const [ activeField, setActiveField ] = useState( null );
 
 	const sensors = useSensors(
 		useSensor( PointerSensor ),
@@ -135,6 +134,16 @@ const FieldList = ( {
 		isEmpty && 'pods-field-list--no-fields',
 	);
 
+	const handleDragStart = ( event ) => {
+		const { active } = event;
+
+		const newActiveField = fields.find(
+			( item ) => ( item.id.toString() === active ),
+		);
+
+		setActiveField( newActiveField );
+	};
+
 	const handleFieldDragEnd = ( event ) => {
 		const { active, over } = event;
 
@@ -158,6 +167,8 @@ const FieldList = ( {
 			...prevState,
 			parseInt( active.id, 10 ),
 		] );
+
+		setActiveField( null );
 	};
 
 	return (
@@ -224,10 +235,11 @@ const FieldList = ( {
 					<DndContext
 						sensors={ sensors }
 						collisionDetection={ closestCenter }
+						onDragStart={ handleDragStart }
 						onDragEnd={ handleFieldDragEnd }
 						modifiers={ [
-							restrictToParentElement,
-							restrictToVerticalAxis,
+							// restrictToParentElement,
+							// restrictToVerticalAxis,
 						] }
 					>
 						<SortableContext
@@ -237,7 +249,7 @@ const FieldList = ( {
 							<div className="pods-field_wrapper-items">
 								{ fields.map( ( field ) => {
 									return (
-										<FieldListItem
+										<DraggableFieldListItem
 											storeKey={ storeKey }
 											podType={ podType }
 											podName={ podName }
@@ -255,6 +267,25 @@ const FieldList = ( {
 								} ) }
 							</div>
 						</SortableContext>
+
+						<DragOverlay>
+							{ activeField ? (
+								<FieldListItem
+									storeKey={ storeKey }
+									podType={ podType }
+									podName={ podName }
+									podID={ podID }
+									podLabel={ podLabel }
+									groupLabel={ groupLabel }
+									field={ activeField }
+									groupName={ groupName }
+									groupID={ groupID }
+									cloneField={ undefined }
+									hasMoved={ movedFieldIDs.includes( activeField?.id ) }
+									isDragging={ true }
+								/>
+							) : null }
+						</DragOverlay>
 					</DndContext>
 
 					<Button

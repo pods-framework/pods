@@ -15,6 +15,11 @@
 		-1px 0 2px 0 rgba(34, 33, 81, 0.01),
 		0px 2px 2px 0 rgba(34, 33, 81, 0.25);
 	transform: scale(1.02);
+	z-index: 999;
+
+	.pods-field_wrapper .pods-field_controls-container {
+		opacity: 0;
+	}
 }
 
 .pods-field_wrapper {
@@ -196,7 +201,6 @@
 	height: auto;
 	overflow: visible;
 	padding: 0 0.5em;
-	position: relative;
 
 	&:hover,
 	&:focus {

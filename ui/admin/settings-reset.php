@@ -1,5 +1,8 @@
 <?php
-global $pods_init;
+/** @var $pods_init PodsInit */
+global $pods_init, $wpdb;
+
+$relationship_table = $wpdb->prefix . 'podsrel';
 
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
 	if ( isset( $_POST['pods_cleanup_1x'] ) ) {
@@ -17,22 +20,28 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 		deactivate_plugins( PODS_DIR . 'init.php' );
 
 		pods_redirect( 'index.php' );
-	} elseif ( 1 == pods_v( 'pods_reset_success' ) ) {
-		pods_message( 'Pods 2.x settings and data have been reset.' );
-	} elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) ) {
-		pods_message( 'Pods 1.x data has been deleted.' );
+	} elseif ( isset( $_POST['pods_recreate_tables'] ) ) {
+		pods_upgrade()->delta_tables();
+
+		pods_redirect( pods_query_arg( array( 'pods_recreate_tables_success' => 1 ), array( 'page', 'tab' ) ) );
 	}
-}//end if
+} elseif ( 1 === (int) pods_v( 'pods_reset_success' ) ) {
+	pods_message( 'Pods 2.x settings and data have been reset.' );
+} elseif ( 1 === (int) pods_v( 'pods_cleanup_1x_success' ) ) {
+	pods_message( 'Pods 1.x data has been deleted.' );
+} elseif ( 1 === (int) pods_v( 'pods_recreate_tables_success' ) ) {
+	pods_message( 'Pods tables have been recreated.' );
+}
 
 // Monday Mode
 $monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
 
 if ( pods_v_sanitized( 'pods_reset_weekend', 'post', pods_v_sanitized( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
 	if ( $monday_mode ) {
-		$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+		$html = '<br /><br /><iframe width="480" height="360" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
 		pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );
 	} else {
-		$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/xhrBDcQq2DM?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+		$html = '<br /><br /><iframe width="480" height="360" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
 		pods_message( 'Oops, sorry! You can only reset the weekend on a Monday before the end of the work day. Somebody call the Waaambulance!' . $html, 'error' );
 	}
 }
@@ -92,7 +101,10 @@ if ( ! empty( $old_version ) ) {
 		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods plugin will remain activated', 'pods' ); ?></li>
 		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
 		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Relationship table (wp_podsrel) will be deleted (and all of the relationships)', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( 'Relationship table (%s) will be deleted (and all of the relationships)', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
 		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
 	</ul>
 
@@ -116,13 +128,38 @@ if ( ! empty( $old_version ) ) {
 		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DEACTIVATE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods plugin will be deactivated', 'pods' ); ?></li>
 		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
 		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Relationship table (wp_podsrel) will be deleted (and all of the relationships)', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( 'Relationship table (%s) will be deleted (and all of the relationships)', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
 		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
 	</ul>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back.", 'pods' ); ?>
 		<input type="submit" class="button button-primary" name="pods_reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+	</p>
+
+	<hr />
+
+	<h3><?php esc_html_e( 'Recreate missing tables', 'pods' ); ?></h3>
+
+	<p><?php esc_html_e( 'This will recreate missing tables if there are any that do not exist.', 'pods' ); ?></p>
+	<h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
+	<ul>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( '%s will remain untouched if it already exists', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'CREATE', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( '%s will be created if it does not exist', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
+	</ul>
+
+	<p class="submit">
+		<?php $confirm = __( "Are you sure you want to do this?", 'pods' ); ?>
+		<input type="submit" class="button button-primary" name="pods_recreate_tables" value=" <?php esc_attr_e( 'Recreate missing tables', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 	<?php
 }//end if

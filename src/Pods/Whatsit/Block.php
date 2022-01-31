@@ -64,7 +64,7 @@ class Block extends Pod {
 			// Extra block controls.
 			'align'                    => true,
 			'alignWide'                => true,
-			'anchor'                   => true,
+			'anchor'                   => false, // Not support for dynamic blocks yet as of WP 5.9
 			'customClassName'          => true,
 			// Block functionality.
 			'inserter'                 => true,

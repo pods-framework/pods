@@ -5,7 +5,7 @@
   "title": "Pods Single Item",
   "description": "Display a single Pod item.",
   "category": "pods",
-  "icon": "page",
+  "icon": "admin-page",
   "keywords": [
     "pods",
     "single",

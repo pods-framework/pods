@@ -1936,11 +1936,31 @@ class PodsField_Pick extends PodsField {
 			$data = $this->get_object_data( $object_params );
 		}
 
+		/**
+		 * Allow filtering whether to always show default select text for the Single select Dropdown field even if
+		 * the field is required.
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param bool            $always_show_default_select_text Whether to always show default select text.
+		 * @param array           $data                            The object data.
+		 * @param string|null     $name                            Field name.
+		 * @param mixed|null      $value                           Current value.
+		 * @param array|null      $options                         Field options.
+		 * @param array|null      $pod                             Pod information.
+		 * @param int|string|null $id                              Current item ID.
+		 */
+		$always_show_default_select_text = (bool) apply_filters( 'pods_field_pick_always_show_default_select_text', false, $data, $name, $value, $options, $pod, $id );
+
 		if (
 			'single' === pods_v( static::$type . '_format_type', $options, 'single' )
 			&& 'dropdown' === pods_v( static::$type . '_format_single', $options, 'dropdown' )
 			//&& 0 !== (int) pods_v( static::$type . '_show_select_text', $options, 1 )
-			&& 0 === (int) pods_v( 'required', $options, 0 )
+			&& (
+				$always_show_default_select_text
+				|| empty( $value )
+				|| 0 === (int) pods_v( 'required', $options, 0 )
+			)
 		) {
 			$default_select = [
 				'' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ),

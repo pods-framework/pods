@@ -39,6 +39,7 @@
   "devDependencies": {
     "@babel/cli": "^7.16.8",
     "@babel/core": "^7.16.12",
+    "@babel/eslint-parser": "^7.16.5",
     "@babel/plugin-external-helpers": "^7.16.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.16.7",
     "@babel/plugin-proposal-optional-chaining": "^7.16.7",
@@ -60,7 +61,6 @@
     "@wordpress/jest-preset-default": "^7.1.5-next.33ec3857e2.0",
     "@wordpress/scripts": "^19.2.3",
     "@wordpress/server-side-render": "3.0.17",
-    "babel-eslint": "^10.0.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-plugin-transform-html-import-to-string": "^2.0.0",

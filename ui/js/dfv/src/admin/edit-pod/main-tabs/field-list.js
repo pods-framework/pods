@@ -17,6 +17,7 @@ import {
 	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 /**
  * WordPress dependencies
@@ -51,6 +52,7 @@ const FieldList = ( {
 	editFieldPod,
 	saveField,
 	fields,
+	allFields,
 	setGroupFields,
 	podSaveStatus,
 } ) => {
@@ -60,6 +62,7 @@ const FieldList = ( {
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
 	const [ movedFieldIDs, setMovedFieldIDs ] = useState( [] );
 	const [ activeField, setActiveField ] = useState( null );
+	const [ clonedItems, setClonedItems ] = useState( null );
 
 	const sensors = useSensors(
 		useSensor( PointerSensor ),
@@ -142,11 +145,103 @@ const FieldList = ( {
 		);
 
 		setActiveField( newActiveField );
+		setClonedItems( fields );
+	};
+
+	const handleDragOver = ( { active, over } ) => {
+		console.log( 'handleDragOver', groupName );
+
+		if ( ! over || ! over.id ) {
+			return;
+		}
+
+		// We only need to move items if we're going from
+		// one group to another.
+		const overContainerId = over.data?.current?.sortable?.containerId;
+		const activeContainerId = active.data?.current?.sortable?.containerId;
+
+		console.log(`overContainerId: ${ overContainerId }`, `activeContainerId: ${ activeContainerId }`);
+
+		if ( overContainerId === activeContainerId ) {
+			return;
+		}
+
+		// @todo add a Droppable zone
+		// It's simpler to handle adding one item to an empty list.
+		if (
+			over.id === 'TODO_DROPPABLE_ID' &&
+			fields.length === 0
+		) {
+			const activeData = allFields.find(
+				( item ) => ( item.id.toString() === active ),
+			);
+
+			if ( ! activeData ) {
+				return;
+			}
+
+			setGroupFields( groupName, [ activeData ] );
+
+			return;
+		}
+
+		const currentItems = [ ...fields ];
+
+		// If the item has already been added, we don't
+		// need to do anything.
+		const doesListAlreadyIncludeActive = currentItems.findIndex(
+			( item ) => item.id.toString() === active.id.toString(),
+		) !== -1;
+
+		if ( doesListAlreadyIncludeActive ) {
+			console.log('returning, already in list');
+			return;
+		}
+
+		const activeData = allFields.find(
+			( item ) => item.id.toString() === active.id.toString(),
+		);
+
+		if ( ! activeData ) {
+			return;
+		}
+
+		console.log('activeData', activeData);
+
+		const overIndex = currentItems.findIndex(
+			( item ) => item.id.toString() === over.id.toString(),
+		);
+
+		const isBelowLastItem = overIndex === currentItems.length - 1 &&
+			active.rect.current.translated &&
+			active.rect.current.translated.offsetTop >
+				over.rect.offsetTop + over.rect.height;
+
+		const modifier = isBelowLastItem ? 1 : 0;
+
+		const newIndex = overIndex >= 0
+			? overIndex + modifier
+			: currentItems.length + 1;
+
+		const newItems = [
+			...currentItems.slice( 0, newIndex ),
+			activeData,
+			...currentItems.slice(
+				newIndex,
+				currentItems.length,
+			),
+		];
+
+		setGroupFields( groupName, newItems );
 	};
 
 	const handleFieldDragEnd = ( event ) => {
+		setActiveField( null );
+		setClonedItems( undefined );
+
 		const { active, over } = event;
 
+		// Don't sort anything if nothing changed or something is missing.
 		if ( ! over?.id || active.id === over.id ) {
 			return;
 		}
@@ -159,6 +254,7 @@ const FieldList = ( {
 			( item ) => ( item.id.toString() === over.id ),
 		);
 
+		// @todo use arraySwap?
 		const reorderedItems = arrayMove( fields, oldIndex, newIndex );
 
 		setGroupFields( groupName, reorderedItems );
@@ -167,8 +263,15 @@ const FieldList = ( {
 			...prevState,
 			parseInt( active.id, 10 ),
 		] );
+	};
+
+	const handleDragCancel = () => {
+		if ( clonedItems ) {
+			setGroupFields( groupName, clonedItems );
+		}
 
 		setActiveField( null );
+		setClonedItems( null );
 	};
 
 	return (
@@ -236,13 +339,13 @@ const FieldList = ( {
 						sensors={ sensors }
 						collisionDetection={ closestCenter }
 						onDragStart={ handleDragStart }
+						onDragOver={ handleDragOver }
 						onDragEnd={ handleFieldDragEnd }
-						modifiers={ [
-							// restrictToParentElement,
-							// restrictToVerticalAxis,
-						] }
+						onDragCancel={ handleDragCancel }
+						modifiers={ [ restrictToWindowEdges ] }
 					>
 						<SortableContext
+							id={ groupName }
 							items={ fields.map( ( field ) => field.id.toString() ) }
 							strategy={ verticalListSortingStrategy }
 						>
@@ -313,6 +416,9 @@ FieldList.propTypes = {
 	fields: PropTypes.arrayOf(
 		FIELD_PROP_TYPE_SHAPE
 	).isRequired,
+	allFields: PropTypes.arrayOf(
+		FIELD_PROP_TYPE_SHAPE
+	).isRequired,
 	fieldSaveStatuses: PropTypes.object.isRequired,
 	fieldSaveMessages: PropTypes.object.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
@@ -331,6 +437,7 @@ export default compose( [
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
 			fieldSaveMessages: storeSelect.getFieldSaveMessages(),
 			podSaveStatus: storeSelect.getSaveStatus(),
+			allFields: storeSelect.getFieldsFromAllGroups(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {

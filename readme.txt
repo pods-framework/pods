@@ -151,7 +151,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.8.10 = February 1st, 2022 =
+= 2.8.10 - February 1st, 2022 =
 
 * Fixed: Meta compatibility fix for when it was not saving to meta through direct update meta calls. #6429 #6431 (@sc0ttkclark)
 * Fixed: Don't render the wrapper HTML for blocks if the contents are empty. (@sc0ttkclark)

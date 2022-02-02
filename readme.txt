@@ -151,9 +151,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.8.10 = February 2nd, 2022 =
+= 2.8.10 = February 1st, 2022 =
 
-*
+* Fixed: Meta compatibility fix for when it was not saving to meta through direct update meta calls. #6429 #6431 (@sc0ttkclark)
 
 = 2.8.9 - January 31st, 2022 =
 

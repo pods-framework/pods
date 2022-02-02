@@ -986,13 +986,13 @@ function pods_shortcode( $tags, $content = null ) {
  *
  * @since 2.8.9
  *
- * @param string $html      The HTML to wrap.
- * @param array $attributes List of attributes for the element.
+ * @param string $html       The HTML to wrap.
+ * @param array  $attributes List of attributes for the element.
  *
  * @return string The wrapped HTML.
  */
 function pods_wrap_html( $html, $attributes = [] ) {
-	if ( empty( $attributes ) ) {
+	if ( empty( $attributes ) || '' === trim( $html ) ) {
 		return $html;
 	}
 

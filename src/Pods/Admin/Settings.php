@@ -194,7 +194,7 @@ class Settings {
 		$fields['wisdom_opt_out'] = [
 			'name'               => 'wisdom_opt_out',
 			'label'              => __( 'Would you like to opt-out of tracking?', 'pods' ),
-			'description'        => __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment, your site admin email address, and plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' ),
+			'description'        => __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment and your plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' ),
 			'type'               => 'pick',
 			'default'            => $is_wisdom_opted_out ? '1' : '',
 			'pick_format'        => 'single',

@@ -986,13 +986,13 @@ function pods_shortcode( $tags, $content = null ) {
  *
  * @since 2.8.9
  *
- * @param string $html      The HTML to wrap.
- * @param array $attributes List of attributes for the element.
+ * @param string $html       The HTML to wrap.
+ * @param array  $attributes List of attributes for the element.
  *
  * @return string The wrapped HTML.
  */
 function pods_wrap_html( $html, $attributes = [] ) {
-	if ( empty( $attributes ) ) {
+	if ( empty( $attributes ) || '' === trim( $html ) ) {
 		return $html;
 	}
 
@@ -1128,15 +1128,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 	if ( 0 < strlen( $tags['view'] ) ) {
 		$return = '';
 
-		if ( ! file_exists( $tags['view'] ) ) {
+		if ( ( ! defined( 'PODS_SHORTCODE_ALLOW_VIEWS' ) || PODS_SHORTCODE_ALLOW_VIEWS ) && ! file_exists( $tags['view'] ) ) {
 			$return = pods_view( $tags['view'], null, (int) $tags['expires'], $tags['cache_mode'], true );
 
 			if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 				$return = do_shortcode( $return );
 			}
-		}
 
-		$return = pods_wrap_html( $return, $tags );
+			$return = pods_wrap_html( $return, $tags );
+		}
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.

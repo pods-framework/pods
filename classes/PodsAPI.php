@@ -5067,15 +5067,13 @@ class PodsAPI {
 						$table_formats[] = PodsForm::prepare( $type, $options );
 					}
 
-					if ( ! $params->podsmeta_direct ) {
-						// Check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to meta.
-						if ( ! $simple ) {
-							// Save fields to meta.
-							$object_meta[ $field ] = $value;
-						} elseif ( $save_simple_to_meta ) {
-							// Save simple to meta.
-							$simple_rel_meta[ $field ] = $value;
-						}
+					// Check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to meta.
+					if ( ! $simple ) {
+						// Save fields to meta.
+						$object_meta[ $field ] = $value;
+					} elseif ( $save_simple_to_meta ) {
+						// Save simple to meta.
+						$simple_rel_meta[ $field ] = $value;
 					}
 				} else {
 					// Store relational field data to be looped through later
@@ -5660,6 +5658,12 @@ class PodsAPI {
 			$related_ids = array_slice( $related_ids, 0, $related_limit );
 		}
 
+		$no_conflict = pods_no_conflict_check( $pod['type'] );
+
+		if ( ! $no_conflict ) {
+			pods_no_conflict_on( $pod['type'] );
+		}
+
 		// Post Types, Media, Users, and Comments (meta-based)
 		if ( pods_relationship_meta_storage_enabled( $field, $pod ) && in_array( $pod['type'], [
 				'post_type',
@@ -5778,6 +5782,10 @@ class PodsAPI {
 		 * @param array|Field $field       The Field object.
 		 */
 		do_action( 'pods_api_save_relationships', $id, $related_ids, $field, $pod );
+
+		if ( ! $no_conflict ) {
+			pods_no_conflict_off( $pod['type'] );
+		}
 
 		return $related_ids;
 	}

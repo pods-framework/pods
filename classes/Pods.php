@@ -3762,7 +3762,13 @@ class Pods implements Iterator {
 		$form_fields = $params['fields'];
 
 		if ( null !== $form_fields && ! is_array( $form_fields ) && 0 < strlen( $form_fields ) ) {
-			$form_fields = explode( ',', $form_fields );
+			$json_form_fields = @json_decode( $form_fields, true );
+			if ( is_array( $json_form_fields ) ) {
+				$form_fields = $json_form_fields;
+			} else {
+				// Regular comma separated string.
+				$form_fields = explode( ',', $form_fields );
+			}
 		}
 
 		$all_fields = pods_config_get_all_fields( $this->pod_data );

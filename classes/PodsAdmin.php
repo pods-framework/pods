@@ -1429,6 +1429,7 @@ class PodsAdmin {
 		$config = [
 			'currentPod'     => $current_pod,
 			'global'         => $this->get_global_config( $pod ),
+			'showFields'     => ! pods_is_types_only(),
 			'fieldTypes'     => PodsForm::field_types(),
 			'relatedObjects' => $this->get_field_related_objects(),
 			'podTypes'       => $api->get_pod_types(),

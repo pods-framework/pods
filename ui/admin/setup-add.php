@@ -362,16 +362,11 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										$data = [
 											'post_type' => __( 'Post Types (Posts, Pages, etc..)', 'pods' ),
-											'taxonomy'  => '',
-											// component will fill this in if it's enabled (this exists for placement)
+											'taxonomy'  => __( 'Taxonomies (Categories, Tags, etc..)', 'pods' ),
 											'media'     => __( 'Media', 'pods' ),
 											'user'      => __( 'Users', 'pods' ),
 											'comment'   => __( 'Comments', 'pods' ),
 										];
-
-										if ( function_exists( 'get_term_meta' ) ) {
-											$data['taxonomy'] = __( 'Taxonomies (Categories, Tags, etc..)', 'pods' );
-										}
 
 										if ( isset( $all_pods['media'] ) && 'media' == $all_pods['media']['type'] ) {
 											unset( $data['media'] );
@@ -386,10 +381,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										}
 
 										$data = apply_filters( 'pods_admin_setup_add_extend_pod_type', $data );
-
-										if ( empty( $data['taxonomy'] ) ) {
-											unset( $data['taxonomy'] );
-										}
 
 										echo PodsForm::field( 'extend_pod_type', pods_v( 'extend_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,

@@ -21,7 +21,6 @@ class Pod extends Base {
 	 * @return array List of tabs for the Pod object.
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
-		$fields      = true;
 		$labels      = false;
 		$admin_ui    = false;
 		$connections = false;
@@ -50,10 +49,6 @@ class Pod extends Base {
 		}
 
 		$core_tabs = [];
-
-		if ( $fields ) {
-			$core_tabs['manage-fields'] = __( 'Manage Fields', 'pods' );
-		}
 
 		if ( $labels ) {
 			$core_tabs['labels'] = __( 'Labels', 'pods' );

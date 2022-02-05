@@ -2681,6 +2681,11 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		'action' => [],
 	];
 
+	// If Pods is not being used for any fields, bypass all hooks.
+	if ( pods_is_types_only() ) {
+		return $hooks;
+	}
+
 	// Filters = Usually get/update/delete meta functions
 	// Actions = Usually insert/update/save/delete object functions
 	if ( 'post' === $object_type || 'media' === $object_type  || 'all' === $object_type ) {
@@ -2879,7 +2884,16 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}*/
 	}
 
-	return $hooks;
+	/**
+	 * Allow filtering the list of actions and filters for a specific object type.
+	 *
+	 * @since TBD
+	 *
+	 * @param array       $hooks       List of filters and actions for a specific object type.
+	 * @param string      $object_type The object type.
+	 * @param string|null $object      The object name.
+	 */
+	return (array) apply_filters( 'pods_meta_hook_list', $hooks, $object_type );
 }
 
 /**
@@ -3702,4 +3716,26 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 
 	// Default mode is base64.
 	return 'data:image/svg+xml;base64,' . base64_encode( $svg_data );
+}
+
+/**
+ * Determine whether Pods is being used for content types only.
+ *
+ * @since TBD
+ *
+ * @return bool Whether Pods is being used for content types only.
+ */
+function pods_is_types_only() {
+	return true;
+	// Check if Pods is only being used for content types only.
+	$is_types_only = defined( 'PODS_META_TYPES_ONLY' ) && PODS_META_TYPES_ONLY;
+
+	/**
+	 * Allow filtering whether Pods is being used for content types only.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool $is_types_only Whether Pods is being used for content types only.
+	 */
+	return (bool) apply_filters( 'pods_is_types_only', $is_types_only );
 }

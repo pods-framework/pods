@@ -1446,7 +1446,6 @@ class PodsAdmin {
 		$config = [
 			'currentPod'     => $current_pod,
 			'global'         => $this->get_global_config( $pod ),
-			'showFields'     => ! pods_is_types_only(),
 			'fieldTypes'     => PodsForm::field_types(),
 			'relatedObjects' => $this->get_field_related_objects(),
 			'podTypes'       => $api->get_pod_types(),
@@ -1698,19 +1697,20 @@ class PodsAdmin {
 		] );
 
 		$pod = [
-			'pod'   => $pod_object->export( [
+			'showFields' => ! pods_is_types_only(),
+			'pod'        => $pod_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
 			] ),
-			'group' => $group_object->export( [
+			'group'      => $group_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
 			] ),
-			'field' => $field_object->export( [
+			'field'      => $field_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,

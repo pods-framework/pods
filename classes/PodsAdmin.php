@@ -936,6 +936,11 @@ class PodsAdmin {
 			],
 		];
 
+		// Do not show Groups/Fields if in types-only mode.
+		if ( pods_is_types_only() ) {
+			unset( $fields['group_count'], $fields['field_count'] );
+		}
+
 		if ( $include_row_counts ) {
 			$fields['row_count'] = [
 				'label' => __( 'Data Rows', 'pods' ),
@@ -1043,11 +1048,16 @@ class PodsAdmin {
 				$row = $pod;
 			}
 
-			$group_count    = $pod->count_groups();
-			$field_count    = $pod->count_fields();
+			$group_count    = 0;
+			$field_count    = 0;
 			$row_count      = 0;
 			$row_meta_count = 0;
 			$podsrel_count  = 0;
+
+			if ( ! pods_is_types_only() ) {
+				$group_count    = $pod->count_groups();
+				$field_count    = $pod->count_fields();
+			}
 
 			if ( $include_row_counts ) {
 				$row_count      = $pod->count_rows();
@@ -1062,19 +1072,22 @@ class PodsAdmin {
 			}
 
 			$pod = [
-				'id'          => $pod['id'],
-				'label'       => pods_v( 'label', $pod ),
-				'name'        => pods_v( 'name', $pod ),
-				'object'      => pods_v( 'object', $pod, '' ),
-				'type'        => $pod_type,
-				'real_type'   => $pod_real_type,
-				'storage'     => $storage_type_label,
-				'group_count' => number_format_i18n( $group_count ),
-				'field_count' => number_format_i18n( $field_count ),
+				'id'        => $pod['id'],
+				'label'     => pods_v( 'label', $pod ),
+				'name'      => pods_v( 'name', $pod ),
+				'object'    => pods_v( 'object', $pod, '' ),
+				'type'      => $pod_type,
+				'real_type' => $pod_real_type,
+				'storage'   => $storage_type_label,
 			];
 
-			$total_groups += $group_count;
-			$total_fields += $field_count;
+			if ( ! pods_is_types_only() ) {
+				$pod['group_count'] = number_format_i18n( $group_count );
+				$pod['field_count'] = number_format_i18n( $field_count );
+
+				$total_groups += $group_count;
+				$total_fields += $field_count;
+			}
 
 			if ( $include_row_counts ) {
 				$pod['row_count'] = number_format_i18n( $row_count );
@@ -1109,13 +1122,17 @@ class PodsAdmin {
 
 		$total_pods = count( $pod_list );
 
-		$extra_total_text = sprintf(
-			', %1$s %2$s, %3$s %4$s',
-			number_format_i18n( $total_groups ),
-			_n( 'group', 'groups', $total_groups, 'pods' ),
-			number_format_i18n( $total_fields ),
-			_n( 'field', 'fields', $total_fields, 'pods' )
-		);
+		$extra_total_text = '';
+
+		if ( ! pods_is_types_only() ) {
+			$extra_total_text .= sprintf(
+				', %1$s %2$s, %3$s %4$s',
+				number_format_i18n( $total_groups ),
+				_n( 'group', 'groups', $total_groups, 'pods' ),
+				number_format_i18n( $total_fields ),
+				_n( 'field', 'fields', $total_fields, 'pods' )
+			);
+		}
 
 		if ( $include_row_counts ) {
 			$extra_total_text .= sprintf(

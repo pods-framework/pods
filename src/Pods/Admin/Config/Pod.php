@@ -71,7 +71,7 @@ class Pod extends Base {
 			$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
 		}
 
-		$args = compact( [ 'fields', 'labels', 'admin_ui', 'connections', 'advanced' ] );
+		$args = compact( [ 'labels', 'admin_ui', 'connections', 'advanced' ] );
 
 		$pod_name = $pod['name'];
 

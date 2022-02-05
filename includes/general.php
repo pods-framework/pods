@@ -3723,12 +3723,23 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
  *
  * @since TBD
  *
+ * @param bool $check_constant_only Whether to only check the constant, unless there's a filter overriding things.
+ *
  * @return bool Whether Pods is being used for content types only.
  */
-function pods_is_types_only() {
-	return true;
+function pods_is_types_only( $check_constant_only = false ) {
 	// Check if Pods is only being used for content types only.
-	$is_types_only = defined( 'PODS_META_TYPES_ONLY' ) && PODS_META_TYPES_ONLY;
+	if ( defined( 'PODS_META_TYPES_ONLY' ) && PODS_META_TYPES_ONLY ) {
+		return true;
+	}
+
+	// Return null we want to only check the constant, unless there's a filter overriding things.
+	if ( $check_constant_only && ! has_filter( 'pods_is_types_only' ) ) {
+		return null;
+	}
+
+	$is_types_only = pods_get_setting( 'types_only', '0' );
+	$is_types_only = filter_var( $is_types_only, FILTER_VALIDATE_BOOLEAN );
 
 	/**
 	 * Allow filtering whether Pods is being used for content types only.

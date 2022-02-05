@@ -149,6 +149,40 @@ class Settings {
 	 * @return array The list of Pods settings fields.
 	 */
 	public function get_setting_fields() {
+		$disabled_text = __( 'This setting is disabled because it is forced through the constant/filter elsewhere.', 'pods' );
+		$current_value = __( 'Current value', 'pods' );
+
+		$fields['core'] = [
+			'label' => __( 'Core', 'pods' ),
+			'type'  => 'heading',
+		];
+
+		$is_types_only            = pods_is_types_only( true );
+		$is_types_only_overridden = null !== $is_types_only;
+
+		$is_types_only_disabled_text = sprintf(
+			'%1$s<br /><strong>%2$s: %3$s</strong>',
+			$disabled_text,
+			$current_value,
+			! $is_types_only ? __( 'Enabled', 'pods' ) : __( 'Disabled', 'pods' )
+		);
+
+		$fields['types_only'] = [
+			'name'               => 'types_only',
+			'label'              => __( 'Allow Pods to create and manage custom fields on any content type created/extended through Pods', 'pods' ),
+			'help'               => __( 'By default, Pods allows you to create custom fields for any content type that you create/extend with Pods. If you only intend to use Pods for content types themselves and not to add custom fields, Disabling Custom Fields can improve performance on your site.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => '0',
+			'readonly'           => $is_types_only_overridden,
+			'description'        => $is_types_only_overridden ? $is_types_only_disabled_text : '',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'0'    => __( 'Enable creating custom fields with Pods', 'pods' ),
+				'1'    => __( 'Disable creating custom fields with Pods (for when using Pods only for content types)', 'pods' ),
+			],
+		];
+
 		$session_auto_start            = pods_session_auto_start( true );
 		$session_auto_start_overridden = null !== $session_auto_start;
 
@@ -157,10 +191,10 @@ class Settings {
 			'type'  => 'heading',
 		];
 
-		$disabled_text = sprintf(
+		$session_auto_start_disabled_text = sprintf(
 			'%1$s<br /><strong>%2$s: %3$s</strong>',
-			__( 'This setting is disabled because it is forced through the PODS_SESSION_AUTO_START constant elsewhere.', 'pods' ),
-			__( 'Current value', 'pods' ),
+			$disabled_text,
+			$current_value,
 			$session_auto_start ? __( 'Enabled', 'pods' ) : __( 'Disabled', 'pods' )
 		);
 
@@ -171,7 +205,7 @@ class Settings {
 			'type'               => 'pick',
 			'default'            => '0',
 			'readonly'           => $session_auto_start_overridden,
-			'description'        => $session_auto_start_overridden ? $disabled_text : '',
+			'description'        => $session_auto_start_overridden ? $session_auto_start_disabled_text : '',
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [

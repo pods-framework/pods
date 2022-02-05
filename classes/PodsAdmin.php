@@ -1,5 +1,8 @@
 <?php
 
+use Pods\Admin\Config\Pod as Config_Pod;
+use Pods\Admin\Config\Group as Config_Group;
+use Pods\Admin\Config\Field as Config_Field;
 use Pods\Admin\Settings;
 use Pods\Whatsit\Pod;
 
@@ -1653,9 +1656,9 @@ class PodsAdmin {
 	 * @return array Global config array.
 	 */
 	public function get_global_config( $pod = null ) {
-		$config_pod   = tribe( \Pods\Admin\Config\Pod::class );
-		$config_group = tribe( \Pods\Admin\Config\Group::class );
-		$config_field = tribe( \Pods\Admin\Config\Field::class );
+		$config_pod   = tribe( Config_Pod::class );
+		$config_group = tribe( Config_Group::class );
+		$config_field = tribe( Config_Field::class );
 
 		// Pod: Backwards compatible configs and hooks.
 		$pod_tabs        = $config_pod->get_tabs( $pod );
@@ -1663,17 +1666,20 @@ class PodsAdmin {
 
 		$this->backcompat_convert_tabs_to_groups( $pod_tabs, $pod_tab_options, 'pod/_pods_pod' );
 
-		// Group: Backwards compatible methods and hooks.
-		$group_tabs        = $config_group->get_tabs( $pod );
-		$group_tab_options = $config_group->get_fields( $pod, $group_tabs );
+		// If not types-only mode, handle groups/fields configs.
+		if ( ! pods_is_types_only() ) {
+			// Group: Backwards compatible methods and hooks.
+			$group_tabs        = $config_group->get_tabs( $pod );
+			$group_tab_options = $config_group->get_fields( $pod, $group_tabs );
 
-		$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
+			$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
 
-		// Field: Backwards compatible methods and hooks.
-		$field_tabs        = $config_field->get_tabs( $pod );
-		$field_tab_options = $config_field->get_fields( $pod, $field_tabs );
+			// Field: Backwards compatible methods and hooks.
+			$field_tabs        = $config_field->get_tabs( $pod );
+			$field_tab_options = $config_field->get_fields( $pod, $field_tabs );
 
-		$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
+			$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
+		}
 
 		$object_collection = Pods\Whatsit\Store::get_instance();
 

@@ -170,7 +170,7 @@ class Settings {
 		$fields['types_only'] = [
 			'name'               => 'types_only',
 			'label'              => __( 'Allow Pods to create and manage custom fields on any content type created/extended through Pods', 'pods' ),
-			'help'               => __( 'By default, Pods allows you to create custom fields for any content type that you create/extend with Pods. If you only intend to use Pods for content types themselves and not to add custom fields, Disabling Custom Fields can improve performance on your site.', 'pods' ),
+			'help'               => __( 'By default, Pods allows you to create custom fields for any content type that you create/extend with Pods. If you only intend to use Pods for content types themselves and not to add custom fields, Disabling Custom Fields can improve performance on your site. When disabled, this is known as the types-only mode feature.', 'pods' ),
 			'type'               => 'pick',
 			'default'            => '0',
 			'readonly'           => $is_types_only_overridden,

@@ -14,40 +14,42 @@ $all_pods = pods_api()->load_pods( [ 'key_names' => true ] );
 
 $quick_actions = [];
 
-if ( ! isset( $all_pods['post'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Posts', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'post_type',
-		'object'        => 'post',
-	];
-}
+if ( ! pods_is_types_only() ) {
+	if ( ! isset( $all_pods['post'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Posts', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'post_type',
+			'object'        => 'post',
+		];
+	}
 
-if ( ! isset( $all_pods['page'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Pages', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'post_type',
-		'object'        => 'page',
-	];
-}
+	if ( ! isset( $all_pods['page'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Pages', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'post_type',
+			'object'        => 'page',
+		];
+	}
 
-if ( ! isset( $all_pods['category'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Categories', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'taxonomy',
-		'object'        => 'category',
-	];
-}
+	if ( ! isset( $all_pods['category'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Categories', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'taxonomy',
+			'object'        => 'category',
+		];
+	}
 
-if ( ! isset( $all_pods['user'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Users', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'user',
-		'object'        => 'user',
-	];
+	if ( ! isset( $all_pods['user'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Users', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'user',
+			'object'        => 'user',
+		];
+	}
 }
 
 /**

@@ -243,8 +243,10 @@ class PodsInit {
 					define( 'TRIBE_HIDE_MARKETING_NOTICES', true );
 				}
 
-				// Disable shortcode handling since we aren't using that.
+				// Disable shortcodes/customizer/widgets handling since we aren't using these.
 				add_filter( 'tribe_shortcodes_is_active', '__return_false' );
+				add_filter( 'tribe_customizer_is_active', '__return_false' );
+				add_filter( 'tribe_widgets_is_active', '__return_false' );
 			}
 
 			$GLOBALS['tribe-common-info'] = [

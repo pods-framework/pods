@@ -242,6 +242,9 @@ class PodsInit {
 				if ( ! defined( 'TRIBE_HIDE_MARKETING_NOTICES' ) ) {
 					define( 'TRIBE_HIDE_MARKETING_NOTICES', true );
 				}
+
+				// Disable shortcode handling since we aren't using that.
+				add_filter( 'tribe_shortcodes_is_active', '__return_false' );
 			}
 
 			$GLOBALS['tribe-common-info'] = [

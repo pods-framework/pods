@@ -10349,6 +10349,10 @@ class PodsAPI {
 		pods_transient_clear( 'pods_components' );
 		pods_transient_clear( 'pods_core_loader_objects' );
 
+		pods_transient_clear( 'pods_pfat_the_pods' );
+		pods_transient_clear( 'pods_pfat_auto_pods' );
+		pods_transient_clear( 'pods_pfat_archive_test' );
+
 		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
 			pods_cache_clear( $pod['name'], 'pods-class' );

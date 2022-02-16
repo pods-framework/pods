@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js v12.18.3
         uses: actions/setup-node@v1
         with:
           node-version: '12.18.3'
       - name: Install dependencies
         run: npm install
-      - name: Run JS build
+      - name: Run build-production
         run: npm run build-production
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:

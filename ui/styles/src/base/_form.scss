@@ -85,6 +85,10 @@ div.pods-textfield input,
 }
 
 /* textarea/wysiwyg */
+.pods-dfv-field .wp-editor-tools {
+	z-index: auto;
+}
+
 .pods-field .wp-editor-container {
 	background-color: #FFF;
 }
@@ -135,6 +139,8 @@ input.pods-form-ui-field-type-color {
 tr.pods-form-ui-row-type-heading td {
 	padding: 0;
 }
+
+/* Pick */
 
 /* This one does need a border, however */
 .pods-pick-values .pods-checkbox-view {

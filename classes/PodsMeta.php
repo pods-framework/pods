@@ -2749,14 +2749,26 @@ class PodsMeta {
 				'customize_changeset' => true,
 				'oembed_cache'        => true,
 				'user_request'        => true,
+				'wp_block'            => true,
+				'wp_global_styles'    => true,
+				'wp_navigation'       => true,
 				'wp_template'         => true,
+				'wp_template_part'    => true,
+				// Disable Beaver Builder post types.
 				'fl-theme-layout'     => true,
 				'fl-builder-template' => true,
+				// Disable Performance Monitor post types (loaded by Nexcess).
+				'pm_report'           => true,
+				'pm_page'             => true,
+				'pm_site_change'      => true,
+				'pm_insight'          => true,
 			],
 			'taxonomy'  => [
 				'nav_menu'                     => true,
 				'post_format'                  => true,
 				'wp_theme'                     => true,
+				'wp_template_part_area'        => true,
+				// Disable Beaver Builder taxonomies.
 				'fl-builder-template-category' => true,
 				'fl-builder-template-type'     => true,
 			],

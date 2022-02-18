@@ -40,8 +40,6 @@ import {
 
 import './field-groups.scss';
 
-/* eslint-disable no-console */
-
 const FieldGroups = ( {
 	storeKey,
 	podType,
@@ -68,9 +66,25 @@ const FieldGroups = ( {
 	const [ activeField, setActiveField ] = useState( null );
 	const [ clonedGroups, setClonedGroups ] = useState( null );
 
+	// If there's only one group, expand that group initially.
+	const [ expandedGroups, setExpandedGroups ] = useState(
+		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
+	);
+
 	// Use an array of names for groups, but an array of IDs for fields:
 	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( [] );
 	const [ fieldsMovedSinceLastSave, setFieldsMovedSinceLastSave ] = useState( [] );
+
+	// During drag-and-drop operations, we need to find a specific group (or an array
+	// of its fields) by name frequently.
+	// We also need to find field information for a specific ID often.
+	const findGroupFields = ( groupName ) => groups.find(
+		( group ) => group.name === groupName,
+	)?.fields || [];
+
+	const findFieldData = ( fieldID ) => allFields.find(
+		( field ) => field.id.toString() === fieldID.toString(),
+	);
 
 	const sensors = useSensors(
 		useSensor( PointerSensor, {
@@ -81,11 +95,6 @@ const FieldGroups = ( {
 		useSensor( KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
 		} ),
-	);
-
-	// If there's only one group, expand that group initially.
-	const [ expandedGroups, setExpandedGroups ] = useState(
-		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
 	);
 
 	const handleAddGroup = ( options = {} ) => ( event ) => {
@@ -119,9 +128,7 @@ const FieldGroups = ( {
 
 		console.log( `handleFieldDragStart: ${ active.id }`, active );
 
-		const newActiveField = allFields.find(
-			( item ) => ( item.id.toString() === active.id.toString() ),
-		);
+		const newActiveField = findFieldData( active.id );
 
 		setActiveField( newActiveField );
 		setClonedGroups( groups );
@@ -137,61 +144,36 @@ const FieldGroups = ( {
 			return;
 		}
 
-		console.log( 'handleDragOver', active.id, over.id );
-
 		// We only need to move items if we're going from one group to another.
 		// (The containerId for a group's SortableContext is the same as the groupName.)
-		const overGroupName = over.data?.current?.sortable?.containerId;
+		// If we're dragging over an empty list, we get the ID passed to useDroppable
+		// instead of useSortable.
+		const overGroupName = 'empty-group' === over.data?.current?.type
+			? over.id
+			: over.data?.current?.sortable?.containerId;
 		const activeGroupName = active.data?.current?.sortable?.containerId;
 
-		console.log(
-			`- overGroupName: ${ overGroupName }`,
-			` - activeGroupName: ${ activeGroupName }`
-		);
+		console.log( 'handleDragOver', active, over, overGroupName, activeGroupName );
 
+		// A field dragged within its original group gets moved during the dragEnd event,
+		// not now.
 		if ( overGroupName === activeGroupName ) {
 			return;
 		}
 
-		const overGroup = groups.find(
-			( group ) => group.name === overGroupName,
-		);
-		const activeGroup = groups.find(
-			( group ) => group.name === activeGroupName,
-		);
+		const activeData = findFieldData( active.id );
 
-		// Shouldn't fail, but handle it just in case.
-		if ( ! overGroup || ! activeGroup ) {
+		console.log( '- activeData', activeData );
+
+		if ( ! activeData ) {
 			return;
 		}
 
-		const overGroupFields = overGroup?.fields || [];
-		const activeGroupFields = activeGroup?.fields || [];
-
-		// @todo add a Droppable zone
-		// It's simpler to handle adding one item to an empty list.
-		if (
-			over.id === 'TODO_DROPPABLE_ID' &&
-			overGroupFields.length === 0
-		) {
-			const activeData = allFields.find(
-				( item ) => ( item.id.toString() === active ),
-			);
-
-			if ( ! activeData ) {
-				return;
-			}
-
-			setGroupFields( overGroupName, [ activeData ] );
-
-			return;
-		}
-
-		const currentItems = [ ...overGroupFields ];
+		const overGroupFields = findGroupFields( overGroupName );
 
 		// If the item has already been added, we don't
 		// need to do anything.
-		const doesListAlreadyIncludeActive = currentItems.findIndex(
+		const doesListAlreadyIncludeActive = overGroupFields.findIndex(
 			( item ) => item.id.toString() === active.id.toString(),
 		) !== -1;
 
@@ -200,21 +182,11 @@ const FieldGroups = ( {
 			return;
 		}
 
-		const activeData = allFields.find(
-			( item ) => item.id.toString() === active.id.toString(),
-		);
-
-		if ( ! activeData ) {
-			return;
-		}
-
-		console.log( '- activeData', activeData );
-
-		const overIndex = currentItems.findIndex(
+		const overIndex = overGroupFields.findIndex(
 			( item ) => item.id.toString() === over.id.toString(),
 		);
 
-		const isBelowLastItem = overIndex === currentItems.length - 1 &&
+		const isBelowLastItem = overIndex === overGroupFields.length - 1 &&
 			active.rect.current.translated &&
 			active.rect.current.translated.offsetTop >
 				over.rect.offsetTop + over.rect.height;
@@ -223,22 +195,24 @@ const FieldGroups = ( {
 
 		const newIndex = overIndex >= 0
 			? overIndex + modifier
-			: currentItems.length + 1;
+			: overGroupFields.length + 1;
 
 		const newOverGroupFields = [
-			...currentItems.slice( 0, newIndex ),
+			...overGroupFields.slice( 0, newIndex ),
 			activeData,
-			...currentItems.slice(
+			...overGroupFields.slice(
 				newIndex,
-				currentItems.length,
+				overGroupFields.length,
 			),
 		];
+
+		const activeGroupFields = findGroupFields( activeGroupName );
 
 		const newActiveGroupFields = [ ...activeGroupFields ].filter(
 			( field ) => field.id.toString() !== active.id.toString()
 		);
 
-		console.log( '-adding field to group' );
+		console.log( `-adding field to group: ${ overGroupName }` );
 
 		// @todo should there be an action for moving a field from one group to another?
 		setGroupFields( overGroupName, newOverGroupFields );
@@ -248,9 +222,7 @@ const FieldGroups = ( {
 	const handleDragEnd = ( event ) => {
 		const { active, over } = event;
 
-		// Don't sort anything if nothing changed or something is missing.
-		if ( ! over?.id || active.id === over.id ) {
-			console.log( 'handleDragEnd returning, active and over same', active, over );
+		if ( ! over?.id ) {
 			return;
 		}
 
@@ -272,18 +244,12 @@ const FieldGroups = ( {
 			return;
 		}
 
-		// @todo what happens when an the active item's group changes during the drag?
-
 		const overGroupName = over.data?.current?.sortable?.containerId;
 		const activeGroupName = active.data?.current?.sortable?.containerId;
 
 		console.log( 'handleFieldDragEnd', active.id, over.id, overGroupName, activeGroupName );
 
-		const overGroup = groups.find(
-			( group ) => group.name === overGroupName,
-		);
-
-		const overGroupFields = overGroup?.fields || [];
+		const overGroupFields = findGroupFields( overGroupName );
 
 		const oldIndex = overGroupFields.findIndex(
 			( item ) => ( item.id.toString() === active.id ),
@@ -293,11 +259,10 @@ const FieldGroups = ( {
 			( item ) => ( item.id.toString() === over.id ),
 		);
 
-		// @todo use arraySwap?
 		const reorderedItems = arrayMove( overGroupFields, oldIndex, newIndex );
 
 		setActiveField( null );
-		setClonedGroups( undefined );
+		setClonedGroups( null );
 		setGroupFields( overGroupName, reorderedItems );
 
 		setFieldsMovedSinceLastSave( ( prevState ) => [
@@ -437,8 +402,7 @@ const FieldGroups = ( {
 							groupName={ '' }
 							groupID={ parseInt( activeField.group, 10 ) }
 							cloneField={ undefined }
-							hasMoved={ false }
-							isDragging={ true }
+							isOverlay={ true }
 						/>
 					) : null }
 				</DragOverlay>

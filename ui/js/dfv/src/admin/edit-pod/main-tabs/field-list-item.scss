@@ -10,11 +10,18 @@
 }
 
 .pods-field_wrapper--dragging {
+	background: $color--super-light-grey;
+
+	.pods-field_wrapper .pods-field_controls-container {
+		opacity: 0;
+	}
+}
+
+.pods-field_wrapper--overlay {
 	background: white;
-	box-shadow:  0 0 0 1px rgba(63, 63, 68, 0.05),
-		-1px 0 2px 0 rgba(34, 33, 81, 0.01),
-		0px 2px 2px 0 rgba(34, 33, 81, 0.25);
-	transform: scale(1.02);
+	box-shadow:  0 0 0 3px rgba(63, 63, 68, 0.05),
+		-1px 0 4px 0 rgba(34, 33, 81, 0.01),
+		0px 4px 4px 0 rgba(34, 33, 81, 0.25);
 	z-index: 999;
 
 	.pods-field_wrapper .pods-field_controls-container {

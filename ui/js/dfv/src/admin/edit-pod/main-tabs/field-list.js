@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import { omit } from 'lodash';
+import { useDroppable } from '@dnd-kit/core';
 import {
 	SortableContext,
 	verticalListSortingStrategy,
@@ -45,6 +45,14 @@ const FieldList = ( {
 	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
 	const [ newFieldIndex, setNewFieldIndex ] = useState( null );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
+
+	const { setNodeRef } = useDroppable( {
+		id: groupName,
+		data: {
+			accepts: [ 'field' ],
+			type: 'empty-group',
+		},
+	} );
 
 	const handleAddField = ( options = {} ) => ( event ) => {
 		event.stopPropagation();
@@ -100,13 +108,8 @@ const FieldList = ( {
 
 	const isEmpty = 0 === fields.length;
 
-	const classes = classnames(
-		'pods-field-list',
-		isEmpty && 'pods-field-list--no-fields',
-	);
-
 	return (
-		<div className={ classes }>
+		<div className="pods-field-list">
 			{ showAddFieldModal && (
 				<SettingsModal
 					storeKey={ storeKey }
@@ -139,17 +142,14 @@ const FieldList = ( {
 			) }
 
 			{ isEmpty ? (
-				<>
-					<p>{ __( 'There are no fields in this group.', 'pods' ) }</p>
-
-					<Button
-						isPrimary
-						className="pods-field-group_add_field_link"
-						onClick={ () => setShowAddFieldModal( true ) }
-					>
-						{ __( 'Add Field', 'pods' ) }
-					</Button>
-				</>
+				<div
+					className="pods-field-list__empty"
+					ref={ setNodeRef }
+				>
+					<p className="pods-field-list__empty-message">
+						{ __( 'There are no fields in this group.', 'pods' ) }
+					</p>
+				</div>
 			) : (
 				<>
 					<Button
@@ -194,16 +194,16 @@ const FieldList = ( {
 							} ) }
 						</div>
 					</SortableContext>
-
-					<Button
-						isSecondary
-						className="pods-field-group_add_field_link"
-						onClick={ () => setShowAddFieldModal( true ) }
-					>
-						{ __( 'Add Field', 'pods' ) }
-					</Button>
 				</>
 			) }
+
+			<Button
+				isSecondary
+				className="pods-field-group_add_field_link"
+				onClick={ () => setShowAddFieldModal( true ) }
+			>
+				{ __( 'Add Field', 'pods' ) }
+			</Button>
 		</div>
 	);
 };

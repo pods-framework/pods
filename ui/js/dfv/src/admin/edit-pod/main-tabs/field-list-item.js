@@ -48,6 +48,7 @@ export const FieldListItem = ( props ) => {
 		deleteField,
 		removeFieldFromGroup,
 		isDragging,
+		isOverlay,
 		style = {},
 		draggableAttributes = {},
 		draggableListeners = {},
@@ -147,6 +148,7 @@ export const FieldListItem = ( props ) => {
 	const classes = classnames(
 		'pods-field_wrapper',
 		isDragging && 'pods-field_wrapper--dragging',
+		isOverlay && 'pods-field_wrapper--overlay',
 		hasMoved && 'pods-field_wrapper--unsaved',
 		isDeleting && 'pods-field_wrapper--deleting',
 		hasDeleteFailed && 'pods-field_wrapper--errored',
@@ -296,7 +298,7 @@ FieldListItem.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
-	hasMoved: PropTypes.bool.isRequired,
+	hasMoved: PropTypes.bool,
 
 	// Props from withSelect:
 	editFieldPod: PropTypes.object,
@@ -319,6 +321,9 @@ FieldListItem.propTypes = {
 	draggableAttributes: PropTypes.object,
 	draggableListeners: PropTypes.object,
 	draggableSetNodeRef: PropTypes.func,
+
+	// From FieldGroups (as drag overlay):
+	isOverlay: PropTypes.bool,
 };
 
 const ConnectedFieldListItem = compose( [

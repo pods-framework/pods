@@ -223,7 +223,7 @@ class PodsField_Website extends PodsField {
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		// Update from a array input field (like link) if the field updates
+		// Update from an array input field (like link) if the field updates
 		if ( is_array( $value ) ) {
 			if ( isset( $value['url'] ) ) {
 				$value = $value['url'];

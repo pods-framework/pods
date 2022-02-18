@@ -126,8 +126,6 @@ const FieldGroups = ( {
 			return;
 		}
 
-		console.log( `handleFieldDragStart: ${ active.id }`, active );
-
 		const newActiveField = findFieldData( active.id );
 
 		setActiveField( newActiveField );
@@ -153,8 +151,6 @@ const FieldGroups = ( {
 			: over.data?.current?.sortable?.containerId;
 		const activeGroupName = active.data?.current?.sortable?.containerId;
 
-		console.log( 'handleDragOver', active, over, overGroupName, activeGroupName );
-
 		// A field dragged within its original group gets moved during the dragEnd event,
 		// not now.
 		if ( overGroupName === activeGroupName ) {
@@ -162,8 +158,6 @@ const FieldGroups = ( {
 		}
 
 		const activeData = findFieldData( active.id );
-
-		console.log( '- activeData', activeData );
 
 		if ( ! activeData ) {
 			return;
@@ -178,7 +172,6 @@ const FieldGroups = ( {
 		) !== -1;
 
 		if ( doesListAlreadyIncludeActive ) {
-			console.log( '- returning, already in list' );
 			return;
 		}
 
@@ -212,8 +205,6 @@ const FieldGroups = ( {
 			( field ) => field.id.toString() !== active.id.toString()
 		);
 
-		console.log( `-adding field to group: ${ overGroupName }` );
-
 		// @todo should there be an action for moving a field from one group to another?
 		setGroupFields( overGroupName, newOverGroupFields );
 		setGroupFields( activeGroupName, newActiveGroupFields );
@@ -245,10 +236,6 @@ const FieldGroups = ( {
 		}
 
 		const overGroupName = over.data?.current?.sortable?.containerId;
-		const activeGroupName = active.data?.current?.sortable?.containerId;
-
-		console.log( 'handleFieldDragEnd', active.id, over.id, overGroupName, activeGroupName );
-
 		const overGroupFields = findGroupFields( overGroupName );
 
 		const oldIndex = overGroupFields.findIndex(

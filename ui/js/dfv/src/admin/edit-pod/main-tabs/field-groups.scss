@@ -21,13 +21,14 @@
 }
 
 .pods-field-group_name {
-	cursor: move;
+	cursor: pointer;
 	margin-right: auto;
 	padding: 0.5em;
 	user-select: none;
 }
 
 .pods-field-group_handle {
+	cursor: move;
 	display: inline-block;
 	padding-right: 13px;
 	vertical-align: middle;

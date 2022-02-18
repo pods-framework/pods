@@ -34,7 +34,14 @@ export const DraggableFieldListItem = ( props ) => {
 		transform,
 		transition,
 		isDragging,
-	} = useSortable( { id: id.toString() } );
+	} = useSortable(
+		{
+			id: id.toString(),
+			data: {
+				type: 'field',
+			},
+		}
+	);
 
 	const style = {
 		transform: CSS.Translate.toString( transform ),

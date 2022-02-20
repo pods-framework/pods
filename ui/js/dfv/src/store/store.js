@@ -67,7 +67,7 @@ export const initEditPodStore = ( config, storeKeyIdentifier = '' ) => {
 
 	const initialUIState = {
 		...INITIAL_UI_STATE,
-		activeTab: config.global.showFields ? 'manage-fields' : firstGroupTab,
+		activeTab: config.global?.showFields === false ? firstGroupTab : 'manage-fields',
 	};
 
 	const initialState = {

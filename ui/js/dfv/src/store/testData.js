@@ -218,6 +218,7 @@ export const GLOBAL_GROUP = {
 export const TEST_CONFIG_DATA = {
 	currentPod: POD,
 	global: {
+		showFields: true,
 		pod: GLOBAL_POD,
 	},
 	data: {

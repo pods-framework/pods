@@ -21,6 +21,7 @@ const EditPod = ( {
 	podName,
 	setPodName,
 	isExtended,
+	showFields,
 	storeKey,
 } ) => {
 	return (
@@ -33,7 +34,15 @@ const EditPod = ( {
 				/>
 				<SaveStatusMessage storeKey={ storeKey } />
 				<PodsNavTab
-					tabs={ tabs }
+					tabs={
+						showFields ? [
+							{
+								name: 'manage-fields',
+								label: 'Fields',
+							},
+							...tabs
+						] : tabs
+					}
 					activeTab={ activeTab }
 					setActiveTab={ setActiveTab }
 				/>
@@ -57,6 +66,7 @@ EditPod.propTypes = {
 	activeTab: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
 	isExtended: PropTypes.bool.isRequired,
+	showFields: PropTypes.bool.isRequired,
 	storeKey: PropTypes.string.isRequired,
 	setActiveTab: PropTypes.func.isRequired,
 	setPodName: PropTypes.func.isRequired,
@@ -73,6 +83,7 @@ export default compose( [
 			activeTab: storeSelect.getActiveTab(),
 			podName: storeSelect.getPodName(),
 			isExtended: !! storeSelect.getPodOption( 'object' ),
+			showFields: storeSelect.getGlobalShowFields(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {

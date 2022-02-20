@@ -60,8 +60,18 @@ const initStore = ( initialState, storeKey ) => {
 };
 
 export const initEditPodStore = ( config, storeKeyIdentifier = '' ) => {
+	// Use the first global Group if showFields is turned off,
+	// otherwise the initial active tab should be "Manage Fields", which
+	// isn't in the config data.
+	const firstGroupTab = config?.global?.pod?.groups?.[ 0 ]?.name || '';
+
+	const initialUIState = {
+		...INITIAL_UI_STATE,
+		activeTab: config.global.showFields ? 'manage-fields' : firstGroupTab,
+	};
+
 	const initialState = {
-		...paths.UI.createTree( INITIAL_UI_STATE ),
+		...paths.UI.createTree( initialUIState ),
 		data: {
 			fieldTypes: { ...config.fieldTypes || {} },
 			relatedObjects: { ...config.relatedObjects || {} },

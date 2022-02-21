@@ -1,5 +1,4 @@
-const webpack = require( 'webpack' );
-const merge = require( 'webpack-merge' );
+const { merge } = require( 'webpack-merge' );
 const Terser = require( 'terser-webpack-plugin' );
 
 const common = require( './webpack.common.js' );
@@ -8,17 +7,18 @@ module.exports = merge( common, {
 	mode: 'production',
 
 	optimization: {
+		minimize: true,
 		minimizer: [
 			new Terser( {
-				cache: true,
 				parallel: true,
-				sourceMap: false, // Must be set to true if using source-maps in production
+				extractComments: false,
 				terserOptions: {
-					output: {
+					sourceMap: false,
+					format: {
 						comments: false,
-					}
-				}
+					},
+				},
 			} ),
-		]
+		],
 	},
 } );

@@ -18,12 +18,6 @@ import {
 
 global.React = React;
 
-global.window.matchMedia = () => ( {
-	matches: false,
-	addListener: () => {},
-	removeListener: () => {},
-} );
-
 global.lodash = lodash;
 global._ = underscore;
 

@@ -209,9 +209,9 @@ class Settings {
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
-				'0'    => __( 'Disable sessions', 'pods' ),
-				'1'    => __( 'Enable sessions', 'pods' ),
 				'auto' => __( 'Auto-detect sessions (enable on first anonymous submission)', 'pods' ),
+				'1'    => __( 'Enable sessions', 'pods' ),
+				'0'    => __( 'Disable sessions', 'pods' ),
 			],
 		];
 

@@ -157,6 +157,7 @@ const FullSelect = ( {
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
+						styles={{ menu: (base) => ({ ...base, zIndex: 2 }) }}
 					/>
 				) }
 			</SortableContext>

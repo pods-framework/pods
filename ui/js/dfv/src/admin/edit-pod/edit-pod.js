@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// WordPress dependencies
+/**
+ * WordPress dependencies
+ */
 import { withSelect, withDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 
-// Pods dependencies
+/**
+ * Pods dependencies
+ */
 import SaveStatusMessage from './save-status-message';
 import EditPodName from './edit-pod-name';
 import PodsNavTab from 'dfv/src/components/pods-nav-tab';
@@ -38,7 +43,7 @@ const EditPod = ( {
 						showFields ? [
 							{
 								name: 'manage-fields',
-								label: 'Fields',
+								label: __( 'Fields', 'pods' ),
 							},
 							...tabs
 						] : tabs

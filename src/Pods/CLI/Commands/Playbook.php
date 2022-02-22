@@ -3,6 +3,8 @@
 namespace Pods\CLI\Commands;
 
 use Exception;
+use Pods_Migrate_Packages;
+use PodsMigrate;
 use WP_CLI;
 use WP_CLI_Command;
 use function WP_CLI\Utils\make_progress_bar;
@@ -10,7 +12,7 @@ use function WP_CLI\Utils\make_progress_bar;
 /**
  * Pods Playbook commands.
  *
- * @since TBD
+ * @since 2.8.11
  */
 class Playbook extends WP_CLI_Command {
 
@@ -36,7 +38,7 @@ class Playbook extends WP_CLI_Command {
 	 * wp pods playbook run upgrade.json --test
 	 * - Preview the playbook run of the upgrade.json file but without changing the database.
 	 *
-	 * @since 1.0.0
+	 * @since 2.8.11
 	 *
 	 * @param array $args       The list of positional arguments.
 	 * @param array $assoc_args The list of associative arguments.
@@ -105,7 +107,7 @@ class Playbook extends WP_CLI_Command {
 				// Check which kind of arguments we will use.
 				if ( isset( $action['params'] ) ) {
 					$action_args = [
-						$action['params']
+						$action['params'],
 					];
 				} elseif ( isset( $action['args'] ) ) {
 					$action_args = $action['args'];
@@ -115,7 +117,9 @@ class Playbook extends WP_CLI_Command {
 
 				// Run the action if not in test mode.
 				if ( ! $test_mode ) {
-					if ( method_exists( $api, $action_name ) ) {
+					if ( 'run' !== $action_name && method_exists( $this, $action_name ) ) {
+						$this->$action_name( ...$action_args );
+					} elseif ( method_exists( $api, $action_name ) ) {
 						$api->$action_name( ...$action_args );
 					} else {
 						// translators: %s: The action name.
@@ -133,6 +137,54 @@ class Playbook extends WP_CLI_Command {
 		}
 
 		WP_CLI::success( __( 'Playbook run completed.', 'pods' ) );
+	}
+
+	/**
+	 * Import the package file for the playbook.
+	 *
+	 * @since 2.8.11
+	 *
+	 * @param string|array $data    The JSON file location, the JSON encoded package string, or an associative array containing the package data.
+	 * @param bool         $replace Whether to replace existing items when found.
+	 *
+	 * @return array|bool
+	 *
+	 * @throws Exception
+	 */
+	protected function import_package( $data, $replace = false ) {
+		if ( ! PodsInit::$components->is_component_active( 'migrate-packages' ) ) {
+			// Attempt to include the Package component code manually.
+			include_once PODS_DIR . 'components/Migrate-Packages/Migrate-Packages.php';
+
+			if ( ! class_exists( 'Pods_Migrate_Packages' ) ) {
+				throw new Exception( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-api activate-component --component=migrate-packages' ), 'pods-package-import-error' );
+			}
+		}
+
+		// Check that we have the file or package we expect.
+		if ( empty( $data ) ) {
+			throw new Exception( __( 'Playbook import package was not set.', 'pods' ), 'pods-package-import-error' );
+		}
+
+		$is_file = is_string( $data ) && '.json' === substr( $data, strrpos( $data, '.json' ) );
+
+		if ( $is_file ) {
+			// Get package file data.
+			if ( ! file_exists( $data ) ) {
+				throw new Exception( __( 'Playbook import package "file" does not exist.', 'pods' ), 'pods-package-import-error' );
+			}
+
+			// Load PodsMigrate class file for use.
+			pods_migrate();
+
+			$data = PodsMigrate::get_data_from_file( $data, true );
+		}
+
+		if ( empty( $data ) ) {
+			throw new Exception( __( 'No Pods Package data found.', 'pods' ), 'pods-package-import-error' );
+		}
+
+		return Pods_Migrate_Packages::import( $data, $replace );
 	}
 
 }

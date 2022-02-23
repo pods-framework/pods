@@ -4556,6 +4556,10 @@ class PodsAPI {
 			$params->track_changed_fields = false;
 		}
 
+		if ( ! isset( $params->podsmeta ) ) {
+			$params->podsmeta = false;
+		}
+
 		if ( ! isset( $params->podsmeta_direct ) ) {
 			$params->podsmeta_direct = false;
 		}
@@ -4621,6 +4625,11 @@ class PodsAPI {
 		$pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ), false );
 
 		if ( false === $pod ) {
+			// Bypass if doing a normal object sync from PodsMeta.
+			if ( $params->podsmeta ) {
+				return;
+			}
+
 			return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
 		}
 
@@ -10348,6 +10357,10 @@ class PodsAPI {
 		pods_transient_clear( 'pods' );
 		pods_transient_clear( 'pods_components' );
 		pods_transient_clear( 'pods_core_loader_objects' );
+
+		pods_transient_clear( 'pods_pfat_the_pods' );
+		pods_transient_clear( 'pods_pfat_auto_pods' );
+		pods_transient_clear( 'pods_pfat_archive_test' );
 
 		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );

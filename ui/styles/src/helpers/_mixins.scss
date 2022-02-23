@@ -14,10 +14,7 @@
 }
 
 @mixin vertical-gradient($start: #000, $stop: #FFF) {
-	background: ($start + $stop) / 2;
-	background: -webkit-gradient(linear, left top, left bottom, from($start), to($stop));
-	background: -moz-linear-gradient(center top, $start 0%, $stop 100%);
-	background: -moz-gradient(center top, $start 0%, $stop 100%);
+	background: linear-gradient($start, $stop);
 }
 
 @mixin box-shadow($horizontal: 0px, $vertical: 1px, $blur: 2px, $opacity: 0.1) {

@@ -7,16 +7,16 @@
 		width: $width;
 	}
 	&.pods-wizard-steps-2 #pods-wizard-heading ul li {
-		width: $width / 2;
+		width: calc($width / 2);
 	}
 	&.pods-wizard-steps-3 #pods-wizard-heading ul li {
-		width: $width / 3;
+		width: calc($width / 3);
 	}
 	&.pods-wizard-steps-4 #pods-wizard-heading ul li {
-		width: $width / 4;
+		width: calc($width / 4);
 	}
 	&.pods-wizard-steps-5 #pods-wizard-heading ul li {
-		width: $width / 5;
+		width: calc($width / 5);
 	}
 	#pods-wizard-heading {
 		ul {

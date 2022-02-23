@@ -3,17 +3,16 @@ import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 import {
 	DndContext,
-	closestCenter,
+	DragOverlay,
+	closestCorners,
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import {
-	restrictToParentElement,
-	restrictToVerticalAxis,
-} from '@dnd-kit/modifiers';
-import {
+	arrayMove,
 	SortableContext,
 	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
@@ -32,8 +31,12 @@ import { sprintf, __ } from '@wordpress/i18n';
 import SettingsModal from './settings-modal';
 import { SAVE_STATUSES } from 'dfv/src/store/constants';
 import FieldGroup from './field-group';
+import FieldListItem from './field-list-item';
 
-import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import {
+	GROUP_PROP_TYPE_SHAPE,
+	FIELD_PROP_TYPE_SHAPE,
+} from 'dfv/src/config/prop-types';
 
 import './field-groups.scss';
 
@@ -48,16 +51,40 @@ const FieldGroups = ( {
 	saveGroup,
 	deleteGroup,
 	removeGroupFromPod,
+	setGroups,
 	moveGroup,
 	resetGroupSaveStatus,
 	groupSaveStatuses,
 	groupSaveMessages,
 	groupDeleteStatuses,
 	editGroupPod,
+	allFields,
+	setGroupFields,
 } ) => {
 	const [ showAddGroupModal, setShowAddGroupModal ] = useState( false );
 	const [ addedGroupName, setAddedGroupName ] = useState( null );
+	const [ activeField, setActiveField ] = useState( null );
+	const [ clonedGroups, setClonedGroups ] = useState( null );
+
+	// If there's only one group, expand that group initially.
+	const [ expandedGroups, setExpandedGroups ] = useState(
+		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
+	);
+
+	// Use an array of names for groups, but an array of IDs for fields:
 	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( [] );
+	const [ fieldsMovedSinceLastSave, setFieldsMovedSinceLastSave ] = useState( [] );
+
+	// During drag-and-drop operations, we need to find a specific group (or an array
+	// of its fields) by name frequently.
+	// We also need to find field information for a specific ID often.
+	const findGroupFields = ( groupName ) => groups.find(
+		( group ) => group.name === groupName,
+	)?.fields || [];
+
+	const findFieldData = ( fieldID ) => allFields.find(
+		( field ) => field.id.toString() === fieldID.toString(),
+	);
 
 	const sensors = useSensors(
 		useSensor( PointerSensor, {
@@ -68,11 +95,6 @@ const FieldGroups = ( {
 		useSensor( KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
 		} ),
-	);
-
-	// If there's only one group, expand that group initially.
-	const [ expandedGroups, setExpandedGroups ] = useState(
-		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
 	);
 
 	const handleAddGroup = ( options = {} ) => ( event ) => {
@@ -96,25 +118,153 @@ const FieldGroups = ( {
 		} );
 	};
 
-	const handleDragEnd = ( event ) => {
-		const { active, over } = event;
+	const handleDragStart = ( event ) => {
+		const { active } = event;
 
-		if ( ! over?.id || active.id === over.id ) {
+		// We only need to handle fields (not groups):
+		if ( 'group' === active?.data?.current?.type ) {
 			return;
 		}
 
-		const oldIndex = groups.findIndex(
-			( item ) => ( item.name === active.id ),
+		const newActiveField = findFieldData( active.id );
+
+		setActiveField( newActiveField );
+		setClonedGroups( groups );
+	};
+
+	const handleDragOver = ( { active, over } ) => {
+		if ( ! over || ! over.id ) {
+			return;
+		}
+
+		// We only need to handle fields (not groups):
+		if ( 'group' === active?.data?.current?.type ) {
+			return;
+		}
+
+		// We only need to move items if we're going from one group to another.
+		// (The containerId for a group's SortableContext is the same as the groupName.)
+		// If we're dragging over an empty list, we get the ID passed to useDroppable
+		// instead of useSortable.
+		const overGroupName = 'empty-group' === over.data?.current?.type
+			? over.id
+			: over.data?.current?.sortable?.containerId;
+		const activeGroupName = active.data?.current?.sortable?.containerId;
+
+		// A field dragged within its original group gets moved during the dragEnd event,
+		// not now.
+		if ( overGroupName === activeGroupName ) {
+			return;
+		}
+
+		const activeData = findFieldData( active.id );
+
+		if ( ! activeData ) {
+			return;
+		}
+
+		const overGroupFields = findGroupFields( overGroupName );
+
+		// If the item has already been added, we don't
+		// need to do anything.
+		const doesListAlreadyIncludeActive = overGroupFields.findIndex(
+			( item ) => item.id.toString() === active.id.toString(),
+		) !== -1;
+
+		if ( doesListAlreadyIncludeActive ) {
+			return;
+		}
+
+		const overIndex = overGroupFields.findIndex(
+			( item ) => item.id.toString() === over.id.toString(),
 		);
 
-		const newIndex = groups.findIndex(
-			( item ) => ( item.name === over.id ),
+		const isBelowLastItem = overIndex === overGroupFields.length - 1 &&
+			active.rect.current.translated &&
+			active.rect.current.translated.offsetTop >
+				over.rect.offsetTop + over.rect.height;
+
+		const modifier = isBelowLastItem ? 1 : 0;
+
+		const newIndex = overIndex >= 0
+			? overIndex + modifier
+			: overGroupFields.length + 1;
+
+		const newOverGroupFields = [
+			...overGroupFields.slice( 0, newIndex ),
+			activeData,
+			...overGroupFields.slice(
+				newIndex,
+				overGroupFields.length,
+			),
+		];
+
+		const activeGroupFields = findGroupFields( activeGroupName );
+
+		const newActiveGroupFields = [ ...activeGroupFields ].filter(
+			( field ) => field.id.toString() !== active.id.toString()
 		);
 
-		moveGroup( oldIndex, newIndex );
+		// @todo should there be an action for moving a field from one group to another?
+		setGroupFields( overGroupName, newOverGroupFields );
+		setGroupFields( activeGroupName, newActiveGroupFields );
+	};
 
-		// Mark all groups as being edited.
-		setGroupsMovedSinceLastSave( groups.map( ( group ) => group.name ) );
+	const handleDragEnd = ( event ) => {
+		const { active, over } = event;
+
+		if ( ! over?.id ) {
+			return;
+		}
+
+		// Handling the dragEnd for a Group is simpler, handle that and return early:
+		if ( 'group' === active?.data?.current?.type ) {
+			const oldIndex = groups.findIndex(
+				( item ) => ( item.name === active.id ),
+			);
+
+			const newIndex = groups.findIndex(
+				( item ) => ( item.name === over.id ),
+			);
+
+			moveGroup( oldIndex, newIndex );
+
+			// Mark all groups as being edited.
+			setGroupsMovedSinceLastSave( groups.map( ( group ) => group.name ) );
+
+			return;
+		}
+
+		const overGroupName = over.data?.current?.sortable?.containerId;
+		const overGroupFields = findGroupFields( overGroupName );
+
+		const oldIndex = overGroupFields.findIndex(
+			( item ) => ( item.id.toString() === active.id ),
+		);
+
+		const newIndex = overGroupFields.findIndex(
+			( item ) => ( item.id.toString() === over.id ),
+		);
+
+		const reorderedItems = arrayMove( overGroupFields, oldIndex, newIndex );
+
+		setActiveField( null );
+		setClonedGroups( null );
+		setGroupFields( overGroupName, reorderedItems );
+
+		setFieldsMovedSinceLastSave( ( prevState ) => [
+			...prevState,
+			parseInt( active.id, 10 ),
+		] );
+	};
+
+	const handleDragCancel = () => {
+		if ( clonedGroups ) {
+			setGroups( clonedGroups );
+		}
+
+		setActiveField( null );
+		setClonedGroups( null );
 	};
 
 	// After the pod has been saved, reset the list of groups
@@ -122,6 +272,7 @@ const FieldGroups = ( {
 	useEffect( () => {
 		if ( podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS ) {
 			setGroupsMovedSinceLastSave( [] );
+			setFieldsMovedSinceLastSave( [] );
 		}
 	}, [ podSaveStatus ] );
 
@@ -182,12 +333,12 @@ const FieldGroups = ( {
 
 			<DndContext
 				sensors={ sensors }
-				collisionDetection={ closestCenter }
+				collisionDetection={ closestCorners }
+				onDragStart={ handleDragStart }
+				onDragOver={ handleDragOver }
 				onDragEnd={ handleDragEnd }
-				modifiers={ [
-					restrictToParentElement,
-					restrictToVerticalAxis,
-				] }
+				onDragCancel={ handleDragCancel }
+				modifiers={ [ restrictToWindowEdges ] }
 			>
 				<SortableContext
 					items={ groups.map( ( group ) => group.name ) }
@@ -218,11 +369,30 @@ const FieldGroups = ( {
 									isExpanded={ expandedGroups[ group.name ] || false }
 									toggleExpanded={ toggleExpandGroup( group.name ) }
 									hasMoved={ hasMoved }
+									fieldsMovedSinceLastSave={ fieldsMovedSinceLastSave }
 								/>
 							);
 						} ) }
 					</div>
 				</SortableContext>
+
+				<DragOverlay>
+					{ activeField ? (
+						<FieldListItem
+							storeKey={ storeKey }
+							podType={ podType }
+							podName={ podName }
+							podID={ podID }
+							podLabel={ podLabel }
+							groupLabel={ '' }
+							field={ activeField }
+							groupName={ '' }
+							groupID={ parseInt( activeField.group, 10 ) }
+							cloneField={ undefined }
+							isOverlay={ true }
+						/>
+					) : null }
+				</DragOverlay>
 			</DndContext>
 
 			<div className="pods-button-group_container">
@@ -253,6 +423,10 @@ FieldGroups.propTypes = {
 	groupSaveStatuses: PropTypes.object.isRequired,
 	groupSaveMessages: PropTypes.object.isRequired,
 	groupDeleteStatuses: PropTypes.object.isRequired,
+	allFields: PropTypes.arrayOf(
+		FIELD_PROP_TYPE_SHAPE
+	).isRequired,
+	setGroupFields: PropTypes.func.isRequired,
 };
 
 export default compose( [
@@ -272,6 +446,7 @@ export default compose( [
 			groupSaveStatuses: storeSelect.getGroupSaveStatuses(),
 			groupSaveMessages: storeSelect.getGroupSaveMessages(),
 			groupDeleteStatuses: storeSelect.getGroupDeleteStatuses(),
+			allFields: storeSelect.getFieldsFromAllGroups(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
@@ -283,8 +458,10 @@ export default compose( [
 			saveGroup: storeDispatch.saveGroup,
 			deleteGroup: storeDispatch.deleteGroup, // groupID, name
 			removeGroupFromPod: storeDispatch.removeGroup, // groupID
-			moveGroup: storeDispatch.moveGroup,
+			setGroups: storeDispatch.setGroups, // groups
+			moveGroup: storeDispatch.moveGroup, // oldIndex, newIndex
 			resetGroupSaveStatus: storeDispatch.resetGroupSaveStatus,
+			setGroupFields: storeDispatch.setGroupFields,
 		};
 	} ),
 ] )( FieldGroups );

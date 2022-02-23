@@ -182,6 +182,10 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											unset( $data['pod'] );
 										}
 
+										if ( pods_is_types_only() ) {
+											unset( $data['settings'], $data['pod'] );
+										}
+
 										echo PodsForm::field( 'create_pod_type', pods_v( 'create_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
 											'dependency' => true,

@@ -15,7 +15,9 @@ class WPML extends Integration {
 	 * @inheritdoc
 	 */
 	protected $hooks = [
-		'action' => [],
+		'action' => [
+			'wpml_language_has_switched', [ 'wpml_language_has_switched' ],
+		],
 		'filter' => [
 			'pods_get_current_language' => [ 'pods_get_current_language', 10, 2 ],
 			'pods_api_get_table_info' => [ 'pods_api_get_table_info', 10, 7 ],
@@ -32,6 +34,19 @@ class WPML extends Integration {
 	 */
 	public static function is_active() {
 		return defined( 'ICL_SITEPRESS_VERSION' ) || ! empty( $GLOBALS['sitepress'] );
+	}
+
+	/**
+	 * Refresh language cache after WPML has switch language.
+	 *
+	 * @since 2.8.11
+	 *
+	 * @see \SitePress::switch_lang()
+	 *
+	 * @return void
+	 */
+	public function wpml_language_has_switched() {
+		pods_i18n()->get_current_language( array( 'refresh' => true ) );
 	}
 
 	/**

@@ -148,7 +148,7 @@ const ListSelectItem = forwardRef( ( {
 							<img
 								className="pinkynail"
 								src={ icon }
-								alt="Icon"
+								alt={ __( 'Icon', 'pods' ) }
 							/>
 						) }
 					</li>

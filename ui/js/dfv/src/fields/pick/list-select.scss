@@ -18,10 +18,8 @@
 	margin: 0;
 	border-bottom: 1px solid #efefef;
 
-	&::after {
-		content: "";
-		display: table;
-		clear: both;
+	&:nth-child(even) {
+		background: #fcfcfc;
 	}
 
 	&:hover {
@@ -33,8 +31,25 @@
 	}
 }
 
+.pods-list-select-item--is-dragging {
+	background: #efefef;
+}
+
+.pods-list-select-item--overlay {
+	box-shadow:  0 0 0 3px rgba(63, 63, 68, 0.05),
+		-1px 0 4px 0 rgba(34, 33, 81, 0.01),
+		0px 4px 4px 0 rgba(34, 33, 81, 0.25);
+}
+
+.pods-list-select-item__inner {
+	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+	margin: 0;
+}
+
 .pods-list-select-item__col {
-	float: left;
+	display: block;
 	margin: 0;
 	padding: 0;
 }
@@ -67,7 +82,6 @@
 .pods-list-select-item__icon {
 	width: 40px;
 	margin: 0 5px;
-	height: 32px;
 	font-size: 0; /* for aligning image */
 	line-height: 32px;
 	text-align: center;
@@ -91,31 +105,31 @@
 
 .pods-list-select-item__name {
 	border-bottom: none;
-	left: 80px;
-	right: 105px; /* needed for action buttons */
-	padding: 3px 0;
 	line-height: 24px;
+	margin: 0;
 	overflow: visible;
+	padding: 3px 0;
 	user-select: none;
 	white-space: nowrap;
 }
 
-.pods-list-select-item__remove {
+.pods-list-select-item__edit {
+	margin: 0 0 0 auto;
 	width: 25px;
-	height: 32px;
-	float: right;
 }
 
 .pods-list-select-item__view {
+	margin: 0;
+	width: 25px;
 }
 
-.pods-list-select-item__edit {
+.pods-list-select-item__remove {
+	margin: 0;
+	width: 25px;
 }
 
 .pods-list-select-item__link {
 	display: block;
-	width: 25px;
-	height: 32px;
 	opacity: 0.40;
 	text-decoration: none;
 	color: #616161;

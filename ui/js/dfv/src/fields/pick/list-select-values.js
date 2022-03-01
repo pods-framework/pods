@@ -11,10 +11,7 @@ import {
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core';
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis,
-} from '@dnd-kit/modifiers';
+import { restrictToParentElement } from '@dnd-kit/modifiers';
 import {
 	arrayMove,
 	SortableContext,
@@ -149,7 +146,7 @@ const ListSelectValues = ( {
 	};
 
 	return (
-		<div className="pods-pick-values">
+		<div className="pods-list-select-values-container">
 			<DndContext
 				sensors={ sensors }
 				collisionDetection={ closestCenter }
@@ -158,7 +155,6 @@ const ListSelectValues = ( {
 				onDragCancel={ handleDragCancel }
 				modifiers={ [
 					restrictToParentElement,
-					restrictToVerticalAxis,
 				] }
 			>
 				<SortableContext
@@ -211,8 +207,9 @@ const ListSelectValues = ( {
 						<ListSelectItem
 							fieldName={ fieldName }
 							value={ getValueWithCorrectedLabel( activeItem ) }
+							isOverlay={ true }
 							isDraggable={ true }
-							isRemovable={ true }
+							isRemovable={ false }
 							editLink={ undefined }
 							viewLink={ undefined }
 							editIframeTitle={ '' }

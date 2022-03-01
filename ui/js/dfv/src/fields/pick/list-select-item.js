@@ -8,7 +8,10 @@
  /**
   * WordPress dependencies
   */
- import { Button, Dashicon } from '@wordpress/components';
+ import {
+	 Button,
+	 Dashicon,
+} from '@wordpress/components';
  import { __ } from '@wordpress/i18n';
  import {
 	 chevronUp,
@@ -33,6 +36,7 @@ const ListSelectItem = forwardRef( ( {
 	moveDown,
 	removeItem,
 	setFieldItemData,
+	isOverlay = false,
 	isDragging = false,
 	style = {},
 	listeners = {},
@@ -75,11 +79,17 @@ const ListSelectItem = forwardRef( ( {
 
 	return (
 		<li
-			className="pods-list-select-item"
+			className={
+				classnames(
+					'pods-list-select-item',
+					isDragging && 'pods-list-select-item--is-dragging',
+					isOverlay && 'pods-list-select-item--overlay'
+				)
+			}
 			ref={ draggableRef }
 			style={ style }
 		>
-			<ul className="pods-dfv-list-meta relationship-item">
+			<ul className="pods-list-select-item__inner">
 				{ isDraggable ? (
 					<>
 						<li
@@ -114,8 +124,8 @@ const ListSelectItem = forwardRef( ( {
 							<Button
 								className={
 									classnames(
-										'pods-list-select-move-button',
-										! moveDown && 'pods-list-select-move-button--disabled'
+										'pods-list-select-item__move-button',
+										! moveDown && 'pods-list-select-item__move-button--disabled'
 									)
 								}
 								showTooltip
@@ -148,33 +158,6 @@ const ListSelectItem = forwardRef( ( {
 					{ value.label }
 				</li>
 
-				{ isRemovable ? (
-					<li className="pods-list-select-item__col pods-list-select-item__remove">
-						<a
-							href="#remove"
-							title={ __( 'Deselect', 'pods' ) }
-							onClick={ removeItem }
-							className="pods-list-select-item__link"
-						>
-							{ __( 'Deselect', 'pods' ) }
-						</a>
-					</li>
-				) : null }
-
-				{ viewLink ? (
-					<li className="pods-list-select-item__col pods-list-select-item__view">
-						<a
-							href={ viewLink }
-							title={ __( 'View', 'pods' ) }
-							target="_blank"
-							rel="noreferrer"
-							className="pods-list-select-item__link"
-						>
-							{ __( 'View', 'pods' ) }
-						</a>
-					</li>
-				) : null }
-
 				{ editLink ? (
 					<li className="pods-list-select-item__col pods-list-select-item__edit">
 						<a
@@ -188,7 +171,43 @@ const ListSelectItem = forwardRef( ( {
 							} }
 							className="pods-list-select-item__link"
 						>
-							{ __( 'Edit', 'pods' ) }
+							<Dashicon icon="edit" />
+							<span className="screen-reader-text">
+								{ __( 'Edit', 'pods' ) }
+							</span>
+						</a>
+					</li>
+				) : null }
+
+				{ viewLink ? (
+					<li className="pods-list-select-item__col pods-list-select-item__view">
+						<a
+							href={ viewLink }
+							title={ __( 'View', 'pods' ) }
+							target="_blank"
+							rel="noreferrer"
+							className="pods-list-select-item__link"
+						>
+							<Dashicon icon="external" />
+							<span className="screen-reader-text">
+								{ __( 'View', 'pods' ) }
+							</span>
+						</a>
+					</li>
+				) : null }
+
+				{ isRemovable ? (
+					<li className="pods-list-select-item__col pods-list-select-item__remove">
+						<a
+							href="#remove"
+							title={ __( 'Deselect', 'pods' ) }
+							onClick={ removeItem }
+							className="pods-list-select-item__link"
+						>
+							<Dashicon icon="no" />
+							<span className="screen-reader-text">
+								{ __( 'Deselect', 'pods' ) }
+							</span>
 						</a>
 					</li>
 				) : null }
@@ -221,6 +240,9 @@ ListSelectItem.propTypes = {
 	moveDown: PropTypes.func,
 	removeItem: PropTypes.func.isRequired,
 	setFieldItemData: PropTypes.func.isRequired,
+
+	// Only used when a child of DragOverlay:
+	isOverlay: PropTypes.bool,
 
 	// From useSortable:
 	isDragging: PropTypes.bool,

@@ -21,7 +21,13 @@ const DraggableListSelectItem = ( props ) => {
 		transform,
 		transition,
 		isDragging,
-	} = useSortable( { id: value.value.toString() } );
+	} = useSortable( {
+		id: value.value.toString(),
+		data: {
+			value: value?.value.toString(),
+			label: value?.label.toString(),
+		},
+	} );
 
 	const style = {
 		transform: CSS.Translate.toString( transform ),

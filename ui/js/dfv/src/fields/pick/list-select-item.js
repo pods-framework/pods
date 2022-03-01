@@ -75,7 +75,7 @@ const ListSelectItem = forwardRef( ( {
 
 	return (
 		<li
-			className="pods-dfv-list-item pods-relationship"
+			className="pods-list-select-item"
 			ref={ draggableRef }
 			style={ style }
 		>
@@ -83,7 +83,7 @@ const ListSelectItem = forwardRef( ( {
 				{ isDraggable ? (
 					<>
 						<li
-							className="pods-dfv-list-col pods-list-select-drag-handle"
+							className="pods-list-select-item__col pods-list-select-item__drag-handle"
 							aria-label="drag"
 							// eslint-disable-next-line react/jsx-props-no-spreading
 							{ ...listeners }
@@ -96,12 +96,12 @@ const ListSelectItem = forwardRef( ( {
 							<Dashicon icon="menu" />
 						</li>
 
-						<li className="pods-dfv-list-col pods-list-select-move-buttons">
+						<li className="pods-list-select-item__col pods-list-select-item__move-buttons">
 							<Button
 								className={
 									classnames(
-										'pods-list-select-move-buttons__button',
-										! moveUp && 'pods-list-select-move-buttons__button--disabled'
+										'pods-list-select-item__move-button',
+										! moveUp && 'pods-list-select-item__move-button--disabled'
 									)
 								}
 								showTooltip
@@ -114,8 +114,8 @@ const ListSelectItem = forwardRef( ( {
 							<Button
 								className={
 									classnames(
-										'pods-list-select-move-buttons__button',
-										! moveDown && 'pods-list-select-move-buttons__button--disabled'
+										'pods-list-select-move-button',
+										! moveDown && 'pods-list-select-move-button--disabled'
 									)
 								}
 								showTooltip
@@ -129,7 +129,7 @@ const ListSelectItem = forwardRef( ( {
 				) : null }
 
 				{ icon ? (
-					<li className="pods-dfv-list-col pods-dfv-list-icon">
+					<li className="pods-list-select-item__col pods-list-select-item__icon">
 						{ isDashIcon ? (
 							<span
 								className={ `pinkynail dashicons ${ icon }` }
@@ -144,16 +144,17 @@ const ListSelectItem = forwardRef( ( {
 					</li>
 				) : null }
 
-				<li className="pods-dfv-list-col pods-dfv-list-name">
+				<li className="pods-list-select-item__col pods-list-select-item__name">
 					{ value.label }
 				</li>
 
 				{ isRemovable ? (
-					<li className="pods-dfv-list-col pods-dfv-list-remove">
+					<li className="pods-list-select-item__col pods-list-select-item__remove">
 						<a
 							href="#remove"
 							title={ __( 'Deselect', 'pods' ) }
 							onClick={ removeItem }
+							className="pods-list-select-item__link"
 						>
 							{ __( 'Deselect', 'pods' ) }
 						</a>
@@ -161,12 +162,13 @@ const ListSelectItem = forwardRef( ( {
 				) : null }
 
 				{ viewLink ? (
-					<li className="pods-dfv-list-col pods-dfv-list-link">
+					<li className="pods-list-select-item__col pods-list-select-item__view">
 						<a
 							href={ viewLink }
 							title={ __( 'View', 'pods' ) }
 							target="_blank"
 							rel="noreferrer"
+							className="pods-list-select-item__link"
 						>
 							{ __( 'View', 'pods' ) }
 						</a>
@@ -174,7 +176,7 @@ const ListSelectItem = forwardRef( ( {
 				) : null }
 
 				{ editLink ? (
-					<li className="pods-dfv-list-col pods-dfv-list-edit">
+					<li className="pods-list-select-item__col pods-list-select-item__edit">
 						<a
 							href={ editLink }
 							title={ __( 'Edit', 'pods' ) }
@@ -184,6 +186,7 @@ const ListSelectItem = forwardRef( ( {
 								event.preventDefault();
 								setShowEditModal( true );
 							} }
+							className="pods-list-select-item__link"
 						>
 							{ __( 'Edit', 'pods' ) }
 						</a>

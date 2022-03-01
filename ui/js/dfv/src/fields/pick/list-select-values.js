@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	DndContext,
 	DragOverlay,
@@ -27,6 +27,7 @@ import PropTypes from 'prop-types';
  * Other Pods dependencies
  */
 import DraggableListSelectItem from './draggable-list-select-item';
+import ListSelectItem from './list-select-item';
 
 import './list-select.scss';
 
@@ -45,6 +46,10 @@ const ListSelectValues = ( {
 	editIframeTitle,
 	readOnly = false,
 } ) => {
+	console.log( 'list select values:', arrayOfValues );
+
+	const [ activeItem, setActiveItem ] = useState( null );
+
 	const removeValueAtIndex = ( index = 0 ) => {
 		if ( isMulti ) {
 			setValue(
@@ -81,6 +86,12 @@ const ListSelectValues = ( {
 		} ),
 	);
 
+	const handleDragStart = ( event ) => {
+		const { active } = event;
+
+		setActiveItem( active?.data?.current );
+	};
+
 	const handleDragEnd = ( event ) => {
 		const { active, over } = event;
 
@@ -106,6 +117,35 @@ const ListSelectValues = ( {
 		setValue( reorderedItems.map(
 			( item ) => item.value )
 		);
+
+		setActiveItem( null );
+	};
+
+	const handleDragCancel = () => {
+		setActiveItem( null );
+	};
+
+	// May need to change the label, if it differs from the fieldItemData.
+	const getValueWithCorrectedLabel = ( { label, value } ) => {
+		const matchingFieldItemData = fieldItemData.find(
+			( item ) => item.id.toString() === value.toString()
+		);
+
+		console.log('getValueWithCorrectedLabel',
+			{
+				label,
+				value,
+			},
+			{
+				label: matchingFieldItemData?.name ? matchingFieldItemData.name : label,
+				value,
+			}
+		);
+
+		return {
+			label: matchingFieldItemData?.name ? matchingFieldItemData.name : label,
+			value,
+		}
 	};
 
 	return (
@@ -113,7 +153,9 @@ const ListSelectValues = ( {
 			<DndContext
 				sensors={ sensors }
 				collisionDetection={ closestCenter }
+				onDragStart={ handleDragStart }
 				onDragEnd={ handleDragEnd }
+				onDragCancel={ handleDragCancel }
 				modifiers={ [
 					restrictToParentElement,
 					restrictToVerticalAxis,
@@ -123,8 +165,8 @@ const ListSelectValues = ( {
 					items={ arrayOfValues.map( ( item ) => item.value.toString() ) }
 					strategy={ verticalListSortingStrategy }
 				>
-					{ !! arrayOfValues.length && (
-						<ul className="pods-dfv-list pods-relationship">
+					{ arrayOfValues.length ? (
+						<ul className="pods-list-select-values">
 							{ arrayOfValues.map( ( valueItem, index ) => {
 								// There may be additional data in an object from the fieldItemData
 								// array.
@@ -134,22 +176,11 @@ const ListSelectValues = ( {
 
 								const icon = showIcon ? ( moreData?.icon || defaultIcon ) : undefined;
 
-								// May need to change the label, if it differs from the provided value.
-								const displayValue = valueItem;
-
-								const matchingFieldItemData = fieldItemData.find(
-									( item ) => Number( item.id ) === Number( valueItem.value )
-								);
-
-								if ( matchingFieldItemData && matchingFieldItemData.name ) {
-									displayValue.label = matchingFieldItemData.name;
-								}
-
 								return (
 									<DraggableListSelectItem
 										key={ `${ fieldName }-${ index }` }
 										fieldName={ fieldName }
-										value={ displayValue }
+										value={ getValueWithCorrectedLabel( valueItem ) }
 										isDraggable={ ! readOnly && ( 1 !== limit ) }
 										isRemovable={ ! readOnly }
 										editLink={ ! readOnly && showEditLink ? moreData?.edit_link : undefined }
@@ -172,8 +203,27 @@ const ListSelectValues = ( {
 								);
 							} ) }
 						</ul>
-					) }
+					) : null }
 				</SortableContext>
+
+				<DragOverlay>
+					{ activeItem ? (
+						<ListSelectItem
+							fieldName={ fieldName }
+							value={ getValueWithCorrectedLabel( activeItem ) }
+							isDraggable={ true }
+							isRemovable={ true }
+							editLink={ undefined }
+							viewLink={ undefined }
+							editIframeTitle={ '' }
+							icon={ undefined }
+							removeItem={ () => {} }
+							setFieldItemData={ () => {} }
+							moveUp={ () => {} }
+							moveDown={ () => {} }
+						/>
+					) : null }
+				</DragOverlay>
 			</DndContext>
 		</div>
 	);

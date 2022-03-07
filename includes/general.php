@@ -88,12 +88,13 @@ function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
 /**
  * Message / Notice handling for Admin UI
  *
- * @param string $message The notice / error message shown
- * @param string $type    Message type
+ * @param string $message The notice / error message shown.
+ * @param string $type    The message type.
+ * @param bool   $return  Whether to return the message.
  *
- * @return void
+ * @return string|null The message or null if not returning.
  */
-function pods_message( $message, $type = null ) {
+function pods_message( $message, $type = null, $return = false ) {
 	if ( empty( $type ) || ! in_array( $type, array( 'notice', 'error' ), true ) ) {
 		$type = 'notice';
 	}
@@ -106,7 +107,13 @@ function pods_message( $message, $type = null ) {
 		$class = 'error';
 	}
 
-	echo '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
+	$html = '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
+
+	if ( $return ) {
+		return $html;
+	}
+
+	echo $html;
 }
 
 $GLOBALS['pods_errors'] = array();
@@ -962,17 +969,54 @@ function pods_doing_json() {
 function pods_shortcode( $tags, $content = null ) {
 	pods_doing_shortcode( true );
 
+	$return_exception = static function() {
+		return 'exception';
+	};
+
+	add_filter( 'pods_error_mode', $return_exception, 50 );
+	add_filter( 'pods_error_exception_fallback_enabled', '__return_false', 50 );
+
 	try {
 		$return = pods_shortcode_run( $tags, $content );
 	} catch ( Exception $exception ) {
-		$return = $exception->getMessage();
+		$return = '';
 
-		if ( ! pods_is_debug_display() ) {
-			// Logs message.
-			pods_debug( $return );
-			$return = '';
+		if ( pods_is_debug_display() ) {
+			$return = pods_message(
+				sprintf(
+					'<strong>%1$s:</strong> %2$s',
+					esc_html__( 'Pods Renderer Error', 'pods' ),
+					esc_html( $exception->getMessage() )
+				),
+				'error',
+				true
+			);
+
+			$return .= '<pre style="overflow:scroll">' . esc_html( $exception->getTraceAsString() ) . '</pre>';
+		} elseif (
+			is_user_logged_in()
+			&& (
+				is_admin()
+				|| (
+					wp_is_json_request()
+					&& did_action( 'rest_api_init' )
+				)
+			)
+		) {
+			$return = pods_message(
+				sprintf(
+					'<strong>%1$s:</strong> %2$s',
+					esc_html__( 'Pods Renderer Error', 'pods' ),
+				esc_html__( 'There was a problem displaying this content, enable WP_DEBUG in wp-config.php to show more details.', 'pods' )
+				),
+				'error',
+				true
+			);
 		}
 	}
+
+	remove_filter( 'pods_error_mode', $return_exception, 50 );
+	remove_filter( 'pods_error_exception_fallback_enabled', '__return_false', 50 );
 
 	pods_doing_shortcode( false );
 
@@ -2681,6 +2725,11 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		'action' => [],
 	];
 
+	// If Pods is not being used for any fields, bypass all hooks.
+	if ( pods_is_types_only() ) {
+		return $hooks;
+	}
+
 	// Filters = Usually get/update/delete meta functions
 	// Actions = Usually insert/update/save/delete object functions
 	if ( 'post' === $object_type || 'media' === $object_type  || 'all' === $object_type ) {
@@ -2879,7 +2928,16 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}*/
 	}
 
-	return $hooks;
+	/**
+	 * Allow filtering the list of actions and filters for a specific object type.
+	 *
+	 * @since TBD
+	 *
+	 * @param array       $hooks       List of filters and actions for a specific object type.
+	 * @param string      $object_type The object type.
+	 * @param string|null $object      The object name.
+	 */
+	return (array) apply_filters( 'pods_meta_hook_list', $hooks, $object_type );
 }
 
 /**
@@ -3702,4 +3760,37 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 
 	// Default mode is base64.
 	return 'data:image/svg+xml;base64,' . base64_encode( $svg_data );
+}
+
+/**
+ * Determine whether Pods is being used for content types only.
+ *
+ * @since TBD
+ *
+ * @param bool $check_constant_only Whether to only check the constant, unless there's a filter overriding things.
+ *
+ * @return bool Whether Pods is being used for content types only.
+ */
+function pods_is_types_only( $check_constant_only = false ) {
+	// Check if Pods is only being used for content types only.
+	if ( defined( 'PODS_META_TYPES_ONLY' ) && PODS_META_TYPES_ONLY ) {
+		return true;
+	}
+
+	// Return null we want to only check the constant, unless there's a filter overriding things.
+	if ( $check_constant_only && ! has_filter( 'pods_is_types_only' ) ) {
+		return null;
+	}
+
+	$is_types_only = pods_get_setting( 'types_only', '0' );
+	$is_types_only = filter_var( $is_types_only, FILTER_VALIDATE_BOOLEAN );
+
+	/**
+	 * Allow filtering whether Pods is being used for content types only.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool $is_types_only Whether Pods is being used for content types only.
+	 */
+	return (bool) apply_filters( 'pods_is_types_only', $is_types_only );
 }

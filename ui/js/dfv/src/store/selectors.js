@@ -6,6 +6,7 @@ import {
 	GLOBAL_POD,
 	GROUPS,
 	// Global
+	GLOBAL_SHOW_FIELDS,
 	GLOBAL_POD_GROUPS,
 	GLOBAL_GROUP,
 	GLOBAL_FIELD,
@@ -63,6 +64,8 @@ export const getFieldsFromAllGroups = ( state ) => getGroups( state ).reduce(
 );
 
 // Global Pod config
+export const getGlobalShowFields = ( state ) => GLOBAL_SHOW_FIELDS.getFrom( state );
+
 export const getGlobalPodOptions = ( state ) => GLOBAL_POD.getFrom( state );
 
 export const getGlobalPodOption = ( state, key ) => GLOBAL_POD.getFrom( state )[ key ];

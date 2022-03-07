@@ -48,6 +48,7 @@ export const GROUPS = createStatePath( `${ CURRENT_POD.path }.groups` );
 // Global
 export const GLOBAL = createStatePath( 'global' );
 
+export const GLOBAL_SHOW_FIELDS = createStatePath( `${ GLOBAL.path }.showFields` );
 export const GLOBAL_POD = createStatePath( `${ GLOBAL.path }.pod` );
 export const GLOBAL_POD_GROUPS = createStatePath( `${ GLOBAL_POD.path }.groups` );
 

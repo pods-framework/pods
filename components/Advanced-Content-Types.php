@@ -27,10 +27,17 @@ class Pods_Advanced_Content_Types extends PodsComponent {
 	 * {@inheritdoc}
 	 */
 	public function init() {
-
-		if ( ! pods_tableless() ) {
-			add_filter( 'pods_admin_setup_add_create_pod_type', array( $this, 'add_pod_type' ) );
+		// Bypass if Pods is in types-only mode.
+		if ( pods_is_types_only() ) {
+			return;
 		}
+
+		// Bypass if Pods is in tableless mode.
+		if ( pods_tableless() ) {
+			return;
+		}
+
+		add_filter( 'pods_admin_setup_add_create_pod_type', array( $this, 'add_pod_type' ) );
 	}
 
 	/**

@@ -41,7 +41,11 @@ With Pods, you can create entirely new content types and settings pages.
 
 = Every Field Type, FREE =
 
-We have an extensive collection of over [25 different input types to choose from on 20+ different field types for any content structure](https://docs.pods.io/fields/). Each field type comes with their own additional options to help you customize content entry and display. You can also control visibility by role/capability and [other advanced options](https://docs.pods.io/fields/settings-advanced/).
+If you choose to use Pods for your custom fields, you'll get every field type you need, free of charge. Pods works great alongside [other custom field plugins](https://comparewp.org/cck) like [https://wordpress.org/plugins/advanced-custom-fields/](Advanced Custom Fields) too.
+
+We have an extensive collection of over [25 different input types to choose from on 20+ different field types for any content structure](https://docs.pods.io/fields/). Each field type comes with their own additional options to help you customize content entry and display.
+
+You can also control visibility by role/capability and [other advanced options](https://docs.pods.io/fields/settings-advanced/).
 
 * **Text:** Plain Text, Website, Phone, Email, Password
 * **Paragraph:** Plain Paragraph Text, WYSIWYG (Visual Editor), Code (Syntax Highlighting)
@@ -76,6 +80,7 @@ And many other relationships are also available including:
 = Optional Components to do even more =
 You can enable some of our included components to extend your WordPress site even further:
 
+* **Types-only Mode** - On our Pods Settings page, you can choose to disable creating custom fields for a performance boost if you only want to use Pods for content types or you plan on using it alongside of other custom field plugins 
 * **Pods Templates** - Use our [template engine](https://docs.pods.io/displaying-pods/pods-templates/) to create templates that can be handed off to clients for care-free management
 * **Markdown Syntax** - Parses [Markdown Syntax](https://www.markdownguide.org/basic-syntax) for Paragraph Text / WYSIWYG fields
 * **Advanced Relationships** - Add even more relationship objects including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates (in the theme), Sidebars, Post Type Objects, and Taxonomy Objects

@@ -88,12 +88,13 @@ function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
 /**
  * Message / Notice handling for Admin UI
  *
- * @param string $message The notice / error message shown
- * @param string $type    Message type
+ * @param string $message The notice / error message shown.
+ * @param string $type    The message type.
+ * @param bool   $return  Whether to return the message.
  *
- * @return void
+ * @return string|null The message or null if not returning.
  */
-function pods_message( $message, $type = null ) {
+function pods_message( $message, $type = null, $return = false ) {
 	if ( empty( $type ) || ! in_array( $type, array( 'notice', 'error' ), true ) ) {
 		$type = 'notice';
 	}
@@ -106,7 +107,13 @@ function pods_message( $message, $type = null ) {
 		$class = 'error';
 	}
 
-	echo '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
+	$html = '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
+
+	if ( $return ) {
+		return $html;
+	}
+
+	echo $html;
 }
 
 $GLOBALS['pods_errors'] = array();
@@ -962,17 +969,54 @@ function pods_doing_json() {
 function pods_shortcode( $tags, $content = null ) {
 	pods_doing_shortcode( true );
 
+	$return_exception = static function() {
+		return 'exception';
+	};
+
+	add_filter( 'pods_error_mode', $return_exception, 50 );
+	add_filter( 'pods_error_exception_fallback_enabled', '__return_false', 50 );
+
 	try {
 		$return = pods_shortcode_run( $tags, $content );
 	} catch ( Exception $exception ) {
-		$return = $exception->getMessage();
+		$return = '';
 
-		if ( ! pods_is_debug_display() ) {
-			// Logs message.
-			pods_debug( $return );
-			$return = '';
+		if ( pods_is_debug_display() ) {
+			$return = pods_message(
+				sprintf(
+					'<strong>%1$s:</strong> %2$s',
+					esc_html__( 'Pods Renderer Error', 'pods' ),
+					esc_html( $exception->getMessage() )
+				),
+				'error',
+				true
+			);
+
+			$return .= '<pre style="overflow:scroll">' . esc_html( $exception->getTraceAsString() ) . '</pre>';
+		} elseif (
+			is_user_logged_in()
+			&& (
+				is_admin()
+				|| (
+					wp_is_json_request()
+					&& did_action( 'rest_api_init' )
+				)
+			)
+		) {
+			$return = pods_message(
+				sprintf(
+					'<strong>%1$s:</strong> %2$s',
+					esc_html__( 'Pods Renderer Error', 'pods' ),
+				esc_html__( 'There was a problem displaying this content, enable WP_DEBUG in wp-config.php to show more details.', 'pods' )
+				),
+				'error',
+				true
+			);
 		}
 	}
+
+	remove_filter( 'pods_error_mode', $return_exception, 50 );
+	remove_filter( 'pods_error_exception_fallback_enabled', '__return_false', 50 );
 
 	pods_doing_shortcode( false );
 

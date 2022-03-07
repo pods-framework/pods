@@ -58,14 +58,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @noinspection PropertyCanBeStaticInspection
 	 */
 	protected $args = [
-		'object_type'  => '',
+		'object_type'         => '',
 		'object_storage_type' => 'collection',
-		'name'         => '',
-		'id'           => '',
-		'parent'       => '',
-		'group'        => '',
-		'label'        => '',
-		'description'  => '',
+		'name'                => '',
+		'id'                  => '',
+		'parent'              => '',
+		'group'               => '',
+		'label'               => '',
+		'description'         => '',
 	];
 
 	/**
@@ -499,6 +499,18 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		foreach ( $args as $arg => $value ) {
 			$this->set_arg( $arg, $value );
+		}
+
+		// If the type is a Pod or Group and types-only mode is enabled, force the groups/fields to be empty.
+		if (
+			(
+				'pod' === static::$type
+				|| 'group' === static::$type
+			)
+			&& pods_is_types_only()
+		) {
+			$this->_groups = [];
+			$this->_fields = [];
 		}
 	}
 

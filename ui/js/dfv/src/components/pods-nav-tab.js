@@ -15,17 +15,9 @@ const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {
 		setActiveTab( tabName );
 	};
 
-	const allTabs = [
-		{
-			name: 'manage-fields',
-			label: 'Fields',
-		},
-		...tabs,
-	];
-
 	return (
 		<h2 className="nav-tab-wrapper pods-nav-tabs">
-			{ allTabs.map( ( { name, label } ) => (
+			{ tabs.map( ( { name, label } ) => (
 				<a
 					key={ name }
 					href={ `#pods-${ name }` }

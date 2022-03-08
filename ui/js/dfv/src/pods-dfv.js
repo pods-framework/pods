@@ -14,13 +14,14 @@ import { registerPlugin } from '@wordpress/plugins';
 /**
  * Pods dependencies
  */
-import {
-	initPodStore,
-	initEditPodStore,
-} from 'dfv/src/store/store';
+import { initPodStore, initEditPodStore } from 'dfv/src/store/store';
 import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
-import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
-import * as models from 'dfv/src/config/model-manifest';
+
+import isGutenbergEditorLoaded from 'dfv/src/helpers/isGutenbergEditorLoaded';
+import isModalWindow from 'dfv/src/helpers/isModalWindow';
+import isMediaModal from 'dfv/src/helpers/isMediaModal';
+
+import initPodsGbModalListener from 'dfv/src/core/gb-modal-listener';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 
@@ -28,9 +29,6 @@ import FIELD_MAP from 'dfv/src/fields/field-map';
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
 window.PodsDFV = {
-	models,
-	dfvRootContainer: null,
-
 	/**
 	 * Initialize Pod data.
 	 *
@@ -223,18 +221,6 @@ window.PodsDFV = {
 			dfvRootContainer
 		);
 	},
-
-	isMediaModal() {
-		return window.location.pathname === '/wp-admin/upload.php';
-	},
-
-	isModalWindow() {
-		return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
-	},
-
-	isGutenbergEditorLoaded() {
-		return ( select( 'core/editor' ) !== undefined );
-	},
 };
 
 /**
@@ -242,7 +228,7 @@ window.PodsDFV = {
  */
 document.addEventListener( 'DOMContentLoaded', () => {
 	// For the Media context, init gets called later.
-	if ( window.PodsDFV.isMediaModal() ) {
+	if ( isMediaModal() ) {
 		return;
 	}
 
@@ -252,8 +238,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 // Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
 const LoadModalListeners = () => {
 	useEffect( () => {
-		if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
-			PodsGbModalListener.init();
+		if ( isModalWindow() && isGutenbergEditorLoaded() ) {
+			initPodsGbModalListener();
 		}
 	}, [] );
 

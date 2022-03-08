@@ -726,7 +726,7 @@ class PodsAdmin {
 		$pod = pods( $pod_name, pods_v( 'id', 'get', null, true ) );
 
 		if ( ! $pod->pod_data->has_fields() ) {
-			pods_message( 'error', __( 'This Pod does not have any fields defined.', 'pods' ) );
+			pods_message( __( 'This Pod does not have any fields defined.', 'pods' ), 'error' );
 			return;
 		}
 

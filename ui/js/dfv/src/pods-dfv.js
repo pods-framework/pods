@@ -82,7 +82,7 @@ window.PodsDFV = {
 		const fields = this.getFields( pod, itemId, formCounter );
 
 		if ( ! Array.isArray( fields ) || ! fields.length ) {
-			return null;
+			return undefined;
 		}
 
 		return fields.find( ( field ) => field.fieldConfig?.name === fieldName );

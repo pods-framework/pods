@@ -5055,8 +5055,9 @@ class PodsAPI {
 						}
 					}
 
-					$save_simple_to_table = $simple && pods_relationship_table_storage_enabled_for_simple_relationships( $options, $pod );
-					$save_simple_to_meta  = $simple && pods_relationship_meta_storage_enabled_for_simple_relationships( $options, $pod );
+					$is_settings_pod      = 'settings' === $pod['type'];
+					$save_simple_to_table = $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_simple_relationships( $options, $pod );
+					$save_simple_to_meta  = $simple && ( $is_settings_pod || pods_relationship_meta_storage_enabled_for_simple_relationships( $options, $pod ) );
 
 					// Check if we should save to the table, and then check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to the table.
 					if ( $save_to_table && ( ! $simple || $save_simple_to_table ) ) {

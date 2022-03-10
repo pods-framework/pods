@@ -1696,9 +1696,17 @@ class PodsAPI {
 				}
 			}
 
-			// Check if name is intentionally not set, set it as current name.
 			if ( ! isset( $params->name ) ) {
+				// Check if name is intentionally not set, set it as current name.
 				$params->name = $pod['name'];
+			} elseif ( isset( $params->new_name ) && ! empty( $params->new_name ) ) {
+				// Handle pod rename.
+				$params->name = $params->new_name;
+
+				unset( $params->new_name );
+
+				// Ensure old ID is set properly.
+				$old_id = $params->id;
 			}
 
 			if ( $old_name !== $params->name ) {
@@ -1723,7 +1731,7 @@ class PodsAPI {
 			}
 
 			if ( (int) $old_id !== (int) $params->id ) {
-				if ( $params->type === $pod['type'] && isset( $params->object ) && $params->object === $pod['object'] ) {
+				if ( isset( $params->type, $params->object ) && $params->type === $pod['type'] && $params->object === $pod['object'] ) {
 					return pods_error( sprintf( __( 'Pod using %s already exists, you can not reuse an object across multiple pods', 'pods' ), $params->object ), $this );
 				} else {
 					return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ), $this );

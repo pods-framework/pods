@@ -2618,10 +2618,10 @@ class PodsAPI {
 			$this->rename_wp_object_type( 'settings', $old_name, $pod_name );
 		}
 
-		$fields_to_sync = [];
+		$field_ids_to_sync = [];
 
 		// Sync any related fields if the name has changed
-		$fields_to_sync[] = pods_query(
+		$field_ids_to_sync[] = pods_query(
 			"
 				SELECT `p`.`ID`
 				FROM `{$wpdb->posts}` AS `p`
@@ -2640,7 +2640,7 @@ class PodsAPI {
 			"
 		);
 
-		$fields_to_sync[] = pods_query(
+		$field_ids_to_sync[] = pods_query(
 			"
 				SELECT `p`.`ID`
 				FROM `{$wpdb->posts}` AS `p`
@@ -2656,15 +2656,15 @@ class PodsAPI {
 			"
 		);
 
-		$fields_to_sync = array_merge( ...$fields_to_sync );
-		$fields_to_sync = array_map( 'absint', $fields_to_sync );
-		$fields_to_sync = array_unique( array_filter( $fields_to_sync ) );
+		$field_ids_to_sync = array_merge( ...$field_ids_to_sync );
+		$field_ids_to_sync = array_map( 'absint', $field_ids_to_sync );
+		$field_ids_to_sync = array_unique( array_filter( $field_ids_to_sync ) );
 
 		// Update the field configurations for any related fields that changed.
-		if ( ! empty( $fields_to_sync ) ) {
-			foreach ( $fields_to_sync as $field_to_sync ) {
+		if ( ! empty( $field_ids_to_sync ) ) {
+			foreach ( $field_ids_to_sync as $field_id_to_sync ) {
 				$found_field = $this->load_field( [
-					'id' => $field_to_sync->ID,
+					'id' => $field_id_to_sync,
 				] );
 
 				// Field not found.

@@ -2657,7 +2657,9 @@ class PodsAPI {
 		);
 
 		$field_ids_to_sync = array_merge( ...$field_ids_to_sync );
-		$field_ids_to_sync = array_map( 'absint', $field_ids_to_sync );
+		$field_ids_to_sync = array_map( static function( $field_to_sync ) {
+			return $field_to_sync->ID;
+		}, $field_ids_to_sync );
 		$field_ids_to_sync = array_unique( array_filter( $field_ids_to_sync ) );
 
 		// Update the field configurations for any related fields that changed.

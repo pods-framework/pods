@@ -1609,22 +1609,66 @@ class PodsAPI {
 			unset( $params->create_extend );
 		}
 
+		$pod = null;
+
+		$lookup_type = null;
+
 		if ( isset( $params->pod ) && $params->pod instanceof Pod ) {
 			$pod = $params->pod;
 
 			unset( $params->pod );
+
+			$lookup_type = 'Pod';
 		} else {
 			$load_params = [];
 
+			$fail_on_load = false;
+
 			if ( ! empty( $params->id ) ) {
 				$load_params['id'] = $params->id;
+
+				$fail_on_load = true;
+
+				$lookup_type = 'id';
 			} elseif ( ! empty( $params->old_name ) ) {
 				$load_params['name'] = $params->old_name;
+
+				$fail_on_load = true;
+
+				$lookup_type = 'old_name';
 			} elseif ( ! empty( $params->name ) ) {
 				$load_params['name'] = $params->name;
+
+				$lookup_type = 'name';
+			} elseif ( ! empty( $params->label ) ) {
+				$load_params = false;
+
+				$lookup_type = 'new';
+			} else{
+				return pods_error( __( 'Pod name or label is required', 'pods' ), $this );
 			}
 
-			$pod = $this->load_pod( $load_params, false );
+			if ( $load_params ) {
+				$pod = $this->load_pod( $load_params );
+
+				if ( $fail_on_load ) {
+					if ( is_wp_error( $pod ) ) {
+						return $pod;
+					} elseif ( empty( $pod ) ) {
+						return pods_error( __( 'Pod not found', 'pods' ), $this );
+					}
+				}
+			}
+		}
+
+		if ( empty( $params->name ) ) {
+			if ( $pod ) {
+				$params->name = $pod['name'];
+			} elseif ( ! empty( $params->label ) ) {
+				$params->name = pods_clean_name( $params->label );
+			} else {
+				return pods_error( __( 'Pod name or label is required', 'pods' ), $this );
+			}
 		}
 
 		if ( $pod instanceof Pod ) {
@@ -1675,17 +1719,16 @@ class PodsAPI {
 
 		if ( ! empty( $pod ) ) {
 			// Existing pod (update).
-
-			if ( isset( $params->id ) && 0 < $params->id ) {
-				$old_id = $params->id;
-			}
-
-			$params->id = $pod['id'];
-
+			$old_id      = $pod['id'];
 			$old_name    = $pod['name'];
 			$old_storage = isset( $pod['storage'] ) ? $pod['storage'] : 'meta';
 			$old_groups  = isset( $pod['groups'] ) ? $pod['groups'] : [];
 			$old_fields  = isset( $pod['fields'] ) ? $pod['fields'] : [];
+
+			// When renaming a Pod, use the old ID for reference if empty.
+			if ( ( 'old_name' === $lookup_type || $params->overwrite ) && empty( $params->id ) ) {
+				$params->id = $old_id;
+			}
 
 			// Get group fields if we have groups.
 			if ( ! empty( $old_groups ) ) {
@@ -1699,14 +1742,6 @@ class PodsAPI {
 			if ( ! isset( $params->name ) ) {
 				// Check if name is intentionally not set, set it as current name.
 				$params->name = $pod['name'];
-			} elseif ( isset( $params->new_name ) && ! empty( $params->new_name ) ) {
-				// Handle pod rename.
-				$params->name = $params->new_name;
-
-				unset( $params->new_name );
-
-				// Ensure old ID is set properly.
-				$old_id = $params->id;
 			}
 
 			if ( $old_name !== $params->name ) {
@@ -2921,6 +2956,14 @@ class PodsAPI {
 
 			$params->id = $field->get_id();
 
+			if ( ! isset( $params->pod_id ) ) {
+				$params->pod_id = $field->get_parent_id();
+			}
+
+			if ( ! isset( $params->group_id ) ) {
+				$params->group_id = $field->get_group_id();
+			}
+
 			unset( $params->field );
 		}
 
@@ -3074,6 +3117,8 @@ class PodsAPI {
 
 		$field_obj = $field;
 
+		$lookup_type = null;
+
 		if ( ! $field ) {
 			$load_params = [
 				'pod_id' => $params->pod_id,
@@ -3085,12 +3130,18 @@ class PodsAPI {
 				$load_params['id'] = $params->id;
 
 				$fail_on_load = true;
+
+				$lookup_type = 'id';
 			} elseif ( ! empty( $params->old_name ) ) {
 				$load_params['name'] = $params->old_name;
 
 				$fail_on_load = true;
+
+				$lookup_type = 'old_name';
 			} elseif ( ! empty( $params->name ) ) {
 				$load_params['name'] = $params->name;
+
+				$lookup_type = 'name';
 			} elseif ( ! empty( $params->label ) ) {
 				$load_params = false;
 			} else{
@@ -3145,8 +3196,8 @@ class PodsAPI {
 			$old_options   = $field;
 			$old_sister_id = pods_v( 'sister_id', $old_options, 0 );
 
-			// Maybe set up the field to save over the existing field.
-			if ( $params->overwrite && empty( $params->id ) ) {
+			// When renaming a field, use the old ID for reference if empty.
+			if ( ( 'old_name' === $lookup_type || $params->overwrite ) && empty( $params->id ) ) {
 				$params->id = $old_id;
 			}
 

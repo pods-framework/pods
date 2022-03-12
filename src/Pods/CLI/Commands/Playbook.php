@@ -27,6 +27,9 @@ class Playbook extends WP_CLI_Command {
 	 * [--test]
 	 * : Whether to run the playbook in test mode and not add/change/remove any data in the database.
 	 *
+	 * [--continue-on-error]
+	 * : Whether to continue on errors when the playbook is rim.
+	 *
 	 * ## EXAMPLES
 	 *
 	 * wp pods playbook run migration.json
@@ -46,7 +49,8 @@ class Playbook extends WP_CLI_Command {
 	public function run( $args, $assoc_args ) {
 		$playbook_file = $args[0];
 
-		$test_mode = ! empty( $assoc_args['test'] );
+		$test_mode         = ! empty( $assoc_args['test'] );
+		$continue_on_error = ! empty( $assoc_args['continue-on-error'] );
 
 		if ( ! file_exists( $playbook_file ) ) {
 			WP_CLI::error( __( 'Playbook file does not exist.', 'pods' ) );
@@ -133,7 +137,13 @@ class Playbook extends WP_CLI_Command {
 			$progress_bar->finish();
 		} catch ( Exception $e ) {
 			// translators: %s: The exception error message.
-			WP_CLI::error( sprintf( __( 'Playbook error: %s', 'pods' ), $e->getMessage() ) );
+			$playbook_error_message = sprintf( __( 'Playbook error: %s', 'pods' ), $e->getMessage() );
+
+			if ( $continue_on_error ) {
+				WP_CLI::warning( $playbook_error_message );
+			} else {
+				WP_CLI::error( $playbook_error_message );
+			}
 		}
 
 		WP_CLI::success( __( 'Playbook run completed.', 'pods' ) );

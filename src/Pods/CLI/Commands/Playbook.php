@@ -80,6 +80,10 @@ class Playbook extends WP_CLI_Command {
 
 		$api = pods_api();
 
+		// Enforce exceptions for errors.
+		add_filter( 'pods_error_mode', static function() { return 'exception'; } );
+		add_filter( 'pods_error_mode_force', '__return_true' );
+
 		$total_actions = count( $playbook_actions );
 
 		$progress_bar = make_progress_bar(
@@ -92,49 +96,65 @@ class Playbook extends WP_CLI_Command {
 			$total_actions
 		);
 
-		try {
-			foreach ( $playbook_actions as $action ) {
-				if ( ! isset( $action['action'] ) ) {
-					WP_CLI::warning( __( 'Action is invalid.', 'pods' ) );
-
-					$progress_bar->tick();
-
-					continue;
-				}
-
-				$action_name = $action['action'];
-
-				$action_comment = isset( $action['#'] ) ? $action['#'] : $action_name;
-
-				$action_args = [];
-
-				// Check which kind of arguments we will use.
-				if ( isset( $action['params'] ) ) {
-					$action_args = [
-						$action['params'],
-					];
-				} elseif ( isset( $action['args'] ) ) {
-					$action_args = $action['args'];
-				}
-
-				WP_CLI::debug( sprintf( '%1$s: %2$s > PodsAPI::%3$s( ...%4$s )', __( 'Running playbook action', 'pods' ), $action_comment, $action_name, wp_json_encode( $action_args ) ) );
-
-				// Run the action if not in test mode.
-				if ( ! $test_mode ) {
-					if ( 'run' !== $action_name && method_exists( $this, $action_name ) ) {
-						$this->$action_name( ...$action_args );
-					} elseif ( method_exists( $api, $action_name ) ) {
-						$api->$action_name( ...$action_args );
-					} else {
-						// translators: %s: The action name.
-						WP_CLI::warning( sprintf( __( 'Action not supported: %s', 'pods' ), $action_name ) );
-					}
-				}
+		foreach ( $playbook_actions as $action ) {
+			if ( ! isset( $action['action'] ) ) {
+				WP_CLI::warning( __( 'Action is invalid.', 'pods' ) );
 
 				$progress_bar->tick();
+
+				continue;
 			}
 
-			$progress_bar->finish();
+			$action_name = $action['action'];
+
+			$action_comment = isset( $action['#'] ) ? $action['#'] : $action_name;
+
+			$action_args = [];
+
+			// Check which kind of arguments we will use.
+			if ( isset( $action['params'] ) ) {
+				$action_args = [
+					$action['params'],
+				];
+			} elseif ( isset( $action['args'] ) ) {
+				$action_args = $action['args'];
+			}
+
+			WP_CLI::debug( sprintf( '%1$s: %2$s > PodsAPI::%3$s( ...%4$s )', __( 'Running playbook action', 'pods' ), $action_comment, $action_name, wp_json_encode( $action_args ) ) );
+
+			// Run the action if not in test mode.
+			if ( ! $test_mode ) {
+				$this->run_action( $action_name, $action_args, $api, $continue_on_error );
+			}
+
+			$progress_bar->tick();
+		}
+
+		$progress_bar->finish();
+
+		WP_CLI::success( __( 'Playbook run completed.', 'pods' ) );
+	}
+
+	/**
+	 * Handle running the action with a try/catch for error handling.
+	 *
+	 * @param string  $action_name
+	 * @param array   $action_args
+	 * @param PodsAPI $api
+	 * @param bool    $continue_on_error
+	 *
+	 * @throws WP_CLI\ExitException
+	 */
+	protected function run_action( $action_name, $action_args, $api, $continue_on_error ) {
+		try {
+			if ( 'run' !== $action_name && method_exists( $this, $action_name ) ) {
+				$this->$action_name( ...$action_args );
+			} elseif ( method_exists( $api, $action_name ) ) {
+				$api->$action_name( ...$action_args );
+			} else {
+				// translators: %s: The action name.
+				WP_CLI::warning( sprintf( __( 'Action not supported: %s', 'pods' ), $action_name ) );
+			}
 		} catch ( Exception $e ) {
 			// translators: %s: The exception error message.
 			$playbook_error_message = sprintf( __( 'Playbook error: %s', 'pods' ), $e->getMessage() );
@@ -145,8 +165,6 @@ class Playbook extends WP_CLI_Command {
 				WP_CLI::error( $playbook_error_message );
 			}
 		}
-
-		WP_CLI::success( __( 'Playbook run completed.', 'pods' ) );
 	}
 
 	/**

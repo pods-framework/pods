@@ -113,8 +113,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 						$content .= '<ul class="normal">';
 
-						foreach ( $import as $k => $what ) {
-							$content .= '<li>' . esc_html( $what ) . '</li>';
+						foreach ( $import as $name => $what ) {
+							$content .= '<li>' . esc_html( $what ) . ( 'pods' === $type ? ' (' . esc_html( $name ) . ')' : '' ) . '</li>';
 						}
 
 						$content .= '</ul>';

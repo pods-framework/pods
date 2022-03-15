@@ -43,8 +43,6 @@ const ListSelectValues = ( {
 	editIframeTitle,
 	readOnly = false,
 } ) => {
-	console.log( 'list select values:', arrayOfValues );
-
 	const [ activeItem, setActiveItem ] = useState( null );
 
 	const removeValueAtIndex = ( index = 0 ) => {
@@ -126,17 +124,6 @@ const ListSelectValues = ( {
 	const getValueWithCorrectedLabel = ( { label, value } ) => {
 		const matchingFieldItemData = fieldItemData.find(
 			( item ) => item.id.toString() === value.toString()
-		);
-
-		console.log('getValueWithCorrectedLabel',
-			{
-				label,
-				value,
-			},
-			{
-				label: matchingFieldItemData?.name ? matchingFieldItemData.name : label,
-				value,
-			}
 		);
 
 		return {

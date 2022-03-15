@@ -62,7 +62,7 @@ class PodTest extends Pods_UnitTestCase {
 	public function test_save_pod_with_empty_params() {
 		$params = [];
 
-		$this->expectExceptionMessage( 'Pod name is required' );
+		$this->expectExceptionMessage( 'Pod name or label is required' );
 		$this->expectException( \Exception::class );
 
 		$this->api->save_pod( $params );

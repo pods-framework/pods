@@ -181,6 +181,15 @@ function pods_error( $error, $obj = null ) {
 	 */
 	$error_mode = apply_filters( 'pods_error_mode', $error_mode, $error, $obj );
 
+	/**
+	 * Allow filtering whether to force the error mode in cases where multiple exceptions have been used.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool $error_mode_force Whether to force the error mode in cases where multiple exceptions have been used.
+	 */
+	$error_mode_force = apply_filters( 'pods_error_mode_force', false );
+
 	if ( is_array( $error ) ) {
 		$error = array_map( 'wp_kses_post', $error );
 
@@ -218,7 +227,7 @@ function pods_error( $error, $obj = null ) {
 
 	$pods_errors = array();
 
-	if ( $last_error === $error && 'exception' === $error_mode ) {
+	if ( $last_error === $error && 'exception' === $error_mode && ! $error_mode_force ) {
 		$error_mode = 'exit';
 	}
 

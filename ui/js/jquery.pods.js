@@ -267,7 +267,6 @@
 
                             if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d ) {
 
-								// @todo replace check with logic from isModalWindow() from Pods DFV.
                                 // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
                                 if ( 'object' === typeof data && null !== data ) {
                                     // Phone home with the data
@@ -366,8 +365,6 @@
                     $submitbutton.css( 'cursor', 'default' );
                     $submitbutton.prop( 'disabled', true );
                     $submitbutton.parent().find( '.waiting' ).fadeIn();
-
-					console.log('jquery.pods.js sending ajax from form?');
 
                     $( this ).closest( 'form.pods-submittable' ).trigger( 'submit' );
                 } );

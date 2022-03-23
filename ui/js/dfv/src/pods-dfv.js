@@ -8,6 +8,7 @@ import { omit } from 'lodash';
 /**
  * WordPress dependencies
  */
+import { createHooks, doAction, addAction } from '@wordpress/hooks';
 import { select, dispatch } from '@wordpress/data'
 import { registerPlugin } from '@wordpress/plugins';
 
@@ -39,6 +40,15 @@ window.PodsDFV = {
 	 * Store the field configs for reference.
 	 */
 	_fieldDataByStoreKeyPrefix: {},
+
+	/**
+	 * Private Pods instance of hooks. Can be used such as:
+	 *
+	 * ```
+	 * window.PodsDFV.hooks.addAction( 'pods_init_complete', 'pods/dfv', () => {} );
+	 * ```
+	 */
+	hooks: createHooks(),
 
 	/**
 	 * Get list of field configs (based on pod, item ID, and form counter).
@@ -330,6 +340,11 @@ window.PodsDFV = {
 			</>,
 			dfvRootContainer
 		);
+
+		/**
+		 * Run an action after Pods DFV init has completed.
+		 */
+		this.hooks.doAction( 'pods_init_complete' );
 	},
 };
 

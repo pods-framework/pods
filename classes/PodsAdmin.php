@@ -919,7 +919,8 @@ class PodsAdmin {
 
 		$pod_types_found = array();
 
-		$include_row_counts = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
+		$include_row_counts         = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
+		$include_row_counts_refresh = filter_var( pods_v( 'pods_include_row_counts_refresh' ), FILTER_VALIDATE_BOOLEAN );
 
 		$fields = [
 			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
@@ -1063,22 +1064,44 @@ class PodsAdmin {
 			}
 
 			if ( $include_row_counts ) {
-				$row_count      = $pod->count_rows();
+				$count_transient_prefix = 'pods_admin_' . $pod['type'] . '_' . $pod['name'] . '_';
 
-				if ( $show_meta_count ) {
-					$row_meta_count = $pod->count_row_meta();
+				$row_counts = [
+					'row_count'      => false,
+					'row_meta_count' => false,
+					'podsrel_count'  => false,
+				];
+
+				if ( ! $include_row_counts_refresh ) {
+					$row_counts['row_count']      = pods_transient_get( $count_transient_prefix . 'row_count' );
+					$row_counts['row_meta_count'] = pods_transient_get( $count_transient_prefix . 'row_meta_count' );
+					$row_counts['podsrel_count']  = pods_transient_get( $count_transient_prefix . 'podsrel_count' );
 				}
 
-				if ( ! $is_tableless ) {
-					$podsrel_count = $pod->count_podsrel_rows();
+				if ( ! is_numeric( $row_counts['row_count'] ) ) {
+					$row_counts['row_count'] = $pod->count_rows();
+
+					pods_transient_set( $count_transient_prefix . 'row_count', $row_counts['row_count'], HOUR_IN_SECONDS * 3 );
+				}
+
+				if ( $show_meta_count && ! is_numeric( $row_counts['row_meta_count'] ) ) {
+					$row_counts['row_meta_count'] = $pod->count_row_meta();
+
+					pods_transient_set( $count_transient_prefix . 'row_meta_count', $row_counts['row_meta_count'], HOUR_IN_SECONDS * 3 );
+				}
+
+				if ( ! $is_tableless && ! is_numeric( $row_counts['podsrel_count'] ) ) {
+					$row_counts['podsrel_count'] = $pod->count_podsrel_rows();
+
+					pods_transient_set( $count_transient_prefix . 'podsrel_count', $row_counts['podsrel_count'], HOUR_IN_SECONDS * 3 );
 				}
 			}
 
 			$pod = [
 				'id'        => $pod['id'],
-				'label'     => pods_v( 'label', $pod ),
-				'name'      => pods_v( 'name', $pod ),
-				'object'    => pods_v( 'object', $pod, '' ),
+				'label'     => $pod['label'],
+				'name'      => $pod['name'],
+				'object'    => $pod['object'],
 				'type'      => $pod_type,
 				'real_type' => $pod_real_type,
 				'storage'   => $storage_type_label,
@@ -1093,23 +1116,23 @@ class PodsAdmin {
 			}
 
 			if ( $include_row_counts ) {
-				$pod['row_count'] = number_format_i18n( $row_count );
+				$pod['row_count'] = number_format_i18n( $row_counts['row_count'] );
 
-				$total_rows += $row_count;
+				$total_rows += $row_counts['row_count'];
 
 				$pod['row_meta_count'] = 'n/a';
 				$pod['podsrel_count']  = 'n/a';
 
 				if ( $show_meta_count ) {
-					$pod['row_meta_count'] = number_format_i18n( $row_meta_count );
+					$pod['row_meta_count'] = number_format_i18n( $row_counts['row_meta_count'] );
 
-					$total_row_meta += $row_meta_count;
+					$total_row_meta += $row_counts['row_meta_count'];
 				}
 
 				if ( ! $is_tableless ) {
-					$pod['podsrel_count'] = number_format_i18n( $podsrel_count );
+					$pod['podsrel_count'] = number_format_i18n( $row_counts['podsrel_count'] );
 
-					$total_podsrel_rows += $podsrel_count;
+					$total_podsrel_rows += $row_counts['podsrel_count'];
 				}
 			}
 

@@ -209,7 +209,7 @@ const FieldGroups = ( {
 									index={ index }
 									editGroupPod={ editGroupPod }
 									deleteGroup={ deleteGroup }
-									removeGroupFromPod={ removeGroupFromPod }
+									removeGroupFromPod={ () => removeGroupFromPod( group.id ) }
 									saveStatus={ groupSaveStatuses[ group.name ] }
 									saveMessage={ groupSaveMessages[ group.name ] }
 									deleteStatus={ groupDeleteStatuses[ group.name ] }

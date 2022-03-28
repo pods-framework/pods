@@ -1,5 +1,8 @@
 <?php
 
+use Pods\Admin\Config\Pod as Config_Pod;
+use Pods\Admin\Config\Group as Config_Group;
+use Pods\Admin\Config\Field as Config_Field;
 use Pods\Admin\Settings;
 use Pods\Whatsit\Pod;
 
@@ -523,29 +526,40 @@ class PodsAdmin {
 				}
 			}
 
+			$edit_pods_title = null;
+
+			if ( 'pods' === pods_v( 'page' ) && 'edit' === pods_v( 'action' ) ) {
+				$edit_pods_title = __( 'Edit Pod', 'pods' );
+			}
+
 			$admin_menus = array(
 				'pods'            => array(
 					'label'    => __( 'Edit Pods', 'pods' ),
+					'title'    => $edit_pods_title,
 					'function' => array( $this, 'admin_setup' ),
 					'access'   => 'pods',
 				),
 				'pods-add-new'    => array(
 					'label'    => __( 'Add New', 'pods' ),
+					'title'    => __( 'Add New Pod', 'pods' ),
 					'function' => array( $this, 'admin_setup' ),
 					'access'   => 'pods',
 				),
 				'pods-components' => array(
 					'label'    => __( 'Components', 'pods' ),
+					'title'    => __( 'Pods Components', 'pods' ),
 					'function' => array( $this, 'admin_components' ),
 					'access'   => 'pods_components',
 				),
 				'pods-settings'   => array(
 					'label'    => __( 'Settings', 'pods' ),
+					'title'    => __( 'Pods Settings', 'pods' ),
 					'function' => array( $this, 'admin_settings' ),
 					'access'   => 'pods_settings',
 				),
 				'pods-help'       => array(
 					'label'    => __( 'Help', 'pods' ),
+					'title'    => __( 'Pods Help', 'pods' ),
 					'function' => array( $this, 'admin_help' ),
 				),
 			);
@@ -560,11 +574,13 @@ class PodsAdmin {
 				),
 				'pods-settings' => array(
 					'label'    => __( 'Settings', 'pods' ),
+					'title'    => __( 'Pods Settings', 'pods' ),
 					'function' => array( $this, 'admin_settings' ),
 					'access'   => 'pods_settings',
 				),
 				'pods-help'     => array(
 					'label'    => __( 'Help', 'pods' ),
+					'title'    => __( 'Pods Help', 'pods' ),
 					'function' => array( $this, 'admin_help' ),
 				),
 			);
@@ -599,8 +615,12 @@ class PodsAdmin {
 					continue;
 				}
 
-				if ( ! isset( $menu_item['label'] ) ) {
+				if ( empty( $menu_item['label'] ) ) {
 					$menu_item['label'] = $page;
+				}
+
+				if ( empty( $menu_item['title'] ) ) {
+					$menu_item['title'] = $menu_item['label'];
 				}
 
 				if ( false === $parent ) {
@@ -615,7 +635,7 @@ class PodsAdmin {
 					add_menu_page( $menu, $menu, 'read', $parent, null, pods_svg_icon( 'pods' ) );
 				}
 
-				add_submenu_page( $parent, $menu_item['label'], $menu_item['label'], 'read', $page, $menu_item['function'] );
+				add_submenu_page( $parent, $menu_item['title'], $menu_item['label'], 'read', $page, $menu_item['function'] );
 
 				if ( 'pods-components' === $page && is_object( PodsInit::$components ) ) {
 					PodsInit::$components->menu( $parent );
@@ -706,7 +726,7 @@ class PodsAdmin {
 		$pod = pods( $pod_name, pods_v( 'id', 'get', null, true ) );
 
 		if ( ! $pod->pod_data->has_fields() ) {
-			pods_message( 'error', __( 'This Pod does not have any fields defined.', 'pods' ) );
+			pods_message( __( 'This Pod does not have any fields defined.', 'pods' ), 'error' );
 			return;
 		}
 
@@ -857,7 +877,7 @@ class PodsAdmin {
 		}
 
 		if ( 'pods' === $_GET['page'] && empty( $pods ) ) {
-			pods_ui_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
+			pods_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
 		}
 
 		// @codingStandardsIgnoreLine
@@ -899,7 +919,8 @@ class PodsAdmin {
 
 		$pod_types_found = array();
 
-		$include_row_counts = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
+		$include_row_counts         = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
+		$include_row_counts_refresh = filter_var( pods_v( 'pods_include_row_counts_refresh' ), FILTER_VALIDATE_BOOLEAN );
 
 		$fields = [
 			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
@@ -918,6 +939,11 @@ class PodsAdmin {
 				'width' => '8%',
 			],
 		];
+
+		// Do not show Groups/Fields if in types-only mode.
+		if ( pods_is_types_only() ) {
+			unset( $fields['group_count'], $fields['field_count'] );
+		}
 
 		if ( $include_row_counts ) {
 			$fields['row_count'] = [
@@ -1026,57 +1052,87 @@ class PodsAdmin {
 				$row = $pod;
 			}
 
-			$group_count    = $pod->count_groups();
-			$field_count    = $pod->count_fields();
+			$group_count    = 0;
+			$field_count    = 0;
 			$row_count      = 0;
 			$row_meta_count = 0;
 			$podsrel_count  = 0;
 
-			if ( $include_row_counts ) {
-				$row_count      = $pod->count_rows();
+			if ( ! pods_is_types_only() ) {
+				$group_count    = $pod->count_groups();
+				$field_count    = $pod->count_fields();
+			}
 
-				if ( $show_meta_count ) {
-					$row_meta_count = $pod->count_row_meta();
+			if ( $include_row_counts ) {
+				$count_transient_prefix = 'pods_admin_' . $pod['type'] . '_' . $pod['name'] . '_';
+
+				$row_counts = [
+					'row_count'      => false,
+					'row_meta_count' => false,
+					'podsrel_count'  => false,
+				];
+
+				if ( ! $include_row_counts_refresh ) {
+					$row_counts['row_count']      = pods_transient_get( $count_transient_prefix . 'row_count' );
+					$row_counts['row_meta_count'] = pods_transient_get( $count_transient_prefix . 'row_meta_count' );
+					$row_counts['podsrel_count']  = pods_transient_get( $count_transient_prefix . 'podsrel_count' );
 				}
 
-				if ( ! $is_tableless ) {
-					$podsrel_count = $pod->count_podsrel_rows();
+				if ( ! is_numeric( $row_counts['row_count'] ) ) {
+					$row_counts['row_count'] = $pod->count_rows();
+
+					pods_transient_set( $count_transient_prefix . 'row_count', $row_counts['row_count'], HOUR_IN_SECONDS * 3 );
+				}
+
+				if ( $show_meta_count && ! is_numeric( $row_counts['row_meta_count'] ) ) {
+					$row_counts['row_meta_count'] = $pod->count_row_meta();
+
+					pods_transient_set( $count_transient_prefix . 'row_meta_count', $row_counts['row_meta_count'], HOUR_IN_SECONDS * 3 );
+				}
+
+				if ( ! $is_tableless && ! is_numeric( $row_counts['podsrel_count'] ) ) {
+					$row_counts['podsrel_count'] = $pod->count_podsrel_rows();
+
+					pods_transient_set( $count_transient_prefix . 'podsrel_count', $row_counts['podsrel_count'], HOUR_IN_SECONDS * 3 );
 				}
 			}
 
 			$pod = [
-				'id'          => $pod['id'],
-				'label'       => pods_v( 'label', $pod ),
-				'name'        => pods_v( 'name', $pod ),
-				'object'      => pods_v( 'object', $pod, '' ),
-				'type'        => $pod_type,
-				'real_type'   => $pod_real_type,
-				'storage'     => $storage_type_label,
-				'group_count' => number_format_i18n( $group_count ),
-				'field_count' => number_format_i18n( $field_count ),
+				'id'        => $pod['id'],
+				'label'     => $pod['label'],
+				'name'      => $pod['name'],
+				'object'    => $pod['object'],
+				'type'      => $pod_type,
+				'real_type' => $pod_real_type,
+				'storage'   => $storage_type_label,
 			];
 
-			$total_groups += $group_count;
-			$total_fields += $field_count;
+			if ( ! pods_is_types_only() ) {
+				$pod['group_count'] = number_format_i18n( $group_count );
+				$pod['field_count'] = number_format_i18n( $field_count );
+
+				$total_groups += $group_count;
+				$total_fields += $field_count;
+			}
 
 			if ( $include_row_counts ) {
-				$pod['row_count'] = number_format_i18n( $row_count );
+				$pod['row_count'] = number_format_i18n( $row_counts['row_count'] );
 
-				$total_rows += $row_count;
+				$total_rows += $row_counts['row_count'];
 
 				$pod['row_meta_count'] = 'n/a';
 				$pod['podsrel_count']  = 'n/a';
 
 				if ( $show_meta_count ) {
-					$pod['row_meta_count'] = number_format_i18n( $row_meta_count );
+					$pod['row_meta_count'] = number_format_i18n( $row_counts['row_meta_count'] );
 
-					$total_row_meta += $row_meta_count;
+					$total_row_meta += $row_counts['row_meta_count'];
 				}
 
 				if ( ! $is_tableless ) {
-					$pod['podsrel_count'] = number_format_i18n( $podsrel_count );
+					$pod['podsrel_count'] = number_format_i18n( $row_counts['podsrel_count'] );
 
-					$total_podsrel_rows += $podsrel_count;
+					$total_podsrel_rows += $row_counts['podsrel_count'];
 				}
 			}
 
@@ -1092,13 +1148,17 @@ class PodsAdmin {
 
 		$total_pods = count( $pod_list );
 
-		$extra_total_text = sprintf(
-			', %1$s %2$s, %3$s %4$s',
-			number_format_i18n( $total_groups ),
-			_n( 'group', 'groups', $total_groups, 'pods' ),
-			number_format_i18n( $total_fields ),
-			_n( 'field', 'fields', $total_fields, 'pods' )
-		);
+		$extra_total_text = '';
+
+		if ( ! pods_is_types_only() ) {
+			$extra_total_text .= sprintf(
+				', %1$s %2$s, %3$s %4$s',
+				number_format_i18n( $total_groups ),
+				_n( 'group', 'groups', $total_groups, 'pods' ),
+				number_format_i18n( $total_fields ),
+				_n( 'field', 'fields', $total_fields, 'pods' )
+			);
+		}
 
 		if ( $include_row_counts ) {
 			$extra_total_text .= sprintf(
@@ -1315,17 +1375,39 @@ class PodsAdmin {
 	public function admin_setup_edit( $duplicate, $obj ) {
 		$api = pods_api();
 
-		$pod = $api->load_pod( [ 'id' => $obj->id ] );
+		$pod = $obj->row;
 
 		if ( ! $pod instanceof Pod ) {
 			$obj->id = null;
 			$obj->row = [];
 			$obj->action = 'manage';
 
-			$obj->error( __( 'Invalid Pod configuration detected.' ) );
+			$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
 			$obj->manage();
 
 			return null;
+		}
+
+		if ( 'post_type' !== $pod->get_object_storage_type() ) {
+			$obj->id = null;
+			$obj->row = [];
+			$obj->action = 'manage';
+
+			// translators: %s: The pod label.
+			$obj->error( sprintf( __( 'Unable to edit the "%s" Pod configuration.', 'pods' ), $pod->get_label() ) );
+			$obj->manage();
+
+			return null;
+		}
+
+		$original_field_count = 0;
+
+		foreach ( $obj->data as $row ) {
+			if ( $row['id'] === $obj->id ) {
+				$original_field_count = $row['field_count'];
+
+				break;
+			}
 		}
 
 		$find_orphan_fields = (
@@ -1333,34 +1415,62 @@ class PodsAdmin {
 			&& pods_is_admin( array( 'pods' ) )
 		);
 
+		$migrated = false;
+
 		if ( $find_orphan_fields || 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
 			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+			$migrated = true;
 
 			// Maybe redirect the page to reload it fresh.
 			if ( $find_orphan_fields ) {
 				pods_redirect( pods_query_arg( [ 'pods_debug_find_orphan_fields' => null ] ) );
 				die();
 			}
+
+			// Check again in case the pod migrated wrong.
+			if ( ! $pod instanceof Pod ) {
+				$obj->id = null;
+				$obj->row = [];
+				$obj->action = 'manage';
+
+				$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
+				$obj->manage();
+
+				return null;
+			}
 		}
 
-		// Check again in case the pod migrated wrong.
-		if ( ! $pod instanceof Pod ) {
-			$obj->id = null;
-			$obj->row = [];
-			$obj->action = 'manage';
+		$current_pod = $pod->export( [
+			'include_groups'       => true,
+			'include_group_fields' => true,
+			'include_fields'       => false,
+		] );
 
-			$obj->error( __( 'Invalid Pod configuration detected.' ) );
-			$obj->manage();
+		if ( ! $migrated ) {
+			$group_field_count = wp_list_pluck( $current_pod['groups'], 'fields' );
+			$group_field_count = array_map( 'count', $group_field_count );
+			$group_field_count = array_sum( $group_field_count );
 
-			return null;
+			if ( $original_field_count !== $group_field_count ) {
+				$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+				// Check again in case the pod migrated wrong.
+				if ( ! $pod instanceof Pod ) {
+					$obj->id = null;
+					$obj->row = [];
+					$obj->action = 'manage';
+
+					$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
+					$obj->manage();
+
+					return null;
+				}
+			}
 		}
 
 		$config = [
-			'currentPod'     => $pod->export( [
-				'include_groups'       => true,
-				'include_group_fields' => true,
-				'include_fields'       => false,
-			] ),
+			'currentPod'     => $current_pod,
 			'global'         => $this->get_global_config( $pod ),
 			'fieldTypes'     => PodsForm::field_types(),
 			'relatedObjects' => $this->get_field_related_objects(),
@@ -1368,6 +1478,7 @@ class PodsAdmin {
 			'storageTypes'   => $api->get_storage_types(),
 			// @todo SKC: Remove these below and replace any references to podsDFVConfig
 			'wp_locale'      => $GLOBALS['wp_locale'],
+			'userLocale'     => str_replace( '_', '-', get_user_locale() ),
 			'currencies'     => PodsField_Currency::data_currencies(),
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
@@ -1568,9 +1679,9 @@ class PodsAdmin {
 	 * @return array Global config array.
 	 */
 	public function get_global_config( $pod = null ) {
-		$config_pod   = tribe( \Pods\Admin\Config\Pod::class );
-		$config_group = tribe( \Pods\Admin\Config\Group::class );
-		$config_field = tribe( \Pods\Admin\Config\Field::class );
+		$config_pod   = tribe( Config_Pod::class );
+		$config_group = tribe( Config_Group::class );
+		$config_field = tribe( Config_Field::class );
 
 		// Pod: Backwards compatible configs and hooks.
 		$pod_tabs        = $config_pod->get_tabs( $pod );
@@ -1578,17 +1689,20 @@ class PodsAdmin {
 
 		$this->backcompat_convert_tabs_to_groups( $pod_tabs, $pod_tab_options, 'pod/_pods_pod' );
 
-		// Group: Backwards compatible methods and hooks.
-		$group_tabs        = $config_group->get_tabs( $pod );
-		$group_tab_options = $config_group->get_fields( $pod, $group_tabs );
+		// If not types-only mode, handle groups/fields configs.
+		if ( ! pods_is_types_only() ) {
+			// Group: Backwards compatible methods and hooks.
+			$group_tabs        = $config_group->get_tabs( $pod );
+			$group_tab_options = $config_group->get_fields( $pod, $group_tabs );
 
-		$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
+			$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
 
-		// Field: Backwards compatible methods and hooks.
-		$field_tabs        = $config_field->get_tabs( $pod );
-		$field_tab_options = $config_field->get_fields( $pod, $field_tabs );
+			// Field: Backwards compatible methods and hooks.
+			$field_tabs        = $config_field->get_tabs( $pod );
+			$field_tab_options = $config_field->get_fields( $pod, $field_tabs );
 
-		$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
+			$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
+		}
 
 		$object_collection = Pods\Whatsit\Store::get_instance();
 
@@ -1612,19 +1726,20 @@ class PodsAdmin {
 		] );
 
 		$pod = [
-			'pod'   => $pod_object->export( [
+			'showFields' => ! pods_is_types_only(),
+			'pod'        => $pod_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
 			] ),
-			'group' => $group_object->export( [
+			'group'      => $group_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
 			] ),
-			'field' => $field_object->export( [
+			'field'      => $field_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,

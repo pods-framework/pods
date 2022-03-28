@@ -242,6 +242,11 @@ class PodsInit {
 				if ( ! defined( 'TRIBE_HIDE_MARKETING_NOTICES' ) ) {
 					define( 'TRIBE_HIDE_MARKETING_NOTICES', true );
 				}
+
+				// Disable shortcodes/customizer/widgets handling since we aren't using these.
+				add_filter( 'tribe_shortcodes_is_active', '__return_false' );
+				add_filter( 'tribe_customizer_is_active', '__return_false' );
+				add_filter( 'tribe_widgets_is_active', '__return_false' );
 			}
 
 			$GLOBALS['tribe-common-info'] = [
@@ -278,6 +283,9 @@ class PodsInit {
 				/** @var Tribe__Assets_Pipeline $assets_pipeline */
 				$assets_pipeline = tribe( 'assets.pipeline' );
 				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
+
+				// Disable the Debug Bar panels.
+				add_filter( 'tribe_debug_bar_panels', '__return_empty_array', 15 );
 			}
 		}
 	}
@@ -1005,6 +1013,7 @@ class PodsInit {
 
 		$config = [
 			'wp_locale'      => $GLOBALS['wp_locale'],
+			'userLocale'     => str_replace( '_', '-', get_user_locale() ),
 			'currencies'     => PodsField_Currency::data_currencies(),
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
@@ -1331,6 +1340,10 @@ class PodsInit {
 				// Labels
 				$cpt_label    = esc_html( pods_v( 'label', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'name', $post_type ) ) ), true ) );
 				$cpt_singular = esc_html( pods_v( 'label_singular', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'label', $post_type, $post_type_name, true ) ) ), true ) );
+
+				// Since 2.8.9: Fix single quote from esc_html().
+				$cpt_label    = str_replace( '&#039;', "'", $cpt_label );
+				$cpt_singular = str_replace( '&#039;', "'", $cpt_singular );
 
 				$cpt_labels                             = array();
 				$cpt_labels['name']                     = $cpt_label;

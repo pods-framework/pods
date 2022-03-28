@@ -218,7 +218,7 @@ class Item_Single extends Base {
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
 		$attributes = $this->attributes( $attributes );
-		$attributes = array_map( 'trim', $attributes );
+		$attributes = array_map( 'pods_trim', $attributes );
 
 		if (
 			empty( $attributes['template'] )

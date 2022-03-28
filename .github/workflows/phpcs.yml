@@ -30,4 +30,4 @@ jobs:
         uses: rtCamp/action-phpcs-code-review@v2
         env:
           GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
-          SKIP_FOLDERS: "tests,.github,tribe-common,vendor"
+          SKIP_FOLDERS: ".github,.wordpress-org,tests,tribe-common,vendor"

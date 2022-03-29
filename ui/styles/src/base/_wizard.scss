@@ -177,7 +177,8 @@
 						padding: 0;
 					}
 
-					.pods-field-option__field {
+					.pods-field-option__field,
+					.pods-field-option__field label.pods-radio-pick__option__label {
 						width: 100%;
 						max-width: 25rem;
 					}

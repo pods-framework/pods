@@ -1314,15 +1314,23 @@ class Pods_Pages extends PodsComponent {
 			}//end if
 		}
 
-		// Attempt to set up a basic WP post object.
-		if ( $template !== $original_template && function_exists( '\Roots\bootloader' ) ) {
-			$paths_to_check = [
-				\get_theme_file_path( '/resources/views' ),
-				\get_parent_theme_file_path( '/resources/views' ),
-				\resource_path( 'views' ),
-			];
+		/**
+		 * Allow filtering the template to include for a Pods Page.
+		 *
+		 * @since TBD
+		 *
+		 * @param string $template The template to use.
+		 * @param array  $exists   The Pods Page data.
+		 */
+		$template = apply_filters( 'pods_page_template_include', $template, self::$exists );
 
-			$factory = \app( ViewFactory::class );
+		// Attempt to set up a basic WP post object.
+		if ( $template !== $original_template && function_exists( '\Roots\bootloader' ) && function_exists( 'resource_path' ) ) {
+			$paths_to_check = [
+				get_theme_file_path( '/resources/views' ),
+				get_parent_theme_file_path( '/resources/views' ),
+				resource_path( 'views' ),
+			];
 
 			foreach ( $paths_to_check as $path_to_check ) {
 				$file_path = $path_to_check . DIRECTORY_SEPARATOR . $template;
@@ -1345,7 +1353,7 @@ class Pods_Pages extends PodsComponent {
 		global $pods;
 
 		// Support the Sage theme, eventually we can implement template_include everywhere else after more testing.
-		if ( function_exists( 'Roots\bootloader' ) ) {
+		if ( function_exists( '\Roots\bootloader' ) ) {
 			if ( ! empty( $pods ) && 0 < $pods->id() && 'post_type' === $pods->pod_data['type'] ) {
 				// Set up the post object using the pod.
 				query_posts( 'p=' . $pods->id() . '&post_type=' . $pods->pod_data['name'] );

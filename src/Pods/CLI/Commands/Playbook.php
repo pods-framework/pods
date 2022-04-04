@@ -4,6 +4,7 @@ namespace Pods\CLI\Commands;
 
 use Exception;
 use Pods_Migrate_Packages;
+use PodsInit;
 use PodsMigrate;
 use WP_CLI;
 use WP_CLI_Command;

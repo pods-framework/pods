@@ -793,7 +793,7 @@ abstract class Base {
 				$doc_endpoint_obj = tribe( 'pods.rest-v1.endpoints.documentation' );
 
 				$doc_endpoint_obj->register_documentation_provider( $rest_doc_route, $this );
-			} catch ( RuntimeException|ReflectionException $exception ) {
+			} catch ( Exception $exception ) {
 				// Do nothing.
 			}
 		}

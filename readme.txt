@@ -159,7 +159,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 = 2.8.12 - April 8th, 2022 =
 
 * Fixed: Resolved PHP issues with PHP 7.x with the REST API endpoints. (@sc0ttkclark)
-* Fixed: Fix Auto Template logic for detecting taxonomy archives to get the correct pod name from the associated term. #6368 #6490 (@sc0ttkclark)
+* Fixed: Fix Auto Template logic for detecting taxonomy archives to get the correct pod name from the associated term. #6368 #6490 (@JoryHogeveen)
 
 = 2.8.11 - April 8th, 2022 =
 

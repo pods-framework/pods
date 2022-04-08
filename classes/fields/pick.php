@@ -399,7 +399,6 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$options[ static::$type . '_post_status' ] = array(
-			'name'             => 'post_status',
 			'label'            => __( 'Limit list by Post Status', 'pods' ),
 			'help'             => __( 'You can choose to limit Posts available for selection by one or more specific post status.', 'pods' ),
 			'type'             => 'pick',

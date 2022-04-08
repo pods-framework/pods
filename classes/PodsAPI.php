@@ -9723,11 +9723,31 @@ class PodsAPI {
 			}
 
 			// Post Status default
-			$post_status = array( 'publish' );
+			$post_status = [
+				'publish',
+			];
 
-			// Pick field post_status option
-			if ( ! empty( $field['pick_post_status'] ) ) {
-				$post_status = (array) $field['pick_post_status'];
+			if ( ! empty( $field['post_status'] ) ) {
+				// Backwards-compatible with the old bugged version named as post_status.
+				$post_status = $field['post_status'];
+			} elseif ( ! empty( $field['pick_post_status'] ) ) {
+				// Support limiting by certain post status values.
+				$post_status = $field['pick_post_status'];
+			}
+
+			// Check for bad serialized array.
+			if ( is_string( $post_status ) ) {
+				$post_status = maybe_unserialize( $post_status );
+
+				if ( is_string( $post_status ) ) {
+					$post_status = explode( ',', $post_status );
+				}
+			}
+
+			if ( ! is_array( $post_status ) ) {
+				$post_status = [
+					'publish',
+				];
 			}
 
 			/**

@@ -16,7 +16,7 @@ class WPML extends Integration {
 	 */
 	protected $hooks = [
 		'action' => [
-			'wpml_language_has_switched', [ 'wpml_language_has_switched' ],
+			'wpml_language_has_switched' => [ 'wpml_language_has_switched' ],
 		],
 		'filter' => [
 			'pods_get_current_language' => [ 'pods_get_current_language', 10, 2 ],

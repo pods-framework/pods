@@ -41,7 +41,7 @@ With Pods, you can create entirely new content types and settings pages.
 
 = Every Field Type, FREE =
 
-If you choose to use Pods for your custom fields, you'll get every field type you need, free of charge. Pods works great alongside [other custom field plugins](https://comparewp.org/cck) like [https://wordpress.org/plugins/advanced-custom-fields/](Advanced Custom Fields) too.
+If you choose to use Pods for your custom fields, you'll get every field type you need, free of charge. Pods works great alongside [other custom field plugins](https://comparewp.org/cck) like [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/) too.
 
 We have an extensive collection of over [25 different input types to choose from on 20+ different field types for any content structure](https://docs.pods.io/fields/). Each field type comes with their own additional options to help you customize content entry and display.
 

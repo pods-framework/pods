@@ -222,11 +222,11 @@ abstract class Base {
 	 *
 	 * @since TBD
 	 *
-	 * @param int|string $id_or_slug The ID or slug.
+	 * @param int|string $id_or_slug The item ID or slug.
 	 *
 	 * @return false|Pods
 	 */
-	public function get_by_id_or_slug( $id_or_slug ) {
+	public function get_pod_item_by_id_or_slug( $id_or_slug ) {
 		$pod = pods( $this->object, $id_or_slug );
 
 		if ( ! $pod || is_wp_error( $pod ) || ! $pod->valid() || ! $pod->exists() ) {

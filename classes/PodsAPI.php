@@ -5032,7 +5032,7 @@ class PodsAPI {
 				if ( $simple ) {
 					if ( ! is_array( $value ) ) {
 						if ( 0 < strlen( $value ) ) {
-							$value = array( $value );
+							$value = explode( ',', $value );
 						} else {
 							$value = array();
 						}

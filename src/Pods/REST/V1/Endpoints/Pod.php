@@ -20,6 +20,20 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
+	 * @since TBD
+	 */
+	public $rest_route = '/pods/(?P<id>\\d+)';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since TBD
+	 */
+	public $rest_doc_route = '/pods/{id}';
+
+	/**
+	 * {@inheritdoc}
+	 *
 	 * @since 2.8.0
 	 */
 	public $object = 'pod';

@@ -16,6 +16,20 @@ class Field_Slug extends Field {
 	/**
 	 * {@inheritdoc}
 	 *
+	 * @since TBD
+	 */
+	public $rest_route = '/pods/(?P<pod>[\w\_\-]+)/fields/(?P<slug>[\w\_\-]+)';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since TBD
+	 */
+	public $rest_doc_route = '/pods/{pod}/fields/{slug}';
+
+	/**
+	 * {@inheritdoc}
+	 *
 	 * @since 2.8.0
 	 */
 	public function READ_args() {

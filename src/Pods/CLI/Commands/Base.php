@@ -45,6 +45,9 @@ abstract class Base {
 	 * @since 2.8.0
 	 */
 	public function hook() {
+		// Permissions are relaxed for WP-CLI context.
+		add_filter( 'pods_is_admin', '__return_true' );
+
 		$this->add_commands();
 	}
 
@@ -54,10 +57,7 @@ abstract class Base {
 	 * @since 2.8.0
 	 */
 	public function add_commands() {
-		// Permissions are relaxed for WP-CLI context.
-		add_filter( 'pods_is_admin', '__return_true' );
-
-		if ( method_exists( $this->endpoint_archive, 'get' ) ) {
+		if ( $this->endpoint_archive && method_exists( $this->endpoint_archive, 'get' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'list' );
 
 			WP_CLI::add_command( $command, [
@@ -66,7 +66,7 @@ abstract class Base {
 			], $this->build_command_args( 'list', $this->endpoint_archive ) );
 		}
 
-		if ( method_exists( $this->endpoint_archive, 'create' ) ) {
+		if ( $this->endpoint_archive && method_exists( $this->endpoint_archive, 'create' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'add' );
 
 			WP_CLI::add_command( $command, [
@@ -75,7 +75,7 @@ abstract class Base {
 			], $this->build_command_args( 'add', $this->endpoint_archive ) );
 		}
 
-		if ( method_exists( $this->endpoint_single, 'get' ) ) {
+		if ( $this->endpoint_single && method_exists( $this->endpoint_single, 'get' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'get' );
 
 			WP_CLI::add_command( $command, [
@@ -84,7 +84,7 @@ abstract class Base {
 			], $this->build_command_args( 'get', $this->endpoint_single ) );
 		}
 
-		if ( method_exists( $this->endpoint_single_slug, 'get' ) ) {
+		if ( $this->endpoint_single_slug && method_exists( $this->endpoint_single_slug, 'get' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'get-by-slug' );
 
 			WP_CLI::add_command( $command, [
@@ -93,7 +93,7 @@ abstract class Base {
 			], $this->build_command_args( 'get', $this->endpoint_single_slug ) );
 		}
 
-		if ( method_exists( $this->endpoint_single, 'update' ) ) {
+		if ( $this->endpoint_single && method_exists( $this->endpoint_single, 'update' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'update' );
 
 			WP_CLI::add_command( $command, [
@@ -102,7 +102,7 @@ abstract class Base {
 			], $this->build_command_args( 'update', $this->endpoint_single ) );
 		}
 
-		if ( method_exists( $this->endpoint_single_slug, 'update' ) ) {
+		if ( $this->endpoint_single_slug && method_exists( $this->endpoint_single_slug, 'update' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'update-by-slug' );
 
 			WP_CLI::add_command( $command, [
@@ -111,7 +111,7 @@ abstract class Base {
 			], $this->build_command_args( 'update', $this->endpoint_single_slug ) );
 		}
 
-		if ( method_exists( $this->endpoint_single, 'delete' ) ) {
+		if ( $this->endpoint_single && method_exists( $this->endpoint_single, 'delete' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'delete' );
 
 			WP_CLI::add_command( $command, [
@@ -120,7 +120,7 @@ abstract class Base {
 			], $this->build_command_args( 'delete', $this->endpoint_single ) );
 		}
 
-		if ( method_exists( $this->endpoint_single_slug, 'delete' ) ) {
+		if ( $this->endpoint_single_slug && method_exists( $this->endpoint_single_slug, 'delete' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'delete-by-slug' );
 
 			WP_CLI::add_command( $command, [

@@ -308,13 +308,21 @@
 
 						<span id="import-export"></span>
 
-						<div class="stuffbox hidden" id="import-export-results">
+						<div class="stuffbox hidden" id="pods-import-results">
+							<h3><?php _e( 'Imported Package', 'pods' ); ?></h3>
+
+							<div class="inside pods-manage-field pods-dependency">
+								<div class="pods-wizard-results"></div>
+							</div>
+						</div>
+
+						<div class="stuffbox hidden" id="pods-export-results">
 							<h3><?php _e( 'Exported Package', 'pods' ); ?></h3>
 
 							<div class="inside pods-manage-field pods-dependency">
 								<p>
-									<button id="pods-wizard-export-download" class="button button-secondary hidden"><?php esc_html_e( 'Download pods-package.json', 'pods' ); ?></button>
-									<button id="pods-wizard-export-copy" class="button button-secondary hidden"><?php esc_html_e( 'Copy the Package JSON', 'pods' ); ?></button>
+									<button id="pods-wizard-export-download" class="button button-secondary"><?php esc_html_e( 'Download pods-package.json', 'pods' ); ?></button>
+									<button id="pods-wizard-export-copy" class="button button-secondary"><?php esc_html_e( 'Copy the Package JSON', 'pods' ); ?></button>
 								</p>
 
 								<div class="pods-wizard-results"></div>
@@ -338,12 +346,18 @@
 </div>
 
 <script type="text/javascript">
-	const $pods_admin_package_import_export = jQuery( '#pods-form-ui-import-export' );
+	const $pods_admin_package_import_export  = jQuery( '#pods-form-ui-import-export' );
+	const $pods_admin_package_import_results = jQuery( '#pods-import-results' );
+	const $pods_admin_package_export_results = jQuery( '#pods-export-results' );
 
 	var pods_admin_wizard_callback = function ( step, completed ) {
 		if ( 2 == step || !step ) {
-			jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideUp( 'fast', function () {
-				jQuery( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' ).html( '' );
+			$pods_admin_package_import_results.slideUp( 'fast', function () {
+				jQuery( 'div.pods-wizard-results', $pods_admin_package_import_results ).html( '' );
+			} );
+
+			$pods_admin_package_export_results.slideUp( 'fast', function () {
+				jQuery( 'div.pods-wizard-results', $pods_admin_package_export_results ).html( '' );
 			} );
 		}
 
@@ -351,9 +365,6 @@
 	};
 
 	var pods_admin_submit_callback = function ( id ) {
-		jQuery( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' ).html( id );
-		jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideDown( 'fast' );
-
 		jQuery( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
 		jQuery( '#pods-wizard-next' ).prop( 'disabled', false );
 		jQuery( '#pods-wizard-next' ).text( jQuery( '#pods-wizard-next' ).data( 'again' ) );
@@ -361,11 +372,11 @@
 		window.location.hash = 'import-export';
 
 		if ( 'export' === $pods_admin_package_import_export.val() ) {
-			jQuery( '#pods-wizard-export-copy' ).show().removeClass( 'hidden' );
-			jQuery( '#pods-wizard-export-download' ).show().removeClass( 'hidden' );
+			jQuery( 'div.pods-wizard-results', $pods_admin_package_export_results ).html( id );
+			$pods_admin_package_export_results.slideDown( 'fast' );
 		} else {
-			jQuery( '#pods-wizard-export-copy' ).hide().addClass( 'hidden' );
-			jQuery( '#pods-wizard-export-download' ).hide().addClass( 'hidden' );
+			jQuery( 'div.pods-wizard-results', $pods_admin_package_import_results ).html( id );
+			$pods_admin_package_import_results.slideDown( 'fast' );
 		}
 
 		return false;
@@ -377,8 +388,11 @@
 	};
 
 	var pods_admin_wizard_startover_callback = function () {
-		jQuery( '#pods-wizard-panel-2 div#import-export-results' ).hide();
-		jQuery( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' ).html( '' );
+		$pods_admin_package_import_results.hide();
+		jQuery( 'div.pods-wizard-results', $pods_admin_package_import_results ).html( '' );
+
+		$pods_admin_package_export_results.hide();
+		jQuery( 'div.pods-wizard-results', $pods_admin_package_export_results ).html( '' );
 	};
 
 	const $pods_admin_package_import_package_code = jQuery( '#pods-form-ui-import-package' );
@@ -446,7 +460,7 @@
 			$pods_admin_package_import_package_file.change();
 		} );
 
-		const $export_results = $( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' );
+		const $export_results = $( 'div.pods-wizard-results', $pods_admin_package_export_results );
 
 		$( '#pods-wizard-export-copy' ).on( 'click', function( e ) {
 			e.preventDefault();

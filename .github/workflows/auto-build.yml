@@ -1,0 +1,26 @@
+name: 'Auto Build'
+on:
+  pull_request:
+    paths:
+      - 'ui/js/blocks/src/**'
+      - 'ui/js/dfv/src/**'
+      - 'ui/styles/src/**'
+      - 'package.json'
+      - 'webpack.*.js'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.13.2'
+      - name: Install dependencies
+        run: npm install
+      - name: Run build-production
+        run: npm run build-production
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css
+          commit_message: Auto rebuild assets

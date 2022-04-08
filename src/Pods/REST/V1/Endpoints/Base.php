@@ -10,6 +10,7 @@ use Tribe__Utils__Array as Utils_Array;
 use Tribe__Validator__Interface as Validator_Interface;
 use WP_Error;
 use WP_REST_Request;
+use WP_REST_Server;
 
 /**
  * Class Base
@@ -23,6 +24,18 @@ abstract class Base {
 	 * @var string
 	 */
 	public $route;
+
+	/**
+	 * @since TBD
+	 * @var string
+	 */
+	public $rest_route;
+
+	/**
+	 * @since TBD
+	 * @var string
+	 */
+	public $rest_doc_route;
 
 	/**
 	 * @since 2.8.0
@@ -202,6 +215,89 @@ abstract class Base {
 		$namespace = $main->get_pods_route_namespace();
 
 		return $namespace . $this->route;
+	}
+
+	/**
+	 * Get the Pod object for a specific item by ID or slug.
+	 *
+	 * @since TBD
+	 *
+	 * @param int|string $id_or_slug The item ID or slug.
+	 *
+	 * @return false|Pods
+	 */
+	public function get_pod_item_by_id_or_slug( $id_or_slug ) {
+		$pod = pods( $this->object, $id_or_slug );
+
+		if ( ! $pod || is_wp_error( $pod ) || ! $pod->valid() || ! $pod->exists() ) {
+			return false;
+		}
+
+		return $pod;
+	}
+
+	/**
+	 * Validate the required params are set.
+	 *
+	 * @since TBD
+	 *
+	 * @param object $params          The object params.
+	 * @param array  $required_params The list of required params.
+	 *
+	 * @return true|WP_Error True if all required params are present, WP_Error if not.
+	 */
+	public function validate_required_params( $params, array $required_params ) {
+		if ( ! is_object( $params ) ) {
+            return new WP_Error( 'rest_invalid_params', __( 'Invalid JSON parameters', 'pods' ), [ 'status' => 500 ] );
+        }
+
+		foreach ( $required_params as $key => $required_param ) {
+			if ( is_array( $required_param ) ) {
+				if ( ! isset( $params->$key ) || ! is_object( $params->$key ) ) {
+	                return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $key ), [ 'status' => 500 ] );
+	            }
+
+				foreach ( $required_param as $required_sub_param ) {
+                    if ( ! isset( $params->$key->$required_sub_param ) ) {
+                        return new WP_Error( 'rest_missing_sub_param', sprintf( __( 'Missing required JSON sub parameter: %s > %s', 'pods' ), $key, $required_sub_param ), [ 'status' => 500 ] );
+                    }
+                }
+            } elseif ( ! isset( $params->$required_param ) ) {
+                return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $required_param ), [ 'status' => 500 ] );
+            }
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether the user has access to the pod item.
+	 *
+	 * @since TBD
+	 *
+	 * @param Pods     $pod          The Pods object.
+	 * @param string   $author_field The author field to check permissions against.
+	 * @param int|null $user_id      The user ID.
+	 *
+	 * @return bool Whether the user has access to the pod item.
+	 */
+	public function check_permission( Pods $pod, $author_field, int $user_id = null ) {
+		// Maybe use the current user ID.
+		if ( null === $user_id ) {
+			if ( ! is_user_logged_in() ) {
+				return false;
+			}
+
+			$user_id = get_current_user_id();
+		}
+
+		// Pod item does not exist.
+		if ( ! $pod->exists() ) {
+			return false;
+		}
+
+		// Check if the user ID matches the author field.
+		return (int) $user_id === (int) $pod->field( $author_field );
 	}
 
 	/**
@@ -615,4 +711,94 @@ abstract class Base {
 
 		return $args;
 	}
+
+	/**
+	 * Register route for the endpoint automatically based on the supported methods.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $namespace   The route namespace.
+	 * @param bool   $add_to_docs Whether to add the route to the documentation endpoint.
+	 *
+	 * @return bool Whether the endpoint was successfully registered.
+	 */
+	public function register_routes( $namespace, $add_to_docs = false ) {
+		$rest_route = $this->route;
+
+		if ( ! empty( $this->rest_route ) ) {
+			$rest_route = $this->rest_route;
+		}
+
+		if ( empty( $rest_route ) ) {
+			return false;
+		}
+
+		$methods = [];
+
+		// Check for READABLE support.
+		if ( method_exists( $this, 'READ_args' ) && method_exists( $this, 'get' ) && method_exists( $this, 'can_read' ) ) {
+			$methods[] = [
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $this->READ_args(),
+				'callback'            => [ $this, 'get' ],
+				'permission_callback' => [ $this, 'can_read' ],
+			];
+		}
+
+		// Check for CREATABLE support.
+		if ( method_exists( $this, 'CREATE_args' ) && method_exists( $this, 'create' ) && method_exists( $this, 'can_create' ) ) {
+			$methods[] = [
+				'methods'             => WP_REST_Server::CREATABLE,
+				'args'                => $this->CREATE_args(),
+				'callback'            => [ $this, 'create' ],
+				'permission_callback' => [ $this, 'can_create' ],
+			];
+		}
+
+		// Check for EDITABLE support.
+		if ( method_exists( $this, 'EDIT_args' ) && method_exists( $this, 'update' ) && method_exists( $this, 'can_edit' ) ) {
+			$methods[] = [
+				'methods'             => WP_REST_Server::EDITABLE,
+				'args'                => $this->EDIT_args(),
+				'callback'            => [ $this, 'update' ],
+				'permission_callback' => [ $this, 'can_edit' ],
+			];
+		}
+
+		// Check for DELETABLE support.
+		if ( method_exists( $this, 'DELETE_args' ) && method_exists( $this, 'delete' ) && method_exists( $this, 'can_delete' ) ) {
+			$methods[] = [
+				'methods'             => WP_REST_Server::DELETABLE,
+				'args'                => $this->DELETE_args(),
+				'callback'            => [ $this, 'delete' ],
+				'permission_callback' => [ $this, 'can_delete' ],
+			];
+		}
+
+		if ( empty( $methods ) ) {
+			return false;
+		}
+
+		$registered = register_rest_route( $namespace, $rest_route, $methods );
+
+		// Maybe register route with the documentation handler.
+		if ( $registered ) {
+			$rest_doc_route = $this->route;
+
+			if ( ! empty( $this->rest_doc_route ) ) {
+				$rest_doc_route = $this->rest_doc_route;
+			}
+
+			try {
+				$doc_endpoint_obj = tribe( 'pods.rest-v1.endpoints.documentation' );
+
+				$doc_endpoint_obj->register_documentation_provider( $rest_doc_route, $this );
+			} catch ( RuntimeException|ReflectionException $exception ) {
+				// Do nothing.
+			}
+		}
+
+		return $registered;
+	}
+
 }

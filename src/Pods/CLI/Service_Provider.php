@@ -4,7 +4,9 @@ namespace Pods\CLI;
 
 use Pods\CLI\Commands\Field;
 use Pods\CLI\Commands\Group;
+use Pods\CLI\Commands\Playbook;
 use Pods\CLI\Commands\Pod;
+use WP_CLI;
 
 /**
  * Class Service_Provider
@@ -39,8 +41,14 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 * @since 2.8.0
 	 */
 	protected function hooks() {
+		// Add dynamic commands.
 		tribe( 'pods.cli.commands.pods.pod' );
 		tribe( 'pods.cli.commands.pods.group' );
 		tribe( 'pods.cli.commands.pods.field' );
+
+		// Add static commands.
+		if ( defined( 'WP_CLI' ) ) {
+			WP_CLI::add_command( 'pods playbook', Playbook::class );
+		}
 	}
 }

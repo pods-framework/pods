@@ -5972,7 +5972,7 @@ class PodsAPI {
 				continue;
 			}
 
-			$group = $this->load_pod( [ 'id' => $group_id ] );
+			$group = $this->load_group( [ 'id' => $group_id ] );
 
 			foreach ( $fields as $field_data ) {
 				unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['object_storage_type'], $field_data['group'] );

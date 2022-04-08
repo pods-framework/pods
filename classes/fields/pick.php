@@ -398,17 +398,28 @@ class PodsField_Pick extends PodsField {
 			$post_type_pick_objects[] = 'post_type-' . $post_type;
 		}
 
-		$options[ static::$type . '_post_status' ] = array(
+		$options[ static::$type . '_post_status' ] = [
 			'label'            => __( 'Limit list by Post Status', 'pods' ),
 			'help'             => __( 'You can choose to limit Posts available for selection by one or more specific post status.', 'pods' ),
 			'type'             => 'pick',
 			'pick_object'      => 'post-status',
 			'pick_format_type' => 'multi',
 			'default'          => 'publish',
-			'depends-on'       => array(
+			'depends-on'       => [
 				static::$type . '_object' => $post_type_pick_objects,
-			),
-		);
+			],
+		];
+
+		$options[ static::$type . '_post_author' ] = [
+			'label'      => __( 'Limit list to the same Post Author', 'pods' ),
+			'help'       => __( 'You can choose to limit Posts available for selection to those created by the same Post Author. This only works if this pod is a Post Type and this field is related to a Post Type.', 'pods' ),
+			'type'       => 'boolean',
+			'default'    => 0,
+			'depends-on' => [
+				// @todo Support being able to depend on the current pod type like _pod_type => post_type or something.
+				static::$type . '_object' => $post_type_pick_objects,
+			],
+		];
 
 		return $options;
 
@@ -2365,6 +2376,16 @@ class PodsField_Pick extends PodsField {
 					$pick_val = pods_v( static::$type . '_table', $options, $pick_val, true );
 				}
 
+				$current_pod = null;
+
+				if ( $pod instanceof Pod ) {
+					$current_pod = $pod;
+				} elseif ( $pod instanceof Pods ) {
+					$current_pod = $pod->pod_data;
+				} elseif ( is_array( $pod ) ) {
+					$current_pod = $pod;
+				}
+
 				$related_pod = null;
 
 				if ( '__current__' === $pick_val ) {
@@ -2373,7 +2394,7 @@ class PodsField_Pick extends PodsField {
 
 						$related_pod = $pod;
 					} elseif ( $pod instanceof Pods ) {
-						$pick_val = $pod->pod;
+						$pick_val = $pod->pod_data->get_name();
 
 						$related_pod = $pod->pod_data;
 					} elseif ( is_array( $pod ) ) {
@@ -2423,12 +2444,36 @@ class PodsField_Pick extends PodsField {
 
 				if ( empty( $params['where'] ) || ( ! is_array( $params['where'] ) && '' === trim( $params['where'] ) ) ) {
 					$params['where'] = array();
-				} elseif ( ! is_array( $params['where'] ) ) {
-					$params['where'] = (array) $params['where'];
 				}
+
+				$params['where'] = (array) $params['where'];
 
 				if ( 'value_to_label' === $context ) {
 					$params['where'][] = "`t`.`{$search_data->field_id}` = " . number_format( $value, 0, '', '' );
+				}
+
+				// Check if we need to limit by the current post author.
+				if (
+					1 === (int) pods_v( static::$type . '_post_author', $options, 0 )
+					&& $current_pod
+					&& 'post_type' === $current_pod['type']
+					&& 'post_type' === $options[ static::$type . '_object' ]
+				) {
+					$post_author_id = 0;
+
+					if ( empty( $id ) ) {
+						if ( is_user_logged_in() ) {
+							$post_author_id = get_current_user_id();
+						}
+					} else {
+						$post = get_post( $id );
+
+						if ( $post ) {
+							$post_author_id = $post->post_author;
+						}
+					}
+
+					$params['where'][] = '`t`.`post_author` = ' . (int) $post_author_id;
 				}
 
 				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );

@@ -9727,12 +9727,12 @@ class PodsAPI {
 				'publish',
 			];
 
-			if ( ! empty( $field['post_status'] ) ) {
-				// Backwards-compatible with the old bugged version named as post_status.
-				$post_status = $field['post_status'];
-			} elseif ( ! empty( $field['pick_post_status'] ) ) {
+			if ( ! empty( $field['pick_post_status'] ) ) {
 				// Support limiting by certain post status values.
 				$post_status = $field['pick_post_status'];
+			} elseif ( ! empty( $field['post_status'] ) ) {
+				// Backwards-compatible with the old bugged version named as post_status.
+				$post_status = $field['post_status'];
 			}
 
 			// Check for bad serialized array.
@@ -9772,7 +9772,7 @@ class PodsAPI {
 				'post_type' => "`t`.`{$info['field_type']}` = '" . pods_sanitize( $post_type ) . "'",
 			];
 
-			if ( 'post_type' === $object_type ) {
+			if ( 'post_type' === $object_type && ! empty( $post_status ) ) {
 				$info['where_default'] = "`t`.`post_status` IN ( '" . implode( "', '", pods_sanitize( $post_status ) ) . "' )";
 			}
 

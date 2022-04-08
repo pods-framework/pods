@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.8.11-b-1
+Stable tag: 2.8.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -155,6 +155,23 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.11 - April 8th, 2022 =
+
+* Added: You can now enable types-only mode for Pods under Pods Admin > Settings. This new mode will disallow adding and managing custom groups/fields. You can force it on by defining `PODS_META_TYPES_ONLY` as true in your wp-config.php too. #6437 (@sc0ttkclark)
+* Added: Now you can limit relationship fields that relate to post types to only include posts that match the current post's author. #4291 (@sc0ttkclark)
+* Added: JS API - Now you can hook into right after the Pods form fields have loaded by using `window.PodsDFV.hooks.addAction( 'pods_init_complete', 'pods/dfv', () => {} );` #6482 (@zrothauser, @sc0ttkclark)
+* Added: JS API - New JS helper functions to interact with fields on the screen including `window.PodsDFV.getField( pod, itemId, fieldName, formCounter )`, `window.PodsDFV.getFields( pod, itemId, formCounter )`, `window.PodsDFV.getFieldValue( pod, itemId, fieldName, formCounter )`, `window.PodsDFV.setFieldValue( pod, itemId, fieldName, value, formCounter )`. #6471 #6475 (@zrothauser, @sc0ttkclark)
+* Added: CLI - New CLI command `wp pods playbook run` which can run playbook .json files which allow you to perform multiple tasks with the Pods API. Useful for coordinating renames of Pods, Groups, and Fields, along with other CLI tasks between different environments. #6460 (@sc0ttkclark)
+* Fixed: Limit by post status option has been resolved but you may need to re-save your post status choices again. #6470 (@sc0ttkclark)
+* Fixed: Duplicated Pods now properly set the groups for the duplicated fields. If you have a Pod that is missing fields, try adding `&pods_debug_find_orphan_fields=1` to your edit pod URL and it should automatically fix them for you. #6463 (@sc0ttkclark)
+* Fixed: Advanced Content Type modals now close as expected when saving them within Flexible Relationships (Add New / Edit links for a relationship). #6457 #6481 (@zrothauser)
+* Fixed: Thumbnails in file lists now properly scale down as expected. #6473 #6474 (@JoryHogeveen)
+* Fixed: Simple Relationships now properly save once again for Settings pods. #6476 (@sc0ttkclark)
+* Fixed: The relationship field option for Autocomplete Select fields have improved drag and drop functionality to resolve issues with larger datasets. #6428 #6466 (@zrothauser)
+* Fixed: Now refreshing the language cache when WPML switches languages. #6448 #6449 (@JoryHogeveen)
+* Fixed: Disabled Tribe Common shortcode handling (when loading TC for Pods in independent-mode). #6438 (@sc0ttkclark)
+* Fixed: Resolved issue with the editor instance appearing over the dropdown select field options. #6452 #6453 (@JoryHogeveen)
 
 = 2.8.10 - February 1st, 2022 =
 

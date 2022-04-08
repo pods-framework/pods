@@ -67,7 +67,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				$pod = $obj->post_type;
 				break;
 			case $obj instanceof WP_Term:
-				$pod = $obj->name;
+				$pod = $obj->taxonomy;
 				break;
 			case $obj instanceof WP_User:
 				$pod = 'user';

@@ -16,6 +16,20 @@ class Group_Slug extends Group {
 	/**
 	 * {@inheritdoc}
 	 *
+	 * @since TBD
+	 */
+	public $rest_route = '/pods/(?P<pod>[\w\_\-]+)/groups/(?P<slug>[\w\_\-]+)';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since TBD
+	 */
+	public $rest_doc_route = '/pods/{pod}/groups/{slug}';
+
+	/**
+	 * {@inheritdoc}
+	 *
 	 * @since 2.8.0
 	 */
 	public function READ_args() {

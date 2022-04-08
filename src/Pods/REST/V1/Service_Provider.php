@@ -2,8 +2,7 @@
 
 namespace Pods\REST\V1;
 
-use RuntimeException;
-use ReflectionException;
+use Exception;
 use Pods\REST\V1\Endpoints\Field;
 use Pods\REST\V1\Endpoints\Field_Slug;
 use Pods\REST\V1\Endpoints\Fields;
@@ -114,7 +113,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 				if ( method_exists( $endpoint_obj, 'register_routes' ) ) {
 					$endpoint_obj->register_routes( $this->namespace, true );
 				}
-			} catch ( RuntimeException|ReflectionException $exception ) {
+			} catch ( Exception $exception ) {
 				// Do nothing.
 			}
 		}

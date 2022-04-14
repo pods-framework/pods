@@ -2385,7 +2385,7 @@ function pods_bool_to_int( $value ) {
 /**
  * Make replacements to a string using key=>value pairs.
  *
- * @since TBD
+ * @since 2.8.11
  *
  * @param string|array|mixed $value        The value to do replacements on.
  * @param array              $replacements The key=>value replacements to make.

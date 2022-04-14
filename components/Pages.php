@@ -1232,7 +1232,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Handle overriding the template used for a Pods Page.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string $original_template The template to include.
 	 *
@@ -1319,7 +1319,7 @@ class Pods_Pages extends PodsComponent {
 		/**
 		 * Allow filtering the template to include for a Pods Page.
 		 *
-		 * @since TBD
+		 * @since 2.8.11
 		 *
 		 * @param string $template The template to use.
 		 * @param array  $exists   The Pods Page data.

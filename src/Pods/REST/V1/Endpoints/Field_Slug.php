@@ -16,14 +16,14 @@ class Field_Slug extends Field {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 */
 	public $rest_route = '/pods/(?P<pod>[\w\_\-]+)/fields/(?P<slug>[\w\_\-]+)';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 */
 	public $rest_doc_route = '/pods/{pod}/fields/{slug}';
 

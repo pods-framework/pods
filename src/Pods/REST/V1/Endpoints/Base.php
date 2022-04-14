@@ -26,13 +26,13 @@ abstract class Base {
 	public $route;
 
 	/**
-	 * @since TBD
+	 * @since 2.8.11
 	 * @var string
 	 */
 	public $rest_route;
 
 	/**
-	 * @since TBD
+	 * @since 2.8.11
 	 * @var string
 	 */
 	public $rest_doc_route;
@@ -220,7 +220,7 @@ abstract class Base {
 	/**
 	 * Get the Pod object for a specific item by ID or slug.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param int|string $id_or_slug The item ID or slug.
 	 *
@@ -239,7 +239,7 @@ abstract class Base {
 	/**
 	 * Validate the required params are set.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param object $params          The object params.
 	 * @param array  $required_params The list of required params.
@@ -273,7 +273,7 @@ abstract class Base {
 	/**
 	 * Check whether the user has access to the pod item.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param Pods     $pod          The Pods object.
 	 * @param string   $author_field The author field to check permissions against.
@@ -715,7 +715,7 @@ abstract class Base {
 	/**
 	 * Register route for the endpoint automatically based on the supported methods.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string $namespace   The route namespace.
 	 * @param bool   $add_to_docs Whether to add the route to the documentation endpoint.

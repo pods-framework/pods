@@ -227,7 +227,7 @@ class PodsAPI {
 	/**
 	 * Save the meta for a meta type.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string $meta_type The meta type.
 	 * @param int    $id        The object ID.

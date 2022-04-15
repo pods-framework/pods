@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.8.14-a-1
+Stable tag: 2.8.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -155,6 +155,18 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.14 - April 15th, 2022 =
+
+* Added: New `$params` support in `Pods::total_found( $params )` to support `Pods::find( $params )` shorthand lookups for getting total number of records found more easily. (@sc0ttkclark)
+* Added: New `pods_api_save_field_table_definition_mode` filter allows overriding the definition mode when saving a field (bypass/add/drop/change) for schema management. (@sc0ttkclark)
+* Added: New `pods_podsrel_enabled()` arguments to allow filtering based on the field and context. (@sc0ttkclark)
+* Added: New `pods_data_build_pre_traverse_args` filter allows for overriding the find/replace/traverse/params arguments for a `PodsData::build()` request before relationship traversal runs. (@sc0ttkclark)
+* Added: New `pods_data_traverse_recurse_handle_join` filter allows for overriding the JOIN SQL used for relationship traversal. (@sc0ttkclark)
+* Fixed: Resolved potential PHP issues with path checks in `PodsView` on certain environments. (@sc0ttkclark)
+* Fixed: When a slug is set on a Pods Page, if the slug value comes through as empty due to a path issue, it will now enforce a 404 as expected. (@sc0ttkclark)   
+* Fixed: Resolved a few issues with the old field data coming through to the `pods_api_save_field_old_definition` filter. (@sc0ttkclark)
+* Fixed: No longer showing WPDB errors from WPDB when query errors are forced off. (@sc0ttkclark)
 
 = 2.8.13 - April 10th, 2022 =
 

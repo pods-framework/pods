@@ -456,9 +456,12 @@ function pods_tableless() {
  *
  * @since 2.8.0
  *
+ * @param null|Field  $field   The field object.
+ * @param null|string $context The context of the podsrel check (lookup/save).
+ *
  * @return bool Whether the wp_podsrel table is enabled.
  */
-function pods_podsrel_enabled() {
+function pods_podsrel_enabled( $field = null, $context = null ) {
 	// Disabled when Pods Tableless mode is on.
 	if ( pods_tableless() ) {
 		return false;
@@ -469,9 +472,11 @@ function pods_podsrel_enabled() {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param bool $enabled Whether the wp_podsrel table is enabled.
+	 * @param bool        $enabled Whether the wp_podsrel table is enabled.
+	 * @param null|Field  $field   The field object.
+	 * @param null|string $context The context of the podsrel check (lookup/save).
 	 */
-	return (bool) apply_filters( 'pods_podsrel_enabled', true );
+	return (bool) apply_filters( 'pods_podsrel_enabled', true, $field, $context );
 }
 
 /**

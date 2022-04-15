@@ -68,7 +68,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Get the list of endpoints.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @return string[] The list of endpoints.
 	 */

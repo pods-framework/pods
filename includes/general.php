@@ -184,7 +184,7 @@ function pods_error( $error, $obj = null ) {
 	/**
 	 * Allow filtering whether to force the error mode in cases where multiple exceptions have been used.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param bool $error_mode_force Whether to force the error mode in cases where multiple exceptions have been used.
 	 */
@@ -456,9 +456,12 @@ function pods_tableless() {
  *
  * @since 2.8.0
  *
+ * @param null|Field  $field   The field object.
+ * @param null|string $context The context of the podsrel check (lookup/save).
+ *
  * @return bool Whether the wp_podsrel table is enabled.
  */
-function pods_podsrel_enabled() {
+function pods_podsrel_enabled( $field = null, $context = null ) {
 	// Disabled when Pods Tableless mode is on.
 	if ( pods_tableless() ) {
 		return false;
@@ -469,9 +472,11 @@ function pods_podsrel_enabled() {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param bool $enabled Whether the wp_podsrel table is enabled.
+	 * @param bool        $enabled Whether the wp_podsrel table is enabled.
+	 * @param null|Field  $field   The field object.
+	 * @param null|string $context The context of the podsrel check (lookup/save).
 	 */
-	return (bool) apply_filters( 'pods_podsrel_enabled', true );
+	return (bool) apply_filters( 'pods_podsrel_enabled', true, $field, $context );
 }
 
 /**
@@ -2940,7 +2945,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 	/**
 	 * Allow filtering the list of actions and filters for a specific object type.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param array       $hooks       List of filters and actions for a specific object type.
 	 * @param string      $object_type The object type.
@@ -3774,7 +3779,7 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 /**
  * Determine whether Pods is being used for content types only.
  *
- * @since TBD
+ * @since 2.8.11
  *
  * @param bool $check_constant_only Whether to only check the constant, unless there's a filter overriding things.
  *
@@ -3797,7 +3802,7 @@ function pods_is_types_only( $check_constant_only = false ) {
 	/**
 	 * Allow filtering whether Pods is being used for content types only.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param bool $is_types_only Whether Pods is being used for content types only.
 	 */

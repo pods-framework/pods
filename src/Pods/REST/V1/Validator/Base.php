@@ -27,7 +27,7 @@ class Base extends Validator_Base implements Validator_Interface {
 	/**
 	 * Determine whether a Pod / Item ID is valid.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string     $pod        The pod name.
 	 * @param int|string $id_or_slug The Item ID or slug.
@@ -43,7 +43,7 @@ class Base extends Validator_Base implements Validator_Interface {
 	/**
 	 * Determine whether a Pod / Item ID is valid.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string     $pod The pod name.
 	 * @param int|string $id  The item ID.
@@ -57,7 +57,7 @@ class Base extends Validator_Base implements Validator_Interface {
 	/**
 	 * Determine whether a Pod / Item slug is valid.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string     $pod  The pod name.
 	 * @param int|string $slug The Item slug.
@@ -172,7 +172,7 @@ class Base extends Validator_Base implements Validator_Interface {
 	/**
 	 * Handle other potential methods automatically if possible.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string $name      The method name.
 	 * @param array  $arguments The arguments provided to the method.

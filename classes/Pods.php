@@ -2473,11 +2473,19 @@ class Pods implements Iterator {
 	 *
 	 * @see   PodsData::total_found
 	 *
+	 * @params null|array $params The list of Pods::find() parameters to use, otherwise use current dataset to calculate total found.
+	 *
 	 * @return int Number of rows returned by find(), regardless of the 'limit' parameter
 	 * @since 2.0.0
 	 * @link  https://docs.pods.io/code/pods/total-found/
 	 */
-	public function total_found() {
+	public function total_found( $params = null ) {
+		// Support find() shorthand to get total_found() for a specific dataset.
+		if ( is_array( $params ) ) {
+			$this->find( $params );
+
+			return $this->total_found();
+		}
 
 		/**
 		 * Runs directly before the value of total_found() is determined and returned.

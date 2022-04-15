@@ -994,7 +994,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Prepare the date/datetime/time field object or options for MomentJS formatting.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param array|Field $options The field object or options.
 	 *
@@ -1043,7 +1043,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Get the format from the options for a specific type (date/datetime/time).
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param array|Field $options The field object or options.
 	 * @param string      $type    The specific field type.
@@ -1144,7 +1144,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Convert the source format to MomentJS format for PHP / jQuery UI formats.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string|mixed $source_format The source format.
 	 * @param array        $args          The list of format arguments including source (php/jquery_ui) and type (date/time).

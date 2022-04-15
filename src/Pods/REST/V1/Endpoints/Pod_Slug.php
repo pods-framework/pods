@@ -16,14 +16,14 @@ class Pod_Slug extends Pod {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 */
 	public $rest_route = '/pods/(?P<slug>[\w\_\-]+)';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 */
 	public $rest_doc_route = '/pods/{slug}';
 

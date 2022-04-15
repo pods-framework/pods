@@ -1038,15 +1038,17 @@ class Pods_Pages extends PodsComponent {
 				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists['options'] ) ) ) {
 					$slug = pods_var_raw( 'pod_slug', self::$exists['options'], null, null, true );
 
+					$has_slug = 0 < strlen( $slug );
+
 					// Handle special magic tags
-					if ( 0 < strlen( $slug ) ) {
+					if ( $has_slug ) {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
 					$pods = pods( pods_var( 'pod', self::$exists['options'] ), $slug );
 
 					// Auto 404 handling if item doesn't exist
-					if ( 0 < strlen( $slug ) && ! $pods->exists() && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
+					if ( $has_slug && ( empty( $slug ) || ! $pods->exists() ) && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
 						$pods = 404;
 					}
 				}
@@ -1230,7 +1232,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Handle overriding the template used for a Pods Page.
 	 *
-	 * @since TBD
+	 * @since 2.8.11
 	 *
 	 * @param string $original_template The template to include.
 	 *
@@ -1317,7 +1319,7 @@ class Pods_Pages extends PodsComponent {
 		/**
 		 * Allow filtering the template to include for a Pods Page.
 		 *
-		 * @since TBD
+		 * @since 2.8.11
 		 *
 		 * @param string $template The template to use.
 		 * @param array  $exists   The Pods Page data.

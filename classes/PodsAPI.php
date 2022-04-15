@@ -2949,6 +2949,7 @@ class PodsAPI {
 
 		$params = (object) $params;
 
+		/** @var false|array|Field $field */
 		$field = false;
 
 		if ( isset( $params->field ) && $params->field instanceof Field ) {
@@ -3196,6 +3197,11 @@ class PodsAPI {
 			$old_options   = $field;
 			$old_sister_id = pods_v( 'sister_id', $old_options, 0 );
 
+			// Maybe clone the field object if we need to.
+			if ( $old_options instanceof Field ) {
+				$old_options = clone $old_options;
+			}
+
 			// When renaming a field, use the old ID for reference if empty.
 			if ( ( 'old_name' === $lookup_type || $params->overwrite ) && empty( $params->id ) ) {
 				$params->id = $old_id;
@@ -3243,7 +3249,7 @@ class PodsAPI {
 				}
 
 				if ( false !== $this->field_exists( $params, false ) ) {
-					return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
+					return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that on the %3$s pod', 'pods' ), $field['name'], $old_name, $pod['name'] ), $this );
 				}
 			}
 
@@ -3265,11 +3271,11 @@ class PodsAPI {
 			 *
 			 * @param string|false       $field_definition The SQL definition to use for the field's table column.
 			 * @param string             $type             The field type.
-			 * @param array              $field            The field data.
+			 * @param array              $old_options      The field data.
 			 * @param bool               $simple           Whether the field is a simple tableless field.
 			 * @param Pods\Whatsit\Field $field_obj        The field object.
 			 */
-			$field_definition = apply_filters( 'pods_api_save_field_old_definition', $field_definition, $old_type, $field, $old_simple, $field_obj );
+			$field_definition = apply_filters( 'pods_api_save_field_old_definition', $field_definition, $old_type, $old_options, $old_simple, $field_obj );
 
 			if ( ! empty( $field_definition ) ) {
 				$old_definition = "`{$old_name}` " . $field_definition;
@@ -3629,6 +3635,12 @@ class PodsAPI {
 
 		$field['id'] = $params->id;
 
+		if ( $field instanceof Field ) {
+			$field_obj = $field;
+		} elseif ( $field_obj instanceof Field && is_array( $field ) ) {
+			$field_obj->set_args( $field );
+		}
+
 		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 
 		$definition       = false;
@@ -3692,6 +3704,35 @@ class PodsAPI {
 					$definition_mode = 'change';
 				}
 			}
+
+			/**
+			 * Allow filtering the definition mode to use for the field definition handling.
+			 *
+			 * @since 2.8.14
+			 *
+			 * @param string             $definition_mode The definition mode used for the table field.
+			 * @param Pods\Whatsit\Pod   $pod             The pod object.
+			 * @param string             $type            The field type.
+			 * @param array              $field           The field data.
+			 * @param array              $extra_info      {
+			 *      Extra information about the field.
+			 *
+			 *      @type bool               $simple Whether the field is a simple tableless field.
+			 *      @type string             $definition The field definition.
+			 *      @type null|string        $old_name The old field name (if preexisting).
+			 *      @type null|string        $old_definition The old field definition (if preexisting).
+			 *      @type null|array         $old_options The old field options (if preexisting).
+			 *      @type Pods\Whatsit\Field $field_obj The field object.
+			 * }
+			 */
+			$definition_mode = apply_filters( 'pods_api_save_field_table_definition_mode', $definition_mode, $pod, $field['type'], $field, [
+				'simple'         => $simple,
+				'definition'     => $definition,
+				'old_name'       => $old_name,
+				'old_definition' => $old_definition,
+				'old_options'    => $old_options,
+				'field_obj'      => $field_obj,
+			] );
 
 			if ( 'bypass' !== $definition_mode ) {
 				/**
@@ -9075,7 +9116,7 @@ class PodsAPI {
 			if ( ! is_wp_error( $related ) ) {
 				$related_ids = $related;
 			}
-		} elseif ( ! $params->force_meta && ! pods_tableless() && pods_podsrel_enabled() ) {
+		} elseif ( ! $params->force_meta && ! pods_tableless() && pods_podsrel_enabled( $params->field, 'lookup' ) ) {
 			$ids = implode( ', ', $params->ids );
 
 			$params->field_id  = (int) $params->field_id;

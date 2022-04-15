@@ -2374,7 +2374,21 @@ class PodsData {
 		// Run Query.
 		$params->sql = apply_filters( 'pods_data_query', $params->sql, $params );
 
+		$wpdb_show_errors = null;
+
+		// Maybe disable wpdb errors.
+		if ( false === $params->error && ! empty( $wpdb->show_errors ) ) {
+			$wpdb_show_errors = false;
+
+			$wpdb->show_errors( false );
+		}
+
 		$result = $wpdb->query( $params->sql );
+
+		// Maybe show wpdb errors.
+		if ( $wpdb_show_errors ) {
+			$wpdb->show_errors( true );
+		}
 
 		$result = apply_filters( 'pods_data_query_result', $result, $params );
 

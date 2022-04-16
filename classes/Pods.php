@@ -816,10 +816,10 @@ class Pods implements Iterator {
 		}
 
 		if (
-			! $override_object_field &&
-			empty( $value ) &&
-			isset( $this->data->row[ $params->name ] ) &&
-			( ! $is_tableless_field || 'arrays' === $params->output )
+			! $override_object_field
+			&& empty( $value )
+			&& isset( $this->data->row[ $params->name ] )
+			&& ( ! $is_tableless_field || 'arrays' === $params->output )
 		) {
 			if ( empty( $field_data ) || in_array( $field_type, [
 					'boolean',

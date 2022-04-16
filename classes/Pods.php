@@ -567,6 +567,7 @@ class Pods implements Iterator {
 			'display_process_individually' => false,
 			'get_meta'                     => false,
 			'output'                       => null,
+			'pods_callback'                => 'pods',
 			'deprecated'                   => false,
 			'keyed'                        => false,
 			// extra data to send to field handlers.
@@ -617,6 +618,10 @@ class Pods implements Iterator {
 
 		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ), true ) ) {
 			$params->output .= 's';
+		}
+
+		if ( empty( $params->pods_callback ) || ! is_callable( $params->pods_callback ) ) {
+			$params->pods_callback = 'pods';
 		}
 
 		// Support old $orderby variable.
@@ -1186,10 +1191,11 @@ class Pods implements Iterator {
 								$is_field_output_full = true;
 							}
 
+							/** @var Pods $related_obj */
 							if ( 'pod' === $object_type ) {
-								$related_obj = pods( $object, null, false );
+								$related_obj = call_user_func( $params->pods_callback, $object, null, false );
 							} elseif ( ! empty( $table['pod'] ) ) {
-								$related_obj = pods( $table['pod']['name'], null, false );
+								$related_obj = call_user_func( $params->pods_callback, $table['pod']['name'], null, false );
 							}
 
 							if ( $table && ( $related_obj || ! empty( $table['table'] ) ) ) {
@@ -1314,10 +1320,11 @@ class Pods implements Iterator {
 												$item = (object) $item;
 											}//end if
 										} elseif ( 'pods' === $params->output ) {
+											/** @var Pods $item */
 											if ( in_array( $object_type, array( 'user', 'media' ), true ) ) {
-												$item = pods( $object_type, (int) $item_id );
+												$item = call_user_func( $params->pods_callback, $object_type, (int) $item_id );
 											} else {
-												$item = pods( $object, (int) $item_id );
+												$item = call_user_func( $params->pods_callback, $object, (int) $item_id );
 											}
 
 											if ( ! $item || ! $item->valid() ) {

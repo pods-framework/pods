@@ -158,7 +158,11 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.8.15 - April 16th, 2022 =
 
-* Fixed: Adjust the `Pods\REST\V1\Endpoints\Base::check_permission()` method so that it references the \Pods object. (@sc0ttkclark)
+* Added: New `pods_callback` support in `Pods::find()` so that you can pass a callback function to use for `pods()` usage with relationships using the `output` as "pods". This allows for using shared instances across large data sets to reduce time. (@sc0ttkclark)
+* Added: New property `$data->fetch_full` added to `PodsData` which can be used to turn off additional fetch requests when all of the table data was already returned by the query with `t.*`. (@sc0ttkclark)
+* Fixed: When using table-based fields and a non-simple relationship has a field in the table, it will still be expanded like a normal relationship field when requesting it by name with no traversal. (@sc0ttkclark)
+* Fixed: Call `PodsField_Pick::simple_objects()` using the object instead of statically to prevent PHP notices. (@sc0ttkclark)
+* Fixed: Adjust the `Pods\REST\V1\Endpoints\Base::check_permission()` method so that it references the correct `\Pods` object. (@sc0ttkclark)
 
 = 2.8.14 - April 15th, 2022 =
 

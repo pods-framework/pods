@@ -791,6 +791,19 @@ class Pods implements Iterator {
 			$params->output = 'arrays';
 		}
 
+		$is_tableless_field_and_not_simple = (
+			! $is_traversal
+			&& $field_data
+			&& ! $field_data instanceof Object_Field
+			&& $is_tableless_field
+			&& ! $field_data->is_simple_relationship()
+		);
+
+		// If a relationship is returned from the table as an ID but the parameter is not traversal, we need to run traversal logic.
+		if ( $is_tableless_field_and_not_simple && isset( $this->data->row[ $params->name ] ) && ! is_array( $this->data->row[ $params->name ] ) ) {
+			unset( $this->data->row[ $params->name ] );
+		}
+
 		// Enforce output type for tableless fields in forms.
 		if ( empty( $value ) && $is_tableless_field ) {
 			$params->raw = true;

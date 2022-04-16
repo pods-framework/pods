@@ -258,7 +258,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_object'        => array_merge( [
 						'site',
 						'network',
-					], self::simple_objects() ),
+					], $this->simple_objects() ),
 					static::$type . '_allow_add_new' => false,
 				],
 				'type'           => 'boolean',
@@ -272,7 +272,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -285,7 +285,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -298,7 +298,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -347,7 +347,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Display Field in Selection List', 'pods' ),
 				'help'        => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ) . ' ' . $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -367,7 +367,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>WHERE</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -376,7 +376,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>ORDER BY</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -385,7 +385,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>GROUP BY</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -2005,7 +2005,7 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function simple_value( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
 
-		if ( in_array( pods_v( static::$type . '_object', $options ), self::simple_objects(), true ) ) {
+		if ( in_array( pods_v( static::$type . '_object', $options ), $this->simple_objects(), true ) ) {
 			if ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 				$simple = @json_decode( $value, true );
 

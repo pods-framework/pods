@@ -2,6 +2,7 @@
 
 namespace Pods\REST\V1\Endpoints;
 
+use Pods;
 use Exception;
 use Pods\Whatsit;
 use Tribe__REST__Messages_Interface as Messages_Interface;
@@ -782,7 +783,7 @@ abstract class Base {
 		$registered = register_rest_route( $namespace, $rest_route, $methods );
 
 		// Maybe register route with the documentation handler.
-		if ( $registered ) {
+		if ( $registered && $add_to_docs ) {
 			$rest_doc_route = $this->route;
 
 			if ( ! empty( $this->rest_doc_route ) ) {

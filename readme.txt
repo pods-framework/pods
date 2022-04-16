@@ -156,6 +156,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.8.15 - April 16th, 2022 =
+
+* Fixed: Adjust the `Pods\REST\V1\Endpoints\Base::check_permission()` method so that it references the \Pods object. (@sc0ttkclark)
+
 = 2.8.14 - April 15th, 2022 =
 
 * Added: New `$params` support in `Pods::total_found( $params )` to support `Pods::find( $params )` shorthand lookups for getting total number of records found more easily. (@sc0ttkclark)

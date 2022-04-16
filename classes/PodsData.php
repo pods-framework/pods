@@ -50,6 +50,11 @@ class PodsData {
 	public static $display_errors = true;
 
 	/**
+	 * @var bool
+	 */
+	public $fetch_full = true;
+
+	/**
 	 * @var PodsAPI
 	 */
 	public $api = null;
@@ -2025,7 +2030,7 @@ class PodsData {
 		 * @param bool     $fetch_full Whether to fetch the full row.
 		 * @param PodsData $pods_data  The PodsData object.
 		 */
-		$fetch_full = (bool) apply_filters( 'pods_data_fetch_full', true, $this );
+		$fetch_full = (bool) apply_filters( 'pods_data_fetch_full', $this->fetch_full, $this );
 
 		if ( $fetch_full && ( null !== $row || ( $this->pod_data && 'settings' === $this->pod_data['type'] ) ) ) {
 			if ( $explicit_set ) {

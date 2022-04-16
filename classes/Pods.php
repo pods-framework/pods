@@ -567,6 +567,7 @@ class Pods implements Iterator {
 			'display_process_individually' => false,
 			'get_meta'                     => false,
 			'output'                       => null,
+			'pods_callback'                => 'pods',
 			'deprecated'                   => false,
 			'keyed'                        => false,
 			// extra data to send to field handlers.
@@ -617,6 +618,10 @@ class Pods implements Iterator {
 
 		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ), true ) ) {
 			$params->output .= 's';
+		}
+
+		if ( empty( $params->pods_callback ) || ! is_callable( $params->pods_callback ) ) {
+			$params->pods_callback = 'pods';
 		}
 
 		// Support old $orderby variable.
@@ -786,6 +791,19 @@ class Pods implements Iterator {
 			$params->output = 'arrays';
 		}
 
+		$is_tableless_field_and_not_simple = (
+			! $is_traversal
+			&& $field_data
+			&& ! $field_data instanceof Object_Field
+			&& $is_tableless_field
+			&& ! $field_data->is_simple_relationship()
+		);
+
+		// If a relationship is returned from the table as an ID but the parameter is not traversal, we need to run traversal logic.
+		if ( $is_tableless_field_and_not_simple && isset( $this->data->row[ $params->name ] ) && ! is_array( $this->data->row[ $params->name ] ) ) {
+			unset( $this->data->row[ $params->name ] );
+		}
+
 		// Enforce output type for tableless fields in forms.
 		if ( empty( $value ) && $is_tableless_field ) {
 			$params->raw = true;
@@ -811,10 +829,10 @@ class Pods implements Iterator {
 		}
 
 		if (
-			! $override_object_field &&
-			empty( $value ) &&
-			isset( $this->data->row[ $params->name ] ) &&
-			( ! $is_tableless_field || 'arrays' === $params->output )
+			! $override_object_field
+			&& empty( $value )
+			&& isset( $this->data->row[ $params->name ] )
+			&& ( ! $is_tableless_field || 'arrays' === $params->output )
 		) {
 			if ( empty( $field_data ) || in_array( $field_type, [
 					'boolean',
@@ -1186,10 +1204,11 @@ class Pods implements Iterator {
 								$is_field_output_full = true;
 							}
 
+							/** @var Pods $related_obj */
 							if ( 'pod' === $object_type ) {
-								$related_obj = pods( $object, null, false );
+								$related_obj = call_user_func( $params->pods_callback, $object, null, false );
 							} elseif ( ! empty( $table['pod'] ) ) {
-								$related_obj = pods( $table['pod']['name'], null, false );
+								$related_obj = call_user_func( $params->pods_callback, $table['pod']['name'], null, false );
 							}
 
 							if ( $table && ( $related_obj || ! empty( $table['table'] ) ) ) {
@@ -1314,10 +1333,11 @@ class Pods implements Iterator {
 												$item = (object) $item;
 											}//end if
 										} elseif ( 'pods' === $params->output ) {
+											/** @var Pods $item */
 											if ( in_array( $object_type, array( 'user', 'media' ), true ) ) {
-												$item = pods( $object_type, (int) $item_id );
+												$item = call_user_func( $params->pods_callback, $object_type, (int) $item_id );
 											} else {
-												$item = pods( $object, (int) $item_id );
+												$item = call_user_func( $params->pods_callback, $object, (int) $item_id );
 											}
 
 											if ( ! $item || ! $item->valid() ) {

@@ -17,6 +17,7 @@
  * @subpackage Pages
  */
 
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Storage;
 
@@ -931,7 +932,7 @@ class Pods_Pages extends PodsComponent {
 					add_action( 'after_setup_theme', array( $this, 'precode' ) );
 					add_action( 'wp', array( $this, 'silence_404' ), 1 );
 
-					// Genesis theme integration
+					// Genesis theme integration.
 					add_action( 'genesis_loop', 'pods_content', 11 );
 				}
 			}
@@ -1037,15 +1038,17 @@ class Pods_Pages extends PodsComponent {
 				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists['options'] ) ) ) {
 					$slug = pods_var_raw( 'pod_slug', self::$exists['options'], null, null, true );
 
+					$has_slug = 0 < strlen( $slug );
+
 					// Handle special magic tags
-					if ( 0 < strlen( $slug ) ) {
+					if ( $has_slug ) {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
 					$pods = pods( pods_var( 'pod', self::$exists['options'] ), $slug );
 
 					// Auto 404 handling if item doesn't exist
-					if ( 0 < strlen( $slug ) && ! $pods->exists() && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
+					if ( $has_slug && ( empty( $slug ) || ! $pods->exists() ) && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
 						$pods = 404;
 					}
 				}
@@ -1227,11 +1230,160 @@ class Pods_Pages extends PodsComponent {
 	}
 
 	/**
+	 * Handle overriding the template used for a Pods Page.
+	 *
+	 * @since 2.8.11
+	 *
+	 * @param string $original_template The template to include.
+	 *
+	 * @return string The template to include.
+	 */
+	public function template_include( $original_template ) {
+		global $pods;
+
+		// Default to original template if pod page was not found.
+		$template = $original_template;
+
+		if ( false !== self::$exists ) {
+			/*
+			 * Create pods.php in your theme directory, and
+			 * style it to suit your needs. Some helpful functions:
+			 *
+			 * get_header()
+			 * pods_content()
+			 * get_sidebar()
+			 * get_footer()
+			 */
+			$template = self::$exists['page_template'];
+			$template = apply_filters( 'pods_page_template', $template, self::$exists );
+
+			$render_function = apply_filters( 'pods_template_redirect', null, $template, self::$exists );
+
+			if ( '_custom' === $template ) {
+				pods_content();
+				die();
+			} elseif ( null !== $render_function && is_callable( $render_function ) ) {
+				call_user_func( $render_function, $template, self::$exists );
+				die();
+			} elseif ( ( ! defined( 'PODS_DISABLE_DYNAMIC_TEMPLATE' ) || ! PODS_DISABLE_DYNAMIC_TEMPLATE ) && is_object( $pods ) && ! is_wp_error( $pods ) && ! empty( $pods->page_template ) ) {
+				$template = $pods->page_template;
+				// found the template and included it, we're good to go!
+			} elseif ( ! empty( self::$exists['page_template'] ) ) {
+				$template = self::$exists['page_template'];
+				// found the template and included it, we're good to go!
+			} else {
+				$located_template = apply_filters( 'pods_page_locate_template', $template, self::$exists );
+
+				if ( $template !== $located_template ) {
+					$template = $located_template;
+				} else {
+					$default_templates = array();
+
+					$uri = explode( '?', self::$exists['uri'] );
+					$uri = explode( '#', $uri[0] );
+
+					$page_path = explode( '/', $uri[0] );
+
+					while ( $last = array_pop( $page_path ) ) {
+						$file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
+						$sanitized = sanitize_title( $file_name );
+
+						$default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+						$default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					}
+
+					$default_templates[] = 'pods.php';
+
+					$default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
+
+					$template = locate_template( $default_templates );
+
+					if ( '' !== $template ) {
+						// found the template and included it, we're good to go!
+					} else {
+						$template = false;
+
+						// templates not found in theme, default output
+						do_action( 'pods_page_default', $template, self::$exists );
+
+						get_header();
+						pods_content();
+						get_sidebar();
+						get_footer();
+						die();
+					}
+				}//end if
+			}//end if
+		}
+
+		/**
+		 * Allow filtering the template to include for a Pods Page.
+		 *
+		 * @since 2.8.11
+		 *
+		 * @param string $template The template to use.
+		 * @param array  $exists   The Pods Page data.
+		 */
+		$template = apply_filters( 'pods_page_template_include', $template, self::$exists );
+
+		// Attempt to set up a basic WP post object.
+		if ( $template !== $original_template && function_exists( '\Roots\bootloader' ) && function_exists( 'resource_path' ) ) {
+			$paths_to_check = [
+				get_theme_file_path( '/resources/views' ),
+				get_parent_theme_file_path( '/resources/views' ),
+				resource_path( 'views' ),
+			];
+
+			foreach ( $paths_to_check as $path_to_check ) {
+				$file_path = $path_to_check . DIRECTORY_SEPARATOR . $template;
+
+				if ( file_exists( $file_path ) ) {
+					$template = $file_path;
+
+					break;
+				}
+			}
+		}
+
+		return $template;
+	}
+
+	/**
 	 *
 	 */
 	public function template_redirect() {
-
 		global $pods;
+
+		// Support the Sage theme, eventually we can implement template_include everywhere else after more testing.
+		if ( function_exists( '\Roots\bootloader' ) ) {
+			if ( ! empty( $pods ) && 0 < $pods->id() && 'post_type' === $pods->pod_data['type'] ) {
+				// Set up the post object using the pod.
+				query_posts( 'p=' . $pods->id() . '&post_type=' . $pods->pod_data['name'] );
+
+				$pod_post = get_post( $pods->id() );
+
+				if ( $pod_post ) {
+					setup_postdata( $pod_post );
+				}
+			} elseif ( null === get_queried_object() ) {
+				// Maybe set up the post using the front page for now.
+				$front_page = (int) get_option( 'page_on_front' );
+
+				if ( 0 < $front_page ) {
+					query_posts( 'page_id=' . $front_page );
+
+					$front_page_post = get_post( $front_page );
+
+					if ( $front_page_post ) {
+						setup_postdata( $front_page_post );
+					}
+				}
+			}
+
+			add_filter( 'template_include', [ $this, 'template_include' ] );
+
+			return;
+		}
 
 		if ( false !== self::$exists ) {
 			/*

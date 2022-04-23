@@ -8,29 +8,144 @@ import { omit } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { select } from '@wordpress/data';
+import { createHooks, doAction, addAction } from '@wordpress/hooks';
+import { select, dispatch } from '@wordpress/data'
 import { registerPlugin } from '@wordpress/plugins';
 
 /**
  * Pods dependencies
  */
 import {
+	createStoreKey,
 	initPodStore,
 	initEditPodStore,
 } from 'dfv/src/store/store';
 import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
-import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
 
-import * as models from 'dfv/src/config/model-manifest';
+import isGutenbergEditorLoaded from 'dfv/src/helpers/isGutenbergEditorLoaded';
+import isModalWindow from 'dfv/src/helpers/isModalWindow';
+import isMediaModal from 'dfv/src/helpers/isMediaModal';
+import isEditPodScreen from 'dfv/src/helpers/isEditPodScreen';
 
+import initPodsGbModalListener from 'dfv/src/core/gb-modal-listener';
+
+import { STORE_KEY_EDIT_POD, STORE_KEY_DFV } from 'dfv/src/store/constants';
 import FIELD_MAP from 'dfv/src/fields/field-map';
 
 // Loads data from an object in this script tag.
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
 window.PodsDFV = {
-	models,
-	dfvRootContainer: null,
+	/**
+	 * Store the field configs for reference.
+	 */
+	_fieldDataByStoreKeyPrefix: {},
+
+	/**
+	 * Private Pods instance of hooks. Can be used such as:
+	 *
+	 * ```
+	 * window.PodsDFV.hooks.addAction( 'pods_init_complete', 'pods/dfv', () => {} );
+	 * ```
+	 */
+	hooks: createHooks(),
+
+	/**
+	 * Get list of field configs (based on pod, item ID, and form counter).
+	 *
+	 * @param {string} pod         Pod slug/name.
+	 * @param {int}    itemId      Object ID.
+	 * @param {int}    formCounter Form index. (Optional.)
+	 *
+	 * @returns {array|undefined} Array of field data, or undefined if not found.
+	 */
+	getFields( pod, itemId, formCounter = 0 ) {
+		if ( isEditPodScreen() ) {
+			return undefined;
+		}
+
+		const storeKey = createStoreKey(
+			pod,
+			itemId,
+			formCounter,
+			isEditPodScreen() ? STORE_KEY_EDIT_POD : STORE_KEY_DFV
+		);
+
+		return this._fieldDataByStoreKeyPrefix[ storeKey ] || undefined;
+	},
+
+	/**
+	 * Get specific field config (based on pod, item ID, form counter, and field name).
+	 *
+	 * @param {string} pod         Pod slug/name.
+	 * @param {int}    itemId      Object ID.
+	 * @param {string} fieldName   Field name.
+	 * @param {int}    formCounter Form index. (Optional.)
+	 *
+	 * @returns {object|undefined} Field data, or undefined if not found.
+	 */
+	getField( pod, itemId, fieldName, formCounter = 0 ) {
+		if ( isEditPodScreen() ) {
+			return undefined;
+		}
+
+		const fields = this.getFields( pod, itemId, formCounter );
+
+		if ( ! Array.isArray( fields ) || ! fields.length ) {
+			return undefined;
+		}
+
+		return fields.find( ( field ) => field.fieldConfig?.name === fieldName );
+	},
+
+	/**
+	 * Get current field value (based on pod, item ID, form counter, and field name).
+	 *
+	 * @param {string} pod         Pod slug/name.
+	 * @param {int}    itemId      Object ID.
+	 * @param {string} fieldName   Field name.
+	 * @param {int}    formCounter Form index. (Optional.)
+	 *
+	 * @returns {any} Field value or undefined.
+	 */
+	getFieldValue( pod, itemId, fieldName, formCounter = 0 ) {
+		if ( isEditPodScreen() ) {
+			return undefined;
+		}
+
+		const storeKey = createStoreKey(
+			pod,
+			itemId,
+			formCounter,
+			isEditPodScreen() ? STORE_KEY_EDIT_POD : STORE_KEY_DFV
+		);
+
+		return select( storeKey )?.getPodOptions()?.[ fieldName ];
+	},
+
+	/**
+	 * Set current field value (based on pod, item ID, form counter, and field name).
+	 *
+	 * @param {string} pod         Pod slug/name.
+	 * @param {int}    itemId      Object ID.
+	 * @param {string} fieldName   Field name.
+	 * @param {any}    value       New value.
+	 * @param {int}    formCounter Form index. (Optional.)
+	 */
+	setFieldValue( pod, itemId, fieldName, value, formCounter = 0 ) {
+		if ( isEditPodScreen() ) {
+			return;
+		}
+
+		const storeKey = createStoreKey(
+			pod,
+			itemId,
+			formCounter,
+			isEditPodScreen() ? STORE_KEY_EDIT_POD : STORE_KEY_DFV
+		);
+
+		dispatch( storeKey ).setOptionValue( fieldName, value );
+	},
 
 	/**
 	 * Initialize Pod data.
@@ -38,8 +153,6 @@ window.PodsDFV = {
 	 * @param {string} selector Selector to target script tags. If empty, selects all DFV script tags from the document.
 	 */
 	init( selector = '' ) {
-		const isEditPodScreen = 'undefined' !== typeof window.podsAdminConfig;
-
 		// Find all in-line data scripts
 		const scriptTagSelector = selector || SCRIPT_TARGET;
 		const dataTags = [ ...document.querySelectorAll( scriptTagSelector ) ];
@@ -85,8 +198,6 @@ window.PodsDFV = {
 				parentNode: tag.parentNode,
 				pod: tag.dataset.pod || null,
 				group: tag.dataset.group || null,
-				// The itemId is used when there are multiple instances of a
-				// pod as a form on the page.
 				itemId: tag.dataset.itemId || null,
 				formCounter: tag.dataset.formCounter || null,
 				fieldConfig: directRender ? undefined : cleanedFieldConfig,
@@ -106,10 +217,11 @@ window.PodsDFV = {
 		// for the store as a nested object by those keys. Also separate out the validFieldsData
 		// using these same keys.
 		const initialStoresWithValues = {};
-		const fieldDataByStoreKeyPrefix = {};
 
 		// Create the store if it hasn't been done already.
-		// The initial values for the data store require some massaging.
+		// The initial values for the data store require some massaging:
+		// Some are arrays when we need single values (this may change once
+		// repeatable fields are implemented), others have special requirements.
 		validFieldsData.forEach( ( currentField ) => {
 			const {
 				fieldConfig = {},
@@ -118,11 +230,15 @@ window.PodsDFV = {
 				formCounter,
 			} = currentField;
 
-			// @todo should group be used here?
-			const storeKeyPrefix = `${ pod }-${ itemId }-${ formCounter }`;
+			const storeKey = createStoreKey(
+				pod,
+				itemId,
+				formCounter,
+				isEditPodScreen() ? STORE_KEY_EDIT_POD : STORE_KEY_DFV
+			);
 
-			fieldDataByStoreKeyPrefix[ storeKeyPrefix ] = [
-				...( fieldDataByStoreKeyPrefix[ storeKeyPrefix ] || [] ),
+			this._fieldDataByStoreKeyPrefix[ storeKey ] = [
+				...( this._fieldDataByStoreKeyPrefix[ storeKey ] || [] ),
 				currentField,
 			];
 
@@ -138,15 +254,18 @@ window.PodsDFV = {
 					}
 
 					// Apply defaults if we're on the Edit Pod screen.
-					if ( isEditPodScreen && 'undefined' === typeof currentField.fieldItemData?.[ groupItem.name ] ) {
+					if (
+						isEditPodScreen() &&
+						'undefined' === typeof currentField.fieldItemData?.[ groupItem.name ]
+					) {
 						booleanGroupValues[ groupItem.name ] = groupItem.default || '';
 					} else {
 						booleanGroupValues[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ];
 					}
 				} );
 
-				initialStoresWithValues[ storeKeyPrefix ] = {
-					...( initialStoresWithValues[ storeKeyPrefix ] || {} ),
+				initialStoresWithValues[ storeKey ] = {
+					...( initialStoresWithValues[ storeKey ] || {} ),
 					...booleanGroupValues,
 				};
 
@@ -157,7 +276,7 @@ window.PodsDFV = {
 			// if a value isn't set. On other screens, this is handled on the back-end.
 			let valueOrDefault;
 
-			if ( isEditPodScreen ) {
+			if ( isEditPodScreen() ) {
 				valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
 					? currentField.fieldValue
 					: currentField.default;
@@ -167,8 +286,8 @@ window.PodsDFV = {
 					: '';
 			}
 
-			initialStoresWithValues[ storeKeyPrefix ] = {
-				...( initialStoresWithValues[ storeKeyPrefix ] || {} ),
+			initialStoresWithValues[ storeKey ] = {
+				...( initialStoresWithValues[ storeKey ] || {} ),
 				[ fieldConfig.name ]: valueOrDefault,
 			};
 		} );
@@ -178,21 +297,21 @@ window.PodsDFV = {
 
 		// Create stores for each of the individual keys we found (the keys of
 		// the initialStoresWithValues object).
-		const storeKeyPrefixes = Object.keys( initialStoresWithValues );
+		const initialStoreKeys = Object.keys( initialStoresWithValues );
 
-		const storeKeys = storeKeyPrefixes.map( ( storeKeyPrefix ) => {
+		const storeKeys = initialStoreKeys.map( ( storeKey ) => {
 			// The Edit Pod screen gets a different store set up than
 			// other contexts.
-			if ( isEditPodScreen ) {
+			if ( isEditPodScreen() ) {
 				return initEditPodStore(
 					window.podsAdminConfig,
-					storeKeyPrefix
+					storeKey
 				);
 			} else if ( window.podsDFVConfig ) {
 				return initPodStore(
 					window.podsDFVConfig,
-					initialStoresWithValues[ storeKeyPrefix ],
-					storeKeyPrefix,
+					initialStoresWithValues[ storeKey ],
+					storeKey,
 				);
 			}
 
@@ -211,28 +330,21 @@ window.PodsDFV = {
 		// Set up the DFV app.
 		ReactDOM.render(
 			<>
-				{ storeKeyPrefixes.map( ( storeKeyPrefix, index ) => (
+				{ storeKeys.map( ( storeKey ) => (
 					<PodsDFVApp
-						fieldsData={ fieldDataByStoreKeyPrefix[ storeKeyPrefix ] }
-						storeKey={ storeKeys[ index ] }
-						key={ storeKeys[ index ] }
+						fieldsData={ this._fieldDataByStoreKeyPrefix[ storeKey ] }
+						storeKey={ storeKey }
+						key={ storeKey }
 					/>
 				) ) }
 			</>,
 			dfvRootContainer
 		);
-	},
 
-	isMediaModal() {
-		return window.location.pathname === '/wp-admin/upload.php';
-	},
-
-	isModalWindow() {
-		return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
-	},
-
-	isGutenbergEditorLoaded() {
-		return ( select( 'core/editor' ) !== undefined );
+		/**
+		 * Run an action after Pods DFV init has completed.
+		 */
+		this.hooks.doAction( 'pods_init_complete' );
 	},
 };
 
@@ -241,7 +353,7 @@ window.PodsDFV = {
  */
 document.addEventListener( 'DOMContentLoaded', () => {
 	// For the Media context, init gets called later.
-	if ( window.PodsDFV.isMediaModal() ) {
+	if ( isMediaModal() ) {
 		return;
 	}
 
@@ -251,8 +363,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 // Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
 const LoadModalListeners = () => {
 	useEffect( () => {
-		if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
-			PodsGbModalListener.init();
+		if ( isModalWindow() && isGutenbergEditorLoaded() ) {
+			initPodsGbModalListener();
 		}
 	}, [] );
 

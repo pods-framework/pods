@@ -1004,7 +1004,9 @@ class PodsField {
 		) {
 			if ( ! is_array( $value ) ) {
 				if ( '' === $value || null === $value ) {
-					$value = [];
+					$value = [
+						'',
+					];
 				} else {
 					$value = (array) $value;
 				}

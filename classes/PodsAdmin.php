@@ -3217,4 +3217,56 @@ class PodsAdmin {
 		return $tests;
 	}
 
+	/**
+	 * Check whether the requirements were met and maybe display error messages.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $requirements List of requirements.
+	 *
+	 * @return bool Whether the requirements were met.
+	 */
+	public function check_requirements( array $requirements ) {
+		foreach ( $requirements as $requirement ) {
+			// Check if requirement passed.
+			if ( $requirement['check'] ) {
+				continue;
+			}
+
+			// Show admin notice if there's a message to be shown.
+			if ( ! empty( $requirement['message'] ) && $this->should_show_notices() ) {
+				pods_message( $requirement['message'], 'error' );
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether we should show notices.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether we should show notices.
+	 */
+	public function should_show_notices() {
+		global $pagenow;
+
+		// We only show notices on admin pages.
+		if ( ! is_admin() ) {
+			return false;
+		}
+
+		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+
+		// We only show on the plugins.php page or on Pods Admin pages.
+		if ( ( 'plugins.php' !== $pagenow && 0 !== strpos( $page, 'pods' ) ) || 0 === strpos( $page, 'pods-content' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 }

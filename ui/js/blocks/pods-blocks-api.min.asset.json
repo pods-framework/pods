@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"dependencies":["lodash","react","react-dom","wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"43a65acd3a0ce2f1ee6ad45c98228bca"}
+=======
+{"dependencies":["lodash","react","react-dom","wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"ba370a76ddaa35b624946bd55b1970df"}
+>>>>>>> release/2.9

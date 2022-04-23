@@ -184,7 +184,7 @@ export const FieldListItem = ( props ) => {
 						{ required && ( <span className="pods-field_required">&nbsp;*</span> ) }
 					</span>
 
-					<div className="pods-field_id"> id = { id }</div>
+					<div className="pods-field_id"> [id = { id }]</div>
 
 					{ hasDeleteFailed ? (
 						<div className="pods-field_controls-container__error">

@@ -246,6 +246,9 @@ export const FieldListItem = ( props ) => {
 
 				<div className="pods-field pods-field_type">
 					{ typeObject?.label }
+					{ field?.repeatable && (
+						<span className="pods-field_repeatable"> ({ __( 'repeatable', 'pods' ) })</span>
+					) }
 					{ typeObject?.type && (
 						<div className="pods-field_id"> [type = { typeObject.type }]</div>
 					) }

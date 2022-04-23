@@ -206,7 +206,7 @@ class Field extends Base {
 				'default'           => 0,
 				'type'              => 'boolean',
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values.', 'pods' ),
-				'boolean_yes_label' => __( 'Yes, allow for multiple values', 'pods' ),
+				'boolean_yes_label' => __( 'Allow multiple values', 'pods' ),
 				'dependency'        => true,
 				'depends-on'        => [
 					'type' => PodsForm::repeatable_field_types(),

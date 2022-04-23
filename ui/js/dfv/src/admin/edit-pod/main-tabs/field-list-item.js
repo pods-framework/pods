@@ -20,6 +20,8 @@ import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
+
 import './field-list-item.scss';
 
 const ENTER_KEY = 13;
@@ -154,6 +156,8 @@ export const FieldListItem = ( props ) => {
 		hasDeleteFailed && 'pods-field_wrapper--errored',
 	);
 
+	const isRepeatable = toBool( field?.repeatable );
+
 	return (
 		<div
 			ref={ draggableSetNodeRef }
@@ -246,7 +250,7 @@ export const FieldListItem = ( props ) => {
 
 				<div className="pods-field pods-field_type">
 					{ typeObject?.label }
-					{ field?.repeatable && (
+					{ isRepeatable && (
 						<span className="pods-field_repeatable"> ({ __( 'repeatable', 'pods' ) })</span>
 					) }
 					{ typeObject?.type && (

@@ -639,7 +639,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 
 		$config = $this->admin->get_global_config( $pod );
 
-		$this->assertCount( 3, $config );
+		$this->assertCount( 4, $config );
 		$this->assertArrayHasKey( 'pod', $config );
 		$this->assertArrayHasKey( 'group', $config );
 		$this->assertArrayHasKey( 'field', $config );

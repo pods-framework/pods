@@ -1,28 +1,137 @@
-ul.pods-dfv-list li.pods-dfv-list-col.pods-list-select-drag-handle {
+// List
+.pods-list-select-values {
+	background: #fff;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border-radius: 0;
+	border: 1px solid #dfdfdf;
+
+	&:empty {
+		display: none;
+	}
+}
+
+// List Items
+.pods-list-select-item {
+	display: block;
+	padding: 6px 5px 6px 10px;
+	margin: 0;
+	border-bottom: 1px solid #efefef;
+
+	&:nth-child(even) {
+		background: #fcfcfc;
+	}
+
+	&:hover {
+		background: #f5f5f5;
+	}
+
+	&:last-of-type {
+		border-bottom: 0;
+	}
+}
+
+.pods-list-select-item--is-dragging {
+	background: #efefef;
+}
+
+.pods-list-select-item--overlay {
+	box-shadow:  0 0 0 3px rgba(63, 63, 68, 0.05),
+		-1px 0 4px 0 rgba(34, 33, 81, 0.01),
+		0px 4px 4px 0 rgba(34, 33, 81, 0.25);
+}
+
+.pods-list-select-item__inner {
+	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+	margin: 0;
+}
+
+.pods-list-select-item__col {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+.pods-list-select-item__drag-handle {
 	width: 30px;
 	flex: 0 0 30px;
 	opacity: .2;
 	padding: 4px 0;
 }
 
-.pods-list-select-move-buttons {
+.pods-list-select-item__move-buttons {
 	display: flex;
 	flex-flow: column nowrap;
 	// 1px padding fixes WP outline on buttons from being cut off
 	padding-left: 1px;
 
-	.pods-list-select-move-buttons__button {
+	.pods-list-select-item__move-button {
 		background: transparent;
 		border: none;
 		height: 16px;
 		padding: 0;
 	}
 
-	.pods-list-select-move-buttons__button--disabled {
+	.pods-list-select-item__move-button--disabled {
 		opacity: 0.3;
 	}
 }
 
-.pods-dfv-list-meta .pods-dfv-list-name {
+.pods-list-select-item__icon {
+	width: 40px;
+	margin: 0 5px;
+	font-size: 0; /* for aligning image */
+	line-height: 32px;
+	text-align: center;
+
+	& > img {
+		display: inline-block;
+		vertical-align: middle;
+		float: none;
+		border-radius: 2px;
+		margin: 0;
+		max-height: 100%;
+		max-width: 100%;
+		width: auto;
+	}
+
+	& > span.pinkynail {
+		font-size: 32px;
+		width: 32px;
+		height: 32px;
+	}
+}
+
+.pods-list-select-item__name {
 	border-bottom: none;
+	line-height: 24px;
+	margin: 0;
+	overflow: visible;
+	padding: 3px 0;
+	user-select: none;
+	white-space: nowrap;
+}
+
+.pods-list-select-item__edit {
+	margin: 0 0 0 auto;
+	width: 25px;
+}
+
+.pods-list-select-item__view {
+	margin: 0;
+	width: 25px;
+}
+
+.pods-list-select-item__remove {
+	margin: 0;
+	width: 25px;
+}
+
+.pods-list-select-item__link {
+	display: block;
+	opacity: 0.40;
+	text-decoration: none;
+	color: #616161;
 }

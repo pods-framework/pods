@@ -9,21 +9,6 @@
 const editorData = wp.data?.select( 'core/editor' );
 let unSubscribe;
 
-/**
- * init() is the only exposed interface
- */
-export const PodsGbModalListener = {
-	init() {
-		if ( editorData.isCurrentPostPublished() ) {
-			// Post is published, this is an edit
-			unSubscribe = wp.data.subscribe( saveListener );
-		} else {
-			// Unpublished post, this is an "add new" modal
-			unSubscribe = wp.data.subscribe( publishListener );
-		}
-	},
-};
-
 //-------------------------------------------
 // Helper functions, not externally exposed
 //-------------------------------------------
@@ -122,3 +107,18 @@ function triggerUpdateEvent( optionalData ) {
 		data: postData,
 	}, window.location.origin );
 }
+
+/**
+ * initPodsGbModalListener() is the only exposed interface
+ */
+const initPodsGbModalListener = () => {
+	if ( editorData.isCurrentPostPublished() ) {
+		// Post is published, this is an edit
+		unSubscribe = wp.data.subscribe( saveListener );
+	} else {
+		// Unpublished post, this is an "add new" modal
+		unSubscribe = wp.data.subscribe( publishListener );
+	}
+};
+
+export default initPodsGbModalListener;

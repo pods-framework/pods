@@ -1919,7 +1919,7 @@ table.DMB_metabox thead tr {
   border: 1px solid #BBB;
   color: #464646;
   background: #F2F2F2;
-  text-shadow: white 0 1px 0;
+  text-shadow: rgb(255, 255, 255) 0 1px 0;
 }
 
 .pods-ui-filter-bar-primary ul.subsubsub li a:hover {
@@ -4226,7 +4226,7 @@ table.DMB_metabox thead tr {
   background-image: -ms-linear-gradient(top, #717171, #232323);
   background-image: -o-linear-gradient(top, #717171, #232323);
   border: 2px solid #ddd;
-  border: 2px solid #f1f1f1;
+  border: 2px solid rgb(241, 241, 241);
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;

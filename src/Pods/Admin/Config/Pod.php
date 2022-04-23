@@ -723,13 +723,14 @@ class Pod extends Base {
 				];
 			}
 
-			$options['connections']['register_custom_post_type'] = [
-				'name'         => 'register_custom_post_type',
-				'label'        => __( 'Add new connections', 'pods' ),
+			$options['connections']['register_custom_taxonomy'] = [
+				'name'         => 'register_custom_taxonomy',
+				'label'        => __( 'Add new connection', 'pods' ),
 				'type'         => 'html',
 				'html_content' => sprintf(
-					'<a href="%s">Create a new Custom Post Type</a>',
-					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=post_type' ) )
+					'<a href="%1$s">%2$s</a>',
+					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) ),
+					esc_html__( 'Create a new Custom Taxonomy', 'pods' )
 				),
 			];
 
@@ -1134,13 +1135,14 @@ class Pod extends Base {
 					'type'          => 'boolean_group',
 					'boolean_group' => [],
 				],
-				'register_custom_taxonomy'       => [
-					'name'           => 'register_custom_taxonomy',
-					'label'          => __( 'Add new connections', 'pods' ),
-					'type'           => 'html',
-					'html_content'   => sprintf(
-						'<a href="%s">Create a new Custom Taxonomy</a>',
-						esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) )
+				'register_custom_post_type'      => [
+					'name'         => 'register_custom_post_type',
+					'label'        => __( 'Add new connection', 'pods' ),
+					'type'         => 'html',
+					'html_content' => sprintf(
+						'<a href="%1$s">%2$s</a>',
+						esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=post_type' ) ),
+						esc_html__( 'Create a new Custom Post Type', 'pods' )
 					),
 				],
 			];

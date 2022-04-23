@@ -1008,7 +1008,7 @@ class PodsForm {
 
 		self::field_loader( $type );
 
-		if ( in_array( $type, self::repeatable_field_types() ) && 1 == pods_v( $type . '_repeatable', $options, 0 ) && ! is_array( $value ) ) {
+		if ( in_array( $type, self::repeatable_field_types() ) && 1 === (int) pods_v( 'repeatable', $options, 0 ) && ! is_array( $value ) ) {
 			if ( 0 < strlen( $value ) ) {
 				$simple = @json_decode( $value, true );
 

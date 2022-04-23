@@ -149,6 +149,7 @@ export const FIELD_PROP_TYPE = {
 	object_storage_type: PropTypes.string,
 	type: PropTypes.string.isRequired,
 	unique: PropTypes.string,
+	repeatable: BOOLEAN_ALL_TYPES,
 	weight: PropTypes.number,
 	'wildcard-on': OBJECT_OR_ARRAY,
 	_locale: PropTypes.string,
@@ -196,10 +197,8 @@ export const FIELD_PROP_TYPE = {
 	// Code fields
 	code_allow_shortcode: PropTypes.string,
 	code_max_length: NUMBER_OR_NUMBER_AS_STRING,
-	code_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Color fields
-	color_repeatable: BOOLEAN_ALL_TYPES,
 	color_select_label: PropTypes.string,
 	color_clear_label: PropTypes.string,
 
@@ -215,7 +214,6 @@ export const FIELD_PROP_TYPE = {
 	currency_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	currency_min: NUMBER_OR_NUMBER_AS_STRING,
 	currency_placeholder: PropTypes.string,
-	currency_repeatable: BOOLEAN_ALL_TYPES,
 	currency_step: NUMBER_OR_NUMBER_AS_STRING,
 
 	// Date fields
@@ -225,7 +223,6 @@ export const FIELD_PROP_TYPE = {
 	date_format_custom_js: PropTypes.string,
 	date_format_moment_js: PropTypes.string,
 	date_html5: BOOLEAN_ALL_TYPES,
-	date_repeatable: BOOLEAN_ALL_TYPES,
 	date_type: PropTypes.string,
 	date_year_range_custom: PropTypes.string,
 
@@ -236,7 +233,6 @@ export const FIELD_PROP_TYPE = {
 	datetime_format_custom: PropTypes.string,
 	datetime_format_custom_js: PropTypes.string,
 	datetime_html5: BOOLEAN_ALL_TYPES,
-	datetime_repeatable: BOOLEAN_ALL_TYPES,
 	datetime_time_format: PropTypes.string,
 	datetime_time_format_24: PropTypes.string,
 	datetime_time_format_custom: PropTypes.string,
@@ -250,7 +246,6 @@ export const FIELD_PROP_TYPE = {
 	email_html5: BOOLEAN_ALL_TYPES,
 	email_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	email_placeholder: PropTypes.string,
-	email_repeatable: BOOLEAN_ALL_TYPES,
 
 	// File field
 	file_add_button: PropTypes.string,
@@ -303,7 +298,6 @@ export const FIELD_PROP_TYPE = {
 	number_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	number_min: NUMBER_OR_NUMBER_AS_STRING,
 	number_placeholder: PropTypes.string,
-	number_repeatable: BOOLEAN_ALL_TYPES,
 	number_step: NUMBER_OR_NUMBER_AS_STRING,
 
 	// Oembed field
@@ -344,7 +338,6 @@ export const FIELD_PROP_TYPE = {
 	oembed_enabled_providers_wordpresstv: BOOLEAN_ALL_TYPES,
 	oembed_enabled_providers_youtubecom: BOOLEAN_ALL_TYPES,
 	oembed_height: NUMBER_OR_NUMBER_AS_STRING,
-	oembed_repeatable: BOOLEAN_ALL_TYPES,
 	oembed_restrict_providers: BOOLEAN_ALL_TYPES,
 	oembed_show_preview: BOOLEAN_ALL_TYPES,
 	oembed_width: NUMBER_OR_NUMBER_AS_STRING,
@@ -357,7 +350,6 @@ export const FIELD_PROP_TYPE = {
 	paragraph_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	paragraph_oembed: BOOLEAN_ALL_TYPES,
 	paragraph_placeholder: PropTypes.string,
-	paragraph_repeatable: BOOLEAN_ALL_TYPES,
 	paragraph_wpautop: BOOLEAN_ALL_TYPES,
 	paragraph_wptexturize: BOOLEAN_ALL_TYPES,
 
@@ -372,7 +364,6 @@ export const FIELD_PROP_TYPE = {
 	phone_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	phone_options: PropTypes.object,
 	phone_placeholder: PropTypes.string,
-	phone_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Pick field
 	default_icon: PropTypes.string,
@@ -460,7 +451,6 @@ export const FIELD_PROP_TYPE = {
 	text_allowed_html_tags: PropTypes.string,
 	text_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	text_placeholder: PropTypes.string,
-	text_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Time	field
 	time_allow_empty: BOOLEAN_ALL_TYPES,
@@ -470,7 +460,6 @@ export const FIELD_PROP_TYPE = {
 	time_format_custom_js: PropTypes.string,
 	time_format_moment_js: PropTypes.string,
 	time_html5: BOOLEAN_ALL_TYPES,
-	time_repeatable: BOOLEAN_ALL_TYPES,
 	time_type: PropTypes.string,
 
 	// Website field
@@ -481,7 +470,6 @@ export const FIELD_PROP_TYPE = {
 	website_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	website_html5: BOOLEAN_ALL_TYPES,
 	website_placeholder: PropTypes.string,
-	website_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Wysiwyg field
 	wysiwyg_allow_shortcode: BOOLEAN_ALL_TYPES,
@@ -492,7 +480,6 @@ export const FIELD_PROP_TYPE = {
 	wysiwyg_media_buttons: BOOLEAN_ALL_TYPES,
 	wysiwyg_default_editor: PropTypes.string,
 	wysiwyg_oembed: BOOLEAN_ALL_TYPES,
-	wysiwyg_repeatable: BOOLEAN_ALL_TYPES,
 	wysiwyg_wpautop: BOOLEAN_ALL_TYPES,
 	wysiwyg_wptexturize: BOOLEAN_ALL_TYPES,
 };

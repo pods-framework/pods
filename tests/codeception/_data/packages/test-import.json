@@ -51,7 +51,7 @@
           "rest_write": "0",
           "rest_pick_response": "array",
           "rest_pick_depth": "2",
-          "wysiwyg_repeatable": "0",
+          "repeatable": "0",
           "wysiwyg_allowed_html_tags": ""
         }
       },

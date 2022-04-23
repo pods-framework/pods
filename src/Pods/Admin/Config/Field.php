@@ -105,7 +105,7 @@ class Field extends Base {
 
 		$options = [];
 
-		$options['basic']    = [
+		$options['basic'] = [
 			'label'       => [
 				'name'     => 'label',
 				'label'    => __( 'Label', 'pods' ),
@@ -143,18 +143,18 @@ class Field extends Base {
 				'help'       => 'help',
 			],
 			'pick_object' => [
-				'name'       => 'pick_object',
-				'label'      => __( 'Related Type', 'pods' ),
-				'type'       => 'pick',
-				'default'    => '',
-				'required'   => true,
-				'data'       => [],
-				'pick_show_select_text'   => 0,
-				'dependency' => true,
-				'depends-on' => [
+				'name'                  => 'pick_object',
+				'label'                 => __( 'Related Type', 'pods' ),
+				'type'                  => 'pick',
+				'default'               => '',
+				'required'              => true,
+				'data'                  => [],
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
+				'depends-on'            => [
 					'type' => 'pick',
 				],
-				'help'       => 'help',
+				'help'                  => 'help',
 			],
 			'pick_custom' => [
 				'name'       => 'pick_custom',
@@ -169,17 +169,17 @@ class Field extends Base {
 				'help'       => __( 'One option per line, use <em>value|Label</em> for separate values and labels', 'pods' ),
 			],
 			'pick_table'  => [
-				'name'       => 'pick_table',
-				'label'      => __( 'Related Table', 'pods' ),
-				'type'       => 'pick',
-				'default'    => '',
-				'data'       => [],
-				'pick_show_select_text'   => 0,
-				'depends-on' => [
+				'name'                  => 'pick_table',
+				'label'                 => __( 'Related Table', 'pods' ),
+				'type'                  => 'pick',
+				'default'               => '',
+				'data'                  => [],
+				'pick_show_select_text' => 0,
+				'depends-on'            => [
 					'type'        => 'pick',
 					'pick_object' => 'table',
 				],
-				'help'       => 'help',
+				'help'                  => 'help',
 			],
 			'sister_id'   => [
 				'name'       => 'sister_id',
@@ -201,7 +201,19 @@ class Field extends Base {
 				'boolean_yes_label' => '',
 				'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 			],
+			'repeatable'  => [
+				'label'             => __( 'Repeatable Field', 'pods' ),
+				'default'           => 0,
+				'type'              => 'boolean',
+				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values. For Pods with table-based storage, these values are saved in the database as a JSON array, so searching and filtering by them may require additional development consideration.', 'pods' ),
+				'boolean_yes_label' => __( 'Yes, allow for multiple values', 'pods' ),
+				'dependency'        => true,
+				'depends-on'        => [
+					'type' => PodsForm::repeatable_field_types(),
+				],
+			],
 		];
+
 		$options['advanced'] = [
 			'visual'                  => [
 				'name'  => 'visual',

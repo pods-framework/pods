@@ -50,14 +50,6 @@ class PodsField_Date extends PodsField_DateTime {
 	public function options() {
 
 		$options = array(
-			static::$type . '_repeatable'       => array(
-				'label'             => __( 'Repeatable Field', 'pods' ),
-				'default'           => 0,
-				'type'              => 'boolean',
-				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
-				'boolean_yes_label' => '',
-				'dependency'        => true,
-			),
 			static::$type . '_type'             => array(
 				'label'      => __( 'Date Format Type', 'pods' ),
 				'default'    => 'format',

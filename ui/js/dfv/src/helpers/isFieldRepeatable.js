@@ -28,7 +28,7 @@ const isFieldRepeatable = ( fieldConfig ) => {
 		return false;
 	}
 
-	return toBool( fieldConfig?.[ `${type}_repeatable` ] || false );
+	return toBool( fieldConfig?.repeatable || false );
 };
 
 export default isFieldRepeatable;

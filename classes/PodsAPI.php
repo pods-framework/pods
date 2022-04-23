@@ -5147,7 +5147,7 @@ class PodsAPI {
 
 				// Prepare all table / meta data
 				if ( $simple || ! in_array( $type, $tableless_field_types, true ) ) {
-					if ( in_array( $type, $repeatable_field_types, true ) && 1 === (int) pods_v( $type . '_repeatable', $field_data, 0 ) ) {
+					if ( in_array( $type, $repeatable_field_types, true ) && 1 === (int) pods_v( 'repeatable', $field_data, 0 ) ) {
 						// Don't save an empty array, just make it an empty string
 						if ( empty( $value ) ) {
 							$value = '';

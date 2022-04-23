@@ -2505,6 +2505,7 @@ class PodsInit {
 		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
 		tribe_register_provider( \Pods\Integrations\Service_Provider::class );
 		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+		tribe_register_provider( \Pods\WPGraphQL\Service_Provider::class );
 
 		// Add WP-CLI commands.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {

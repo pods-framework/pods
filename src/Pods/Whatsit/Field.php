@@ -365,6 +365,11 @@ class Field extends Whatsit {
 	 * @return Whatsit|null The bi-directional field if it is set.
 	 */
 	public function get_bidirectional_field() {
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
 		$sister_id = $this->get_arg( 'sister_id' );
 
 		if ( ! $sister_id ) {
@@ -389,8 +394,18 @@ class Field extends Whatsit {
 	 * @return int The field value limit.
 	 */
 	public function get_limit() {
+		// If this is a repeatable field then use the repeatable limit (if any).
+		if ( $this->is_repeatable() ) {
+			return $this->get_arg( 'repeatable_limit', 0 );
+		}
+
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return 1;
+		}
+
 		$type   = $this->get_type();
-		$format = $this->get_arg( $type .'_format_type', 'single' );
+		$format = $this->get_arg( $type . '_format_type', 'single' );
 
 		if ( 'multi' === $format ) {
 			return (int) $this->get_arg( $type . '_limit', 0 );

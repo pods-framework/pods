@@ -415,6 +415,18 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a multiple value field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a multiple value field.
+	 */
+	public function is_multi_value() {
+		// This is a multiple value field if the limit is not 1 (0 for no limit or 2+).
+		return 1 !== $this->get_limit();
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function get_fields( array $args = [] ) {

@@ -136,6 +136,68 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a required field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a required field.
+	 */
+	public function is_required() {
+		return filter_var( $this->get_arg( 'required', false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
+	 * Determine whether this is a unique field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a unique field.
+	 */
+	public function is_unique() {
+		$parent_object = $this->get_parent_object();
+
+		if ( ! $parent_object instanceof Pod ) {
+			return false;
+		}
+
+		// Only table-based Pods can have unique fields.
+		if ( ! $parent_object->is_table_based() ) {
+			return false;
+		}
+
+		return filter_var( $this->get_arg( 'unique', false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
+	 * Determine whether this is a repeatable field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a repeatable field.
+	 */
+	public function is_repeatable() {
+		$parent_object = $this->get_parent_object();
+
+		if ( ! $parent_object instanceof Pod ) {
+			return false;
+		}
+
+		// Only non table-based Pods can have repeatable fields.
+		if ( $parent_object->is_table_based() ) {
+			return false;
+		}
+
+		$repeatable_field_types = PodsForm::repeatable_field_types();
+
+		// It must be a repeatable field type.
+		if ( ! in_array( $this->get_type(), $repeatable_field_types, true ) ) {
+			return false;
+		}
+
+		return filter_var( $this->get_arg( 'repeatable', false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
 	 * Get related object type from field.
 	 *
 	 * @since 2.8.0

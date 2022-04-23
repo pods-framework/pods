@@ -205,7 +205,7 @@ class Field extends Base {
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
-				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values. For Pods with table-based storage, these values are saved in the database as a JSON array, so searching and filtering by them may require additional development consideration.', 'pods' ),
+				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values.', 'pods' ),
 				'boolean_yes_label' => __( 'Yes, allow for multiple values', 'pods' ),
 				'dependency'        => true,
 				'depends-on'        => [
@@ -510,6 +510,8 @@ class Field extends Base {
 		] );*/
 
 		if ( 'table' === $pod['storage'] || 'pod' === $pod['type'] ) {
+			unset( $options['basic']['repeatable'] );
+
 			$options['basic']['unique'] = [
 				'name'              => 'unique',
 				'label'             => __( 'Unique', 'pods' ),

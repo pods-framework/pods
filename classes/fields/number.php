@@ -206,9 +206,7 @@ class PodsField_Number extends PodsField {
 		$form_field_type = PodsForm::$field_type;
 		$is_read_only    = false;
 
-		if ( is_array( $value ) ) {
-			$value = implode( '', $value );
-		}
+		$value = $this->normalize_value_for_input( $value, $options, '' );
 
 		if ( 'slider' === pods_v( static::$type . '_format_type', $options, 'number' ) ) {
 			$field_type = 'slider';

@@ -142,8 +142,16 @@ class PodsField_Website extends PodsField {
 		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
+		$value = $this->normalize_value_for_input( $value, $options );
+
 		// Ensure proper format
-		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $repeatable_value ) {
+				$value[ $k ] = $this->pre_save( $repeatable_value, $id, $name, $options, null, $pod );
+			}
+		} else {
+			$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		}
 
 		$field_type = 'website';
 
@@ -219,7 +227,9 @@ class PodsField_Website extends PodsField {
 			if ( isset( $value['url'] ) ) {
 				$value = $value['url'];
 			} else {
-				$value = implode( ' ', $value );
+				$value = $this->normalize_value_for_input( $value, $options );
+
+				// @todo Eventually rework this further.
 			}
 		}
 

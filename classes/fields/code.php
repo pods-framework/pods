@@ -107,9 +107,7 @@ class PodsField_Code extends PodsField {
 		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
-		if ( is_array( $value ) ) {
-			$value = implode( "\n", $value );
-		}
+		$value = $this->normalize_value_for_input( $value, $options, "\n" );
 
 		$field_type = 'codemirror';
 

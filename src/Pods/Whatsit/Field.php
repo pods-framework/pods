@@ -189,12 +189,22 @@ class Field extends Whatsit {
 
 		$repeatable_field_types = PodsForm::repeatable_field_types();
 
+		$type = $this->get_type();
+
 		// It must be a repeatable field type.
-		if ( ! in_array( $this->get_type(), $repeatable_field_types, true ) ) {
+		if ( ! in_array( $type, $repeatable_field_types, true ) ) {
 			return false;
 		}
 
-		return filter_var( $this->get_arg( 'repeatable', false ), FILTER_VALIDATE_BOOLEAN );
+		// Disable repeatable for WYSIWYG TinyMCE fields.
+		if ( 'wysiwyg' === $type && 'tinymce' === $this->get_arg( 'wysiwyg_editor', 'tinymce' ) ) {
+			return false;
+		}
+
+		return (
+			filter_var( $this->get_arg( 'repeatable', false ), FILTER_VALIDATE_BOOLEAN )
+			&& 1 !== (int) $this->get_arg( 'repeatable_limit', 0 )
+		);
 	}
 
 	/**

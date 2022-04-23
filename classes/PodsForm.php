@@ -1008,8 +1008,27 @@ class PodsForm {
 
 		self::field_loader( $type );
 
-		if ( in_array( $type, self::repeatable_field_types() ) && 1 === (int) pods_v( 'repeatable', $options, 0 ) && ! is_array( $value ) ) {
-			if ( 0 < strlen( $value ) ) {
+		$is_repeatable_field = (
+			(
+				(
+					$options instanceof Field
+					|| $options instanceof Value_Field
+				)
+				&& $options->is_repeatable()
+			)
+			|| (
+				is_array( $options )
+				&& in_array( $type, self::repeatable_field_types(), true )
+				&& 1 === (int) pods_v( 'repeatable', $options )
+				&& (
+					'wysiwyg' !== $type
+					|| 'tinymce' !== pods_v( 'wysiwyg_editor', $options, 'tinymce', true )
+				)
+			)
+		);
+
+		if ( $is_repeatable_field && ! is_array( $value ) ) {
+			if ( is_string( $value ) && 0 < strlen( $value ) ) {
 				$simple = @json_decode( $value, true );
 
 				if ( is_array( $simple ) ) {
@@ -1018,7 +1037,7 @@ class PodsForm {
 					$value = (array) $value;
 				}
 			} else {
-				$value = array();
+				$value = [];
 			}
 		}
 

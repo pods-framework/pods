@@ -211,6 +211,9 @@ class Field extends Base {
 				'depends-on'        => [
 					'type' => PodsForm::repeatable_field_types(),
 				],
+				'excludes-on'      => [
+					'wysiwyg_editor' => 'tinymce',
+				],
 			],
 		];
 

@@ -575,6 +575,8 @@ class PodsField {
 	public function build_dfv_field_config( $args ) {
 		if ( $args->options instanceof Field ) {
 			$config = $args->options->export();
+
+			$config['repeatable'] = $args->options->is_repeatable();
 		} else {
 			$config = (array) $args->options;
 		}
@@ -994,6 +996,10 @@ class PodsField {
 			|| (
 				is_array( $field )
 				&& 1 === (int) pods_v( 'repeatable', $field )
+				&& (
+					'wysiwyg' !== pods_v( 'type', $field )
+					|| 'tinymce' !== pods_v( 'wysiwyg_editor', $field, 'tinymce', true )
+				)
 			)
 		) {
 			if ( ! is_array( $value ) ) {

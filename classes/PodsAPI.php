@@ -5108,6 +5108,25 @@ class PodsAPI {
 				$simple = ( 'pick' === $type && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects ) );
 				$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
 
+				$is_repeatable_field = (
+					(
+						(
+							$field_data instanceof Field
+							|| $field_data instanceof Value_Field
+						)
+						&& $field_data->is_repeatable()
+					)
+					|| (
+						is_array( $field_data )
+						&& in_array( $type, $repeatable_field_types, true )
+						&& 1 === (int) pods_v( 'repeatable', $field_data )
+						&& (
+							'wysiwyg' !== $type
+							|| 'tinymce' !== pods_v( 'wysiwyg_editor', $field_data, 'tinymce', true )
+						)
+					)
+				);
+
 				// Handle Simple Relationships
 				if ( $simple ) {
 					if ( ! is_array( $value ) ) {
@@ -5185,8 +5204,8 @@ class PodsAPI {
 				}
 
 				// Prepare all table / meta data.
-				if ( $simple || ! in_array( $type, $tableless_field_types, true ) ) {
-					if ( in_array( $type, $repeatable_field_types, true ) && 1 === (int) pods_v( 'repeatable', $field_data, 0 ) ) {
+				if ( $simple || $is_repeatable_field || ! in_array( $type, $tableless_field_types, true ) ) {
+					if ( $is_repeatable_field ) {
 						// Don't save an empty array, just make it an empty string
 						if ( empty( $value ) ) {
 							$value = '';
@@ -5201,7 +5220,7 @@ class PodsAPI {
 					$save_simple_to_meta  = $simple && ( $is_settings_pod || pods_relationship_meta_storage_enabled_for_simple_relationships( $options, $pod ) );
 
 					// Check if we should save to the table, and then check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to the table.
-					if ( $save_to_table && ( ! $simple || $save_simple_to_table ) ) {
+					if ( $save_to_table && ! $is_repeatable_field && ( ! $simple || $save_simple_to_table ) ) {
 						$table_data[ $field ] = $value;
 
 						// Enforce JSON values for objects/arrays.

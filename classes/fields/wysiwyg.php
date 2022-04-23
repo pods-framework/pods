@@ -248,6 +248,11 @@ class PodsField_WYSIWYG extends PodsField {
 
 			$field_type = 'textarea';
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
+			// TinyMCE does not support repeatable.
+			if ( is_array( $value ) ) {
+				$value = implode( "\n", $value );
+			}
+
 			$field_type = 'tinymce';
 
 			// Enforce boolean.

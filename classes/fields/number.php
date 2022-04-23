@@ -236,7 +236,14 @@ class PodsField_Number extends PodsField {
 
 		// Only format the value for non-HTML5 inputs.
 		if ( ! $options[ static::$type . '_html5' ] ) {
-			$value = $this->format( $value, $name, $options, $pod, $id );
+			// Ensure proper format
+			if ( is_array( $value ) ) {
+				foreach ( $value as $k => $repeatable_value ) {
+					$value[ $k ] = $this->format( $repeatable_value, $name, $options, $pod, $id );
+				}
+			} else {
+				$value = $this->format( $value, $name, $options, $pod, $id );
+			}
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {

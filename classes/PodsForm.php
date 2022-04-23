@@ -1735,14 +1735,15 @@ class PodsForm {
 
 		if ( null === $field_types ) {
 			$field_types = [
-				'code',
 				'color',
 				'currency',
 				'date',
 				'datetime',
 				'email',
 				'number',
+				'oembed',
 				'paragraph',
+				'password',
 				'phone',
 				'text',
 				'time',

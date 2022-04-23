@@ -111,7 +111,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "@tippyjs/react": "^4.2.6",
     "codemirror": "^5.65.3",
-    "faker": "^6.6.6",
+    "faker": "^5.5.3",
     "html-react-parser": "^1.4.12",
     "immutability-helper": "^3.1.1",
     "moment": "^2.29.3",

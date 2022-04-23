@@ -159,47 +159,46 @@ const RepeatableFieldList = ( {
 									setValue={ createSetValueAtIndex( index ) }
 									setHasBlurred={ setHasBlurred }
 									isDraggable={ valuesArray.length > 1 }
-									endControls={ ( valuesArray.length > 1 ) ? (
-										<>
-											<ToolbarGroup className="pods-field-wrapper__movers">
-												<ToolbarButton
-													disabled={ index === 0 }
-													onClick={ () => swapValues( index, index - 1 ) }
-													icon={ chevronUp }
-													label={ __( 'Move up', 'pods' ) }
-													showTooltip
-													className="pods-field-wrapper__mover"
-												/>
-
-												<ToolbarButton
-													disabled={ index === ( valuesArray.length - 1 ) }
-													onClick={ () => swapValues( index, index + 1 ) }
-													icon={ chevronDown }
-													label={ __( 'Move down', 'pods' ) }
-													showTooltip
-													className="pods-field-wrapper__mover"
-												/>
-											</ToolbarGroup>
+									moveControls={ ( valuesArray.length > 1 ) ? (
+										<ToolbarGroup className="pods-field-wrapper__movers">
+											<ToolbarButton
+												disabled={ index === 0 }
+												onClick={ () => swapValues( index, index - 1 ) }
+												icon={ chevronUp }
+												label={ __( 'Move up', 'pods' ) }
+												showTooltip
+												className="pods-field-wrapper__mover"
+											/>
 
 											<ToolbarButton
-												onClick={ ( event ) => {
-													event.stopPropagation();
-
-													// eslint-disable-next-line no-alert
-													const confirmation = confirm(
-														// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
-														__( 'Are you sure you want to delete this value?', 'pods' )
-													);
-
-													if ( confirmation ) {
-														deleteValueAtIndex( index );
-													}
-												} }
-												icon={ close }
-												label={ __( 'Delete', 'pods' ) }
+												disabled={ index === ( valuesArray.length - 1 ) }
+												onClick={ () => swapValues( index, index + 1 ) }
+												icon={ chevronDown }
+												label={ __( 'Move down', 'pods' ) }
 												showTooltip
+												className="pods-field-wrapper__mover"
 											/>
-										</>
+										</ToolbarGroup>
+									) : null }
+									deleteControl={ ( valuesArray.length > 1 ) ? (
+										<ToolbarButton
+											onClick={ ( event ) => {
+												event.stopPropagation();
+
+												// eslint-disable-next-line no-alert
+												const confirmation = confirm(
+													// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
+													__( 'Are you sure you want to delete this value?', 'pods' )
+												);
+
+												if ( confirmation ) {
+													deleteValueAtIndex( index );
+												}
+											} }
+											icon={ close }
+											label={ __( 'Delete', 'pods' ) }
+											showTooltip
+										/>
 									) : null }
 									key={ `${ fieldConfig.name }-${ index }` }
 								/>

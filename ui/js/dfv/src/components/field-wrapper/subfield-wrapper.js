@@ -29,7 +29,8 @@ const SubfieldWrapper = ( {
 	fieldConfig,
 	FieldComponent,
 	isDraggable,
-	endControls,
+	moveControls,
+	deleteControl,
 	value,
 	podType,
 	podName,
@@ -112,7 +113,7 @@ const SubfieldWrapper = ( {
 							{ ...attributes }
 						/>
 
-						{ endControls ? endControls : null }
+						{ moveControls ? moveControls : null }
 					</Toolbar>
 				</div>
 			) : null }
@@ -133,6 +134,14 @@ const SubfieldWrapper = ( {
 
 				{ validationMessagesComponent }
 			</div>
+
+			{ isDraggable && deleteControl ? (
+				<div className="pods-field-wrapper__controls pods-field-wrapper__controls--end">
+					<Toolbar label="Repeatable field delete">
+						{ deleteControl ? deleteControl : null }
+					</Toolbar>
+				</div>
+			) : null }
 		</div>
 	);
 };
@@ -156,7 +165,8 @@ SubfieldWrapper.propTypes = {
 	/**
 	 * Additional controls to add.
 	 */
-	endControls: PropTypes.element,
+	moveControls: PropTypes.element,
+	deleteControl: PropTypes.element,
 
 	/**
 	 * Field value.

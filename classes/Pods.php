@@ -782,9 +782,10 @@ class Pods implements Iterator {
 		}
 
 		// Store field info.
-		$field_type         = pods_v( 'type', $field_data, '' );
-		$field_options      = $field_data;
-		$is_tableless_field = in_array( $field_type, $tableless_field_types, true );
+		$field_type          = pods_v( 'type', $field_data, '' );
+		$field_options       = $field_data;
+		$is_tableless_field  = in_array( $field_type, $tableless_field_types, true );
+		$is_repeatable_field = $field_data instanceof Field && $field_data->is_repeatable();
 
 		// Simple fields have no other output options.
 		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
@@ -925,9 +926,9 @@ class Pods implements Iterator {
 					}
 				}
 
-				if ( ! $is_traversal && ( $simple || ! $is_field_set || ! $is_tableless_field ) ) {
+				if ( ! $is_traversal && ( $simple || $is_repeatable_field || ! $is_field_set || ! $is_tableless_field ) ) {
 					if ( null === $params->single ) {
-						if ( $is_field_set && ! $is_tableless_field ) {
+						if ( $is_field_set && ! $is_tableless_field && ! $is_repeatable_field ) {
 							$params->single = true;
 						} else {
 							$params->single = false;
@@ -968,10 +969,14 @@ class Pods implements Iterator {
 						$single_multi = 'single';
 
 						if ( $is_field_set ) {
-							$single_multi = pods_v( $field_type . '_format_type', $field_data, $single_multi );
+							if ( $is_repeatable_field ) {
+								$single_multi = 'multi';
+							} else {
+								$single_multi = pods_v( $field_type . '_format_type', $field_data, $single_multi );
+							}
 						}
 
-						if ( $simple && ! is_array( $value ) && 'single' !== $single_multi ) {
+						if ( ( $simple || $is_repeatable_field ) && ! is_array( $value ) && 'single' !== $single_multi ) {
 							$value = get_metadata( $metadata_type, $id, $params->name );
 						}
 					} elseif ( 'settings' === $pod_type ) {
@@ -1050,8 +1055,9 @@ class Pods implements Iterator {
 
 						$field_exists = isset( $all_fields[ $pod ][ $field ] );
 
-						$current_field = null;
-						$simple        = false;
+						$current_field       = null;
+						$simple              = false;
+						$is_repeatable_field = false;
 
 						if ( $field_exists ) {
 							/** @var \Pods\Whatsit\Field $current_field */
@@ -1064,6 +1070,8 @@ class Pods implements Iterator {
 									$simple = true;
 								}
 							}
+
+							$is_repeatable_field = $current_field->is_repeatable();
 						}
 
 						// Tableless handler.
@@ -1534,7 +1542,7 @@ class Pods implements Iterator {
 											/** This filter is documented earlier in this method */
 											$metadata_object_id = apply_filters( 'pods_pods_field_get_metadata_object_id', $metadata_object_id, $metadata_type, $params, $this );
 
-											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, true );
+											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, ! $is_repeatable_field );
 
 											$value[] = pods_traverse( $traverse_fields, $meta_value );
 										} elseif ( 'settings' === $object_type ) {

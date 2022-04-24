@@ -576,7 +576,10 @@ class PodsField {
 		if ( $args->options instanceof Field ) {
 			$config = $args->options->export();
 
-			$config['repeatable'] = $args->options->is_repeatable();
+			$config['repeatable']               = $args->options->is_repeatable();
+			$config['repeatable_add_new_label'] = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
+			$config['repeatable_reorder']       = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
+			$config['repeatable_limit']         = $args->options->get_limit();
 		} else {
 			$config = (array) $args->options;
 		}

@@ -24,6 +24,7 @@ import ValidationMessages from 'dfv/src/components/validation-messages';
  */
 import useValidation from 'dfv/src/hooks/useValidation';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 const SubfieldWrapper = ( {
 	fieldConfig,
@@ -92,13 +93,15 @@ const SubfieldWrapper = ( {
 		<ValidationMessages messages={ validationMessages } />
 	) : undefined;
 
+	const isReorderEnabled = true === toBool( fieldConfig?.repeatable_reorder );
+
 	return (
 		<div
 			className="pods-field-wrapper__item pods-field-wrapper__repeatable"
 			ref={ setNodeRef }
 			style={ style }
 		>
-			{ isDraggable ? (
+			{ isDraggable && isReorderEnabled ? (
 				<div className="pods-field-wrapper__controls pods-field-wrapper__controls--start">
 					<Toolbar label="Repeatable field">
 						<ToolbarButton

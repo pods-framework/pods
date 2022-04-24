@@ -215,6 +215,19 @@ class Field extends Base {
 					'wysiwyg_editor' => 'tinymce',
 				],
 			],
+			'repeatable_add_new_label'  => [
+				'label'       => __( 'Repeatable Add New Label', 'pods' ),
+				'placeholder' => __( 'Add New', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
+				'depends-on'  => [
+					'type'       => PodsForm::repeatable_field_types(),
+					'repeatable' => true,
+				],
+				'excludes-on'      => [
+					'wysiwyg_editor' => 'tinymce',
+				],
+			],
 		];
 
 		$options['advanced'] = [

@@ -128,6 +128,8 @@ const RepeatableFieldList = ( {
 		setHasBlurred( true );
 	};
 
+	const addNewText = fieldConfig?.repeatable_add_new_label || __( 'Add New', 'pods' );
+
 	return (
 		<div className="pods-field-wrapper__repeatable-fields">
 			<div className="pods-field-wrapper__repeatable-field-table">
@@ -213,7 +215,7 @@ const RepeatableFieldList = ( {
 				isSecondary
 				className="pods-field-wrapper__add-button"
 			>
-				{ __( 'Add', 'pods' ) }
+				{ addNewText }
 			</Button>
 		</div>
 	);

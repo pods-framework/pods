@@ -201,8 +201,17 @@ class Field extends Base {
 				'boolean_yes_label' => '',
 				'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 			],
+			'repeatable_separator'  => [
+				'name'         => 'repeatable_separator',
+				'type'         => 'html',
+				'html_content' => '<hr />',
+				'depends-on'   => [
+					'type' => PodsForm::repeatable_field_types(),
+				],
+			],
 			'repeatable'  => [
-				'label'             => __( 'Repeatable Field', 'pods' ),
+				'name'              => 'repeatable',
+				'label'             => __( 'Repeatable', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values.', 'pods' ),
@@ -211,21 +220,16 @@ class Field extends Base {
 				'depends-on'        => [
 					'type' => PodsForm::repeatable_field_types(),
 				],
-				'excludes-on'      => [
-					'wysiwyg_editor' => 'tinymce',
-				],
 			],
 			'repeatable_add_new_label'  => [
-				'label'       => __( 'Repeatable Add New Label', 'pods' ),
+				'name'        => 'repeatable_add_new_label',
+				'label'       => __( 'Repeatable - Add New Label', 'pods' ),
 				'placeholder' => __( 'Add New', 'pods' ),
 				'default'     => '',
 				'type'        => 'text',
 				'depends-on'  => [
 					'type'       => PodsForm::repeatable_field_types(),
 					'repeatable' => true,
-				],
-				'excludes-on'      => [
-					'wysiwyg_editor' => 'tinymce',
 				],
 			],
 		];

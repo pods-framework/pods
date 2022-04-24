@@ -16,11 +16,11 @@ $color--grey: #82878c;
 	border: 1px solid $color--grey;
 	margin-bottom: 0;
 	padding: 10px;
-	position: relative;
-	top: -1px;
+	positio: relative;
+	border-top: none;
 
 	&:first-child {
-		top: 0;
+		border-top: 1px solid $color--grey;
 	}
 
 	.components-button {

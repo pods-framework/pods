@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.5
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
 Stable tag: 2.8.15
 License: GPLv2 or later
@@ -155,6 +155,16 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.16 - May 6th, 2022 =
+
+* Added: More compatiblity with Advanced Relationship Storage Add-On from Pods Pro by SKCDEV which allows for saving table-based relationship fields during the normal save process. (@sc0ttkclark)
+* Fixed: Booleans when saving to the database now prepare as `%d` instead of the generic `%s`. (@sc0ttkclark)
+* Fixed: Additional SV file escaping on exports to prevent formulas from evaluating in certain spreadsheet apps unexpectedly. (@sc0ttkclark)
+* Fixed: The old Pods / Pods API CLI commands were unintentially removed in Pods 2.8 and they have now been brought back as `wp pods-legacy` and `wp pods-legacy-api`. (@sc0ttkclark)
+* Fixed: Improved the text / link for registering connections on Post Types and Taxonomies so they reference the correct object type. (@sc0ttkclark)
+* Fixed: Multi-select fields were not saving properly in certain forms. #6498 #6216 (@zrothauser)
+* Confirmed compatibility with WordPress 6.0.
 
 = 2.8.15 - April 16th, 2022 =
 

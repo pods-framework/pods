@@ -426,6 +426,20 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function prepare( $options = null ) {
+		$format = static::$prepare;
+
+		// Maybe use number format for storage if not a simple relationship and limit is one.
+		if ( $options instanceof Field && ! $options->is_simple_relationship() && 1 === $options->get_limit() ) {
+			$format = '%d';
+		}
+
+		return $format;
+	}
+
+	/**
 	 * Register a related object.
 	 *
 	 * @param string $name    Object name.

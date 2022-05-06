@@ -20,7 +20,7 @@ class PodsField_Boolean extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $prepare = '%s';
+	public static $prepare = '%d';
 
 	/**
 	 * {@inheritdoc}

@@ -5022,6 +5022,12 @@ class PodsAPI {
 			$type    = $field_data['type'];
 			$options = pods_v( 'options', $field_data, [] );
 
+			$field_object = $field_data;
+
+			if ( $field_data instanceof Value_Field ) {
+				$field_object = $field_data->get_field_object();
+			}
+
 			if ( in_array( $type, $layout_field_types, true ) ) {
 				continue;
 			}
@@ -5145,8 +5151,12 @@ class PodsAPI {
 					}
 				}
 
+				$is_tableless_field       = in_array( $type, $tableless_field_types, true );
+				$is_settings_pod          = 'settings' === $pod['type'];
+				$save_non_simple_to_table = $is_tableless_field && ! $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_object_relationships( $field_object, $pod );
+
 				// Prepare all table / meta data
-				if ( $simple || ! in_array( $type, $tableless_field_types, true ) ) {
+				if ( ! $is_tableless_field || $simple || $save_non_simple_to_table ) {
 					if ( in_array( $type, $repeatable_field_types, true ) && 1 === (int) pods_v( $type . '_repeatable', $field_data, 0 ) ) {
 						// Don't save an empty array, just make it an empty string
 						if ( empty( $value ) ) {
@@ -5157,12 +5167,11 @@ class PodsAPI {
 						}
 					}
 
-					$is_settings_pod      = 'settings' === $pod['type'];
-					$save_simple_to_table = $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_simple_relationships( $options, $pod );
-					$save_simple_to_meta  = $simple && ( $is_settings_pod || pods_relationship_meta_storage_enabled_for_simple_relationships( $options, $pod ) );
+					$save_simple_to_table = $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_simple_relationships( $field_object, $pod );
+					$save_simple_to_meta  = $simple && ( $is_settings_pod || pods_relationship_meta_storage_enabled_for_simple_relationships( $field_object, $pod ) );
 
 					// Check if we should save to the table, and then check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to the table.
-					if ( $save_to_table && ( ! $simple || $save_simple_to_table ) ) {
+					if ( $save_to_table && ( ! $simple || $save_simple_to_table || $save_non_simple_to_table ) ) {
 						$table_data[ $field ] = $value;
 
 						// Enforce JSON values for objects/arrays.
@@ -5176,7 +5185,7 @@ class PodsAPI {
 							'{prefix}'
 						], $table_data[ $field ] );
 
-						$table_formats[] = PodsForm::prepare( $type, $options );
+						$table_formats[] = PodsForm::prepare( $type, $field_object );
 					}
 
 					// Check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to meta.

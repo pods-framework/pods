@@ -3248,6 +3248,12 @@ function pods_reserved_keywords( $context = null ) {
  * @return mixed The setting value.
  */
 function pods_get_setting( $setting_name, $default = null ) {
+	if ( ! function_exists( 'tribe' ) ) {
+		_doing_it_wrong( __FUNCTION__, 'Calling pods_get_setting too early, before tribe() is defined.', '2.8.17' );
+
+		return $default;
+	}
+
 	$settings = tribe( Settings::class );
 
 	return $settings->get_setting( $setting_name, $default );

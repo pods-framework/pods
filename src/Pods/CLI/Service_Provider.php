@@ -42,9 +42,9 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 */
 	protected function hooks() {
 		// Add dynamic commands.
-		tribe( 'pods.cli.commands.pods.pod' );
-		tribe( 'pods.cli.commands.pods.group' );
-		tribe( 'pods.cli.commands.pods.field' );
+		pods_container( 'pods.cli.commands.pods.pod' );
+		pods_container( 'pods.cli.commands.pods.group' );
+		pods_container( 'pods.cli.commands.pods.field' );
 
 		// Add static commands.
 		if ( defined( 'WP_CLI' ) ) {

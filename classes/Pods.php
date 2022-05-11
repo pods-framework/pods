@@ -866,7 +866,7 @@ class Pods implements Iterator {
 				}
 			} else {
 				// Handle custom/supported value mappings.
-				$map_field_values = tribe( Map_Field_Values::class );
+				$map_field_values = pods_container( Map_Field_Values::class );
 
 				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this );
 

@@ -156,6 +156,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.8.17 - May 11th, 2022 =
+
+* Fixed: Attempting to catch potential issues where an issue is detected with loading the Tribe Common library by introducing a wrapper function `pods_container()` to be used before calling `tribe()`. (@sc0ttkclark)
+
 = 2.8.16 - May 6th, 2022 =
 
 * Added: More compatiblity with Advanced Relationship Storage Add-On from Pods Pro by SKCDEV which allows for saving table-based relationship fields during the normal save process. (@sc0ttkclark)

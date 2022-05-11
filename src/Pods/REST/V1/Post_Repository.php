@@ -39,7 +39,7 @@ class Post_Repository extends REST_Post_Repository {
 			'_pods_field' => [ $this, 'get_field_data' ],
 		];
 
-		$this->messages = $messages ? $messages : tribe( 'pods.rest-v1.messages' );
+		$this->messages = $messages ? $messages : pods_container( 'pods.rest-v1.messages' );
 	}
 
 	/**

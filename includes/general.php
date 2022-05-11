@@ -3250,8 +3250,17 @@ function pods_reserved_keywords( $context = null ) {
 function pods_get_setting( $setting_name, $default = null ) {
 	$settings = pods_container( Settings::class );
 
+	// Fallback for the setting handling if it's too early.
 	if ( ! $settings ) {
-		return $default;
+		$settings = get_option( Settings::OPTION_NAME, [] );
+
+		$setting = pods_v( $setting_name, (array) $settings, $default );
+
+		if ( null === $setting ) {
+			return $default;
+		}
+
+		return $setting;
 	}
 
 	return $settings->get_setting( $setting_name, $default );

@@ -7,14 +7,31 @@ import {
 	getDecimalSeparatorFromPodsFormat,
 } from 'dfv/src/helpers/formatNumberWithPodsFormat';
 
-export const requiredValidator = ( fieldLabel ) => ( value ) => {
+const isValueSet = ( value ) => {
 	// Allow zero to be OK for required fields.
-	if ( false === value || undefined === value || null === value || '' === value || [] === value ) {
-		// translators: %s is the Field label of the required field.
-		throw sprintf( __( '%s is required.', 'pods' ), fieldLabel );
+	// @todo this may not account for boolean values correctly,
+	// do we need to take field types into account?
+	return (
+		'undefined' !== typeof value &&
+		null !== value &&
+		'' !== value &&
+		( Array.isArray( value ) ? value.length > 0 : true )
+	);
+};
+
+export const requiredValidator = ( fieldLabel, isRepeatable ) => ( value ) => {
+	// Convert all values into an array.
+	const valuesArray = ( isRepeatable && Array.isArray( value ) )
+		? value
+		: [ value ];
+
+	// If any item in the array is valid, the field is valid.
+	if ( valuesArray.some( isValueSet ) ) {
+		return true;
 	}
 
-	return true;
+	// translators: %s is the Field label of the required field.
+	throw sprintf( __( '%s is required.', 'pods' ), fieldLabel );
 };
 
 export const maxValidator = ( maxValue ) => ( value ) => {

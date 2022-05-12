@@ -34,9 +34,6 @@
   border-bottom: none;
 }
 
-.form-table td .pods-form-ui-field {
-  max-width: 95%;
-}
 .form-table td .pods-form-ui-comment {
   clear: both;
 }

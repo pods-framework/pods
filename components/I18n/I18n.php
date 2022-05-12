@@ -48,6 +48,9 @@ class Pods_Component_I18n extends PodsComponent {
 		'placeholder' => [],
 		'menu_name' => [],
 		'name_admin_bar' => [],
+		'repeatable_add_new_label' => [
+			'depends-on' => [ 'repeatable' => true ],
+		],
 		'boolean_yes_label' => [
 			'depends-on' => [ 'type' => 'boolean' ],
 		],

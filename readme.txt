@@ -54,6 +54,7 @@ You can also control visibility by role/capability and [other advanced options](
 * **Relationships / Media:** File / Image / Video (Media library and basic upload options available), Avatar (for extended Users), oEmbed, Relationship (Dropdown, Multi Select, Autocomplete, Checkboxes, Radio Buttons, and List View available)
 * **Checkbox** (Yes / No)
 * **Color Picker**
+* **Turn almost any field into a repeatable field with multiple values**
 
 = Relationships to rule the world with =
 
@@ -94,16 +95,21 @@ You can enable some of our included components to extend your WordPress site eve
 We also do our best to integrate and play nicely with other projects:
 
 * **Plugins we've integrated with**
- * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) using the free [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
+ * [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
  * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using the [Pods Add-On for Admin Columns Pro](https://www.admincolumns.com/pods/)
  * [Conductor](https://conductorplugin.com/)
+ * [Elementor Pro](https://elementor.com/pro/)
  * [Gravity Forms](https://www.gravityforms.com/) using the free [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
+ * [Oxygen Builder](https://oxygenbuilder.com/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
  * [Paid Memberships Pro](https://wordpress.org/plugins/paid-memberships-pro/) using the free [Paid Memberships Pro - Pods Add On](https://wordpress.org/plugins/pmpro-pods/)
- * [Polylang](https://wordpress.org/plugins/polylang/)
+ * [Polylang](https://wordpress.org/plugins/polylang/) integrates directly with Pods
+ * [TablePress](https://wordpress.org/plugins/tablepress/) using the premium [Pods Pro by SKCDEV Add-On: TablePress Integration](https://pods-pro.skc.dev/downloads/tablepress-integration/)
  * [Timber](https://wordpress.org/plugins/timber-library/)
- * [WPML](http://wpml.org/)
+ * [WPGraphQL](https://wordpress.org/plugins/wp-graphql/) integrates directly with Pods
+ * [WPML](http://wpml.org/) integrates directly with Pods
  * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/)
 * **Themes we've integrated with**
+ * [Divi Theme](https://www.elegantthemes.com/gallery/divi/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
  * [Genesis](https://www.studiopress.com/themes/genesis/) (StudioPress)
 
 == Installation ==

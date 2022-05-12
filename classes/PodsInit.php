@@ -1829,6 +1829,11 @@ class PodsInit {
 				pods_debug( [ __METHOD__ . '/register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ] );
 			}
 
+			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+				echo '<h3>' . $taxonomy . '</h3>';
+				echo '<textarea rows="15" style="width:100%;">register_taxonomy( ' . esc_textarea( var_export( $taxonomy, true ) ) . ', ' . esc_textarea( var_export( $ct_post_types, true ) ) . ', ' . esc_textarea( var_export( $options, true ) ) . ' );' . "</textarea>\n";
+			}
+
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
 
 			if ( ! empty( $options['show_in_rest'] ) ) {
@@ -1875,6 +1880,11 @@ class PodsInit {
 
 			if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				pods_debug( [ __METHOD__ . '/register_post_type', compact( 'post_type', 'options' ) ] );
+			}
+
+			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+				echo '<h3>' . $post_type . '</h3>';
+				echo '<textarea rows="15" style="width:100%;">register_post_type( ' . esc_textarea( var_export( $post_type, true ) ) . ', ' . esc_textarea( var_export( $options, true ) ) . ' );' . "</textarea>\n";
 			}
 
 			register_post_type( $post_type, $options );

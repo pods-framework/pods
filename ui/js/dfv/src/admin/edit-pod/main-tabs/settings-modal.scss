@@ -143,7 +143,8 @@
     margin-bottom: .2em;
 }
 
-.pods-field-option input[type="text"] {
+.pods-field-option input[type="text"],
+.pods-field-option textarea {
     width: 100%;
 }
 

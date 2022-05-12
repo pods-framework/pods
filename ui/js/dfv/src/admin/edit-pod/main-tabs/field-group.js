@@ -186,7 +186,7 @@ const FieldGroup = ( props ) => {
 
 					{ !! groupID && (
 						<span className="pods-field-group_name__id">
-							{ `\u00A0 id = ${ groupID }` }
+							{ `\u00A0 [id = ${ groupID }]` }
 						</span>
 					) }
 				</div>

@@ -269,11 +269,20 @@ class PodsAPI {
 			// Enforce boolean integer values.
 			$meta_value = pods_bool_to_int( $meta_value );
 
-			$simple    = false;
-			$is_single = false;
+			$simple              = false;
+			$is_single           = false;
+			$is_repeatable_field = false;
 
 			if ( isset( $fields[ $meta_key ] ) ) {
 				$field_data = $fields[ $meta_key ];
+
+				$is_repeatable_field = (
+					(
+						$field_data instanceof Field
+						|| $field_data instanceof Value_Field
+					)
+					&& $field_data->is_repeatable()
+				);
 
 				$simple = ( 'pick' === pods_v( 'type', $field_data ) && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true ) );
 
@@ -283,7 +292,7 @@ class PodsAPI {
 			}
 
 			if ( null === $original_meta_value || ( $strict && '' === $original_meta_value ) ) {
-				if ( $simple ) {
+				if ( $simple || $is_repeatable_field ) {
 					delete_metadata( $meta_type, $id, $meta_key );
 					delete_metadata( $meta_type, $id, '_pods_' . $meta_key );
 				} else {
@@ -295,18 +304,20 @@ class PodsAPI {
 
 					delete_metadata( $meta_type, $id, $meta_key, $old_meta_value );
 				}
-			} elseif ( $simple ) {
+			} elseif ( $simple || $is_repeatable_field ) {
 				delete_metadata( $meta_type, $id, $meta_key );
 
 				if ( ! is_array( $meta_value ) ) {
 					$meta_value = [ $meta_value ];
 				}
 
-				if ( $is_single ) {
-					// Delete it because it is not needed for single values.
-					delete_metadata( $meta_type, $id, '_pods_' . $meta_key );
-				} else {
-					update_metadata( $meta_type, $id, '_pods_' . $meta_key, $meta_value );
+				if ( ! $is_repeatable_field ) {
+					if ( $is_single ) {
+						// Delete it because it is not needed for single values.
+						delete_metadata( $meta_type, $id, '_pods_' . $meta_key );
+					} else {
+						update_metadata( $meta_type, $id, '_pods_' . $meta_key, $meta_value );
+					}
 				}
 
 				foreach ( $meta_value as $value ) {
@@ -5020,7 +5031,7 @@ class PodsAPI {
 
 			$value   = $field_data['value'];
 			$type    = $field_data['type'];
-			$options = pods_v( 'options', $field_data, [] );
+			$options = $field_data instanceof Value_Field ? $field_data->get_field_object() : pods_v( 'options', $field_data, [] );
 
 			$field_object = $field_data;
 
@@ -5031,6 +5042,12 @@ class PodsAPI {
 			if ( in_array( $type, $layout_field_types, true ) ) {
 				continue;
 			}
+
+			$is_multi_repeatable_field = (
+					is_array( $value )
+					&& $options instanceof Field
+					&& $options->is_repeatable()
+			);
 
 			// WPML AJAX compatibility
 			if ( is_admin()
@@ -5044,8 +5061,21 @@ class PodsAPI {
 				$options['required']          = 0;
 				$fields[ $field ]['required'] = 0;
 			} else {
-				// Validate value
-				$validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
+				if ( $is_multi_repeatable_field ) {
+					// Handle repeatable field values (if an array was sent).
+					foreach ( $value as $repeatable_value ) {
+						// Validate value.
+						$validate = $this->handle_field_validation( $repeatable_value, $field, $object_fields, $fields, $pod, $params );
+
+						// Maybe pass $validate to the logic later to show error message.
+						if ( true !== $validate ) {
+							break;
+						}
+					}
+				} else {
+					// Validate value
+					$validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
+				}
 
 				if ( false === $validate ) {
 					$validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field_data['label'] );
@@ -5058,7 +5088,16 @@ class PodsAPI {
 				}
 			}
 
-			$value = PodsForm::pre_save( $field_data['type'], $value, $params->id, $field, $field_data, pods_config_merge_fields( $fields, $object_fields ), $pod, $params );
+			$merged_fields = pods_config_merge_fields( $fields, $object_fields );
+
+			if ( $is_multi_repeatable_field ) {
+				// Handle repeatable field values (if an array was sent).
+				foreach ( $value as $k => $repeatable_value ) {
+					$value[ $k ] = PodsForm::pre_save( $field_data['type'], $repeatable_value, $params->id, $field, $field_data, $merged_fields, $pod, $params );
+				}
+			} else {
+				$value = PodsForm::pre_save( $field_data['type'], $value, $params->id, $field, $field_data, $merged_fields, $pod, $params );
+			}
 
 			$field_data['value'] = $value;
 
@@ -5074,6 +5113,25 @@ class PodsAPI {
 			} else {
 				$simple = ( 'pick' === $type && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects ) );
 				$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
+
+				$is_repeatable_field = (
+					(
+						(
+							$field_data instanceof Field
+							|| $field_data instanceof Value_Field
+						)
+						&& $field_data->is_repeatable()
+					)
+					|| (
+						is_array( $field_data )
+						&& in_array( $type, $repeatable_field_types, true )
+						&& 1 === (int) pods_v( 'repeatable', $field_data )
+						&& (
+							'wysiwyg' !== $type
+							|| 'tinymce' !== pods_v( 'wysiwyg_editor', $field_data, 'tinymce', true )
+						)
+					)
+				);
 
 				// Handle Simple Relationships
 				if ( $simple ) {
@@ -5155,9 +5213,9 @@ class PodsAPI {
 				$is_settings_pod          = 'settings' === $pod['type'];
 				$save_non_simple_to_table = $is_tableless_field && ! $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_object_relationships( $field_object, $pod );
 
-				// Prepare all table / meta data
-				if ( ! $is_tableless_field || $simple || $save_non_simple_to_table ) {
-					if ( in_array( $type, $repeatable_field_types, true ) && 1 === (int) pods_v( $type . '_repeatable', $field_data, 0 ) ) {
+				// Prepare all table / meta data.
+				if ( $is_repeatable_field || ! $is_tableless_field || $simple || $save_non_simple_to_table ) {
+					if ( $is_repeatable_field ) {
 						// Don't save an empty array, just make it an empty string
 						if ( empty( $value ) ) {
 							$value = '';
@@ -5171,7 +5229,7 @@ class PodsAPI {
 					$save_simple_to_meta  = $simple && ( $is_settings_pod || pods_relationship_meta_storage_enabled_for_simple_relationships( $field_object, $pod ) );
 
 					// Check if we should save to the table, and then check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to the table.
-					if ( $save_to_table && ( ! $simple || $save_simple_to_table || $save_non_simple_to_table ) ) {
+					if ( $save_to_table && ! $is_repeatable_field && ( ! $simple || $save_simple_to_table || $save_non_simple_to_table ) ) {
 						$table_data[ $field ] = $value;
 
 						// Enforce JSON values for objects/arrays.

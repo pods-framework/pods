@@ -16,9 +16,10 @@ class MarionetteAdapter extends React.Component {
 
 	componentDidMount() {
 		const {
-			htmlAttr = {},
 			fieldConfig = {},
 		} = this.props;
+
+		const htmlAttr = fieldConfig?.htmlAttr || {};
 
 		this.fieldModel = new PodsDFVFieldModel( {
 			htmlAttr,

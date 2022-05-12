@@ -285,6 +285,20 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function prepare( $options = null ) {
+		$format = static::$prepare;
+
+		// Maybe use number format for storage if limit is one.
+		if ( $options instanceof Field && 1 === $options->get_limit() ) {
+			$format = '%d';
+		}
+
+		return $format;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function schema( $options = null ) {
 		return false;
 	}

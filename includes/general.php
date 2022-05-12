@@ -553,6 +553,29 @@ function pods_relationship_table_storage_enabled_for_simple_relationships( $fiel
 }
 
 /**
+ * Determine whether relationship table storage is enabled for object based relationships.
+ *
+ * @since 2.8.16
+ *
+ * @param null|array|Field $field The field object.
+ * @param null|array|Pod   $pod   The pod object.
+ *
+ * @return bool Whether relationship table storage is enabled.
+ */
+function pods_relationship_table_storage_enabled_for_object_relationships( $field = null, $pod = null ) {
+	/**
+	 * Allow filtering of whether relationship table storage is enabled for object based relationships.
+	 *
+	 * @since 2.8.16
+	 *
+	 * @param bool             $enabled Whether relationship table storage table is enabled for object based relationships.
+	 * @param null|array|Field $field   The field object.
+	 * @param null|array|Pod   $pod     The pod object.
+	 */
+	return (bool) apply_filters( 'pods_relationship_table_storage_enabled_for_object_relationships', false, $field, $pod );
+}
+
+/**
  * Determine if Light Mode is enabled
  *
  * @return bool Whether Light Mode is enabled
@@ -1905,7 +1928,7 @@ function pods_redirect( $location, $status = 302, $die = true ) {
  * @since 2.0.5
  */
 function pods_permission( $object ) {
-	$permissions = tribe( Permissions::class );
+	$permissions = pods_container( Permissions::class );
 
 	return $permissions->user_has_permission( $object );
 }
@@ -1920,7 +1943,7 @@ function pods_permission( $object ) {
  * @return bool Whether the permissions are restricted for an object.
  */
 function pods_has_permissions( $object ) {
-	$permissions = tribe( Permissions::class );
+	$permissions = pods_container( Permissions::class );
 
 	return $permissions->are_permissions_restricted( $object );
 }
@@ -3225,7 +3248,20 @@ function pods_reserved_keywords( $context = null ) {
  * @return mixed The setting value.
  */
 function pods_get_setting( $setting_name, $default = null ) {
-	$settings = tribe( Settings::class );
+	$settings = pods_container( Settings::class );
+
+	// Fallback for the setting handling if it's too early.
+	if ( ! $settings ) {
+		$settings = get_option( Settings::OPTION_NAME, [] );
+
+		$setting = pods_v( $setting_name, (array) $settings, $default );
+
+		if ( null === $setting ) {
+			return $default;
+		}
+
+		return $setting;
+	}
 
 	return $settings->get_setting( $setting_name, $default );
 }
@@ -3238,7 +3274,7 @@ function pods_get_setting( $setting_name, $default = null ) {
  * @return array The setting values.
  */
 function pods_get_settings() {
-	$settings = tribe( Settings::class );
+	$settings = pods_container( Settings::class );
 
 	return $settings->get_settings();
 }
@@ -3252,7 +3288,7 @@ function pods_get_settings() {
  * @param mixed  $setting_value The setting value.
  */
 function pods_update_setting( $setting_name, $setting_value ) {
-	$settings = tribe( Settings::class );
+	$settings = pods_container( Settings::class );
 
 	$settings->update_setting( $setting_name, $setting_value );
 }
@@ -3265,7 +3301,7 @@ function pods_update_setting( $setting_name, $setting_value ) {
  * @param array $setting_values The list of settings to update, pass null as a value to remove it.
  */
 function pods_update_settings( $setting_values ) {
-	$settings = tribe( Settings::class );
+	$settings = pods_container( Settings::class );
 
 	$settings->update_settings( $setting_values );
 }
@@ -3289,6 +3325,9 @@ function pods_session_auto_start( $check_constant_only = false ) {
 	}
 
 	$auto_start = pods_get_setting( 'session_auto_start', 'auto' );
+
+	pods_debug( $auto_start );
+	die();
 
 	// Check for "auto" string and return that.
 	if ( 'auto' === $auto_start ) {
@@ -3721,7 +3760,7 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 		$icon_path = PODS_DIR . '/ui/images/icon-menu.svg';
 	}
 
-	$static_cache = tribe( Static_Cache::class );
+	$static_cache = pods_container( Static_Cache::class );
 
 	$icon = $static_cache->get( $icon_path, __FUNCTION__ . '/' . $mode );
 
@@ -3807,4 +3846,25 @@ function pods_is_types_only( $check_constant_only = false ) {
 	 * @param bool $is_types_only Whether Pods is being used for content types only.
 	 */
 	return (bool) apply_filters( 'pods_is_types_only', $is_types_only );
+}
+
+/**
+ * Set up the container and return it.
+ *
+ * @since 2.8.17
+ *
+ * @param string|null $slug_or_class Either the slug of a binding previously registered using `tribe_singleton` or
+ *                                   `tribe_register` or the full class name that should be automagically created or
+ *                                   `null` to get the container instance itself.
+ *
+ * @return mixed|null The pods_container() object or null if the function does not exist yet.
+ */
+function pods_container( $slug_or_class = null ) {
+	if ( ! function_exists( 'tribe' ) ) {
+		_doing_it_wrong( __FUNCTION__, 'The function tribe() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+
+		return null;
+	}
+
+	return call_user_func_array( 'tribe', func_get_args() );
 }

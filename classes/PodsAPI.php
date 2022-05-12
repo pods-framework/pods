@@ -5022,6 +5022,12 @@ class PodsAPI {
 			$type    = $field_data['type'];
 			$options = pods_v( 'options', $field_data, [] );
 
+			$field_object = $field_data;
+
+			if ( $field_data instanceof Value_Field ) {
+				$field_object = $field_data->get_field_object();
+			}
+
 			if ( in_array( $type, $layout_field_types, true ) ) {
 				continue;
 			}
@@ -5145,8 +5151,12 @@ class PodsAPI {
 					}
 				}
 
+				$is_tableless_field       = in_array( $type, $tableless_field_types, true );
+				$is_settings_pod          = 'settings' === $pod['type'];
+				$save_non_simple_to_table = $is_tableless_field && ! $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_object_relationships( $field_object, $pod );
+
 				// Prepare all table / meta data
-				if ( $simple || ! in_array( $type, $tableless_field_types, true ) ) {
+				if ( ! $is_tableless_field || $simple || $save_non_simple_to_table ) {
 					if ( in_array( $type, $repeatable_field_types, true ) && 1 === (int) pods_v( $type . '_repeatable', $field_data, 0 ) ) {
 						// Don't save an empty array, just make it an empty string
 						if ( empty( $value ) ) {
@@ -5157,12 +5167,11 @@ class PodsAPI {
 						}
 					}
 
-					$is_settings_pod      = 'settings' === $pod['type'];
-					$save_simple_to_table = $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_simple_relationships( $options, $pod );
-					$save_simple_to_meta  = $simple && ( $is_settings_pod || pods_relationship_meta_storage_enabled_for_simple_relationships( $options, $pod ) );
+					$save_simple_to_table = $simple && ! $is_settings_pod && pods_relationship_table_storage_enabled_for_simple_relationships( $field_object, $pod );
+					$save_simple_to_meta  = $simple && ( $is_settings_pod || pods_relationship_meta_storage_enabled_for_simple_relationships( $field_object, $pod ) );
 
 					// Check if we should save to the table, and then check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to the table.
-					if ( $save_to_table && ( ! $simple || $save_simple_to_table ) ) {
+					if ( $save_to_table && ( ! $simple || $save_simple_to_table || $save_non_simple_to_table ) ) {
 						$table_data[ $field ] = $value;
 
 						// Enforce JSON values for objects/arrays.
@@ -5176,7 +5185,7 @@ class PodsAPI {
 							'{prefix}'
 						], $table_data[ $field ] );
 
-						$table_formats[] = PodsForm::prepare( $type, $options );
+						$table_formats[] = PodsForm::prepare( $type, $field_object );
 					}
 
 					// Check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to meta.
@@ -5314,7 +5323,7 @@ class PodsAPI {
 			pods_no_conflict_on( $pod['type'] );
 		}
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		// Save relationship / file data
 		if ( ! empty( $rel_fields ) ) {
@@ -5635,7 +5644,7 @@ class PodsAPI {
 	 * @return array List of changed fields (if $mode = 'get')
 	 */
 	public static function handle_changed_fields( $pod, $id, $mode = 'set' ) {
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$changed_pods_cache   = $static_cache->get( 'changed_pods_cache', __CLASS__ ) ?: [];
 		$old_fields_cache     = $static_cache->get( 'old_fields_cache', __CLASS__ ) ?: [];
@@ -5731,7 +5740,7 @@ class PodsAPI {
 	 * @return array List of ID(s) that were setup for saving.
 	 */
 	public function save_relationships( $id, $related_ids, $pod, $field ) {
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$related_data = $static_cache->get( $field['name'] . '/' . $field['id'], 'PodsField_Pick/related_data' ) ?: [];
 
@@ -5742,7 +5751,7 @@ class PodsAPI {
 			$current_ids = $this->lookup_related_items( $field['id'], $pod['id'], $id, $field, $pod );
 		}
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$cache_key = $pod['id'] . '|' . $field['id'];
 
@@ -7577,7 +7586,7 @@ class PodsAPI {
 			}
 		}
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$cache_key = $related_pod['id'] . '|' . $related_field['id'];
 
@@ -9043,7 +9052,7 @@ class PodsAPI {
 
 		$idstring = implode( ',', $params->ids );
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$cache_key = $params->pod_id . '|' . $params->field_id;
 
@@ -9667,7 +9676,7 @@ class PodsAPI {
 
 		$_info = false;
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$table_info_cache = $static_cache->get( $cache_key, __CLASS__ . '/table_info_cache' ) ?: [];
 
@@ -10497,7 +10506,7 @@ class PodsAPI {
 			pods_transient_clear( 'pods_wp_cpt_ct' );
 		}
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$static_cache->flush( __CLASS__ );
 		$static_cache->flush( __CLASS__ . '/table_info_cache' );

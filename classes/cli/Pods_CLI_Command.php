@@ -385,4 +385,4 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 }
 
-WP_CLI::add_command( 'pods', 'Pods_CLI_Command' );
+WP_CLI::add_command( 'pods-legacy', 'Pods_CLI_Command' );

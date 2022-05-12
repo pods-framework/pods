@@ -78,12 +78,12 @@ class API {
 		 */
 		do_action( 'pods_blocks_api_pre_init' );
 
-		tribe( 'pods.blocks.collection.pods' );
-		tribe( 'pods.blocks.field' );
-		tribe( 'pods.blocks.form' );
-		tribe( 'pods.blocks.list' );
-		tribe( 'pods.blocks.single' );
-		tribe( 'pods.blocks.view' );
+		pods_container( 'pods.blocks.collection.pods' );
+		pods_container( 'pods.blocks.field' );
+		pods_container( 'pods.blocks.form' );
+		pods_container( 'pods.blocks.list' );
+		pods_container( 'pods.blocks.single' );
+		pods_container( 'pods.blocks.view' );
 
 		/**
 		 * Allow custom blocks to be registered with Pods.

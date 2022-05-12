@@ -1679,9 +1679,9 @@ class PodsAdmin {
 	 * @return array Global config array.
 	 */
 	public function get_global_config( $pod = null ) {
-		$config_pod   = tribe( Config_Pod::class );
-		$config_group = tribe( Config_Group::class );
-		$config_field = tribe( Config_Field::class );
+		$config_pod   = pods_container( Config_Pod::class );
+		$config_group = pods_container( Config_Group::class );
+		$config_field = pods_container( Config_Field::class );
 
 		// Pod: Backwards compatible configs and hooks.
 		$pod_tabs        = $config_pod->get_tabs( $pod );
@@ -3039,7 +3039,7 @@ class PodsAdmin {
 		// Turn into a string.
 		$auto_start = (string) $auto_start;
 
-		$settings = tribe( Settings::class );
+		$settings = pods_container( Settings::class );
 
 		$fields = $settings->get_setting_fields();
 

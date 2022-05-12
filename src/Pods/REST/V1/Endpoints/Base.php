@@ -211,7 +211,7 @@ abstract class Base {
 	 */
 	public function get_route() {
 		/** @var Main $main */
-		$main = tribe( 'pods.rest-v1.main' );
+		$main = pods_container( 'pods.rest-v1.main' );
 
 		$namespace = $main->get_pods_route_namespace();
 
@@ -791,7 +791,7 @@ abstract class Base {
 			}
 
 			try {
-				$doc_endpoint_obj = tribe( 'pods.rest-v1.endpoints.documentation' );
+				$doc_endpoint_obj = pods_container( 'pods.rest-v1.endpoints.documentation' );
 
 				$doc_endpoint_obj->register_documentation_provider( $rest_doc_route, $this );
 			} catch ( Exception $exception ) {

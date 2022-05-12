@@ -270,18 +270,18 @@ class PodsInit {
 				remove_action( 'plugins_loaded', [ 'Tribe__Admin__Notices', 'instance' ], 1 );
 
 				/** @var Tribe__Assets $assets */
-				$assets = tribe( 'assets' );
+				$assets = pods_container( 'assets' );
 				$assets->remove( 'tribe-tooltip' );
 
 				/** @var Tribe__Asset__Data $asset_data */
-				$asset_data = tribe( 'asset.data' );
+				$asset_data = pods_container( 'asset.data' );
 
 				remove_action( 'admin_footer', [ $asset_data, 'render_json' ] );
 				remove_action( 'customize_controls_print_footer_scripts', [ $asset_data, 'render_json' ] );
 				remove_action( 'wp_footer', [ $asset_data, 'render_json' ] );
 
 				/** @var Tribe__Assets_Pipeline $assets_pipeline */
-				$assets_pipeline = tribe( 'assets.pipeline' );
+				$assets_pipeline = pods_container( 'assets.pipeline' );
 				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
 
 				// Disable the Debug Bar panels.
@@ -1217,7 +1217,7 @@ class PodsInit {
 		$existing_taxonomies = get_taxonomies( [], 'objects' );
 
 		// Handle static cache for determining whether an object was extended or not.
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$existing_post_types_cached = $static_cache->get( 'post_type', __CLASS__ . '/existing_content_types' );
 

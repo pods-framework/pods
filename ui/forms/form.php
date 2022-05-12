@@ -174,7 +174,7 @@ if ( 0 < $pod->id() ) {
 	}
 }
 
-$static_cache = tribe( Static_Cache::class );
+$static_cache = pods_container( Static_Cache::class );
 
 $counter = (int) $static_cache->get( $pod->pod . '-counter', 'pods-forms' );
 

@@ -42,9 +42,9 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		$this->container->singleton( 'pods.rest-v1.validator', Base_Validator::class );
 		$this->container->singleton( 'pods.rest-v1.repository', Post_Repository::class );
 
-		$messages        = tribe( 'pods.rest-v1.messages' );
-		$post_repository = tribe( 'pods.rest-v1.repository' );
-		$validator       = tribe( 'pods.rest-v1.validator' );
+		$messages        = pods_container( 'pods.rest-v1.messages' );
+		$post_repository = pods_container( 'pods.rest-v1.repository' );
+		$validator       = pods_container( 'pods.rest-v1.validator' );
 
 		$endpoints = $this->get_endpoints();
 
@@ -96,7 +96,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 */
 	public function register_endpoints() {
 		/** @var Main $main */
-		$main = tribe( 'pods.rest-v1.main' );
+		$main = pods_container( 'pods.rest-v1.main' );
 
 		$this->namespace = $main->get_pods_route_namespace();
 
@@ -108,7 +108,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 			}
 
 			try {
-				$endpoint_obj = tribe( $key );
+				$endpoint_obj = pods_container( $key );
 
 				if ( method_exists( $endpoint_obj, 'register_routes' ) ) {
 					$endpoint_obj->register_routes( $this->namespace, true );
@@ -130,7 +130,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 */
 	protected function register_endpoint_documentation() {
 		/** @var Swagger_Builder_Interface $endpoint */
-		$endpoint = tribe( 'pods.rest-v1.endpoints.documentation' );
+		$endpoint = pods_container( 'pods.rest-v1.endpoints.documentation' );
 
 		register_rest_route( $this->namespace, '/doc', [
 			'methods'             => WP_REST_Server::READABLE,

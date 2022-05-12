@@ -40,7 +40,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'ext-taxonomy-table',
 		];
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
 		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );
@@ -78,7 +78,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'ext-taxonomy-table',
 		];
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
 		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );

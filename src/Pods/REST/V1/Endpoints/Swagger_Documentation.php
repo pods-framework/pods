@@ -38,7 +38,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 
 	public function hook() {
 		/** @var Main $main */
-		$main = tribe( 'pods.rest-v1.main' );
+		$main = pods_container( 'pods.rest-v1.main' );
 
 		$this->set_current_rest_api_version( $main->get_semantic_version() );
 	}
@@ -80,7 +80,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	 */
 	public function get_documentation() {
 		/** @var Main $main */
-		$main = tribe( 'pods.rest-v1.main' );
+		$main = pods_container( 'pods.rest-v1.main' );
 
 		$documentation = [
 			'openapi'    => $this->open_api_version,

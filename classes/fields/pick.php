@@ -426,6 +426,20 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function prepare( $options = null ) {
+		$format = static::$prepare;
+
+		// Maybe use number format for storage if not a simple relationship and limit is one.
+		if ( $options instanceof Field && ! $options->is_simple_relationship() && 1 === $options->get_limit() ) {
+			$format = '%d';
+		}
+
+		return $format;
+	}
+
+	/**
 	 * Register a related object.
 	 *
 	 * @param string $name    Object name.
@@ -954,7 +968,7 @@ class PodsField_Pick extends PodsField {
 		if ( $this->can_ajax( $args->type, $field_options ) ) {
 			$ajax = true;
 
-			$static_cache = tribe( Static_Cache::class );
+			$static_cache = pods_container( Static_Cache::class );
 
 			$field_data = $static_cache->get( $field_options['name'] . '/' . $field_options['id'], __CLASS__ . '/field_data' ) ?: [];
 
@@ -1606,7 +1620,7 @@ class PodsField_Pick extends PodsField {
 
 		$options['id'] = (int) $options['id'];
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
@@ -1731,7 +1745,7 @@ class PodsField_Pick extends PodsField {
 
 		$value_ids = array_unique( array_filter( $value ) );
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
@@ -2356,7 +2370,7 @@ class PodsField_Pick extends PodsField {
 				);
 
 				if ( 'data' === $context ) {
-					$static_cache = tribe( Static_Cache::class );
+					$static_cache = pods_container( Static_Cache::class );
 
 					$static_cache->set( $name . '/' . $options['id'], [
 						'autocomplete' => false,
@@ -2711,7 +2725,7 @@ class PodsField_Pick extends PodsField {
 				}//end if
 
 				if ( 'data' === $context ) {
-					$static_cache = tribe( Static_Cache::class );
+					$static_cache = pods_container( Static_Cache::class );
 
 					$static_cache->set( $name . '/' . $options['id'], [
 						'autocomplete' => $autocomplete,

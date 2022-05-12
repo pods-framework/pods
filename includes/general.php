@@ -3326,9 +3326,6 @@ function pods_session_auto_start( $check_constant_only = false ) {
 
 	$auto_start = pods_get_setting( 'session_auto_start', 'auto' );
 
-	pods_debug( $auto_start );
-	die();
-
 	// Check for "auto" string and return that.
 	if ( 'auto' === $auto_start ) {
 		return $auto_start;

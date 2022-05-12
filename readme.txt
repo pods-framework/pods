@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.5
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
 Stable tag: 2.9.0-beta-1
 License: GPLv2 or later

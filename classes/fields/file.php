@@ -477,7 +477,7 @@ class PodsField_File extends PodsField {
 
 		$limit_types      = trim( str_replace( $find, $replace, $limit_types ), ',' );
 		$limit_extensions = trim( str_replace( $find, $replace, $limit_extensions ), ',' );
-		$mime_types       = wp_get_mime_types();
+		$mime_types       = get_allowed_mime_types();
 
 		if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ), true ) ) {
 			$new_limit_types = array();
@@ -1144,7 +1144,7 @@ class PodsField_File extends PodsField {
 				), ','
 			);
 
-			$mime_types = wp_get_mime_types();
+			$mime_types = get_allowed_mime_types();
 
 			if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ), true ) ) {
 				$new_limit_types = array();

@@ -3782,7 +3782,11 @@ class PodsAPI {
 
 				// If the old field doesn't exist, continue to add a new field
 				if ( 'add' === $definition_mode ) {
-					pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+					$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", false );
+
+					if ( false === $test ) {
+						pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` MODIFY {$definition}", __( 'Cannot create or update new field', 'pods' ) );
+					}
 				}
 
 				/**

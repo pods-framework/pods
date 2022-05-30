@@ -538,9 +538,8 @@ class PodsView {
 	 * @return bool|mixed|string|void
 	 */
 	private static function locate_template( $_view ) {
-
 		if ( is_array( $_view ) ) {
-			$_views = array();
+			$_views = [];
 
 			if ( isset( $_view[0] ) && false === strpos( $_view[0], '.php' ) ) {
 				$_view_count = count( $_view );
@@ -567,73 +566,23 @@ class PodsView {
 			return $_view;
 		}//end if
 
-		// Keep it safe
-		$_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
+		// Is the view's file somewhere within the plugin directory tree?
+		// Note: we include PODS_DIR for the case of symlinks (see issue #2945).
+		$located = pods_validate_safe_path( $_view, [ 'plugins', 'pods', 'theme' ] );
 
-		if ( empty( $_view ) ) {
+		/**
+		 * Allow filtering the validated view file path to use.
+		 *
+		 * @since unknown
+		 *
+		 * @param string|false $located The validated view file path to use, or false if it was not valid.
+		 * @param string       $_view   The original view file path to use.
+		 */
+		$located = apply_filters( 'pods_view_locate_template', $located, $_view );
+
+		if ( ! $located ) {
 			return false;
 		}
-
-		$_real_view = realpath( $_view );
-
-		if ( empty( $_real_view ) ) {
-			$_real_view = $_view;
-		}
-
-		$located = false;
-
-		// Is the view's file somewhere within the plugin directory tree?
-		// Note: we explicitly whitelist PODS_DIR for the case of symlinks (see issue #2945)
-		$path_checks = [
-			realpath( WP_PLUGIN_DIR ),
-			realpath( WPMU_PLUGIN_DIR ),
-			realpath( PODS_DIR ),
-		];
-
-		$path_checks = array_filter( $path_checks );
-
-		$path_match = false;
-
-		foreach ( $path_checks as $path_check ) {
-			if ( false !== strpos( $_real_view, $path_check ) ) {
-				$path_match = true;
-
-				break;
-			}
-		}
-
-		if ( $path_match ) {
-			if ( file_exists( $_view ) ) {
-				$located = $_view;
-			} else {
-				$located = apply_filters( 'pods_view_locate_template', $located, $_view );
-			}
-		} else {
-			// The view's file is outside the plugin directory
-			$_real_view = trim( $_real_view, '/' );
-
-			if ( empty( $_real_view ) ) {
-				return false;
-			}
-
-			// Allow views in the theme or child theme.
-			$path_checks = [
-				realpath( get_stylesheet_directory() . DIRECTORY_SEPARATOR . $_real_view ),
-				realpath( get_template_directory() . DIRECTORY_SEPARATOR . $_real_view ),
-			];
-
-			$path_checks = array_filter( $path_checks );
-
-			$path_match = false;
-
-			foreach ( $path_checks as $path_check ) {
-				if ( file_exists( $path_check ) ) {
-					$located = $path_check;
-
-					break;
-				}
-			}
-		}//end if
 
 		return $located;
 

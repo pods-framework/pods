@@ -216,8 +216,16 @@
                             	value = null;
 							}
 
+							// Fix for FormData converting arrays into comma-separated strings.
                             if ( null !== value ) {
-                                postdata.append( field_name, value );
+								if ( field_name.endsWith( '[]' ) && Array.isArray( value ) ) {
+									value.forEach( ( subvalue ) => {
+										postdata.append( field_name, subvalue );
+									} );
+								} else {
+									postdata.append( field_name, value );
+								}
+
                             }
                         }
                     } );
@@ -257,7 +265,6 @@
 						contentType: false,
 						processData: false,
                         success : function ( d ) {
-
                             // Attempt to parse what was returned as data
                             try {
                                 data = $.parseJSON( d );
@@ -270,9 +277,11 @@
 
                                 // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
                                 if ( 'object' === typeof data && null !== data ) {
-
                                     // Phone home with the data
-                                    window.parent.jQuery( window.parent ).trigger('dfv:modal:update', data );
+									window.parent.postMessage( {
+										type: 'PODS_MESSAGE',
+										data: data,
+									}, window.location.origin );
                                 }
                                 else {
                                     id = d.match( /\d*$/, '' );

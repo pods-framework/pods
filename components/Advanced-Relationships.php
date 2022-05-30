@@ -27,6 +27,10 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 * {@inheritdoc}
 	 */
 	public function init() {
+		// Bypass if Pods is in types-only mode.
+		if ( pods_is_types_only() ) {
+			return;
+		}
 
 		add_action( 'pods_form_ui_field_pick_related_objects_other', array( $this, 'add_related_objects' ) );
 	}

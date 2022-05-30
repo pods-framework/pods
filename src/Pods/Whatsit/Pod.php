@@ -47,7 +47,7 @@ class Pod extends Whatsit {
 		$value = parent::get_arg( $arg, $default, $strict );
 
 		// Better handle object for extended objects.
-		if ( 'object' === $arg && 'table' !== $this->get_type() ) {
+		if ( 'object' === $arg && 'table' !== $this->get_type() && ( did_action( 'init' ) || doing_action( 'init' ) ) ) {
 			if ( $this->is_extended() ) {
 				return $this->get_name();
 			}
@@ -128,6 +128,28 @@ class Pod extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a table-based Pod.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a table-based Pod.
+	 */
+	public function is_table_based() {
+		return 'table' === $this->get_storage() || 'pod' === $this->get_type();
+	}
+
+	/**
+	 * Determine whether this is a meta-based Pod.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a meta-based Pod.
+	 */
+	public function is_meta_based() {
+		return 'meta' === $this->get_storage();
+	}
+
+	/**
 	 * Determine whether the Pod is an extending an existing content type.
 	 *
 	 * @since 2.8.4
@@ -145,34 +167,151 @@ class Pod extends Whatsit {
 			return true;
 		} elseif ( 'comment' === $type ) {
 			return true;
+		} elseif ( 'post_type' !== $type && 'taxonomy' !== $type ) {
+			return false;
 		}
+
+		$cached_var = '';
 
 		// Simple checks for post types.
 		if ( 'post_type' === $type ) {
 			if ( 'post' === $name || 'page' === $name ) {
 				return true;
 			}
+
+			$cached_var = 'existing_post_types_cached';
 		}
 
 		// Simple checks for taxonomies.
-		if ( 'post_type' === $type ) {
+		if ( 'taxonomy' === $type ) {
 			if ( 'category' === $name || 'post_tag' === $name ) {
 				return true;
 			}
+
+			$cached_var = 'existing_taxonomies_cached';
 		}
 
-		$static_cache = tribe( Static_Cache::class );
+		$existing_cached = pods_init()->refresh_existing_content_types_cache();
 
-		$existing_cached = $static_cache->get( $type, 'PodsInit/existing_content_types' );
+		return ! empty( $existing_cached[ $cached_var ] ) && array_key_exists( $this->get_name(), $existing_cached[ $cached_var ] );
+	}
 
-		// Check if we need to refresh the content types cache.
-		if ( empty( $existing_cached ) || ! is_array( $existing_cached ) ) {
-			pods_init()->refresh_existing_content_types_cache();
+	/**
+	 * Count the total rows for the pod.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return int The total rows for the Pod.
+	 */
+	public function count_rows() {
+		$pod = pods( $this );
 
-			$existing_cached = (array) $static_cache->get( $type, 'PodsInit/existing_content_types' );
+		if ( ! $pod || ! $pod->valid() ) {
+			return 0;
 		}
 
-		return $existing_cached && array_key_exists( $this->get_name(), $existing_cached );
+		return $pod->total_all_rows();
+	}
+
+	/**
+	 * Count the total row meta for the pod.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return int The total row meta for the Pod.
+	 */
+	public function count_row_meta() {
+		if ( 'meta' !== $this->get_storage() && ! in_array( $this->get_type(), [ 'post_type', 'taxonomy', 'user', 'comment' ], true ) ) {
+			return 0;
+		}
+
+		$pod = pods( $this );
+
+		if ( ! $pod || ! $pod->valid() ) {
+			return 0;
+		}
+
+		$field_id      = $this->get_arg( 'field_id' );
+		$meta_field_id = $this->get_arg( 'meta_field_id' );
+		$meta_table    = $this->get_arg( 'meta_table' );
+
+		if ( empty( $meta_field_id ) || empty( $meta_table ) ) {
+			return 0;
+		}
+
+		// Make a simple request so we can perform a total_found() SQL request.
+		$params = [
+			'distinct' => false,
+			'select'   => 'meta.' . $meta_field_id,
+			'join'     => "LEFT JOIN {$meta_table} AS meta ON meta.{$meta_field_id} = t.{$field_id}",
+			'limit'    => 1,
+		];
+
+		$pod->find( $params );
+
+		return $pod->total_found();
+	}
+
+	/**
+	 * Count the total wp_podsrel rows for the pod.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return int The total wp_podsrel rows for the pod.
+	 */
+	public function count_podsrel_rows() {
+		if ( pods_tableless() ) {
+			return 0;
+		}
+
+		$pod = pods( $this );
+
+		if ( ! $pod || ! $pod->valid() ) {
+			return 0;
+		}
+
+		$fields = $this->get_fields();
+
+		if ( empty( $fields ) ) {
+			return 0;
+		}
+
+		$pod_id    = (int) $this->get_id();
+		$field_ids = wp_list_pluck( $fields, 'id' );
+		$field_ids = array_map( 'absint', $field_ids );
+		$field_ids = array_filter( $field_ids );
+
+		if ( empty( $field_ids ) ) {
+			return 0;
+		}
+
+		$field_ids = implode( ', ', $field_ids );
+
+		$data = pods_data();
+
+		global $wpdb;
+
+		// Make a simple request so we can perform a total_found() SQL request.
+		$params = [
+			'distinct' => false,
+			'select'   => 't.id',
+			'table'    => $wpdb->prefix . 'podsrel',
+			'where'    => "
+				(
+					t.pod_id = {$pod_id}
+					AND t.field_id IN ( {$field_ids} )
+				)
+				OR (
+					t.related_pod_id = {$pod_id}
+					AND t.related_field_id IN ( {$field_ids} )
+				)
+			",
+			'limit'    => 1,
+		];
+
+		$data->select( $params );
+
+		return $data->total_found();
 	}
 
 }

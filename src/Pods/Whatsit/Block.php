@@ -2,6 +2,7 @@
 
 namespace Pods\Whatsit;
 
+use Exception;
 use Pods\Whatsit;
 use Tribe__Utils__Array;
 use WP_Block;
@@ -64,7 +65,7 @@ class Block extends Pod {
 			// Extra block controls.
 			'align'                    => true,
 			'alignWide'                => true,
-			'anchor'                   => true,
+			'anchor'                   => false, // Not support for dynamic blocks yet as of WP 5.9
 			'customClassName'          => true,
 			// Block functionality.
 			'inserter'                 => true,
@@ -202,7 +203,56 @@ class Block extends Pod {
 
 		// Render block from callback.
 		if ( $render_callback && is_callable( $render_callback ) ) {
-			return $render_callback( $attributes, $content, $block_obj );
+			$return_exception = static function() {
+				return 'exception';
+			};
+
+			add_filter( 'pods_error_mode', $return_exception, 50 );
+			add_filter( 'pods_error_exception_fallback_enabled', '__return_false', 50 );
+
+			try {
+				$rendered_block = $render_callback( $attributes, $content, $block_obj );
+			} catch ( Exception $exception ) {
+				$rendered_block = '';
+
+				if ( pods_is_debug_display() ) {
+					$rendered_block = pods_message(
+						sprintf(
+							'<strong>%1$s:</strong> %2$s',
+							esc_html__( 'Pods Block Error', 'pods' ),
+							esc_html( $exception->getMessage() )
+						),
+						'error',
+						true
+					);
+
+					$rendered_block .= '<pre style="overflow:scroll">' . esc_html( $exception->getTraceAsString() ) . '</pre>';
+				} elseif (
+					is_user_logged_in()
+					&& (
+						is_admin()
+						|| (
+							wp_is_json_request()
+							&& did_action( 'rest_api_init' )
+						)
+					)
+				) {
+					$rendered_block = pods_message(
+						sprintf(
+							'<strong>%1$s:</strong> %2$s',
+							esc_html__( 'Pods Block Error', 'pods' ),
+						esc_html__( 'There was a problem displaying this content, enable WP_DEBUG in wp-config.php to show more details.', 'pods' )
+						),
+						'error',
+						true
+					);
+				}
+			}
+
+			remove_filter( 'pods_error_mode', $return_exception, 50 );
+			remove_filter( 'pods_error_exception_fallback_enabled', '__return_false', 50 );
+
+			return $rendered_block;
 		}
 
 		// Render block from template.

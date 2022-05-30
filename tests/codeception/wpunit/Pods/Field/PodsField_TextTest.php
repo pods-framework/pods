@@ -47,14 +47,6 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 * @covers  PodsField_Text::options
 	 * @depends test_method_exists_options
 	 */
-	public function test_method_options_key_exists_text_repeatable() {
-		$this->assertArrayHasKey( 'text_repeatable', $this->field->options() );
-	}
-
-	/**
-	 * @covers  PodsField_Text::options
-	 * @depends test_method_exists_options
-	 */
 	public function test_method_options_key_exists_output_options() {
 		$this->assertArrayHasKey( 'output_options', $this->field->options() );
 	}

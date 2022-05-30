@@ -212,10 +212,10 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case CURRENT_POD_ACTIONS.SET_GROUP_LIST: {
+		case CURRENT_POD_ACTIONS.SET_GROUPS: {
 			return {
 				...state,
-				[ GROUPS_PATH.tailPath ]: action.groupList,
+				[ GROUPS_PATH.tailPath ]: action.groups,
 			};
 		}
 

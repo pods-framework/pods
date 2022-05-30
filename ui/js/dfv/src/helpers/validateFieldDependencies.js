@@ -96,10 +96,23 @@ const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) =>
 		);
 	}
 
-	// We could either have an array of possible values,
-	// or a string that is the possible value.
-	if ( Array.isArray( ruleValue ) ) {
-		return ruleValue.includes( currentValue );
+	// We could have an array or single value in currentValue
+	// (if it's a repeater field it'll be an array), and either an array or
+	// single value for the possible rules.
+	if ( Array.isArray( ruleValue ) || Array.isArray( currentValue ) ) {
+		const arrayOfRuleValues = Array.isArray( ruleValue )
+			? ruleValue
+			: [ ruleValue ];
+
+		const arrayOfCurrentValues = Array.isArray( currentValue )
+			? currentValue
+			: [ currentValue ];
+
+		const intersection = arrayOfRuleValues.filter(
+			( ruleValueItem ) => arrayOfCurrentValues.includes( ruleValueItem ),
+		);
+
+		return ( intersection.length > 0 );
 	}
 
 	// Start with a strict comparison.

@@ -10,8 +10,8 @@
 
 use Pods\Static_Cache;
 
-wp_enqueue_script( 'pods' );
-wp_enqueue_style( 'pods-form' );
+pods_form_enqueue_script( 'pods' );
+pods_form_enqueue_style( 'pods-form' );
 
 $is_settings_pod = 'settings' === $pod->pod_data['type'];
 
@@ -174,7 +174,7 @@ if ( 0 < $pod->id() ) {
 	}
 }
 
-$static_cache = tribe( Static_Cache::class );
+$static_cache = pods_container( Static_Cache::class );
 
 $counter = (int) $static_cache->get( $pod->pod . '-counter', 'pods-forms' );
 

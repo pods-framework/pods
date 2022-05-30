@@ -1,8 +1,10 @@
 <?php
 /**
- * Name: Migrate: Packages
+ * ID: migrate-packages
  *
- * Menu Name: Migrate Packages
+ * Name: Import/Export Packages
+ *
+ * Menu Name: Import/Export Packages
  *
  * Description: Import/Export your Pods, Fields, and other settings from any Pods site; Includes an API to Import/Export Packages via PHP
  *
@@ -113,8 +115,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 						$content .= '<ul class="normal">';
 
-						foreach ( $import as $k => $what ) {
-							$content .= '<li>' . esc_html( $what ) . '</li>';
+						foreach ( $import as $name => $what ) {
+							$content .= '<li>' . esc_html( $what ) . ( 'pods' === $type ? ' (' . esc_html( $name ) . ')' : '' ) . '</li>';
 						}
 
 						$content .= '</ul>';
@@ -273,6 +275,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 		$found = apply_filters( 'pods_packages_import', $found, $data, $replace );
 
 		if ( ! empty( $found ) ) {
+			self::$api->cache_flush_pods();
+
 			return $found;
 		}
 
@@ -340,6 +344,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 		} elseif ( ! empty( $pod['fields'] ) ) {
 			$pod['fields'] = self::import_pod_setup_objects( $pod['fields'], $existing_fields );
 		}
+
+		// Force 2.8 orphan field check.
+		$pod['_migrated_28'] = false;
 
 		$pod['overwrite'] = $replace;
 

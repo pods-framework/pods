@@ -3,9 +3,9 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.5
-Tested up to: 5.8
+Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.8.4
+Stable tag: 2.9.0-beta-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,7 +41,11 @@ With Pods, you can create entirely new content types and settings pages.
 
 = Every Field Type, FREE =
 
-We have an extensive collection of over [25 different input types to choose from on 20+ different field types for any content structure](https://docs.pods.io/fields/). Each field type comes with their own additional options to help you customize content entry and display. You can also control visibility by role/capability and [other advanced options](https://docs.pods.io/fields/settings-advanced/).
+If you choose to use Pods for your custom fields, you'll get every field type you need, free of charge. Pods works great alongside [other custom field plugins](https://comparewp.org/cck) like [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/) too.
+
+We have an extensive collection of over [25 different input types to choose from on 20+ different field types for any content structure](https://docs.pods.io/fields/). Each field type comes with their own additional options to help you customize content entry and display.
+
+You can also control visibility by role/capability and [other advanced options](https://docs.pods.io/fields/settings-advanced/).
 
 * **Text:** Plain Text, Website, Phone, Email, Password
 * **Paragraph:** Plain Paragraph Text, WYSIWYG (Visual Editor), Code (Syntax Highlighting)
@@ -50,6 +54,7 @@ We have an extensive collection of over [25 different input types to choose from
 * **Relationships / Media:** File / Image / Video (Media library and basic upload options available), Avatar (for extended Users), oEmbed, Relationship (Dropdown, Multi Select, Autocomplete, Checkboxes, Radio Buttons, and List View available)
 * **Checkbox** (Yes / No)
 * **Color Picker**
+* **Turn almost any field into a repeatable field with multiple values**
 
 = Relationships to rule the world with =
 
@@ -76,6 +81,7 @@ And many other relationships are also available including:
 = Optional Components to do even more =
 You can enable some of our included components to extend your WordPress site even further:
 
+* **Types-only Mode** - On our Pods Settings page, you can choose to disable creating custom fields for a performance boost if you only want to use Pods for content types or you plan on using it alongside of other custom field plugins
 * **Pods Templates** - Use our [template engine](https://docs.pods.io/displaying-pods/pods-templates/) to create templates that can be handed off to clients for care-free management
 * **Markdown Syntax** - Parses [Markdown Syntax](https://www.markdownguide.org/basic-syntax) for Paragraph Text / WYSIWYG fields
 * **Advanced Relationships** - Add even more relationship objects including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates (in the theme), Sidebars, Post Type Objects, and Taxonomy Objects
@@ -89,16 +95,21 @@ You can enable some of our included components to extend your WordPress site eve
 We also do our best to integrate and play nicely with other projects:
 
 * **Plugins we've integrated with**
- * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) using the free [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
+ * [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
  * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using the [Pods Add-On for Admin Columns Pro](https://www.admincolumns.com/pods/)
  * [Conductor](https://conductorplugin.com/)
+ * [Elementor Pro](https://elementor.com/pro/)
  * [Gravity Forms](https://www.gravityforms.com/) using the free [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
+ * [Oxygen Builder](https://oxygenbuilder.com/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
  * [Paid Memberships Pro](https://wordpress.org/plugins/paid-memberships-pro/) using the free [Paid Memberships Pro - Pods Add On](https://wordpress.org/plugins/pmpro-pods/)
- * [Polylang](https://wordpress.org/plugins/polylang/)
+ * [Polylang](https://wordpress.org/plugins/polylang/) integrates directly with Pods
+ * [TablePress](https://wordpress.org/plugins/tablepress/) using the premium [Pods Pro by SKCDEV Add-On: TablePress Integration](https://pods-pro.skc.dev/downloads/tablepress-integration/)
  * [Timber](https://wordpress.org/plugins/timber-library/)
- * [WPML](http://wpml.org/)
+ * [WPGraphQL](https://wordpress.org/plugins/wp-graphql/) integrates directly with Pods
+ * [WPML](http://wpml.org/) integrates directly with Pods
  * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/)
 * **Themes we've integrated with**
+ * [Divi Theme](https://www.elegantthemes.com/gallery/divi/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
  * [Genesis](https://www.studiopress.com/themes/genesis/) (StudioPress)
 
 == Installation ==
@@ -151,9 +162,144 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.8.15 - April 16th, 2022 =
+
+* Added: New `pods_callback` support in `Pods::find()` so that you can pass a callback function to use for `pods()` usage with relationships using the `output` as "pods". This allows for using shared instances across large data sets to reduce time. (@sc0ttkclark)
+* Added: New property `$data->fetch_full` added to `PodsData` which can be used to turn off additional fetch requests when all of the table data was already returned by the query with `t.*`. (@sc0ttkclark)
+* Fixed: When using table-based fields and a non-simple relationship has a field in the table, it will still be expanded like a normal relationship field when requesting it by name with no traversal. (@sc0ttkclark)
+* Fixed: Call `PodsField_Pick::simple_objects()` using the object instead of statically to prevent PHP notices. (@sc0ttkclark)
+* Fixed: Adjust the `Pods\REST\V1\Endpoints\Base::check_permission()` method so that it references the correct `\Pods` object. (@sc0ttkclark)
+
+= 2.8.14 - April 15th, 2022 =
+
+* Added: New `$params` support in `Pods::total_found( $params )` to support `Pods::find( $params )` shorthand lookups for getting total number of records found more easily. (@sc0ttkclark)
+* Added: New `pods_api_save_field_table_definition_mode` filter allows overriding the definition mode when saving a field (bypass/add/drop/change) for schema management. (@sc0ttkclark)
+* Added: New `pods_podsrel_enabled()` arguments to allow filtering based on the field and context. (@sc0ttkclark)
+* Added: New `pods_data_build_pre_traverse_args` filter allows for overriding the find/replace/traverse/params arguments for a `PodsData::build()` request before relationship traversal runs. (@sc0ttkclark)
+* Added: New `pods_data_traverse_recurse_handle_join` filter allows for overriding the JOIN SQL used for relationship traversal. (@sc0ttkclark)
+* Fixed: Resolved potential PHP issues with path checks in `PodsView` on certain environments. (@sc0ttkclark)
+* Fixed: When a slug is set on a Pods Page, if the slug value comes through as empty due to a path issue, it will now enforce a 404 as expected. (@sc0ttkclark)
+* Fixed: Resolved a few issues with the old field data coming through to the `pods_api_save_field_old_definition` filter. (@sc0ttkclark)
+* Fixed: No longer showing WPDB errors from WPDB when query errors are forced off. (@sc0ttkclark)
+
+= 2.8.13 - April 10th, 2022 =
+
+* Fixed: Resolved PHP issues with PHP 7.x with the WPML integration. (@sc0ttkclark)
+
+= 2.8.12 - April 8th, 2022 =
+
+* Fixed: Resolved PHP issues with PHP 7.x with the REST API endpoints. (@sc0ttkclark)
+* Fixed: Fix Auto Template logic for detecting taxonomy archives to get the correct pod name from the associated term. #6368 #6490 (@JoryHogeveen)
+
+= 2.8.11 - April 8th, 2022 =
+
+* Added: You can now enable types-only mode for Pods under Pods Admin > Settings. This new mode will disallow adding and managing custom groups/fields. You can force it on by defining `PODS_META_TYPES_ONLY` as true in your wp-config.php too. #6437 (@sc0ttkclark)
+* Added: Now you can limit relationship fields that relate to post types to only include posts that match the current post's author. #4291 (@sc0ttkclark)
+* Added: JS API - Now you can hook into right after the Pods form fields have loaded by using `window.PodsDFV.hooks.addAction( 'pods_init_complete', 'pods/dfv', () => {} );` #6482 (@zrothauser, @sc0ttkclark)
+* Added: JS API - New JS helper functions to interact with fields on the screen including `window.PodsDFV.getField( pod, itemId, fieldName, formCounter )`, `window.PodsDFV.getFields( pod, itemId, formCounter )`, `window.PodsDFV.getFieldValue( pod, itemId, fieldName, formCounter )`, `window.PodsDFV.setFieldValue( pod, itemId, fieldName, value, formCounter )`. #6471 #6475 (@zrothauser, @sc0ttkclark)
+* Added: CLI - New CLI command `wp pods playbook run` which can run playbook .json files which allow you to perform multiple tasks with the Pods API. Useful for coordinating renames of Pods, Groups, and Fields, along with other CLI tasks between different environments. #6460 (@sc0ttkclark)
+* Fixed: Limit by post status option has been resolved but you may need to re-save your post status choices again. #6470 (@sc0ttkclark)
+* Fixed: Duplicated Pods now properly set the groups for the duplicated fields. If you have a Pod that is missing fields, try adding `&pods_debug_find_orphan_fields=1` to your edit pod URL and it should automatically fix them for you. #6463 (@sc0ttkclark)
+* Fixed: Advanced Content Type modals now close as expected when saving them within Flexible Relationships (Add New / Edit links for a relationship). #6457 #6481 (@zrothauser)
+* Fixed: Thumbnails in file lists now properly scale down as expected. #6473 #6474 (@JoryHogeveen)
+* Fixed: Simple Relationships now properly save once again for Settings pods. #6476 (@sc0ttkclark)
+* Fixed: The relationship field option for Autocomplete Select fields have improved drag and drop functionality to resolve issues with larger datasets. #6428 #6466 (@zrothauser)
+* Fixed: Now refreshing the language cache when WPML switches languages. #6448 #6449 (@JoryHogeveen)
+* Fixed: Disabled Tribe Common shortcode handling (when loading TC for Pods in independent-mode). #6438 (@sc0ttkclark)
+* Fixed: Resolved issue with the editor instance appearing over the dropdown select field options. #6452 #6453 (@JoryHogeveen)
+
+= 2.8.10 - February 1st, 2022 =
+
+* Fixed: Meta compatibility fix for when it was not saving to meta through direct update meta calls. #6429 #6431 (@sc0ttkclark)
+* Fixed: Don't render the wrapper HTML for blocks if the contents are empty. (@sc0ttkclark)
+
+= 2.8.9 - January 31st, 2022 =
+
+* Added: There's a new tool at Pods Admin > Settings > Tools that will let you "Recreate missing tables". This will run the logic used to create those tables needed by Pods. This is currently just for `wp_podsrel` but will eventually include all other table-based Pods too. #5795 (@sc0ttkclark)
+* Added: Are you interested in seeing how much data your Pods are storing? You can now add `&pods_include_row_counts=1` to the Pods Admin > Edit Pods URL and see how many Data Rows, Meta Rows, and Relationship Rows are associated to each pod. This is a hidden feature and will be added in the future as a link directly within the Edit Pods screen. (@sc0ttkclark)
+* Added: Support for alignment and custom classes on Pods Blocks. Disabled support for Anchors until they are officially resolved for dynamic blocks in core. (@sc0ttkclark)
+* Added: Hooks implemented for new compatibility with the Pods Pro by SKCDEV Add On for Advanced Relationship Storage. (@sc0ttkclark)
+* Fixed: Abstracted the meta saving into `PodsMeta::save_meta()` so that it can be used to remove duplicate logic in other methods and implemented it for meta fallback for simple relationship compatibility saving in integrations like Paid Membership Pro. (@sc0ttkclark)
+* Fixed: Resolved single/double quotes that were getting converted to HTML entities for Custom Post Type singular/plural labels. #6399 #6394 (@JoryHogeveen)
+* Fixed: Additional work on preventing unnecessary queries from other plugins with our Meta API integration. #6379 (@sc0ttkclark)
+* Fixed: Groups now properly check their access rights before showing. #6377 (@sc0ttkclark)
+* Fixed: Resolved deprecation notices where we still called `pods_ui_message()`, replaced with `pods_message()`. #6340 (@sc0ttkclark)
+* Fixed: Resolved issues with 00:00 times when HTML5 inputs are enabled for Date/Time fields. #6256 #6382 (@zrothauser, @sc0ttkclark)
+* Fixed: Some times after updating to 2.8, a Pod may have orphaned fields that exist outside of groups. This normally gets handled during the first time you edit a pod but now we have an additional count check to see if the field counts match as expected when editing a pod so it can trigger that process even after the first edit in 2.8. #6384 #6302 (@sc0ttkclark)
+* Fixed: Cleaned up and abstracted the logic to build the field name used in DB queries for a field. #6270 #6411 (@sc0ttkclark, @jamesgol)
+* Fixed: Resolved Date/Time field issues on certain browsers/OS combinations. #6318 #6300 (@sc0ttkclark, @zrothauser)
+* Fixed: No longer showing the pagination links if there's just one page. #5184 (@sc0ttkclark)
+* Fixed: Resolved PHP warnings with the Pods Blocks that may occur due to variations on how the data is provided to the block. #6367 #6386 #6388 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Relationships now properly respect the depth provided in the field settings for REST API responses. #6373 (@sc0ttkclark)
+* Fixed: Better prevent recursive loops when saving meta from third parties. #6391 (@sc0ttkclark, @mircobabini)
+* Fixed: Resolve pods_data usage in `PodsAPI::import()`. #6404 (@sc0ttkclark, @LN-MDeRuscio)
+* Fixed: Multiple block collections registered through Pods now works as expected. #6403 (@sc0ttkclark)
+* Fixed: Groups now remove from the screen after deleting them. The group was deleted before but it wasn't removed from the screen which caused confusion. #6395 #6396 (@zrothauser, @sc0ttkclark)
+* Fixed: Resolved PHP warning in PHP 8+ on 404 pages for taxonomy terms. #6383 #6387 (@JoryHogeveen)
+* Fixed: Reordering relationships for all inputs that support that has been resolved. #6206 #6094 #6390 (@zrothauser)
+* Fixed: Resolved issues with newly added items being added to the multi-select input. #6216 #6385 (@zrothauser)
+* Fixed: Improved appearance for Add New modal sizes. #6364 #6365 (@JoryHogeveen)
+
+= 2.8.8.1 - December 8th, 2021 =
+
+* Fixed: Resolve issues with going to Add New Pod screen and not seeing expected post types / taxonomies to be extended. #6358 #6359 (@JoryHogeveen)
+* Fixed: Slider formatting for input now supports more varied separators and decimal characters. #6357 #6361 (@JoryHogeveen)
+
+= 2.8.8 - December 7th, 2021 =
+
+* Tweak: Support passing the object into specific field functions/helpers using the filter `pods_helper_include_obj` and returning `true`. (@sc0ttkclark)
+* Tweak: Exclude post types and taxonomies more uniformly and allow filtering the ignored types with the filter `pods_meta_ignored_types`. You can check whether a content type is covered by calling `PodsMeta::is_type_covered( $content_type, $object_name )`. (@sc0ttkclark)
+* Fixed: Resolved conflicts with Ultimate Member plugin by disabling Object Field access in meta data functions. You can enable access to these fields by returning true on the `pods_meta_cover_object_fields_in_meta` filter going forward. (@sc0ttkclark)
+* Fixed: Ensure Number formatting is normalized for all number/currency inputs to prevent issues with decimal/thousands formats. #6269 #6356 #6333 (@JoryHogeveen)
+* Fixed: Pods Pages now loads the expected value for page_template when editing a Pod Page. #6355 (@sc0ttkclark)
+* Fixed: Pods Pages now loads the labels for Associated Pod when editing a Pod Page. #6355 (@sc0ttkclark)
+* Fixed: Prevent potential timeouts by reducing areas of conflict in `PodsMeta`. #6349 (@sc0ttkclark)
+* Fixed: Resolved potential performance issues / timeouts with large datasets and many Pods Blocks when loading Block Editor by adding the filter `pods_blocks_types_preload_block` and returning `false` to disable preloading blocks on load of the edit post screen. #6349 (@sc0ttkclark)
+* Fixed: Enforce slug characters on registration of post type / taxonomy instead of the admin config field for Custom Rewrite Slug and Archive Page Slug Override. #6354 (@sc0ttkclark)
+* Fixed: Resolve issues with `PodsAPI::save_field()` when trying to save a field just using the name, now you can pass the `override` parameter as true to bypass duplicate field checks to force saving as matching field. #6345 (@sc0ttkclark)
+* Fixed: More robust checking for conflicts with extended post types and taxonomies before registering them. #6348 #6342 (@sc0ttkclark)
+* Fixed: Resolved bug with Form, Item List, and Item Single blocks so they get the correct context from the Query blocks when rendering. #6351 (@sc0ttkclark)
+* Fixed: Use `copy()` instead of `file_get_contents()` in `pods_attachment_import()`. (@sc0ttkclark)
+
+= 2.8.7 - December 1st, 2021 =
+
+* Fixed: Solved issue where some shortcodes were not processed properly in templates. #6337 (@sc0ttkclark)
+* Fixed: Prevent conflicts with get_metadata integrations causing recursive loops. (@sc0ttkclark)
+
+= 2.8.6 - November 30th, 2021 =
+
+* Security: Escape/KSES labels and descriptions in more places. (@sc0ttkclark)
+* Tweak: Added bbPress profile form support so that Pods fields appear like the other form fields. (@sc0ttkclark)
+* Tweak: Added ability enable more consistent responses with REST API relationship depths. Filter `pods_api_export_pod_item_level_export_ids_at_final_depth` and return true to only export IDs at the final depth (note: depth set as 1 always returns IDs). #6260 (@sc0ttkclark)
+* Tweak: Added ability to force checking if a Pod has orphan fields that aren't assigned to groups and setting them to the first group. Add `pods_debug_find_orphan_fields=1` to the URL when editing a pod. (@sc0ttkclark)
+* Tweak: Implement Block schema for Pods blocks and set the icons to use dashicons for WordPress.org. (@sc0ttkclark)
+* Tweak: Improve performance by only checking a Pod once for a field when filtering meta related functions. (@sc0ttkclark)
+* Tweak: When calling pick_object and pick_val for a field object, automatically map to the corresponding method to deal with additional logic. (@sc0ttkclark)
+* Fixed: Flush cache after importing packages. (@sc0ttkclark)
+* Fixed: Adjust CSS for fields in meta boxes that are in side context. (@sc0ttkclark)
+* Fixed: Resolve issues with enqueueing assets that may not be registered yet (for bbPress compatibility) by doing a late enqueue. (@sc0ttkclark)
+* Fixed: Resolve PHP notices and added a fallback when related IDs are not set in the cache as expected. #6322 (@sc0ttkclark)
+* Fixed: Advanced Content Types now create the default fields as expected (name, created, modified, author, permalink) . #6314 (@sc0ttkclark)
+* Fixed: Added backwards compatibility for some more old Pods 1.x code, but be sure to update compatibility as this may not be maintained in the future. #6312 (@sc0ttkclark)
+* Fixed: Added backwards compatibility for `[if]` template tags to support running normal shortcodes in them. To enable this, set `PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES` to true in your wp-config.php file. #6290 (@sc0ttkclark)
+* Fixed: Set up the currency configurations needed for frontend forms with currency fields (using non-USD currencies) in case they haven't been set up yet. #6315 (@sc0ttkclark)
+* Fixed: Added backwards compatibility for `pods_group_add()` so that when a field is marked as hidden in the UI but it is added directly with `pods_group_add()`, then it will treat it as not hidden anymore. #6309 (@sc0ttkclark)
+* Fixed: Automatically assume configuration needs to be refreshed when transient of Pods registered post types/taxonomies does not match current post types/taxonomies count in Pods configs. #6313 (@sc0ttkclark)
+* Fixed: Relationships now require a Related Type option to be set. #6327 (@sc0ttkclark)
+* Fixed: Resolve issues with duplicating a Pod so that it properly creates the duplicated groups/fields for the new pod. #6330 (@sc0ttkclark)
+
+= 2.8.5 - November 17th, 2021 =
+
+* Fixed: Resolved problems with old Pods 1.x upgrades not fully going away. (@sc0ttkclark)
+* Fixed: Resolved problems with extended post types being overridden. (@sc0ttkclark)
+
+= 2.8.4.1 - November 17th, 2021 =
+
+* Fixed: Resolved issues where usage of `pods_group_add()` could produce errors which would stop the Edit Post screen from loading. (@sc0ttkclark)
+
 = 2.8.4 - November 16th, 2021 =
 
-* Added: Pods Field Value widget now supports using current post/term just like the Pods Single Item widget does. (@sc0ttkclark) 
+* Added: Pods Field Value widget now supports using current post/term just like the Pods Single Item widget does. (@sc0ttkclark)
 * Fixed: Checkbox dependencies for Pod options now show as expected when loading the Edit Pod screen for a newly created Pod. #6255 #6291 (@zrothauser)
 * Fixed: "/" is now specifically disallowed from being used for the custom rewrite slug on a post type or taxonomy to prevent rewrite conflicts. #5744 (@sc0ttkclark, @dingman)
 * Fixed: Advanced Filters pop-up now shows without showing the unused scrollbars in most cases. #6264 (@sc0ttkclark)
@@ -172,7 +318,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Placeholder values are properly inherited based on field type specific options. #6289 (@JoryHogeveen, @sc0ttkclark)
 * Fixed: REST API fields now correctly check the right field option for whether fields should be individually shown. #6288 (@JoryHogeveen)
 * Fixed: Relationship traversal now properly handle selection limit if more than the original field. #6243 (@sc0ttkclark)
-* Fixed: Prevent potential conflicts when a plugin uses `$post->content` instead of `$post->post_content` to get the content of a post. Pods no longer checks objet field aliases with `get_post_meta()` and directly integrated metadata function calls. (@sc0ttkclark) 
+* Fixed: Prevent potential conflicts when a plugin uses `$post->content` instead of `$post->post_content` to get the content of a post. Pods no longer checks objet field aliases with `get_post_meta()` and directly integrated metadata function calls. (@sc0ttkclark)
 * Fixed: Fix `orderby` PHP notices for `in_array()` checks on field id and field index. (@sc0ttkclark)
 * Fixed: Better checks for Pod objects existing in PodsMeta. (@sc0ttkclark)
 * Fixed: Removed the "Extra Fields" option (old WP compatibility option) for Custom Taxonomies on the Pods Admin > Add New screen. (@sc0ttkclark)
@@ -224,7 +370,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Taggable autocomplete works as expected again. #6182 (@sc0ttkclark)
 * Fixed: ORDER BY basic field detection has been improved to prevent certain fields from using the incorrect alias. (@sc0ttkclark)
 * Fixed: The `<ul>` used with checkbox inputs has been styled with `list-style:none` as it should be. (@sc0ttkclark)
-* Fixed: Default the form output type to `div` if it's provided but empty. (@sc0ttkclark) 
+* Fixed: Default the form output type to `div` if it's provided but empty. (@sc0ttkclark)
 * Compatibility: Added compatibility for Enfold theme and public forms so that `wp-mediaelement` is not removed by the theme. #6188 (@sc0ttkclark)
 * Tweak: Internal API - Storage and Storage Types used in the internal Pods code has been clarified to prevent ambiguity. Storage Types have been changed to Object Storage Types in all areas regarding Whatsit Storage). (@sc0ttkclark)
 * Tweak: Public forms now have unique IDs added to them to help in custom CSS work. (@sc0ttkclark)
@@ -248,12 +394,12 @@ Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-
 * Feature: Now you can add multiple groups of fields. (@sc0ttkclark, @zrothauser)
 * Feature: Our Edit Pod screen is powered by our all new React form interfaces, tooltips, and they use our new Pods Admin REST API endpoints. (@sc0ttkclark, @zrothauser)
 * Feature: All of our form fields are powered by React now in preparation for Pods 2.9 repeatable fields that we're working on next. (@sc0ttkclark, @zrothauser)
-* Feature: New field types for Heading and HTML. (@sc0ttkclark, @zrothauser) 
+* Feature: New field types for Heading and HTML. (@sc0ttkclark, @zrothauser)
 * Feature: New Pods Blocks available and the underlying Pods Block PHP API is compatible with ACF Blocks if you've ever used those before. (@sc0ttkclark, @zrothauser)
 * Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields. (@sc0ttkclark)
 * Feature: WP-CLI commands that mirror the REST API endpoints we have. (@sc0ttkclark)
 * Feature: The new WYSIWYG editor option to use [Quill Editor](https://github.com/zenoamaro/react-quill) is now available and the CLEditor has been removed. (@sc0ttkclark, @zrothauser)
-* Compatibility: Completely updated compatibility with WPML and Polylang plugins. 
+* Compatibility: Completely updated compatibility with WPML and Polylang plugins.
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 

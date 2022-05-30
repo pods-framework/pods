@@ -29,14 +29,25 @@ class API {
 		// The Pods Blocks JS API.
 		$pods_blocks_options_file = file_get_contents( PODS_DIR . 'ui/js/blocks/pods-blocks-api.min.asset.json' );
 
-		$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
+		$pods_blocks_options = null;
+
+		if ( $pods_blocks_options_file ) {
+			$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
+		}
+
+		if ( ! is_array( $pods_blocks_options ) ) {
+			$pods_blocks_options = [
+				'dependencies' => [],
+				'version'      => false,
+			];
+		}
 
 		wp_register_script( 'pods-blocks-api', PODS_URL . 'ui/js/blocks/pods-blocks-api.min.js', $pods_blocks_options['dependencies'], $pods_blocks_options['version'], true );
 
 		wp_set_script_translations( 'pods-blocks-api', 'pods' );
 
 		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', [
-			'blocks'      => $js_blocks ,
+			'blocks'      => $js_blocks,
 			// No custom collections to register directly with JS right now.
 			'collections' => [],
 		] );
@@ -78,12 +89,12 @@ class API {
 		 */
 		do_action( 'pods_blocks_api_pre_init' );
 
-		tribe( 'pods.blocks.collection.pods' );
-		tribe( 'pods.blocks.field' );
-		tribe( 'pods.blocks.form' );
-		tribe( 'pods.blocks.list' );
-		tribe( 'pods.blocks.single' );
-		tribe( 'pods.blocks.view' );
+		pods_container( 'pods.blocks.collection.pods' );
+		pods_container( 'pods.blocks.field' );
+		pods_container( 'pods.blocks.form' );
+		pods_container( 'pods.blocks.list' );
+		pods_container( 'pods.blocks.single' );
+		pods_container( 'pods.blocks.view' );
 
 		/**
 		 * Allow custom blocks to be registered with Pods.

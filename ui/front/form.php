@@ -8,8 +8,8 @@
  * @var string  $thank_you
  * @var string  $output_type
  */
-wp_enqueue_style( 'pods-form' );
-wp_enqueue_script( 'pods' );
+pods_form_enqueue_style( 'pods-form' );
+pods_form_enqueue_script( 'pods' );
 
 $pod_name = $pod->pod;
 $id       = $pod->id();

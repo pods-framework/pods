@@ -1,58 +1,55 @@
 <?php
-$ignore = [
-	'attachment',
-	'revision',
-	'nav_menu_item',
-	'custom_css',
-	'customize_changeset',
-	'post_format',
-];
+$pods_meta = pods_meta();
+
+$ignore = [];
 
 // Only add support for built-in taxonomy "link_category" if link manager is enabled.
 $link_manager_enabled = (int) get_option( 'link_manager_enabled', 0 );
 
 if ( 0 === $link_manager_enabled ) {
-	$ignore[] = 'link_category';
+	$ignore['link_category'] = true;
 }
 
 $all_pods = pods_api()->load_pods( [ 'key_names' => true ] );
 
 $quick_actions = [];
 
-if ( ! isset( $all_pods['post'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Posts', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'post_type',
-		'object'        => 'post',
-	];
-}
+if ( ! pods_is_types_only() ) {
+	if ( ! isset( $all_pods['post'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Posts', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'post_type',
+			'object'        => 'post',
+		];
+	}
 
-if ( ! isset( $all_pods['page'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Pages', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'post_type',
-		'object'        => 'page',
-	];
-}
+	if ( ! isset( $all_pods['page'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Pages', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'post_type',
+			'object'        => 'page',
+		];
+	}
 
-if ( ! isset( $all_pods['category'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Categories', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'taxonomy',
-		'object'        => 'category',
-	];
-}
+	if ( ! isset( $all_pods['category'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Categories', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'taxonomy',
+			'object'        => 'category',
+		];
+	}
 
-if ( ! isset( $all_pods['user'] ) ) {
-	$quick_actions[] = [
-		'label'         => __( 'Add custom fields to Users', 'pods' ),
-		'create_extend' => 'extend',
-		'type'          => 'user',
-		'object'        => 'user',
-	];
+	if ( ! isset( $all_pods['user'] ) ) {
+		$quick_actions[] = [
+			'label'         => __( 'Add custom fields to Users', 'pods' ),
+			'create_extend' => 'extend',
+			'type'          => 'user',
+			'object'        => 'user',
+		];
+	}
 }
 
 /**
@@ -183,6 +180,10 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										if ( empty( $data['pod'] ) ) {
 											unset( $data['pod'] );
+										}
+
+										if ( pods_is_types_only() ) {
+											unset( $data['settings'], $data['pod'] );
 										}
 
 										echo PodsForm::field( 'create_pod_type', pods_v( 'create_pod_type', 'post', 'post_type', true ), 'pick', [
@@ -367,16 +368,11 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										$data = [
 											'post_type' => __( 'Post Types (Posts, Pages, etc..)', 'pods' ),
-											'taxonomy'  => '',
-											// component will fill this in if it's enabled (this exists for placement)
+											'taxonomy'  => __( 'Taxonomies (Categories, Tags, etc..)', 'pods' ),
 											'media'     => __( 'Media', 'pods' ),
 											'user'      => __( 'Users', 'pods' ),
 											'comment'   => __( 'Comments', 'pods' ),
 										];
-
-										if ( function_exists( 'get_term_meta' ) ) {
-											$data['taxonomy'] = __( 'Taxonomies (Categories, Tags, etc..)', 'pods' );
-										}
 
 										if ( isset( $all_pods['media'] ) && 'media' == $all_pods['media']['type'] ) {
 											unset( $data['media'] );
@@ -392,10 +388,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										$data = apply_filters( 'pods_admin_setup_add_extend_pod_type', $data );
 
-										if ( empty( $data['taxonomy'] ) ) {
-											unset( $data['taxonomy'] );
-										}
-
 										echo PodsForm::field( 'extend_pod_type', pods_v( 'extend_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
 											'dependency' => true,
@@ -407,7 +399,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$post_types = get_post_types();
 
 										foreach ( $post_types as $post_type => $label ) {
-											if ( in_array( $post_type, $ignore, true ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+											if ( empty( $post_type ) || isset( $ignore[ $post_type ] ) || 0 === strpos( $post_type, '_pods_' ) || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 												// Post type is ignored
 												unset( $post_types[ $post_type ] );
 
@@ -439,7 +431,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$taxonomies = get_taxonomies();
 
 										foreach ( $taxonomies as $taxonomy => $label ) {
-											if ( in_array( $taxonomy, $ignore, true ) ) {
+											if ( empty( $taxonomy ) || isset( $ignore[ $taxonomy ] ) || 0 === strpos( $taxonomy, '_pods_' ) || ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
 												// Taxonomy is ignored
 												unset( $taxonomies[ $taxonomy ] );
 

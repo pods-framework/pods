@@ -139,7 +139,7 @@ class PodsRESTHandlers {
 					if ( $related_pod_items ) {
 						$fields = false;
 						$items  = array();
-						$depth  = pods_v( 'rest_pick_depth', $field_data, 2 );
+						$depth  = (int) pods_v( 'rest_pick_depth', $field_data, 2 );
 
 						if ( ! is_array( $related_pod_items ) ) {
 							$related_pod_items = array( $related_pod_items );
@@ -164,12 +164,12 @@ class PodsRESTHandlers {
 								 *
 								 * @since 0.0.1
 								 *
-								 * @param array                  $fields     The fields to show
-								 * @param string                 $field_name The name of the field
-								 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
-								 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
-								 * @param int                    $id         Current item ID
-								 * @param object|WP_REST_Request Current     request object.
+								 * @param array                  $fields      The fields to show
+								 * @param string                 $field_name  The name of the field
+								 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
+								 * @param object|Pods            $related_pod The Pods object for Pod relationship is to.
+								 * @param int                    $id          Current item ID
+								 * @param object|WP_REST_Request $request     Current request object.
 								 */
 								$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
 							}//end if
@@ -179,18 +179,18 @@ class PodsRESTHandlers {
 							 *
 							 * @since 0.0.1
 							 *
-							 * @param array                  $depth      The depth.
-							 * @param string                 $field_name The name of the field
-							 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
-							 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
-							 * @param int                    $id         Current item ID
-							 * @param object|WP_REST_Request Current     request object.
+							 * @param int                    $depth      The depth number to limit to.
+							 * @param string                 $field_name  The name of the field
+							 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
+							 * @param object|Pods            $related_pod The Pods object for Pod relationship is to.
+							 * @param int                    $id          Current item ID
+							 * @param object|WP_REST_Request $request     Current request object.
 							 */
-							$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
+							$related_depth = (int) apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
 
 							$params = array(
 								'fields'  => $fields,
-								'depth'   => $depth,
+								'depth'   => $related_depth,
 								'context' => 'rest',
 							);
 

@@ -58,14 +58,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @noinspection PropertyCanBeStaticInspection
 	 */
 	protected $args = [
-		'object_type'  => '',
+		'object_type'         => '',
 		'object_storage_type' => 'collection',
-		'name'         => '',
-		'id'           => '',
-		'parent'       => '',
-		'group'        => '',
-		'label'        => '',
-		'description'  => '',
+		'name'                => '',
+		'id'                  => '',
+		'parent'              => '',
+		'group'               => '',
+		'label'               => '',
+		'description'         => '',
 	];
 
 	/**
@@ -499,6 +499,18 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		foreach ( $args as $arg => $value ) {
 			$this->set_arg( $arg, $value );
+		}
+
+		// If the type is a Pod or Group and types-only mode is enabled, force the groups/fields to be empty.
+		if (
+			(
+				'pod' === static::$type
+				|| 'group' === static::$type
+			)
+			&& pods_is_types_only()
+		) {
+			$this->_groups = [];
+			$this->_fields = [];
 		}
 	}
 
@@ -1302,6 +1314,23 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		if ( ! empty( $table_info['table'] ) ) {
 			return $table_info['table'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the pod table name for object.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return string|null The Pod table name for object or null if not set.
+	 */
+	public function get_pod_table_name() {
+		$table_info = $this->get_table_info();
+
+		if ( ! empty( $table_info['pod_table'] ) ) {
+			return $table_info['pod_table'];
 		}
 
 		return null;

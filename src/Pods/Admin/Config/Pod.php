@@ -21,7 +21,6 @@ class Pod extends Base {
 	 * @return array List of tabs for the Pod object.
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
-		$fields      = true;
 		$labels      = false;
 		$admin_ui    = false;
 		$connections = false;
@@ -51,10 +50,6 @@ class Pod extends Base {
 
 		$core_tabs = [];
 
-		if ( $fields ) {
-			$core_tabs['manage-fields'] = __( 'Manage Fields', 'pods' );
-		}
-
 		if ( $labels ) {
 			$core_tabs['labels'] = __( 'Labels', 'pods' );
 		}
@@ -76,7 +71,7 @@ class Pod extends Base {
 			$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
 		}
 
-		$args = compact( [ 'fields', 'labels', 'admin_ui', 'connections', 'advanced' ] );
+		$args = compact( [ 'labels', 'admin_ui', 'connections', 'advanced' ] );
 
 		$pod_name = $pod['name'];
 
@@ -728,13 +723,14 @@ class Pod extends Base {
 				];
 			}
 
-			$options['connections']['register_custom_post_type'] = [
-				'name'         => 'register_custom_post_type',
-				'label'        => __( 'Add new connections', 'pods' ),
+			$options['connections']['register_custom_taxonomy'] = [
+				'name'         => 'register_custom_taxonomy',
+				'label'        => __( 'Add new connection', 'pods' ),
 				'type'         => 'html',
 				'html_content' => sprintf(
-					'<a href="%s">Create a new Custom Post Type</a>',
-					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=post_type' ) )
+					'<a href="%1$s">%2$s</a>',
+					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) ),
+					esc_html__( 'Create a new Custom Taxonomy', 'pods' )
 				),
 			];
 
@@ -798,7 +794,7 @@ class Pod extends Base {
 				'has_archive_slug'        => [
 					'label'         => __( 'Archive Page Slug Override', 'pods' ),
 					'help'          => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'has_archive' => true ],
@@ -822,7 +818,7 @@ class Pod extends Base {
 				'rewrite_custom_slug'     => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],
@@ -1139,13 +1135,14 @@ class Pod extends Base {
 					'type'          => 'boolean_group',
 					'boolean_group' => [],
 				],
-				'register_custom_taxonomy'       => [
-					'name'           => 'register_custom_taxonomy',
-					'label'          => __( 'Add new connections', 'pods' ),
-					'type'           => 'html',
-					'html_content'   => sprintf(
-						'<a href="%s">Create a new Custom Taxonomy</a>',
-						esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) )
+				'register_custom_post_type'      => [
+					'name'         => 'register_custom_post_type',
+					'label'        => __( 'Add new connection', 'pods' ),
+					'type'         => 'html',
+					'html_content' => sprintf(
+						'<a href="%1$s">%2$s</a>',
+						esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=post_type' ) ),
+						esc_html__( 'Create a new Custom Post Type', 'pods' )
 					),
 				],
 			];
@@ -1177,7 +1174,7 @@ class Pod extends Base {
 				'rewrite_custom_slug'      => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],

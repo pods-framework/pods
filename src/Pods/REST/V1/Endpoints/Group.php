@@ -20,6 +20,20 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
+	 * @since 2.8.11
+	 */
+	public $rest_route = '/groups/(?P<id>\\d+)';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8.11
+	 */
+	public $rest_doc_route = '/groups/{id}';
+
+	/**
+	 * {@inheritdoc}
+	 *
 	 * @since 2.8.0
 	 */
 	public $object = 'group';

@@ -112,6 +112,13 @@ export const setOptionsValues = ( options = {} ) => {
 
 export const refreshPodData = ( data ) => setOptionsValues( data?.pod || {} );
 
+export const setGroups = ( groups ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_GROUPS,
+		groups,
+	};
+};
+
 export const moveGroup = ( oldIndex, newIndex ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.MOVE_GROUP,

@@ -18,11 +18,11 @@ const DateField = ( props ) => {
 	const newConfig = {
 		...Object.fromEntries( fieldConfigEntries ),
 		datetime_allow_empty: fieldConfig.date_allow_empty,
+		datetime_date_format_moment_js: fieldConfig.date_format_moment_js,
 		datetime_format: fieldConfig.date_format,
 		datetime_format_custom: fieldConfig.date_format_custom,
 		datetime_format_custom_js: fieldConfig.date_format_custom_js,
 		datetime_html5: fieldConfig.date_html5,
-		datetime_repeatable: fieldConfig.date_repeatable,
 		datetime_type: fieldConfig.date_type,
 		datetime_year_range_custom: fieldConfig.date_year_range_custom,
 	};

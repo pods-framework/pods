@@ -31,11 +31,12 @@ const getMediaItemData = async ( mediaID ) => {
 const File = ( props ) => {
 	const {
 		fieldConfig = {},
-		htmlAttr = {},
 		value,
 		setValue,
 		setHasBlurred,
 	} = props;
+
+	const htmlAttr = fieldConfig?.htmlAttr || {};
 
 	const {
 		fieldItemData = [],
@@ -117,10 +118,10 @@ const File = ( props ) => {
 	return (
 		<MarionetteAdapter
 			{ ...props }
-			htmlAttr={ htmlAttr }
 			fieldConfig={ {
 				...fieldConfig,
 				file_limit: correctedLimit,
+				htmlAttr,
 			} }
 			View={ FileView }
 			value={ collectionData }

@@ -75,9 +75,7 @@ class PodsField_Slug extends PodsField {
 		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
-		if ( is_array( $value ) ) {
-			$value = implode( '-', $value );
-		}
+		$value = $this->normalize_value_for_input( $value, $options, '-' );
 
 		$field_type = 'slug';
 
@@ -98,8 +96,6 @@ class PodsField_Slug extends PodsField {
 		if ( ! empty( $options['disable_dfv'] ) ) {
 			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 		}
-
-		wp_enqueue_script( 'pods-dfv' );
 
 		$type = pods_v( 'type', $options, static::$type );
 

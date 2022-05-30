@@ -1,6 +1,9 @@
 <?php
 
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
+use Pods\Whatsit\Value_Field;
+use Pod as Pod_Deprecated;
 
 /**
  * Pods Field class for common type-specific methods.
@@ -346,7 +349,12 @@ class PodsField {
 	 * }
 	 */
 	public function render_input_script( $args ) {
-		wp_enqueue_script( 'pods-dfv' );
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
+
+		pods_form_enqueue_script( 'pods-dfv' );
 
 		if ( is_array( $args ) ) {
 			$args = (object) $args;
@@ -382,9 +390,9 @@ class PodsField {
 		$group_name = '';
 
 		if ( ! empty( $args->pod ) ) {
-			if ( $args->pod instanceof Pods ) {
+			if ( $args->pod instanceof Pods || $args->pod instanceof Pod_Deprecated ) {
 				$pod_name = $args->pod->pod_data['name'];
-			} else {
+			} elseif ( $args->pod instanceof Pod || is_array( $args->pod ) ) {
 				$pod_name = $args->pod['name'];
 			}
 		}
@@ -567,6 +575,11 @@ class PodsField {
 	public function build_dfv_field_config( $args ) {
 		if ( $args->options instanceof Field ) {
 			$config = $args->options->export();
+
+			$config['repeatable']               = $args->options->is_repeatable();
+			$config['repeatable_add_new_label'] = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
+			$config['repeatable_reorder']       = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
+			$config['repeatable_limit']         = $args->options->get_limit();
 		} else {
 			$config = (array) $args->options;
 		}
@@ -963,6 +976,53 @@ class PodsField {
 		}
 
 		return trim( $value );
+	}
+
+	/**
+	 * Normalize the field value for the input.
+	 *
+	 * @param mixed       $value     The field value.
+	 * @param Field|array $field     The field object or the field options array.
+	 * @param string      $separator The separator to use if the field does not support multiple values.
+	 *
+	 * @return mixed The field normalized value.
+	 */
+	public function normalize_value_for_input( $value, $field, $separator = ' ' ) {
+		if (
+			(
+				(
+					$field instanceof Field
+					|| $field instanceof Value_Field
+				)
+				&& $field->is_repeatable()
+			)
+			|| (
+				is_array( $field )
+				&& 1 === (int) pods_v( 'repeatable', $field )
+				&& (
+					'wysiwyg' !== pods_v( 'type', $field )
+					|| 'tinymce' !== pods_v( 'wysiwyg_editor', $field, 'tinymce', true )
+				)
+			)
+		) {
+			if ( ! is_array( $value ) ) {
+				if ( '' === $value || null === $value ) {
+					$value = [
+						'',
+					];
+				} else {
+					$value = (array) $value;
+				}
+			}
+
+			return $value;
+		}
+
+		if ( ! is_array( $value ) ) {
+			return $value;
+		}
+
+		return implode( $separator, $value );
 	}
 
 	/**

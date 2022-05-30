@@ -154,6 +154,7 @@ class PodsField_Pick extends PodsField {
 				'label'                 => __( 'Selection Type', 'pods' ),
 				'help'                  => $fallback_help,
 				'default'               => 'single',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'single' => __( 'Single Select', 'pods' ),
@@ -169,6 +170,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'single',
 				],
 				'default'               => 'dropdown',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [
 					'dropdown'     => __( 'Drop Down', 'pods' ),
@@ -186,6 +188,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'checkbox',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
 					'checkbox'     => __( 'Checkboxes', 'pods' ),
@@ -203,6 +206,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'default',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
@@ -254,7 +258,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_object'        => array_merge( [
 						'site',
 						'network',
-					], self::simple_objects() ),
+					], $this->simple_objects() ),
 					static::$type . '_allow_add_new' => false,
 				],
 				'type'           => 'boolean',
@@ -268,7 +272,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -281,7 +285,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -294,7 +298,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -343,7 +347,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Display Field in Selection List', 'pods' ),
 				'help'        => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ) . ' ' . $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -363,7 +367,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>WHERE</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -372,7 +376,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>ORDER BY</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -381,7 +385,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>GROUP BY</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -394,21 +398,45 @@ class PodsField_Pick extends PodsField {
 			$post_type_pick_objects[] = 'post_type-' . $post_type;
 		}
 
-		$options[ static::$type . '_post_status' ] = array(
-			'name'             => 'post_status',
+		$options[ static::$type . '_post_status' ] = [
 			'label'            => __( 'Limit list by Post Status', 'pods' ),
 			'help'             => __( 'You can choose to limit Posts available for selection by one or more specific post status.', 'pods' ),
 			'type'             => 'pick',
 			'pick_object'      => 'post-status',
 			'pick_format_type' => 'multi',
 			'default'          => 'publish',
-			'depends-on'       => array(
+			'depends-on'       => [
 				static::$type . '_object' => $post_type_pick_objects,
-			),
-		);
+			],
+		];
+
+		$options[ static::$type . '_post_author' ] = [
+			'label'      => __( 'Limit list to the same Post Author', 'pods' ),
+			'help'       => __( 'You can choose to limit Posts available for selection to those created by the same Post Author. This only works if this pod is a Post Type and this field is related to a Post Type.', 'pods' ),
+			'type'       => 'boolean',
+			'default'    => 0,
+			'depends-on' => [
+				// @todo Support being able to depend on the current pod type like _pod_type => post_type or something.
+				static::$type . '_object' => $post_type_pick_objects,
+			],
+		];
 
 		return $options;
 
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function prepare( $options = null ) {
+		$format = static::$prepare;
+
+		// Maybe use number format for storage if not a simple relationship and limit is one.
+		if ( $options instanceof Field && ! $options->is_simple_relationship() && 1 === $options->get_limit() ) {
+			$format = '%d';
+		}
+
+		return $format;
 	}
 
 	/**
@@ -524,23 +552,14 @@ class PodsField_Pick extends PodsField {
 			 */
 			$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
 
+			$pods_meta = pods_meta();
+
 			// Public Post Types for relationships.
 			$post_types = get_post_types( [ 'public' => true ] );
 			asort( $post_types );
 
-			$ignored_post_types = [
-				'attachment',
-				'revision',
-				'nav_menu_item',
-				'custom_css',
-				'customize_changeset',
-				'oembed_cache',
-				'user_request',
-				'wp_template',
-			];
-
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -564,7 +583,7 @@ class PodsField_Pick extends PodsField {
 			asort( $post_types );
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -587,15 +606,8 @@ class PodsField_Pick extends PodsField {
 			$taxonomies = get_taxonomies();
 			asort( $taxonomies );
 
-			$ignored_taxonomies = [
-				'nav_menu',
-				'post_format',
-				'wp_theme',
-			];
-
 			foreach ( $taxonomies as $taxonomy => $label ) {
-
-				if ( empty( $taxonomy ) || in_array( $taxonomy, $ignored_taxonomies, true ) ) {
+				if ( empty( $taxonomy ) || ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;
@@ -956,7 +968,7 @@ class PodsField_Pick extends PodsField {
 		if ( $this->can_ajax( $args->type, $field_options ) ) {
 			$ajax = true;
 
-			$static_cache = tribe( Static_Cache::class );
+			$static_cache = pods_container( Static_Cache::class );
 
 			$field_data = $static_cache->get( $field_options['name'] . '/' . $field_options['id'], __CLASS__ . '/field_data' ) ?: [];
 
@@ -1025,6 +1037,7 @@ class PodsField_Pick extends PodsField {
 		$field_options['select2_overrides'] = null;
 
 		if ( 'select2' === $field_options['view_name'] ) {
+			// @todo Revisit this, they probably aren't used anymore now since this is DFV.
 			wp_enqueue_style( 'pods-select2' );
 			wp_enqueue_script( 'pods-select2' );
 
@@ -1607,7 +1620,7 @@ class PodsField_Pick extends PodsField {
 
 		$options['id'] = (int) $options['id'];
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
@@ -1732,11 +1745,11 @@ class PodsField_Pick extends PodsField {
 
 		$value_ids = array_unique( array_filter( $value ) );
 
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
-		if ( ! empty( $related_data ) ) {
+		if ( ! empty( $related_data ) && isset( $related_data['current_ids_' . $id ], $related_data['remove_ids_' . $id ] ) ) {
 			$related_pod        = $related_data['related_pod'];
 			$related_field      = $related_data['related_field'];
 			$related_pick_limit = $related_data['related_pick_limit'];
@@ -1947,11 +1960,31 @@ class PodsField_Pick extends PodsField {
 			$data = $this->get_object_data( $object_params );
 		}
 
+		/**
+		 * Allow filtering whether to always show default select text for the Single select Dropdown field even if
+		 * the field is required.
+		 *
+		 * @since 2.8.9
+		 *
+		 * @param bool            $always_show_default_select_text Whether to always show default select text.
+		 * @param array           $data                            The object data.
+		 * @param string|null     $name                            Field name.
+		 * @param mixed|null      $value                           Current value.
+		 * @param array|null      $options                         Field options.
+		 * @param array|null      $pod                             Pod information.
+		 * @param int|string|null $id                              Current item ID.
+		 */
+		$always_show_default_select_text = (bool) apply_filters( 'pods_field_pick_always_show_default_select_text', false, $data, $name, $value, $options, $pod, $id );
+
 		if (
 			'single' === pods_v( static::$type . '_format_type', $options, 'single' )
 			&& 'dropdown' === pods_v( static::$type . '_format_single', $options, 'dropdown' )
 			//&& 0 !== (int) pods_v( static::$type . '_show_select_text', $options, 1 )
-			&& 0 === (int) pods_v( 'required', $options, 0 )
+			&& (
+				$always_show_default_select_text
+				|| empty( $value )
+				|| 0 === (int) pods_v( 'required', $options, 0 )
+			)
 		) {
 			$default_select = [
 				'' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ),
@@ -1986,7 +2019,7 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function simple_value( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
 
-		if ( in_array( pods_v( static::$type . '_object', $options ), self::simple_objects(), true ) ) {
+		if ( in_array( pods_v( static::$type . '_object', $options ), $this->simple_objects(), true ) ) {
 			if ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 				$simple = @json_decode( $value, true );
 
@@ -2025,7 +2058,7 @@ class PodsField_Pick extends PodsField {
 					$val = array();
 
 					foreach ( $value as $k => $v ) {
-						if ( isset( $data[ $v ] ) ) {
+						if ( is_scalar( $v ) && isset( $data[ $v ] ) ) {
 							if ( false === $raw ) {
 								$k = $v;
 								$v = $data[ $v ];
@@ -2337,7 +2370,7 @@ class PodsField_Pick extends PodsField {
 				);
 
 				if ( 'data' === $context ) {
-					$static_cache = tribe( Static_Cache::class );
+					$static_cache = pods_container( Static_Cache::class );
 
 					$static_cache->set( $name . '/' . $options['id'], [
 						'autocomplete' => false,
@@ -2357,6 +2390,16 @@ class PodsField_Pick extends PodsField {
 					$pick_val = pods_v( static::$type . '_table', $options, $pick_val, true );
 				}
 
+				$current_pod = null;
+
+				if ( $pod instanceof Pod ) {
+					$current_pod = $pod;
+				} elseif ( $pod instanceof Pods ) {
+					$current_pod = $pod->pod_data;
+				} elseif ( is_array( $pod ) ) {
+					$current_pod = $pod;
+				}
+
 				$related_pod = null;
 
 				if ( '__current__' === $pick_val ) {
@@ -2365,7 +2408,7 @@ class PodsField_Pick extends PodsField {
 
 						$related_pod = $pod;
 					} elseif ( $pod instanceof Pods ) {
-						$pick_val = $pod->pod;
+						$pick_val = $pod->pod_data->get_name();
 
 						$related_pod = $pod->pod_data;
 					} elseif ( is_array( $pod ) ) {
@@ -2415,12 +2458,36 @@ class PodsField_Pick extends PodsField {
 
 				if ( empty( $params['where'] ) || ( ! is_array( $params['where'] ) && '' === trim( $params['where'] ) ) ) {
 					$params['where'] = array();
-				} elseif ( ! is_array( $params['where'] ) ) {
-					$params['where'] = (array) $params['where'];
 				}
+
+				$params['where'] = (array) $params['where'];
 
 				if ( 'value_to_label' === $context ) {
 					$params['where'][] = "`t`.`{$search_data->field_id}` = " . number_format( $value, 0, '', '' );
+				}
+
+				// Check if we need to limit by the current post author.
+				if (
+					1 === (int) pods_v( static::$type . '_post_author', $options, 0 )
+					&& $current_pod
+					&& 'post_type' === $current_pod['type']
+					&& 'post_type' === $options[ static::$type . '_object' ]
+				) {
+					$post_author_id = 0;
+
+					if ( empty( $id ) ) {
+						if ( is_user_logged_in() ) {
+							$post_author_id = get_current_user_id();
+						}
+					} else {
+						$post = get_post( $id );
+
+						if ( $post ) {
+							$post_author_id = $post->post_author;
+						}
+					}
+
+					$params['where'][] = '`t`.`post_author` = ' . (int) $post_author_id;
 				}
 
 				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
@@ -2658,7 +2725,7 @@ class PodsField_Pick extends PodsField {
 				}//end if
 
 				if ( 'data' === $context ) {
-					$static_cache = tribe( Static_Cache::class );
+					$static_cache = pods_container( Static_Cache::class );
 
 					$static_cache->set( $name . '/' . $options['id'], [
 						'autocomplete' => $autocomplete,

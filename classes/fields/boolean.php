@@ -20,7 +20,7 @@ class PodsField_Boolean extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $prepare = '%s';
+	public static $prepare = '%d';
 
 	/**
 	 * {@inheritdoc}
@@ -152,8 +152,6 @@ class PodsField_Boolean extends PodsField {
 		if ( ! empty( $options['disable_dfv'] ) ) {
 			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 		}
-
-		wp_enqueue_script( 'pods-dfv' );
 
 		$type = pods_v( 'type', $options, static::$type );
 

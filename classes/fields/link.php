@@ -201,8 +201,16 @@ class PodsField_Link extends PodsField_Website {
 		$form_field_type = PodsForm::$field_type;
 		$field_type      = 'link';
 
+		$value = $this->normalize_value_for_input( $value, $options );
+
 		// Ensure proper format
-		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $repeatable_value ) {
+				$value[ $k ] = $this->pre_save( $repeatable_value, $id, $name, $options, null, $pod );
+			}
+		} else {
+			$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		}
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 	}
@@ -212,27 +220,25 @@ class PodsField_Link extends PodsField_Website {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+		$check    = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+		// Remove valid field keys from returning in website field.
+		if ( is_array( $value ) ) {
+			$validate = array_diff_key( $validate, $check );
+		}
 
 		$errors = array();
 		if ( is_array( $validate ) ) {
 			$errors = $validate;
 		}
 
-		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
+		if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check['url'] ) {
+			$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
-		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
-
-		$check = $check['url'];
-
-		if ( is_array( $check ) ) {
-			$errors = $check;
-		} else {
-			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check ) {
-				if ( $this->is_required( $options ) ) {
-					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
-				} else {
-					$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
-				}
+			if ( $this->is_required( $options ) ) {
+				$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
+			} else {
+				$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
 			}
 		}
 
@@ -291,7 +297,7 @@ class PodsField_Link extends PodsField_Website {
 	 * Init the editor needed for WP Link modal to work
 	 */
 	public function validate_link_modal() {
-		$static_cache = tribe( Static_Cache::class );
+		$static_cache = pods_container( Static_Cache::class );
 
 		$init = (boolean) $static_cache->get( 'init', __METHOD__ );
 

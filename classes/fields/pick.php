@@ -176,7 +176,7 @@ class PodsField_Pick extends PodsField {
 					'dropdown'     => __( 'Drop Down', 'pods' ),
 					'radio'        => __( 'Radio Buttons', 'pods' ),
 					'autocomplete' => __( 'Autocomplete', 'pods' ),
-					'list'         => __( 'List View (with reordering)', 'pods' ),
+					'list'         => __( 'List View (single value)', 'pods' ),
 				] ),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
@@ -187,7 +187,7 @@ class PodsField_Pick extends PodsField {
 				'depends-on'            => [
 					static::$type . '_format_type' => 'multi',
 				],
-				'default'               => 'checkbox',
+				'default'               => 'list',
 				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [

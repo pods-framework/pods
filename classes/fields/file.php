@@ -189,7 +189,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_allowed_extensions'     => array(
 				'label'       => __( 'Allowed File Extensions', 'pods' ),
-				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
+				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime-type group like Images, Video, etc.', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
 				'text_placeholder' => 'jpg,png,mp4,mov',

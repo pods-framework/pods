@@ -1454,16 +1454,6 @@ class PodsForm {
 		$class_name = ucfirst( $field_type );
 		$class_name = "PodsField_{$class_name}";
 
-		$path_checks = [
-			realpath( WP_CONTENT_DIR ),
-			realpath( WP_PLUGIN_DIR ),
-			realpath( WPMU_PLUGIN_DIR ),
-			realpath( ABSPATH ),
-			realpath( PODS_DIR ),
-		];
-
-		$path_checks = array_filter( $path_checks );
-
 		if ( ! class_exists( $class_name ) ) {
 			if ( isset( self::$field_types[ $field_type ] ) && ! empty( self::$field_types[ $field_type ]['file'] ) ) {
 				$file = realpath( self::$field_types[ $field_type ]['file'] );
@@ -1478,10 +1468,14 @@ class PodsForm {
 			 */
 			$file = apply_filters( 'pods_form_field_include', $file, $field_type );
 
-			$located = pods_validate_safe_path( $file, 'all' );
+			$file = trim( $file );
 
-			if ( $located ) {
-				include_once $located;
+			if ( '' !== $file ) {
+				$located = pods_validate_safe_path( $file, 'all' );
+
+				if ( $located ) {
+					include_once $located;
+				}
 			}
 		}
 

@@ -18,7 +18,10 @@ import SettingsModal from './settings-modal';
 
 import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import {
+	GROUP_PROP_TYPE_SHAPE,
+	FIELD_PROP_TYPE_SHAPE,
+} from 'dfv/src/config/prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 
@@ -354,8 +357,41 @@ const ConnectedFieldListItem = compose( [
 			relatedObject = storeSelect.getFieldRelatedObjects()[ key ];
 		}
 
+		// @todo This may be a temporary way to add the "Conditional Logic" screen
+		// to the Field options.
+		// @todo only add the Conditional Logic group for specific field types.
+		const editFieldPod = {
+			...(storeSelect.getGlobalFieldOptions()),
+			groups: [
+				...(storeSelect.getGlobalFieldOptions()?.groups || []),
+				{
+					id: '',
+					label: __( 'Conditional Logic', 'pods' ),
+					name: 'conditional-logic-group',
+					fields: [
+						{
+							id: '',
+							group: 'group/pod/_pods_field/conditional-logic',
+							label: __( 'Enable Conditional Logic', 'pods' ),
+							name: 'enable-conditional-logic',
+							parent: 'pod/_pods_field',
+							type: 'boolean',
+						},
+						{
+							id: '',
+							group: 'group/pod/_pods_field/conditional-logic',
+							label: __( 'Conditional Logic', 'pods' ),
+							name: 'conditional-logic',
+							parent: 'pod/_pods_field',
+							type: 'conditional-logic',
+						},
+					],
+				},
+			]
+		};
+
 		return {
-			editFieldPod: storeSelect.getGlobalFieldOptions(),
+			editFieldPod: editFieldPod,
 			relatedObject,
 			typeObject: storeSelect.getFieldTypeObject( field.type ),
 			saveStatus: storeSelect.getFieldSaveStatus( field.name ),

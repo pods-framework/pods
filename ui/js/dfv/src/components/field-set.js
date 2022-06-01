@@ -8,6 +8,7 @@ import FieldWrapper from 'dfv/src/components/field-wrapper';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const FieldSet = ( {
+	storeKey,
 	fields,
 	podType,
 	podName,
@@ -84,6 +85,7 @@ const FieldSet = ( {
 		return (
 			<FieldWrapper
 				key={ name }
+				storeKey={ storeKey }
 				field={ field }
 				value={ isGroupField ? undefined : allPodValues[ name ] }
 				values={ isGroupField ? booleanGroupValues : undefined }
@@ -98,6 +100,11 @@ const FieldSet = ( {
 };
 
 FieldSet.propTypes = {
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
+
 	/**
 	 * Array of fields that should be rendered in the set.
 	 */

@@ -39,6 +39,7 @@ import RepeatableFieldList from './repeatable-field-list';
 
 export const FieldWrapper = ( props ) => {
 	const {
+		storeKey,
 		field = {},
 		podName,
 		podType,
@@ -167,6 +168,7 @@ export const FieldWrapper = ( props ) => {
 					if ( true === isBooleanGroupField ) {
 						return (
 							<FieldComponent
+								storeKey={ storeKey }
 								values={ values }
 								podName={ podName }
 								podType={ podType }
@@ -184,6 +186,7 @@ export const FieldWrapper = ( props ) => {
 					if ( true === isRepeatable ) {
 						return (
 							<RepeatableFieldList
+								storeKey={ storeKey }
 								fieldConfig={ processedFieldConfig }
 								valuesArray={ valuesArray }
 								FieldComponent={ FieldComponent }
@@ -199,6 +202,7 @@ export const FieldWrapper = ( props ) => {
 
 					return (
 						<FieldComponent
+							storeKey={ storeKey }
 							value={ value }
 							podName={ podName }
 							podType={ podType }
@@ -243,6 +247,11 @@ export const FieldWrapper = ( props ) => {
 };
 
 FieldWrapper.propTypes = {
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
+
 	/**
 	 * Field config.
 	 */

@@ -3,6 +3,7 @@ import Boolean from 'dfv/src/fields/boolean';
 import BooleanGroup from 'dfv/src/fields/boolean-group';
 import Code from 'dfv/src/fields/code';
 import Color from 'dfv/src/fields/color';
+import ConditionalLogic from 'dfv/src/fields/conditional-logic';
 import Currency from 'dfv/src/fields/currency';
 import DateField from 'dfv/src/fields/date-field';
 import DateTime from 'dfv/src/fields/datetime';
@@ -42,6 +43,10 @@ const FIELD_MAP = {
 	},
 	color: {
 		fieldComponent: Color,
+		directRender: false,
+	},
+	'conditional-logic': {
+		fieldComponent: ConditionalLogic,
 		directRender: false,
 	},
 	currency: {

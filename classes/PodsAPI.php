@@ -5688,7 +5688,7 @@ class PodsAPI {
 			if ( 'get' === $mode ) {
 				$changed_fields_cache[ $cache_key ] = array();
 
-				if ( ! empty( $changed_pods_cache[ $pod ] ) ) {
+				if ( ! empty( $changed_pods_cache[ $pod ] ) && $changed_pods_cache[ $pod ]->valid() ) {
 					if ( $id != $changed_pods_cache[ $pod ]->id() ) {
 						$changed_pods_cache[ $pod ]->fetch( $id );
 					}

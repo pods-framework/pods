@@ -5,16 +5,40 @@ import PropTypes from 'prop-types';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withSelect } from '@wordpress/data';
+import { Button } from '@wordpress/components';
 
 import {
+	FIELD_PROP_TYPE_SHAPE,
 	GROUP_PROP_TYPE_SHAPE,
 	FIELD_COMPONENT_BASE_PROPS,
 } from 'dfv/src/config/prop-types';
 
+import './conditional-logic.scss';
+
+const UNSUPPORTED_FIELD_TYPES = [
+	'boolean_group',
+	'conditional-logic',
+	'date',
+	'datetime',
+	'time',
+	'heading',
+	'html',
+];
+
+const FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS = [
+	'file',
+	'avatar',
+	'oembed',
+	'pick',
+	'boolean',
+	'color',
+];
+
 const ConditionalLogic = ( props ) => {
 	const {
 		currentPodGroups,
+		currentPodAllFields,
 	} = props;
 
 	// @todo save this to the actual field data as JSON
@@ -85,8 +109,9 @@ const ConditionalLogic = ( props ) => {
 
 	return (
 		<>
-			<div>
+			<div className="pods-conditional-logic-options">
 				<select
+					className="pods-conditional-logic-rule__action"
 					value={ conditions.action }
 					onChange={ ( event ) => updateAction( event.target.value ) }
 				>
@@ -97,83 +122,121 @@ const ConditionalLogic = ( props ) => {
 				{__( ' this field if ' )}
 
 				<select
+					className="pods-conditional-logic-rule__logic"
 					value={ conditions.logic }
 					onChange={ ( event ) => updateLogic( event.target.value ) }
 				>
-					<option value="any">{ __( 'Any', 'pods' ) }</option>
-					<option value="all">{ __( 'All', 'pods' ) }</option>
+					<option value="any">{ __( 'any', 'pods' ) }</option>
+					<option value="all">{ __( 'all', 'pods' ) }</option>
 				</select>
 
-				{__( ' of the following match ' )}
+				{__( ' of the following match:' )}
 			</div>
 
-			{ conditions.rules.map( ( rule, index ) => (
-				<div
-					className="pods-conditional-logic-rule"
-					key={ `rule-${ index }` }
-				>
-					<select
-						className="pods-conditional-logic-rule__field"
-						value={ rule.field }
-						onChange={ ( event ) => setRuleOption( index, 'field', event.target.value ) }
+			{ conditions.rules.map( ( rule, index ) => {
+				const ruleFieldObject = currentPodAllFields.find(
+					( field ) => field.name === rule.field,
+				);
+
+				const ruleFieldType = ruleFieldObject?.type;
+
+				return (
+					<div
+						className="pods-conditional-logic-rule"
+						key={ `rule-${ index }` }
 					>
-						{ currentPodGroups.map( ( group ) => (
-							<optgroup
-								label={ group.label }
-								key={ group.name }
+						<select
+							className="pods-conditional-logic-rule__field"
+							value={ rule.field }
+							onChange={ ( event ) => setRuleOption( index, 'field', event.target.value ) }
+						>
+							{ currentPodGroups.map( ( group ) => (
+								<optgroup
+									label={ group.label }
+									key={ group.name }
+								>
+									{ ( group.fields || []).map( ( field ) => {
+										// @todo Don't render the same field.
+										// if ( field.name ) {
+											// return null;
+										// }
+
+										// Don't render an option if it's an unsupported field type.
+										if ( UNSUPPORTED_FIELD_TYPES.includes( field.type ) ) {
+											return null;
+										}
+
+										return (
+											<option
+												value={ field.name }
+												key={ field.name }
+											>
+												{ field.label }
+											</option>
+										);
+									} ) }
+								</optgroup>
+							) ) }
+						</select>
+
+						<select
+							className="pods-conditional-logic-rule__compare"
+							value={ rule.compare }
+							onChange={ ( event ) => setRuleOption( index, 'compare', event.target.value ) }
+						>
+							<option value="=">{ __( 'is', 'pods' ) }</option>
+							<option value="!=">{ __( 'is not', 'pods' ) }</option>
+
+							{ ! FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS.includes( ruleFieldType ) ? (
+								<>
+									<option value=">">{ __( 'greater than', 'pods' ) }</option>
+									<option value=">=">{ __( 'greater than or equal to', 'pods' ) }</option>
+									<option value="<">{ __( 'lesser than', 'pods' ) }</option>
+									<option value="<=">{ __( 'lesser than or equal to', 'pods' ) }</option>
+									<option value="like">{ __( 'contains', 'pods' ) }</option>
+									<option value="begins">{ __( 'starts with', 'pods' ) }</option>
+									<option value="ends">{ __( 'ends with', 'pods' ) }</option>
+									<option value="matches">{ __( 'matches pattern', 'pods' ) }</option>
+								</>
+							) : null }
+						</select>
+
+						<input
+							type="text"
+							className="pods-conditional-logic-rule__value"
+							value={ rule.value }
+							onChange={ ( event ) => setRuleOption( index, 'value', event.target.value ) }
+						/>
+
+						<Button
+							onClick={ () => addRule( index ) }
+							isSecondary
+							className="pods-conditional-logic-rule__add"
+						>
+							{ __( '+', 'pods' ) }
+						</Button>
+
+						{ conditions.rules.length > 1 ? (
+							<Button
+								className="pods-conditional-logic-rule__remove"
+								isSecondary
+								onClick={ () => {
+									// eslint-disable-next-line no-alert
+									const result = confirm(
+										__( 'Are you sure you want to delete this rule?', 'pods' ),
+									);
+
+									if ( result ) {
+										deleteRule( index );
+									}
+								} }
 							>
-								{ ( group.fields || []).map( ( field ) => (
-									<option
-										value={ field.name }
-										key={ field.name }
-									>
-										{ field.label }
-									</option>
-								) ) }
-							</optgroup>
-						) ) }
-					</select>
-
-					<select
-						className="pods-conditional-logic-rule__compare"
-						value={ rule.compare }
-						onChange={ ( event ) => setRuleOption( index, 'compare', event.target.value ) }
-					>
-						{ /* @todo limit options based on field type */ }
-						<option value="=">{ __( 'is', 'pods' ) }</option>
-						<option value="!=">{ __( 'is not', 'pods' ) }</option>
-						<option value=">">{ __( 'greater than', 'pods' ) }</option>
-						<option value=">=">{ __( 'greater than or equal to', 'pods' ) }</option>
-						<option value="<">{ __( 'lesser than', 'pods' ) }</option>
-						<option value="<=">{ __( 'lesser than or equal to', 'pods' ) }</option>
-						<option value="like">{ __( 'contains', 'pods' ) }</option>
-						<option value="begins">{ __( 'starts with', 'pods' ) }</option>
-						<option value="ends">{ __( 'ends with', 'pods' ) }</option>
-						<option value="matches">{ __( 'matches pattern', 'pods' ) }</option>
-					</select>
-
-					{ /* @todo make this either a select with available options or a text field? */ }
-					<input
-						type="text"
-						className="pods-conditional-logic-rule__value"
-						// @todo real styles
-						style={ { maxWidth: '200px' } }
-						value={ rule.value }
-						onChange={ ( event ) => setRuleOption( index, 'value', event.target.value ) }
-					/>
-
-					<button onClick={ () => addRule( index ) }>
-						{ __( '+', 'pods' ) }
-					</button>
-
-					{ /* @todo add confirmation? */ }
-					{ conditions.rules.length > 1 ? (
-						<button onClick={ () => deleteRule( index ) }>
-							{ __( '-', 'pods' ) }
-						</button>
-					) : null }
-				</div>
-			) ) }
+								{ __( '-', 'pods' ) }
+							</Button>
+						) : null }
+					</div>
+				);
+			} ) }
 		</>
 	);
 };
@@ -187,7 +250,7 @@ ConditionalLogic.propTypes = {
 	 storeKey: PropTypes.string.isRequired,
 
 	/**
-	 * @todo how should the value be stored?
+	 * @todo how should the value be stored? as a JSON string?
 	 */
 	value: PropTypes.string,
 
@@ -195,6 +258,11 @@ ConditionalLogic.propTypes = {
 	 * Full array of Pod groups (and fields).
 	 */
 	currentPodGroups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * Array of all Pod fields (so that we can search without having to dig through Groups).
+	 */
+	currentPodAllFields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
 };
 
 // Unlike most Fields, this one needs to be connected to the Redux store -
@@ -202,7 +270,6 @@ ConditionalLogic.propTypes = {
 const ConnectedConditionalLogic = withSelect(
 	( select, ownProps ) => {
 		const {
-			field = {},
 			storeKey,
 		} = ownProps;
 
@@ -210,6 +277,7 @@ const ConnectedConditionalLogic = withSelect(
 
 		return {
 			currentPodGroups: storeSelect.getGroups(),
+			currentPodAllFields: storeSelect.getFieldsFromAllGroups(),
 		};
 	}
 )( ConditionalLogic );

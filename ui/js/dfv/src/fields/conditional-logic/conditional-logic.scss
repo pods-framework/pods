@@ -1,0 +1,37 @@
+.pods-conditional-logic-options {
+	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+	margin: 1em 0;
+}
+
+.pods-conditional-logic-rule__action {
+	margin-right: 0.25em;
+}
+
+.pods-conditional-logic-rule__logic {
+	margin: 0 0.25em;
+}
+
+.pods-conditional-logic-rule {
+	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+	margin-bottom: 0.5em;
+}
+
+.pods-conditional-logic-rule__field,
+.pods-conditional-logic-rule__compare,
+.pods-conditional-logic-rule__value {
+	margin-right: 0.25em;
+}
+
+.pods-conditional-logic-rule__add,
+.pods-conditional-logic-rule__remove {
+	height: auto;
+	margin-right: 0.25em;
+
+	&:last-child {
+		margin-right: 0;
+	}
+}

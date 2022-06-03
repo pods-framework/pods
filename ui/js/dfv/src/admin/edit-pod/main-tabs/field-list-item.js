@@ -357,9 +357,8 @@ const ConnectedFieldListItem = compose( [
 			relatedObject = storeSelect.getFieldRelatedObjects()[ key ];
 		}
 
-		// @todo This may be a temporary way to add the "Conditional Logic" screen
-		// to the Field options.
-		// @todo only add the Conditional Logic group for specific field types.
+		// @todo This is a temporary way to add the Conditional Logic options,
+		// this should really go in the backend.
 		const editFieldPod = {
 			...(storeSelect.getGlobalFieldOptions()),
 			groups: [
@@ -384,6 +383,10 @@ const ConnectedFieldListItem = compose( [
 							name: 'conditional-logic',
 							parent: 'pod/_pods_field',
 							type: 'conditional-logic',
+							// Field attribute only used by the "Conditional Logic"
+							// field: we need to know which field this affects, so that
+							// it can't reference itself.
+							conditional_logic_affected_field_name: field.name,
 						},
 					],
 				},

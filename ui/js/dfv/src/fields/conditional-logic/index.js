@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -35,13 +35,17 @@ const FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS = [
 	'color',
 ];
 
-const ConditionalLogic = ( props ) => {
+const ConditionalLogic = ( {
+	currentPodGroups,
+	currentPodAllFields,
+	fieldConfig,
+	value,
+	setValue,
+} ) => {
 	const {
-		currentPodGroups,
-		currentPodAllFields,
-	} = props;
+		conditional_logic_affected_field_name: affectedFieldName,
+	} = fieldConfig;
 
-	// @todo save this to the actual field data as JSON
 	const [conditions, setConditions] = useState( {
 		action: 'show',
 		logic: 'any',
@@ -53,6 +57,27 @@ const ConditionalLogic = ( props ) => {
 			},
 		],
 	} );
+
+	// When the component loads, set our "conditions" state with
+	// the parsed value (which should be a JSON string).
+	useEffect( () => {
+		if ( ! value || '' === value ) {
+			return;
+		}
+
+		try {
+			const parsedValue = JSON.parse( value );
+
+			setConditions( parsedValue );
+		} catch( e ) {
+			console.warn( 'Error parsing Conditional Logic JSON: ', e );
+		}
+	}, [] );
+
+	// Stringify the value whenever the conditions change.
+	useEffect( () => {
+		setValue( JSON.stringify( conditions ) );
+	}, [ conditions ] );
 
 	const updateAction = ( action ) => setConditions(
 		( oldConditions ) => ( {
@@ -82,13 +107,13 @@ const ConditionalLogic = ( props ) => {
 		( oldConditions ) => ( {
 			...oldConditions,
 			rules: [
-				...( oldConditions.rules || [] ).slice( 0, index ),
+				...( oldConditions.rules || [] ).slice( 0, index + 1 ),
 				{
 					field: "",
 					compare: "=",
 					value: "",
 				},
-				...( oldConditions.rules || [] ).slice( index ),
+				...( oldConditions.rules || [] ).slice( index + 1 ),
 			],
 		} )
 	);
@@ -156,10 +181,11 @@ const ConditionalLogic = ( props ) => {
 									key={ group.name }
 								>
 									{ ( group.fields || []).map( ( field ) => {
-										// @todo Don't render the same field.
-										// if ( field.name ) {
-											// return null;
-										// }
+										// Don't render an option for the field that we're editing,
+										// to avoid any circular weirdness.
+										if ( field.name === affectedFieldName ) {
+											return null;
+										}
 
 										// Don't render an option if it's an unsupported field type.
 										if ( UNSUPPORTED_FIELD_TYPES.includes( field.type ) ) {
@@ -250,7 +276,7 @@ ConditionalLogic.propTypes = {
 	 storeKey: PropTypes.string.isRequired,
 
 	/**
-	 * @todo how should the value be stored? as a JSON string?
+	 * Value stored as a JSON string.
 	 */
 	value: PropTypes.string,
 

@@ -204,6 +204,9 @@ export const FIELD_PROP_TYPE = {
 	color_select_label: PropTypes.string,
 	color_clear_label: PropTypes.string,
 
+	// Conditional Logic fields
+	conditional_logic_affected_field_name: PropTypes.string,
+
 	// Currency fields
 	currency_decimal_handling: PropTypes.string,
 	currency_decimals: NUMBER_OR_NUMBER_AS_STRING,

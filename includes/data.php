@@ -2522,3 +2522,53 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 
 	return $path;
 }
+
+/**
+ * Maybe sleep and help avoid hitting memory limit.
+ *
+ * @since 2.8.18
+ *
+ * @param int $sleep_time The amount of seconds to sleep (if sleep is needed).
+ * @param int $after      The number of triggers needed to run the logic.
+ */
+function pods_maybe_clean_memory( $sleep_time = 0, $after = 100 ) {
+	static $counter = 0;
+
+	$counter++;
+
+	if ( $after === $counter ) {
+		$counter = 0;
+
+		pods_clean_memory( $sleep_time );
+	}
+}
+
+/**
+ * Sleep and help avoid hitting memory limit.
+ *
+ * @since 2.8.18
+ *
+ * @param int $sleep_time The amount of seconds to sleep (if sleep is needed).
+ */
+function pods_clean_memory( $sleep_time = 0 ) {
+	if ( 0 < $sleep_time ) {
+		sleep( $sleep_time );
+	}
+
+	global $wpdb, $wp_object_cache;
+
+	$wpdb->queries = [];
+
+	if ( ! is_object( $wp_object_cache ) ) {
+		return;
+	}
+
+	$wp_object_cache->group_ops      = [];
+	$wp_object_cache->stats          = [];
+	$wp_object_cache->memcache_debug = [];
+	$wp_object_cache->cache          = [];
+
+	if ( is_callable( $wp_object_cache, '__remoteset' ) ) {
+		call_user_func( [ $wp_object_cache, '__remoteset' ] ); // important
+	}
+}

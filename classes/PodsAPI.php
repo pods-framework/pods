@@ -5673,17 +5673,23 @@ class PodsAPI {
 			}
 
 			if ( empty( $old_fields_cache[ $cache_key ] ) || 'reset' === $mode ) {
-				$old_fields_cache[ $cache_key ] = array();
+				$old_fields_cache[ $cache_key ] = [];
 
 				if ( ! empty( $id ) ) {
 					if ( ! isset( $changed_pods_cache[ $pod ] ) ) {
-						$changed_pods_cache[ $pod ] = pods( $pod );
+						$pod_object = pods( $pod );
+
+						if ( ! $pod_object || ! $pod_object->valid() ) {
+							return [];
+						}
+
+						$changed_pods_cache[ $pod ] = $pod_object;
 					}
 
-					if ( $changed_pods_cache[ $pod ] && $changed_pods_cache[ $pod ]->valid() ) {
-						$changed_pods_cache[ $pod ]->fetch( $id );
-
-						$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+					if ( $changed_pods_cache[ $pod ] ) {
+						if ( $changed_pods_cache[ $pod ]->fetch( $id ) ) {
+							$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+						}
 					}
 				}
 			}
@@ -5701,7 +5707,11 @@ class PodsAPI {
 
 				if ( ! empty( $changed_pods_cache[ $pod ] ) ) {
 					if ( $id != $changed_pods_cache[ $pod ]->id() ) {
-						$changed_pods_cache[ $pod ]->fetch( $id );
+						$found = $changed_pods_cache[ $pod ]->fetch( $id );
+
+						if ( ! $found ) {
+							return [];
+						}
 					}
 
 					$new_fields = $changed_pods_cache[ $pod ]->export( $export_params );

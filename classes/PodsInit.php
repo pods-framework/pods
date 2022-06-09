@@ -1213,16 +1213,21 @@ class PodsInit {
 			$force = true;
 		}
 
-		$existing_post_types = get_post_types( [], 'objects' );
-		$existing_taxonomies = get_taxonomies( [], 'objects' );
-
 		// Handle static cache for determining whether an object was extended or not.
 		$static_cache = pods_container( Static_Cache::class );
 
-		$existing_post_types_cached = $static_cache->get( 'post_type', __CLASS__ . '/existing_content_types' );
+		if ( $force ) {
+			$existing_post_types_cached = null;
+			$existing_taxonomies_cached = null;
+		} else {
+			$existing_post_types_cached = $static_cache->get( 'post_type', __CLASS__ . '/existing_content_types' );
+			$existing_taxonomies_cached = $static_cache->get( 'taxonomy', __CLASS__ . '/existing_content_types' );
+		}
 
-		if ( $force || empty( $existing_post_types_cached ) || ! is_array( $existing_post_types_cached ) ) {
+		if ( empty( $existing_post_types_cached ) || ! is_array( $existing_post_types_cached ) ) {
 			$existing_post_types_cached = [];
+
+			$existing_post_types = get_post_types( [], 'objects' );
 
 			foreach ( $existing_post_types as $post_type ) {
 				// Skip Pods types.
@@ -1236,10 +1241,10 @@ class PodsInit {
 			$static_cache->set( 'post_type', $existing_post_types_cached, __CLASS__ . '/existing_content_types' );
 		}
 
-		$existing_taxonomies_cached = $static_cache->get( 'taxonomy', __CLASS__ . '/existing_content_types' );
-
-		if ( $force || empty( $existing_taxonomies_cached ) || ! is_array( $existing_taxonomies_cached ) ) {
+		if ( empty( $existing_taxonomies_cached ) || ! is_array( $existing_taxonomies_cached ) ) {
 			$existing_taxonomies_cached = [];
+
+			$existing_taxonomies = get_taxonomies( [], 'objects' );
 
 			foreach ( $existing_taxonomies as $taxonomy ) {
 				// Skip Pods types.

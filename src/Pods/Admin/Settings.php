@@ -182,8 +182,25 @@ class Settings {
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
-				'0'    => __( 'Enable creating custom fields with Pods', 'pods' ),
-				'1'    => __( 'Disable creating custom fields with Pods (for when using Pods only for content types)', 'pods' ),
+				'0' => __( 'Enable creating custom fields with Pods', 'pods' ),
+				'1' => __( 'Disable creating custom fields with Pods (for when using Pods only for content types)', 'pods' ),
+			],
+		];
+
+		$first_pods_version = get_option( 'pods_framework_version_first' );
+		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+
+		$fields['watch_changed_fields'] = [
+			'name'               => 'watch_changed_fields',
+			'label'              => __( 'Watch changed fields for use in hooks', 'pods' ),
+			'help'               => __( 'By default, Pods does not watch changed fields when a post, term, user, or other Pods items are saved. Enabling this will allow you to use PHP hooks to reference the previous values of those fields after the save has happened.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => version_compare( $first_pods_version, '2.8.18', '<=' ) ? '1' : '0',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'0' => __( 'Enable watching changed fields (may reduce performance with large processes)', 'pods' ),
+				'1' => __( 'Disable watching changed fields', 'pods' ),
 			],
 		];
 

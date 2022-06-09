@@ -5648,6 +5648,13 @@ class PodsAPI {
 	 * @return array List of changed fields (if $mode = 'get')
 	 */
 	public static function handle_changed_fields( $pod, $id, $mode = 'set' ) {
+		$watch_changed_fields = (int) pods_get_setting( 'watch_changed_fields' );
+
+		// Only continue if changed fields are watched.
+		if ( 0 === $watch_changed_fields ) {
+			return [];
+		}
+
 		$static_cache = pods_container( Static_Cache::class );
 
 		$changed_pods_cache   = $static_cache->get( 'changed_pods_cache', __CLASS__ ) ?: [];

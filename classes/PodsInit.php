@@ -2345,8 +2345,14 @@ class PodsInit {
 		}
 
 		// Setup DB tables
-		$pods_version      = get_option( 'pods_framework_version' );
-		$pods_version_last = get_option( 'pods_framework_version_last' );
+		$pods_version       = get_option( 'pods_framework_version' );
+		$pods_version_first = get_option( 'pods_framework_version_first' );
+		$pods_version_last  = get_option( 'pods_framework_version_last' );
+
+		if ( empty( $pods_version_first ) ) {
+			delete_option( 'pods_framework_version_first' );
+			add_option( 'pods_framework_version_first', PODS_VERSION );
+		}
 
 		if ( empty( $pods_version ) ) {
 			// Install Pods

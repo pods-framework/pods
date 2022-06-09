@@ -2767,16 +2767,21 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		return $hooks;
 	}
 
+	$metadata_integration = 1 === (int) pods_get_setting( 'metadata_integration' );
+	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields' );
+
+	$is_tableless = pods_tableless();
+
 	// Filters = Usually get/update/delete meta functions
 	// Actions = Usually insert/update/save/delete object functions
 	if ( 'post' === $object_type || 'media' === $object_type  || 'all' === $object_type ) {
 		// Handle *_post_meta
-		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'post' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
 				$hooks['filter']['get_post_metadata'] = [ 'get_post_metadata', [ PodsInit::$meta, 'get_post_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_post_metadata']          = [ 'add_post_metadata', [ PodsInit::$meta, 'add_post_meta' ], 10, 5 ];
 				$hooks['filter']['update_post_metadata']       = [ 'update_post_metadata', [ PodsInit::$meta, 'update_post_meta' ], 10, 5 ];
 				$hooks['filter']['update_post_metadata_by_id'] = [ 'update_post_metadata_by_id', [ PodsInit::$meta, 'update_post_meta_by_id' ], 10, 4 ];
@@ -2802,24 +2807,26 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 			// Handle delete from relationships.
 			$hooks['action'][] = [ 'delete_post', [ PodsInit::$meta, 'delete_post' ], 10, 1 ];
 
-			// Track changed fields.
-			$hooks['action'][] = [
-				'wp_insert_post_data',
-				[ PodsInit::$meta, 'save_post_track_changed_fields' ],
-				10,
-				2,
-			];
+			if ( $watch_changed_fields ) {
+				// Track changed fields.
+				$hooks['action'][] = [
+					'wp_insert_post_data',
+					[ PodsInit::$meta, 'save_post_track_changed_fields' ],
+					10,
+					2,
+				];
+			}
 		}
 	}
 
 	if ( 'taxonomy' === $object_type || 'all' === $object_type ) {
 		// Handle *_term_meta
-		if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'term' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
 				$hooks['filter'][] = [ 'get_term_metadata', [ PodsInit::$meta, 'get_term_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_term_metadata']          = [ 'add_term_metadata', [ PodsInit::$meta, 'add_term_meta' ], 10, 5 ];
 				$hooks['filter']['update_term_metadata']       = [ 'update_term_metadata', [ PodsInit::$meta, 'update_term_meta' ], 10, 5 ];
 				$hooks['filter']['update_term_metadata_by_id'] = [ 'update_term_metadata_by_id', [ PodsInit::$meta, 'update_term_meta_by_id' ], 10, 4 ];
@@ -2841,13 +2848,15 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 			$hooks['action'][] = [ $object . '_add_form_fields', [ PodsInit::$meta, 'meta_taxonomy' ], 10, 1 ];
 		}
 
-		// Track changed fields.
-		$hooks['action'][] = [
-			'edit_terms',
-			[ PodsInit::$meta, 'save_taxonomy_track_changed_fields' ],
-			10,
-			2,
-		];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['action'][] = [
+				'edit_terms',
+				[ PodsInit::$meta, 'save_taxonomy_track_changed_fields' ],
+				10,
+				2,
+			];
+		}
 
 		/**
 		 * Fires after a previously shared taxonomy term is split into two separate terms.
@@ -2878,23 +2887,25 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		// Handle delete.
 		$hooks['action'][] = [ 'delete_attachment', [ PodsInit::$meta, 'delete_media' ], 10, 1 ];
 
-		// Track changed fields.
-		$hooks['filter'][] = [
-			'wp_insert_attachment_data',
-			[ PodsInit::$meta, 'save_post_track_changed_fields' ],
-			10,
-			2,
-		];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['filter'][] = [
+				'wp_insert_attachment_data',
+				[ PodsInit::$meta, 'save_post_track_changed_fields' ],
+				10,
+				2,
+			];
+		}
 	}
 
 	if ( 'user' === $object_type || 'all' === $object_type ) {
 		// Handle *_user_meta.
-		if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'user' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
 				$hooks['filter'][] = [ 'get_user_metadata', [ PodsInit::$meta, 'get_user_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_user_metadata']          = [ 'add_user_metadata', [ PodsInit::$meta, 'add_user_meta' ], 10, 5 ];
 				$hooks['filter']['update_user_metadata']       = [ 'update_user_metadata', [ PodsInit::$meta, 'update_user_meta' ], 10, 5 ];
 				$hooks['filter']['update_user_metadata_by_id'] = [ 'update_user_metadata_by_id', [ PodsInit::$meta, 'update_user_meta_by_id' ], 10, 4 ];
@@ -2913,18 +2924,25 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		// Handle saving from profile update.
 		$hooks['action'][] = [ 'profile_update', [ PodsInit::$meta, 'save_user' ], 10, 2 ];
 
-		// Track changed fields.
-		$hooks['filter'][] = [ 'pre_user_login', [ PodsInit::$meta, 'save_user_track_changed_fields' ], 10, 1 ];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['filter'][] = [
+				'pre_user_login',
+				[ PodsInit::$meta, 'save_user_track_changed_fields' ],
+				10,
+				1,
+			];
+		}
 	}
 
 	if ( 'comment' === $object_type || 'all' === $object_type ) {
-		if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
 			// Handle *_comment_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'comment' ) ) {
 				$hooks['filter'][] = [ 'get_comment_metadata', [ PodsInit::$meta, 'get_comment_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_comment_metadata']           = [ 'add_comment_metadata', [ PodsInit::$meta, 'add_comment_meta' ], 10, 5 ];
 				$hooks['filter']['update_comment_metadata']        = [ 'update_comment_metadata', [ PodsInit::$meta, 'update_comment_meta' ], 10, 5 ];
 				$hooks['filter']['update_comment_metadata_by_id']  = [ 'update_comment_metadata_by_id', [ PodsInit::$meta, 'update_comment_meta_by_id' ], 10, 4 ];
@@ -2948,8 +2966,15 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		// Handle saving comment from admin.
 		$hooks['action'][] = [ 'edit_comment', [ PodsInit::$meta, 'save_comment' ], 10, 1 ];
 
-		// Track changed fields.
-		$hooks['action'][] = [ 'wp_update_comment_data', [ PodsInit::$meta, 'save_comment_track_changed_fields' ], 10, 3 ];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['action'][] = [
+				'wp_update_comment_data',
+				[ PodsInit::$meta, 'save_comment_track_changed_fields' ],
+				10,
+				3,
+			];
+		}
 	}
 
 	if ( 'settings' === $object_type || 'all' === $object_type ) {

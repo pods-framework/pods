@@ -64,7 +64,11 @@ class Settings {
 		// Register settings with Wisdom Tracker.
 		$settings['wisdom_registered_setting'] = 1;
 
-		$defaults = $this->get_setting_fields();
+		static $defaults;
+
+		if ( null === $defaults ) {
+			$defaults = $this->get_setting_fields();
+		}
 
 		$layout_field_types = PodsForm::layout_field_types();
 

@@ -1034,12 +1034,22 @@ class PodsInit {
 
 		wp_localize_script( 'pods-dfv', 'podsDFVConfig', $config );
 
+		/**
+		 * Allow filtering whether to load Pods DFV on the front of the site.
+		 *
+		 * @since 2.8.18
+		 *
+		 * @param bool $load_pods_dfv_on_front Whether to load Pods DFV on the front of the site.
+		 */
+		$load_pods_dfv_on_front = (bool) apply_filters( 'pods_init_register_assets_load_pods_dfv_on_front', false );
+
 		// Page builders.
 		if (
 			// @todo Finish Elementor & Divi support.
 			// doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
 			// null !== pods_v( 'et_fb', 'get' ) // Divi.
 			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
+			|| ( $load_pods_dfv_on_front && ! is_admin() )
 		) {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );

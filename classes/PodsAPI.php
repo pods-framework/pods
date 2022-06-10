@@ -1848,6 +1848,7 @@ class PodsAPI {
 
 		$options_ignore = array(
 			'_locale',
+			'adhoc',
 			'attributes',
 			'dependency',
 			'depends-on',
@@ -3307,6 +3308,7 @@ class PodsAPI {
 
 		$options_ignore = [
 			'_locale',
+			'adhoc',
 			'attributes',
 			'dependency',
 			'depends-on',
@@ -4185,6 +4187,7 @@ class PodsAPI {
 		$options = get_object_vars( $params );
 
 		$options_ignore = [
+			'adhoc',
 			'method',
 			'table_info',
 			'attributes',
@@ -5679,7 +5682,7 @@ class PodsAPI {
 					if ( ! isset( $changed_pods_cache[ $pod ] ) ) {
 						$pod_object = pods( $pod );
 
-						if ( ! $pod_object || ! $pod_object->valid() ) {
+						if ( ! $pod_object || ! $pod_object->is_defined() ) {
 							return [];
 						}
 
@@ -10944,6 +10947,7 @@ class PodsAPI {
 					'name'        => $type,
 					'label'       => __( 'User', 'pods' ),
 					'storage'     => 'meta',
+					'adhoc'       => true,
 				];
 			} elseif ( 'comment' === $params['name'] ) {
 				// Detect comment.
@@ -10955,6 +10959,7 @@ class PodsAPI {
 					'name'        => $type,
 					'label'       => __( 'Comment', 'pods' ),
 					'storage'     => 'meta',
+					'adhoc'       => true,
 				];
 			} elseif ( 'media' === $params['name'] || 'attachment' === $params['name'] ) {
 				// Detect media.
@@ -10966,6 +10971,7 @@ class PodsAPI {
 					'name'        => $type,
 					'label'       => __( 'Media', 'pods' ),
 					'storage'     => 'meta',
+					'adhoc'       => true,
 				];
 			}
 
@@ -10983,6 +10989,7 @@ class PodsAPI {
 						'label'       => $post_type->label,
 						'description' => $post_type->description,
 						'storage'     => 'meta',
+						'adhoc'       => true,
 					];
 				}
 			}
@@ -11001,6 +11008,7 @@ class PodsAPI {
 						'label'       => $taxonomy->label,
 						'description' => $taxonomy->description,
 						'storage'     => 'meta',
+						'adhoc'       => true,
 					];
 				}
 			}

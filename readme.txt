@@ -159,7 +159,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 = 2.8.18 - June 9th, 2022 =
 
 * Added: New helper functions `pods_clean_memory()` and `pods_maybe_clean_memory()` introduced to provide WP-CLI commands in Pods core and add-ons the ability to help reduce memory usage in long running processes. (@sc0ttkclark)
-* Added: New function `Pods::is_defined()` determines whether a Pod was defined or if it was generated adhoc when calling a non-defined Pod. (@sc0ttkclark)
+* Added: New function `Pods::is_defined()` determines whether a Pod was defined or if it was generated adhoc when calling a non-defined Pod. (@sc0ttkclark, @JoryHogeveen)
 * Added: New function `Pods::is_valid()` replaces the logic in `Pods::valid()` to better follow the naming pattern used elsewhere in Pods. `Pods::valid()` is not deprecated yet. (@sc0ttkclark)
 * Added: New filter `pods_init_register_assets_load_pods_dfv_on_front` which allows you to force loading Pods DFV scripts on the front of the site when needed. Normally they will be included but some plugins/themes may need them enqueued sooner. (@sc0ttkclark)
 * Tweak: Improved performance when using TranslatePress by optimizing how settings and blocks are handled to avoid extra `__()` translation calls. (@sc0ttkclark)

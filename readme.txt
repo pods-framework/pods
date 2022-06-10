@@ -156,7 +156,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.8.18 - June 9th, 2022 =
+= 2.8.18 - June 10th, 2022 =
 
 * Added: New helper functions `pods_clean_memory()` and `pods_maybe_clean_memory()` introduced to provide WP-CLI commands in Pods core and add-ons the ability to help reduce memory usage in long running processes. (@sc0ttkclark)
 * Added: New function `Pods::is_defined()` determines whether a Pod was defined or if it was generated adhoc when calling a non-defined Pod. (@sc0ttkclark, @JoryHogeveen)

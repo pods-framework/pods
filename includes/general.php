@@ -2405,6 +2405,56 @@ function pods_option_cache_clear( $key = true, $group = '' ) {
 }
 
 /**
+ * Set a cached value in the Pods Static Cache.
+ *
+ * @see   PodsView::set
+ *
+ * @param string $key   Key for the cache.
+ * @param mixed  $value Value to add to the cache.
+ * @param string $group (optional) Key for the group.
+ *
+ * @return bool|mixed|null|string|void
+ *
+ * @since 2.8.18
+ */
+function pods_static_cache_set( $key, $value, $group = '' ) {
+	return pods_view_set( $key, $value, 0, 'static-cache', $group );
+}
+
+/**
+ * Get a cached value in the Pods Static Cache.
+ *
+ * @see   PodsView::get
+ *
+ * @param string $key      Key for the cache.
+ * @param string $group    (optional) Key for the group.
+ * @param string $callback (optional) Callback function to run to set the value if not cached.
+ *
+ * @return bool
+ *
+ * @since 2.8.18
+ */
+function pods_static_cache_get( $key, $group = '', $callback = null ) {
+	return pods_view_get( $key, 'static-cache', $group, $callback );
+}
+
+/**
+ * Clear a cached value in the Pods Static Cache.
+ *
+ * @see PodsView::clear
+ *
+ * @param string|bool $key   Key for the cache.
+ * @param string      $group (optional) Key for the group.
+ *
+ * @return bool|mixed|null|void
+ *
+ * @since 2.8.18
+ */
+function pods_static_cache_clear( $key = true, $group = '' ) {
+	return pods_view_clear( $key, 'static-cache', $group );
+}
+
+/**
  * Scope variables and include a template like get_template_part that's child-theme aware
  *
  * @see   get_template_part
@@ -3782,9 +3832,7 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 		$icon_path = PODS_DIR . '/ui/images/icon-menu.svg';
 	}
 
-	$static_cache = pods_container( Static_Cache::class );
-
-	$icon = $static_cache->get( $icon_path, __FUNCTION__ . '/' . $mode );
+	$icon = pods_static_cache_get( $icon_path, __FUNCTION__ . '/' . $mode );
 
 	// If the cached icon did not exist, use default.
 	if ( '404-not-exists' === $icon ) {
@@ -3813,7 +3861,7 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 	}
 
 	if ( ! file_exists( $icon_path ) ) {
-		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+		pods_static_cache_set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
 
 		return $default;
 	}
@@ -3821,12 +3869,12 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 	$svg_data = file_get_contents( $icon_path );
 
 	if ( ! $svg_data ) {
-		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+		pods_static_cache_set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
 
 		return $default;
 	}
 
-	$static_cache->set( $icon_path, $icon, __FUNCTION__ . '/' . $mode );
+	pods_static_cache_set( $icon_path, $icon, __FUNCTION__ . '/' . $mode );
 
 	// If mode is SVG data, return that.
 	if ( 'svg' === $mode ) {

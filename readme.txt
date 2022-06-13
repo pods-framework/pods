@@ -156,9 +156,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.8.19 - TBD =
+= 2.8.19 - June 13th, 2022 =
 
-* TBD
+* Fixed: Theme views now load as expected, fixing an issue introduced in 2.8.18. (@sc0ttkclark)
 
 = 2.8.18 - June 10th, 2022 =
 

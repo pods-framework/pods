@@ -10560,6 +10560,7 @@ class PodsAPI {
 	 * @since 2.0.0
 	 */
 	public function process_form( $params, $obj = null, $fields = null, $thank_you = null ) {
+		$old_display_errors = $this->display_errors;
 
 		$this->display_errors = false;
 
@@ -10639,6 +10640,8 @@ class PodsAPI {
 				pods_redirect( $thank_you, 302, false );
 			}
 		}
+
+		$this->display_errors = $old_display_errors;
 
 		return $id;
 	}

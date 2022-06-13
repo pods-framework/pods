@@ -26,6 +26,11 @@ const UNSUPPORTED_FIELD_TYPES = [
 	'html',
 ];
 
+const NUMERIC_FIELD_TYPES = [
+	'currency',
+	'number',
+]
+
 const FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS = [
 	'file',
 	'avatar',
@@ -213,18 +218,24 @@ const ConditionalLogic = ( {
 							<option value="=">{ __( 'is', 'pods' ) }</option>
 							<option value="!=">{ __( 'is not', 'pods' ) }</option>
 
-							{ ! FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS.includes( ruleFieldType ) ? (
+							{ NUMERIC_FIELD_TYPES.includes( ruleFieldType ) ? (
 								<>
 									<option value=">">{ __( 'greater than', 'pods' ) }</option>
 									<option value=">=">{ __( 'greater than or equal to', 'pods' ) }</option>
 									<option value="<">{ __( 'lesser than', 'pods' ) }</option>
 									<option value="<=">{ __( 'lesser than or equal to', 'pods' ) }</option>
+								</>
+							) : null }
+
+							{ ! FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS.includes( ruleFieldType ) ? (
+								<>
 									<option value="like">{ __( 'contains', 'pods' ) }</option>
 									<option value="begins">{ __( 'starts with', 'pods' ) }</option>
 									<option value="ends">{ __( 'ends with', 'pods' ) }</option>
 									<option value="matches">{ __( 'matches pattern', 'pods' ) }</option>
 								</>
 							) : null }
+
 						</select>
 
 						<input

@@ -2471,12 +2471,13 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 	}
 
 	$path = trim( str_replace( '\\', '/', (string) $path ) );
+	$path = str_replace( '/', DIRECTORY_SEPARATOR, $path );
 
 	$match_count = 1;
 
 	// Replace the ../ usage as many times as it may need to be replaced.
 	while ( $match_count ) {
-		$path = str_replace( '../', '', $path, $match_count );
+		$path = str_replace( '..' . DIRECTORY_SEPARATOR, '', $path, $match_count );
 	}
 
 	$real_path = realpath( $path );

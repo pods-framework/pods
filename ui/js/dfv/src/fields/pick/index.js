@@ -210,6 +210,12 @@ const Pick = ( props ) => {
 	}, [ bidirectionFieldItemData ] );
 
 	const setValueWithLimit = ( newValue ) => {
+		// The field may be cleared with an empty string or null.
+		if ( '' === newValue || null === newValue ) {
+			setValue( undefined );
+			return;
+		}
+
 		// We don't need to worry about limits if this isn't a multi-select field.
 		if ( isSingle ) {
 			setValue( newValue );
@@ -354,7 +360,11 @@ const Pick = ( props ) => {
 					const newOptions = isMulti ? newOption : [ newOption ];
 
 					newOptions.forEach( ( option ) => {
-						if ( prevDataValues.includes( option.value ) ) {
+						if ( ! option?.value ) {
+							return;
+						}
+
+						if ( prevDataValues.includes( option?.value ) ) {
 							return;
 						}
 

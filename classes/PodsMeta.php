@@ -2827,10 +2827,8 @@ class PodsMeta {
 			$cached_is_key_covered = pods_cache_get( $type . '/' . $object_name, __CLASS__ . '/is_key_covered' );
 
 			if ( '404' !== $cached_is_key_covered ) {
-				$static_cache = pods_container( Static_Cache::class );
-
 				// Check if object type/name/key is not covered.
-				$cached_is_key_covered = $static_cache->get( $type . '/' . $object_name . '/' . $key, __CLASS__ . '/is_key_covered' );
+				$cached_is_key_covered = pods_static_cache_get( $type . '/' . $object_name . '/' . $key, __CLASS__ . '/is_key_covered' );
 			}
 
 			if ( '404' === $cached_is_key_covered ) {
@@ -3640,6 +3638,20 @@ class PodsMeta {
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+
+		// Only continue if metadata is integrated with.
+		if ( 0 === $metadata_integration ) {
+			return $_null;
+		}
+
+		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get' );
+
+		// Only continue if metadata is overridden.
+		if ( 0 === $metadata_override_get ) {
+			return $_null;
+		}
+
 		// Enforce boolean as it can be a string sometimes
 		$single = filter_var( $single, FILTER_VALIDATE_BOOLEAN );
 
@@ -3733,8 +3745,7 @@ class PodsMeta {
 			}
 
 			if ( $meta_key ) {
-				$static_cache = pods_container( Static_Cache::class );
-				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+				pods_static_cache_set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 			}
 
 			if ( ! $no_conflict ) {
@@ -3879,6 +3890,13 @@ class PodsMeta {
 			return $_null;
 		}
 
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+
+		// Only continue if metadata is integrated with.
+		if ( 0 === $metadata_integration ) {
+			return $_null;
+		}
+
 		if ( in_array( $object_type, array( 'post', 'post_type', 'media' ) ) ) {
 			$object_name = get_post_type( $object_id );
 		} elseif ( 'taxonomy' == $object_type ) {
@@ -3932,8 +3950,7 @@ class PodsMeta {
 			}
 
 			if ( $meta_key ) {
-				$static_cache = pods_container( Static_Cache::class );
-				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+				pods_static_cache_set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 			}
 
 			return $_null;
@@ -3994,6 +4011,13 @@ class PodsMeta {
 			return $_null;
 		}
 
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+
+		// Only continue if metadata is integrated with.
+		if ( 0 === $metadata_integration ) {
+			return $_null;
+		}
+
 		if ( in_array( $object_type, array( 'post', 'post_type', 'media' ) ) ) {
 			$object_name = get_post_type( $object_id );
 		} elseif ( 'taxonomy' == $object_type ) {
@@ -4047,8 +4071,7 @@ class PodsMeta {
 			}
 
 			if ( $meta_key ) {
-				$static_cache = pods_container( Static_Cache::class );
-				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+				pods_static_cache_set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 			}
 
 			return $_null;
@@ -4108,6 +4131,13 @@ class PodsMeta {
 	 * @return bool|int|null
 	 */
 	public function update_meta_by_id( $object_type, $_null = null, $meta_id = 0, $meta_key = '', $meta_value = '' ) {
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+
+		// Only continue if metadata is integrated with.
+		if ( 0 === $metadata_integration ) {
+			return $_null;
+		}
+
 		$meta_type = 'post_type' === $object_type ? 'post' : $object_type;
 
 		// Get the original meta record.
@@ -4138,6 +4168,13 @@ class PodsMeta {
 	 */
 	public function delete_meta( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $delete_all = false ) {
 		if ( pods_tableless() ) {
+			return $_null;
+		}
+
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+
+		// Only continue if metadata is integrated with.
+		if ( 0 === $metadata_integration ) {
 			return $_null;
 		}
 
@@ -4194,8 +4231,7 @@ class PodsMeta {
 			}
 
 			if ( $meta_key ) {
-				$static_cache = tribe( Static_Cache::class );
-				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+				pods_static_cache_set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 			}
 
 			return $_null;
@@ -4254,6 +4290,13 @@ class PodsMeta {
 	 * @return bool|int|null
 	 */
 	public function delete_meta_by_id( $object_type, $_null = null, $meta_id = 0 ) {
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+
+		// Only continue if metadata is integrated with.
+		if ( 0 === $metadata_integration ) {
+			return $_null;
+		}
+
 		$meta_type = 'post_type' === $object_type ? 'post' : $object_type;
 
 		// Get the original meta record.
@@ -4324,11 +4367,8 @@ class PodsMeta {
 	 * @param string $taxonomy         Taxonomy for the split term.
 	 */
 	public static function split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
-
-
 		$term_splitting = new Pods_Term_Splitting( $term_id, $new_term_id, $taxonomy );
 		$term_splitting->split_shared_term();
-
 	}
 
 	/**
@@ -4337,7 +4377,6 @@ class PodsMeta {
 	 * @return bool
 	 */
 	public function delete_user( $id ) {
-
 		return $this->delete_object( 'user', $id );
 	}
 
@@ -4347,7 +4386,6 @@ class PodsMeta {
 	 * @return bool
 	 */
 	public function delete_comment( $id ) {
-
 		return $this->delete_object( 'comment', $id );
 	}
 
@@ -4369,7 +4407,6 @@ class PodsMeta {
 	 * @return bool
 	 */
 	public function delete_object( $type, $id, $name = null ) {
-
 		if ( empty( $name ) ) {
 			$name = $type;
 		}

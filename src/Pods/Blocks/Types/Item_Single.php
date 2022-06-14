@@ -5,7 +5,7 @@ namespace Pods\Blocks\Types;
 use WP_Block;
 
 /**
- * Item_Single block functionality class.
+ * Item Single block functionality class.
  *
  * @since 2.8.0
  */

@@ -17,7 +17,7 @@
 			<?php echo esc_html( $field['label'] ); ?>
 		</<?php echo esc_html( $heading_tag ); ?>>
 		<?php echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field ); ?>
-	<?php elseif ( 'html' === $field['type'] ) : ?>
+	<?php elseif ( 'html' === $field['type'] && 1 === (int) $field['html_no_label'] ) : ?>
 		<?php echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
 	<?php else : ?>
 		<p<?php if ( ! empty( $row_classes ) ) : ?>

@@ -183,13 +183,24 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Whether this Pod object is valid or not
+	 * Determine whether this Pod object was defined or was built adhoc.
 	 *
-	 * @return bool
+	 * @since 2.8.18
 	 *
-	 * @since 2.0.0
+	 * @return bool Whether this Pod object was defined or was built adhoc.
 	 */
-	public function valid() {
+	public function is_defined() {
+		return $this->pod_data && empty( $this->pod_data['adhoc'] );
+	}
+
+	/**
+	 * Determine whether this Pod object is valid or not.
+	 *
+	 * @since 2.8.18
+	 *
+	 * @return bool Whether this Pod object is valid or not.
+	 */
+	public function is_valid() {
 		if ( empty( $this->pod_data ) ) {
 			return false;
 		}
@@ -199,6 +210,19 @@ class Pods implements Iterator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Whether this Pod object is valid or not
+	 *
+	 * @return bool
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Pods::is_valid()
+	 */
+	public function valid() {
+		return $this->is_valid();
 	}
 
 	/**

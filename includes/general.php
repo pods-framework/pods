@@ -2405,6 +2405,56 @@ function pods_option_cache_clear( $key = true, $group = '' ) {
 }
 
 /**
+ * Set a cached value in the Pods Static Cache.
+ *
+ * @see   PodsView::set
+ *
+ * @param string $key   Key for the cache.
+ * @param mixed  $value Value to add to the cache.
+ * @param string $group (optional) Key for the group.
+ *
+ * @return bool|mixed|null|string|void
+ *
+ * @since 2.8.18
+ */
+function pods_static_cache_set( $key, $value, $group = '' ) {
+	return pods_view_set( $key, $value, 0, 'static-cache', $group );
+}
+
+/**
+ * Get a cached value in the Pods Static Cache.
+ *
+ * @see   PodsView::get
+ *
+ * @param string $key      Key for the cache.
+ * @param string $group    (optional) Key for the group.
+ * @param string $callback (optional) Callback function to run to set the value if not cached.
+ *
+ * @return bool
+ *
+ * @since 2.8.18
+ */
+function pods_static_cache_get( $key, $group = '', $callback = null ) {
+	return pods_view_get( $key, 'static-cache', $group, $callback );
+}
+
+/**
+ * Clear a cached value in the Pods Static Cache.
+ *
+ * @see PodsView::clear
+ *
+ * @param string|bool $key   Key for the cache.
+ * @param string      $group (optional) Key for the group.
+ *
+ * @return bool|mixed|null|void
+ *
+ * @since 2.8.18
+ */
+function pods_static_cache_clear( $key = true, $group = '' ) {
+	return pods_view_clear( $key, 'static-cache', $group );
+}
+
+/**
  * Scope variables and include a template like get_template_part that's child-theme aware
  *
  * @see   get_template_part
@@ -2767,16 +2817,21 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		return $hooks;
 	}
 
+	$metadata_integration = 1 === (int) pods_get_setting( 'metadata_integration' );
+	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields' );
+
+	$is_tableless = pods_tableless();
+
 	// Filters = Usually get/update/delete meta functions
 	// Actions = Usually insert/update/save/delete object functions
 	if ( 'post' === $object_type || 'media' === $object_type  || 'all' === $object_type ) {
 		// Handle *_post_meta
-		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'post' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
 				$hooks['filter']['get_post_metadata'] = [ 'get_post_metadata', [ PodsInit::$meta, 'get_post_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_post_metadata']          = [ 'add_post_metadata', [ PodsInit::$meta, 'add_post_meta' ], 10, 5 ];
 				$hooks['filter']['update_post_metadata']       = [ 'update_post_metadata', [ PodsInit::$meta, 'update_post_meta' ], 10, 5 ];
 				$hooks['filter']['update_post_metadata_by_id'] = [ 'update_post_metadata_by_id', [ PodsInit::$meta, 'update_post_meta_by_id' ], 10, 4 ];
@@ -2802,24 +2857,26 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 			// Handle delete from relationships.
 			$hooks['action'][] = [ 'delete_post', [ PodsInit::$meta, 'delete_post' ], 10, 1 ];
 
-			// Track changed fields.
-			$hooks['action'][] = [
-				'wp_insert_post_data',
-				[ PodsInit::$meta, 'save_post_track_changed_fields' ],
-				10,
-				2,
-			];
+			if ( $watch_changed_fields ) {
+				// Track changed fields.
+				$hooks['action'][] = [
+					'wp_insert_post_data',
+					[ PodsInit::$meta, 'save_post_track_changed_fields' ],
+					10,
+					2,
+				];
+			}
 		}
 	}
 
 	if ( 'taxonomy' === $object_type || 'all' === $object_type ) {
 		// Handle *_term_meta
-		if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'term' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
 				$hooks['filter'][] = [ 'get_term_metadata', [ PodsInit::$meta, 'get_term_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_term_metadata']          = [ 'add_term_metadata', [ PodsInit::$meta, 'add_term_meta' ], 10, 5 ];
 				$hooks['filter']['update_term_metadata']       = [ 'update_term_metadata', [ PodsInit::$meta, 'update_term_meta' ], 10, 5 ];
 				$hooks['filter']['update_term_metadata_by_id'] = [ 'update_term_metadata_by_id', [ PodsInit::$meta, 'update_term_meta_by_id' ], 10, 4 ];
@@ -2841,13 +2898,15 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 			$hooks['action'][] = [ $object . '_add_form_fields', [ PodsInit::$meta, 'meta_taxonomy' ], 10, 1 ];
 		}
 
-		// Track changed fields.
-		$hooks['action'][] = [
-			'edit_terms',
-			[ PodsInit::$meta, 'save_taxonomy_track_changed_fields' ],
-			10,
-			2,
-		];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['action'][] = [
+				'edit_terms',
+				[ PodsInit::$meta, 'save_taxonomy_track_changed_fields' ],
+				10,
+				2,
+			];
+		}
 
 		/**
 		 * Fires after a previously shared taxonomy term is split into two separate terms.
@@ -2878,23 +2937,25 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		// Handle delete.
 		$hooks['action'][] = [ 'delete_attachment', [ PodsInit::$meta, 'delete_media' ], 10, 1 ];
 
-		// Track changed fields.
-		$hooks['filter'][] = [
-			'wp_insert_attachment_data',
-			[ PodsInit::$meta, 'save_post_track_changed_fields' ],
-			10,
-			2,
-		];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['filter'][] = [
+				'wp_insert_attachment_data',
+				[ PodsInit::$meta, 'save_post_track_changed_fields' ],
+				10,
+				2,
+			];
+		}
 	}
 
 	if ( 'user' === $object_type || 'all' === $object_type ) {
 		// Handle *_user_meta.
-		if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'user' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
 				$hooks['filter'][] = [ 'get_user_metadata', [ PodsInit::$meta, 'get_user_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_user_metadata']          = [ 'add_user_metadata', [ PodsInit::$meta, 'add_user_meta' ], 10, 5 ];
 				$hooks['filter']['update_user_metadata']       = [ 'update_user_metadata', [ PodsInit::$meta, 'update_user_meta' ], 10, 5 ];
 				$hooks['filter']['update_user_metadata_by_id'] = [ 'update_user_metadata_by_id', [ PodsInit::$meta, 'update_user_meta_by_id' ], 10, 4 ];
@@ -2913,18 +2974,25 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		// Handle saving from profile update.
 		$hooks['action'][] = [ 'profile_update', [ PodsInit::$meta, 'save_user' ], 10, 2 ];
 
-		// Track changed fields.
-		$hooks['filter'][] = [ 'pre_user_login', [ PodsInit::$meta, 'save_user_track_changed_fields' ], 10, 1 ];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['filter'][] = [
+				'pre_user_login',
+				[ PodsInit::$meta, 'save_user_track_changed_fields' ],
+				10,
+				1,
+			];
+		}
 	}
 
 	if ( 'comment' === $object_type || 'all' === $object_type ) {
-		if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
+		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
 			// Handle *_comment_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'comment' ) ) {
 				$hooks['filter'][] = [ 'get_comment_metadata', [ PodsInit::$meta, 'get_comment_meta' ], 10, 4 ];
 			}
 
-			if ( ! pods_tableless() ) {
+			if ( ! $is_tableless ) {
 				$hooks['filter']['add_comment_metadata']           = [ 'add_comment_metadata', [ PodsInit::$meta, 'add_comment_meta' ], 10, 5 ];
 				$hooks['filter']['update_comment_metadata']        = [ 'update_comment_metadata', [ PodsInit::$meta, 'update_comment_meta' ], 10, 5 ];
 				$hooks['filter']['update_comment_metadata_by_id']  = [ 'update_comment_metadata_by_id', [ PodsInit::$meta, 'update_comment_meta_by_id' ], 10, 4 ];
@@ -2948,8 +3016,15 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		// Handle saving comment from admin.
 		$hooks['action'][] = [ 'edit_comment', [ PodsInit::$meta, 'save_comment' ], 10, 1 ];
 
-		// Track changed fields.
-		$hooks['action'][] = [ 'wp_update_comment_data', [ PodsInit::$meta, 'save_comment_track_changed_fields' ], 10, 3 ];
+		if ( $watch_changed_fields ) {
+			// Track changed fields.
+			$hooks['action'][] = [
+				'wp_update_comment_data',
+				[ PodsInit::$meta, 'save_comment_track_changed_fields' ],
+				10,
+				3,
+			];
+		}
 	}
 
 	if ( 'settings' === $object_type || 'all' === $object_type ) {
@@ -3757,9 +3832,7 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 		$icon_path = PODS_DIR . '/ui/images/icon-menu.svg';
 	}
 
-	$static_cache = pods_container( Static_Cache::class );
-
-	$icon = $static_cache->get( $icon_path, __FUNCTION__ . '/' . $mode );
+	$icon = pods_static_cache_get( $icon_path, __FUNCTION__ . '/' . $mode );
 
 	// If the cached icon did not exist, use default.
 	if ( '404-not-exists' === $icon ) {
@@ -3788,7 +3861,7 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 	}
 
 	if ( ! file_exists( $icon_path ) ) {
-		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+		pods_static_cache_set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
 
 		return $default;
 	}
@@ -3796,12 +3869,12 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 	$svg_data = file_get_contents( $icon_path );
 
 	if ( ! $svg_data ) {
-		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+		pods_static_cache_set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
 
 		return $default;
 	}
 
-	$static_cache->set( $icon_path, $icon, __FUNCTION__ . '/' . $mode );
+	pods_static_cache_set( $icon_path, $icon, __FUNCTION__ . '/' . $mode );
 
 	// If mode is SVG data, return that.
 	if ( 'svg' === $mode ) {

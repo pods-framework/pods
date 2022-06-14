@@ -2479,11 +2479,7 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 		$path = str_replace( '../', '', $path, $match_count );
 	}
 
-	$path = realpath( $path );
-
-	if ( ! $path ) {
-		return false;
-	}
+	$real_path = realpath( $path );
 
 	$path_match = false;
 
@@ -2497,18 +2493,22 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 		$is_theme = 'theme' === $check_type;
 
 		foreach ( $check_type_paths as $path_to_check ) {
-			if ( 0 === strpos( $path, $path_to_check ) && file_exists( $path ) ) {
+			if ( $real_path && 0 === strpos( $real_path, $path_to_check ) && file_exists( $real_path ) ) {
 				// Check the path starts with the one we are checking for and that the file exists.
 				$path_match = true;
+
+				$path = $real_path;
 
 				break;
 			} elseif ( $is_theme ) {
 				// Check the theme directories.
-				$path_localized_for_theme = trim( $path, PATH_SEPARATOR );
+				$path_localized_for_theme = trim( $path, DIRECTORY_SEPARATOR );
 
 				// Confirm the file exists.
-				if ( file_exists( $path_to_check . $path_localized_for_theme ) ) {
+				if ( file_exists( $path_to_check . DIRECTORY_SEPARATOR . $path_localized_for_theme ) ) {
 					$path_match = true;
+
+					$path = $path_to_check . DIRECTORY_SEPARATOR . $path_localized_for_theme;
 
 					break;
 				}

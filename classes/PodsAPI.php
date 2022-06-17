@@ -5649,7 +5649,10 @@ class PodsAPI {
 	 * @return array List of changed fields (if $mode = 'get')
 	 */
 	public static function handle_changed_fields( $pod, $id, $mode = 'set' ) {
-		$watch_changed_fields = (int) pods_get_setting( 'watch_changed_fields' );
+		$first_pods_version = get_option( 'pods_framework_version_first' );
+		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+
+		$watch_changed_fields = (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.18', '<=' ) ? 1 : 0 );
 
 		// Only continue if changed fields are watched.
 		if ( 0 === $watch_changed_fields ) {

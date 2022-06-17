@@ -3638,14 +3638,17 @@ class PodsMeta {
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
 			return $_null;
 		}
 
-		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get' );
+		$first_pods_version = get_option( 'pods_framework_version_first' );
+		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+
+		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get', version_compare( $first_pods_version, '2.8.18', '<=' ) ? 1 : 0 );
 
 		// Only continue if metadata is overridden.
 		if ( 0 === $metadata_override_get ) {
@@ -3890,7 +3893,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4011,7 +4014,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4131,7 +4134,7 @@ class PodsMeta {
 	 * @return bool|int|null
 	 */
 	public function update_meta_by_id( $object_type, $_null = null, $meta_id = 0, $meta_key = '', $meta_value = '' ) {
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4171,7 +4174,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4290,7 +4293,7 @@ class PodsMeta {
 	 * @return bool|int|null
 	 */
 	public function delete_meta_by_id( $object_type, $_null = null, $meta_id = 0 ) {
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {

@@ -3334,7 +3334,7 @@ function pods_get_setting( $setting_name, $default = null ) {
 
 		$setting = pods_v( $setting_name, (array) $settings, $default );
 
-		if ( null === $setting ) {
+		if ( null !== $default && ( null === $setting || '' === $setting ) ) {
 			return $default;
 		}
 

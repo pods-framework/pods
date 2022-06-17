@@ -44,7 +44,13 @@ class Settings {
 	public function get_setting( $setting_name, $default = null ) {
 		$settings = $this->get_settings();
 
-		return pods_v( $setting_name, $settings, $default );
+		$setting = pods_v( $setting_name, $settings, $default );
+
+		if ( null !== $default && ( null === $setting || '' === $setting ) ) {
+			return $default;
+		}
+
+		return $setting;
 	}
 
 	/**
@@ -79,7 +85,13 @@ class Settings {
 				continue;
 			}
 
-			if ( isset( $settings[ $setting_name ] ) || ! isset( $setting['default'] ) ) {
+			// Skip if we do not have a default to set.
+			if ( ! isset( $setting['default'] ) ) {
+				continue;
+			}
+
+			// Skip if we do not
+			if ( isset( $settings[ $setting_name ] ) && ! in_array( $settings[ $setting_name ], [ null, '' ], true ) ) {
 				continue;
 			}
 

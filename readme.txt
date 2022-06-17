@@ -159,6 +159,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 = 2.8.20 - June 17th, 2022 =
 
 * Fixed: Use the correct defaults for the new Pods Settings of Meta Integration and Meta Overrides. (@sc0ttkclark)
+* Fixed: Use the correct defaults for Pods Settings when they return as a blank string. (@sc0ttkclark)
 
 = 2.8.19 - June 13th, 2022 =
 

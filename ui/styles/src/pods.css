@@ -50,8 +50,7 @@
 
 .pods-admin .pods_floatmenu {
   position: sticky;
-  top: 48px;
-  /* Toolbar */
+  top: 48px; /* Toolbar */
 }
 
 .pods-admin .pods-icon {
@@ -263,12 +262,10 @@ tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manag
  * Pods Field statuses
  */
 tbody.pods-manage-list .pods-manage-row th.check-field {
-  border: 5px solid transparent;
-  /* separates items from each other */
+  border: 5px solid transparent; /* separates items from each other */
   border-right: 0;
   padding: 3px 5px;
-  transition: border-color 300ms ease;
-  /* ooh, fancy! */
+  transition: border-color 300ms ease; /* ooh, fancy! */
 }
 
 /* Any changed or new field */
@@ -559,7 +556,6 @@ body[class*=settings_page_pods-] .pods-manage-field .pods-slider-field {
     display: block;
     width: 100%;
   }
-
   .pods-admin .pods_floatmenu .inner-sidebar {
     float: none;
     width: auto;
@@ -574,12 +570,10 @@ body[class*=settings_page_pods-] .pods-manage-field .pods-slider-field {
     margin-top: -10px;
     margin-bottom: 5px;
   }
-
   .wp-list-table .is-expanded td.column-secondary {
     margin-top: 0;
     margin-bottom: 0;
   }
-
   div.pods-manage-field .pods-field-option label,
 div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     float: none;
@@ -590,7 +584,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     margin-bottom: 0;
     line-height: 22px;
   }
-
   .pods-manage-field .pods-field-option input[type=text],
 .pods-manage-field .pods-field-option textarea,
 .pods-manage-field .pods-field-option .pods-field.pods-boolean,
@@ -602,14 +595,12 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     width: 100%;
     max-width: none;
   }
-
   .pods-manage-field .pods-field.pods-boolean label,
 .pods-manage-field .pods-field-option .pods-pick-values label {
     line-height: 22px;
     font-size: 14px;
     margin-left: 34px;
   }
-
   .pods-manage-field .pods-pick-values li.pods-zebra-odd,
 .pods-manage-field .pods-pick-values li.pods-zebra-even {
     display: block;
@@ -654,7 +645,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     -ms-flex-direction: row;
     flex-direction: row;
   }
-
   .pods-admin_friends-callout_container {
     max-width: 250px;
     margin-left: 20px;
@@ -1112,8 +1102,7 @@ ul.pods-dfv-list li.pods-dfv-list-icon {
   width: 40px;
   margin: 0 5px;
   height: 32px;
-  font-size: 0;
-  /* for aligning image */
+  font-size: 0; /* for aligning image */
   line-height: 32px;
   text-align: center;
 }
@@ -1223,8 +1212,7 @@ ul.pods-dfv-list li.pods-dfv-list-remove a {
 
 ul.pods-dfv-list li.pods-dfv-list-name {
   left: 80px;
-  right: 105px;
-  /* needed for action buttons */
+  right: 105px; /* needed for action buttons */
   padding: 3px 0;
   line-height: 24px;
   overflow: visible;
@@ -1234,8 +1222,7 @@ ul.pods-dfv-list li.pods-dfv-list-name {
 
 ul.pods-dfv-list li.pods-dfv-list-name input[type=text] {
   width: 100% !important;
-  font-size: 1em;
-  /*1vh*/
+  font-size: 1em; /*1vh*/
   line-height: 1;
   padding: 0.3vh 5px;
   margin: 0;
@@ -1725,8 +1712,7 @@ form.pods-manage .pods-inline-files .plupload-progress {
 }
 
 table.DMB_metabox td, table.DMB_metabox th {
-  border-bottom: 1px solid #f5f5f5;
-  /* Optional borders between fields */
+  border-bottom: 1px solid #f5f5f5; /* Optional borders between fields */
 }
 
 table.DMB_metabox th {
@@ -2351,16 +2337,13 @@ table.DMB_metabox thead tr {
   overflow: auto;
 }
 .pods-compat-container .CodeMirror-lines {
-  padding: 4px 0;
-  /* Vertical padding around content */
+  padding: 4px 0; /* Vertical padding around content */
 }
 .pods-compat-container .CodeMirror pre {
-  padding: 0 4px;
-  /* Horizontal padding of content */
+  padding: 0 4px; /* Horizontal padding of content */
 }
 .pods-compat-container .CodeMirror-scrollbar-filler, .pods-compat-container .CodeMirror-gutter-filler {
-  background-color: white;
-  /* The little square between H and V scrollbars */
+  background-color: white; /* The little square between H and V scrollbars */
 }
 .pods-compat-container .CodeMirror-gutters {
   border-right: 1px solid #ddd;
@@ -2551,8 +2534,7 @@ table.DMB_metabox thead tr {
   margin-right: -30px;
   padding-bottom: 30px;
   height: 100%;
-  outline: none;
-  /* Prevent dragging from highlighting the element */
+  outline: none; /* Prevent dragging from highlighting the element */
   position: relative;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
@@ -2620,8 +2602,7 @@ table.DMB_metabox thead tr {
 }
 .pods-compat-container .CodeMirror-lines {
   cursor: text;
-  min-height: 1px;
-  /* prevents collapsing before first draw */
+  min-height: 1px; /* prevents collapsing before first draw */
 }
 .pods-compat-container .CodeMirror pre {
   /* Reset some styles that the rest of the page might have set */
@@ -4051,24 +4032,15 @@ table.DMB_metabox thead tr {
   border-left-width: 1px;
 }
 .pods-compat-container .ui-datepicker-cover {
-  display: none;
-  /*sorry for IE5*/
-  display/**/: block;
-  /*sorry for IE5*/
-  position: absolute;
-  /*must have*/
-  z-index: -1;
-  /*must have*/
-  filter: mask();
-  /*must have*/
-  top: -4px;
-  /*must have*/
-  left: -4px;
-  /*must have*/
-  width: 200px;
-  /*must have*/
-  height: 200px;
-  /*must have*/
+  display: none; /*sorry for IE5*/
+  display/**/: block; /*sorry for IE5*/
+  position: absolute; /*must have*/
+  z-index: -1; /*must have*/
+  filter: mask(); /*must have*/
+  top: -4px; /*must have*/
+  left: -4px; /*must have*/
+  width: 200px; /*must have*/
+  height: 200px; /*must have*/
 }
 .pods-compat-container .ui-progressbar {
   height: 2em;

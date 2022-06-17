@@ -361,16 +361,13 @@ p.pods-add-file {
   .form-table td .pods-form-ui-field {
     max-width: none;
   }
-
   /* Fix for Pods field bottom border */
   .pods-metabox tr.pods-field > th {
     padding-top: 15px;
   }
-
   .pods-metabox tr.pods-field > td {
     padding-bottom: 15px;
   }
-
   /* HTML select field fix */
   .pods-form-ui-row-type-pick .pods-form-ui-field select {
     width: 100%;
@@ -442,8 +439,7 @@ ul.pods-dfv-list li.pods-dfv-list-icon {
   width: 40px;
   margin: 0 5px;
   height: 32px;
-  font-size: 0;
-  /* for aligning image */
+  font-size: 0; /* for aligning image */
   line-height: 32px;
   text-align: center;
 }
@@ -553,8 +549,7 @@ ul.pods-dfv-list li.pods-dfv-list-remove a {
 
 ul.pods-dfv-list li.pods-dfv-list-name {
   left: 80px;
-  right: 105px;
-  /* needed for action buttons */
+  right: 105px; /* needed for action buttons */
   padding: 3px 0;
   line-height: 24px;
   overflow: visible;
@@ -564,8 +559,7 @@ ul.pods-dfv-list li.pods-dfv-list-name {
 
 ul.pods-dfv-list li.pods-dfv-list-name input[type=text] {
   width: 100% !important;
-  font-size: 1em;
-  /*1vh*/
+  font-size: 1em; /*1vh*/
   line-height: 1;
   padding: 0.3vh 5px;
   margin: 0;

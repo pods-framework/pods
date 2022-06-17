@@ -1261,9 +1261,7 @@ class PodsField_DateTime extends PodsField {
 	 * @since 2.7.0
 	 */
 	public function enqueue_jquery_ui_i18n() {
-		$static_cache = tribe( Static_Cache::class );
-
-		$done = (array) $static_cache->get( 'done', __METHOD__ );
+		$done = (array) pods_static_cache_get( 'done', __METHOD__ );
 
 		$types = array();
 

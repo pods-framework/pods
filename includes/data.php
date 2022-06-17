@@ -2420,3 +2420,156 @@ function pods_replace_keys_to_values( $value, $replacements ) {
 		$value
 	);
 }
+
+/**
+ * Validate that a file path is safe and within the expected path(s).
+ *
+ * @since 2.8.18
+ *
+ * @param string            $path           The file path.
+ * @param null|array|string $paths_to_check The list of path types to check, defaults to just checking 'pods'.
+ *                                          Available: 'pods', 'plugins', 'content', 'theme', 'abspath',
+ *                                          or 'all' to check all supported paths.
+ *
+ * @return false|string False if the path was not allowed or did not exist, otherwise it returns the normalized path.
+ */
+function pods_validate_safe_path( $path, $paths_to_check = null ) {
+	static $available_checks;
+
+	if ( null === $paths_to_check ) {
+		$paths_to_check = [
+			'pods',
+		];
+	}
+
+	if ( ! $available_checks ) {
+		$available_checks = [
+			'pods'    => realpath( PODS_DIR ),
+			'plugins' => [
+				realpath( WP_PLUGIN_DIR ),
+				realpath( WPMU_PLUGIN_DIR ),
+			],
+			'content' => realpath( WP_CONTENT_DIR ),
+			'theme'   => [
+				realpath( get_stylesheet_directory() ),
+				realpath( get_template_directory() ),
+			],
+			'abspath' => realpath( ABSPATH ),
+		];
+
+		$available_checks['plugins'] = array_unique( array_filter( $available_checks['plugins'] ) );
+		$available_checks['theme']   = array_unique( array_filter( $available_checks['theme'] ) );
+		$available_checks            = array_filter( $available_checks );
+	}
+
+	if ( 'all' === $paths_to_check ) {
+		$paths_to_check = array_keys( $available_checks );
+	}
+
+	if ( empty( $paths_to_check ) ) {
+		return false;
+	}
+
+	$path = trim( str_replace( '\\', '/', (string) $path ) );
+	$path = str_replace( '/', DIRECTORY_SEPARATOR, $path );
+
+	$match_count = 1;
+
+	// Replace the ../ usage as many times as it may need to be replaced.
+	while ( $match_count ) {
+		$path = str_replace( '..' . DIRECTORY_SEPARATOR, '', $path, $match_count );
+	}
+
+	$real_path = realpath( $path );
+
+	$path_match = false;
+
+	foreach ( $paths_to_check as $check_type ) {
+		if ( ! isset( $available_checks[ $check_type ] ) ) {
+			continue;
+		}
+
+		$check_type_paths = (array) $available_checks[ $check_type ];
+
+		$is_theme = 'theme' === $check_type;
+
+		foreach ( $check_type_paths as $path_to_check ) {
+			if ( $real_path && 0 === strpos( $real_path, $path_to_check ) && file_exists( $real_path ) ) {
+				// Check the path starts with the one we are checking for and that the file exists.
+				$path_match = true;
+
+				$path = $real_path;
+
+				break;
+			} elseif ( $is_theme ) {
+				// Check the theme directories.
+				$path_localized_for_theme = trim( $path, DIRECTORY_SEPARATOR );
+
+				// Confirm the file exists.
+				if ( file_exists( $path_to_check . DIRECTORY_SEPARATOR . $path_localized_for_theme ) ) {
+					$path_match = true;
+
+					$path = $path_to_check . DIRECTORY_SEPARATOR . $path_localized_for_theme;
+
+					break;
+				}
+			}
+		}
+	}
+
+	if ( ! $path_match ) {
+		return false;
+	}
+
+	return $path;
+}
+
+/**
+ * Maybe sleep and help avoid hitting memory limit.
+ *
+ * @since 2.8.18
+ *
+ * @param int $sleep_time The amount of seconds to sleep (if sleep is needed).
+ * @param int $after      The number of triggers needed to run the logic.
+ */
+function pods_maybe_clean_memory( $sleep_time = 0, $after = 100 ) {
+	static $counter = 0;
+
+	$counter++;
+
+	if ( $after === $counter ) {
+		$counter = 0;
+
+		pods_clean_memory( $sleep_time );
+	}
+}
+
+/**
+ * Sleep and help avoid hitting memory limit.
+ *
+ * @since 2.8.18
+ *
+ * @param int $sleep_time The amount of seconds to sleep (if sleep is needed).
+ */
+function pods_clean_memory( $sleep_time = 0 ) {
+	if ( 0 < $sleep_time ) {
+		sleep( $sleep_time );
+	}
+
+	global $wpdb, $wp_object_cache;
+
+	$wpdb->queries = [];
+
+	if ( ! is_object( $wp_object_cache ) ) {
+		return;
+	}
+
+	$wp_object_cache->group_ops      = [];
+	$wp_object_cache->stats          = [];
+	$wp_object_cache->memcache_debug = [];
+	$wp_object_cache->cache          = [];
+
+	if ( is_callable( $wp_object_cache, '__remoteset' ) ) {
+		call_user_func( [ $wp_object_cache, '__remoteset' ] ); // important
+	}
+}

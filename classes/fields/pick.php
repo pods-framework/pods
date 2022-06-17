@@ -176,7 +176,7 @@ class PodsField_Pick extends PodsField {
 					'dropdown'     => __( 'Drop Down', 'pods' ),
 					'radio'        => __( 'Radio Buttons', 'pods' ),
 					'autocomplete' => __( 'Autocomplete', 'pods' ),
-					'list'         => __( 'List View (with reordering)', 'pods' ),
+					'list'         => __( 'List View (single value)', 'pods' ),
 				] ),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
@@ -187,7 +187,7 @@ class PodsField_Pick extends PodsField {
 				'depends-on'            => [
 					static::$type . '_format_type' => 'multi',
 				],
-				'default'               => 'checkbox',
+				'default'               => 'list',
 				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
@@ -968,9 +968,7 @@ class PodsField_Pick extends PodsField {
 		if ( $this->can_ajax( $args->type, $field_options ) ) {
 			$ajax = true;
 
-			$static_cache = pods_container( Static_Cache::class );
-
-			$field_data = $static_cache->get( $field_options['name'] . '/' . $field_options['id'], __CLASS__ . '/field_data' ) ?: [];
+			$field_data = pods_static_cache_get( $field_options['name'] . '/' . $field_options['id'], __CLASS__ . '/field_data' ) ?: [];
 
 			if ( isset( $field_data['autocomplete'] ) ) {
 				$ajax = (boolean) $field_data['autocomplete'];
@@ -1620,9 +1618,7 @@ class PodsField_Pick extends PodsField {
 
 		$options['id'] = (int) $options['id'];
 
-		$static_cache = pods_container( Static_Cache::class );
-
-		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
+		$related_data = pods_static_cache_get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
 			$related_pod = self::$api->load_pod( [
@@ -1695,7 +1691,7 @@ class PodsField_Pick extends PodsField {
 			$related_data['related_field']      = $related_field;
 			$related_data['related_pick_limit'] = $related_pick_limit;
 
-			$static_cache->set( $options['name'] . '/' . $options['id'], $related_data, __CLASS__ . '/related_data' );
+			pods_static_cache_set( $options['name'] . '/' . $options['id'], $related_data, __CLASS__ . '/related_data' );
 
 			$pick_limit = (int) pods_v( static::$type . '_limit', $options, 0 );
 
@@ -1705,7 +1701,7 @@ class PodsField_Pick extends PodsField {
 
 			$related_field['id'] = (int) $related_field['id'];
 
-			$bidirectional_related_data = $static_cache->get( $related_field['name'] . '/' . $related_field['id'], __CLASS__ . '/related_data' ) ?: [];
+			$bidirectional_related_data = pods_static_cache_get( $related_field['name'] . '/' . $related_field['id'], __CLASS__ . '/related_data' ) ?: [];
 
 			if ( empty( $bidirectional_related_data ) ) {
 				$bidirectional_related_data = [
@@ -1714,7 +1710,7 @@ class PodsField_Pick extends PodsField {
 					'related_pick_limit' => $pick_limit,
 				];
 
-				$static_cache->set( $related_field['name'] . '/' . $related_field['id'], $bidirectional_related_data, __CLASS__ . '/related_data' );
+				pods_static_cache_set( $related_field['name'] . '/' . $related_field['id'], $bidirectional_related_data, __CLASS__ . '/related_data' );
 			}
 		}//end if
 
@@ -1745,9 +1741,7 @@ class PodsField_Pick extends PodsField {
 
 		$value_ids = array_unique( array_filter( $value ) );
 
-		$static_cache = pods_container( Static_Cache::class );
-
-		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
+		$related_data = pods_static_cache_get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
 		if ( ! empty( $related_data ) && isset( $related_data['current_ids_' . $id ], $related_data['remove_ids_' . $id ] ) ) {
 			$related_pod        = $related_data['related_pod'];
@@ -2370,9 +2364,7 @@ class PodsField_Pick extends PodsField {
 				);
 
 				if ( 'data' === $context ) {
-					$static_cache = pods_container( Static_Cache::class );
-
-					$static_cache->set( $name . '/' . $options['id'], [
+					pods_static_cache_set( $name . '/' . $options['id'], [
 						'autocomplete' => false,
 					], __CLASS__ . '/field_data' );
 				}
@@ -2725,9 +2717,7 @@ class PodsField_Pick extends PodsField {
 				}//end if
 
 				if ( 'data' === $context ) {
-					$static_cache = pods_container( Static_Cache::class );
-
-					$static_cache->set( $name . '/' . $options['id'], [
+					pods_static_cache_set( $name . '/' . $options['id'], [
 						'autocomplete' => $autocomplete,
 					], __CLASS__ . '/field_data' );
 				}

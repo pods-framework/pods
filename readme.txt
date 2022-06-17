@@ -162,10 +162,54 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.8.20 - June 17th, 2022 =
+
+* Fixed: Use the correct defaults for the new Pods Settings of Meta Integration and Meta Overrides. (@sc0ttkclark)
+* Fixed: Use the correct defaults for Pods Settings when they return as a blank string. (@sc0ttkclark)
+
+= 2.8.19 - June 13th, 2022 =
+
+* Fixed: Theme views now load as expected, fixing an issue introduced in 2.8.18. (@sc0ttkclark)
+
+= 2.8.18 - June 10th, 2022 =
+
+* Added: New helper functions `pods_clean_memory()` and `pods_maybe_clean_memory()` introduced to provide WP-CLI commands in Pods core and add-ons the ability to help reduce memory usage in long running processes. (@sc0ttkclark)
+* Added: New function `Pods::is_defined()` determines whether a Pod was defined or if it was generated adhoc when calling a non-defined Pod. (@sc0ttkclark, @JoryHogeveen)
+* Added: New function `Pods::is_valid()` replaces the logic in `Pods::valid()` to better follow the naming pattern used elsewhere in Pods. `Pods::valid()` is not deprecated yet. (@sc0ttkclark)
+* Added: New functions `pods_static_cache_get()`, `pods_static_cache_set()`, and `pods_static_cache_clear()` abstract the static cache handling that would sometimes fail if the class was not available. (@sc0ttkclark)
+* Added: New filter `pods_init_register_assets_load_pods_dfv_on_front` which allows you to force loading Pods DFV scripts on the front of the site when needed. Normally they will be included but some plugins/themes may need them enqueued sooner. (@sc0ttkclark)
+* Tweak: Improved performance when using TranslatePress by optimizing how settings and blocks are handled to avoid extra `__()` translation calls. (@sc0ttkclark)
+* Tweak: Improved performance with Block configurations. (@sc0ttkclark)
+* Tweak: Improved performance with existing content type checks. (@sc0ttkclark)
+* Tweak: Improved performance by offering a new setting to enable/disable tracking changed fields. (@sc0ttkclark)
+* Tweak: Improved performance by offering a new setting to enable/disable metadata integration. (@sc0ttkclark)
+* Tweak: Improved performance and third party plugin compatibility by offering a new setting to enable/disable metadata display overrides for Relationship/File fields. (@sc0ttkclark)
+* Tweak: Improved file types help text on the File field to describe how limiting file types works more clearly. (@sc0ttkclark)
+* Tweak: Default input type for Relationships multiple-select is now List View. (@sc0ttkclark)
+* Fixed: File path checks are now more strict and consistent across all Pods Views loading. (@sybrew from The SEO Framework team, @sc0ttkclark)
+* Fixed: SVG and other file types would not properly match up when certain plugins add additional mime types to be supported. (@sc0ttkclark)
+* Fixed: Improved fallback handling for DB table schema errors when trying to add a column that may already exist in the table. (@sc0ttkclark)
+* Fixed: Support labels for HTML field types in more form areas. (@sc0ttkclark)
+* Fixed: `PodsUI` now filters all field values instead of circumventing that when it's pulled from the table row already. (@sc0ttkclark)
+
+= 2.8.17 - May 11th, 2022 =
+
+* Fixed: Attempting to catch potential issues where an issue is detected with loading the Tribe Common library by introducing a wrapper function `pods_container()` to be used before calling `tribe()`. (@sc0ttkclark)
+
+= 2.8.16 - May 6th, 2022 =
+
+* Added: More compatibility with Advanced Relationship Storage Add-On from Pods Pro by SKCDEV which allows for saving table-based relationship fields during the normal save process. (@sc0ttkclark)
+* Fixed: Booleans when saving to the database now prepare as `%d` instead of the generic `%s`. (@sc0ttkclark)
+* Fixed: Additional SV file escaping on exports to prevent formulas from evaluating in certain spreadsheet apps unexpectedly. (@sc0ttkclark)
+* Fixed: The old Pods / Pods API CLI commands were unintentionally removed in Pods 2.8 and they have now been brought back as `wp pods-legacy` and `wp pods-legacy-api`. (@sc0ttkclark)
+* Fixed: Improved the text / link for registering connections on Post Types and Taxonomies so they reference the correct object type. (@sc0ttkclark)
+* Fixed: Multi-select fields were not saving properly in certain forms. #6498 #6216 (@zrothauser)
+* Confirmed compatibility with WordPress 6.0.
+
 = 2.8.15 - April 16th, 2022 =
 
 * Added: New `pods_callback` support in `Pods::find()` so that you can pass a callback function to use for `pods()` usage with relationships using the `output` as "pods". This allows for using shared instances across large data sets to reduce time. (@sc0ttkclark)
-* Added: New property `$data->fetch_full` added to `PodsData` which can be used to turn off additional fetch requests when all of the table data was already returned by the query with `t.*`. (@sc0ttkclark)
+* Added: New property `$data->fetch_full` added to `PodsData` which can be used to turn off additional fetch requests when all table data was already returned by the query with `t.*`. (@sc0ttkclark)
 * Fixed: When using table-based fields and a non-simple relationship has a field in the table, it will still be expanded like a normal relationship field when requesting it by name with no traversal. (@sc0ttkclark)
 * Fixed: Call `PodsField_Pick::simple_objects()` using the object instead of statically to prevent PHP notices. (@sc0ttkclark)
 * Fixed: Adjust the `Pods\REST\V1\Endpoints\Base::check_permission()` method so that it references the correct `\Pods` object. (@sc0ttkclark)

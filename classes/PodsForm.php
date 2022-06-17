@@ -1473,28 +1473,27 @@ class PodsForm {
 		$class_name = ucfirst( $field_type );
 		$class_name = "PodsField_{$class_name}";
 
-		$content_dir   = realpath( WP_CONTENT_DIR );
-		$plugins_dir   = realpath( WP_PLUGIN_DIR );
-		$muplugins_dir = realpath( WPMU_PLUGIN_DIR );
-		$abspath_dir   = realpath( ABSPATH );
-		$pods_dir      = realpath( PODS_DIR );
-
 		if ( ! class_exists( $class_name ) ) {
 			if ( isset( self::$field_types[ $field_type ] ) && ! empty( self::$field_types[ $field_type ]['file'] ) ) {
 				$file = realpath( self::$field_types[ $field_type ]['file'] );
 			}
 
-			if ( ! empty( $file ) && 0 === strpos( $file, $abspath_dir ) && file_exists( $file ) ) {
-				include_once $file;
-			} else {
-				$file = str_replace( '../', '', apply_filters( 'pods_form_field_include', '', $field_type ) );
+			/**
+			 * The field type include path.
+			 *
+			 * @since unknown
+			 *
+			 * @param string $file The file path to include for the field type.
+			 */
+			$file = apply_filters( 'pods_form_field_include', $file, $field_type );
 
-				if ( ! empty( $file ) ) {
-					$file = realpath( $file );
+			$file = trim( $file );
 
-					if ( file_exists( $file ) && ( 0 === strpos( $file, $pods_dir ) || 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) ) {
-						include_once $file;
-					}
+			if ( '' !== $file ) {
+				$located = pods_validate_safe_path( $file, 'all' );
+
+				if ( $located ) {
+					include_once $located;
 				}
 			}
 		}

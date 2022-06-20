@@ -73,6 +73,8 @@ const formatValuesForReactSelectComponent = (
 	fieldItemData = [],
 	isMulti = false
 ) => {
+	console.log( 'formatValuesForReactSelectComponent', value, fieldItemData );
+
 	if ( ! value ) {
 		return isMulti ? [] : [];
 	}
@@ -92,7 +94,7 @@ const formatValuesForReactSelectComponent = (
 
 	const splitValue = Array.isArray( value ) ? value : value.split( ',' );
 
-	return splitValue.map(
+	const results = splitValue.map(
 		( currentValue ) => {
 			const fullFieldItem = fieldItemData.find(
 				( option ) => option?.id?.toString() === currentValue.toString()
@@ -105,9 +107,11 @@ const formatValuesForReactSelectComponent = (
 				};
 			}
 
-			return {};
+			return null;
 		}
 	);
+
+	return results.filter( ( result ) => null !== result );
 };
 
 const formatValuesForHTMLSelectElement = ( value, isMulti ) => {
@@ -387,6 +391,8 @@ const Pick = ( props ) => {
 					setValueWithLimit( newOption.value );
 				}
 			};
+
+			console.log( 'formattedValue', formattedValue );
 
 			return (
 				<>

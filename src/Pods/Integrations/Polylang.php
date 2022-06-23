@@ -23,6 +23,7 @@ class Polylang extends Integration {
 			'pods_api_get_table_info' => [ 'pods_api_get_table_info', 10, 7 ],
 			'pods_data_traverse_recurse_ignore_aliases' => [ 'pods_data_traverse_recurse_ignore_aliases', 10 ],
 			'pods_meta_ignored_types' => [ 'pods_meta_ignored_types' ],
+			'pods_form_ui_field_pick_related_objects_other' => [ 'pods_pick_field_add_related_objects' ],
 			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
 			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
 			'pods_var_post_id' => [ 'pods_var_post_id' ],
@@ -100,6 +101,23 @@ class Polylang extends Integration {
 		$ignored_types['taxonomy']['term_translations'] = true;
 
 		return $ignored_types;
+	}
+
+	/**
+	 * @since 2.8.21
+	 *
+	 * @param array[] $related_objects
+	 *
+	 * @return void
+	 */
+	public function pods_pick_field_add_related_objects() {
+		$taxonomy = get_taxonomy( 'language' );
+
+		\PodsField_Pick::$related_objects[ 'taxonomy-language' ] = array(
+			'label'         => $taxonomy->label . ' (' . $taxonomy->name . ')',
+			'group'         => __( 'Polylang', 'pods' ),
+			'bidirectional' => false,
+		);
 	}
 
 	/**

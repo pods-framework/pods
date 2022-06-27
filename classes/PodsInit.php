@@ -2358,7 +2358,12 @@ class PodsInit {
 
 		if ( empty( $pods_version_first ) ) {
 			delete_option( 'pods_framework_version_first' );
-			add_option( 'pods_framework_version_first', PODS_VERSION );
+
+			if ( ! empty( $pods_version_last ) ) {
+				add_option( 'pods_framework_version_first', $pods_version_last );
+			} else {
+				add_option( 'pods_framework_version_first', PODS_VERSION );
+			}
 		}
 
 		if ( empty( $pods_version ) ) {

@@ -104,11 +104,9 @@ class Polylang extends Integration {
 	}
 
 	/**
+	 * Add the Polylang language taxonomy to be used in relationships.
+	 *
 	 * @since 2.8.21
-	 *
-	 * @param array[] $related_objects
-	 *
-	 * @return void
 	 */
 	public function pods_pick_field_add_related_objects() {
 		$taxonomy = get_taxonomy( 'language' );

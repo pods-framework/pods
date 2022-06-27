@@ -2821,7 +2821,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 	$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
 	$metadata_integration = 1 === (int) pods_get_setting( 'metadata_integration', 1 );
-	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.18', '<=' ) ? 1 : 0 );
+	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
 
 	$is_tableless = pods_tableless();
 

@@ -3648,7 +3648,7 @@ class PodsMeta {
 		$first_pods_version = get_option( 'pods_framework_version_first' );
 		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
-		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get', version_compare( $first_pods_version, '2.8.18', '<=' ) ? 1 : 0 );
+		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
 
 		// Only continue if metadata is overridden.
 		if ( 0 === $metadata_override_get ) {

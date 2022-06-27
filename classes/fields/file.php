@@ -482,7 +482,7 @@ class PodsField_File extends PodsField {
 		if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ), true ) ) {
 			$new_limit_types = array();
 
-			$limit_types = explode( ',', $limit_types );
+			$limit_types = array_filter( explode( ',', $limit_types ) );
 
 			foreach ( $limit_types as $k => $limit_type ) {
 				if ( isset( $mime_types[ $limit_type ] ) ) {

@@ -5472,6 +5472,33 @@ class PodsAPI {
 								}
 							} elseif ( $is_file_field && isset( $v['id'] ) ) {
 								$v = (int) $v['id'];
+							} elseif ( 'pods' === $data_mode && ! isset( $v[0] ) ) {
+								// Save related field values.
+								$v_id = false;
+
+								if ( isset( $v[ $search_data->field_id ] ) ) {
+									$v_id = $v[ $search_data->field_id ];
+
+									unset( $v[ $search_data->field_id ] );
+								}
+
+								if ( ! empty( $v_id ) ) {
+									$search_data->save( $v, null, $v_id );
+								} else {
+									$row_has_values = array_filter( $v );
+
+									if ( ! $row_has_values ) {
+										continue;
+									}
+
+									$v_id = $search_data->add( $v );
+								}
+
+								if ( empty( $v_id ) ) {
+									continue;
+								}
+
+								$v = $v_id;
 							} else {
 								continue;
 							}

@@ -207,20 +207,16 @@ function frontier_if_block( $attributes, $code ) {
 		// Handle comparison.
 		if ( '=' === $attributes['compare'] ) {
 			if ( $maybe_array ) {
-				$pass = $field_data === $attributes['value'];
+				$pass = in_array( (string) $attributes['value'], (array) $field_data, false );
 			} else {
 				$pass = (string) $field_data === (string) $attributes['value'];
 			}
 		} elseif ( '!=' === $attributes['compare'] ) {
 			if ( $maybe_array ) {
-				$pass = $field_data !== $attributes['value'];
+				$pass = ! in_array( (string) $attributes['value'], (array) $field_data, false );
 			} else {
 				$pass = (string) $field_data !== (string) $attributes['value'];
 			}
-		} elseif ( 'IN' === $attributes['compare'] ) {
-			$pass = in_array( $attributes['value'], (array) $field_data, false );
-		} elseif ( 'NOT IN' === $attributes['compare'] ) {
-			$pass = ! in_array( $attributes['value'], (array) $field_data, false );
 		} elseif ( 'EXISTS' === $attributes['compare'] ) {
 			$pass = null !== $field_data && [] !== $field_data;
 		} elseif ( 'NOT EXISTS' === $attributes['compare'] ) {
@@ -228,6 +224,10 @@ function frontier_if_block( $attributes, $code ) {
 		} elseif ( $maybe_array ) {
 			// We do not support comparisons for array values beyond equals.
 			$pass = false;
+		} elseif ( 'IN' === $attributes['compare'] ) {
+			$pass = in_array( (string) $field_data, explode( ',', $attributes['value'] ), false );
+		} elseif ( 'NOT IN' === $attributes['compare'] ) {
+			$pass = ! in_array( (string) $field_data, explode( ',', $attributes['value'] ), false );
 		} elseif ( '>' === $attributes['compare'] ) {
 			$pass = (float) $field_data > (float) $attributes['value'];
 		} elseif ( '>=' === $attributes['compare'] ) {

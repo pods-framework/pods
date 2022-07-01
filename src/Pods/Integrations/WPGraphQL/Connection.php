@@ -1,13 +1,13 @@
 <?php
 
-namespace Pods\WPGraphQL;
+namespace Pods\Integrations\WPGraphQL;
 
 use Exception;
 use GraphQL\Deferred;
 use GraphQL\Type\Definition\ResolveInfo;
-use Pods\WPGraphQL\Connection_Resolver\Custom_Simple;
-use Pods\WPGraphQL\Connection_Resolver\Pod;
-use Pods\WPGraphQL\Connection_Resolver\Pod_Type;
+use Pods\Integrations\WPGraphQL\Connection_Resolver\Custom_Simple;
+use Pods\Integrations\WPGraphQL\Connection_Resolver\Pod;
+use Pods\Integrations\WPGraphQL\Connection_Resolver\Pod_Type;
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\Connection\AbstractConnectionResolver;
 use WPGraphQL\Data\Connection\CommentConnectionResolver;

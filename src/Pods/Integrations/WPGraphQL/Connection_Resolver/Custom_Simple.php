@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods\WPGraphQL\Connection_Resolver;
+namespace Pods\Integrations\WPGraphQL\Connection_Resolver;
 
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;

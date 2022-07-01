@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods\WPGraphQL;
+namespace Pods\Integrations\WPGraphQL;
 
 /**
  * Settings specific functionality.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods\WPGraphQL;
+namespace Pods\Integrations\WPGraphQL;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Pods\Pod_Manager;

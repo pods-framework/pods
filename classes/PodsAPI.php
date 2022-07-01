@@ -5192,7 +5192,7 @@ class PodsAPI {
 							'{prefix}'
 						], $table_data[ $field ] );
 
-						$table_formats[] = PodsForm::prepare( $type, $field_object );
+						$table_formats[ $field ] = PodsForm::prepare( $type, $field_object );
 					}
 
 					// Check if the field is not a simple relationship OR the simple relationship field is allowed to be saved to meta.
@@ -5234,7 +5234,9 @@ class PodsAPI {
 			$has_object_data_to_save = true;
 		}
 
-		if ( ! in_array( $pod['type'], array( 'pod', 'table', '' ) ) ) {
+		$is_not_external_pod = ! in_array( $pod['type'], [ 'pod', 'table', '' ], true );
+
+		if ( $is_not_external_pod ) {
 			$meta_fields = array();
 
 			if ( 'meta' === $pod['storage'] || 'settings' === $pod['type'] ) {
@@ -5274,7 +5276,36 @@ class PodsAPI {
 			 * @param bool $strict_meta_save Whether to delete values if values are passed as an empty '' string.
 			 */
 			$strict_meta_save = (bool) apply_filters( 'pods_api_save_pod_item_strict_meta_save', false );
+		}
 
+		$data_to_filter = [
+			'has_object_data_to_save',
+			'object_data',
+			'object_meta',
+			'post_term_data',
+			'rel_field_ids',
+			'rel_fields',
+			'simple_rel_meta',
+			'table_data',
+			'table_formats',
+		];
+
+		$data_to_save = compact( ...$data_to_filter );
+
+		/**
+		 * Allow filtering the list of processed data values that will be used to do the final save.
+		 *
+		 * @since TBD
+		 *
+		 * @param array $data_to_save The list of processed data values that will be used to do the final save.
+		 */
+		$data_to_save = (array) apply_filters( 'pods_api_save_pod_item_processed_data_to_save', $data_to_save );
+
+		foreach ( $data_to_filter as $data_var ) {
+			$$data_var = isset( $data_to_save[ $data_var ] ) ? $data_to_save[ $data_var ] : null;
+		}
+
+		if ( $is_not_external_pod ) {
 			if ( empty( $params->id ) || $has_object_data_to_save || ! empty( $meta_fields ) ) {
 				$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, $strict_meta_save, true, $fields_to_send );
 			}
@@ -5286,10 +5317,12 @@ class PodsAPI {
 
 		if ( 'table' === $pod['storage'] ) {
 			// Every row should have an id set here, otherwise Pods with nothing
-			// but relationship fields won't get properly ID'd
+			// but relationship fields won't get their ID properly set.
 			if ( empty( $params->id ) ) {
 				$params->id = 0;
 			}
+
+			$table_formats = array_values( $table_formats );
 
 			$table_data = array( 'id' => $params->id ) + $table_data;
 			array_unshift( $table_formats, '%d' );
@@ -5319,6 +5352,8 @@ class PodsAPI {
 
 					$post_terms[ $k ] = $v;
 				}
+
+				$post_terms = array_filter( $post_terms );
 
 				wp_set_object_terms( $params->id, $post_terms, $post_taxonomy );
 			}

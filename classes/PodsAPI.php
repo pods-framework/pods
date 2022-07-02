@@ -9265,6 +9265,8 @@ class PodsAPI {
 		} elseif ( ! $params->force_meta && ! pods_tableless() && pods_podsrel_enabled( $params->field, 'lookup' ) ) {
 			$params->field_id  = (int) $params->field_id;
 
+			$ids_in = implode( ', ', array_fill( 0, count( $params->ids ), '%d' ) );
+
 			$sister_id = pods_v( 'sister_id', $params->field, 0 );
 
 			if ( is_numeric( $sister_id ) ) {
@@ -9279,12 +9281,18 @@ class PodsAPI {
 				SELECT item_id, related_item_id
 				FROM `@wp_podsrel`
 				WHERE
-					`field_id` = {$params->field_id}
-					AND `item_id` IN ( {$idstring} )
+					`field_id` = %d
+					AND `item_id` IN ( {$ids_in} )
 				ORDER BY `weight`
 			";
 
-			$relationships = pods_query( $sql );
+			$prepare = [
+				$params->field_id,
+			];
+
+			$prepare = array_merge( $prepare, $params->ids );
+
+			$relationships = pods_query_prepare( $sql, $prepare );
 
 			if ( ! empty( $relationships ) ) {
 				foreach ( $relationships as $relation ) {
@@ -9317,12 +9325,12 @@ class PodsAPI {
 					SELECT item_id, related_item_id
 					FROM `@wp_podsrel`
 					WHERE
-						`related_field_id` = {$params->field_id}
-						AND `related_item_id` IN ( {$idstring} )
+						`related_field_id` = %d
+						AND `related_item_id` IN ( {$ids_in} )
 					ORDER BY `weight`
 				";
 
-				$relationships = pods_query( $sql );
+				$relationships = pods_query_prepare( $sql, $prepare );
 
 				if ( ! empty( $relationships ) ) {
 					foreach ( $relationships as $relation ) {

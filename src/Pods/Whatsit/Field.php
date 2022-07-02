@@ -327,14 +327,30 @@ class Field extends Whatsit {
 	 * @return int The field value limit.
 	 */
 	public function get_limit() {
-		$type   = $this->get_type();
-		$format = $this->get_arg( $type .'_format_type', 'single' );
+		$type = $this->get_type();
 
-		if ( 'multi' === $format ) {
-			return (int) $this->get_arg( $type . '_limit', 0 );
+		if ( 'multi' === $this->get_single_multi() ) {
+			return (int) $this->get_type_arg( '_limit', 0 );
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Get whether the field allows for single or multi tableless field values.
+	 *
+	 * @since TBD
+	 *
+	 * @return string Whether the field allows for single or multi tableless field values.
+	 */
+	public function get_single_multi() {
+		$format_type = $this->get_arg( $this->get_type() .'_format_type', 'single' );
+
+		if ( ! $format_type ) {
+			return 'single';
+		}
+
+		return $format_type;
 	}
 
 	/**

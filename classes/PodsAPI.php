@@ -9327,7 +9327,7 @@ class PodsAPI {
 						$gathered_ids[ (int) $relation->item_id ] = [];
 					}
 
-					$gathered_ids[ (int) $relation->item_id ] = (int) $relation->related_item_id;
+					$gathered_ids[ (int) $relation->item_id ][] = (int) $relation->related_item_id;
 				}
 			}
 
@@ -9365,7 +9365,7 @@ class PodsAPI {
 							$gathered_ids[ (int) $relation->related_item_id ] = [];
 						}
 
-						$gathered_ids[ (int) $relation->related_item_id ] = (int) $relation->item_id;
+						$gathered_ids[ (int) $relation->related_item_id ][] = (int) $relation->item_id;
 					}
 				}
 			}

@@ -5563,29 +5563,38 @@ class PodsAPI {
 
 			$field_table_info = $field['table_info'];
 
+			$search_data = null;
+
 			if ( ! empty( $field_table_info['pod'] ) && ! empty( $field_table_info['pod']['name'] ) ) {
 				$search_data = pods( $field_table_info['pod']['name'] );
 
 				$data_mode = 'pods';
 			} else {
-				$search_data = pods_data();
-				$search_data->table( $field_table_info );
+				try {
+					$search_data = pods_data();
+					$search_data->table( $field_table_info );
 
-				$data_mode = 'data';
+					$data_mode = 'data';
+				} catch ( Exception $exception ) {
+					$search_data = null;
+					// There shouldn't be any exceptions happening.
+				}
 			}
 
-			$find_rel_params = [
-				'select'     => "`t`.`{$search_data->field_id}`",
-				'where'      => "`t`.`{$search_data->field_slug}` = %s OR `t`.`{$search_data->field_index}` = %s",
-				'limit'      => 1,
-				'pagination' => false,
-				'search'     => false
-			];
+			if ( $search_data ) {
+				$find_rel_params = [
+					'select'     => "`t`.`{$search_data->field_id}`",
+					'where'      => "`t`.`{$search_data->field_slug}` = %s OR `t`.`{$search_data->field_index}` = %s",
+					'limit'      => 1,
+					'pagination' => false,
+					'search'     => false
+				];
 
-			if ( empty( $search_data->field_slug ) && ! empty( $search_data->field_index ) ) {
-				$find_rel_params['where'] = "`t`.`{$search_data->field_index}` = %s";
-			} elseif ( empty( $search_data->field_slug ) && empty( $search_data->field_index ) ) {
-				$find_rel_params = false;
+				if ( empty( $search_data->field_slug ) && ! empty( $search_data->field_index ) ) {
+					$find_rel_params['where'] = "`t`.`{$search_data->field_index}` = %s";
+				} elseif ( empty( $search_data->field_slug ) && empty( $search_data->field_index ) ) {
+					$find_rel_params = false;
+				}
 			}
 
 			$is_taggable = 1 === (int) pods_v( $field_type . '_taggable', $field );
@@ -5619,7 +5628,7 @@ class PodsAPI {
 								continue;
 							}
 						}
-					} else {
+					} elseif ( $search_data ) {
 						// Reference by slug
 						$v_data = false;
 

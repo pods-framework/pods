@@ -61,6 +61,25 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 }
 
 /**
+ * Prepare and run the query.
+ *
+ * @since 2.8.22
+ *
+ * @see   PodsData::query
+ *
+ * @param string $sql              SQL Query
+ * @param array  $prepare          Variables to prepare for the SQL query.
+ * @param string $error            (optional) The failure message
+ * @param string $results_error    (optional) Throw an error if a records are found
+ * @param string $no_results_error (optional) Throw an error if no records are found
+ *
+ * @return array|bool|mixed|null|void
+ */
+function pods_query_prepare( $sql, $prepare, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
+	return pods_query( [ $sql, $prepare ], $error, $results_error, $no_results_error );
+}
+
+/**
  * Standardize filters / actions
  *
  * @param string $scope Scope of the filter / action (ui for PodsUI, api for PodsAPI, etc..)

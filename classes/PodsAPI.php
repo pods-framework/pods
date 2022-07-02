@@ -5506,10 +5506,10 @@ class PodsAPI {
 	 *
 	 * @since 2.8.22
 	 *
-	 * @param Pod|array   $pod    The Pod object.
-	 * @param Field|array $field  The field object.
-	 * @param array       $values The values to be prepared.
-	 * @param array       $pieces The pieces used for filtering.
+	 * @param Pod|array    $pod    The Pod object.
+	 * @param Field|array  $field  The field object.
+	 * @param array|string $values The values to be prepared.
+	 * @param array        $pieces The pieces used for filtering.
 	 *
 	 * @return array|null The value_ids and field_save_values information used to save relationships data with, or null if field type is not tableless or is a simple relationship.
 	 */
@@ -5527,6 +5527,22 @@ class PodsAPI {
 		if ( ! in_array( $field_type, $tableless_field_types, true ) ) {
 			return null;
 		}
+
+		// Store relational field data to be looped through later
+		// Convert values from a comma-separated string into an array
+		if ( ! is_array( $values ) ) {
+			if ( is_string( $values ) ) {
+				$values = explode( ',', $values );
+			} elseif ( is_numeric( $values ) ) {
+				$values = [
+					$values
+				];
+			} else {
+				$values = [];
+			}
+		}
+
+		$values = array_filter( $values );
 
 		$is_file_field = in_array( $field_type, $file_field_types, true );
 
@@ -5565,8 +5581,6 @@ class PodsAPI {
 
 			$field_table_info = $field['table_info'];
 
-			$search_data = null;
-
 			if ( ! empty( $field_table_info['pod'] ) && ! empty( $field_table_info['pod']['name'] ) ) {
 				$search_data = pods( $field_table_info['pod']['name'] );
 
@@ -5578,8 +5592,7 @@ class PodsAPI {
 
 					$data_mode = 'data';
 				} catch ( Exception $exception ) {
-					$search_data = null;
-					// There shouldn't be any exceptions happening.
+					$search_data = false;
 				}
 			}
 
@@ -5613,76 +5626,74 @@ class PodsAPI {
 
 		// @todo Handle simple relationships eventually
 		foreach ( $values as $v ) {
-			if ( ! empty( $v ) ) {
-				if ( ! is_array( $v ) ) {
-					if ( ! preg_match( '/[^\D]/', $v ) ) {
-						$v = (int) $v;
-					} elseif ( $is_file_field ) {
-						// File handling
-						// Get ID from GUID
-						$v = pods_image_id_from_field( $v );
+			if ( ! is_array( $v ) ) {
+				if ( ! preg_match( '/[^\D]/', $v ) ) {
+					$v = (int) $v;
+				} elseif ( $is_file_field ) {
+					// File handling
+					// Get ID from GUID
+					$v = pods_image_id_from_field( $v );
 
-						// If file not found, add it
-						if ( empty( $v ) ) {
-							try {
-								$v = pods_attachment_import( $v );
-							} catch ( Exception $exception ) {
-								continue;
-							}
-						}
-					} elseif ( $search_data ) {
-						// Reference by slug
-						$v_data = false;
-
-						if ( false !== $find_rel_params ) {
-							$rel_params          = $find_rel_params;
-							$rel_params['where'] = $wpdb->prepare( $rel_params['where'], array( $v, $v ) );
-
-							$search_data->select( $rel_params );
-
-							$v_data = $search_data->fetch( $v );
-						}
-
-						if ( ! empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) ) {
-							$v = (int) $v_data[ $search_data->field_id ];
-						} elseif ( $is_taggable && 'pods' === $data_mode ) {
-							// Allow tagging for Pods objects
-							$tag_data = array(
-								$search_data->field_index => $v
-							);
-
-							if ( 'post_type' === $search_data->pod_data['type'] ) {
-								$tag_data['post_status'] = 'publish';
-							}
-
-							/**
-							 * Filter for changing tag before adding new item.
-							 *
-							 * @param array  $tag_data    Fields for creating new item.
-							 * @param int    $v           Field ID of tag.
-							 * @param Pods   $search_data Search object for tag.
-							 * @param string $field_name  Table info for field.
-							 * @param array  $pieces      Field array.
-							 *
-							 * @since 2.3.19
-							 */
-							$tag_data = apply_filters( 'pods_api_save_pod_item_taggable_data', $tag_data, $v, $search_data, $field, $pieces );
-
-							// Save $v to a new item on related object
-							$v = $search_data->add( $tag_data );
-
-							// @todo Support non-Pods for tagging
+					// If file not found, add it
+					if ( empty( $v ) ) {
+						try {
+							$v = pods_attachment_import( $v );
+						} catch ( Exception $exception ) {
+							continue;
 						}
 					}
-				} elseif ( $is_file_field && isset( $v['id'] ) ) {
-					$v = (int) $v['id'];
-				} else {
-					continue;
-				}
+				} elseif ( $search_data ) {
+					// Reference by slug
+					$v_data = false;
 
-				if ( ! empty( $v ) && ! in_array( $v, $value_ids, true ) ) {
-					$value_ids[] = $v;
+					if ( false !== $find_rel_params ) {
+						$rel_params          = $find_rel_params;
+						$rel_params['where'] = $wpdb->prepare( $rel_params['where'], array( $v, $v ) );
+
+						$search_data->select( $rel_params );
+
+						$v_data = $search_data->fetch( $v );
+					}
+
+					if ( ! empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) ) {
+						$v = (int) $v_data[ $search_data->field_id ];
+					} elseif ( $is_taggable && 'pods' === $data_mode ) {
+						// Allow tagging for Pods objects
+						$tag_data = array(
+							$search_data->field_index => $v
+						);
+
+						if ( 'post_type' === $search_data->pod_data['type'] ) {
+							$tag_data['post_status'] = 'publish';
+						}
+
+						/**
+						 * Filter for changing tag before adding new item.
+						 *
+						 * @param array  $tag_data    Fields for creating new item.
+						 * @param int    $v           Field ID of tag.
+						 * @param Pods   $search_data Search object for tag.
+						 * @param string $field_name  Table info for field.
+						 * @param array  $pieces      Field array.
+						 *
+						 * @since 2.3.19
+						 */
+						$tag_data = apply_filters( 'pods_api_save_pod_item_taggable_data', $tag_data, $v, $search_data, $field, $pieces );
+
+						// Save $v to a new item on related object
+						$v = $search_data->add( $tag_data );
+
+						// @todo Support non-Pods for tagging
+					}
 				}
+			} elseif ( $is_file_field && isset( $v['id'] ) ) {
+				$v = (int) $v['id'];
+			} else {
+				continue;
+			}
+
+			if ( ! empty( $v ) && ! in_array( $v, $value_ids, true ) ) {
+				$value_ids[] = $v;
 			}
 		}
 

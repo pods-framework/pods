@@ -5664,7 +5664,7 @@ class PodsAPI {
 							 *
 							 * @since 2.3.19
 							 */
-							$tag_data = apply_filters( 'pods_api_save_pod_item_taggable_data', $tag_data, $v, $search_data, $field, compact( $pieces ) );
+							$tag_data = apply_filters( 'pods_api_save_pod_item_taggable_data', $tag_data, $v, $search_data, $field, $pieces );
 
 							// Save $v to a new item on related object
 							$v = $search_data->add( $tag_data );

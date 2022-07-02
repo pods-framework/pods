@@ -339,7 +339,7 @@ class Field extends Whatsit {
 	/**
 	 * Get whether the field allows for single or multi tableless field values.
 	 *
-	 * @since TBD
+	 * @since 2.8.22
 	 *
 	 * @return string Whether the field allows for single or multi tableless field values.
 	 */

@@ -5327,7 +5327,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering the list of processed data values that will be used to do the final save.
 		 *
-		 * @since TBD
+		 * @since 2.8.22
 		 *
 		 * @param array $data_to_save The list of processed data values that will be used to do the final save.
 		 */
@@ -5504,10 +5504,12 @@ class PodsAPI {
 	/**
 	 * Prepare file/relationship data to be saved.
 	 *
-	 * @param \Pods\Whatsit\Pod|array $pod The Pod object.
-	 * @param \Pods\Whatsit\Field|array $field The field object.
-	 * @param array $values The values to be prepared.
-	 * @param array $pieces The pieces used for filtering. @todo Figure this out.
+	 * @since 2.8.22
+	 *
+	 * @param Pod|array   $pod    The Pod object.
+	 * @param Field|array $field  The field object.
+	 * @param array       $values The values to be prepared.
+	 * @param array       $pieces The pieces used for filtering.
 	 *
 	 * @return array|null The value_ids and field_save_values information used to save relationships data with, or null if field type is not tableless or is a simple relationship.
 	 */
@@ -9321,7 +9323,7 @@ class PodsAPI {
 			/**
 			 * Allow filtering whether bidirectional fallback should be used for podsrel table lookups.
 			 *
-			 * @since TBD
+			 * @since 2.8.22
 			 *
 			 * @param bool   $bidirectional_fallback The list of related IDs found.
 			 * @param int    $sister_id              The bidirectional sister field ID.

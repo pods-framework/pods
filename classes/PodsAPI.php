@@ -9233,6 +9233,18 @@ class PodsAPI {
 			$related_pick_limit *= count( $params->ids );
 		}
 
+		$meta_type = null;
+
+		if ( $params->pod ) {
+			$meta_type = $params->pod['type'];
+
+			if ( in_array( $meta_type, [ 'post_type', 'media' ], true ) ) {
+				$meta_type = 'post';
+			} elseif ( 'taxonomy' === $meta_type ) {
+				$meta_type = 'term';
+			}
+		}
+
 		if ( 'taxonomy' === $field_type ) {
 			$related = wp_get_object_terms( $params->ids, pods_v( 'name', $params->field ), array( 'fields' => 'ids' ) );
 
@@ -9251,9 +9263,8 @@ class PodsAPI {
 				$related_ids = $related;
 			}
 		} elseif ( ! $params->force_meta && ! pods_tableless() && pods_podsrel_enabled( $params->field, 'lookup' ) ) {
-			$ids = implode( ', ', $params->ids );
-
 			$params->field_id  = (int) $params->field_id;
+
 			$sister_id = pods_v( 'sister_id', $params->field, 0 );
 
 			if ( is_numeric( $sister_id ) ) {
@@ -9262,12 +9273,14 @@ class PodsAPI {
 				$sister_id = 0;
 			}
 
+			$gathered_ids = [];
+
 			$sql = "
-				SELECT item_id, related_item_id, related_field_id
+				SELECT item_id, related_item_id
 				FROM `@wp_podsrel`
 				WHERE
 					`field_id` = {$params->field_id}
-					AND `item_id` IN ( {$ids} )
+					AND `item_id` IN ( {$idstring} )
 				ORDER BY `weight`
 			";
 
@@ -9275,31 +9288,88 @@ class PodsAPI {
 
 			if ( ! empty( $relationships ) ) {
 				foreach ( $relationships as $relation ) {
-					if ( ! in_array( $relation->related_item_id, $related_ids ) ) {
-						$related_ids[] = (int) $relation->related_item_id;
-					} elseif ( 0 < $sister_id && $params->field_id == $relation->related_field_id && ! in_array( $relation->item_id, $related_ids ) ) {
-						$related_ids[] = (int) $relation->item_id;
+					// Skip if this is not a valid 1+ item ID.
+					if ( (int) $relation->related_item_id < 1 ) {
+						continue;
+					}
+
+					if ( ! isset( $gathered_ids[ (int) $relation->item_id ] ) ) {
+						$gathered_ids[ (int) $relation->item_id ] = [];
+					}
+
+					$gathered_ids[ (int) $relation->item_id ] = (int) $relation->related_item_id;
+				}
+			}
+
+			/**
+			 * Allow filtering whether bidirectional fallback should be used for podsrel table lookups.
+			 *
+			 * @since TBD
+			 *
+			 * @param bool   $bidirectional_fallback The list of related IDs found.
+			 * @param int    $sister_id              The bidirectional sister field ID.
+			 * @param object $params                 The parameters object for the method.
+			 */
+			$bidirectional_fallback = (bool) apply_filters( 'pods_api_lookup_related_items_bidirectional_fallback', false, $sister_id, $params );
+
+			if ( $bidirectional_fallback && 0 < $sister_id ) {
+				$sql = "
+					SELECT item_id, related_item_id
+					FROM `@wp_podsrel`
+					WHERE
+						`related_field_id` = {$params->field_id}
+						AND `related_item_id` IN ( {$idstring} )
+					ORDER BY `weight`
+				";
+
+				$relationships = pods_query( $sql );
+
+				if ( ! empty( $relationships ) ) {
+					foreach ( $relationships as $relation ) {
+						// Skip if this is not a valid 1+ item ID.
+						if ( (int) $relation->item_id < 1 ) {
+							continue;
+						}
+
+						if ( ! isset( $gathered_ids[ (int) $relation->related_item_id ] ) ) {
+							$gathered_ids[ (int) $relation->related_item_id ] = [];
+						}
+
+						$gathered_ids[ (int) $relation->related_item_id ] = (int) $relation->item_id;
 					}
 				}
 			}
+
+			// Filter the gathered IDs.
+			foreach ( $params->ids as $id ) {
+				$related_item_ids = isset( $gathered_ids[ (int) $id ] ) ? $gathered_ids[ (int) $id ] : [];
+
+				/**
+				 * Allow filtering the related IDs for an ID.
+				 *
+				 * @since 2.8.9
+				 *
+				 * @param array       $related_item_ids The list of related IDs found.
+				 * @param int         $id               The object ID.
+				 * @param string|null $meta_type        The meta type (if any).
+				 * @param object      $params           The parameters object for the method.
+				 */
+				$gathered_ids[ (int) $id ] = (array) apply_filters( 'pods_api_lookup_related_items_related_ids_for_id', $related_item_ids, $id, $meta_type, $params );
+			}
+
+			$related_ids = array_merge( ...$gathered_ids );
+			$related_ids = array_map( 'absint', $related_ids );
+			$related_ids = array_unique( $related_ids );
 		} else {
 			if ( ! ( is_array( $params->pod ) || $params->pod instanceof Pods\Whatsit ) ) {
 				$params->pod = $this->load_pod( array( 'id' => $params->pod_id ), false );
 			}
 
 			if ( ! empty( $params->pod ) ) {
-				$meta_type = $params->pod['type'];
-
-				if ( in_array( $meta_type, array( 'post_type', 'media' ), true ) ) {
-					$meta_type = 'post';
-				} elseif ( 'taxonomy' === $meta_type ) {
-					$meta_type = 'term';
-				}
-
-				$no_conflict = pods_no_conflict_check( ( 'term' === $meta_type ? 'taxonomy' : $meta_type ) );
+				$no_conflict = pods_no_conflict_check( $meta_type );
 
 				if ( ! $no_conflict ) {
-					pods_no_conflict_on( ( 'term' === $meta_type ? 'taxonomy' : $meta_type ) );
+					pods_no_conflict_on( $meta_type );
 				}
 
 				$meta_storage_types = [
@@ -9368,16 +9438,16 @@ class PodsAPI {
 					 *
 					 * @since 2.8.9
 					 *
-					 * @param array  $related_ids The list of related IDs found.
-					 * @param int    $id          The object ID.
-					 * @param string $meta_type   The meta type.
-					 * @param object $params      The parameters object for the method.
+					 * @param array       $related_item_ids The list of related IDs found.
+					 * @param int         $item_id          The object ID.
+					 * @param string|null $meta_type        The meta type (if any).
+					 * @param object      $params           The parameters object for the method.
 					 */
 					$related_ids = (array) apply_filters( 'pods_api_lookup_related_items_related_ids_for_id', $related_ids, $id, $meta_type, $params );
 				}
 
 				if ( ! $no_conflict ) {
-					pods_no_conflict_off( ( 'term' === $meta_type ? 'taxonomy' : $meta_type ) );
+					pods_no_conflict_off( $meta_type );
 				}
 			}
 		}

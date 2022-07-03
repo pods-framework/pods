@@ -677,6 +677,16 @@ class PodsField_File extends PodsField {
 			self::$api = pods_api();
 		}
 
+		if ( null === $value ) {
+			$value = [];
+		} elseif ( ! is_array( $value ) || isset( $value['id'] ) ) {
+			$value = [
+				$value,
+			];
+		}
+
+		$value = array_unique( array_filter( $value ) );
+
 		// Handle File title saving.
 		foreach ( $value as $id ) {
 			$title = false;

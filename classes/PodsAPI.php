@@ -4975,11 +4975,12 @@ class PodsAPI {
 			}
 		}
 
-		$table_data    = array();
-		$table_formats = array();
-		$update_values = array();
-		$rel_fields    = array();
-		$rel_field_ids = array();
+		$table_data         = [];
+		$table_formats      = [];
+		$update_values      = [];
+		$rel_fields         = [];
+		$rel_field_ids      = [];
+		$fields_to_run_save = [];
 
 		$object_type = $pod['type'];
 
@@ -5247,8 +5248,7 @@ class PodsAPI {
 						$field_save_value = $value_data['field_save_values'];
 					}
 
-					// Run save function for field type (where needed)
-					PodsForm::save( $type, $field_save_value, $params->id, $field, $fields[ $field ], pods_config_merge_fields( $fields, $object_fields ), $pod, $params );
+					$fields_to_run_save[ $field ] = $field_save_value;
 				} else {
 					// Store relational field data to be looped through later.
 					$rel_fields[ $type ][ $field ] = $value_data;
@@ -5406,52 +5406,66 @@ class PodsAPI {
 			pods_no_conflict_on( $pod['type'] );
 		}
 
+		$all_fields = pods_config_merge_fields( $fields, $object_fields );
+
+		// Handle other save processes based on field type.
+		foreach ( $fields_to_run_save as $field_name => $field_save_value ) {
+			// Run save function for field type (where needed).
+			PodsForm::save( $fields[ $field_name ]['type'], $field_save_value, $params->id, $field_name, $fields[ $field_name ], $all_fields, $pod, $params );
+		}
+
 		// Save relationship / file data
 		if ( ! empty( $rel_fields ) ) {
 			foreach ( $rel_fields as $type => $data ) {
-				foreach ( $data as $field => $value_data ) {
-					$value_ids = $value_data['value_ids'];
+				foreach ( $data as $field_name => $value_data ) {
+					$field_data = $fields[ $field_name ];
+					$field_id   = $field_data['id'];
+
+					$value_ids         = $value_data['value_ids'];
 					$field_save_values = $value_data['field_save_values'];
 
-					$related_data = pods_static_cache_get( $fields[ $field ]['name'] . '/' . $fields[ $field ]['id'], 'PodsField_Pick/related_data' ) ?: [];
+					$related_data = pods_static_cache_get( $field_name . '/' . $field_id, 'PodsField_Pick/related_data' ) ?: [];
 
 					// Get current values
 					if ( 'pick' === $type && isset( $related_data[ 'current_ids_' . $params->id ] ) ) {
 						$related_ids = $related_data[ 'current_ids_' . $params->id ];
 					} else {
-						$related_ids = $this->lookup_related_items( $fields[ $field ]['id'], $pod['id'], $params->id, $fields[ $field ], $pod );
+						$related_ids = $this->lookup_related_items( $field_id, $pod['id'], $params->id, $field_data, $pod );
 					}
 
 					// Get ids to remove
 					$remove_ids = array_diff( $related_ids, $value_ids );
 
-					if ( ! empty( $fields[ $field ] ) ) {
+					if ( ! empty( $field_data ) ) {
 						// Delete relationships
 						if ( ! empty( $remove_ids ) ) {
-							$this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
+							$this->delete_relationships( $params->id, $remove_ids, $pod, $field_data );
 						}
 
 						// Save relationships
 						if ( ! empty( $value_ids ) ) {
-							$this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+							$this->save_relationships( $params->id, $value_ids, $pod, $field_data );
 						}
 					}
 
-					// Run save function for field type (where needed)
-					PodsForm::save( $type, $field_save_values, $params->id, $field, $fields[ $field ], pods_config_merge_fields( $fields, $object_fields ), $pod, $params );
+					// Run save function for field type (where needed).
+					PodsForm::save( $type, $field_save_values, $params->id, $field_name, $field_data, $all_fields, $pod, $params );
 				}
 
 				// Unset data no longer needed
 				if ( 'pick' === $type ) {
-					foreach ( $data as $field => $values ) {
-						$related_data = pods_static_cache_get( $fields[ $field ]['name'] . '/' . $fields[ $field ]['id'], 'PodsField_Pick/related_data' ) ?: [];
+					foreach ( $data as $field_name => $value_data ) {
+						$field_data = $fields[ $field_name ];
+						$field_id   = $field_data['id'];
+
+						$related_data = pods_static_cache_get( $field_name . '/' . $field_id, 'PodsField_Pick/related_data' ) ?: [];
 
 						if ( ! empty( $related_data ) ) {
 							if ( ! empty( $related_data['related_field'] ) ) {
 								pods_static_cache_clear( $related_data['related_field']['name'] . '/' . $related_data['related_field']['id'], 'PodsField_Pick/related_data' );
 							}
 
-							pods_static_cache_clear( $fields[ $field ]['name'] . '/' . $fields[ $field ]['id'], 'PodsField_Pick/related_data' );
+							pods_static_cache_clear( $field_name . '/' . $field_id, 'PodsField_Pick/related_data' );
 						}
 					}
 				}
@@ -5474,7 +5488,7 @@ class PodsAPI {
 		}
 
 		// Clear WP meta cache
-		if ( in_array( $pod['type'], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
+		if ( in_array( $pod['type'], [ 'post_type', 'media', 'taxonomy', 'user', 'comment' ], true ) ) {
 			$meta_type = $pod['type'];
 
 			if ( 'post_type' === $meta_type ) {

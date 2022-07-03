@@ -344,7 +344,11 @@ class Field extends Whatsit {
 	 * @return string Whether the field allows for single or multi tableless field values.
 	 */
 	public function get_single_multi() {
-		$format_type = $this->get_arg( $this->get_type() .'_format_type', 'single' );
+		if ( ! $this->is_relationship() ) {
+			return 'single';
+		}
+
+		$format_type = $this->get_type_arg( 'format_type', 'single' );
 
 		if ( ! $format_type ) {
 			return 'single';

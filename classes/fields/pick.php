@@ -1739,6 +1739,14 @@ class PodsField_Pick extends PodsField {
 		$current_ids        = [];
 		$remove_ids         = [];
 
+		if ( null === $value ) {
+			$value = [];
+		} elseif ( ! is_array( $value ) ) {
+			$value = [
+				$value,
+			];
+		}
+
 		$value_ids = array_unique( array_filter( $value ) );
 
 		$related_data = pods_static_cache_get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];

@@ -158,17 +158,19 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.8.22 - July 3rd, 2022 =
 
-* Added: Support `IN` and `NOT IN` comparisons for the Pods Templating `[if]` conditional shortcode that checks if the current value is/isn't within a comma-separated list of values.
-* Added: Support `=` and `!=` comparisons when the current value is an array of values, it now confirms the value is/isn't within that array.
-* Added: When saving pod items, support field-type specific save method for non-tableless field types for future flexibility.
-* Added: New `pods_query_prepare()` function maps to `pods_query()` but allows for distinct prepare usage instead of confusing array syntax.
-* Added: Added new `Field::get_single_multi()` helper method to determine whether a field is using a single/multi format type.
-* Tweak: When saving pod items, pre-process tableless field type data consistently to better support table-based storage.
-* Tweak: When saving pod items, allow filtering the list of processed data values that will be used to do the final save with `pods_api_save_pod_item_processed_data_to_save`.
-* Tweak: Adjusted the prepared SQL statements to use the new `pods_query_prepare()` when doing `wp_podsrel` table relationship lookups.
-* Tweak: Filter `wp_podsrel` table relationship lookup related IDs the same way as meta-based related IDs get with the `pods_api_lookup_related_items_related_ids_for_id` filter.
-* Fixed: Avoid setting post terms that are empty when saving pod item.
-* Fixed: Dot-traversal in Pods Templating `[if]` conditional shortcodes references the correct pod and expected field path.
+* Added: Support `IN` and `NOT IN` comparisons for the Pods Templating `[if]` conditional shortcode that checks if the current value is/isn't within a comma-separated list of values. (@sc0ttkclark)
+* Added: Support `=` and `!=` comparisons when the current value is an array of values, it now confirms the value is/isn't within that array. (@sc0ttkclark)
+* Added: When saving pod items, support field-type specific save method for non-tableless field types for future flexibility. (@sc0ttkclark)
+* Added: New `pods_query_prepare()` function maps to `pods_query()` but allows for distinct prepare usage instead of confusing array syntax. (@sc0ttkclark)
+* Added: Added new `Field::get_single_multi()` helper method to determine whether a field is using a single/multi format type. (@sc0ttkclark)
+* Tweak: When saving pod items, pre-process tableless field type data consistently to better support table-based storage. (@sc0ttkclark)
+* Tweak: When saving pod items, allow filtering the list of processed data values that will be used to do the final save with `pods_api_save_pod_item_processed_data_to_save`. (@sc0ttkclark)
+* Tweak: Adjusted the prepared SQL statements to use the new `pods_query_prepare()` when doing `wp_podsrel` table relationship lookups. (@sc0ttkclark)
+* Tweak: Filter `wp_podsrel` table relationship lookup related IDs the same way as meta-based related IDs get with the `pods_api_lookup_related_items_related_ids_for_id` filter. (@sc0ttkclark)
+* Tweak: Support custom heading tags for the Heading field in the DFV-powered areas like the Edit Pod screen. (@sc0ttkclark)
+* Tweak: Further lock down custom heading tags in PHP-powered forms so that they can only contain basic tag names. (@sc0ttkclark)
+* Fixed: Avoid setting post terms that are empty when saving pod item. (@sc0ttkclark)
+* Fixed: Dot-traversal in Pods Templating `[if]` conditional shortcodes references the correct pod and expected field path. (@sc0ttkclark)
 
 = 2.8.21 - June 27th, 2022 =
 

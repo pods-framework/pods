@@ -8,6 +8,7 @@ import './heading.scss';
 const Heading = ( props ) => {
 	const {
 		fieldConfig: {
+			heading_tag: headingTag = 'h3',
 			helpText,
 			label,
 			name,
@@ -23,15 +24,21 @@ const Heading = ( props ) => {
 		? helpText[ 1 ]
 		: undefined;
 
+	let htmlTag = 'h3';
+
+	if ( '' !== headingTag ) {
+		htmlTag = headingTag;
+	}
+
 	return (
-		<h3 className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
+		<htmlTag className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
 			{ label }
 			{ shouldShowHelpText && (
 				<HelpTooltip
 					helpText={ helpTextString }
 					helpLink={ helpLink }
 				/> ) }
-		</h3>
+		</htmlTag>
 	);
 };
 

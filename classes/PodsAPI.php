@@ -5182,7 +5182,7 @@ class PodsAPI {
 						|| $save_non_simple_to_table
 					)
 				) {
-					$value_data = $this->prepare_relationship_data_for_save( $pod, $field_data, $value, compact( $pieces ) );
+					$value_data = $this->prepare_tableless_data_for_save( $pod, $field_data, $value, compact( $pieces ) );
 				}
 
 				// Prepare all table / meta data.
@@ -5240,6 +5240,15 @@ class PodsAPI {
 						// Save simple to meta.
 						$simple_rel_meta[ $field ] = $value;
 					}
+
+					$field_save_value = $value;
+
+					if ( $value_data ) {
+						$field_save_value = $value_data['field_save_values'];
+					}
+
+					// Run save function for field type (where needed)
+					PodsForm::save( $type, $field_save_value, $params->id, $field, $fields[ $field ], pods_config_merge_fields( $fields, $object_fields ), $pod, $params );
 				} else {
 					// Store relational field data to be looped through later.
 					$rel_fields[ $type ][ $field ] = $value_data;
@@ -5502,7 +5511,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * Prepare file/relationship data to be saved.
+	 * Prepare tableless (file/relationship) data to be saved.
 	 *
 	 * @since 2.8.22
 	 *
@@ -5511,9 +5520,9 @@ class PodsAPI {
 	 * @param array|string $values The values to be prepared.
 	 * @param array        $pieces The pieces used for filtering.
 	 *
-	 * @return array|null The value_ids and field_save_values information used to save relationships data with, or null if field type is not tableless or is a simple relationship.
+	 * @return array|null The value_ids, field_save_values, meta_save_values, and table_save_value information used to save relationships data with, or null if field type is not tableless or is a simple relationship.
 	 */
-	public function prepare_relationship_data_for_save( $pod, $field, $values, $pieces ) {
+	public function prepare_tableless_data_for_save( $pod, $field, $values, $pieces ) {
 		global $wpdb;
 
 		$field_type = $field['type'];
@@ -5521,8 +5530,6 @@ class PodsAPI {
 		$pods_api = pods_api();
 
 		$tableless_field_types = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
-		$file_field_types = PodsForm::file_field_types();
 
 		if ( ! in_array( $field_type, $tableless_field_types, true ) ) {
 			return null;
@@ -5543,6 +5550,9 @@ class PodsAPI {
 		}
 
 		$values = array_filter( $values );
+
+		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+		$file_field_types         = PodsForm::file_field_types();
 
 		$is_file_field = in_array( $field_type, $file_field_types, true );
 

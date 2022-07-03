@@ -5344,7 +5344,12 @@ class PodsAPI {
 		$data_to_save = (array) apply_filters( 'pods_api_save_pod_item_processed_data_to_save', $data_to_save );
 
 		foreach ( $data_to_filter as $data_var ) {
-			$$data_var = isset( $data_to_save[ $data_var ] ) ? $data_to_save[ $data_var ] : null;
+			// Skip variables not returned in filter.
+			if ( ! isset( $data_to_save[ $data_var ] ) ) {
+				continue;
+			}
+
+			$$data_var = $data_to_save[ $data_var ];
 		}
 
 		if ( $is_not_external_pod ) {

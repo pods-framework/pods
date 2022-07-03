@@ -24,11 +24,7 @@ const Heading = ( props ) => {
 		? helpText[ 1 ]
 		: undefined;
 
-	let htmlTag = 'h3';
-
-	if ( '' !== headingTag ) {
-		htmlTag = headingTag;
-	}
+	const htmlTag = '' !== headingTag ? `${headingTag}` : `h3`;
 
 	return (
 		<htmlTag className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>

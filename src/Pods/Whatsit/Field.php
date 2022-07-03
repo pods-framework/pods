@@ -330,7 +330,7 @@ class Field extends Whatsit {
 		$type = $this->get_type();
 
 		if ( 'multi' === $this->get_single_multi() ) {
-			return (int) $this->get_type_arg( '_limit', 0 );
+			return (int) $this->get_type_arg( 'limit', 0 );
 		}
 
 		return 1;

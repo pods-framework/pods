@@ -355,13 +355,13 @@ class PodsField_Pick extends PodsField {
 			static::$type . '_user_role'                => [
 				'label'            => __( 'Limit list by Role(s)', 'pods' ),
 				'help'             => __( 'You can choose to limit Users available for selection by specific role(s).', 'pods' ) . ' ' . $fallback_help,
-				'depends-on'       => [
-					static::$type . '_object' => 'user',
-				],
 				'default'          => '',
 				'type'             => 'pick',
 				'pick_object'      => 'role',
 				'pick_format_type' => 'multi',
+				'depends-on'       => [
+					static::$type . '_object' => 'user',
+				],
 			],
 			static::$type . '_where'                    => [
 				'label'       => __( 'Customized <em>WHERE</em>', 'pods' ),

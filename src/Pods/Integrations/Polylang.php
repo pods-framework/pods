@@ -17,6 +17,7 @@ class Polylang extends Integration {
 	protected $hooks = [
 		'action' => [
 			'pods_meta_init' => [ 'pods_meta_init' ],
+			'pods_form_ui_field_pick_related_objects_other' => [ 'pods_pick_field_add_related_objects' ],
 		],
 		'filter' => [
 			'pods_get_current_language' => [ 'pods_get_current_language', 10, 2 ],
@@ -100,6 +101,21 @@ class Polylang extends Integration {
 		$ignored_types['taxonomy']['term_translations'] = true;
 
 		return $ignored_types;
+	}
+
+	/**
+	 * Add the Polylang language taxonomy to be used in relationships.
+	 *
+	 * @since 2.8.21
+	 */
+	public function pods_pick_field_add_related_objects() {
+		$taxonomy = get_taxonomy( 'language' );
+
+		\PodsField_Pick::$related_objects[ 'taxonomy-language' ] = array(
+			'label'         => $taxonomy->label . ' (' . $taxonomy->name . ')',
+			'group'         => __( 'Polylang', 'pods' ),
+			'bidirectional' => false,
+		);
 	}
 
 	/**

@@ -5,6 +5,9 @@
  * @package Pods_Frontier_Template_Editor\view_template
  */
 
+use Pods\Whatsit\Pod;
+use Pods\Whatsit\Field;
+
 // add filters
 add_filter( 'pods_templates_post_template', 'frontier_end_template', 25, 4 );
 add_filter( 'pods_templates_do_template', 'frontier_do_shortcode', 25, 1 );
@@ -178,14 +181,16 @@ function frontier_if_block( $attributes, $code ) {
 		$comparisons = [
 			'=',
 			'!=',
+			'IN',
+			'NOT IN',
+			'EXISTS',
+			'NOT EXISTS',
 			'>',
 			'>=',
 			'<',
 			'<=',
 			'LIKE',
 			'NOT LIKE',
-			'EXISTS',
-			'NOT EXISTS',
 			'EMPTY',
 			'NOT EMPTY',
 		];
@@ -202,13 +207,13 @@ function frontier_if_block( $attributes, $code ) {
 		// Handle comparison.
 		if ( '=' === $attributes['compare'] ) {
 			if ( $maybe_array ) {
-				$pass = $field_data === $attributes['value'];
+				$pass = in_array( (string) $attributes['value'], (array) $field_data, false );
 			} else {
 				$pass = (string) $field_data === (string) $attributes['value'];
 			}
 		} elseif ( '!=' === $attributes['compare'] ) {
 			if ( $maybe_array ) {
-				$pass = $field_data !== $attributes['value'];
+				$pass = ! in_array( (string) $attributes['value'], (array) $field_data, false );
 			} else {
 				$pass = (string) $field_data !== (string) $attributes['value'];
 			}
@@ -219,6 +224,10 @@ function frontier_if_block( $attributes, $code ) {
 		} elseif ( $maybe_array ) {
 			// We do not support comparisons for array values beyond equals.
 			$pass = false;
+		} elseif ( 'IN' === $attributes['compare'] ) {
+			$pass = in_array( (string) $field_data, explode( ',', $attributes['value'] ), false );
+		} elseif ( 'NOT IN' === $attributes['compare'] ) {
+			$pass = ! in_array( (string) $field_data, explode( ',', $attributes['value'] ), false );
 		} elseif ( '>' === $attributes['compare'] ) {
 			$pass = (float) $field_data > (float) $attributes['value'];
 		} elseif ( '>=' === $attributes['compare'] ) {
@@ -612,8 +621,9 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 /**
  * processes template code within an each command from the base template
  *
- * @param array attributes from template
- * @param string template to be processed
+ * @param array  $code     The code to filter.
+ * @param string $template The template to be processed.
+ * @param Pods   $pod      The Pods object.
  *
  * @return null
  * @since 2.4.0
@@ -677,8 +687,8 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 				$value   = null;
 				$compare = null;
 
-				$ID    = '{@EntryID}';
-				$atts  = ' pod="{@pod}"';
+				$pod_name = '{@pod}';
+				$ID       = '{@EntryID}';
 
 				if ( '' !== $matches['field_attr'][ $key ] ) {
 					$field = $matches['field'][ $key ];
@@ -705,13 +715,33 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 
 				if ( $field && false !== strpos( $field, '.' ) ) {
 					// Take the last element off of the array and use the ID.
-					$path  = explode( '.', $field );
-					$field = array_pop( $path );
+					$field_path = explode( '.', $field );
+					$last_field = array_pop( $field_path );
+					$field_path = implode( '.', $field_path );
 
-					// Rebuild the ID used for the lookup.
-					$ID    = '{@' . implode( '.', $path ) . '.' . $pod->pod_data['field_id'] . '}';
+					$related_field = $pod->pod_data->get_field( $field_path );
+
+					if ( $related_field instanceof Field && 1 === $related_field->get_limit() ) {
+						$related_pod = $related_field->get_related_object();
+
+						if ( $related_pod instanceof Pod ) {
+							$table_field_id = $related_pod->get_arg( 'field_id' );
+
+							if ( $table_field_id ) {
+								// Use the other pod.
+								$pod_name = $related_pod->get_name();
+
+								// Rebuild the ID used for the lookup.
+								$ID = '{@' . $field_path . '.' . $table_field_id . '}';
+
+								// Override the field to use.
+								$field = $last_field;
+							}
+						}
+					}
 				}
 
+				$atts  = ' pod="' . esc_attr( $pod_name ) . '"';
 				$atts .= ' id="' . esc_attr( $ID ) . '"';
 
 				if ( $field ) {

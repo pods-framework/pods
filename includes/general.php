@@ -61,6 +61,25 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 }
 
 /**
+ * Prepare and run the query.
+ *
+ * @since 2.8.22
+ *
+ * @see   PodsData::query
+ *
+ * @param string $sql              SQL Query
+ * @param array  $prepare          Variables to prepare for the SQL query.
+ * @param string $error            (optional) The failure message
+ * @param string $results_error    (optional) Throw an error if a records are found
+ * @param string $no_results_error (optional) Throw an error if no records are found
+ *
+ * @return array|bool|mixed|null|void
+ */
+function pods_query_prepare( $sql, $prepare, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
+	return pods_query( [ $sql, $prepare ], $error, $results_error, $no_results_error );
+}
+
+/**
  * Standardize filters / actions
  *
  * @param string $scope Scope of the filter / action (ui for PodsUI, api for PodsAPI, etc..)
@@ -2821,7 +2840,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 	$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
 	$metadata_integration = 1 === (int) pods_get_setting( 'metadata_integration', 1 );
-	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.18', '<=' ) ? 1 : 0 );
+	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
 
 	$is_tableless = pods_tableless();
 

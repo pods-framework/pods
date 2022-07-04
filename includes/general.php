@@ -17,10 +17,10 @@ use Pods\Static_Cache;
  *
  * @see   PodsData::query
  *
- * @param string|array $sql              SQL Query
- * @param string       $error            (optional) The failure message
- * @param string       $results_error    (optional) Throw an error if a records are found
- * @param string       $no_results_error (optional) Throw an error if no records are found
+ * @param string|array $sql              The SQL query or an array with the SQL query and the values to prepare.
+ * @param string       $error            (optional) The failure message to use for Database errors.
+ * @param string       $results_error    (optional) Throw an error if a records are found.
+ * @param string       $no_results_error (optional) Throw an error if no records are found.
  *
  * @return array|bool|mixed|null|void
  * @since 2.0.0

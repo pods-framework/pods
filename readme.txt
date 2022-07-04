@@ -165,7 +165,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Resolved potential PHP warnings on certain sites by preparing SQL queries separately from other string processing. #6556 #6555 #6554 (@JoryHogeveen, @sc0ttkclark)
 * Fixed: Resolved potential PHP notices when getting table information in `PodsData::table()`. (@JoryHogeveen)
 * Fixed: Resolved potential PHP type conversion warnings by passing `SORT_REGULAR` to `array_unique()`` in the File field saving process. (@JoryHogeveen)
-* Fixed: Pods Auto Templates defaults for some fields were set to "true" and that is now treated as empty. The default for those fields are now empty as intended. This resolves notices on the Edit Pod screen about templates being used for Archives when Archives are disabled, but there was no template intentionally set for Archive. (@sc0ttkclark) 
+* Fixed: Pods Auto Templates defaults for some fields were set to "true" and that is now treated as empty. The default for those fields are now empty as intended. This resolves notices on the Edit Pod screen about templates being used for Archives when Archives are disabled, but there was no template intentionally set for Archive. (@sc0ttkclark)
 
 = 2.8.22.1 - July 3rd, 2022 =
 

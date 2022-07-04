@@ -3,6 +3,7 @@
 namespace Pods_Unit_Tests\Functions;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use Exception;
 use stdClass;
 
 /**
@@ -13,6 +14,14 @@ use stdClass;
 class DataTest extends Pods_UnitTestCase {
 
 	public static $db_reset_teardown = false;
+
+	public function tearDown(): void {
+		global $wpdb;
+
+		$wpdb->show_errors( true );
+
+		parent::tearDown();
+	}
 
 	/**
 	 * @covers ::pods_sanitize
@@ -293,6 +302,199 @@ class DataTest extends Pods_UnitTestCase {
 
 	public function test_pods_query_arg() {
 		$this->markTestSkipped( 'not yet implemented' );
+	}
+
+	public function test_pods_query() {
+		$sql = "
+			SELECT ID
+			FROM @wp_posts
+		    LIMIT 1
+	    ";
+
+		$result = pods_query( $sql );
+
+		$this->assertIsArray( $result );
+		$this->assertCount( 1, $result );
+		$this->assertArrayHasKey( 0, $result );
+		$this->assertIsObject( $result[0] );
+		$this->assertObjectHasAttribute( 'ID', $result[0] );
+		$this->assertIsNumeric( $result[0]->ID );
+	}
+
+	public function test_pods_query_with_error() {
+		global $wpdb;
+
+		$wpdb->hide_errors();
+		$wpdb->suppress_errors( true );
+
+		$sql = "
+			SELECT ID
+			FROM @wp_postssssss
+		    WHERE ID = 123456
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'Database Error' );
+
+		$result = pods_query( $sql );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_pods_query_with_custom_error_message() {
+		global $wpdb;
+
+		$wpdb->hide_errors();
+		$wpdb->suppress_errors( true );
+
+		$sql = "
+			SELECT ID
+			FROM @wp_postssssss
+		    WHERE ID = 123456
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'Custom database error message' );
+
+		$result = pods_query( $sql, 'Custom database error message' );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_pods_query_with_results_error() {
+		$sql = "
+			SELECT ID
+			FROM @wp_posts
+		    WHERE ID != 123456
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'I have results but I should not' );
+
+		$result = pods_query( $sql, 'Database Error', 'I have results but I should not' );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_pods_query_with_no_results_error() {
+		$sql = "
+			SELECT ID
+			FROM @wp_posts
+		    WHERE ID = 123456
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'I have no results but I should' );
+
+		$result = pods_query( $sql, 'Database Error', null, 'I have no results but I should' );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_pods_query_prepare() {
+		$sql = "
+			SELECT ID
+			FROM @wp_posts
+		    WHERE
+		        ID != %d
+		        AND post_title != %s
+		    LIMIT 1
+	    ";
+
+		$result = pods_query_prepare( $sql, [ 1234, 'Not this title' ] );
+
+		$this->assertIsArray( $result );
+		$this->assertCount( 1, $result );
+		$this->assertArrayHasKey( 0, $result );
+		$this->assertIsObject( $result[0] );
+		$this->assertObjectHasAttribute( 'ID', $result[0] );
+		$this->assertIsNumeric( $result[0]->ID );
+	}
+
+	public function test_pods_query_prepare_with_error() {
+		global $wpdb;
+
+		$wpdb->hide_errors();
+		$wpdb->suppress_errors( true );
+
+		$sql = "
+			SELECT ID
+			FROM @wp_postssssss
+		    WHERE
+		        ID != %d
+		        AND post_title != %s
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'Database Error' );
+
+		$result = pods_query_prepare( $sql, [ 1234, 'Not this title' ] );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_pods_query_prepare_with_custom_error_message() {
+		global $wpdb;
+
+		$wpdb->hide_errors();
+		$wpdb->suppress_errors( true );
+
+		$sql = "
+			SELECT ID
+			FROM @wp_postssssss
+		    WHERE
+		        ID != %d
+		        AND post_title != %s
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'Custom database error message' );
+
+		$result = pods_query_prepare( $sql, [ 1234, 'Not this title' ], 'Custom database error message' );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_pods_query_prepare_with_results_error() {
+		$sql = "
+			SELECT ID
+			FROM @wp_posts
+		    WHERE
+		        ID != %d
+		        AND post_title != %s
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'I have results but I should not' );
+
+		$result = pods_query_prepare( $sql, [ 1234, 'Not this title' ], 'Database Error', 'I have results but I should not' );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_pods_query_prepare_with_no_results_error() {
+		$sql = "
+			SELECT ID
+			FROM @wp_posts
+		    WHERE
+		        ID = %d
+		        AND post_title = %s
+		    LIMIT 1
+	    ";
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'I have no results but I should' );
+
+		$result = pods_query_prepare( $sql, [ 1234, 'Not this title' ], 'Database Error', null, 'I have no results but I should' );
+
+		$this->assertFalse( $result );
 	}
 
 	public function test_pods_var_update() {

@@ -158,7 +158,14 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.8.23 - July 4th, 2022 =
 
-* Fixed: Resolved potential PHP warnings on certain sites by preparing SQL queries ahead of other string-related processing. #6556 #6555 #6554 (@JoryHogeveen, @sc0ttkclark)
+* Tweak: Added support for exporting post types and taxonomies to PHP for debugging purposes. While logged in as an admin, add `?pods_debug_register_export=1` to expose textareas on the page to get the code. (@sc0ttkclark)
+* Tweak: Added support for new `{@_current_page}` calculation value. (@sc0ttkclark)
+* Tweak: Added support for calculation values in conditional display tags like `[if field="_position" value="2"]`. #6513 (@sc0ttkclark)
+* Fixed: Resolved revision issues when `revisions_to_keep_limit` is set to 0 in the post type. It was supposed to see 0 and use the default revision limit. Instead, it was disabling the revisions for that post type. #6499 (@sc0ttkclark)
+* Fixed: Resolved potential PHP warnings on certain sites by preparing SQL queries separately from other string processing. #6556 #6555 #6554 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Resolved potential PHP notices when getting table information in `PodsData::table()`. (@JoryHogeveen)
+* Fixed: Resolved potential PHP type conversion warnings by passing `SORT_REGULAR` to `array_unique()`` in the File field saving process. (@JoryHogeveen)
+* Fixed: Pods Auto Templates defaults for some fields were set to "true" and that is now treated as empty. The default for those fields are now empty as intended. This resolves notices on the Edit Pod screen about templates being used for Archives when Archives are disabled, but there was no template intentionally set for Archive. (@sc0ttkclark) 
 
 = 2.8.22.1 - July 3rd, 2022 =
 

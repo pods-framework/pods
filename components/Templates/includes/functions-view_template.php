@@ -395,8 +395,7 @@ function frontier_template_once_blocks( $atts, $code ) {
  * @since 2.4.0
  */
 function frontier_do_subtemplate( $atts, $content ) {
-
-	$out        = null;
+	$out        = '';
 	$field_name = $atts['field'];
 
 	$pod = Pods_Templates::get_obj( $atts['pod'], $atts['id'] );
@@ -405,21 +404,49 @@ function frontier_do_subtemplate( $atts, $content ) {
 		return '';
 	}
 
-	$entries = $pod->field( $field_name );
-
 	$field = $pod->fields( $field_name );
 
-	if ( ! empty( $entries ) && $field ) {
+	$is_repeatable_field = $field && $field->is_repeatable();
+
+	$entries = $pod->field( [
+		'name'                         => $field_name,
+		'display'                      => $is_repeatable_field,
+		'display_process_individually' => $is_repeatable_field,
+	] );
+
+	if ( $field && ! empty( $entries ) ) {
 		$entries = (array) $entries;
 
 		// Force array even for single items since the logic below is using loops.
-		if ( 'single' === pods_v( $field['type'] . '_format_type', $field, 'single' ) && ! isset( $entries[0] ) ) {
+		if (
+			(
+				$is_repeatable_field
+				|| 'single' === $field->get_single_multi()
+			)
+			&& ! isset( $entries[0] )
+		) {
 			$entries = array( $entries );
 		}
 
 		// Object types that could be Pods
 		$object_types = array( 'post_type', 'pod' );
 
+		if ( $is_repeatable_field ) {
+			foreach ( $entries as $key => $entry ) {
+				$template = frontier_decode_template( $content, $atts );
+
+				$template = str_replace( '{_key}', '{@_index}', $template );
+				$template = str_replace( '{@_key}', '{@_index}', $template );
+				$template = str_replace( '{_index}', '{@_index}', $template );
+
+				$entry = array(
+					'_index' => $key,
+					'_value' => $entry,
+				);
+
+				$out .= frontier_pseudo_magic_tags( $template, $entry, $pod, true );
+			}
+		}
 		/**
 		 * Note on the change below for issue #3018:
 		 * ... || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ]
@@ -431,7 +458,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 		 * the $pod->fields array and is something to not expect to be there in
 		 * 3.0 as this was unintentional.
 		 */
-		if ( 'taxonomy' === $field['type'] || in_array( $field['pick_object'], $object_types, true ) ) {
+		elseif ( 'taxonomy' === $field['type'] || in_array( $field['pick_object'], $object_types, true ) ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );

@@ -32,15 +32,23 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 		return null;
 	}
 
-	$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
-	$sql = $podsdata->get_sql( $sql );
-
+	// If the $error is the $prepare array, set the $error to the default message.
 	if ( is_array( $error ) ) {
 		if ( ! is_array( $sql ) ) {
 			$sql = array( $sql, $error );
 		}
 
 		$error = 'Database Error';
+	}
+
+	if ( is_array( $sql ) ) {
+		$sql = array_values( $sql );
+
+		$sql[0] = apply_filters( 'pods_query_sql', $sql[0], $error, $results_error, $no_results_error );
+		$sql[0] = $podsdata->get_sql( $sql[0] );
+	} else {
+		$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
+		$sql = $podsdata->get_sql( $sql );
 	}
 
 	if ( 1 === (int) pods_v( 'pods_debug_sql_all' ) && is_user_logged_in() && pods_is_admin( array( 'pods' ) ) ) {

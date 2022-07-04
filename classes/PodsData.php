@@ -3714,25 +3714,6 @@ class PodsData {
 			$sql = $this->sql;
 		}
 
-		if ( is_array( $sql ) ) {
-			$sql = array_values( $sql );
-
-			if ( 2 === count( $sql ) ) {
-				if ( ! is_array( $sql[1] ) ) {
-					$sql[1] = [
-						$sql[1],
-					];
-				}
-
-				$sql = self::prepare( $sql[0], $sql[1] );
-			} else {
-				$sql_query = array_shift( $sql );
-				$prepare   = $sql;
-
-				$sql = self::prepare( $sql_query, $prepare );
-			}
-		}
-
 		/**
 		 * Allow SQL query to be manipulated.
 		 *

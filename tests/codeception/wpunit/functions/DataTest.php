@@ -313,11 +313,12 @@ class DataTest extends Pods_UnitTestCase {
 
 		$result = pods_query( $sql );
 
+		$this->assertTrue( is_array( $result ) );
 		$this->assertCount( 1, $result );
 		$this->assertArrayHasKey( 0, $result );
-		$this->assertIsObject( $result[0] );
+		$this->assertTrue( is_object( $result[0] ) );
 		$this->assertObjectHasAttribute( 'ID', $result[0] );
-		$this->assertIsNumeric( $result[0]->ID );
+		$this->assertTrue( is_numeric( $result[0]->ID ) );
 	}
 
 	public function test_pods_query_with_error() {
@@ -406,11 +407,12 @@ class DataTest extends Pods_UnitTestCase {
 
 		$result = pods_query_prepare( $sql, [ 1234, 'Not this title' ] );
 
+		$this->assertTrue( is_array( $result ) );
 		$this->assertCount( 1, $result );
 		$this->assertArrayHasKey( 0, $result );
-		$this->assertIsObject( $result[0] );
+		$this->assertTrue( is_object( $result[0] ) );
 		$this->assertObjectHasAttribute( 'ID', $result[0] );
-		$this->assertIsNumeric( $result[0]->ID );
+		$this->assertTrue( is_numeric( $result[0]->ID ) );
 	}
 
 	public function test_pods_query_prepare_with_error() {

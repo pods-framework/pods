@@ -313,7 +313,6 @@ class DataTest extends Pods_UnitTestCase {
 
 		$result = pods_query( $sql );
 
-		$this->assertIsArray( $result );
 		$this->assertCount( 1, $result );
 		$this->assertArrayHasKey( 0, $result );
 		$this->assertIsObject( $result[0] );
@@ -407,7 +406,6 @@ class DataTest extends Pods_UnitTestCase {
 
 		$result = pods_query_prepare( $sql, [ 1234, 'Not this title' ] );
 
-		$this->assertIsArray( $result );
 		$this->assertCount( 1, $result );
 		$this->assertArrayHasKey( 0, $result );
 		$this->assertIsObject( $result[0] );

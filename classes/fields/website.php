@@ -73,6 +73,12 @@ class PodsField_Website extends PodsField {
 				'type'       => 'boolean',
 				'depends-on' => array( static::$type . '_clickable' => true ),
 			),
+			static::$type . '_nofollow'  => array(
+				'label'      => __( 'Make link "nofollow" to exclude from search engines', 'pods' ),
+				'default'    => apply_filters( 'pods_form_ui_field_website_nofollow', 0, static::$type ),
+				'type'       => 'boolean',
+				'depends-on' => array( static::$type . '_clickable' => true ),
+			),
 			static::$type . '_max_length'  => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
@@ -124,9 +130,21 @@ class PodsField_Website extends PodsField {
 			$link = '<a href="%s"%s>%s</a>';
 
 			$atts = '';
+			$rel  = [];
+
+			if ( 1 === (int) pods_v( static::$type . '_nofollow', $options ) ) {
+				$rel[] = 'nofollow';
+			}
 
 			if ( 1 === (int) pods_v( static::$type . '_new_window', $options ) ) {
-				$atts .= ' target="_blank" rel="noopener noreferrer"';
+				$rel[] = 'noopener';
+				$rel[] = 'noreferrer';
+
+				$atts .= ' target="_blank"';
+			}
+
+			if ( ! empty( $rel ) ) {
+				$atts .= ' rel="' . esc_attr( implode( ' ', $rel ) ) . '"';
 			}
 
 			$value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );

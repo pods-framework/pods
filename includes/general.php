@@ -33,7 +33,12 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 	}
 
 	$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
-	$sql = $podsdata->get_sql( $sql );
+
+	if ( is_array( $sql ) ) {
+		$sql[0] = $podsdata->get_sql( $sql[0] );
+	} else {
+		$sql = $podsdata->get_sql( $sql );
+	}
 
 	if ( is_array( $error ) ) {
 		if ( ! is_array( $sql ) ) {

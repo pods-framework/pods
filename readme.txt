@@ -158,11 +158,11 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.8.23 - July 4th, 2022 =
 
-
+* Fixed: Resolved potential PHP warnings on certain sites by preparing SQL queries ahead of other string-related processing. #6556 #6555 #6554 (@JoryHogeveen, @sc0ttkclark)
 
 = 2.8.22.1 - July 3rd, 2022 =
 
-* Fixed: Resolve potential PHP errors from Relationship/File field saves by ensuring consistent array structures.
+* Fixed: Resolve potential PHP errors from Relationship/File field saves by ensuring consistent array structures. (@sc0ttkclark)
 
 = 2.8.22 - July 3rd, 2022 =
 

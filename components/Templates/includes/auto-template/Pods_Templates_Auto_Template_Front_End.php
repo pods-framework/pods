@@ -220,6 +220,14 @@ class Pods_Templates_Auto_Template_Front_End {
 					$archive_filter   = pods_v( 'pfat_filter_archive', $options, $default_hook, true );
 					$run_outside_loop = pods_v( 'pfat_run_outside_loop', $options, false, true );
 
+					if ( 'true' === $single ) {
+						$single = '';
+					}
+
+					if ( 'true' === $archive ) {
+						$archive = '';
+					}
+
 					if ( 'custom' === $single_filter ) {
 						$single_filter = pods_v( 'pfat_filter_single_custom', $options, $default_hook, true );
 					}

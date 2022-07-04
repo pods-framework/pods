@@ -685,7 +685,7 @@ class PodsField_File extends PodsField {
 			];
 		}
 
-		$value = array_unique( array_filter( $value ) );
+		$value = array_unique( array_filter( $value ), SORT_REGULAR );
 
 		// Handle File title saving.
 		foreach ( $value as $id ) {

@@ -863,16 +863,20 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
 
 = 2.6.11.2 - August 4th, 2021 =
+
 * Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
 
 = 2.6.11.1 - June 4th, 2020 =
+
 * Security: Remove deprecated usage of escapeMarkup in Select2 (@sc0ttkclark, @miha.jirov)
 
 = 2.6.11 - September 20th 2017 =
+
 * Fixed: WordPress 4.8.2 introduced a breaking change that no longer correctly prepared number/currency queries. It did not introduce a vulnerability but only produced Database errors.
 * Stay tuned for Pods 2.7 which will be out soon -- [Download Pods 2.7 RC1](https://github.com/pods-framework/pods/archive/release/2.7.zip) and join our [Pods Slack channel #pods-beta](https://pods.io/chat/) to help us finish the final testing
 
 = 2.6.10 - July 14th 2017 =
+
 * Fixed: Pods Templates were creating erroneous output with nested `[if _fieldname_][else][/if]` and `[each _fieldname_][/each]` template tags inside HTML entities after 2.6.9 upgrade. This fix bypasses `do_shortcode` and also bypasses `do_shortcodes_in_html_tags` which was the problem with this particular fix. Fixes (#4324,#4307,#4307). (#4335). [@pglewis]
 * Fixed: Multi-file fields save was causing array to string conversion warning. New function & helper added called `array_filter_walker` for backwards compatibility. Also fixes the 'editable' titles in Multiple File Upload. Fixes (#4112,#4313). (#4314). [@mgratch,@JoryHogeveen,@sc0ttkclark]
 * Added: Pods Templates & Page Capabilities have been added to the Members Cap Filter and Pods Role Manager from Components, Roles & Capabilities. This corrects an issue where Pods Templates and Pods Pages were not available to Admins, only Network Admins. Admins will still need to have the pods_templates_ and pods_pages_ capabilities added to their role, but now they'll be able to do this without additional code. Fixes (#4311). (#4342). [@JoryHogeveen]
@@ -881,6 +885,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Updated: Removed CodeClimate Integration (#4275) and updated glob 7.1 (#4242). [@Ramoonus]
 
 = 2.6.9 - May 30th 2017 =
+
 * Added: Pods Template Component is now automatically active on initial installation or reinstallation of Pods. Fixes (#3446). (#4060,#4180). [@pglewis,@sc0ttkclark]
 * Added: Auto Template Fix: Add configurations setting to override and allow Auto Templates to run against the_content outside of the WordPress_Loop. By default now, it will only run inside the WP Loop. (#4088). [@jamesgol]
 * Added: Allow raw value in PodsUI rows. New type "raw" that can output HTML form elements; used in i18n component. Fixes (#3959). (#3960). [@JoryHogeveen]
@@ -908,6 +913,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Updated: Brand assets for Pods (icons and banners) for WordPress Plugin Directory. Fixes (#3948). (#4268) [@jimtrue]
 
 = 2.6.8 - January 17th 2017 =
+
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]
 * Added: Add action after successful AJAX in admin_ajax. This allows other scripts to hook in the ajax handlers from Pods. Fixes (#3839). (#3840). [@JoryHogeveen]
 * Added: Keep Plupload instances in `windows.pods_uploader[id]`. This makes it possible to bind event listeners to the file uploader. Fixes (#3763). (#3768). [@thirdender]
@@ -956,6 +962,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Allow the entry of negative numbers in Currency fields. Fixes (#3708). (#3709). [@pcfreak30]
 
 = 2.6.7 - August 15th 2016 =
+
 * Fixed: Magic Tag {@permalink} fixes for taxonomy / user / comment detail URL Mapping. Fixes (#3339). [@sc0ttkclark]
 * Fixed: Pods Wizard for Forms now properly uses the `[podsform]` shortcode. Fixes (#3251). [@sc0ttkclark]
 * Fixed: Issue with pll_get_post returning false instead of null. Fixes (#3596). (#3599) [@JoryHogeveen]
@@ -973,6 +980,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: travis-ci: test with PHP 7.1 (#3702). [@Ramoonus]
 
 = 2.6.6 - June 23rd 2016 =
+
 * Added: Polylang compatibility with latest versions along with fixes to longstanding issues with editing and displaying content, relationships, and taxonomy (#3574). Fixes (#3572, #3506) [@JoryHogeveen]
 * Added: REST API v2 Compatibility (#3584). Switches `register_api_field` to `register_rest_field`. Fixes (#3581) [@sc0ttkclark]
 * Added: Allow changing the Auto Templates Filter. This adds a new section in the Auto Templates tab that allows overriding the default `the_content` filter (#3542). Fixes (#3540) [@Shelob9]
@@ -992,31 +1000,39 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: PodsRESTHandlers::write_handler needs to be static (#3511). Fixes (#3510) [@pcfreak30]
 
 = 2.6.5.2 - May 4th 2016 =
+
 * Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
 
 = 2.6.5.1 - May 4th, 2016 =
+
 * Fixed: Additional Field Options tab disappears from field admin view. Fixes (#3501). [@sc0ttkclark]
 
 = 2.6.5 - May 3rd, 2016 =
+
 * Fixed: Renaming of Pods with underscores to hyphenated names that was introduced in 2.6.3. Hyphenated Pods names will remain hyphenated and Underscored Pods names will remain underscored. Fixes (#3499). [@sc0ttkclark]
 * Fixed: Support for new Polylang Versions with much kudos to @JoryHogeveen for tackling this (#3491). Fixes (#3490,#3223) [@JoryHogeveen]
 
 = 2.6.4 - April 25th, 2016 =
+
 * Fixed: Modified Run activation/install priority to fire before plugins loaded. Fix for the Clearing Pods Cache automatically after Pods Upgrade (#3487). Fixes (#2558,#3348) [@sc0ttkclark]
 
 = 2.6.3.1 - April 21st, 2016 =
+
 * Fixed: An Git / SVN deploy bug caused some files to not be properly pushed to WordPress.org SVN, this release is just to ensure everyone who may have updated to 2.6.3 during the period which we were fixing it will be able to still get the proper file updates
 
 = 2.6.3 - April 21st, 2016 =
+
 * Fixed: Fix forcing underscores when loading Edit Pod Form (#3483). Fixes (#3095) [@sc0ttkclark] Kudos to @lkraav for helping us pin this particular issue down and bring it to resolution.
 * Fixed: Clearing Pods Cache automatically after Pods Upgrade "Salt n'Pepa"'ing the cache keys (#3401). Fixes (#2558,#3348) [@sc0ttkclark]
 
 = 2.6.2 - March 24th, 2016 =
+
 * Added: Support for object fields when using Pods::field() with a specific $field and $option. This was also used to correct a problem with "fetching" Custom Taxonomy's Term List when using Pods Feeds in Pods Gravity Forms Plugin. (#3437) [@sc0ttkclark]
 * Fixed: Correcting CSS used for Dashicon to remove conflict with icon usage in Divi. (#3404,#3406) [@jimtrue]
 * Fixed: Currency/Number Validation used to correct issue with Currency Usage in the Pods Gravity Forms plugin (#3436) [@sc0ttkclark]
 
 = 2.6.1 - February 15th, 2016 =
+
 * Added: Additional Label support for Post Type / Taxonomy register functions (#3275) [@pcfreak30]
 * Added: Add use_current option for Widget Single (#3393,#3394) [@sc0ttkclark]
 * Added: Add option to website fields to open links in new window (#3388,#3387) [@sc0ttkclark]
@@ -1036,6 +1052,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Taxonomy custom meta fields returning false from REST API (#3365,#3369) [@anandamd]
 
 = 2.6 - December 9th, 2015 =
+
 * Added: Support for Term Meta in WP 4.4 - Now create meta-based taxonomies and Pods just magically works! (#3169,#3163) [@sc0ttkclark]
 * Added: Add REST API Support to Post Types, Taxonomies, Users. Read the update in https://github.com/pods-framework/pods/pull/3184 for step by step details. (#3184,#3182) [@Shelob9]
 * Added: Added compatibility with the latest Polylang version, using $polylang-model to get the current language and version. (#3223) [@JoryHogeveen]
@@ -1067,6 +1084,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Removed: Composer remove coveralls. Was not being used and needs phpunit support. Could also be replaced by php codesniffer or scrutinizer. (#3174) [@Ramoonus]
 
 = 2.5.5 - September 16th, 2015 =
+
 * Added: Unit testing for PHPUnit 4.8 support. (#3090, #3069) Kudos to @Ramoonus
 * Fixed: Drop External code coverage - timeout in Scrutinizer.  (#3091) Kudos to @Ramoonus
 * Fixed: Changed Content property to fix spacing issues with AutoComplete Field where the formatted selection fields have awkward spacing between the selection box and the selection list. (#3098, #3097, #3099) Kudos to @nicdford
@@ -1077,6 +1095,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Added: License.txt changes to sync with GPL v2 (#3130, #3133) Kudos to @Ramoonus
 
 = 2.5.4 - August 10th, 2015 =
+
 * Added: Support for Compare ALL with meta_query syntax. Kudos to @pcfreak30. (#3037, #3038)
 * Added: Query_field tests (meta_query syntax for where) (#3033, #3032, #1662, #2689)
 * Added: Support for autoCAST()ing meta_value orderby for dates and numbers (#3043, #3041, #3058)
@@ -1087,6 +1106,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Style escaping which created a quote encoding bug in PodsMeta.php. (#3053, #3032)
 
 = 2.5.3 - June 11th, 2015 =
+
 * Added: Support for Term Splitting in WP 4.2 (#2856, #2660)
 * Added: Support for Pod and Field names with dashes and prefixes with underscores (#3012, #3021, #3022)
 * Added: Add git workflow and a link to it from contributing.md (#2490, #2496)
@@ -1113,6 +1133,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Allow fields to be sorted by orderby; Two separate but connected issues. First if orderby is passed then the $data array is never populated. Then looping through $ids will always give it results sorted by priority in the relationships field (data returned by lookup_related_items) (#2350, #2277)
 
 = 2.5.2 - May 14th, 2015 =
+
 * Fixed: Issues with default values for number and other types of fields.
 * Fixed: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
 * Fixed: Issue preventing proper display of fields in a related CPT via Pods::field()
@@ -1137,14 +1158,17 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Improved: URL escaping in PodsUI
 
 = 2.5.1.2 - March 16th, 2015 =
+
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods
 * or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
 * Fixed: Pods UI orderby now strictly enforces Database column format
 
 = 2.5.1.1 - January 22nd, 2015 =
+
 * Fixed missing files for font icon.
 
 = 2.5.1 - January 22nd, 2015 =
+
 * Fixed: Issue preventing fields from being sorted by weight or by orderby, that was affecting image multi-select image field ordering.
 * Fixed: Missing gradients in UI.
 * Fixed: Use of anonymous function in PodsMeta.php causing issues with old versions of PHP.
@@ -1158,6 +1182,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Issue with custom taxonomy joins preventing "custom_tax.d.custom_field" type where clauses from working.
 
 = 2.5 - December 30th, 2014 =
+
 * Major performance enhancements can now make things run up to 400% faster (props to @jamesgol!)
 * More unit tests -- now 1,858 tests with a total of 13,420 assertions covering all content type, storage type, and field variations (props to @sc0ttkclark, @clubduece, and @mordauk! it was a group effort)
 * Added Travis-CI / Scrutinizer-CI for all pushes and pull requests to unit test and check for other issues
@@ -1212,15 +1237,18 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at https://pods.io/help/
 
 = 2.4.3 - June 23rd, 2014 =
+
 * Fixed: Pods Templates component now has better handling of the new shortcodes
 * Fixed: PodsUI data issue with Custom DB Table support
 * Fixed: Readonly fields and noncing now works properly, Pods 2.4.2 caused all forms with readonly fields to fail submission
 * Hardened: Further security hardening of the `[pods]` shortcode, added PODS_DISABLE_SHORTCODE constant to allow sites to disable the Pods shortcode altogether
 
 = 2.4.2 - June 22nd, 2014 =
+
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods to fix a noncing issue with form saving, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
 
 = 2.4.1 - June 19th, 2014 =
+
 * Fixed: Display of of hidden fields in Pods Forms
 * Fixed: Reordering fields in PodsUI
 * Fixed: PodsUI Admin Icon Display
@@ -1246,6 +1274,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Added: Ability to use pods() without any parameters. Will pull the pod object based off of the current WP_Query queried object / object id
 
 = 2.4 - April 16th, 2014 =
+
 * After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.
 * In Pods 3.0 we're focusing on finishing some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features.
 * Added: Tagging feature for Relationship fields with Autocomplete (Select2) which lets you add new items on-demand when saving
@@ -1296,20 +1325,24 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Improper wording for text at top of settings page field
 
 = 2.3.18 - November 4th, 2013 =
+
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
 * Fixed: PodsData row handling during fetch loop, thanks to a number of users who helped find this one
 
 = 2.3.17 - November 4th, 2013 =
+
 * Fixed: PodsData item caching now disabled for WP objects, relying on core WP caching entirely
 * Fixed: PodsAPI::save_pod_item default value handling for new items no goes through all fields, even if not included in form
 
 = 2.3.16 - November 4th, 2013 =
+
 * Fixed: PodsMeta pod caching is now different between meta calls and the form methods, avoiding potential issues with functions used that call their own meta (TinyMCE)
 * Fixed: Properly add/drop column for table-based Pods when switching between a custom simple relationship and a normal relationship
 * Fixed: Session starting for memcache-based sessions and other tcp:// configs improved
 * Fixed: Media saving bug, where the custom fields were not saving when going to Media Library > Edit
 
 = 2.3.15 - October 31st, 2013 =
+
 * Added: New 'calc_rows' option in Pods::find, this allows for SQL_CALC_FOUND_ROWS to be run selectively (default is off, since we run a separate count query on demand by default)
 * Added: You can now override the 'manage' action link in PodsUI 'action_links'
 * Added: `shortcodes="1"` attribute for the Pods shortcode will allow for running of shortcodes output through templates or fields included
@@ -1319,19 +1352,23 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Traversal handling of Pods::field for related_item.ID would cache into object as related_item, so a subsequent lookup of related_item would come back as the ID and return the wrong value
 
 = 2.3.14 - October 29th, 2013 =
+
 * Fixed: Some users experienced and issue with user registration when there were required fields
 
 = 2.3.13 - N/A =
 
 = 2.3.12 - October 15th, 2013 =
+
 * Improved: Meta object caching improved
 * Fixed: Some users experienced an issue with a reference error
 
 = 2.3.11 - October 12th, 2013 =
+
 * Fixed: User / Post field value saving with better nonce handling
 * Fixed: pods_v_set saving for user meta
 
 = 2.3.10 - October 11th, 2013 =
+
 * Added: Ability to set 'output' type in Pods::field() to 'pods' for Relationship fields related to a Pod, which will return an array of fully functional 'pods' objects for further advanced code
 * Added: Pod Pages now have an option to redirect to the login page or a custom URL if the user does not have permission to view it (based on restrict settings on the Pod Page itself)
 * Added: Ability to set Taxonomy terms for a Post Type item through the normal Pods 'add' / 'save' / etc methods
@@ -1350,6 +1387,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Timezone notices on certain configurations
 
 = 2.3.9 - August 5th, 2013 =
+
 * A big welcome to the newest contributor to our team, David Cramer (@desertsnowman)!
 * Added: Theme-based Pod Templates now available, when using $pod->template( 'your-template' ) or other places a template can be used (shortcode, widget, etc), with $obj variable available for use like in a normal template -- this will automatically include your template file from the following locations, child-theme aware: pods/your-template.php, pods-your-template.php, or your-template.php -- Get the code out of the database and get rid of the need for the Templates component!
 * Added: When saving items via the API, relationship fields now accept slugs (previously only IDs)
@@ -1364,12 +1402,14 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Translation tweaks and fixes
 
 = 2.3.8 - June 8th, 2013 =
+
 * Fixed: Hide field from UI option now works properly for admins
 * Fixed: User data handling for `pods( 'user' )`
 * Fixed: jpeg extension now included in built-in 'images' option for File field type
 * Fixed: iThemes Builder / Markdown components weren't loading properly (no errors, just didn't load)
 
 = 2.3.7 - June 7th, 2013 =
+
 * Added: New filter to allow searching across different fields in autocomplete relationship fields: https://github.com/pods-framework/pods/issues/1464
 * Improved: JS performance used for the field manager drastically improved (props @pglewis)
 * Improved: PHP optimization tweaks for how we handle $_POST sanitization
@@ -1379,17 +1419,21 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Issue with find() queries using number decimals matching the relationship traversal regex rules
 
 = 2.3.6 - May 24th, 2013 =
+
 * Fixed: Issue with the Pod list when you delete or empty a Pod, it would repeat the same row in the list until you went back to the Edit Pods screen without the id=X in the URL
 * Fixed: Issue with renaming a field to another name would rename the field name and then delete it due to a missing ID validation check
 
 = 2.3.5.1 - May 20th, 2013 =
+
 * Fixed: Issue with the Upgrade wizard from 1.x to 2.x showing up properly
 
 = 2.3.5 - May 19th, 2013 =
+
 * Added: Ability to add new global field options (separate from field types) and new field editor tabs
 * Various fixes that can be found on GitHub
 
 = 2.3.4 - April 29th, 2013 =
+
 * Added: Ability to iterate through the Pods object with `foreach ( $pod as $item ) { echo $item->display( 'name' ); }`
 * Added: Ability to override serial array parameters in Pods::display() `$pod->display( array( 'name' => 'field_name', 'serial_params' => array( 'and' => '' ) ) )`
 * Added: Ability to override related field parameters in Pods::field() to further filter related field arrays beyond the defaults `$pod->field( array( 'name' => 'related_field', 'params' => array( 'where' => 't.active = 1' ) ) )`
@@ -1398,10 +1442,12 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * And 15 other bug fixes that can be found on GitHub
 
 = 2.3.3.1 - April 21st, 2013 =
+
 * Fixed: Advanced Content Types were missing their 'Advanced' tab
 * Fixed: IE 8-10 issue with plupload implementation for the 'Add File' button
 
 = 2.3.3 - April 21st, 2013 =
+
 * Added: Ability to change the output type of relationship fields with pods_field_related_output_type filter - Options are arrays (default), objects, ids, or names
 * Added: Traversal for detail_url (related_post.detail_url maps to get_permalink, same for Taxonomies, Users, or Comments)
 * Added: Pods::is( $field, $value ) to check if a field is a specific value
@@ -1413,14 +1459,17 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * And 40+ other enhancements and bug fixes that can be found on GitHub
 
 = 2.3.2 - April 11th, 2013 =
+
 * Added: You can now select 'ID' from the list of available columns to show in Admin UI for Advanced Content Types
 * Various fixes that can be found on GitHub
 
 = 2.3.1 - April 9th, 2013 =
+
 * Added: New ability to set the menu location of Custom Taxonomies (expose a Custom Taxonomy that isn't associated to a Post Type)
 * Various fixes that can be found on GitHub
 
 = 2.3 - April 7th, 2013 =
+
 * Added: Custom Settings Pages - now you can add new settings pages with their own custom fields!
 * Added: Pods find() 'where' / 'having' parameters now accepts the standard WP_Query meta_query format! With the added ability to nest AND/OR 'relation' too!
 * Added: When using pods() function and `[pods]` shortcode, Pod and ID will be auto-detected from current post type and ID if on singular post page or in the loop
@@ -1461,6 +1510,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Various fixes that can be found on GitHub
 
 = 2.2 - January 5th, 2013 =
+
 * Added: New 'Duplicate Field' option, that lets you copy a field's settings into a new field in the Pod editor
 * Added: New iThemes Builder component - Adds four new modules available for use in Builder Layouts -- Field Value, Form, List Items, and Single Item
 * Updated: Split up the old Pods Admin > Setup menu into two separate items -- Edit Pods and Add New
@@ -1468,6 +1518,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Various fixes that can be found on GitHub
 
 = 2.1 - December 7th, 2012 =
+
 * Pods is now WordPress 3.5 compatible as we've added a number of fixes for all the 3.5 media goodness! We're also working on some tighter integration with the new 3.5 media popups (thanks to the awesome work of @jchristopher) - watch for that in Pods 2.2 soon
 * Added: New Tableless mode (for WordPress VIP compatibility!) lets Pods run on any site w/ table-based storage turned off and wp_podsrel won't be utilized (or even created if tableless mode is on during activation) - define( 'PODS_TABLELESS', true )
 * Added: New Light mode disables all Components - define( 'PODS_LIGHT', true )
@@ -1481,13 +1532,16 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Various fixes that can be found on GitHub
 
 = 2.0.5.1 - November 25th, 2012 =
+
 * Fixed: 'Edit' link wasn't appearing for Pod Pages / Templates / Helpers (you could click the title though)
 
 = 2.0.5 - November 24th, 2012 =
+
 * Another big set of stability fixes to improve performance and functionality
 * Added: Migrate Packages component - Our Package manager makes a return! You may remember it from Pods 1.x, but we've cleaned it up and improved the interface to make it easier to migrate your settings between sites or share them with others
 
 = 2.0.4.1 - October 17th, 2012 =
+
 * Updated: Pods UI duplicate method labels were confusing
 * Fixed: Simple Relationships were returning raw data for table-based Pods
 * Fixed: Specify specific content types to import in Migrate Custom Post Types UI component
@@ -1498,13 +1552,16 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: WP Rewrites are properly flushed upon adding / editing / deleting Pods
 
 = 2.0.4 - October 15th, 2012 =
+
 * Big bug fix release, we've fixed tons of bugs and improved backwards compatibility even further - stability, stability, stability!
 
 = 2.0.3.1 - October 5th, 2012 =
+
 * Fixed an upgrade issue a few users were reporting where the upgrade wouldn't start
 * Fixed reserved post_name issues with our internal post types for Pods and Fields (rss, date, and any other feeds)
 
 = 2.0.3 - October 4th, 2012 =
+
 * We've fixed many more bugs, that means even more stability and backwards compatibility for those who have been holding off on upgrading
 * Added: 'expires' parameter to find() / findRecords() calls, defaults to null, but set it to 0 or above (in seconds) and it will cache the results for as long as you'd like.
 * Added: 'cache_mode' parameter to find() / findRecords() calls, defaults to 'cache', additional options are 'transient' and 'site-transient' and it kicks in when 'expires' is 0 or above
@@ -1518,20 +1575,24 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * While we have been working on our new Pods 2.0 documentation for our site, we went ahead and synced all of that good stuff over into the code comments along with links back to the documentation.
 
 = 2.0.2 - September 27th, 2012 =
+
 * Even more bugs have now been fixed including additional backwards compatibility fixes
 * Caching improvements and fixes, things should be even more responsive, try enabling object caching to see super speed!
 
 = 2.0.1 - September 25th, 2012 =
+
 * With the help of our awesome users, we've been able to quickly fix 14 bugs
 * Improved backwards compatibility
 * Fixed Pods UI reordering saving bug
 
 = 2.0 - September 21st, 2012 =
+
 * An all new, fully revamped Pods has arrived! Check our plugin page for all the details
 * Please backup your site database before upgrading, even though we've tested migration it's never a bad idea to be safe
 * Create and extend WP objects like Post Types, Taxonomies, Media, Users, and Comments, plus everything you love about Pods from before
 
 = 1.14.4 - September 16th, 2012 =
+
 * Security Update Reminder: As of Pods 1.12+, AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
 * Note: Oh hey, Pods 2.0 is coming out September 21st! Please help us continue to test the beta this week: http://dev.pods.io/tag/pods2/
 * Changed: get_current_url was an older function added by Pods a while back, pods_get_current_url is the new function name which is future-proof (get_current_url will point at the new one)
@@ -1542,6 +1603,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Q & A: What's going to happen to Pods 1.x when Pods 2.0 comes out? We're going to release maintenence updates to Pods 1.14.x for a period of time, but there will be no further features added
 
 = 1.14.3 - September 6th, 2012 =
+
 * Added: Reordering a Pod (using pods_ui_manage) now has a new capability check for pods_reorder_pod_podname (Custom WP capability you can add to the user's role if they don't have pod_podname access already)
 * Added: New pods_page_precode_X action, where X is the Pod Page URI
 * Fixed: get_field from returning values if an id is not set (no data found)
@@ -1549,14 +1611,17 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Pods UI pagination and search parameter naming for 'num' usage
 
 = 1.14.2 - June 8th, 2012 =
+
 * Changed: More strictness to the above security update, also setting tighter defaults for security access w/ uploader
 
 = 1.14.1 - May 31st, 2012 =
+
 * Changed: Uploaded files now uses data-post-id attribute in file row div to avoid issues with IDs, backwards compatibility maintained for old input helpers using IDs
 * Fixed: Uploaded files not showing in form in the order of upload on subsequent edits
 * Fixed: Fixed an issue with adding / editing fields where "Related to" dropdown would not show
 
 = 1.14 - May 21, 2012 =
+
 * Important Change / Addition: For installations using WordPress 3.3+, we have switched the default uploader to Plupload from SWFUpload due to incompatibilities introduced in WP 3.3.2 that effect all plugins and themes using the styled button. Be sure to update your file upload helpers using our examples at http://pods.io/packages/file-uploader-input-helpers/
 * Added: edit_where_any option in Pods UI now lets you set (true/false) whether for edit_where to be an ANY or ALL match (default false = ALL)
 * Fixed: Date Input field was throwing a JS error if you used YYYY-mm-dd format without the time included
@@ -1567,6 +1632,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Resolved incompatibility issues with certain MySQL configurations which were throwing errors when saving a Pod
 
 = 1.12.4 - April 5, 2012 =
+
 * Added: 'offset' parameter to Pod::findRecords, allows you to offset what results to start with, which is added to the offset calculated based on current page number and limit
 * Added: 'page_var' parameter to Pod::findRecords, allows you to set a custom page_var (default is 'pg'), setting it will reset the current page number, set during Pod::construct()
 * Added: New 'pods_rel_lookup_data' filter to filter the data array itself (not just the MySQL resource given in 'pods_rel_lookup' filter above), great for customizing drop-downs for PICK fields
@@ -1577,6 +1643,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: More strict matching in Pod::findRecords for field names, instead of just removing '(' and ')', it now removes 'function_name(' first, so that fields with the same name as function names won't be pulled
 
 = 1.12.3 - February 19, 2012 =
+
 * Added: Pods UI findRecords parameters array now goes through a new filter called "pods_ui_findrecords"
 * Fixed: Forcing boolean check if true in bypass_helpers in PodAPI
 * Fixed: Pod Page automatic title generation now removed WP home path (for WP sites in sub-directories) (props @chrisbliss18)
@@ -1586,12 +1653,15 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Pods UI filtering sets emptied values now, wasn't setting right if you had emptied a filter value when submitting (unselected drop-down)
 
 = 1.12.2 - December 14, 2011 =
+
 * Fixed: WP 3.3 TinyMCE Editor bug with HTML tab (wouldn't save if HTML tab was active during initial form load) and other minor fixes
 
 = 1.12.1 - December 12, 2011 =
+
 * Fixed: findRecords Order bug
 
 = 1.12 - December 12, 2011 =
+
 * Important: As with all upgrades, we take them seriously. If you experience any major issues when upgrading to this version from a previous version, immediately contact uhoh@pods.io and we'll help get your upgrade issue figured out (critical bugs only please)
 * Security Update: AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
 * Added: Multi-level references in field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) - ex. `'where' =&gt; 'pick_field.another_pick_field.another_pick.field = "Example"'` **(donation-funded by @chriscarvache)**
@@ -1648,6 +1718,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: SQL cleaned up (extra line breaks removed so it's not as ugly) and standardized to escape field names in SQL references
 
 = 1.11 - August 12, 2011 =
+
 * Improved: MySQL performance enhanced with a number of MySQL indexes and column type tweaks, your DB will be automatically upgraded for you
 * Added: PodInit :: setup now has filters / actions that run before / after install and updates
 * Added: PodInit :: setup now explicitly sets CHARSET / COLLATE options as defined in wp-config ($wpdb->charset / $wpdb->collate)
@@ -1665,9 +1736,11 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Various PHP notice fixes and query updates to improve performance (to maximize performance on custom queries, update wp_pod queries to use datatype first then tbl_row_id if it's not already in WHERE statements, do same for wp_pod_rel on field_id and pod_id)
 
 = 1.10.7 - August 9, 2011 =
+
 * Fixed: /ui/ajax/api.php which added extra slashes unnecessarily
 
 = 1.10.6 - August 9, 2011 =
+
 * Added: pods_var function to replace pods_url_variable (better name, more functionality), now handles URL segments, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, CONSTANT, User meta, custom arrays, and custom objects - also added a $default option to set what it should default to if not found (default: null) - also added a $allowed option to set what values are allowed to be returned, if $output is not $allowed ($allowed is array and not in $allowed OR $allowed is not array and does not equal $allowed) then $default is returned
 * Added: pods_var_set function to set variables, operates similar to pods_var, has three variables ($value, $key, $type) and returns $value on success (if $type is an array or object it will return the updated $type, if $type is 'url' it will return the full updated $url)
 * Fixed: Now using get_current_url() and parse_url to get path versus $_SERVER['REQUEST_URI']
@@ -1675,6 +1748,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Backslashes being automatically added and causing issues with additional urlencoding and esc_attr usage
 
 = 1.10.5 - August 9, 2011 =
+
 * Added: $pods->meta_extra now outputs after the meta tags when wp_head runs in case you want to output one-off meta tags for a specific page using pre-code without extra WP functions
 * Fixed: When adding a helper, it will now be added to the 'input helper' drop-down too
 * Fixed: Pods non-top-level management has session filters turned off now by default
@@ -1684,6 +1758,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Reminder: Pods 2.0 and How You Can Help - http://dev.pods.io/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.4 - August 1, 2011 =
+
 * Fixed: Pods UI was breaking 'view' links
 * Fixed: Pods UI reordering fixed
 * Fixed: Better errors for when a Pod doesn't exist to replace SQL errors
@@ -1691,18 +1766,21 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Reminder: Pods 2.0 and How You Can Help - http://dev.pods.io/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.3 - July 30, 2011 =
+
 * Fixed: Shortcode 'where' parameter fixed
 * Fixed: Body Class for Pod Pages not replacing / with - correctly and leaving an extra - at the end with wildcards
 * Reminder: 1.9.6 Security Update information can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 * Reminder: Pods 2.0 and How You Can Help - http://dev.pods.io/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.2 - July 29, 2011 =
+
 * Added: Moved the demo.php file from the Pods UI plugin over as pods-ui-demo.php and can now be found distributed with this plugin in the /demo/ plugin.
 * Fixed: PHP error with new Version to Point function
 * Reminder: 1.9.6 Security Update information can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 * Reminder: Pods 2.0 and How You Can Help - http://dev.pods.io/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.1 - July 28, 2011 =
+
 * Added: New wp_pod and wp_pod_tbl_* table fix tool under Pods >> Setup >> Settings tab to resync your wp_pod table (clear orphans in wp_pod, and sync from wp_pod_tbl_* to wp_pod what doesn't already exist) - Useful for those who imported directly to wp_pod_tbl_* but forgot to import into wp_pod
 * Added: Set Meta Tags in your Pod Page precode, just setup $pods on your Pod object, and assign $pods->meta as an array with 'description', 'keywords', or any other meta tags you want put on that page
 * Added: Set Title Tag via $pods->meta['title'] (see Meta Tags feature listed directly above) which overrides what you might have in your Pod Page Title field
@@ -1718,6 +1796,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Reminder: Pods 2.0 and How You Can Help - http://dev.pods.io/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10 - July 28, 2011 =
+
 * Added: Full revamped UI for Content Management via Pods UI (you no longer need two separate plugins - Pods and Pods UI)
 * Added: TinyMCE is now the default visual editor in WP Admin pages (nicEdit remains default for frontend forms), you can still use the newly updated TinyMCE for Pods package to customize this
 * Improved: Added many new filters across functions.php for advanced customization via other plugins
@@ -1745,6 +1824,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Reminder: Pods 2.0 and How You Can Help - http://dev.pods.io/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.9.8 - July 24, 2011 =
+
 * Added: New Option to override existing packages during package import
 * Added: Pods and additional database calls are not initiated (but you can run the code as the files are included) when SHORTINIT is defined and set to true (also does not load much of WP itself)
 * Added: Pods will now check the version of Pods a package was exported from and display notices if it 'might' be incompatible (based on the minor version in major.minor.patch), and an additional two variables (compatible_from and compatible_to) are available within the 'meta' array which will get utilized in the new Pods site revamp within the Package Directory
@@ -1756,16 +1836,20 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Reminder: 1.9.6 Security Update information can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.7.4 - July 14, 2011 =
+
 * Fixed: esc_html replaced with esc_textarea for Package Export and textarea usages to prevent breaking html entities
 * Fixed: Errors when you enter a field that doesn't exist, for inclusion in a publicForm
 
 = 1.9.7.3 - July 6, 2011 =
+
 * Fixed: Uploader cookie-handling for advanced usage (1.9.7.2 wouldn't appear on wp.org)
 
 = 1.9.7.1 - July 6, 2011 =
+
 * Fixed: Fix for relationships / file saving (error 500 fix)
 
 = 1.9.7 - July 5, 2011 =
+
 * Added: 'having' parameter to Pod :: findRecords
 * Added: #spacer_$name ID is now set on the spacer (div.pods_form div.clear) directly after a field) for clean UI when utilizing advanced CSS / jQuery usage; Also increased spacing by 5px
 * Improved: Increased integer limits on IDs throughout the database to allow for more (or just higher ID #'s)
@@ -1781,11 +1865,13 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Reminder: 1.9.6 Security Update information can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.3 - June 24, 2011 =
+
 * Fixed: JS optimization and fixes for nicEdit (also now no longer outputting pods-ui.js on every page)
 * Fixed: Non Top-level menu Pods now appearing in alphabetical order under Pods menu
 * Reminder: 1.9.6 Security Update information can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.2 - June 23, 2011 =
+
 * Fixed: TinyMCE API update from @azaozz with additional WP 3.2 support
 * Fixed: Pod Page Precode $pods = 404; bug that wouldn't produce the default WordPress 404 error page
 * Fixed: Fix for nicEdit JS error during init that breaks forms (when on a non top-level menu Pod AJAX-loaded form)
@@ -1793,10 +1879,12 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Reminder: 1.9.6 Security Update information can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.1 - June 23, 2011 =
+
 * Fixed: Fix for nicEdit JS error during init that breaks forms
 * Reminder: 1.9.6 Security Update information can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6 - June 22, 2011 =
+
 * Full Details can be found at: http://dev.pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 * Security Update: New security settings section in the Pods >> Setup >> Settings tab to restrict access to the File Browser / Uploader used in publicForm, adjust the settings to fit your site if you experience any problems
 * Added: New TinyMCE API for use with the new TinyMCE package update at http://pods.io/packages/tinymce-for-pods/
@@ -1811,9 +1899,11 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: PHP warnings dependant on error_reporting level and PHP version
 
 = 1.9.5.1 - April 7, 2011 =
+
 * Fixed: dot-traversal in Pod :: get_field
 
 = 1.9.5 - April 7, 2011 =
+
 * Added: Multisite (3.0+) Network Activation support - Now when you click Network Activate, Pods will install itself correctly across all sites (and new sites as they are added)
 * Added: Third option "$thankyou_url" in publicForm($columns, $label, $thankyou_url) which changes what happens when a form is submitted
 * Added: Pod :: findRecords - New 'total' variable separate from getTotalRows(), call $record->total to get the number of results in _current_ query
@@ -1823,16 +1913,19 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: Various PHP warnings cleaned up (was showing when WP_DEBUG and other debugging is turned on)
 
 = 1.9.4 - October 20, 2010 =
+
 * Fixed: Pod Pages - Only match Pod Page URIs that match current depth (specifically when using wildcards)
 * Fixed: $groupby referenced but not used - and $orderby should be allowed to be empty (gives error if it is)
 * Fixed: Allow Pod Pages on domains other than contained in wpurl
 * Fixed: Pod :: get_dropdown_values wp_taxonomy Filter Query fix
 
 = 1.9.3.1 - October 4, 2010 =
+
 * Fixed / Added: Pod :: findRecords - Add param for groupby since where is now surrounded in ( ) - resolving the issue introduced in 1.9.3
 * Fixed: Pod :: findRecords - Filtering should run through $search variable instead of $where
 
 = 1.9.3 - October 1, 2010 =
+
 * Fixed: PodAPI :: csv_to_php - Field Name not un-escaped like Field Values (quotes)
 * Fixed: Pod :: findRecords - $limit / $where / etc should only run if $sql is empty
 * Fixed: Pod :: findRecords - $where (if not empty) should be surrounded in parethesis
@@ -1846,12 +1939,15 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: PodInit :: init - htaccess check not necessary, not all users will use Pod Pages
 
 = 1.9.2.2 - September 23, 2010 =
+
 * Fixed: Older method of array('datatype'=>'x','columns'=>array('name','other_col'),'name'=>$name,'other_col'=>$other_col) with save_pod_item now work when saving (to allow an easier upgrade path for those using already built code that utilize it)
 
 = 1.9.2.1 - September 23, 2010 =
+
 * Fixed: Adding / Editing items weren't saving properly
 
 = 1.9.2 - September 23, 2010 =
+
 * Added: Ability to use filters / actions to add new Column Types to Pods
 * Added: Filters - pods_admin_menu_name / pods_admin_menu_label / pods_admin_submenu_name / pods_admin_submenu_label / pods_rel_lookup / pods_get_dropdown_values / pods_findrecords_the_join / pods_findrecords_join / pods_showform_save_button_atts / pods_showform_save_button / pods_column_dbtypes / pods_column_types
 * Added: Actions - pods_pre_pod_helper / pods_pre_pod_helper_$helper / pods_post_pod_helper / pods_post_pod_helper_$helper / pods_pre_showtemplate / pods_pre_showtemplate_$tpl / pods_post_showtemplate / pods_post_showtemplate_$tpl / pods_pre_input_field / pods_pre_input_field_$name / pods_pre_input_field_type_$coltype / pods_input_field_type_$coltype / pods_post_input_field / pods_post_input_field_$name / pods_post_input_field_type_$coltype / pods_pre_form / pods_pre_form_{Pod :: datatype} / pods_post_form / pods_post_form_{Pod :: datatype}
@@ -1877,6 +1973,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Deprecated: Instead of using wp_users you should use $wpdb->users (along with other Core WP table names)
 
 = 1.9.1 - August 13, 2010 =
+
 * Added: Support for Multisite Environment URLs and Super Admin role
 * Added: Filters for Manage Tabs (to allow Pods UI to enhance these areas)
 * Added: page.php now appears as "Page (WP Default)" in the Page Template list if page.php has no "Template Name" and exists in the theme (previously did not show up)
@@ -1885,6 +1982,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Fixed: validate_package() in PodAPI assumed array, now it checks if the $data is an array
 
 = 1.9.0 - July 29, 2010 =
+
 * Added: Integration with body_class() - When on a Pod Page, two classes are added: pods, pod-page-URI-GOES-HERE; and if $pods is defined as a Pod another is added: pod-POD-NAME-GOES-HERE
 * Added: pods_admin css class to wrap divs in Admin UI
 * Added: New Pods Icon set for primary Pods menu and Pods Setup heading
@@ -1917,21 +2015,26 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Removed: package.php has been removed from AJAX operations as code has been moved into PodAPI class
 
 = 1.8.9 - July 7, 2010 =
+
 * Changed: Minor UI changes
 * Changed: author_id now getting stored
 * Fixed: Add / Edit javascript fix
 
 = 1.8.8 - May 23, 2010 =
+
 * Fixed: bi-directional relationships
 
 = 1.8.7 - April 16, 2010 =
+
 * Fixed: error when editing a unique field
 * Fixed: API handling for drop_pod_item
 
 = 1.8.6 - April 14, 2010 =
+
 * Fixed: saving an empty pick column throws an error
 
 = 1.8.5 - April 13, 2010 =
+
 * Changed: save_pod_item improvements, see http://bit.ly/d4EWDM
 * Changed: proper PHPdoc commenting
 * Fixed: timezone issues

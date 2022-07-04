@@ -1106,7 +1106,7 @@ class PodsMeta {
 		$revisions_to_keep_limit = pods_v( 'revisions_to_keep_limit', $pod->pod_data );
 
 		// Check if we have a valid limit.
-		if ( ! is_numeric( $revisions_to_keep_limit ) ) {
+		if ( ! is_numeric( $revisions_to_keep_limit ) || 0 === (int) $revisions_to_keep_limit ) {
 			return $num;
 		}
 

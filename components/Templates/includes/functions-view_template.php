@@ -473,6 +473,8 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+				$template = str_replace( '{_key}', $key, $template );
+				$template = str_replace( '{@_key}', $key, $template );
 				$template = str_replace( '{_index}', $key, $template );
 				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
 
@@ -501,28 +503,30 @@ function frontier_do_subtemplate( $atts, $content ) {
 			$media_pod = pods( 'media' );
 
 			foreach ( $entries as $key => $entry ) {
-				$content = str_replace( '{_index}', $key, $template );
+				$template = str_replace( '{_key}', $key, $template );
+				$template = str_replace( '{@_key}', $key, $template );
+				$template = str_replace( '{_index}', $key, $template );
 
 				if ( $media_pod && $media_pod->valid() && $media_pod->fetch( $entry['ID'] ) ) {
-					$content   = str_replace( '{@' . $field_name . '.', '{@', $content );
+					$template   = str_replace( '{@' . $field_name . '.', '{@', $template );
 
 					$entry_pod = $media_pod;
 				} else {
-					$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
-					$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
-					$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
+					$template = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $template );
+					$template = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $template );
+					$template = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $template );
 
 					// Fix for lowercase ID's.
 					$entry['id'] = $entry['ID'];
 
 					// Allow array-like tags.
-					$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
+					$template = frontier_pseudo_magic_tags( $template, $entry, $pod, true );
 
 					// Fallback to parent Pod so above tags still work.
 					$entry_pod = $pod;
 				}
 
-				$out .= pods_do_shortcode( $entry_pod->do_magic_tags( $content ), frontier_get_shortcodes() );
+				$out .= pods_do_shortcode( $entry_pod->do_magic_tags( $template ), frontier_get_shortcodes() );
 			}
 		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
 			// Relationship to something that is extended by Pods
@@ -534,6 +538,9 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+
+				$template = str_replace( '{_key}', $key, $template );
+				$template = str_replace( '{@_key}', $key, $template );
 				$template = str_replace( '{_index}', $key, $template );
 				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
 
@@ -543,10 +550,14 @@ function frontier_do_subtemplate( $atts, $content ) {
 			// Relationship to something other than a Pod (ie: user)
 			foreach ( $entries as $key => $entry ) {
 				$template = frontier_decode_template( $content, $atts );
-				$template = str_replace( '{_index}', $key, $template );
+
+				$template = str_replace( '{_key}', '{@_index}', $template );
+				$template = str_replace( '{@_key}', '{@_index}', $template );
+				$template = str_replace( '{_index}', '{@_index}', $template );
+
 				if ( ! is_array( $entry ) ) {
 					$entry = array(
-						'_key'   => $key,
+						'_index' => $key,
 						'_value' => $entry,
 					);
 				}

@@ -156,6 +156,14 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.8.23 - July 4th, 2022 =
+
+
+
+= 2.8.22.1 - July 3rd, 2022 =
+
+* Fixed: Resolve potential PHP errors from Relationship/File field saves by ensuring consistent array structures.
+
 = 2.8.22 - July 3rd, 2022 =
 
 * Added: Support `IN` and `NOT IN` comparisons for the Pods Templating `[if]` conditional shortcode that checks if the current value is/isn't within a comma-separated list of values. (@sc0ttkclark)

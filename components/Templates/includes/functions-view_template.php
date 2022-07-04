@@ -121,7 +121,21 @@ function frontier_if_block( $attributes, $code ) {
 	$field_type = 'text';
 
 	if ( ! empty( $attributes['field'] ) ) {
-		if ( '_index' === $attributes['field'] ) {
+		$supported_calculations = [
+			'_zebra'          => 'number',
+			'_position'       => 'number',
+			'_total'          => 'number',
+			'_total_found'    => 'number',
+			'_total_all_rows' => 'number',
+			'_total_pages'    => 'number',
+			'_current_page'   => 'number',
+		];
+
+		if ( isset( $supported_calculations[ $attributes['field'] ] ) ) {
+			// Support [if field="_position" value="2"] and other calculation value handlers.
+			$field_data = $pod->field( $attributes['field'] );
+			$field_type = $supported_calculations[ $attributes['field'] ];
+		} elseif ( '_index' === $attributes['field'] ) {
 			$field_data = pods_v( 'index', $attributes );
 		} else {
 			$field_data = $pod->field( $attributes['field'] );

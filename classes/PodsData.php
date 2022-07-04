@@ -394,7 +394,7 @@ class PodsData {
 		}
 
 		// Check for pod object.
-		if ( $table['pod'] instanceof Pod ) {
+		if ( ! empty( $table['pod'] ) && $table['pod'] instanceof Pod ) {
 			$this->pod_data = $table['pod'];
 		} else {
 			$this->table_info = $table;

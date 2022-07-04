@@ -128,6 +128,7 @@ function frontier_if_block( $attributes, $code ) {
 			'_total_found'    => 'number',
 			'_total_all_rows' => 'number',
 			'_total_pages'    => 'number',
+			'_current_page'   => 'number',
 		];
 
 		if ( isset( $supported_calculations[ $attributes['field'] ] ) ) {

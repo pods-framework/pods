@@ -1641,6 +1641,8 @@ class Pods implements Iterator {
 				$old_post_id = null;
 				$post_ID     = null;
 
+				$is_repeatable_field = $field_data instanceof Field && $field_data->is_repeatable();
+
 				if ( empty( $GLOBALS['post'] ) && 'post_type' === pods_v( 'type', $this->pod_data ) && 0 < $this->id() ) {
 					global $post_ID, $post;
 
@@ -1687,15 +1689,27 @@ class Pods implements Iterator {
 					if ( $value_reset ) {
 						$value = reset( $value );
 					}
-				} elseif ( 1 === (int) pods_v( 'display_process', $field_data, 1 ) ) {
-					if ( ! is_array( $value ) || ! $params->display_process_individually ) {
-						// Do the normal display handling.
-						$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
-					} else {
+				} elseif ( $is_repeatable_field || 1 === (int) pods_v( 'display_process', $field_data, 1 ) ) {
+					if ( $is_repeatable_field && $value && ! is_array( $value ) ) {
+						$value = [
+							$value,
+						];
+					}
+
+					if (
+						is_array( $value )
+						&& (
+							$is_repeatable_field
+							|| $params->display_process_individually
+						)
+					) {
 						// Attempt to process each value independently.
 						foreach ( $value as $k => $val ) {
 							$value[ $k ] = PodsForm::display( $field_data['type'], $val, $params->name, $field_data, $this->pod_data, $this->id() );
 						}
+					} else {
+						// Do the normal display handling.
+						$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
 					}
 				}
 

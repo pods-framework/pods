@@ -428,6 +428,7 @@ class Post_Type extends Collection {
 					if ( $query instanceof WP_Query ) {
 						$post_objects = $query->posts;
 					} else {
+						_prime_post_caches( $posts, false, false ); // Prevent separate queries for each iteration.
 						$post_objects = array_map( 'get_post', $posts );
 					}
 				}
@@ -454,6 +455,7 @@ class Post_Type extends Collection {
 				}, $post_objects );
 			} else {
 				// Handle normal Whatsit object setup.
+				update_postmeta_cache( $posts ); // Prevent separate queries for each iteration.
 				$posts = array_map( [ $this, 'to_object' ], $post_objects );
 				$posts = array_filter( $posts );
 			}

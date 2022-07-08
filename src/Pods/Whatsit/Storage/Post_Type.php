@@ -390,6 +390,9 @@ class Post_Type extends Collection {
 				// We only receive the first post, so let's just override the posts with the count.
 				if ( ! empty( $args['count'] ) ) {
 					$posts = array_fill( 0, $query->found_posts, 'temp_count_holder' );
+				} elseif ( 'ids' !== $post_args['fields'] ) {
+					// This variable should always containt the post ID's.
+					$posts = wp_list_pluck( $posts, 'ID' );
 				}
 
 				if ( empty( $args['bypass_cache'] ) ) {

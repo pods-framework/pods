@@ -309,6 +309,7 @@ class Post_Type extends Collection {
 
 		$current_language = pods_i18n()->get_current_language();
 
+		$query        = null;
 		$cache_key    = null;
 		$posts        = false;
 		$post_objects = false;
@@ -424,7 +425,11 @@ class Post_Type extends Collection {
 					}, $posts );
 				} else {
 					// Get the post objects.
-					$post_objects = array_map( 'get_post', $posts );
+					if ( $query instanceof WP_Query ) {
+						$post_objects = $query->posts;
+					} else {
+						$post_objects = array_map( 'get_post', $posts );
+					}
 				}
 			}
 

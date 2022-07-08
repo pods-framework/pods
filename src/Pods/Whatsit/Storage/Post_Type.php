@@ -299,7 +299,7 @@ class Post_Type extends Collection {
 		 */
 		$post_args = apply_filters( 'pods_whatsit_storage_post_type_find_args', $post_args, $args );
 
-		$post_args['fields'] = 'ids';
+		$post_args['fields'] = ( ! empty( $args['ids'] ) ) ? 'ids' : 'all';
 
 		if ( empty( $post_args['meta_query'] ) ) {
 			unset( $post_args['meta_query'] );

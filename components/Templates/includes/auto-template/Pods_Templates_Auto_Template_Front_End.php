@@ -67,7 +67,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				$pod = $obj->post_type;
 				break;
 			case $obj instanceof WP_Term:
-				$pod = $obj->name;
+				$pod = $obj->taxonomy;
 				break;
 			case $obj instanceof WP_User:
 				$pod = 'user';
@@ -119,11 +119,11 @@ class Pods_Templates_Auto_Template_Front_End {
 	public function the_pods() {
 
 		// use the cached results.
-		$key      = '_pods_pfat_the_pods';
+		$key      = 'pods_pfat_the_pods';
 		$the_pods = pods_transient_get( $key );
 
 		// check if we already have the results cached & use it if we can.
-		if ( false === $the_pods ) {
+		if ( ! is_array( $the_pods ) ) {
 			// get all post type pods.
 			$the_pods = pods_api()->load_pods(
 				array(
@@ -133,7 +133,7 @@ class Pods_Templates_Auto_Template_Front_End {
 						'comment',
 						'user',
 					),
-					'names'      => true,
+					'labels'     => true,
 					'fields'     => false,
 					'table_info' => false,
 				)
@@ -177,11 +177,11 @@ class Pods_Templates_Auto_Template_Front_End {
 		}
 
 		// try to get cached results of this method.
-		$key       = '_pods_pfat_auto_pods';
+		$key       = 'pods_pfat_auto_pods';
 		$auto_pods = pods_transient_get( $key );
 
 		// check if we already have the results cached & use it if we can.
-		if ( $auto_pods === false ) {
+		if ( ! is_array( $auto_pods ) ) {
 			$default_hooks = array(
 				'post_type' => 'the_content',
 				'taxonomy'  => 'get_the_archive_description',
@@ -219,6 +219,14 @@ class Pods_Templates_Auto_Template_Front_End {
 					$single_filter    = pods_v( 'pfat_filter_single', $options, $default_hook, true );
 					$archive_filter   = pods_v( 'pfat_filter_archive', $options, $default_hook, true );
 					$run_outside_loop = pods_v( 'pfat_run_outside_loop', $options, false, true );
+
+					if ( 'true' === $single ) {
+						$single = '';
+					}
+
+					if ( 'true' === $archive ) {
+						$archive = '';
+					}
 
 					if ( 'custom' === $single_filter ) {
 						$single_filter = pods_v( 'pfat_filter_single_custom', $options, $default_hook, true );

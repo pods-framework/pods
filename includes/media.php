@@ -246,7 +246,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 
 	if ( ! ( $uploads && false === $uploads['error'] ) ) {
 		if ( $strict ) {
-			throw new \Exception( sprintf( 'Attachment import failed, uploads directory has a problem: %s', var_export( $uploads, true ) ) );
+			throw new Exception( sprintf( 'Attachment import failed, uploads directory has a problem: %s', var_export( $uploads, true ) ) );
 		}
 
 		return 0;
@@ -255,17 +255,13 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 	$filename = wp_unique_filename( $uploads['path'], $filename );
 	$new_file = $uploads['path'] . '/' . $filename;
 
-	$file_data = @file_get_contents( $url );
+	if ( ! copy( $url, $new_file ) ) {
+        if ( $strict ) {
+            throw new Exception( sprintf( 'Attachment import failed, could not copy file from %s to %s', $url, $new_file ) );
+        }
 
-	if ( ! $file_data ) {
-		if ( $strict ) {
-			throw new \Exception( 'Attachment import failed, file_get_contents had a problem' );
-		}
-
-		return 0;
-	}
-
-	file_put_contents( $new_file, $file_data );
+        return 0;
+    }
 
 	$stat  = stat( dirname( $new_file ) );
 	$perms = $stat['mode'] & 0000666;
@@ -275,7 +271,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 
 	if ( ! $wp_filetype['type'] || ! $wp_filetype['ext'] ) {
 		if ( $strict ) {
-			throw new \Exception( sprintf( 'Attachment import failed, filetype check failed: %s', var_export( $wp_filetype, true ) ) );
+			throw new Exception( sprintf( 'Attachment import failed, filetype check failed: %s', var_export( $wp_filetype, true ) ) );
 		}
 
 		return 0;
@@ -293,7 +289,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 
 	if ( is_wp_error( $attachment_id ) ) {
 		if ( $strict ) {
-			throw new \Exception( sprintf( 'Attachment import failed, wp_insert_attachment failed: %s', var_export( $attachment_id, true ) ) );
+			throw new Exception( sprintf( 'Attachment import failed, wp_insert_attachment failed: %s', var_export( $attachment_id, true ) ) );
 		}
 
 		return 0;

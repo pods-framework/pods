@@ -282,7 +282,9 @@ class Map_Field_Values {
 			'_position',
 			'_total',
 			'_total_found',
+			'_total_all_rows',
 			'_total_pages',
+			'_current_page',
 		];
 
 		// Skip if not the field we are looking for.
@@ -309,8 +311,16 @@ class Map_Field_Values {
 				$value = $obj->total_found();
 
 				break;
+			case '_total_all_rows':
+				$value = $obj->total_all_rows();
+
+				break;
 			case '_total_pages':
 				$value = $obj->total_pages();
+
+				break;
+			case '_current_page':
+				$value = (int) $obj->page;
 
 				break;
 		}

@@ -174,13 +174,11 @@ if ( 0 < $pod->id() ) {
 	}
 }
 
-$static_cache = tribe( Static_Cache::class );
-
-$counter = (int) $static_cache->get( $pod->pod . '-counter', 'pods-forms' );
+$counter = (int) pods_static_cache_get( $pod->pod . '-counter', 'pods-forms' );
 
 $counter ++;
 
-$static_cache->set( $pod->pod . '-counter', $counter, 'pods-forms' );
+pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 ?>
 
 <form action="" method="post"

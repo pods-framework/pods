@@ -239,13 +239,16 @@ class PodsField_Number extends PodsField {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
-
-			$value = $this->format( $value, $name, $options, $pod, $id );
 		}
 
 		// Enforce boolean.
 		$options[ static::$type . '_html5' ]       = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
 		$options[ static::$type . '_format_soft' ] = filter_var( pods_v( static::$type . '_format_soft', $options, false ), FILTER_VALIDATE_BOOLEAN );
+
+		// Only format the value for non-HTML5 inputs.
+		if ( ! $options[ static::$type . '_html5' ] ) {
+			$value = $this->format( $value, $name, $options, $pod, $id );
+		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {
 			return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );

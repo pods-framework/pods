@@ -202,71 +202,81 @@ class PodsView {
 			}
 		}
 
+		$cache_enabled = ! in_array( $cache_mode, $nocache, true );
+
 		if ( apply_filters( 'pods_view_cache_alt_get', false, $cache_mode, $group_key . $key, $original_key, $group ) ) {
 			$value = apply_filters( 'pods_view_cache_alt_get_value', $value, $cache_mode, $group_key . $key, $original_key, $group );
-		} elseif ( 'transient' === $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
-			$value = get_transient( $group_key . $key );
-		} elseif ( 'site-transient' === $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
-			$value = get_site_transient( $group_key . $key );
-		} elseif ( 'cache' === $cache_mode && $object_cache && ! in_array( $cache_mode, $nocache ) ) {
-			$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
-		} elseif ( 'option-cache' === $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
-			global $_wp_using_ext_object_cache;
+		} elseif ( $cache_enabled ) {
+			if ( 'transient' === $cache_mode ) {
+				$value = get_transient( $group_key . $key );
+			} elseif ( 'site-transient' === $cache_mode ) {
+				$value = get_site_transient( $group_key . $key );
+			} elseif ( 'cache' === $cache_mode && $object_cache ) {
+				$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
+			} elseif ( 'option-cache' === $cache_mode ) {
+				global $_wp_using_ext_object_cache;
 
-			$pre = apply_filters( "pre_transient_{$key}", false );
+				$pre = apply_filters( "pre_transient_{$key}", false );
 
-			if ( false !== $pre ) {
-				$value = $pre;
-			} elseif ( $_wp_using_ext_object_cache ) {
-				$cache_found = false;
+				if ( false !== $pre ) {
+					$value = $pre;
+				} elseif ( $_wp_using_ext_object_cache ) {
+					$cache_found = false;
 
-				$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_option_cache' : $group ), false, $cache_found );
+					$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_option_cache' : $group ), false, $cache_found );
 
-				if ( false === $value || ! $cache_found ) {
-					if ( is_callable( $callback ) ) {
-						// Callback function should do it's own set/update for cache
-						$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
+					if ( false === $value || ! $cache_found ) {
+						if ( is_callable( $callback ) ) {
+							// Callback function should do it's own set/update for cache
+							$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
 
-						if ( null !== $callback_value && false !== $callback_value ) {
-							$value = $callback_value;
+							if ( null !== $callback_value && false !== $callback_value ) {
+								$value = $callback_value;
+							}
+
+							$called = true;
 						}
-
-						$called = true;
 					}
+				} else {
+					$transient_option  = '_pods_option_' . $key;
+					$transient_timeout = '_pods_option_timeout_' . $key;
+
+					$value   = get_option( $transient_option );
+					$timeout = get_option( $transient_timeout );
+
+					if ( ! empty( $timeout ) && $timeout < time() ) {
+						if ( is_callable( $callback ) ) {
+							// Callback function should do it's own set/update for cache
+							$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
+
+							if ( null !== $callback_value && false !== $callback_value ) {
+								$value = $callback_value;
+							}
+
+							$called = true;
+						} else {
+							$value = false;
+
+							delete_option( $transient_option );
+							delete_option( $transient_timeout );
+						}
+					}
+				}//end if
+
+				if ( false !== $value ) {
+					$value = apply_filters( "transient_{$key}", $value );
+				}
+			} elseif ( 'static-cache' === $cache_mode ) {
+				$static_cache = pods_container( Static_Cache::class );
+
+				if ( $static_cache ) {
+					$value = $static_cache->get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
+				} else {
+					$value = false;
 				}
 			} else {
-				$transient_option  = '_pods_option_' . $key;
-				$transient_timeout = '_pods_option_timeout_' . $key;
-
-				$value   = get_option( $transient_option );
-				$timeout = get_option( $transient_timeout );
-
-				if ( ! empty( $timeout ) && $timeout < time() ) {
-					if ( is_callable( $callback ) ) {
-						// Callback function should do it's own set/update for cache
-						$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
-
-						if ( null !== $callback_value && false !== $callback_value ) {
-							$value = $callback_value;
-						}
-
-						$called = true;
-					} else {
-						$value = false;
-
-						delete_option( $transient_option );
-						delete_option( $transient_timeout );
-					}
-				}
+				$value = false;
 			}//end if
-
-			if ( false !== $value ) {
-				$value = apply_filters( "transient_{$key}", $value );
-			}
-		} elseif ( 'static-cache' === $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
-			$static_cache = tribe( Static_Cache::class );
-
-			$value = $static_cache->get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
 		} else {
 			$value = false;
 		}//end if
@@ -365,9 +375,11 @@ class PodsView {
 				do_action( 'setted_transient', $key );
 			}
 		} elseif ( 'static-cache' === $cache_mode ) {
-			$static_cache = tribe( Static_Cache::class );
+			$static_cache = pods_container( Static_Cache::class );
 
-			$static_cache->set( $key, $value, ( empty( $group ) ? __CLASS__ : $group ) );
+			if ( $static_cache ) {
+				$static_cache->set( $key, $value, ( empty( $group ) ? __CLASS__ : $group ) );
+			}
 		}//end if
 
 		do_action( "pods_view_set_{$cache_mode}", $original_key, $value, $expires, $group );
@@ -474,12 +486,14 @@ class PodsView {
 				do_action( 'deleted_transient', $key );
 			}
 		} elseif ( 'static-cache' === $cache_mode ) {
-			$static_cache = tribe( Static_Cache::class );
+			$static_cache = pods_container( Static_Cache::class );
 
-			if ( true === $key ) {
-				$static_cache->flush( ( empty( $group ) ? 'pods_view' : $group ) );
-			} else {
-				$static_cache->delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
+			if ( $static_cache ) {
+				if ( true === $key ) {
+					$static_cache->flush( ( empty( $group ) ? 'pods_view' : $group ) );
+				} else {
+					$static_cache->delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
+				}
 			}
 		}//end if
 
@@ -538,9 +552,8 @@ class PodsView {
 	 * @return bool|mixed|string|void
 	 */
 	private static function locate_template( $_view ) {
-
 		if ( is_array( $_view ) ) {
-			$_views = array();
+			$_views = [];
 
 			if ( isset( $_view[0] ) && false === strpos( $_view[0], '.php' ) ) {
 				$_view_count = count( $_view );
@@ -567,44 +580,23 @@ class PodsView {
 			return $_view;
 		}//end if
 
-		// Keep it safe
-		$_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
+		// Is the view's file somewhere within the plugin directory tree?
+		// Note: we include PODS_DIR for the case of symlinks (see issue #2945).
+		$located = pods_validate_safe_path( $_view, [ 'plugins', 'pods', 'theme' ] );
 
-		if ( empty( $_view ) ) {
+		/**
+		 * Allow filtering the validated view file path to use.
+		 *
+		 * @since unknown
+		 *
+		 * @param string|false $located The validated view file path to use, or false if it was not valid.
+		 * @param string       $_view   The original view file path to use.
+		 */
+		$located = apply_filters( 'pods_view_locate_template', $located, $_view );
+
+		if ( ! $located ) {
 			return false;
 		}
-
-		$_real_view = realpath( $_view );
-
-		if ( empty( $_real_view ) ) {
-			$_real_view = $_view;
-		}
-
-		$located = false;
-
-		// Is the view's file somewhere within the plugin directory tree?
-		// Note: we explicitly whitelist PODS_DIR for the case of symlinks (see issue #2945)
-		if ( false !== strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) || false !== strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) || false !== strpos( $_real_view, PODS_DIR ) ) {
-			if ( file_exists( $_view ) ) {
-				$located = $_view;
-			} else {
-				$located = apply_filters( 'pods_view_locate_template', $located, $_view );
-			}
-		} else {
-			// The view's file is outside the plugin directory
-			$_real_view = trim( $_real_view, '/' );
-
-			if ( empty( $_real_view ) ) {
-				return false;
-			}
-
-			// Allow views in the theme or child theme
-			if ( file_exists( realpath( get_stylesheet_directory() . '/' . $_real_view ) ) ) {
-				$located = realpath( get_stylesheet_directory() . '/' . $_real_view );
-			} elseif ( file_exists( realpath( get_template_directory() . '/' . $_real_view ) ) ) {
-				$located = realpath( get_template_directory() . '/' . $_real_view );
-			}
-		}//end if
 
 		return $located;
 

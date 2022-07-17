@@ -133,7 +133,7 @@ class Pods implements Iterator {
 			$pod = get_queried_object();
 		}
 
-		if ( $pod && ! is_string( $pod ) ) {
+		if ( $pod && ! is_string( $pod ) && ! $pod instanceof Pod ) {
 			if ( $pod instanceof WP_Post ) {
 				// Post Type Singular.
 				$pod       = $pod->post_type;
@@ -183,13 +183,24 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Whether this Pod object is valid or not
+	 * Determine whether this Pod object was defined or was built adhoc.
 	 *
-	 * @return bool
+	 * @since 2.8.18
 	 *
-	 * @since 2.0.0
+	 * @return bool Whether this Pod object was defined or was built adhoc.
 	 */
-	public function valid() {
+	public function is_defined() {
+		return $this->pod_data && empty( $this->pod_data['adhoc'] );
+	}
+
+	/**
+	 * Determine whether this Pod object is valid or not.
+	 *
+	 * @since 2.8.18
+	 *
+	 * @return bool Whether this Pod object is valid or not.
+	 */
+	public function is_valid() {
 		if ( empty( $this->pod_data ) ) {
 			return false;
 		}
@@ -199,6 +210,19 @@ class Pods implements Iterator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Whether this Pod object is valid or not
+	 *
+	 * @return bool
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Pods::is_valid()
+	 */
+	public function valid() {
+		return $this->is_valid();
 	}
 
 	/**
@@ -567,6 +591,7 @@ class Pods implements Iterator {
 			'display_process_individually' => false,
 			'get_meta'                     => false,
 			'output'                       => null,
+			'pods_callback'                => 'pods',
 			'deprecated'                   => false,
 			'keyed'                        => false,
 			// extra data to send to field handlers.
@@ -617,6 +642,10 @@ class Pods implements Iterator {
 
 		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ), true ) ) {
 			$params->output .= 's';
+		}
+
+		if ( empty( $params->pods_callback ) || ! is_callable( $params->pods_callback ) ) {
+			$params->pods_callback = 'pods';
 		}
 
 		// Support old $orderby variable.
@@ -764,12 +793,16 @@ class Pods implements Iterator {
 			$field_data = $this->fields( $params->name );
 		}
 
+		$override_object_field = false;
+
 		if ( $field_data instanceof \Pods\Whatsit\Object_Field ) {
 			$field_source = 'object_field';
 			$is_field_set = true;
 		} elseif ( $field_data instanceof \Pods\Whatsit\Field ) {
 			$field_source = 'field';
 			$is_field_set = true;
+
+			$override_object_field = (bool) $field_data->get_arg( 'override_object_field', false );
 		}
 
 		// Store field info.
@@ -780,6 +813,19 @@ class Pods implements Iterator {
 		// Simple fields have no other output options.
 		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
 			$params->output = 'arrays';
+		}
+
+		$is_tableless_field_and_not_simple = (
+			! $is_traversal
+			&& $field_data
+			&& ! $field_data instanceof Object_Field
+			&& $is_tableless_field
+			&& ! $field_data->is_simple_relationship()
+		);
+
+		// If a relationship is returned from the table as an ID but the parameter is not traversal, we need to run traversal logic.
+		if ( $is_tableless_field_and_not_simple && isset( $this->data->row[ $params->name ] ) && ! is_array( $this->data->row[ $params->name ] ) ) {
+			unset( $this->data->row[ $params->name ] );
 		}
 
 		// Enforce output type for tableless fields in forms.
@@ -807,9 +853,10 @@ class Pods implements Iterator {
 		}
 
 		if (
-			empty( $value ) &&
-			isset( $this->data->row[ $params->name ] ) &&
-			( ! $is_tableless_field || 'arrays' === $params->output )
+			! $override_object_field
+			&& empty( $value )
+			&& isset( $this->data->row[ $params->name ] )
+			&& ( ! $is_tableless_field || 'arrays' === $params->output )
 		) {
 			if ( empty( $field_data ) || in_array( $field_type, [
 					'boolean',
@@ -843,7 +890,7 @@ class Pods implements Iterator {
 				}
 			} else {
 				// Handle custom/supported value mappings.
-				$map_field_values = tribe( Map_Field_Values::class );
+				$map_field_values = pods_container( Map_Field_Values::class );
 
 				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this );
 
@@ -1181,10 +1228,11 @@ class Pods implements Iterator {
 								$is_field_output_full = true;
 							}
 
+							/** @var Pods $related_obj */
 							if ( 'pod' === $object_type ) {
-								$related_obj = pods( $object, null, false );
+								$related_obj = call_user_func( $params->pods_callback, $object, null, false );
 							} elseif ( ! empty( $table['pod'] ) ) {
-								$related_obj = pods( $table['pod']['name'], null, false );
+								$related_obj = call_user_func( $params->pods_callback, $table['pod']['name'], null, false );
 							}
 
 							if ( $table && ( $related_obj || ! empty( $table['table'] ) ) ) {
@@ -1309,10 +1357,11 @@ class Pods implements Iterator {
 												$item = (object) $item;
 											}//end if
 										} elseif ( 'pods' === $params->output ) {
+											/** @var Pods $item */
 											if ( in_array( $object_type, array( 'user', 'media' ), true ) ) {
-												$item = pods( $object_type, (int) $item_id );
+												$item = call_user_func( $params->pods_callback, $object_type, (int) $item_id );
 											} else {
-												$item = pods( $object, (int) $item_id );
+												$item = call_user_func( $params->pods_callback, $object, (int) $item_id );
 											}
 
 											if ( ! $item || ! $item->valid() ) {
@@ -2468,11 +2517,19 @@ class Pods implements Iterator {
 	 *
 	 * @see   PodsData::total_found
 	 *
+	 * @params null|array $params The list of Pods::find() parameters to use, otherwise use current dataset to calculate total found.
+	 *
 	 * @return int Number of rows returned by find(), regardless of the 'limit' parameter
 	 * @since 2.0.0
 	 * @link  https://docs.pods.io/code/pods/total-found/
 	 */
-	public function total_found() {
+	public function total_found( $params = null ) {
+		// Support find() shorthand to get total_found() for a specific dataset.
+		if ( is_array( $params ) ) {
+			$this->find( $params );
+
+			return $this->total_found();
+		}
 
 		/**
 		 * Runs directly before the value of total_found() is determined and returned.
@@ -2485,7 +2542,38 @@ class Pods implements Iterator {
 
 		$this->data->total_found();
 
-		return $this->data->total_found;
+		return (int) $this->data->total_found;
+	}
+
+	/**
+	 * Get the total count of all rows in a simple find() across the whole Pod. This will perform a new find() request
+	 * and then return the total number of rows found.
+	 *
+	 * This method is non-destructive and it will not alter the current Pod object.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return int The total count of all rows in a simple find() across the whole Pod.
+	 */
+	public function total_all_rows() {
+		$field_id = pods_v( 'field_id', $this->pod_data );
+
+		if ( empty( $field_id ) ) {
+			return 0;
+		}
+
+		$pod = clone $this;
+
+		// Make a simple request so we can perform a total_found() SQL request.
+		$params = [
+			'distinct' => false,
+			'select'   => 't.' . $this->pod_data['field_id'],
+			'limit'    => 1,
+		];
+
+		$pod->find( $params );
+
+		return $pod->total_found();
 	}
 
 	/**
@@ -2495,7 +2583,7 @@ class Pods implements Iterator {
 	 * @param null|int $offset Offset of rows.
 	 * @param null|int $total  Total rows.
 	 *
-	 * @return int Number of pages
+	 * @return int Number of pages.
 	 * @since 2.3.10
 	 */
 	public function total_pages( $limit = null, $offset = null, $total = null ) {
@@ -2514,7 +2602,12 @@ class Pods implements Iterator {
 			$total = $this->total_found();
 		}
 
-		return ceil( ( $total - $offset ) / $limit );
+		// No limit means one page.
+		if ( $limit < 1 ) {
+			return 1;
+		}
+
+		return (int) ceil( ( $total - $offset ) / $limit );
 
 	}
 
@@ -3049,7 +3142,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function import( $import_data, $numeric_mode = false, $format = null ) {
-
 		return $this->data->api->import( $import_data, $numeric_mode, $format );
 	}
 
@@ -3068,7 +3160,6 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
-
 		$params = array(
 			'pod'     => $this->pod,
 			'id'      => $id,
@@ -3120,7 +3211,6 @@ class Pods implements Iterator {
 	 * @since 2.3.0
 	 */
 	public function export_data( $params = null ) {
-
 		$defaults = array(
 			'fields' => null,
 			'depth'  => 2,
@@ -3227,6 +3317,10 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/filters/
 	 */
 	public function filters( $params = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
 
 		$defaults = array(
 			'fields' => $params,
@@ -3371,8 +3465,8 @@ class Pods implements Iterator {
 		/**
 		 * Allows changing whether callbacks are allowed to run.
 		 *
-		 * @param bool  $allowed Whether callbacks are allowed to run.
-		 * @param array $params  Parameters used by Pods::helper() method.
+		 * @param bool  $allow_callbacks Whether callbacks are allowed to run.
+		 * @param array $params          Parameters used by Pods::helper() method.
 		 *
 		 * @since 2.8.0
 		 */
@@ -3382,8 +3476,22 @@ class Pods implements Iterator {
 			return $value;
 		}
 
+		/**
+		 * Allows changing whether to include the Pods object as the second value to the callback.
+		 *
+		 * @param bool  $include_obj Whether to include the Pods object as the second value to the callback.
+		 * @param array $params      Parameters used by Pods::helper() method.
+		 *
+		 * @since 2.8.0
+		 */
+		$include_obj = (boolean) apply_filters( 'pods_helper_include_obj', false, $params );
+
 		if ( ! is_callable( $params['helper'] ) ) {
-			return apply_filters( $params['helper'], $value );
+			if ( $include_obj ) {
+				return apply_filters( $params['helper'], $value, $this );
+			} else {
+				return apply_filters( $params['helper'], $value );
+			}
 		}
 
 		$disallowed = array(
@@ -3441,11 +3549,15 @@ class Pods implements Iterator {
 			$is_allowed = true;
 		}
 
-		if ( $is_allowed ) {
-			$value = call_user_func( $params['helper'], $value );
+		if ( ! $is_allowed ) {
+			return $value;
 		}
 
-		return $value;
+		if ( $include_obj ) {
+			return call_user_func( $params['helper'], $value, $this );
+		}
+
+		return call_user_func( $params['helper'], $value );
 	}
 
 	/**
@@ -3639,6 +3751,11 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
+		// Only show placeholder text if in REST API block preview.
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			return '<em>[' . esc_html__( 'This is a placeholder. Filters and form fields are not included in block previews.', 'pods' ) . ']</em>';
+		}
+
 		// Check for anonymous submissions.
 		if ( ! is_user_logged_in() ) {
 			$session_auto_start = pods_session_auto_start();

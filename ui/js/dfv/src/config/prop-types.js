@@ -48,6 +48,17 @@ export const HTML_ATTR = PropTypes.shape( {
 	name_clean: PropTypes.string,
 } );
 
+export const AJAX_DATA = PropTypes.shape( {
+	ajax: BOOLEAN_ALL_TYPES,
+	delay: NUMBER_OR_NUMBER_AS_STRING,
+	minimum_input_length: NUMBER_OR_NUMBER_AS_STRING,
+	pod: NUMBER_OR_NUMBER_AS_STRING,
+	field: NUMBER_OR_NUMBER_AS_STRING,
+	id: NUMBER_OR_NUMBER_AS_STRING,
+	uri: PropTypes.string,
+	_wpnonce: PropTypes.string,
+} );
+
 export const FIELD_PROP_TYPE = {
 	// Used in multiple fields
 	admin_only: BOOLEAN_ALL_TYPES,
@@ -212,6 +223,7 @@ export const FIELD_PROP_TYPE = {
 	date_format: PropTypes.string,
 	date_format_custom: PropTypes.string,
 	date_format_custom_js: PropTypes.string,
+	date_format_moment_js: PropTypes.string,
 	date_html5: BOOLEAN_ALL_TYPES,
 	date_repeatable: BOOLEAN_ALL_TYPES,
 	date_type: PropTypes.string,
@@ -219,6 +231,7 @@ export const FIELD_PROP_TYPE = {
 
 	// Date/Time fields
 	datetime_allow_empty: BOOLEAN_ALL_TYPES,
+	datetime_date_format_moment_js: PropTypes.string,
 	datetime_format: PropTypes.string,
 	datetime_format_custom: PropTypes.string,
 	datetime_format_custom_js: PropTypes.string,
@@ -228,6 +241,7 @@ export const FIELD_PROP_TYPE = {
 	datetime_time_format_24: PropTypes.string,
 	datetime_time_format_custom: PropTypes.string,
 	datetime_time_format_custom_js: PropTypes.string,
+	datetime_time_format_moment_js: PropTypes.string,
 	datetime_time_type: PropTypes.string,
 	datetime_type: PropTypes.string,
 	datetime_year_range_custom: PropTypes.string,
@@ -263,6 +277,9 @@ export const FIELD_PROP_TYPE = {
 	plupload_init: PropTypes.object,
 	limit_extensions: PropTypes.string,
 	limit_types: PropTypes.string,
+
+	// Heading field
+	heading_tag: PropTypes.string,
 
 	// HTML field
 	html_content: PropTypes.string,
@@ -410,6 +427,7 @@ export const FIELD_PROP_TYPE = {
 	pick_limit: NUMBER_OR_NUMBER_AS_STRING,
 	pick_object: PropTypes.string,
 	pick_orderby: PropTypes.string,
+	pick_placeholder: PropTypes.string,
 	pick_post_status: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),
@@ -434,16 +452,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	view_name: PropTypes.string,
-	ajax_data: PropTypes.shape( {
-		ajax: BOOLEAN_ALL_TYPES,
-		delay: NUMBER_OR_NUMBER_AS_STRING,
-		minimum_input_length: NUMBER_OR_NUMBER_AS_STRING,
-		pod: NUMBER_OR_NUMBER_AS_STRING,
-		field: NUMBER_OR_NUMBER_AS_STRING,
-		id: NUMBER_OR_NUMBER_AS_STRING,
-		uri: PropTypes.string,
-		_wpnonce: PropTypes.string,
-	} ),
+	ajax_data: AJAX_DATA,
 	select2_overrides: PropTypes.any,
 	supports_thumbnails: BOOLEAN_ALL_TYPES,
 	optgroup: PropTypes.any,
@@ -462,6 +471,7 @@ export const FIELD_PROP_TYPE = {
 	time_format_24: PropTypes.string,
 	time_format_custom: PropTypes.string,
 	time_format_custom_js: PropTypes.string,
+	time_format_moment_js: PropTypes.string,
 	time_html5: BOOLEAN_ALL_TYPES,
 	time_repeatable: BOOLEAN_ALL_TYPES,
 	time_type: PropTypes.string,

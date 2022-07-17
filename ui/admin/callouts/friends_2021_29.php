@@ -3,6 +3,8 @@
  * @var bool $force_callouts Whether to force the callouts.
  */
 
+$callout = 'friends_2021_29';
+
 $donor_count    = 18;
 $donor_goal     = 100;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
@@ -26,7 +28,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 
 <div class="pods-admin_friends-callout_container">
 	<?php if ( ! $force_callouts ) : ?>
-		<a href="<?php echo esc_url( add_query_arg( 'pods_callout_dismiss', 'friends_2021' ) ); ?>" class="pods-admin_friends-callout_close">
+		<a href="<?php echo esc_url( add_query_arg( 'pods_callout_dismiss', $callout ) ); ?>" class="pods-admin_friends-callout_close">
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 125" enable-background="new 0 0 100 100" xml:space="preserve"><polygon points="95,17 83,5 50,38 17,5 5,17 38,50 5,83 17,95 50,62 83,95 95,83 62,50 "/></svg>
 		</a>
 	<?php endif; ?>
@@ -37,7 +39,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 		<h2 class="pods-admin_friends-callout_headline">
 			<?php
 				printf(
-					esc_html__( 'We need %1$sYOU%2$s in 2021 and beyond', 'pods' ),
+					esc_html__( 'We need %1$sYOU%2$s', 'pods' ),
 					'<span class="pods-admin_friends-you">',
 					'</span>'
 				);
@@ -49,7 +51,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 			<?php
 				printf(
 					'%1$s: <a href="%2$s" target="_blank" rel="noreferrer">%3$s</a>',
-					esc_html__( 'Pods 2.8 is out now and we are building the next feature for Pods 2.9', 'pods' ),
+					esc_html__( 'Pods 2.8 is out and we are building the next feature for Pods 2.9', 'pods' ),
 					esc_url( $feature_callout_link ),
 					esc_html__( 'Simple Repeatable Fields', 'pods' )
 				);

@@ -11,7 +11,7 @@ namespace Pods;
  */
 class Wisdom_Tracker {
 
-	private $wisdom_version = '1.2.4';
+	private $wisdom_version = '1.2.5';
 	private $home_url = '';
 	private $plugin_file = '';
 	private $plugin_name = '';
@@ -27,7 +27,7 @@ class Wisdom_Tracker {
 	 * Class constructor
 	 *
 	 * @param $_home_url                   The URL to the site we're sending data to
-	 * @param $_plugin_slug                The slug for this plugin
+	 * @param $_plugin_slug                The slug for this plugin (SKC modification for Pods).
 	 * @param $_plugin_file                The file path for this plugin
 	 * @param $_options                    Plugin options to track
 	 * @param $_require_optin              Whether user opt-in is required (always required on WordPress.org)
@@ -45,7 +45,12 @@ class Wisdom_Tracker {
 
 		// If the filename is 'functions' then we're tracking a theme
 		if ( basename( $this->plugin_file, '.php' ) != 'functions' ) {
-			$this->plugin_name = ! empty( $_plugin_slug ) ? $_plugin_slug : basename( $this->plugin_file, '.php' );
+			$this->plugin_name = basename( $this->plugin_file, '.php' );
+
+			// SKC modification for Pods.
+			if ( ! empty( $_plugin_slug ) ) {
+				$this->plugin_name = $_plugin_slug;
+			}
 		} else {
 			$this->what_am_i = 'theme';
 			$theme           = wp_get_theme();
@@ -305,7 +310,7 @@ class Wisdom_Tracker {
 		if ( empty( $plugin ) ) {
 			// We can't find the plugin data
 			// Send a message back to our home site
-			$body['message'] .= __( 'We can\'t detect any product information. This is most probably because you have not included the code snippet.', 'singularity' );
+			$body['message'] .= __( 'We can\'t detect any product information. This is most probably because you have not included the code snippet.', 'pods' );
 			$body['status']  = 'Data not found'; // Never translated
 		} else {
 			if ( isset( $plugin['Name'] ) ) {
@@ -425,6 +430,7 @@ class Wisdom_Tracker {
 		// First, check if the user has changed their mind and opted out of tracking
 		if ( $this->has_user_opted_out() ) {
 			$this->set_is_tracking_allowed( false, $this->plugin_name );
+
 			// SKC modification for Pods.
 			$this->set_can_collect_email( false, $this->plugin_name );
 
@@ -815,10 +821,10 @@ class Wisdom_Tracker {
 			// Decide on notice text
 			if ( $this->marketing != 1 ) {
 				// Standard notice text
-				$notice_text = sprintf( __( 'Thank you for installing our %1$s. We would like to track its usage on your site. We don\'t record any sensitive data, only information regarding the WordPress environment and %1$s settings, which we will use to help us make improvements to the %1$s. Tracking is completely optional.', 'singularity' ), $this->what_am_i );
+				$notice_text = sprintf( __( 'Thank you for installing our %1$s. We would like to track its usage on your site. We don\'t record any sensitive data, only information regarding the WordPress environment and %1$s settings, which we will use to help us make improvements to the %1$s. Tracking is completely optional.', 'pods' ), $this->what_am_i );
 			} else {
 				// If we have option 1 for marketing, we include reference to sending product information here
-				$notice_text = sprintf( __( 'Thank you for installing our %1$s. We\'d like your permission to track its usage on your site and subscribe you to our newsletter. We won\'t record any sensitive data, only information regarding the WordPress environment and %1$s settings, which we will use to help us make improvements to the %1$s. Tracking is completely optional.', 'singularity' ), $this->what_am_i );
+				$notice_text = sprintf( __( 'Thank you for installing our %1$s. We\'d like your permission to track its usage on your site and subscribe you to our newsletter. We won\'t record any sensitive data, only information regarding the WordPress environment and %1$s settings, which we will use to help us make improvements to the %1$s. Tracking is completely optional.', 'pods' ), $this->what_am_i );
 			}
 			// And we allow you to filter the text anyway
 			$notice_text = apply_filters( 'wisdom_notice_text_' . esc_attr( $this->plugin_name ), $notice_text ); ?>
@@ -827,8 +833,8 @@ class Wisdom_Tracker {
 				<p><?php echo '<strong>' . esc_html( $plugin_name ) . '</strong>'; ?></p>
 				<p><?php echo esc_html( $notice_text ); ?></p>
 				<p>
-					<a href="<?php echo esc_url( $url_yes ); ?>" class="button-secondary"><?php _e( 'Allow', 'singularity' ); ?></a>
-					<a href="<?php echo esc_url( $url_no ); ?>" class="button-secondary"><?php _e( 'Do Not Allow', 'singularity' ); ?></a>
+					<a href="<?php echo esc_url( $url_yes ); ?>" class="button-secondary"><?php _e( 'Allow', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $url_no ); ?>" class="button-secondary"><?php _e( 'Do Not Allow', 'pods' ); ?></a>
 				</p>
 			</div>
 			<?php
@@ -863,15 +869,15 @@ class Wisdom_Tracker {
 				'marketing_optin' => 'no',
 			] );
 
-			$marketing_text = sprintf( __( 'Thank you for opting in to tracking. Would you like to receive occasional news about this %s, including details of new features and special offers?', 'singularity' ), $this->what_am_i );
+			$marketing_text = sprintf( __( 'Thank you for opting in to tracking. Would you like to receive occasional news about this %s, including details of new features and special offers?', 'pods' ), $this->what_am_i );
 			$marketing_text = apply_filters( 'wisdom_marketing_text_' . esc_attr( $this->plugin_name ), $marketing_text ); ?>
 
 			<div class="notice notice-info updated put-dismiss-notice">
 				<p><?php echo '<strong>' . esc_html( $plugin_name ) . '</strong>'; ?></p>
 				<p><?php echo esc_html( $marketing_text ); ?></p>
 				<p>
-					<a href="<?php echo esc_url( $url_yes ); ?>" data-putnotice="yes" class="button-secondary"><?php _e( 'Yes Please', 'singularity' ); ?></a>
-					<a href="<?php echo esc_url( $url_no ); ?>" data-putnotice="no" class="button-secondary"><?php _e( 'No Thank You', 'singularity' ); ?></a>
+					<a href="<?php echo esc_url( $url_yes ); ?>" data-putnotice="yes" class="button-secondary"><?php _e( 'Yes Please', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $url_no ); ?>" data-putnotice="no" class="button-secondary"><?php _e( 'No Thank You', 'pods' ); ?></a>
 				</p>
 			</div>
 		<?php }
@@ -904,18 +910,18 @@ class Wisdom_Tracker {
 	 */
 	public function form_default_text() {
 		$form            = [];
-		$form['heading'] = __( 'Sorry to see you go', 'singularity' );
-		$form['body']    = __( 'Before you deactivate the plugin, would you quickly give us your reason for doing so?', 'singularity' );
+		$form['heading'] = __( 'Sorry to see you go', 'pods' );
+		$form['body']    = __( 'Before you deactivate the plugin, would you quickly give us your reason for doing so?', 'pods' );
 		$form['options'] = [
-			__( 'Set up is too difficult', 'singularity' ),
-			__( 'Lack of documentation', 'singularity' ),
-			__( 'Not the features I wanted', 'singularity' ),
-			__( 'Found a better plugin', 'singularity' ),
-			__( 'Installed by mistake', 'singularity' ),
-			__( 'Only required temporarily', 'singularity' ),
-			__( 'Didn\'t work', 'singularity' ),
+			__( 'Set up is too difficult', 'pods' ),
+			__( 'Lack of documentation', 'pods' ),
+			__( 'Not the features I wanted', 'pods' ),
+			__( 'Found a better plugin', 'pods' ),
+			__( 'Installed by mistake', 'pods' ),
+			__( 'Only required temporarily', 'pods' ),
+			__( 'Didn\'t work', 'pods' ),
 		];
-		$form['details'] = __( 'Details (optional)', 'singularity' );
+		$form['details'] = __( 'Details (optional)', 'pods' );
 
 		return $form;
 	}
@@ -958,7 +964,7 @@ class Wisdom_Tracker {
 			$html .= '</div><!-- .put-goodbye-options -->';
 		}
 		$html .= '</div><!-- .put-goodbye-form-body -->';
-		$html .= '<p class="deactivating-spinner"><span class="spinner"></span> ' . __( 'Submitting form', 'singularity' ) . '</p>';
+		$html .= '<p class="deactivating-spinner"><span class="spinner"></span> ' . __( 'Submitting form', 'pods' ) . '</p>';
 		?>
 		<div class="put-goodbye-form-bg"></div>
 		<style type="text/css">
@@ -1027,7 +1033,7 @@ class Wisdom_Tracker {
 					var url = document.getElementById( "put-goodbye-link-<?php echo esc_attr( $this->plugin_name ); ?>" );
 					$( 'body' ).toggleClass( 'put-form-active' );
 					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).fadeIn();
-					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).html( '<?php echo $html; ?>' + '<div class="put-goodbye-form-footer"><p><a id="put-submit-form" class="button primary" href="#"><?php _e( 'Submit and Deactivate', 'singularity' ); ?></a>&nbsp;<a class="secondary button" href="' + url + '"><?php _e( 'Just Deactivate', 'singularity' ); ?></a></p></div>' );
+					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).html( '<?php echo $html; ?>' + '<div class="put-goodbye-form-footer"><p><a id="put-submit-form" class="button primary" href="#"><?php _e( 'Submit and Deactivate', 'pods' ); ?></a>&nbsp;<a class="secondary button" href="' + url + '"><?php _e( 'Just Deactivate', 'pods' ); ?></a></p></div>' );
 					$( '#put-submit-form' ).on( 'click', function ( e ) {
 						// As soon as we click, the body of the form should disappear
 						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .put-goodbye-form-body" ).fadeOut();

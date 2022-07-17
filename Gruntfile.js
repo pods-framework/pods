@@ -7,18 +7,17 @@ module.exports = function( grunt ) {
 
 	grunt.loadNpmTasks( 'grunt-exec' );
 
+	const pkg = grunt.file.readJSON( 'package.json' );
+	const version_number = grunt.option( 'ver' ) || pkg.version;
 	const config = {
-		pkg: grunt.file.readJSON( 'package.json' ),
 		replace: {
 			version_readme_txt: {
 				src: [ 'readme.txt' ],
 				overwrite: true,
 				replacements: [
 					{
-						from: /Stable tag: ([\.\d\w\-]*)/,
-						to() {
-							return 'Stable tag: ' + grunt.option( 'ver' ) || pkg.version;
-						},
+						from: /Stable tag:(\s+)([\.\d\w\-]*)/,
+						to: 'Stable tag:$1' + version_number,
 					},
 				],
 			},
@@ -27,16 +26,12 @@ module.exports = function( grunt ) {
 				overwrite: true,
 				replacements: [
 					{
-						from: /Version:\s+([\.\d\w\-]*)/,
-						to() {
-							return 'Version: ' + grunt.option( 'ver' ) || pkg.version;
-						},
+						from: /Version:(\s+)([\.\d\w\-]*)/,
+						to: 'Version:$1' + version_number,
 					},
 					{
-						from: /define\( 'PODS_VERSION', '([\.\d\w\-]*)' \);/,
-						to() {
-							return "define( 'PODS_VERSION', '" + ( grunt.option( 'ver' ) || pkg.version ) + "' );";
-						},
+						from: /define\( '([\w_]+)_VERSION', '([\.\d\w\-]*)' \);/,
+						to: "define( '$1_VERSION', '" + version_number + "' );",
 					},
 				],
 			},
@@ -46,9 +41,7 @@ module.exports = function( grunt ) {
 				replacements: [
 					{
 						from: /"version": "([\.\d\w\-]*)"/,
-						to() {
-							return '"version": "' + ( grunt.option( 'ver' ) || pkg.version ) + '"';
-						},
+						to: '"version": "' + version_number + '"',
 					},
 				],
 			},

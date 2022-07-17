@@ -197,6 +197,7 @@ class PodsInit {
 				$tribe_options = [
 					'tribe_settings_errors',
 					'pue_install_key_promoter',
+					'external_updates-promoter',
 					'tribe_pue_key_notices',
 					'tribe_events_calendar_options',
 					'tribe_settings_major_error',
@@ -241,6 +242,11 @@ class PodsInit {
 				if ( ! defined( 'TRIBE_HIDE_MARKETING_NOTICES' ) ) {
 					define( 'TRIBE_HIDE_MARKETING_NOTICES', true );
 				}
+
+				// Disable shortcodes/customizer/widgets handling since we aren't using these.
+				add_filter( 'tribe_shortcodes_is_active', '__return_false' );
+				add_filter( 'tribe_customizer_is_active', '__return_false' );
+				add_filter( 'tribe_widgets_is_active', '__return_false' );
 			}
 
 			$GLOBALS['tribe-common-info'] = [
@@ -264,19 +270,22 @@ class PodsInit {
 				remove_action( 'plugins_loaded', [ 'Tribe__Admin__Notices', 'instance' ], 1 );
 
 				/** @var Tribe__Assets $assets */
-				$assets = tribe( 'assets' );
+				$assets = pods_container( 'assets' );
 				$assets->remove( 'tribe-tooltip' );
 
 				/** @var Tribe__Asset__Data $asset_data */
-				$asset_data = tribe( 'asset.data' );
+				$asset_data = pods_container( 'asset.data' );
 
 				remove_action( 'admin_footer', [ $asset_data, 'render_json' ] );
 				remove_action( 'customize_controls_print_footer_scripts', [ $asset_data, 'render_json' ] );
 				remove_action( 'wp_footer', [ $asset_data, 'render_json' ] );
 
 				/** @var Tribe__Assets_Pipeline $assets_pipeline */
-				$assets_pipeline = tribe( 'assets.pipeline' );
+				$assets_pipeline = pods_container( 'assets.pipeline' );
 				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
+
+				// Disable the Debug Bar panels.
+				add_filter( 'tribe_debug_bar_panels', '__return_empty_array', 15 );
 			}
 		}
 	}
@@ -1004,6 +1013,7 @@ class PodsInit {
 
 		$config = [
 			'wp_locale'      => $GLOBALS['wp_locale'],
+			'userLocale'     => str_replace( '_', '-', get_user_locale() ),
 			'currencies'     => PodsField_Currency::data_currencies(),
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
@@ -1024,12 +1034,22 @@ class PodsInit {
 
 		wp_localize_script( 'pods-dfv', 'podsDFVConfig', $config );
 
+		/**
+		 * Allow filtering whether to load Pods DFV on the front of the site.
+		 *
+		 * @since 2.8.18
+		 *
+		 * @param bool $load_pods_dfv_on_front Whether to load Pods DFV on the front of the site.
+		 */
+		$load_pods_dfv_on_front = (bool) apply_filters( 'pods_init_register_assets_load_pods_dfv_on_front', false );
+
 		// Page builders.
 		if (
 			// @todo Finish Elementor & Divi support.
 			// doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
 			// null !== pods_v( 'et_fb', 'get' ) // Divi.
 			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
+			|| ( $load_pods_dfv_on_front && ! is_admin() )
 		) {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
@@ -1194,19 +1214,27 @@ class PodsInit {
 	 *
 	 * @since 2.8.4
 	 *
+	 * @param bool $force Whether to force refreshing the cache.
+	 *
 	 * @return array The existing post types and taxonomies.
 	 */
-	public function refresh_existing_content_types_cache() {
-		$existing_post_types = get_post_types( [], 'objects' );
-		$existing_taxonomies = get_taxonomies( [], 'objects' );
+	public function refresh_existing_content_types_cache( $force = false ) {
+		if ( ! did_action( 'init' ) ) {
+			$force = true;
+		}
 
-		// Handle static cache for determining whether an object was extended or not.
-		$static_cache = tribe( Static_Cache::class );
+		if ( $force ) {
+			$existing_post_types_cached = null;
+			$existing_taxonomies_cached = null;
+		} else {
+			$existing_post_types_cached = pods_static_cache_get( 'post_type', __CLASS__ . '/existing_content_types' );
+			$existing_taxonomies_cached = pods_static_cache_get( 'taxonomy', __CLASS__ . '/existing_content_types' );
+		}
 
-		$existing_post_types_cached = $static_cache->get( 'post_type', __CLASS__ . '/existing_content_types' );
-
-		if ( empty( $existing_post_types_cached ) ) {
+		if ( empty( $existing_post_types_cached ) || ! is_array( $existing_post_types_cached ) ) {
 			$existing_post_types_cached = [];
+
+			$existing_post_types = get_post_types( [], 'objects' );
 
 			foreach ( $existing_post_types as $post_type ) {
 				// Skip Pods types.
@@ -1217,13 +1245,13 @@ class PodsInit {
 				$existing_post_types_cached[ $post_type->name ] = $post_type->name;
 			}
 
-			$static_cache->set( 'post_type', $existing_post_types_cached, __CLASS__ . '/existing_content_types' );
+			pods_static_cache_set( 'post_type', $existing_post_types_cached, __CLASS__ . '/existing_content_types' );
 		}
 
-		$existing_taxonomies_cached = $static_cache->get( 'taxonomy', __CLASS__ . '/existing_content_types' );
-
-		if ( empty( $existing_taxonomies_cached ) ) {
+		if ( empty( $existing_taxonomies_cached ) || ! is_array( $existing_taxonomies_cached ) ) {
 			$existing_taxonomies_cached = [];
+
+			$existing_taxonomies = get_taxonomies( [], 'objects' );
 
 			foreach ( $existing_taxonomies as $taxonomy ) {
 				// Skip Pods types.
@@ -1234,7 +1262,7 @@ class PodsInit {
 				$existing_taxonomies_cached[ $taxonomy->name ] = $taxonomy->name;
 			}
 
-			$static_cache->set( 'taxonomy', $existing_taxonomies_cached, __CLASS__ . '/existing_content_types' );
+			pods_static_cache_set( 'taxonomy', $existing_taxonomies_cached, __CLASS__ . '/existing_content_types' );
 		}
 
 		if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
@@ -1261,7 +1289,7 @@ class PodsInit {
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
 
-		$existing_content_types = $this->refresh_existing_content_types_cache();
+		$existing_content_types = $this->refresh_existing_content_types_cache( $save_transient );
 
 		$existing_post_types = $existing_content_types['existing_post_types_cached'];
 		$existing_taxonomies = $existing_content_types['existing_taxonomies_cached'];
@@ -1317,11 +1345,6 @@ class PodsInit {
 					$pods_cpt_ct['post_types'][ $post_type['name'] ] = false;
 
 					continue;
-				} elseif ( $post_type instanceof Pod && $post_type->is_extended() ) {
-					// Post type is extended.
-					$pods_cpt_ct['post_types'][ $post_type['name'] ] = false;
-
-					continue;
 				}
 
 				$post_type_name = pods_v_sanitized( 'name', $post_type );
@@ -1329,6 +1352,10 @@ class PodsInit {
 				// Labels
 				$cpt_label    = esc_html( pods_v( 'label', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'name', $post_type ) ) ), true ) );
 				$cpt_singular = esc_html( pods_v( 'label_singular', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'label', $post_type, $post_type_name, true ) ) ), true ) );
+
+				// Since 2.8.9: Fix single quote from esc_html().
+				$cpt_label    = str_replace( '&#039;', "'", $cpt_label );
+				$cpt_singular = str_replace( '&#039;', "'", $cpt_singular );
 
 				$cpt_labels                             = array();
 				$cpt_labels['name']                     = $cpt_label;
@@ -1439,6 +1466,9 @@ class PodsInit {
 
 				if ( false !== $cpt_rewrite ) {
 					$cpt_rewrite = $cpt_rewrite_array;
+
+					// Only allow specific characters.
+					$cpt_rewrite['slug'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $cpt_rewrite['slug'] );
 				}
 
 				$capability_type = pods_v( 'capability_type', $post_type, 'post' );
@@ -1487,6 +1517,13 @@ class PodsInit {
 					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
 					'_provider'           => 'pods',
 				);
+
+				// Check if we have a custom archive page slug.
+				if ( is_string( $pods_post_types[ $post_type_name ]['has_archive'] ) ) {
+					// Only allow specific characters.
+					$pods_post_types[ $post_type_name ]['has_archive'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $pods_post_types[ $post_type_name ][
+						'has_archive'] );
+				}
 
 				// REST API
 				$rest_enabled = (boolean) pods_v( 'rest_enable', $post_type, false );
@@ -1558,11 +1595,6 @@ class PodsInit {
 					$pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] = false;
 
 					continue;
-				} elseif ( $taxonomy instanceof Pod && $taxonomy->is_extended() ) {
-					// Taxonomy is extended.
-					$pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] = false;
-
-					continue;
 				}
 
 				$taxonomy_name = pods_v( 'name', $taxonomy );
@@ -1604,6 +1636,9 @@ class PodsInit {
 
 				if ( false !== $ct_rewrite ) {
 					$ct_rewrite = $ct_rewrite_array;
+
+					// Only allow specific characters.
+					$ct_rewrite['slug'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $ct_rewrite['slug'] );
 				}
 
 				/**
@@ -1806,6 +1841,10 @@ class PodsInit {
 				pods_debug( [ __METHOD__ . '/register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ] );
 			}
 
+			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+				echo '<textarea cols="100" rows="24">' . esc_textarea( 'register_taxonomy( ' . var_export( $taxonomy, true ) . ', ' . var_export( $ct_post_types, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
+			}
+
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
 
 			if ( ! empty( $options['show_in_rest'] ) ) {
@@ -1852,6 +1891,10 @@ class PodsInit {
 
 			if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				pods_debug( [ __METHOD__ . '/register_post_type', compact( 'post_type', 'options' ) ] );
+			}
+
+			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+				echo '<textarea cols="100" rows="24">' . esc_textarea( 'register_post_type( ' . var_export( $post_type, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
 			}
 
 			register_post_type( $post_type, $options );
@@ -2317,8 +2360,19 @@ class PodsInit {
 		}
 
 		// Setup DB tables
-		$pods_version      = get_option( 'pods_framework_version' );
-		$pods_version_last = get_option( 'pods_framework_version_last' );
+		$pods_version       = get_option( 'pods_framework_version' );
+		$pods_version_first = get_option( 'pods_framework_version_first' );
+		$pods_version_last  = get_option( 'pods_framework_version_last' );
+
+		if ( empty( $pods_version_first ) ) {
+			delete_option( 'pods_framework_version_first' );
+
+			if ( ! empty( $pods_version_last ) ) {
+				add_option( 'pods_framework_version_first', $pods_version_last );
+			} else {
+				add_option( 'pods_framework_version_first', PODS_VERSION );
+			}
+		}
 
 		if ( empty( $pods_version ) ) {
 			// Install Pods

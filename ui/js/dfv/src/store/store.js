@@ -3,7 +3,6 @@
  */
 import { configureStore } from '@reduxjs/toolkit';
 import { omit } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * WordPress dependencies
@@ -14,15 +13,25 @@ import { registerGenericStore } from '@wordpress/data';
  * Pods dependencies
  */
 import * as paths from './state-paths';
-import {
-	STORE_KEY_EDIT_POD,
-	STORE_KEY_DFV,
-	INITIAL_UI_STATE,
-} from './constants';
+import { INITIAL_UI_STATE } from './constants';
 import reducer from './reducer';
 import * as selectors from './selectors';
 import * as actions from './actions';
 import apiMiddleware from './api-middleware';
+
+/**
+ * Creates a consistent Redux store key, for when we have a store for each pod.
+ *
+ * @param {string} pod         Pod slug/name.
+ * @param {int}    itemId      Object ID.
+ * @param {int}    formCounter Form index. (Optional.)
+ * @param {string} prefix      Prefix. (Optional.)
+ */
+ export const createStoreKey = ( pod, itemId, formCounter = 0, prefix = '' ) => {
+	return prefix.length ?
+		`${ prefix }-${ pod }-${ itemId }-${ formCounter }`
+		: `${ pod }-${ itemId }-${ formCounter }`;
+};
 
 const initStore = ( initialState, storeKey ) => {
 	const reduxStore = configureStore( {
@@ -52,16 +61,24 @@ const initStore = ( initialState, storeKey ) => {
 		subscribe: reduxStore.subscribe,
 	};
 
-	const uniqueStoreKey = `${ storeKey }-${ uuidv4() }`;
+	registerGenericStore( storeKey, genericStore );
 
-	registerGenericStore( uniqueStoreKey, genericStore );
-
-	return uniqueStoreKey;
+	return storeKey;
 };
 
-export const initEditPodStore = ( config, storeKeyIdentifier = '' ) => {
+export const initEditPodStore = ( config, storeKey = '' ) => {
+	// Use the first global Group if showFields is turned off,
+	// otherwise the initial active tab should be "Manage Fields", which
+	// isn't in the config data.
+	const firstGroupTab = config?.global?.pod?.groups?.[ 0 ]?.name || '';
+
+	const initialUIState = {
+		...INITIAL_UI_STATE,
+		activeTab: config.global?.showFields === false ? firstGroupTab : 'manage-fields',
+	};
+
 	const initialState = {
-		...paths.UI.createTree( INITIAL_UI_STATE ),
+		...paths.UI.createTree( initialUIState ),
 		data: {
 			fieldTypes: { ...config.fieldTypes || {} },
 			relatedObjects: { ...config.relatedObjects || {} },
@@ -69,10 +86,10 @@ export const initEditPodStore = ( config, storeKeyIdentifier = '' ) => {
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
 	};
 
-	return initStore( initialState, `${ STORE_KEY_EDIT_POD }-${ storeKeyIdentifier }` );
+	return initStore( initialState, storeKey );
 };
 
-export const initPodStore = ( config = {}, initialValues = {}, storeKeyIdentifier = '' ) => {
+export const initPodStore = ( config = {}, initialValues = {}, storeKey = '' ) => {
 	const initialState = {
 		data: {
 			fieldTypes: { ...config.fieldTypes || {} },
@@ -82,5 +99,5 @@ export const initPodStore = ( config = {}, initialValues = {}, storeKeyIdentifie
 		currentPod: initialValues,
 	};
 
-	return initStore( initialState, `${ STORE_KEY_DFV }-${ storeKeyIdentifier }` );
+	return initStore( initialState, storeKey );
 };

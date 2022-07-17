@@ -113,8 +113,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 						$content .= '<ul class="normal">';
 
-						foreach ( $import as $k => $what ) {
-							$content .= '<li>' . esc_html( $what ) . '</li>';
+						foreach ( $import as $name => $what ) {
+							$content .= '<li>' . esc_html( $what ) . ( 'pods' === $type ? ' (' . esc_html( $name ) . ')' : '' ) . '</li>';
 						}
 
 						$content .= '</ul>';
@@ -342,6 +342,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 		} elseif ( ! empty( $pod['fields'] ) ) {
 			$pod['fields'] = self::import_pod_setup_objects( $pod['fields'], $existing_fields );
 		}
+
+		// Force 2.8 orphan field check.
+		$pod['_migrated_28'] = false;
 
 		$pod['overwrite'] = $replace;
 

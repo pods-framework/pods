@@ -1,5 +1,6 @@
 import React from 'react';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
+import HeadingTag from './heading-tag';
 
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
@@ -8,6 +9,7 @@ import './heading.scss';
 const Heading = ( props ) => {
 	const {
 		fieldConfig: {
+			heading_tag: headingTag = 'h3',
 			helpText,
 			label,
 			name,
@@ -24,14 +26,14 @@ const Heading = ( props ) => {
 		: undefined;
 
 	return (
-		<h3 className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
+		<HeadingTag type={ headingTag } className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
 			{ label }
 			{ shouldShowHelpText && (
 				<HelpTooltip
 					helpText={ helpTextString }
 					helpLink={ helpLink }
 				/> ) }
-		</h3>
+		</HeadingTag>
 	);
 };
 

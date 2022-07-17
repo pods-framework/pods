@@ -40,10 +40,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'ext-taxonomy-table',
 		];
 
-		$static_cache = tribe( Static_Cache::class );
-
-		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
-		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );
+		$existing_post_type_cached = (array) pods_static_cache_get( 'post_type', 'PodsInit/existing_content_types' );
+		$existing_taxonomy_cached  = (array) pods_static_cache_get( 'taxonomy', 'PodsInit/existing_content_types' );
 
 		foreach ( $post_types as $post_type ) {
 			register_post_type( $post_type );
@@ -57,8 +55,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 			$existing_taxonomy_cached[] = $taxonomy;
 		}
 
-		$static_cache->set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
-		$static_cache->set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
+		pods_static_cache_set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
+		pods_static_cache_set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
 	}
 
 	/**
@@ -78,10 +76,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'ext-taxonomy-table',
 		];
 
-		$static_cache = tribe( Static_Cache::class );
-
-		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
-		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );
+		$existing_post_type_cached = (array) pods_static_cache_get( 'post_type', 'PodsInit/existing_content_types' );
+		$existing_taxonomy_cached  = (array) pods_static_cache_get( 'taxonomy', 'PodsInit/existing_content_types' );
 
 		foreach ( $post_types as $post_type ) {
 			unregister_post_type( $post_type );
@@ -103,8 +99,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 			}
 		}
 
-		$static_cache->set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
-		$static_cache->set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
+		pods_static_cache_set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
+		pods_static_cache_set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
 
 		parent::tearDown();
 	}
@@ -639,7 +635,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 
 		$config = $this->admin->get_global_config( $pod );
 
-		$this->assertCount( 3, $config );
+		$this->assertCount( 4, $config );
 		$this->assertArrayHasKey( 'pod', $config );
 		$this->assertArrayHasKey( 'group', $config );
 		$this->assertArrayHasKey( 'field', $config );

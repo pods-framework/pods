@@ -189,7 +189,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_allowed_extensions'     => array(
 				'label'       => __( 'Allowed File Extensions', 'pods' ),
-				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
+				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime-type group like Images, Video, etc.', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
 				'text_placeholder' => 'jpg,png,mp4,mov',
@@ -285,6 +285,20 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function prepare( $options = null ) {
+		$format = static::$prepare;
+
+		// Maybe use number format for storage if limit is one.
+		if ( $options instanceof Field && 1 === $options->get_limit() ) {
+			$format = '%d';
+		}
+
+		return $format;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function schema( $options = null ) {
 		return false;
 	}
@@ -362,6 +376,8 @@ class PodsField_File extends PodsField {
 		}
 
 		wp_enqueue_media();
+
+		wp_enqueue_script( 'pods-i18n' );
 
 		// Ensure the media library is initialized
 		$this->render_input_script( $args );
@@ -461,12 +477,12 @@ class PodsField_File extends PodsField {
 
 		$limit_types      = trim( str_replace( $find, $replace, $limit_types ), ',' );
 		$limit_extensions = trim( str_replace( $find, $replace, $limit_extensions ), ',' );
-		$mime_types       = wp_get_mime_types();
+		$mime_types       = get_allowed_mime_types();
 
 		if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ), true ) ) {
 			$new_limit_types = array();
 
-			$limit_types = explode( ',', $limit_types );
+			$limit_types = array_filter( explode( ',', $limit_types ) );
 
 			foreach ( $limit_types as $k => $limit_type ) {
 				if ( isset( $mime_types[ $limit_type ] ) ) {
@@ -660,6 +676,16 @@ class PodsField_File extends PodsField {
 		if ( empty( self::$api ) ) {
 			self::$api = pods_api();
 		}
+
+		if ( null === $value ) {
+			$value = [];
+		} elseif ( ! is_array( $value ) || isset( $value['id'] ) ) {
+			$value = [
+				$value,
+			];
+		}
+
+		$value = array_unique( array_filter( $value ), SORT_REGULAR );
 
 		// Handle File title saving.
 		foreach ( $value as $id ) {
@@ -1128,7 +1154,7 @@ class PodsField_File extends PodsField {
 				), ','
 			);
 
-			$mime_types = wp_get_mime_types();
+			$mime_types = get_allowed_mime_types();
 
 			if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ), true ) ) {
 				$new_limit_types = array();

@@ -44,7 +44,13 @@ class Settings {
 	public function get_setting( $setting_name, $default = null ) {
 		$settings = $this->get_settings();
 
-		return pods_v( $setting_name, $settings, $default );
+		$setting = pods_v( $setting_name, $settings, $default );
+
+		if ( null !== $default && ( null === $setting || '' === $setting ) ) {
+			return $default;
+		}
+
+		return $setting;
 	}
 
 	/**
@@ -64,7 +70,11 @@ class Settings {
 		// Register settings with Wisdom Tracker.
 		$settings['wisdom_registered_setting'] = 1;
 
-		$defaults = $this->get_setting_fields();
+		static $defaults;
+
+		if ( null === $defaults ) {
+			$defaults = $this->get_setting_fields();
+		}
 
 		$layout_field_types = PodsForm::layout_field_types();
 
@@ -75,7 +85,13 @@ class Settings {
 				continue;
 			}
 
-			if ( isset( $settings[ $setting_name ] ) || ! isset( $setting['default'] ) ) {
+			// Skip if we do not have a default to set.
+			if ( ! isset( $setting['default'] ) ) {
+				continue;
+			}
+
+			// Skip if we do not
+			if ( isset( $settings[ $setting_name ] ) && ! in_array( $settings[ $setting_name ], [ null, '' ], true ) ) {
 				continue;
 			}
 
@@ -149,6 +165,92 @@ class Settings {
 	 * @return array The list of Pods settings fields.
 	 */
 	public function get_setting_fields() {
+		$disabled_text = __( 'This setting is disabled because it is forced through the constant/filter elsewhere.', 'pods' );
+		$current_value = __( 'Current value', 'pods' );
+
+		$fields['core'] = [
+			'label' => __( 'Core', 'pods' ),
+			'type'  => 'heading',
+		];
+
+		$is_types_only            = pods_is_types_only( true );
+		$is_types_only_overridden = null !== $is_types_only;
+
+		$is_types_only_disabled_text = sprintf(
+			'%1$s<br /><strong>%2$s: %3$s</strong>',
+			$disabled_text,
+			$current_value,
+			! $is_types_only ? __( 'Enabled', 'pods' ) : __( 'Disabled', 'pods' )
+		);
+
+		$fields['types_only'] = [
+			'name'               => 'types_only',
+			'label'              => __( 'Allow Pods to create and manage custom fields on any content type created/extended through Pods', 'pods' ),
+			'help'               => __( 'By default, Pods allows you to create custom fields for any content type that you create/extend with Pods. If you only intend to use Pods for content types themselves and not to add custom fields, Disabling Custom Fields can improve performance on your site. When disabled, this is known as the types-only mode feature.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => '0',
+			'readonly'           => $is_types_only_overridden,
+			'description'        => $is_types_only_overridden ? $is_types_only_disabled_text : '',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'0' => __( 'Enable creating custom fields with Pods', 'pods' ),
+				'1' => __( 'Disable creating custom fields with Pods (for when using Pods only for content types)', 'pods' ),
+			],
+		];
+
+		$fields['performance'] = [
+			'label' => __( 'Performance', 'pods' ),
+			'type'  => 'heading',
+		];
+
+		$first_pods_version = get_option( 'pods_framework_version_first' );
+		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+
+		$fields['watch_changed_fields'] = [
+			'name'               => 'watch_changed_fields',
+			'label'              => __( 'Watch changed fields for use in hooks', 'pods' ),
+			'help'               => __( 'By default, Pods does not watch changed fields when a post, term, user, or other Pods items are saved. Enabling this will allow you to use PHP hooks to reference the previous values of those fields after the save has happened.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable watching changed fields (may reduce performance with large processes)', 'pods' ),
+				'0' => __( 'Disable watching changed fields', 'pods' ),
+			],
+		];
+
+		$fields['metadata_integration'] = [
+			'name'               => 'metadata_integration',
+			'label'              => __( 'Watch WP Metadata calls', 'pods' ),
+			'help'               => __( 'By default, Pods will watch Metadata calls and send any values to table-based fields as well as index relationship IDs when they are saved. You can disable this if you do not use table-based Pods and you only want to query meta-based Pods or settings.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => '1',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable watching WP Metadata calls (may reduce performance with large processes)', 'pods' ),
+				'0' => __( 'Disable watching WP Metadata calls', 'pods' ),
+			],
+			'dependency'         => true,
+		];
+
+		$fields['metadata_override_get'] = [
+			'name'               => 'metadata_override_get',
+			'label'              => __( 'Override WP Metadata values', 'pods' ),
+			'help'               => __( 'By default, Pods will override Metadata values when calling functions like get_post_meta() so that it can provide more Relationship / File field context.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable overriding WP Metadata values (may conflict with certain plugins and decrease performance with large processes)', 'pods' ),
+				'0' => __( 'Disable overriding WP Metadata values', 'pods' ),
+			],
+			'depends-on' => [ 'pods_field_metadata_integration' => '1' ],
+		];
+
 		$session_auto_start            = pods_session_auto_start( true );
 		$session_auto_start_overridden = null !== $session_auto_start;
 
@@ -157,10 +259,10 @@ class Settings {
 			'type'  => 'heading',
 		];
 
-		$disabled_text = sprintf(
+		$session_auto_start_disabled_text = sprintf(
 			'%1$s<br /><strong>%2$s: %3$s</strong>',
-			__( 'This setting is disabled because it is forced through the PODS_SESSION_AUTO_START constant elsewhere.', 'pods' ),
-			__( 'Current value', 'pods' ),
+			$disabled_text,
+			$current_value,
 			$session_auto_start ? __( 'Enabled', 'pods' ) : __( 'Disabled', 'pods' )
 		);
 
@@ -171,13 +273,13 @@ class Settings {
 			'type'               => 'pick',
 			'default'            => '0',
 			'readonly'           => $session_auto_start_overridden,
-			'description'        => $session_auto_start_overridden ? $disabled_text : '',
+			'description'        => $session_auto_start_overridden ? $session_auto_start_disabled_text : '',
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
-				'0'    => __( 'Disable sessions', 'pods' ),
-				'1'    => __( 'Enable sessions', 'pods' ),
 				'auto' => __( 'Auto-detect sessions (enable on first anonymous submission)', 'pods' ),
+				'1'    => __( 'Enable sessions (may decrease performance)', 'pods' ),
+				'0'    => __( 'Disable sessions', 'pods' ),
 			],
 		];
 
@@ -194,7 +296,7 @@ class Settings {
 		$fields['wisdom_opt_out'] = [
 			'name'               => 'wisdom_opt_out',
 			'label'              => __( 'Would you like to opt-out of tracking?', 'pods' ),
-			'description'        => __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment, your site admin email address, and plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' ),
+			'description'        => __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment and your plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' ),
 			'type'               => 'pick',
 			'default'            => $is_wisdom_opted_out ? '1' : '',
 			'pick_format'        => 'single',

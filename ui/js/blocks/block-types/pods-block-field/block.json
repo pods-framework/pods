@@ -5,7 +5,7 @@
   "title": "Pods Field Value",
   "description": "Display a single Pod item's field value (custom fields).",
   "category": "pods",
-  "icon": "page",
+  "icon": "admin-page",
   "keywords": [
     "pods",
     "field",

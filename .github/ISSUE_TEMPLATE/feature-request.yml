@@ -23,24 +23,17 @@ body:
     validations:
       required: true
   - type: textarea
-    id: workaround
+    id: possible-workaround
     attributes:
-      label: Workaround
-      description: "Is there any other way to accomplish what you want currently?"
+      label: Possible Workaround
+      description: "If you have discovered a workaround, let us know so other people can be aware too."
     validations:
       required: false
   - type: textarea
     id: examples-elswhere
     attributes:
-      label: Examples Elsehwere
+      label: Examples Elsewhere
       description: "Let us know if you have seen this kind of thing done somewhere else before."
-    validations:
-      required: false
-  - type: textarea
-    id: possible-workaround
-    attributes:
-      label: Possible Workaround
-      description: "If you have discovered a workaround, let us know so other people can be aware too."
     validations:
       required: false
   - type: textarea

@@ -809,19 +809,46 @@ function frontier_backtrack_template( $code, $aliases ) {
 			$shortcodes = explode( '__', $alias );
 			$content    = $used[5][ $key ];
 			$atts       = shortcode_parse_atts( $used[3][ $key ] );
+
+			$new_shortcode_name = $shortcodes[0];
+
+			$new_shortcode_atts_data = [
+				'seq' => $shortcodes[1],
+			];
+
 			if ( ! empty( $atts ) ) {
 				if ( ! empty( $atts['field'] ) && false !== strpos( $atts['field'], '.' ) ) {
 					$content = str_replace( $atts['field'] . '.', '', $content );
 				}
+
 				preg_match_all( '/' . $regex . '/s', $content, $subused );
+
 				if ( ! empty( $subused[2] ) ) {
 					$content = frontier_backtrack_template( $content, $aliases );
 				}
-				$codecontent = '[' . $shortcodes[0] . ' ' . trim( $used[3][ $key ] ) . ' seq="' . $shortcodes[1] . '"]' . base64_encode( $content ) . '[/' . $shortcodes[0] . ']';
-			} else {
-				$codecontent = '[' . $shortcodes[0] . ' seq="' . $shortcodes[1] . '"]' . base64_encode( $content ) . '[/' . $shortcodes[0] . ']';
+
+				$new_shortcode_atts_data[] = trim( $used[3][ $key ] );
 			}
-			$code = str_replace( $used[0][ $key ], $codecontent, $code );
+
+			$new_shortcode_atts = '';
+
+			foreach ( $new_shortcode_atts_data as $new_shortcode_att_key => $new_shortcode_att_data ) {
+				if ( is_int( $new_shortcode_att_key ) ) {
+					$new_shortcode_atts .= ' ' . $new_shortcode_att_data;
+				} else {
+					$new_shortcode_atts .= ' ' . $new_shortcode_att_key . '="' . esc_attr( $new_shortcode_att_data ) . '"';
+				}
+			}
+
+			// Build the new shortcode.
+			$new_shortcode = sprintf(
+				'[%1$s %2$s]%3$s[/%1$s]',
+				$new_shortcode_name,
+				$new_shortcode_atts,
+				base64_encode( $content )
+			);
+
+			$code = str_replace( $used[0][ $key ], $new_shortcode, $code );
 		}
 	}//end if
 

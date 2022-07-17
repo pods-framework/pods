@@ -903,5 +903,5 @@ function frontier_end_template( $code, $base, $template, $pod ) {
 		unset( $template_post_blocks['after'][ $pod->pod ] );
 	}
 
-	return frontier_do_shortcode( $code );
+	return pods_do_shortcode( $code, frontier_get_shortcodes() );
 }

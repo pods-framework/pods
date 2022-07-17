@@ -368,11 +368,23 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		var_dump( $prefix );
 	}
 
+	$debug_line_number = 0;
+
 	if ( '_null' !== $debug ) {
 		var_dump( $debug );
+
+		$debug_line_number = __LINE__ - 2;
 	} else {
 		var_dump( 'Pods Debug #' . $pods_debug );
+
+		$debug_line_number = __LINE__ - 2;
 	}
+
+	$debug_line_check = sprintf(
+		'<small>%s:%s:</small>',
+		__FILE__,
+		$debug_line_number
+	);
 
 	$debug = ob_get_clean();
 
@@ -382,6 +394,19 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		}
 
 		$debug = '<pre>' . $debug . '</pre>';
+	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		if ( ! empty( $backtrace[0] ) ) {
+			$debug_line_replace = sprintf(
+				'<small>%s:%s:</small>',
+				$backtrace[0]['file'],
+				$backtrace[0]['line']
+			);
+
+			$debug = str_replace( $debug_line_check, $debug_line_replace, $debug );
+		}
 	}
 
 	$debug = '<e>' . $debug;

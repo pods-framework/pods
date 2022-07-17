@@ -518,26 +518,29 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$subatts = array(
 					'id' => $entry->id,
 					'pod' => $entry->pod,
+					'index' => $key,
 				);
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
-				$template = str_replace( '{_index}', $key, $template );
 				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
 
 				$out .= pods_do_shortcode( $entry->do_magic_tags( $template ), frontier_get_shortcodes() );
 			}
 		} else {
+			$template = frontier_decode_template( $content, $atts );
+
 			// Relationship to something other than a Pod (ie: user)
 			foreach ( $entries as $key => $entry ) {
-				$template = frontier_decode_template( $content, $atts );
-				$template = str_replace( '{_index}', $key, $template );
+				$content = str_replace( '{_index}', $key, $template );
+
 				if ( ! is_array( $entry ) ) {
 					$entry = array(
 						'_key'   => $key,
 						'_value' => $entry,
 					);
 				}
-				$out .= pods_do_shortcode( frontier_pseudo_magic_tags( $template, $entry, $pod ), frontier_get_shortcodes() );
+
+				$out .= pods_do_shortcode( frontier_pseudo_magic_tags( $content, $entry, $pod ), frontier_get_shortcodes() );
 			}
 		}//end if
 	}//end if

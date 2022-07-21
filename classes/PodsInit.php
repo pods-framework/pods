@@ -1286,6 +1286,10 @@ class PodsInit {
 
 		$save_transient = ! did_action( 'pods_init' ) && ( doing_action( 'init' ) || did_action( 'init' ) );
 
+		if ( $save_transient ) {
+			PodsMeta::enqueue();
+		}
+
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
 

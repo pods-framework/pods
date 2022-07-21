@@ -2507,31 +2507,53 @@ function pods_template_part( $template, $data = null, $return = false ) {
 }
 
 /**
- * Add a new Pod outside of the DB
- *
- * @see   PodsMeta::register
+ * Add a new Pod outside of the DB.
  *
  * @param string $type   The pod type ('post_type', 'taxonomy', 'media', 'user', 'comment')
  * @param string $name   The pod name
- * @param array  $object (optional) Pod array, including any 'fields' arrays
+ * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
  *
  * @return array|boolean Pod data or false if unsuccessful
  * @since 2.1.0
  */
 function pods_register_type( $type, $name, $object = null ) {
 	if ( empty( $object ) ) {
-		$object = array();
+		$object = [];
 	}
 
 	if ( ! empty( $name ) ) {
 		$object['name'] = $name;
 	}
 
-	return pods_meta()->register( $type, $object );
+	if ( ! empty( $type ) ) {
+		$object['type'] = $type;
+	}
+
+	if ( ! isset( PodsMeta::$queue[ $object['type'] ] ) ) {
+		PodsMeta::$queue[ $object['type'] ] = [];
+	}
+
+	$registered = pods_register_object( $object, 'pod' );
+
+	if ( true === $registered ) {
+		try {
+			$object_collection = Store::get_instance();
+
+			$registered_object = $object_collection->get_object( 'pod/' . $object['name'] );
+
+			if ( $registered_object ) {
+				PodsMeta::$queue[ $object['type'] ][ $object['name'] ] = $registered_object;
+			}
+		} catch ( Exception $exception ) {
+			return new WP_Error( 'pods-register-type-error', $exception->getMessage() );
+		}
+	}
+
+	return $registered;
 }
 
 /**
- * Add a new Pod field outside of the DB
+ * Add a new Pod field outside of the DB.
  *
  * @see   PodsMeta::register_field
  *
@@ -2539,19 +2561,23 @@ function pods_register_type( $type, $name, $object = null ) {
  * @param string       $name   The name of the Pod
  * @param array        $object (optional) Pod array, including any 'fields' arrays
  *
- * @return array|boolean Field data or false if unsuccessful
+ * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
  * @since 2.1.0
  */
 function pods_register_field( $pod, $name, $field = null ) {
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
 	if ( empty( $field ) ) {
-		$field = array();
+		$field = [];
 	}
 
 	if ( ! empty( $name ) ) {
 		$field['name'] = $name;
 	}
 
-	return pods_meta()->register_field( $pod, $field );
+	$field['parent'] = 'pod/' . $pod_name;
+
+	return pods_register_object( $field, 'field' );
 }
 
 /**
@@ -2594,11 +2620,15 @@ function pods_register_related_object( $name, $label, $options = null ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_object( array $object, $type ) {
-	$object['object_type']  = $type;
+	$object['object_type']         = $type;
 	$object['object_storage_type'] = 'collection';
 
-	$object_collection = Store::get_instance();
-	$object_collection->register_object( $object );
+	try {
+		$object_collection = Store::get_instance();
+		$object_collection->register_object( $object );
+	} catch ( Exception $exception ) {
+		return new WP_Error( 'pods-register-object-error', $exception->getMessage() );
+	}
 
 	return true;
 }
@@ -2614,13 +2644,21 @@ function pods_register_object( array $object, $type ) {
  *
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
-function pods_register_group( array $group, $pod, array $fields ) {
-	$group['parent'] = 'pod/' . $pod;
+function pods_register_group( array $group, $pod, array $fields = [] ) {
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
+	$group['parent'] = 'pod/' . $pod_name;
+
+	if ( isset( $group['fields'] ) ) {
+		$fields = $group['fields'];
+
+		unset( $group['fields'] );
+	}
 
 	pods_register_object( $group, 'group' );
 
 	foreach ( $fields as $field ) {
-		pods_register_group_field( $field, $group['name'], $pod );
+		pods_register_group_field( $field, $group['name'], $pod_name );
 	}
 
 	return true;
@@ -2638,7 +2676,9 @@ function pods_register_group( array $group, $pod, array $fields ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_group_field( array $field, $group, $pod ) {
-	$field['parent'] = 'pod/' . $pod;
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
+	$field['parent'] = 'pod/' . $pod_name;
 	$field['group']  = $group;
 
 	pods_register_object( $field, 'field' );

@@ -1239,12 +1239,20 @@ class PodsAdmin {
 				],
 			],
 			'action_links'     => [
-				'add' => pods_query_arg( [
+				'add'       => pods_query_arg( [
 					'page'     => 'pods-add-new',
 					'action'   => '',
 					'id'       => '',
 					'do'       => '',
 					'_wpnonce' => '',
+				] ),
+				'duplicate' => pods_query_arg( [
+					'id'   => '{@id}',
+					'name' => '{@name}',
+				] ),
+				'reset'     => pods_query_arg( [
+					'id'   => '{@id}',
+					'name' => '{@name}',
 				] ),
 			],
 			'search'           => false,
@@ -2019,8 +2027,9 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
-
-		if ( in_array(
+		if ( 'DB' !== $row['source'] ) {
+			$restricted = true;
+		} elseif ( in_array(
 			$row['real_type'], array(
 				'user',
 				'media',
@@ -2031,7 +2040,6 @@ class PodsAdmin {
 		}
 
 		return $restricted;
-
 	}
 
 	/**
@@ -2069,7 +2077,9 @@ class PodsAdmin {
 	 * @since 2.3.10
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( in_array(
+		if ( 'DB' !== $row['source'] ) {
+			$restricted = true;
+		} elseif ( in_array(
 			$row['real_type'], array(
 				'user',
 				'media',

@@ -1109,13 +1109,10 @@ class PodsAdmin {
 				}
 			}
 
-			$pod_label = $pod['label'];
-			$editable  = true;
-			$source    = 'DB';
+			$source = 'DB';
 
 			if ( 'post_type' !== $pod->get_object_storage_type() ) {
-				$editable = false;
-				$source   = 'Code';
+				$source = 'Code';
 
 				$has_source = true;
 			}
@@ -1128,7 +1125,6 @@ class PodsAdmin {
 				'type'      => $pod_type,
 				'real_type' => $pod_real_type,
 				'storage'   => $storage_type_label,
-				'editable'  => $editable,
 				'source'    => $source,
 			];
 
@@ -1219,7 +1215,10 @@ class PodsAdmin {
 			'actions_disabled' => [ 'view', 'export', 'delete' ],
 			'actions_custom'   => [
 				'add'        => [ $this, 'admin_setup_add' ],
-				'edit'       => [ $this, 'admin_setup_edit' ],
+				'edit'       => [
+					'callback'          => [ $this, 'admin_setup_edit' ],
+					'restrict_callback' => [ $this, 'admin_setup_edit_restrict' ],
+				],
 				'duplicate'  => [
 					'callback'          => [ $this, 'admin_setup_duplicate' ],
 					'restrict_callback' => [ $this, 'admin_setup_duplicate_restrict' ],
@@ -1233,11 +1232,12 @@ class PodsAdmin {
 					'span_class'        => 'delete',
 				],
 				'delete_pod' => [
-					'label'      => __( 'Delete', 'pods' ),
-					'confirm'    => __( 'Are you sure you want to delete this Pod? All of the content and items will remain in the database, you may want to Delete All Items first.', 'pods' ),
-					'callback'   => [ $this, 'admin_setup_delete' ],
-					'nonce'      => true,
-					'span_class' => 'delete',
+					'label'             => __( 'Delete', 'pods' ),
+					'confirm'           => __( 'Are you sure you want to delete this Pod? All of the content and items will remain in the database, you may want to Delete All Items first.', 'pods' ),
+					'callback'          => [ $this, 'admin_setup_delete' ],
+					'restrict_callback' => [ $this, 'admin_setup_delete_restrict' ],
+					'nonce'             => true,
+					'span_class'        => 'delete',
 				],
 			],
 			'action_links'     => [
@@ -1563,6 +1563,27 @@ class PodsAdmin {
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
 		pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
+	}
+
+	/**
+	 * Restrict Edit action.
+	 *
+	 * @param bool   $restricted Whether action is restricted.
+	 * @param array  $restrict   Restriction array.
+	 * @param string $action     Current action.
+	 * @param array  $row        Item data row.
+	 * @param PodsUI $obj        PodsUI object.
+	 *
+	 * @since 2.3.10
+	 *
+	 * @return bool
+	 */
+	public function admin_setup_edit_restrict( $restricted, $restrict, $action, $row, $obj ) {
+		if ( 'Code' === $row['source'] ) {
+			$restricted = true;
+		}
+
+		return $restricted;
 	}
 
 	/**
@@ -2050,8 +2071,9 @@ class PodsAdmin {
 	 * @since 2.3.10
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
-
-		if ( in_array(
+		if ( 'Code' === $row['source'] ) {
+			$restricted = true;
+		} elseif ( in_array(
 			$row['real_type'], array(
 				'user',
 				'media',
@@ -2061,7 +2083,6 @@ class PodsAdmin {
 		}
 
 		return $restricted;
-
 	}
 
 	/**
@@ -2094,6 +2115,27 @@ class PodsAdmin {
 		$obj->message( __( 'Pod deleted successfully.', 'pods' ) );
 
 		$obj->manage();
+	}
+
+	/**
+	 * Restrict Delete action.
+	 *
+	 * @param bool   $restricted Whether action is restricted.
+	 * @param array  $restrict   Restriction array.
+	 * @param string $action     Current action.
+	 * @param array  $row        Item data row.
+	 * @param PodsUI $obj        PodsUI object.
+	 *
+	 * @since 2.3.10
+	 *
+	 * @return bool
+	 */
+	public function admin_setup_delete_restrict( $restricted, $restrict, $action, $row, $obj ) {
+		if ( 'Code' === $row['source'] ) {
+			$restricted = true;
+		}
+
+		return $restricted;
 	}
 
 	/**

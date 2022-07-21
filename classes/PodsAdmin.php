@@ -1577,7 +1577,7 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_edit_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( 'Code' === $row['source'] ) {
+		if ( 'DB' !== $row['source'] ) {
 			$restricted = true;
 		}
 
@@ -2127,7 +2127,7 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_delete_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( 'Code' === $row['source'] ) {
+		if ( 'DB' !== $row['source'] ) {
 			$restricted = true;
 		}
 

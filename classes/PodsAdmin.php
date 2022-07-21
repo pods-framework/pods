@@ -923,9 +923,19 @@ class PodsAdmin {
 		$include_row_counts_refresh = filter_var( pods_v( 'pods_include_row_counts_refresh' ), FILTER_VALIDATE_BOOLEAN );
 
 		$fields = [
-			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
-			'name'        => [ 'label' => __( 'Name', 'pods' ) ],
-			'type'        => [ 'label' => __( 'Type', 'pods' ) ],
+			'label'       => [
+				'label' => __( 'Label', 'pods' ),
+			],
+			'name'        => [
+				'label' => __( 'Name', 'pods' ),
+			],
+			'type'        => [
+				'label' => __( 'Type', 'pods' ),
+			],
+			'source'      => [
+				'label' => __( 'Source', 'pods' ),
+				'width' => '8%',
+			],
 			'storage'     => [
 				'label' => __( 'Storage Type', 'pods' ),
 				'width' => '10%',
@@ -981,6 +991,8 @@ class PodsAdmin {
 		$pod_list = array();
 
 		$is_tableless = pods_tableless();
+
+		$has_source = false;
 
 		foreach ( $pods as $k => $pod ) {
 			$pod_type       = $pod['type'];
@@ -1097,6 +1109,17 @@ class PodsAdmin {
 				}
 			}
 
+			$pod_label = $pod['label'];
+			$editable  = true;
+			$source    = 'DB';
+
+			if ( 'post_type' !== $pod->get_object_storage_type() ) {
+				$editable = false;
+				$source   = 'Code';
+
+				$has_source = true;
+			}
+
 			$pod = [
 				'id'        => $pod['id'],
 				'label'     => $pod['label'],
@@ -1105,6 +1128,8 @@ class PodsAdmin {
 				'type'      => $pod_type,
 				'real_type' => $pod_real_type,
 				'storage'   => $storage_type_label,
+				'editable'  => $editable,
+				'source'    => $source,
 			];
 
 			if ( ! pods_is_types_only() ) {
@@ -1138,6 +1163,10 @@ class PodsAdmin {
 
 			$pod_list[] = $pod;
 		}//end foreach
+
+		if ( ! $has_source ) {
+			unset( $fields['source'] );
+		}
 
 		if ( false === $row && 0 < pods_v( 'id' ) && 'delete' !== pods_v( 'action' ) ) {
 			pods_message( 'Pod not found', 'error' );

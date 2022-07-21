@@ -221,8 +221,6 @@ class PodsForm {
 		$value           = apply_filters( "pods_form_ui_field_{$type}_value", $value, $name, $options, $pod, $id );
 		$form_field_type = self::$field_type;
 
-		ob_start();
-
 		$helper = false;
 
 		/**
@@ -245,6 +243,9 @@ class PodsForm {
 			$options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
 			$data            = $options['data'];
 		}
+
+		// Start field render.
+		ob_start();
 
 		/**
 		 * pods_form_ui_field_{$type}_override filter leaves too much to be done by developer.

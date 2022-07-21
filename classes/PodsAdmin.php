@@ -2069,9 +2069,7 @@ class PodsAdmin {
 	 * @since 2.3.10
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( 'Code' === $row['source'] ) {
-			$restricted = true;
-		} elseif ( in_array(
+		if ( in_array(
 			$row['real_type'], array(
 				'user',
 				'media',

@@ -1109,11 +1109,9 @@ class PodsAdmin {
 				}
 			}
 
-			$source = 'DB';
+			$source = $pod->get_object_storage_type_label();
 
-			if ( 'post_type' !== $pod->get_object_storage_type() ) {
-				$source = 'Code';
-
+			if ( 'DB' !== $source ) {
 				$has_source = true;
 			}
 

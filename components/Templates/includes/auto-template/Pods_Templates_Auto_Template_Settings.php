@@ -296,7 +296,7 @@ class Pods_Templates_Auto_Template_Settings {
 			'type'               => 'pick',
 			'pick_format_type'   => 'single',
 			'pick_format_single' => 'dropdown',
-			'default'            => 'true',
+			'default'            => '',
 		);
 
 		// get template titles

@@ -394,7 +394,7 @@ class PodsData {
 		}
 
 		// Check for pod object.
-		if ( $table['pod'] instanceof Pod ) {
+		if ( ! empty( $table['pod'] ) && $table['pod'] instanceof Pod ) {
 			$this->pod_data = $table['pod'];
 		} else {
 			$this->table_info = $table;
@@ -2386,16 +2386,21 @@ class PodsData {
 		// Handle Preparations of Values (sprintf format).
 		if ( is_array( $sql ) ) {
 			if ( isset( $sql[0] ) && 1 < count( $sql ) ) {
+				$sql = array_values( $sql );
+
 				if ( 2 === count( $sql ) ) {
 					if ( ! is_array( $sql[1] ) ) {
-						$sql[1] = array( $sql[1] );
+						$sql[1] = [
+							$sql[1],
+						];
 					}
 
 					$params->sql = self::prepare( $sql[0], $sql[1] );
-				} elseif ( 3 === count( $sql ) ) {
-					$params->sql = self::prepare( $sql[0], array( $sql[1], $sql[2] ) );
 				} else {
-					$params->sql = self::prepare( $sql[0], array( $sql[1], $sql[2], $sql[3] ) );
+					$sql_query = array_shift( $sql );
+					$prepare   = $sql;
+
+					$params->sql = self::prepare( $sql_query, $prepare );
 				}
 			} else {
 				$params = (object) array_merge( get_object_vars( $params ), $sql );
@@ -3698,6 +3703,8 @@ class PodsData {
 	 * Get the complete sql
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param string|array $sql The SQL query, optionally an array with the query first and the variables to prepare after that.
 	 */
 	public function get_sql( $sql = '' ) {
 

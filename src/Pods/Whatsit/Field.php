@@ -68,26 +68,26 @@ class Field extends Whatsit {
 
 		$special_args = [
 			// Pod args.
-			'pod_id'             => 'get_parent_id',
-			'pod'                => 'get_parent_name',
-			'pod_name'           => 'get_parent_name',
-			'pod_identifier'     => 'get_parent_identifier',
-			'pod_label'          => 'get_parent_label',
-			'pod_description'    => 'get_parent_description',
-			'pod_object'         => 'get_parent_object',
-			'pod_object_type'    => 'get_parent_object_type',
+			'pod_id'                    => 'get_parent_id',
+			'pod'                       => 'get_parent_name',
+			'pod_name'                  => 'get_parent_name',
+			'pod_identifier'            => 'get_parent_identifier',
+			'pod_label'                 => 'get_parent_label',
+			'pod_description'           => 'get_parent_description',
+			'pod_object'                => 'get_parent_object',
+			'pod_object_type'           => 'get_parent_object_type',
 			'pod_object_storage_type'   => 'get_parent_object_storage_type',
-			'pod_type'           => 'get_parent_type',
+			'pod_type'                  => 'get_parent_type',
 			// Group args.
-			'group_id'           => 'get_group_id',
-			'group_name'         => 'get_group_name',
-			'group_identifier'   => 'get_group_identifier',
-			'group_label'        => 'get_group_label',
-			'group_description'  => 'get_group_description',
-			'group_object'       => 'get_group_object',
-			'group_object_type'  => 'get_group_object_type',
+			'group_id'                  => 'get_group_id',
+			'group_name'                => 'get_group_name',
+			'group_identifier'          => 'get_group_identifier',
+			'group_label'               => 'get_group_label',
+			'group_description'         => 'get_group_description',
+			'group_object'              => 'get_group_object',
+			'group_object_type'         => 'get_group_object_type',
 			'group_object_storage_type' => 'get_group_object_storage_type',
-			'group_type'         => 'get_group_type',
+			'group_type'                => 'get_group_type',
 		];
 
 		if ( isset( $special_args[ $arg ] ) ) {
@@ -409,19 +409,32 @@ class Field extends Whatsit {
 			return $this->get_arg( 'repeatable_limit', 0 );
 		}
 
-		// Only continue if this is a relationship field.
-		if ( ! $this->is_relationship() ) {
-			return 1;
-		}
-
-		$type   = $this->get_type();
-		$format = $this->get_arg( $type . '_format_type', 'single' );
-
-		if ( 'multi' === $format ) {
-			return (int) $this->get_arg( $type . '_limit', 0 );
+		if ( 'multi' === $this->get_single_multi() ) {
+			return (int) $this->get_type_arg( 'limit', 0 );
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Get whether the field allows for single or multi tableless field values.
+	 *
+	 * @since 2.8.22
+	 *
+	 * @return string Whether the field allows for single or multi tableless field values.
+	 */
+	public function get_single_multi() {
+		if ( ! $this->is_relationship() ) {
+			return 'single';
+		}
+
+		$format_type = $this->get_type_arg( 'format_type', 'single' );
+
+		if ( ! $format_type ) {
+			return 'single';
+		}
+
+		return $format_type;
 	}
 
 	/**

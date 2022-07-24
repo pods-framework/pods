@@ -212,7 +212,7 @@ class Settings {
 			'label'              => __( 'Watch changed fields for use in hooks', 'pods' ),
 			'help'               => __( 'By default, Pods does not watch changed fields when a post, term, user, or other Pods items are saved. Enabling this will allow you to use PHP hooks to reference the previous values of those fields after the save has happened.', 'pods' ),
 			'type'               => 'pick',
-			'default'            => version_compare( $first_pods_version, '2.8.18', '<=' ) ? '1' : '0',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
@@ -241,7 +241,7 @@ class Settings {
 			'label'              => __( 'Override WP Metadata values', 'pods' ),
 			'help'               => __( 'By default, Pods will override Metadata values when calling functions like get_post_meta() so that it can provide more Relationship / File field context.', 'pods' ),
 			'type'               => 'pick',
-			'default'            => version_compare( $first_pods_version, '2.8.18', '<=' ) ? '1' : '0',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [

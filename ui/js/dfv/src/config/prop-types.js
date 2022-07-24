@@ -275,6 +275,9 @@ export const FIELD_PROP_TYPE = {
 	limit_extensions: PropTypes.string,
 	limit_types: PropTypes.string,
 
+	// Heading field
+	heading_tag: PropTypes.string,
+
 	// HTML field
 	html_content: PropTypes.string,
 	html_content_param: PropTypes.string,

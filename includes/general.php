@@ -17,10 +17,10 @@ use Pods\Static_Cache;
  *
  * @see   PodsData::query
  *
- * @param string $sql              SQL Query
- * @param string $error            (optional) The failure message
- * @param string $results_error    (optional) Throw an error if a records are found
- * @param string $no_results_error (optional) Throw an error if no records are found
+ * @param string|array $sql              The SQL query or an array with the SQL query and the values to prepare.
+ * @param string       $error            (optional) The failure message to use for Database errors.
+ * @param string       $results_error    (optional) Throw an error if a records are found.
+ * @param string       $no_results_error (optional) Throw an error if no records are found.
  *
  * @return array|bool|mixed|null|void
  * @since 2.0.0
@@ -32,15 +32,23 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 		return null;
 	}
 
-	$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
-	$sql = $podsdata->get_sql( $sql );
-
+	// If the $error is the $prepare array, set the $error to the default message.
 	if ( is_array( $error ) ) {
 		if ( ! is_array( $sql ) ) {
 			$sql = array( $sql, $error );
 		}
 
 		$error = 'Database Error';
+	}
+
+	if ( is_array( $sql ) ) {
+		$sql = array_values( $sql );
+
+		$sql[0] = apply_filters( 'pods_query_sql', $sql[0], $error, $results_error, $no_results_error );
+		$sql[0] = $podsdata->get_sql( $sql[0] );
+	} else {
+		$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
+		$sql = $podsdata->get_sql( $sql );
 	}
 
 	if ( 1 === (int) pods_v( 'pods_debug_sql_all' ) && is_user_logged_in() && pods_is_admin( array( 'pods' ) ) ) {
@@ -58,6 +66,25 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 	}
 
 	return PodsData::query( $sql, $error, $results_error, $no_results_error );
+}
+
+/**
+ * Prepare and run the query.
+ *
+ * @since 2.8.22
+ *
+ * @see   PodsData::query
+ *
+ * @param string $sql              SQL Query
+ * @param array  $prepare          Variables to prepare for the SQL query.
+ * @param string $error            (optional) The failure message
+ * @param string $results_error    (optional) Throw an error if a records are found
+ * @param string $no_results_error (optional) Throw an error if no records are found
+ *
+ * @return array|bool|mixed|null|void
+ */
+function pods_query_prepare( $sql, $prepare, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
+	return pods_query( [ $sql, $prepare ], $error, $results_error, $no_results_error );
 }
 
 /**
@@ -341,11 +368,23 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		var_dump( $prefix );
 	}
 
+	$debug_line_number = 0;
+
 	if ( '_null' !== $debug ) {
 		var_dump( $debug );
+
+		$debug_line_number = __LINE__ - 2;
 	} else {
 		var_dump( 'Pods Debug #' . $pods_debug );
+
+		$debug_line_number = __LINE__ - 2;
 	}
+
+	$debug_line_check = sprintf(
+		'<small>%s:%s:</small>',
+		__FILE__,
+		$debug_line_number
+	);
 
 	$debug = ob_get_clean();
 
@@ -355,6 +394,19 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		}
 
 		$debug = '<pre>' . $debug . '</pre>';
+	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		if ( ! empty( $backtrace[0] ) ) {
+			$debug_line_replace = sprintf(
+				'<small>%s:%s:</small>',
+				$backtrace[0]['file'],
+				$backtrace[0]['line']
+			);
+
+			$debug = str_replace( $debug_line_check, $debug_line_replace, $debug );
+		}
 	}
 
 	$debug = '<e>' . $debug;
@@ -2821,7 +2873,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 	$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
 	$metadata_integration = 1 === (int) pods_get_setting( 'metadata_integration', 1 );
-	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.18', '<=' ) ? 1 : 0 );
+	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
 
 	$is_tableless = pods_tableless();
 

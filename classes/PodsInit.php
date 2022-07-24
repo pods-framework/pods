@@ -1842,8 +1842,8 @@ class PodsInit {
 			}
 
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				echo '<h3>' . $taxonomy . '</h3>';
-				echo '<textarea rows="15" style="width:100%;">register_taxonomy( ' . esc_textarea( var_export( $taxonomy, true ) ) . ', ' . esc_textarea( var_export( $ct_post_types, true ) ) . ', ' . esc_textarea( var_export( $options, true ) ) . ' );' . "</textarea>\n";
+				echo '<h3>' . esc_html( $taxonomy ) . '</h3>';
+				echo '<textarea rows="15" style="width:100%">' . esc_textarea( 'register_taxonomy( ' . var_export( $taxonomy, true ) . ', ' . var_export( $ct_post_types, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
 			}
 
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
@@ -1895,8 +1895,8 @@ class PodsInit {
 			}
 
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				echo '<h3>' . $post_type . '</h3>';
-				echo '<textarea rows="15" style="width:100%;">register_post_type( ' . esc_textarea( var_export( $post_type, true ) ) . ', ' . esc_textarea( var_export( $options, true ) ) . ' );' . "</textarea>\n";
+				echo '<h3>' . esc_html( $post_type ) . '</h3>';
+				echo '<textarea rows="15" style="width:100%">' . esc_textarea( 'register_post_type( ' . var_export( $post_type, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
 			}
 
 			register_post_type( $post_type, $options );
@@ -2368,7 +2368,12 @@ class PodsInit {
 
 		if ( empty( $pods_version_first ) ) {
 			delete_option( 'pods_framework_version_first' );
-			add_option( 'pods_framework_version_first', PODS_VERSION );
+
+			if ( ! empty( $pods_version_last ) ) {
+				add_option( 'pods_framework_version_first', $pods_version_last );
+			} else {
+				add_option( 'pods_framework_version_first', PODS_VERSION );
+			}
 		}
 
 		if ( empty( $pods_version ) ) {
@@ -2533,7 +2538,7 @@ class PodsInit {
 		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
 		tribe_register_provider( \Pods\Integrations\Service_Provider::class );
 		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
-		tribe_register_provider( \Pods\WPGraphQL\Service_Provider::class );
+		tribe_register_provider( \Pods\Integrations\WPGraphQL\Service_Provider::class );
 
 		// Add WP-CLI commands.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {

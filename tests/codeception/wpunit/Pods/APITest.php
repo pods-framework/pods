@@ -133,7 +133,6 @@ class APITest extends Pods_UnitTestCase {
 	 * @since  2.8.0
 	 */
 	public function test_method_construct_no_pod() {
-		$this->assertFalse( $this->api->display_errors, 'Property PodsAPI->display_errors is set as true' );
 		$this->assertNull( $this->api->pod_data, 'Property PodsAPI->pod_data not null' );
 		$this->assertNull( $this->api->pod, 'Property PodsAPI->pod not null' );
 		$this->assertNull( $this->api->pod_id, 'Property PodsAPI->pod_id not null' );

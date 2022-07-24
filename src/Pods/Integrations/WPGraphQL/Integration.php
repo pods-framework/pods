@@ -1,11 +1,11 @@
 <?php
 
-namespace Pods\WPGraphQL;
+namespace Pods\Integrations\WPGraphQL;
 
 use Exception;
 use Pods\Whatsit\Field as Pod_Field;
 use Pods\Whatsit\Pod;
-use Pods\WPGraphQL\Field;
+use Pods\Integrations\WPGraphQL\Field;
 use PodsForm;
 
 /**

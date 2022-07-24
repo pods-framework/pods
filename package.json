@@ -1,6 +1,6 @@
 {
   "name": "pods",
-  "version": "2.9.0-beta-1",
+  "version": "2.9.0-beta-2",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
   "homepage": "https://pods.io/",
@@ -103,14 +103,14 @@
     "@codemirror/basic-setup": "^0.20.0",
     "@codemirror/gutter": "^0.19.9",
     "@codemirror/lang-php": "^6.0.0",
-    "@codemirror/state": "^6.0.1",
+    "@codemirror/state": "^6.1.0",
     "@dnd-kit/core": "^5.0.3",
     "@dnd-kit/modifiers": "^5.0.0",
     "@dnd-kit/sortable": "^6.0.1",
     "@dnd-kit/utilities": "^3.1.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@tippyjs/react": "^4.2.6",
-    "codemirror": "^6.0.0",
+    "codemirror": "^6.0.1",
     "faker": "^5.5.3",
     "html-react-parser": "^1.4.12",
     "immutability-helper": "^3.1.1",
@@ -118,7 +118,7 @@
     "react-datetime": "^3.1.1",
     "react-quill": "^2.0.0-beta.4",
     "react-select": "^4.3.1",
-    "rodemirror": "^1.6.7",
+    "rodemirror": "^1.6.8",
     "sanitize-html": "^2.7.0",
     "uuid": "^8.3.2"
   }

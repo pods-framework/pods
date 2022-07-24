@@ -1106,7 +1106,7 @@ class PodsMeta {
 		$revisions_to_keep_limit = pods_v( 'revisions_to_keep_limit', $pod->pod_data );
 
 		// Check if we have a valid limit.
-		if ( ! is_numeric( $revisions_to_keep_limit ) ) {
+		if ( ! is_numeric( $revisions_to_keep_limit ) || 0 === (int) $revisions_to_keep_limit ) {
 			return $num;
 		}
 
@@ -1486,6 +1486,8 @@ class PodsMeta {
 
 		$meta_nonce = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_media' ), 'hidden' );
 
+		$did_init = false;
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -1498,8 +1500,6 @@ class PodsMeta {
 			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
 				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'media' );
 			}
-
-			$did_init = false;
 
 			foreach ( $group['fields'] as $field ) {
 				if ( ! pods_permission( $field ) ) {
@@ -3648,7 +3648,7 @@ class PodsMeta {
 		$first_pods_version = get_option( 'pods_framework_version_first' );
 		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
-		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get', version_compare( $first_pods_version, '2.8.18', '<=' ) ? 1 : 0 );
+		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
 
 		// Only continue if metadata is overridden.
 		if ( 0 === $metadata_override_get ) {

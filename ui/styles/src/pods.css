@@ -2330,7 +2330,7 @@ table.DMB_metabox thead tr {
 .pods-compat-container .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
-  height: 300px;
+  height: auto;
 }
 .pods-compat-container .CodeMirror-scroll {
   /* Set scrolling behaviour here */

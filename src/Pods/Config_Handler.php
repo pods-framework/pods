@@ -520,11 +520,18 @@ class Config_Handler {
 				unset( $item['id'] );
 			}
 
+			// Legacy support for old Template/Page/Helper objects.
+			$item['label']       = $item['name'];
+			$item['description'] = $item['code'];
+			$item['name'] = sanitize_title( $item['label'] );
+
+			unset( $item['code'] );
+
 			$item['_pods_file_source'] = $file_path;
 
-			$this->templates[ $item['name'] ] = $item;
+			$this->templates[ $item['label'] ] = $item;
 
-			$this->file_path_configs[ $file_path ]['templates'] = $item['name'];
+			$this->file_path_configs[ $file_path ]['templates'] = $item['label'];
 		}
 
 	}
@@ -547,6 +554,13 @@ class Config_Handler {
 			if ( isset( $item['id'] ) ) {
 				unset( $item['id'] );
 			}
+
+			// Legacy support for old Template/Page/Helper objects.
+			$item['label']       = $item['name'];
+			$item['description'] = $item['code'];
+			$item['name'] = sanitize_title( $item['label'] );
+
+			unset( $item['code'] );
 
 			$item['_pods_file_source'] = $file_path;
 
@@ -575,6 +589,13 @@ class Config_Handler {
 			if ( isset( $item['id'] ) ) {
 				unset( $item['id'] );
 			}
+
+			// Legacy support for old Template/Page/Helper objects.
+			$item['label']       = $item['name'];
+			$item['description'] = $item['code'];
+			$item['name']        = sanitize_title( $item['label'] );
+
+			unset( $item['code'] );
 
 			$item['_pods_file_source'] = $file_path;
 

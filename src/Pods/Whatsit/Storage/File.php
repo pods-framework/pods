@@ -14,4 +14,11 @@ class File extends Collection {
 	 */
 	protected static $type = 'file';
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_label() {
+		return __( 'File', 'pods' );
+	}
+
 }

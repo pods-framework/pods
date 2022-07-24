@@ -917,7 +917,9 @@ class PodsAdmin {
 
 		$row = false;
 
-		$pod_types_found = array();
+		$pod_types_found = [];
+		$sources_found   = [];
+		$source_types    = [];
 
 		$include_row_counts         = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
 		$include_row_counts_refresh = filter_var( pods_v( 'pods_include_row_counts_refresh' ), FILTER_VALIDATE_BOOLEAN );
@@ -1109,10 +1111,33 @@ class PodsAdmin {
 				}
 			}
 
-			$source = $pod->get_object_storage_type_label();
+			$object_storage_type = $pod->get_object_storage_type();
+			$source              = $pod->get_object_storage_type_label();
 
-			if ( 'DB' !== $source ) {
+			if ( $source ) {
+				$source_types[ $object_storage_type ] = $source;
+
+				if ( ! isset( $sources_found[ $object_storage_type ] ) ) {
+					$sources_found[ $object_storage_type ] = 1;
+				} else {
+					$sources_found[ $object_storage_type ] ++;
+				}
+			}
+
+			if ( 'post_type' !== $object_storage_type ) {
 				$has_source = true;
+
+				if ( 'file' === $object_storage_type ) {
+					$file_path = $pod->get_arg( '_pods_file_source' );
+
+					if ( $file_path ) {
+						if ( 0 === strpos( $file_path, ABSPATH ) ) {
+							$file_path = str_replace( ABSPATH, '', $file_path );
+						}
+
+						$source .= ' (' . $file_path . ')';
+					}
+				}
 			}
 
 			$pod = [
@@ -1271,7 +1296,22 @@ class PodsAdmin {
 			$ui['filters_enhanced'] = true;
 
 			foreach ( $pod_types_found as $pod_type => $number_found ) {
-				$ui['views'][ $pod_type ] = $pod_types[ $pod_type ] . ' (' . $number_found . ')';
+				$ui['views'][ $pod_type ] = sprintf(
+					'%1$s (%2$s)',
+					$pod_types[ $pod_type ],
+					number_format_i18n( $number_found )
+				);
+			}
+
+			if ( $has_source && 1 < count( $sources_found ) ) {
+				foreach ( $sources_found as $source_type => $number_found ) {
+					$ui['views'][ 'source/' . $source_type ] = sprintf(
+						'%1$s: %2$s (%3$s)',
+						__( 'Source', 'pods' ),
+						$source_types[ $source_type ],
+						$number_found
+					);
+				}
 			}
 		}
 
@@ -1585,7 +1625,7 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_edit_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( 'DB' !== $row['source'] ) {
+		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
 			$restricted = true;
 		}
 
@@ -2027,7 +2067,7 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( 'DB' !== $row['source'] ) {
+		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
 			$restricted = true;
 		} elseif ( in_array(
 			$row['real_type'], array(
@@ -2077,7 +2117,7 @@ class PodsAdmin {
 	 * @since 2.3.10
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( 'DB' !== $row['source'] ) {
+		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
 			$restricted = true;
 		} elseif ( in_array(
 			$row['real_type'], array(
@@ -2137,7 +2177,7 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_delete_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( 'DB' !== $row['source'] ) {
+		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
 			$restricted = true;
 		}
 

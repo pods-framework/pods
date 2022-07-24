@@ -2558,6 +2558,21 @@ function pods_register_type( $type, $name, $object = null ) {
 		PodsMeta::$queue[ $object['type'] ] = [];
 	}
 
+	$groups = [];
+	$fields = [];
+
+	if ( isset( $object['groups'] ) ) {
+		$groups = $object['groups'];
+
+		unset( $object['groups'] );
+	}
+
+	if ( isset( $object['fields'] ) ) {
+		$fields = $object['fields'];
+
+		unset( $object['fields'] );
+	}
+
 	$registered = pods_register_object( $object, 'pod' );
 
 	if ( true === $registered ) {
@@ -2572,6 +2587,14 @@ function pods_register_type( $type, $name, $object = null ) {
 		} catch ( Exception $exception ) {
 			return new WP_Error( 'pods-register-type-error', $exception->getMessage() );
 		}
+	}
+
+	foreach ( $groups as $group ) {
+		pods_register_group( $group, $object['name'] );
+	}
+
+	foreach ( $fields as $field ) {
+		pods_register_field( $object['name'], $field['name'], $field );
 	}
 
 	return $registered;
@@ -2645,8 +2668,11 @@ function pods_register_related_object( $name, $label, $options = null ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_object( array $object, $type ) {
-	$object['object_type']         = $type;
-	$object['object_storage_type'] = 'collection';
+	$object['object_type'] = $type;
+
+	if ( ! isset( $object['object_storage_type'] ) || 'post_type' === $object['object_storage_type'] ) {
+		$object['object_storage_type'] = 'collection';
+	}
 
 	try {
 		$object_collection = Store::get_instance();

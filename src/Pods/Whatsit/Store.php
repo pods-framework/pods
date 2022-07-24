@@ -4,6 +4,7 @@ namespace Pods\Whatsit;
 
 use Pods\Whatsit;
 use Pods\Whatsit\Storage\Collection;
+use Pods\Whatsit\Storage\File;
 use Pods\Whatsit\Storage\Post_Type;
 
 /**

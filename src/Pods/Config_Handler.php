@@ -277,11 +277,6 @@ class Config_Handler {
 	 */
 	protected function load_configs() {
 		/**
-		 * @var $wp_filesystem WP_Filesystem_Base
-		 */
-		global $wp_filesystem;
-
-		/**
 		 * Allow plugins/themes to hook into config loading.
 		 *
 		 * @since TBD
@@ -290,6 +285,19 @@ class Config_Handler {
 		 *
 		 */
 		do_action( 'pods_config_pre_load_configs', $this );
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		/**
+		 * @var $wp_filesystem WP_Filesystem_Base
+		 */
+		global $wp_filesystem;
+
+		WP_Filesystem();
+
+		if ( ! $wp_filesystem ) {
+			return;
+		}
 
 		$file_configs = $this->get_file_configs();
 
@@ -438,6 +446,8 @@ class Config_Handler {
 				$item['fields'] = [];
 			}
 
+			$item['_pods_file_source'] = $file_path;
+
 			$this->pods[ $item['type'] ][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pods'] = $item['type'] . ':' . $item['name'];
@@ -482,6 +492,8 @@ class Config_Handler {
 				unset( $item['id'] );
 			}
 
+			$item['_pods_file_source'] = $file_path;
+
 			$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ]['fields'][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pods'] = $item['pod']['type'] . ':' . $item['pod']['name'] . ':' . $item['name'];
@@ -507,6 +519,8 @@ class Config_Handler {
 			if ( isset( $item['id'] ) ) {
 				unset( $item['id'] );
 			}
+
+			$item['_pods_file_source'] = $file_path;
 
 			$this->templates[ $item['name'] ] = $item;
 
@@ -534,6 +548,8 @@ class Config_Handler {
 				unset( $item['id'] );
 			}
 
+			$item['_pods_file_source'] = $file_path;
+
 			$this->pages[ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pages'] = $item['name'];
@@ -559,6 +575,8 @@ class Config_Handler {
 			if ( isset( $item['id'] ) ) {
 				unset( $item['id'] );
 			}
+
+			$item['_pods_file_source'] = $file_path;
 
 			$this->helpers[ $item['name'] ] = $item;
 
@@ -603,6 +621,8 @@ class Config_Handler {
 				unset( $item['id'] );
 			}
 
+			$item['_pods_file_source'] = $file_path;
+
 			$this->custom_configs[ $item_type ][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ][ $item_type ] = $item['name'];
@@ -614,7 +634,12 @@ class Config_Handler {
 	 * Store the registered configurations.
 	 */
 	protected function store_configs() {
-		$store = Store::get_instance();
+		$mapped_object_types = [
+			'pods'      => 'pod',
+			'templates' => 'template',
+			'pages'     => 'page',
+			'helpers'   => 'helper',
+		];
 
 		foreach ( $this->registered_config_item_types as $config_item_type ) {
 			if ( 'pods' === $config_item_type ) {
@@ -631,14 +656,23 @@ class Config_Handler {
 				continue;
 			}
 
-			// Remove the 's' off the end.
-			$real_type = substr( $config_item_type, 0, -1 );
+			$real_type = isset( $mapped_object_types[ $config_item_type ] )
+				? $mapped_object_types[ $config_item_type ]
+				: $config_item_type;
 
-			foreach ( $configs as $config ) {
-				$config['object_type']         = $real_type;
-				$config['object_storage_type'] = 'file';
+			foreach ( $configs as $key => $config ) {
+				if ( 'pod' === $real_type ) {
+					foreach ( $config as $pod ) {
+						$pod['object_type']         = $real_type;
+						$pod['object_storage_type'] = 'file';
 
-				$store->register_object( $config );
+						pods_register_type( $key, $pod['name'], $pod );
+					}
+				} else {
+					$config['object_storage_type'] = 'file';
+
+					pods_register_object( $config, $real_type );
+				}
 			}
 		}
 	}

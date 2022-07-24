@@ -26,6 +26,13 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_label() {
+		return __( 'Code', 'pods' );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get( array $args = [] ) {
 		// Object type is required.
 		if ( empty( $args['object_type'] ) ) {

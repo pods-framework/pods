@@ -2,12 +2,16 @@
 
 namespace Pods;
 
+use Pods\Whatsit\Store;
+use Spyc;
+use WP_Filesystem_Base;
+
 /**
  * Class to handle registration of Pods configs and loading/saving of config files.
  *
  * @package Pods
  */
-class Config {
+class Config_Handler {
 
 	/**
 	 * List of registered config types.
@@ -123,6 +127,7 @@ class Config {
 		}
 
 		$this->load_configs();
+		$this->store_configs();
 	}
 
 	/**
@@ -259,8 +264,8 @@ class Config {
 					'item_type'     => $config_item_type,
 					'theme_support' => true,
 				];
-			}//end foreach
-		}//end foreach
+			}
+		}
 
 		return $file_configs;
 	}
@@ -272,8 +277,9 @@ class Config {
 	 */
 	protected function load_configs() {
 		/**
-		 * @var $wp_filesystem \WP_Filesystem_Base
-		 */ global $wp_filesystem;
+		 * @var $wp_filesystem WP_Filesystem_Base
+		 */
+		global $wp_filesystem;
 
 		/**
 		 * Allow plugins/themes to hook into config loading.
@@ -311,8 +317,8 @@ class Config {
 				}
 
 				$this->load_config( $file_config['type'], $raw_config, $file_path, $file_config );
-			}//end foreach
-		}//end foreach
+			}
+		}
 
 	}
 
@@ -332,7 +338,7 @@ class Config {
 		if ( 'yml' === $config_type ) {
 			require_once PODS_DIR . 'vendor/mustangostang/spyc/Spyc.php';
 
-			$config = \Spyc::YAMLLoadString( $raw_config );
+			$config = Spyc::YAMLLoadString( $raw_config );
 		} elseif ( 'json' === $config_type ) {
 			$config = json_decode( $raw_config, true );
 		} else {
@@ -401,7 +407,7 @@ class Config {
 			} else {
 				$this->register_config_custom_item_type( $item_type, $items, $file_path );
 			}
-		}//end foreach
+		}
 
 	}
 
@@ -435,7 +441,7 @@ class Config {
 			$this->pods[ $item['type'] ][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pods'] = $item['type'] . ':' . $item['name'];
-		}//end foreach
+		}
 
 	}
 
@@ -479,7 +485,7 @@ class Config {
 			$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ]['fields'][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pods'] = $item['pod']['type'] . ':' . $item['pod']['name'] . ':' . $item['name'];
-		}//end foreach
+		}
 
 	}
 
@@ -505,7 +511,7 @@ class Config {
 			$this->templates[ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['templates'] = $item['name'];
-		}//end foreach
+		}
 
 	}
 
@@ -531,7 +537,7 @@ class Config {
 			$this->pages[ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pages'] = $item['name'];
-		}//end foreach
+		}
 
 	}
 
@@ -557,7 +563,7 @@ class Config {
 			$this->helpers[ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['helpers'] = $item['name'];
-		}//end foreach
+		}
 
 	}
 
@@ -600,8 +606,41 @@ class Config {
 			$this->custom_configs[ $item_type ][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ][ $item_type ] = $item['name'];
-		}//end foreach
+		}
 
+	}
+
+	/**
+	 * Store the registered configurations.
+	 */
+	protected function store_configs() {
+		$store = Store::get_instance();
+
+		foreach ( $this->registered_config_item_types as $config_item_type ) {
+			if ( 'pods' === $config_item_type ) {
+				$configs = $this->pods;
+			} elseif ( 'templates' === $config_item_type ) {
+				$configs = $this->templates;
+			} elseif ( 'pages' === $config_item_type ) {
+				$configs = $this->pages;
+			} elseif ( 'helpers' === $config_item_type ) {
+				$configs = $this->helpers;
+			} elseif ( isset( $this->custom_configs[ $config_item_type ] ) ) {
+				$configs = $this->custom_configs[ $config_item_type ];
+			} else {
+				continue;
+			}
+
+			// Remove the 's' off the end.
+			$real_type = substr( $config_item_type, 0, -1 );
+
+			foreach ( $configs as $config ) {
+				$config['object_type']         = $real_type;
+				$config['object_storage_type'] = 'file';
+
+				$store->register_object( $config );
+			}
+		}
 	}
 
 	/**

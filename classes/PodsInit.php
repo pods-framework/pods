@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Config_Handler;
 use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Wisdom_Tracker;
@@ -1199,6 +1200,9 @@ class PodsInit {
 		$args = self::object_label_fix( $args, 'post_type' );
 
 		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
+
+		$config_handler = pods_container( Config_Handler::class );
+		$config_handler->setup();
 	}
 
 	/**

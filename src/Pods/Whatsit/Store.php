@@ -84,6 +84,7 @@ class Store {
 	public function get_default_storage_types() {
 		return [
 			'collection' => Collection::class,
+			'file'       => File::class,
 			'post_type'  => Post_Type::class,
 		];
 	}

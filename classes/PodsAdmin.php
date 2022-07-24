@@ -1221,6 +1221,8 @@ class PodsAdmin {
 			);
 		}
 
+		$pod_list = wp_list_sort( $pod_list, 'label', 'ASC', true );
+
 		$ui = [
 			'data'             => $pod_list,
 			'row'              => $row,

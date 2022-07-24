@@ -284,7 +284,7 @@ class Config_Handler {
 		/**
 		 * Allow plugins/themes to hook into config loading.
 		 *
-		 * @since 2.7.2
+		 * @since TBD
 		 *
 		 * @param Config $pods_config Pods config object.
 		 *
@@ -345,7 +345,7 @@ class Config_Handler {
 			/**
 			 * Parse Pods config from a custom config type.
 			 *
-			 * @since 2.7.2
+			 * @since TBD
 			 *
 			 * @param string $config_type Config type.
 			 * @param string $raw_config  Raw config content.
@@ -585,7 +585,7 @@ class Config_Handler {
 			/**
 			 * Pre-process the item to be saved for a custom item type.
 			 *
-			 * @since 2.7.2
+			 * @since TBD
 			 *
 			 * @param string $item_type Item type.
 			 * @param string $file_path Config file path.

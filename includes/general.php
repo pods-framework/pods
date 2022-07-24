@@ -5,12 +5,12 @@
 
 use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
+use Pods\Config_Handler;
+use Pods\Permissions;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
-use Pods\Permissions;
-use Pods\Static_Cache;
 
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
@@ -2801,6 +2801,61 @@ function pods_register_block_collection( array $collection ) {
 	$object_collection->register_object( $collection );
 
 	return true;
+}
+
+/**
+ * Register a custom config path to use with Pods configs.
+ *
+ * @since TBD
+ *
+ * @param string $path The config path to use.
+ */
+function pods_register_config_path( $path ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_path( $path );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config type to use with Pods configs.
+ *
+ * For custom config types, use the pods_config_parse_$type filter along with this to support other format parsing.
+ *
+ * Default support for json and yml can be filtered with the pods_config_parse filter to override them.
+ *
+ * @since TBD
+ *
+ * @param string $type The config type to use.
+ */
+function pods_register_config_type( $type ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_config_type( $type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config item type to use with Pods configs.
+ *
+ * @since TBD
+ *
+ * @param string $item_type The config path to use.
+ */
+function pods_register_config_item_type( $item_type ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_config_item_type( $item_type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
 }
 
 /**

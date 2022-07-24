@@ -2,7 +2,6 @@
 
 namespace Pods;
 
-use Pods\Whatsit\Store;
 use Spyc;
 use WP_Filesystem_Base;
 
@@ -355,13 +354,22 @@ class Config_Handler {
 			 *
 			 * @since TBD
 			 *
-			 * @param string $config_type Config type.
-			 * @param string $raw_config  Raw config content.
-			 *
 			 * @param array  $config      Config data.
+			 * @param string $raw_config  Raw config content.
 			 */
-			$config = apply_filters( 'pods_config_parse', [], $config_type, $raw_config );
+			$config = apply_filters( "pods_config_parse_{$config_type}", [], $raw_config );
 		}
+
+		/**
+		 * Allow filtering the config for additional parsing customization.
+		 *
+		 * @since TBD
+		 *
+		 * @param array  $config      Config data.
+		 * @param string $config_type Config type.
+		 * @param string $raw_config  Raw config content.
+		 */
+		$config = apply_filters( 'pods_config_parse', $config, $config_type, $raw_config );
 
 		if ( $config && is_array( $config ) ) {
 			$this->register_config( $config, $file_path, $file_config );

@@ -1486,6 +1486,8 @@ class PodsMeta {
 
 		$meta_nonce = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_media' ), 'hidden' );
 
+		$did_init = false;
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -1498,8 +1500,6 @@ class PodsMeta {
 			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
 				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'media' );
 			}
-
-			$did_init = false;
 
 			foreach ( $group['fields'] as $field ) {
 				if ( ! pods_permission( $field ) ) {

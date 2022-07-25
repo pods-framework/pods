@@ -1,0 +1,33 @@
+name: 'PHP CodeSniffer'
+on:
+  pull_request:
+    paths:
+      - 'classes/**.php'
+      - 'components/**.php'
+      - 'includes/**.php'
+      - 'src/**.php'
+      - 'sql/**.php'
+      - 'ui/**.php'
+      - '*.php'
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Run PHPCS inspection
+        uses: rtCamp/action-phpcs-code-review@v2
+        env:
+          GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+          SKIP_FOLDERS: ".github,.wordpress-org,tests,tribe-common,vendor"

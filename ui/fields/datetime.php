@@ -9,7 +9,7 @@ $use_time = ( 'time' === $form_field_type || 'datetime' === $form_field_type );
 $use_date = ( 'date' === $form_field_type || 'datetime' === $form_field_type );
 
 wp_enqueue_script( 'jquery-ui-datepicker' );
-wp_enqueue_style( 'pods-styles' );
+pods_form_enqueue_style( 'pods-styles' );
 
 if ( $use_time ) {
 	wp_enqueue_script( 'jquery-ui-timepicker' );
@@ -101,16 +101,9 @@ $date_default = PodsForm::field_method( $form_field_type, 'createFromFormat', $m
 $formatted_value = PodsForm::field_method( $form_field_type, 'format_value_display', $value, $options, true );
 $mysql_value     = $value;
 
-$empty_values = array(
-	'',
-	'0000-00-00',
-	'0000-00-00 00:00:00',
-	'00:00:00',
-);
-
 if (
 	pods_v( $form_field_type . '_allow_empty', $options, true )
-	&& in_array( $value, $empty_values, true )
+	&& PodsForm::field_method( $form_field_type, 'is_empty', $value )
 ) {
 	$formatted_value = '';
 	$value           = '';

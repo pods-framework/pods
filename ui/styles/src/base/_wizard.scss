@@ -7,16 +7,16 @@
 		width: $width;
 	}
 	&.pods-wizard-steps-2 #pods-wizard-heading ul li {
-		width: $width / 2;
+		width: calc($width / 2);
 	}
 	&.pods-wizard-steps-3 #pods-wizard-heading ul li {
-		width: $width / 3;
+		width: calc($width / 3);
 	}
 	&.pods-wizard-steps-4 #pods-wizard-heading ul li {
-		width: $width / 4;
+		width: calc($width / 4);
 	}
 	&.pods-wizard-steps-5 #pods-wizard-heading ul li {
-		width: $width / 5;
+		width: calc($width / 5);
 	}
 	#pods-wizard-heading {
 		ul {
@@ -149,6 +149,7 @@
 		}
 		.stuffbox {
 			margin: 15px 15px 0 15px;
+			padding: 0 10px 10px 10px;
 			h3 {
 				font-size: 15px;
 				font-weight: normal;
@@ -158,6 +159,40 @@
 			}
 			.inside {
 				padding: 0;
+
+				.pods-field__container {
+					background: #fcfcfc;
+					border-bottom: 1px solid #CCD0D4;
+					padding: 15px 0;
+
+					label {
+						padding-top: 4px;
+						float: left;
+						width: 30%;
+						max-width: 150px;
+						margin: 0 2%;
+					}
+
+					.pods-field-option {
+						padding: 0;
+					}
+
+					.pods-field-option__field {
+						width: 100%;
+						max-width: 25rem;
+					}
+
+					input[type="text"],
+					select,
+					textarea,
+					.pods-field.pods-boolean,
+					.pods-pick-values,
+					.pods-form-ui-field-type-file,
+					.pods-slider-field {
+						width: 100%;
+					}
+				}
+
 				div.pods-wizard-content {
 					h3 {
 						margin: 1.33em 20px;
@@ -189,18 +224,31 @@
 			&:first-child {
 				display: block;
 			}
-			.button-primary, .button-secondary {
+			a.button-primary,
+			a.button-secondary {
 				padding: 8px 15px;
 				border-radius: 14px 14px 14px 14px;
 			}
 			.pods-wizard-content {
+				padding: 20px;
+				margin-bottom: 25px;
 				background: #fff;
 				&.pods-wizard-grey {
 					background: #f9f9f9;
 				}
 				p {
-					padding: 20px;
 					margin-top: 0;
+				}
+				ul.normal {
+					margin: 15px 20px;
+					list-style: circle;
+					li {
+						margin: 0 0 8px 30px;
+						padding-left: 4px;
+						line-height: 22px;
+						font-size: 14px;
+						list-style: circle;
+					}
 				}
 			}
 			table {
@@ -289,6 +337,16 @@
 			}
 			#pods-wizard-options {
 				text-align: center;
+				.pods-wizard-options-list {
+					display: flex;
+					justify-content: space-evenly;
+
+					.pods-wizard-option {
+						&:first-child {
+							margin-right: 0 !important;
+						}
+					}
+				}
 				.pods-wizard-option {
 					width: 290px;
 					display: inline-block;
@@ -297,8 +355,8 @@
 						margin-right: 40px;
 					}
 					a {
-						height: 140px;
-						padding-top: 10px;
+						min-height: 140px;
+						padding: 10px 0;
 						display: block;
 						background: #f9f9f9;
 						position: relative;
@@ -370,12 +428,39 @@
 		clear: both;
 		@include multi-border-radius(0, 0, 8px, 8px);
 		@include vertical-gradient(#ededed, #f9f9f9);
-		.button {
+
+		&.pods-wizard-button-interface {
+			height: 45px;
+
+			#pods-wizard-toolbar {
+				height: 45px;
+				padding: 0 15px;
+				display: flex;
+				justify-content: space-between;
+				align-content: center;
+				align-items: center;
+			}
+		}
+
+		input.button,
+		a.button {
+			position: absolute;
+			top: 2px;
+		}
+
+		input.button {
+			&.button-primary {
+				right: 2px;
+			}
+			&.button-secondary {
+				left: 2px;
+			}
+		}
+
+		a.button {
 			display: block;
 			height: 35px;
 			width: 110px;
-			position: absolute;
-			top: 0;
 			line-height: 35px;
 			text-align: center;
 			font-weight: bold;

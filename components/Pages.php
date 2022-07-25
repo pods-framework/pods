@@ -2,8 +2,9 @@
 /**
  * Name: Pages
  *
- * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods
- * Advanced Content Types. Not recommended for use with other content types.
+ * Menu Name: Pod Pages
+ *
+ * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods Advanced Content Types. Not recommended for use with other content types.
  *
  * Version: 2.3
  *
@@ -15,6 +16,10 @@
  * @package    Pods\Components
  * @subpackage Pages
  */
+
+use Illuminate\Contracts\View\Factory as ViewFactory;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Storage;
 
 if ( class_exists( 'Pods_Pages' ) ) {
 	return;
@@ -88,7 +93,7 @@ class Pods_Pages extends PodsComponent {
 			'has_archive'  => false,
 			'hierarchical' => false,
 			'supports'     => array( 'title', 'author', 'revisions' ),
-			'menu_icon'    => 'dashicons-pods',
+			'menu_icon'    => pods_svg_icon( 'pods' ),
 		);
 
 		if ( ! pods_is_admin() ) {
@@ -106,7 +111,7 @@ class Pods_Pages extends PodsComponent {
 		} else {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
-			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ) );
+			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
 
 			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
@@ -210,13 +215,13 @@ class Pods_Pages extends PodsComponent {
 			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
-			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 			9  => sprintf(
-				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" rel="noopener noreferrer" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
 			),
-			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
@@ -240,7 +245,7 @@ class Pods_Pages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function admin_assets() {
-
+		wp_enqueue_script( 'pods-dfv' );
 		wp_enqueue_style( 'pods-styles' );
 	}
 
@@ -377,7 +382,7 @@ class Pods_Pages extends PodsComponent {
 
 		global $post_type;
 
-		if ( $this->object_type != $post_type ) {
+		if ( $this->object_type !== $post_type ) {
 			return;
 		}
 
@@ -413,82 +418,91 @@ class Pods_Pages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function add_meta_boxes() {
-
-		$pod = array(
+		$pod = [
 			'name' => $this->object_type,
 			'type' => 'post_type',
-		);
+		];
 
 		if ( isset( PodsMeta::$post_types[ $pod['name'] ] ) ) {
 			return;
 		}
 
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_assets' ], 21 );
+
 		if ( ! function_exists( 'get_page_templates' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/theme.php';
 		}
 
-		$page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
+		$wp_page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
 
-		$page_templates[ __( '-- Page Template --', 'pods' ) ] = '';
+		$page_templates = [];
+
+		foreach ( $wp_page_templates as $page_template => $file ) {
+			$page_templates[ $page_template . ' - ' . $file ] = $file;
+		}
+
+		$page_templates[ __( '-- Select a Page Template --', 'pods' ) ] = '';
 
 		$page_templates[ __( 'Custom (uses only Pod Page content)', 'pods' ) ] = '_custom';
 
-		if ( ! in_array( 'pods.php', $page_templates, true ) && locate_template( array( 'pods.php', false ) ) ) {
-			$page_templates[ __( 'Pods (Pods Default)', 'pods' ) ] = 'pods.php';
+		if ( ! in_array( 'pods.php', $page_templates, true ) && locate_template( [ 'pods.php', false ] ) ) {
+			$page_templates[ __( 'Pods (Pods Default)', 'pods' ) . ' - pods.php' ] = 'pods.php';
 		}
 
-		if ( ! in_array( 'page.php', $page_templates, true ) && locate_template( array( 'page.php', false ) ) ) {
-			$page_templates[ __( 'Page (WP Default)', 'pods' ) ] = 'page.php';
+		if ( ! in_array( 'page.php', $page_templates, true ) && locate_template( [ 'page.php', false ] ) ) {
+			$page_templates[ __( 'Page (WP Default)', 'pods' ) . ' - page.php' ] = 'page.php';
 		}
 
-		if ( ! in_array( 'index.php', $page_templates, true ) && locate_template( array( 'index.php', false ) ) ) {
-			$page_templates[ __( 'Index (WP Fallback)', 'pods' ) ] = 'index.php';
+		if ( ! in_array( 'index.php', $page_templates, true ) && locate_template( [ 'index.php', false ] ) ) {
+			$page_templates[ __( 'Index (WP Fallback)', 'pods' ) . ' - index.php' ] = 'index.php';
 		}
 
 		ksort( $page_templates );
 
 		$page_templates = array_flip( $page_templates );
 
-		$fields = array(
-			array(
+		$page_fields = [
+			[
 				'name'  => 'page_title',
 				'label' => __( 'Page Title', 'pods' ),
 				'type'  => 'text',
-			),
-			array(
+			],
+			[
 				'name'          => 'code',
 				'label'         => __( 'Page Code', 'pods' ),
 				'type'          => 'code',
-				'attributes'    => array(
+				'attributes'    => [
 					'id' => 'content',
-				),
-				'label_options' => array(
-					'attributes' => array(
+				],
+				'label_options' => [
+					'attributes' => [
 						'for' => 'content',
-					),
-				),
-			),
-			array(
+					],
+				],
+			],
+			[
 				'name'  => 'precode',
 				'label' => __( 'Page Precode', 'pods' ),
 				'type'  => 'code',
 				'help'  => __( 'Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default.', 'pods' ),
-			),
-			array(
-				'name'  => 'page_template',
-				'label' => __( 'Page Template', 'pods' ),
-				'type'  => 'pick',
-				'data'  => $page_templates,
-			),
-		);
+			],
+			[
+				'name'                  => 'page_template',
+				'label'                 => __( 'Page Template', 'pods' ),
+				'default'               => '',
+				'type'                  => 'pick',
+				'pick_object'           => 'custom-simple',
+				'pick_format_type'      => 'single',
+				'data'                  => $page_templates,
+				'override_object_field' => true,
+			],
+		];
 
-		pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
-
-		$associated_pods = array(
+		$associated_pods = [
 			0 => __( '-- Select a Pod --', 'pods' ),
-		);
+		];
 
-		$all_pods = pods_api()->load_pods( array( 'names' => true ) );
+		$all_pods = pods_api()->load_pods( [ 'labels' => true ] );
 
 		if ( ! empty( $all_pods ) ) {
 			foreach ( $all_pods as $pod_name => $pod_label ) {
@@ -498,46 +512,47 @@ class Pods_Pages extends PodsComponent {
 			$associated_pods[0] = __( 'None Found', 'pods' );
 		}
 
-		$fields = array(
-			array(
-				'name'       => 'pod',
-				'label'      => __( 'Associated Pod', 'pods' ),
-				'default'    => 0,
-				'type'       => 'pick',
-				'data'       => $associated_pods,
-				'dependency' => true,
-			),
-			array(
+		$association_fields = [
+			[
+				'name'             => 'pod',
+				'label'            => __( 'Associated Pod', 'pods' ),
+				'default'          => 0,
+				'type'             => 'pick',
+				'pick_object'      => 'custom-simple',
+				'pick_format_type' => 'single',
+				'placeholder'      => __( 'Select Pod', 'pods' ),
+				'data'             => $associated_pods,
+				'dependency'       => true,
+			],
+			[
 				'name'        => 'pod_slug',
 				'label'       => __( 'Wildcard Slug', 'pods' ),
 				'help'        => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_v_sanitized( 2, "url" ) in PHP.', 'pods' ),
 				'type'        => 'text',
-				'excludes-on' => array( 'pod' => 0 ),
-			),
-		);
+				'excludes-on' => [ 'pod' => 0 ],
+			],
+		];
 
-		pods_group_add( $pod, __( 'Pod Association', 'pods' ), $fields, 'normal', 'high' );
-
-		$fields = array(
-			array(
+		$restrict_fields = [
+			[
 				'name'       => 'admin_only',
-				'label'      => __( 'Restrict access to Admins?', 'pods' ),
+				'label'      => __( 'Restrict access to Admins', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
-			),
-			array(
+			],
+			[
 				'name'       => 'restrict_role',
-				'label'      => __( 'Restrict access by Role?', 'pods' ),
-				'help'       => array(
+				'label'      => __( 'Restrict access by Role', 'pods' ),
+				'help'       => [
 					__( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
-				),
+				],
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
-			),
-			array(
+			],
+			[
 				'name'              => 'roles_allowed',
 				'label'             => __( 'Role(s) Allowed', 'pods' ),
 				'type'              => 'pick',
@@ -546,22 +561,22 @@ class Pods_Pages extends PodsComponent {
 				'pick_format_multi' => 'autocomplete',
 				'pick_ajax'         => false,
 				'default'           => '',
-				'depends-on'        => array(
-					'restrict_role' => true,
-				),
-			),
-			array(
+				'depends-on'        => [
+					'pods_meta_restrict_role' => true,
+				],
+			],
+			[
 				'name'       => 'restrict_capability',
-				'label'      => __( 'Restrict access by Capability?', 'pods' ),
-				'help'       => array(
+				'label'      => __( 'Restrict access by Capability', 'pods' ),
+				'help'       => [
 					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
-				),
+				],
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
-			),
-			array(
+			],
+			[
 				'name'              => 'capability_allowed',
 				'label'             => __( 'Capability Allowed', 'pods' ),
 				'type'              => 'pick',
@@ -570,40 +585,57 @@ class Pods_Pages extends PodsComponent {
 				'pick_format_multi' => 'autocomplete',
 				'pick_ajax'         => false,
 				'default'           => '',
-				'depends-on'        => array(
-					'restrict_capability' => true,
-				),
-			),
-			array(
+				'depends-on'        => [
+					'pods_meta_restrict_capability' => true,
+				],
+			],
+			[
 				'name'       => 'restrict_redirect',
-				'label'      => __( 'Redirect if Restricted?', 'pods' ),
+				'label'      => __( 'Redirect if Restricted', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
-			),
-			array(
+			],
+			[
 				'name'       => 'restrict_redirect_login',
 				'label'      => __( 'Redirect to WP Login page', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
-				'depends-on' => array(
-					'restrict_redirect' => true,
-				),
-			),
-			array(
+				'depends-on' => [
+					'pods_meta_restrict_redirect' => true,
+				],
+			],
+			[
 				'name'       => 'restrict_redirect_url',
 				'label'      => __( 'Redirect to a Custom URL', 'pods' ),
 				'default'    => '',
 				'type'       => 'text',
-				'depends-on' => array(
-					'restrict_redirect'       => true,
-					'restrict_redirect_login' => false,
-				),
-			),
-		);
+				'depends-on' => [
+					'pods_meta_restrict_redirect'       => true,
+					'pods_meta_restrict_redirect_login' => false,
+				],
+			],
+		];
 
-		pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
+		$fields = array_merge( $page_fields, $association_fields, $restrict_fields );
+
+		$object_collection = Pods\Whatsit\Store::get_instance();
+
+		/** @var Storage $storage */
+		$storage = $object_collection->get_storage_object( 'collection' );
+
+		foreach ( $fields as $field ) {
+			$field['parent'] = $pod['name'];
+
+			$field = new Field( $field );
+
+			$storage->add( $field );
+		}
+
+		pods_group_add( $pod, __( 'Page', 'pods' ), $page_fields, 'normal', 'high' );
+		pods_group_add( $pod, __( 'Pod Association', 'pods' ), $association_fields, 'normal', 'high' );
+		pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $restrict_fields, 'normal', 'high' );
 	}
 
 	/**
@@ -617,16 +649,17 @@ class Pods_Pages extends PodsComponent {
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
-
-		if ( 'code' === $meta_key ) {
-			$post = get_post( $post_ID );
-
-			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
-				return $post->post_content;
-			}
+		if ( 'code' !== $meta_key ) {
+			return $_null;
 		}
 
-		return $_null;
+		$post = get_post( $post_ID );
+
+		if ( ! is_object( $post ) || $this->object_type !== $post->post_type ) {
+			return $_null;
+		}
+
+		return $post->post_content;
 	}
 
 	/**
@@ -635,42 +668,44 @@ class Pods_Pages extends PodsComponent {
 	 * @param        $_null
 	 * @param int    $post_ID
 	 * @param string $meta_key
-	 * @param null   $meta_value
+	 * @param string $meta_value
 	 *
 	 * @return bool|int|null
 	 */
 	public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+		if ( 'code' !== $meta_key ) {
+			return $_null;
+		}
 
-		if ( 'code' === $meta_key ) {
-			$post = get_post( $post_ID );
+		$post = get_post( $post_ID );
 
-			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
-				$postdata = array(
-					'ID'           => $post_ID,
-					'post_content' => $meta_value,
-				);
+		if ( ! is_object( $post ) || $this->object_type !== $post->post_type ) {
+			return $_null;
+		}
 
-				remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
+		$postdata = array(
+			'ID'           => $post_ID,
+			'post_content' => $meta_value,
+		);
 
-				$revisions = false;
+		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
 
-				if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
-					remove_action( 'pre_post_update', 'wp_save_post_revision' );
+		$revisions = false;
 
-					$revisions = true;
-				}
+		if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
+			remove_action( 'pre_post_update', 'wp_save_post_revision' );
 
-				wp_update_post( (object) $postdata );
-				// objects will be automatically sanitized
-				if ( $revisions ) {
-					add_action( 'pre_post_update', 'wp_save_post_revision' );
-				}
+			$revisions = true;
+		}
 
-				return true;
-			}//end if
-		}//end if
+		wp_update_post( (object) $postdata );
 
-		return $_null;
+		// objects will be automatically sanitized
+		if ( $revisions ) {
+			add_action( 'pre_post_update', 'wp_save_post_revision' );
+		}
+
+		return true;
 	}
 
 	/**
@@ -701,7 +736,7 @@ class Pods_Pages extends PodsComponent {
 
 		uksort( $pod_page_rewrites, 'pods_page_length_sort' );
 
-		pods_transient_set( 'pods_object_page_rewrites', $pod_page_rewrites );
+		pods_transient_set( 'pods_object_page_rewrites', $pod_page_rewrites, WEEK_IN_SECONDS );
 
 		$pod_page_rewrites = array_flip( $pod_page_rewrites );
 
@@ -718,20 +753,22 @@ class Pods_Pages extends PodsComponent {
 	 * @return array|bool
 	 */
 	public static function exists( $uri = null ) {
-
 		if ( null === $uri ) {
-			$uri = parse_url( pods_current_url() );
-			$uri = $uri['path'];
-		} else {
-			$uri = explode( '?', $uri );
-			$uri = explode( '#', $uri[0] );
-			$uri = $uri[0];
+			$uri = pods_current_path();
 		}
 
-		$home = parse_url( get_home_url() );
+		if ( empty( $uri ) ) {
+			return false;
+		}
 
-		if ( ! empty( $home ) && isset( $home['path'] ) && '/' !== $home['path'] ) {
-			$uri = substr( $uri, strlen( $home['path'] ) );
+		$uri = explode( '?', $uri );
+		$uri = explode( '#', $uri[0] );
+		$uri = $uri[0];
+
+		$home_path = wp_parse_url( get_home_url(), PHP_URL_PATH );
+
+		if ( ! empty( $home_path ) && '/' !== $home_path ) {
+			$uri = substr( $uri, strlen( $home_path ) );
 		}
 
 		$uri       = trim( $uri, '/' );
@@ -895,7 +932,7 @@ class Pods_Pages extends PodsComponent {
 					add_action( 'after_setup_theme', array( $this, 'precode' ) );
 					add_action( 'wp', array( $this, 'silence_404' ), 1 );
 
-					// Genesis theme integration
+					// Genesis theme integration.
 					add_action( 'genesis_loop', 'pods_content', 11 );
 				}
 			}
@@ -991,7 +1028,7 @@ class Pods_Pages extends PodsComponent {
 		}
 
 		if ( false !== self::$exists ) {
-			$permission = pods_permission( self::$exists['options'] );
+			$permission = pods_permission( self::$exists );
 
 			$permission = (boolean) apply_filters( 'pods_pages_permission', $permission, self::$exists );
 
@@ -1001,15 +1038,17 @@ class Pods_Pages extends PodsComponent {
 				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists['options'] ) ) ) {
 					$slug = pods_var_raw( 'pod_slug', self::$exists['options'], null, null, true );
 
+					$has_slug = 0 < strlen( $slug );
+
 					// Handle special magic tags
-					if ( 0 < strlen( $slug ) ) {
+					if ( $has_slug ) {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
 					$pods = pods( pods_var( 'pod', self::$exists['options'] ), $slug );
 
 					// Auto 404 handling if item doesn't exist
-					if ( 0 < strlen( $slug ) && ! $pods->exists() && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
+					if ( $has_slug && ( empty( $slug ) || ! $pods->exists() ) && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
 						$pods = 404;
 					}
 				}
@@ -1191,11 +1230,160 @@ class Pods_Pages extends PodsComponent {
 	}
 
 	/**
+	 * Handle overriding the template used for a Pods Page.
+	 *
+	 * @since 2.8.11
+	 *
+	 * @param string $original_template The template to include.
+	 *
+	 * @return string The template to include.
+	 */
+	public function template_include( $original_template ) {
+		global $pods;
+
+		// Default to original template if pod page was not found.
+		$template = $original_template;
+
+		if ( false !== self::$exists ) {
+			/*
+			 * Create pods.php in your theme directory, and
+			 * style it to suit your needs. Some helpful functions:
+			 *
+			 * get_header()
+			 * pods_content()
+			 * get_sidebar()
+			 * get_footer()
+			 */
+			$template = self::$exists['page_template'];
+			$template = apply_filters( 'pods_page_template', $template, self::$exists );
+
+			$render_function = apply_filters( 'pods_template_redirect', null, $template, self::$exists );
+
+			if ( '_custom' === $template ) {
+				pods_content();
+				die();
+			} elseif ( null !== $render_function && is_callable( $render_function ) ) {
+				call_user_func( $render_function, $template, self::$exists );
+				die();
+			} elseif ( ( ! defined( 'PODS_DISABLE_DYNAMIC_TEMPLATE' ) || ! PODS_DISABLE_DYNAMIC_TEMPLATE ) && is_object( $pods ) && ! is_wp_error( $pods ) && ! empty( $pods->page_template ) ) {
+				$template = $pods->page_template;
+				// found the template and included it, we're good to go!
+			} elseif ( ! empty( self::$exists['page_template'] ) ) {
+				$template = self::$exists['page_template'];
+				// found the template and included it, we're good to go!
+			} else {
+				$located_template = apply_filters( 'pods_page_locate_template', $template, self::$exists );
+
+				if ( $template !== $located_template ) {
+					$template = $located_template;
+				} else {
+					$default_templates = array();
+
+					$uri = explode( '?', self::$exists['uri'] );
+					$uri = explode( '#', $uri[0] );
+
+					$page_path = explode( '/', $uri[0] );
+
+					while ( $last = array_pop( $page_path ) ) {
+						$file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
+						$sanitized = sanitize_title( $file_name );
+
+						$default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+						$default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					}
+
+					$default_templates[] = 'pods.php';
+
+					$default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
+
+					$template = locate_template( $default_templates );
+
+					if ( '' !== $template ) {
+						// found the template and included it, we're good to go!
+					} else {
+						$template = false;
+
+						// templates not found in theme, default output
+						do_action( 'pods_page_default', $template, self::$exists );
+
+						get_header();
+						pods_content();
+						get_sidebar();
+						get_footer();
+						die();
+					}
+				}//end if
+			}//end if
+		}
+
+		/**
+		 * Allow filtering the template to include for a Pods Page.
+		 *
+		 * @since 2.8.11
+		 *
+		 * @param string $template The template to use.
+		 * @param array  $exists   The Pods Page data.
+		 */
+		$template = apply_filters( 'pods_page_template_include', $template, self::$exists );
+
+		// Attempt to set up a basic WP post object.
+		if ( $template !== $original_template && function_exists( '\Roots\bootloader' ) && function_exists( 'resource_path' ) ) {
+			$paths_to_check = [
+				get_theme_file_path( '/resources/views' ),
+				get_parent_theme_file_path( '/resources/views' ),
+				resource_path( 'views' ),
+			];
+
+			foreach ( $paths_to_check as $path_to_check ) {
+				$file_path = $path_to_check . DIRECTORY_SEPARATOR . $template;
+
+				if ( file_exists( $file_path ) ) {
+					$template = $file_path;
+
+					break;
+				}
+			}
+		}
+
+		return $template;
+	}
+
+	/**
 	 *
 	 */
 	public function template_redirect() {
-
 		global $pods;
+
+		// Support the Sage theme, eventually we can implement template_include everywhere else after more testing.
+		if ( function_exists( '\Roots\bootloader' ) ) {
+			if ( ! empty( $pods ) && 0 < $pods->id() && 'post_type' === $pods->pod_data['type'] ) {
+				// Set up the post object using the pod.
+				query_posts( 'p=' . $pods->id() . '&post_type=' . $pods->pod_data['name'] );
+
+				$pod_post = get_post( $pods->id() );
+
+				if ( $pod_post ) {
+					setup_postdata( $pod_post );
+				}
+			} elseif ( null === get_queried_object() ) {
+				// Maybe set up the post using the front page for now.
+				$front_page = (int) get_option( 'page_on_front' );
+
+				if ( 0 < $front_page ) {
+					query_posts( 'page_id=' . $front_page );
+
+					$front_page_post = get_post( $front_page );
+
+					if ( $front_page_post ) {
+						setup_postdata( $front_page_post );
+					}
+				}
+			}
+
+			add_filter( 'template_include', [ $this, 'template_include' ] );
+
+			return;
+		}
 
 		if ( false !== self::$exists ) {
 			/*
@@ -1337,7 +1525,6 @@ function get_pod_page_uri() {
  * @since 1.7.5
  */
 function pod_page_exists( $uri = null ) {
-
 	return Pods_Pages::exists( $uri );
 }
 

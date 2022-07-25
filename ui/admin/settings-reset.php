@@ -1,5 +1,8 @@
 <?php
-global $pods_init;
+/** @var $pods_init PodsInit */
+global $pods_init, $wpdb;
+
+$relationship_table = $wpdb->prefix . 'podsrel';
 
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
 	if ( isset( $_POST['pods_cleanup_1x'] ) ) {
@@ -17,22 +20,28 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 		deactivate_plugins( PODS_DIR . 'init.php' );
 
 		pods_redirect( 'index.php' );
-	} elseif ( 1 == pods_v( 'pods_reset_success' ) ) {
-		pods_message( 'Pods 2.x settings and data have been reset.' );
-	} elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) ) {
-		pods_message( 'Pods 1.x data has been deleted.' );
+	} elseif ( isset( $_POST['pods_recreate_tables'] ) ) {
+		pods_upgrade()->delta_tables();
+
+		pods_redirect( pods_query_arg( array( 'pods_recreate_tables_success' => 1 ), array( 'page', 'tab' ) ) );
 	}
-}//end if
+} elseif ( 1 === (int) pods_v( 'pods_reset_success' ) ) {
+	pods_message( 'Pods 2.x settings and data have been reset.' );
+} elseif ( 1 === (int) pods_v( 'pods_cleanup_1x_success' ) ) {
+	pods_message( 'Pods 1.x data has been deleted.' );
+} elseif ( 1 === (int) pods_v( 'pods_recreate_tables_success' ) ) {
+	pods_message( 'Pods tables have been recreated.' );
+}
 
 // Monday Mode
 $monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
 
 if ( pods_v_sanitized( 'pods_reset_weekend', 'post', pods_v_sanitized( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
 	if ( $monday_mode ) {
-		$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+		$html = '<br /><br /><iframe width="480" height="360" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
 		pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );
 	} else {
-		$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/xhrBDcQq2DM?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+		$html = '<br /><br /><iframe width="480" height="360" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
 		pods_message( 'Oops, sorry! You can only reset the weekend on a Monday before the end of the work day. Somebody call the Waaambulance!' . $html, 'error' );
 	}
 }
@@ -44,9 +53,9 @@ $old_version = get_option( 'pods_version' );
 
 if ( ! empty( $old_version ) ) {
 	?>
-	<h3><?php _e( 'Delete Pods 1.x data', 'pods' ); ?></h3>
+	<h3><?php esc_html_e( 'Delete Pods 1.x data', 'pods' ); ?></h3>
 
-	<p><?php _e( 'This will delete all of your Pods 1.x data, it\'s only recommended if you\'ve verified your data has been properly migrated into Pods 2.x.', 'pods' ); ?></p>
+	<p><?php esc_html_e( 'This will delete all of your Pods 1.x data, it\'s only recommended if you\'ve verified your data has been properly migrated into Pods 2.x.', 'pods' ); ?></p>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install.", 'pods' ); ?>
@@ -55,9 +64,9 @@ if ( ! empty( $old_version ) ) {
 
 	<hr />
 
-	<h3><?php _e( 'Reset Pods 2.x', 'pods' ); ?></h3>
+	<h3><?php esc_html_e( 'Reset Pods 2.x', 'pods' ); ?></h3>
 
-	<p><?php _e( 'This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it\'s data, and performs a fresh install.', 'pods' ); ?></p>
+	<p><?php esc_html_e( 'This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it\'s data, and performs a fresh install.', 'pods' ); ?></p>
 	<p><?php echo sprintf( '<strong>%1$s</strong>', $please_note ) . __( 'This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified. Any custom fields stored using the table storage component, content in Advanced Content Types, and relationships between posts will be lost.', 'pods' ); ?></p>
 
 	<p class="submit">
@@ -67,9 +76,9 @@ if ( ! empty( $old_version ) ) {
 
 	<hr />
 
-	<h3><?php _e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?></h3>
+	<h3><?php esc_html_e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?></h3>
 
-	<p><?php _e( 'This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed.', 'pods' ); ?></p>
+	<p><?php esc_html_e( 'This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed.', 'pods' ); ?></p>
 	<p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
 
 	<p class="submit">
@@ -79,10 +88,25 @@ if ( ! empty( $old_version ) ) {
 	<?php
 } else {
 	?>
-	<h3><?php _e( 'Reset Pods', 'pods' ); ?></h3>
+	<h3><?php esc_html_e( 'Reset Pods', 'pods' ); ?></h3>
 
-	<p><?php _e( 'This will reset Pods settings, removes all of it\'s data, and performs a fresh install.', 'pods' ); ?></p>
-	<p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
+	<p><?php esc_html_e( 'This will reset Pods settings, remove all of your Pod configurations, and perform a fresh install.', 'pods' ); ?></p>
+	<h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
+	<ul>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All posts will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All terms will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All media will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All users will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All custom field values will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods plugin will remain activated', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( 'Relationship table (%s) will be deleted (and all of the relationships)', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
+	</ul>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install.", 'pods' ); ?>
@@ -91,14 +115,51 @@ if ( ! empty( $old_version ) ) {
 
 	<hr />
 
-	<h3><?php _e( 'Deactivate and Delete Pods data', 'pods' ); ?></h3>
+	<h3><?php esc_html_e( 'Deactivate and Delete Pods data', 'pods' ); ?></h3>
 
-	<p><?php _e( 'This will delete Pods settings, data, and deactivate itself once done. Your database will be as if Pods never existed.', 'pods' ); ?></p>
-	<p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
+	<p><?php esc_html_e( 'This will delete Pods settings, data, and deactivate itself once done.', 'pods' ); ?></p>
+	<h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
+	<ul>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All posts will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All terms will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All media will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All users will remain', 'pods' ); ?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All custom field values will remain', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DEACTIVATE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods plugin will be deactivated', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( 'Relationship table (%s) will be deleted (and all of the relationships)', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
+	</ul>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back.", 'pods' ); ?>
 		<input type="submit" class="button button-primary" name="pods_reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+	</p>
+
+	<hr />
+
+	<h3><?php esc_html_e( 'Recreate missing tables', 'pods' ); ?></h3>
+
+	<p><?php esc_html_e( 'This will recreate missing tables if there are any that do not exist.', 'pods' ); ?></p>
+	<h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
+	<ul>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( '%s will remain untouched if it already exists', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
+		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'CREATE', 'pods' ); ?>:</strong> <?php
+			// translators: %s is the name of the wp_podsrel table in the database.
+			printf( esc_html__( '%s will be created if it does not exist', 'pods' ), esc_html( $relationship_table ) );
+			?></li>
+	</ul>
+
+	<p class="submit">
+		<?php $confirm = __( "Are you sure you want to do this?", 'pods' ); ?>
+		<input type="submit" class="button button-primary" name="pods_recreate_tables" value=" <?php esc_attr_e( 'Recreate missing tables', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 	<?php
 }//end if
@@ -107,10 +168,10 @@ if ( $monday_mode ) {
 	?>
 	<hr />
 
-	<h3><?php _e( 'Reset Weekend', 'pods' ); ?></h3>
+	<h3><?php esc_html_e( 'Reset Weekend', 'pods' ); ?></h3>
 
-	<p><?php _e( 'This feature has been exclusively built for Pods to help developers suffering from "Monday", and allows them to reset the weekend.', 'pods' ); ?></p>
-	<p><?php _e( "By resetting the weekend, you will be sent back to Friday night and the weekend you've just spent will be erased. You will retain all of your memories of the weekend, and be able to relive it in any way you wish.", 'pods' ); ?></p>
+	<p><?php esc_html_e( 'This feature has been exclusively built for Pods to help developers suffering from "Monday", and allows them to reset the weekend.', 'pods' ); ?></p>
+	<p><?php esc_html_e( "By resetting the weekend, you will be sent back to Friday night and the weekend you've just spent will be erased. You will retain all of your memories of the weekend, and be able to relive it in any way you wish.", 'pods' ); ?></p>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to Reset your Weekend?\n\nThere is no going back, you cannot reclaim anything you've gained throughout your weekend.\n\nYou are about to be groundhoggin' it", 'pods' ); ?>

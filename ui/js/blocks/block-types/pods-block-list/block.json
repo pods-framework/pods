@@ -1,0 +1,129 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": "1",
+  "name": "pods/pods-block-list",
+  "title": "Pods Item List",
+  "description": "List multiple Pod items.",
+  "category": "pods",
+  "icon": "list-view",
+  "keywords": [
+    "pods",
+    "item",
+    "list"
+  ],
+  "editorScript": "file:../../pods-blocks-api.min.js",
+  "editorStyle": "file:../../../../styles/dist/pods.css",
+  "supports": {
+    "html": false,
+    "align": true,
+    "alignWide": true,
+    "anchor": true,
+    "customClassName": true,
+    "inserter": true,
+    "multiple": true,
+    "reusable": true,
+    "__experimentalColor": true,
+    "__experimentalFontSize": true,
+    "__experimentalPadding": true,
+    "__experimentalLineHeight": true,
+    "jsx": false
+  },
+  "attributes": {
+    "align": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "name": {
+      "type": "object",
+      "default": {
+        "label": "- Use Current Pod -",
+        "value": ""
+      }
+    },
+    "template": {
+      "type": "object",
+      "default": {
+        "label": "- Use Custom Template -",
+        "value": ""
+      }
+    },
+    "template_custom": {
+      "type": "string"
+    },
+    "content_before": {
+      "type": "string"
+    },
+    "content_after": {
+      "type": "string"
+    },
+    "not_found": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "number",
+      "default": 15
+    },
+    "orderby": {
+      "type": "string"
+    },
+    "where": {
+      "type": "string"
+    },
+    "pagination": {
+      "type": "boolean",
+      "default": false
+    },
+    "pagination_location": {
+      "type": "object",
+      "default": {
+        "label": "After list",
+        "value": "after"
+      }
+    },
+    "pagination_type": {
+      "type": "object",
+      "default": {
+        "label": "Basic links",
+        "value": "advanced"
+      }
+    },
+    "filters": {
+      "type": "string"
+    },
+    "filters_label": {
+      "type": "string"
+    },
+    "filters_location": {
+      "type": "object",
+      "default": {
+        "label": "Before list",
+        "value": "before"
+      }
+    },
+    "expires": {
+      "type": "number",
+      "default": 300
+    },
+    "cache_mode": {
+      "type": "object",
+      "default": {
+        "label": "Disable Caching",
+        "value": "none"
+      }
+    }
+  }
+}

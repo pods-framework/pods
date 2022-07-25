@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/pick.php';
 
 /**
  * Create a faux pick field type for comment traversal.

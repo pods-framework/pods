@@ -1,0 +1,22 @@
+.pods-dfv-container .pods-tinymce-editor-container {
+	border: none;
+	background: transparent;
+}
+
+.pods-tinymce-editor-container .mce-tinymce {
+	border: 1px solid #e5e5e5;
+}
+
+.pods-alternate-editor {
+	width: 100%;
+}
+
+#profile-page .form-table .pods-field-option,
+.pods-field-option {
+	.wp-editor-container textarea.wp-editor-area,
+	.wp-editor-container textarea.components-textarea-control__input {
+		width: 100%;
+		border: none;
+		margin-bottom: 0;
+	}
+}

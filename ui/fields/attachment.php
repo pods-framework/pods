@@ -1,14 +1,12 @@
 <?php
 global $post_ID;
 
-wp_enqueue_script( 'pods-handlebars' );
+pods_form_enqueue_script( 'pods-handlebars' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 wp_enqueue_script( 'thickbox' );
-wp_enqueue_script( 'pods-attach' );
 
 wp_enqueue_style( 'thickbox' );
-wp_enqueue_style( 'pods-attach' );
 
 $field_file = PodsForm::field_loader( 'file' );
 
@@ -19,7 +17,7 @@ $css_id = $attributes['id'];
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 
-$uid = @session_id();
+$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();

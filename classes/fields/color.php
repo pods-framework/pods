@@ -25,7 +25,7 @@ class PodsField_Color extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Color Picker', 'pods' );
+		static::$label = __( 'Color Picker', 'pods' );
 	}
 
 	/**
@@ -42,6 +42,18 @@ class PodsField_Color extends PodsField {
 				'boolean_yes_label' => '',
 				'dependency'        => true,
 				'developer_mode'    => true,
+			),
+			static::$type . '_select_label'   => array(
+				'label'       => __( 'Select Color Label', 'pods' ),
+				'placeholder' => __( 'Select Color', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
+			),
+			static::$type . '_clear_label'   => array(
+				'label'       => __( 'Clear Label', 'pods' ),
+				'placeholder' => __( 'Clear', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
 			),
 		);
 
@@ -63,7 +75,7 @@ class PodsField_Color extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -73,7 +85,7 @@ class PodsField_Color extends PodsField {
 		// WP Color Picker for 3.5+
 		$field_type = 'color';
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
@@ -87,15 +99,37 @@ class PodsField_Color extends PodsField {
 			$field_type = 'text';
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		// Default labels.
+		if ( empty( $options[ static::$type . '_select_label' ] ) ) {
+			$options[ static::$type . '_select_label' ] = __( 'Select Color', 'pods' );
+		}
+		if ( empty( $options[ static::$type . '_clear_label' ] ) ) {
+			$options[ static::$type . '_clear_label' ] = __( 'Clear', 'pods' );
+		}
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -105,7 +139,7 @@ class PodsField_Color extends PodsField {
 			$color = str_replace( '#', '', $check );
 
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				} else {
 					// @todo Ask for a specific format in error message
@@ -120,7 +154,7 @@ class PodsField_Color extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**
@@ -128,7 +162,7 @@ class PodsField_Color extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$value = str_replace( '#', '', $value );
 

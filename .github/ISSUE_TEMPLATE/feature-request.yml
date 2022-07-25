@@ -1,0 +1,45 @@
+name: "Feature Request"
+description: "Suggest an idea for this project"
+labels: ["Type: Enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for sharing your idea with us, we'd love to know more about it."
+  - type: textarea
+    id: problem-to-solve
+    attributes:
+      label: Problem to Solve
+      description: "A clear and concise description of the problem you are trying to solve."
+      placeholder: "Pods Packages do not export content."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: "A clear and concise description of the solution you are proposing to have us add."
+      placeholder: "Support exporting content for a pod when exporting a pod."
+    validations:
+      required: true
+  - type: textarea
+    id: possible-workaround
+    attributes:
+      label: Possible Workaround
+      description: "If you have discovered a workaround, let us know so other people can be aware too."
+    validations:
+      required: false
+  - type: textarea
+    id: examples-elswhere
+    attributes:
+      label: Examples Elsewhere
+      description: "Let us know if you have seen this kind of thing done somewhere else before."
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots-screencast
+    attributes:
+      label: Screenshots / Screencast
+      description: "If you have any screenshot(s) or screencast(s) to show your idea, these can help us understand things more quickly."
+    validations:
+      required: false

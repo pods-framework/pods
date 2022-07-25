@@ -90,16 +90,6 @@
 	font-size: 11px;
 }
 
-body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input[name="s"] {
-	float: none;
-	line-height: 24px;
-}
-
-body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input.button {
-	float: none;
-	line-height: 23px;
-}
-
 .pods-ui-filter-bar-secondary {
 	margin: 0 auto;
 	width: 97%;
@@ -259,29 +249,20 @@ body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input.button {
 	border-bottom: none;
 }
 
+#TB_ajaxContent .pods-ui-posts-filter-popup p {
+	padding: 0;
+}
+
 .pods-ui-posts-filter-popup p.submit {
 	margin-top: 30px;
 	padding: 0 !important;
 	border-bottom: none;
 }
 
-body.branch-3-5 .pods-ui-posts-filter-popup p.submit {
-	margin-top: 36px;
-}
-
 .pods-ui-posts-filter-popup p.submit.clear {
 	clear: none;
 	float: right;
 	text-align: right;
-}
-
-body.branch-3-4 .pods-ui-posts-filter-popup p.submit input.button {
-	font-size: 13px !important;
-	padding: 5px 32px;
-}
-
-body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
-	padding: 0 32px;
 }
 
 .pods-ui-posts-filter-popup p:after,
@@ -291,4 +272,14 @@ body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
 	height: 0;
 	clear: both;
 	visibility: hidden;
+}
+
+.pods-ui {
+	.wp-list-table .toggle-row {
+    	display: none;
+	}
+
+	p div.pods-pick-values {
+	    display: inline;
+	}
 }

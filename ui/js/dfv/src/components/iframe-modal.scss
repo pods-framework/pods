@@ -1,0 +1,12 @@
+.pods-iframe-modal {
+    height: 100%;
+	width: 100%;
+	/* Overwrite WP core max values and set same offset as media modal. */
+	max-height: calc(100% - 60px);
+	max-width: calc(100% - 60px);
+}
+
+.pods-iframe-modal__iframe {
+	height: 100%;
+	width: 100%;
+}

@@ -5,6 +5,9 @@
  * @package Pods_Frontier_Template_Editor\view_template
  */
 
+use Pods\Whatsit\Pod;
+use Pods\Whatsit\Field;
+
 // add filters
 add_filter( 'pods_templates_post_template', 'frontier_end_template', 25, 4 );
 add_filter( 'pods_templates_do_template', 'frontier_do_shortcode', 25, 1 );
@@ -46,11 +49,19 @@ function frontier_get_shortcodes() {
  * @since 2.4.3
  */
 function frontier_do_shortcode( $content ) {
+	// Run only Pods template shortcodes (each, once, before, after, if, and else).
+	return pods_do_shortcode( $content, frontier_get_shortcodes() );
+}
 
-	$content = pods_do_shortcode( $content, frontier_get_shortcodes() );
-
-	return $content;
-
+/**
+ * @param $content
+ *
+ * @return string
+ * @since 2.8.6
+ */
+function frontier_do_other_shortcodes( $content ) {
+	// Run all other shortcodes but ignore the Pods template shortcodes (each, once, before, after, if, and else).
+	return pods_do_shortcode( $content, [], frontier_get_shortcodes() );
 }
 
 /**
@@ -63,9 +74,7 @@ function frontier_do_shortcode( $content ) {
  * @since 2.4.0
  */
 function frontier_decode_template( $code, $atts ) {
-
 	$code = base64_decode( $code );
-	$pod  = pods( $atts['pod'] );
 
 	if ( isset( $atts['pod'] ) ) {
 		$code = str_replace( '@pod', $atts['pod'], $code );
@@ -83,42 +92,55 @@ function frontier_decode_template( $code, $atts ) {
 /**
  * processes if condition within a template
  *
- * @param array  $atts attributes from template
+ * @param array  $attributes attributes from template
  * @param string $code encoded template to be decoded
  *
  * @return string
  * @since 2.4.0
  */
-function frontier_if_block( $atts, $code ) {
+function frontier_if_block( $attributes, $code ) {
+	$attributes = array_merge( [
+		'pod'     => null,
+		'id'      => null,
+		'field'   => null,
+		'value'   => null,
+		'compare' => null,
+		'index'   => null,
+	], $attributes );
 
-	$pod = pods( $atts['pod'], $atts['id'] );
+	$pod = Pods_Templates::get_obj( $attributes['pod'], $attributes['id'] );
 
-	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
+	if ( ! $pod || ! $pod->exists() ) {
 		return '';
 	}
 
-	$code = explode( '[else]', frontier_decode_template( $code, $atts ) );
-
-	// sysvals
-	$system_values = array(
-		'_index',
-	);
+	$code = explode( '[else]', frontier_decode_template( $code, $attributes ) );
 
 	// field data
 	$field_data = null;
-	$field_type = null;
+	$field_type = 'text';
 
-	if ( in_array( $atts['field'], $system_values, true ) ) {
-		switch ( $atts['field'] ) {
-			case '_index':
-				$field_data = $atts['index'];
+	if ( ! empty( $attributes['field'] ) ) {
+		$supported_calculations = [
+			'_zebra'          => 'number',
+			'_position'       => 'number',
+			'_total'          => 'number',
+			'_total_found'    => 'number',
+			'_total_all_rows' => 'number',
+			'_total_pages'    => 'number',
+			'_current_page'   => 'number',
+		];
 
-				break;
+		if ( isset( $supported_calculations[ $attributes['field'] ] ) ) {
+			// Support [if field="_position" value="2"] and other calculation value handlers.
+			$field_data = $pod->field( $attributes['field'] );
+			$field_type = $supported_calculations[ $attributes['field'] ];
+		} elseif ( '_index' === $attributes['field'] ) {
+			$field_data = pods_v( 'index', $attributes );
+		} else {
+			$field_data = $pod->field( $attributes['field'] );
+			$field_type = $pod->fields( $attributes['field'], 'type' );
 		}
-	} else {
-		$field_data = $pod->field( $atts['field'] );
-
-		$field_type = $pod->fields( $atts['field'], 'type' );
 	}
 
 	$is_empty = true;
@@ -131,56 +153,182 @@ function frontier_if_block( $atts, $code ) {
 		$is_empty = PodsForm::field_method( $field_type, 'values_are_empty', $field_data );
 	}
 
-	$output = '';
+	$has_value_compare_attribute = null !== $attributes['value'] || null !== $attributes['compare'];
 
-	if ( ! $is_empty || isset( $atts['value'] ) ) {
-		// theres a field - let go deeper
-		if ( isset( $atts['value'] ) ) {
+	if ( ! $is_empty || $has_value_compare_attribute ) {
+		// Check if we do not have a value to compare with.
+		if ( ! $has_value_compare_attribute ) {
+			$template = $code[0];
 
-			// check if + or - are present
-			if ( '+' === substr( $atts['value'], 0, 1 ) ) {
-				// is greater
-				$atts['value'] = (float) substr( $atts['value'], 1 ) + 1;
-
-				if ( (float) $field_data > $atts['value'] ) {
-					// is greater - set it the same to allow
-					$atts['value'] = $field_data;
-				}
-			} elseif ( substr( $atts['value'], 0, 1 ) === '-' ) {
-				// is smaller
-				$atts['value'] = (float) substr( $atts['value'], 1 ) - 1;
-
-				if ( (float) $field_data < $atts['value'] ) {
-					// is greater - set it the same to allow
-					$atts['value'] = $field_data;
-				}
+			// Maybe run any shortcode.
+			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
+				$template = frontier_do_other_shortcodes( $template );
 			}
 
-			if ( (string) $field_data === (string) $atts['value'] ) {
-				// IF statement true, use [IF] content as template
-				$template = $pod->do_magic_tags( $code[0] );
-			} else {
-				// No 'field' value (or value false), switch to [else] content
-				if ( isset( $code[1] ) ) {
-					// There is an [ELSE] tag
-					$template = $pod->do_magic_tags( $code[1] );
-				} else {
-					// Value did not match (and no [ELSE]), nothing should be displayed
-					$template = '';
-				}
-			}
-		} else {
 			// Field exists and is not empty, use [IF] content
-			$template = $pod->do_magic_tags( $code[0] );
-		}//end if
-	} elseif ( isset( $code[1] ) ) {
-		// No value or field is empty and there is an [ELSE] tag.  Use [ELSE]
-		$template = $pod->do_magic_tags( $code[1] );
-	} else {
-		$template = '';
-	}//end if
+			$template = $pod->do_magic_tags( $template );
 
-	return do_shortcode( $template );
+			return frontier_do_shortcode( $template );
+		}
+
+		$first_character = substr( $attributes['value'], 0, 1 );
+
+		// check if + or - are present
+		if ( '+' === $first_character ) {
+			// is greater
+			$attributes['value']   = (float) substr( $attributes['value'], 1 ) + 1;
+			$attributes['compare'] = '>';
+		} elseif ( '-' === $first_character ) {
+			// is smaller
+			$attributes['value']   = (float) substr( $attributes['value'], 1 ) - 1;
+			$attributes['compare'] = '<';
+		}
+
+		if ( empty( $attributes['compare'] ) ) {
+			$attributes['compare'] = '=';
+		}
+
+		$attributes['compare'] = html_entity_decode( $attributes['compare'] );
+		$attributes['compare'] = strtoupper( $attributes['compare'] );
+
+		// Normalize the compare.
+		$comparisons = [
+			'=',
+			'!=',
+			'IN',
+			'NOT IN',
+			'EXISTS',
+			'NOT EXISTS',
+			'>',
+			'>=',
+			'<',
+			'<=',
+			'LIKE',
+			'NOT LIKE',
+			'EMPTY',
+			'NOT EMPTY',
+		];
+
+		// Comparison not supported, assume it does not match.
+		if ( ! in_array( $attributes['compare'], $comparisons, true ) ) {
+			return '';
+		}
+
+		$pass = false;
+
+		$maybe_array = is_array( $field_data ) || is_array( $attributes['value'] );
+
+		// Handle comparison.
+		if ( '=' === $attributes['compare'] ) {
+			if ( $maybe_array ) {
+				$pass = in_array( (string) $attributes['value'], (array) $field_data, false );
+			} else {
+				$pass = (string) $field_data === (string) $attributes['value'];
+			}
+		} elseif ( '!=' === $attributes['compare'] ) {
+			if ( $maybe_array ) {
+				$pass = ! in_array( (string) $attributes['value'], (array) $field_data, false );
+			} else {
+				$pass = (string) $field_data !== (string) $attributes['value'];
+			}
+		} elseif ( 'EXISTS' === $attributes['compare'] ) {
+			$pass = null !== $field_data && [] !== $field_data;
+		} elseif ( 'NOT EXISTS' === $attributes['compare'] ) {
+			$pass = null === $field_data || [] === $field_data;
+		} elseif ( $maybe_array ) {
+			// We do not support comparisons for array values beyond equals.
+			$pass = false;
+		} elseif ( 'IN' === $attributes['compare'] ) {
+			$pass = in_array( (string) $field_data, explode( ',', $attributes['value'] ), false );
+		} elseif ( 'NOT IN' === $attributes['compare'] ) {
+			$pass = ! in_array( (string) $field_data, explode( ',', $attributes['value'] ), false );
+		} elseif ( '>' === $attributes['compare'] ) {
+			$pass = (float) $field_data > (float) $attributes['value'];
+		} elseif ( '>=' === $attributes['compare'] ) {
+			$pass = (float) $field_data >= (float) $attributes['value'];
+		} elseif ( '<' === $attributes['compare'] ) {
+			$pass = (float) $field_data < (float) $attributes['value'];
+		} elseif ( '<=' === $attributes['compare'] ) {
+			$pass = (float) $field_data <= (float) $attributes['value'];
+		} elseif ( 'LIKE' === $attributes['compare'] || 'NOT LIKE' === $attributes['compare'] ) {
+			$field_data = (string) $field_data;
+
+			$attributes['value'] = (string) $attributes['value'];
+
+			if ( false !== strpos( $attributes['value'], '%' ) ) {
+				// Handle % LIKE values.
+				$attributes['value'] = str_replace( '%', '.*', preg_quote( $attributes['value'], '/' ) );
+
+				$found = preg_match( '/^' . $attributes['value'] . '$/Uim', $field_data );
+
+				if ( 0 === $found ) {
+					$found = false;
+				}
+			} else {
+				$found = stripos( $field_data, $attributes['value'] );
+			}
+
+			if ( 'LIKE' === $attributes['compare'] ) {
+				// Check if the string contains the match.
+				$pass = false !== $found;
+			} elseif ( 'NOT LIKE' === $attributes['compare'] ) {
+				// Check if the string does not contain the match.
+				$pass = false === $found;
+			}
+		} elseif ( 'EMPTY' === $attributes['compare'] ) {
+			$pass = $is_empty;
+		} elseif ( 'NOT EMPTY' === $attributes['compare'] ) {
+			$pass = ! $is_empty;
+		}
+
+		if ( $pass ) {
+			$template = $code[0];
+
+			// Maybe run any shortcode.
+			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
+				$template = frontier_do_other_shortcodes( $template );
+			}
+
+			// IF statement true, use [IF] content as template.
+			$template = $pod->do_magic_tags( $template );
+
+			return frontier_do_shortcode( $template );
+		}
+
+		if ( isset( $code[1] ) ) {
+			$template = $code[1];
+
+			// Maybe run any shortcode.
+			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
+				$template = frontier_do_other_shortcodes( $template );
+			}
+
+			// There is an [ELSE] tag
+			$template = $pod->do_magic_tags( $template );
+
+			return frontier_do_shortcode( $template );
+		}
+
+		// Value did not match (and no [ELSE]), nothing should be displayed.
+		return '';
+	}
+
+	if ( isset( $code[1] ) ) {
+		$template = $code[1];
+
+		// Maybe run any shortcode.
+		if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
+			$template = frontier_do_other_shortcodes( $template );
+		}
+
+		// No value or field is empty and there is an [ELSE] tag. Use [ELSE].
+		$template = $pod->do_magic_tags( $template );
+
+		return frontier_do_shortcode( $template );
+	}
+
+	// No match at all for the format we support.
+	return '';
 }
 
 /**
@@ -263,18 +411,23 @@ function frontier_template_once_blocks( $atts, $code ) {
 function frontier_do_subtemplate( $atts, $content ) {
 
 	$out        = null;
-	$pod        = pods( $atts['pod'], $atts['id'] );
 	$field_name = $atts['field'];
+
+	$pod = Pods_Templates::get_obj( $atts['pod'], $atts['id'] );
+
+	if ( ! $pod || ! $pod->exists() ) {
+		return '';
+	}
 
 	$entries = $pod->field( $field_name );
 
-	if ( ! empty( $entries ) ) {
+	$field = $pod->fields( $field_name );
+
+	if ( ! empty( $entries ) && $field ) {
 		$entries = (array) $entries;
 
-		$field = $pod->fields[ $field_name ];
-
 		// Force array even for single items since the logic below is using loops.
-		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'], 'single' ) && ! isset( $entries[0] ) ) {
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field, 'single' ) && ! isset( $entries[0] ) ) {
 			$entries = array( $entries );
 		}
 
@@ -292,13 +445,17 @@ function frontier_do_subtemplate( $atts, $content ) {
 		 * the $pod->fields array and is something to not expect to be there in
 		 * 3.0 as this was unintentional.
 		 */
-		if ( in_array( $field['pick_object'], $object_types, true ) || 'taxonomy' == $field['type'] ) {
+		if ( 'taxonomy' === $field['type'] || in_array( $field['pick_object'], $object_types, true ) ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );
 
+				if ( ! $subpod || ! $subpod->valid() ) {
+					continue;
+				}
+
 				$subatts = array(
-					'id'  => $entry[ $subpod->api->pod_data['field_id'] ],
+					'id'  => $entry[ $subpod->pod_data['field_id'] ],
 					'pod' => $field['pick_val'],
 				);
 
@@ -326,16 +483,33 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 			}//end foreach
-		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
-			$template = frontier_decode_template( $content, $atts );
+		} elseif ( 'file' === $field['type'] ) {
+			$template  = frontier_decode_template( $content, $atts );
+			$media_pod = pods( 'media' );
+
 			foreach ( $entries as $key => $entry ) {
 				$content = str_replace( '{_index}', $key, $template );
-				$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
-				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
-				$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
-				$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
 
-				$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), frontier_get_shortcodes() );
+				if ( $media_pod && $media_pod->valid() && $media_pod->fetch( $entry['ID'] ) ) {
+					$content   = str_replace( '{@' . $field_name . '.', '{@', $content );
+
+					$entry_pod = $media_pod;
+				} else {
+					$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
+					$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
+					$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
+
+					// Fix for lowercase ID's.
+					$entry['id'] = $entry['ID'];
+
+					// Allow array-like tags.
+					$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
+
+					// Fallback to parent Pod so above tags still work.
+					$entry_pod = $pod;
+				}
+
+				$out .= pods_do_shortcode( $entry_pod->do_magic_tags( $content ), frontier_get_shortcodes() );
 			}
 		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
 			// Relationship to something that is extended by Pods
@@ -372,7 +546,6 @@ function frontier_do_subtemplate( $atts, $content ) {
 }
 
 /**
- *
  * Search and replace like Pods magic tags but with an array of data instead of a Pod
  *
  * @param Pod     $pod
@@ -462,8 +635,9 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 /**
  * processes template code within an each command from the base template
  *
- * @param array attributes from template
- * @param string template to be processed
+ * @param array  $code     The code to filter.
+ * @param string $template The template to be processed.
+ * @param Pods   $pod      The Pods object.
  *
  * @return null
  * @since 2.4.0
@@ -497,65 +671,121 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 
 	$aliases = array();
 	foreach ( $commands as $command => $shortcode ) {
-		preg_match_all( '/(\[' . $command . '(.*?)]|\[\/' . $command . '\])/m', $code, $matches );
+		//preg_match_all( '/(\[' . $command . '(?<attributes>.*?)]|\[\/' . $command . '\])/m', $code, $matches );
+		preg_match_all( '/('
+            . '\[' . preg_quote( $command, '/' ) . '\s*'
+            . '(?<field_attr>field="(?<field>[^"]*)")*' . '\s*'
+            . '(?<value_attr>value="(?<value>[^"]*)")*' . '\s*'
+            . '(?<compare_attr>compare="(?<compare>[^"]*)")*' . '\s*'
+            . '(?<other_attributes>[^\]]*)'
+            . ']|\[\/' . preg_quote( $command, '/' ) . '\]'
+            . ')/m', $code, $matches );
+
 		if ( ! empty( $matches[0] ) ) {
-			// holder for found blocks.
-			$blocks     = array();
+			// holder for found tags.
+			$tags       = array();
 			$indexCount = 0;
 			foreach ( $matches[0] as $key => $tag ) {
-				if ( false === strpos( $tag, '[/' ) ) {
-					// open tag
-					$field = null;
-					$value = null;
-					$ID    = '{@EntryID}';
-					$atts  = ' pod="@pod" id="' . $ID . '"';
-					if ( ! empty( $matches[2][ $key ] ) ) {
-						// get atts if any
-						// $atts = shortcode_parse_atts(str_replace('.', '____', $matches[2][$key]));
-						$atts    = array();
-						$pattern = '/(\w.+)\s*=\s*"([^"]*)"(?:\s|$)/';
-						$text    = preg_replace( "/[\x{00a0}\x{200b}]+/u", ' ', $matches[2][ $key ] );
-						if ( preg_match_all( $pattern, $text, $match, PREG_SET_ORDER ) ) {
-							$field = $match[0][1];
-							$value = $match[0][2];
-						} else {
-							$field = trim( $matches[2][ $key ] );
-						}
-						if ( false !== strpos( $field, '.' ) ) {
-							$path  = explode( '.', $field );
-							$field = array_pop( $path );
-							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->api->pod_data['field_id'] . '}';
-						}
-						$atts = ' id="' . $ID . '" pod="@pod" field="' . $field . '"';
-						if ( ! empty( $value ) ) {
-							$atts .= ' value="' . $value . '"';
-						}
-					}//end if
-
-					$newtag              = $shortcode . '__' . $key;
-					$tags[ $indexCount ] = $newtag;
-					$aliases[]           = $newtag;
-					$code                = preg_replace( '/(' . preg_quote( $tag ) . ')/m', '[' . $newtag . $atts . ' index="{_index}"]', $code, 1 );
-					$indexCount ++;
-				} else {
+				if ( false !== strpos( $tag, '[/' ) ) {
 					// close tag
 					$indexCount --;
 					$newclose = $tags[ $indexCount ];
 					$code     = preg_replace( '/(' . preg_quote( $tag, '/' ) . ')/m', '[/' . $newclose . ']', $code, 1 );
 
+					continue;
 				}//end if
+
+				// Handle open tags.
+
+				$field   = null;
+				$value   = null;
+				$compare = null;
+
+				$pod_name = '{@pod}';
+				$ID       = '{@EntryID}';
+
+				if ( '' !== $matches['field_attr'][ $key ] ) {
+					$field = $matches['field'][ $key ];
+
+					if ( '' !== $matches['value_attr'][ $key ] ) {
+						$value = $matches['value'][ $key ];
+					}
+
+					if ( '' !== $matches['compare_attr'][ $key ] ) {
+						$compare = $matches['compare'][ $key ];
+					}
+				} elseif ( '' !== $matches['other_attributes'][ $key ] ) {
+					// get atts if any
+					// $atts = shortcode_parse_atts(str_replace('.', '____', $matches[2][$key]));
+					$pattern = '/(?<field>[\w\.\_\-]+)\s*=\s*"(?<value>[^"]*)"(?:\s|$)/';
+					$field   = trim( $matches['other_attributes'][ $key ] );
+					$text    = preg_replace( "/[\x{00a0}\x{200b}]+/u", ' ', $field );
+
+					if ( preg_match_all( $pattern, $text, $field_value_match, PREG_SET_ORDER ) ) {
+						$field = $field_value_match[0]['field'];
+						$value = $field_value_match[0]['value'];
+					}
+				}//end if
+
+				if ( $field && false !== strpos( $field, '.' ) ) {
+					// Take the last element off of the array and use the ID.
+					$field_path = explode( '.', $field );
+					$last_field = array_pop( $field_path );
+					$field_path = implode( '.', $field_path );
+
+					$related_field = $pod->pod_data->get_field( $field_path );
+
+					if ( $related_field instanceof Field && 1 === $related_field->get_limit() ) {
+						$related_pod = $related_field->get_related_object();
+
+						if ( $related_pod instanceof Pod ) {
+							$table_field_id = $related_pod->get_arg( 'field_id' );
+
+							if ( $table_field_id ) {
+								// Use the other pod.
+								$pod_name = $related_pod->get_name();
+
+								// Rebuild the ID used for the lookup.
+								$ID = '{@' . $field_path . '.' . $table_field_id . '}';
+
+								// Override the field to use.
+								$field = $last_field;
+							}
+						}
+					}
+				}
+
+				$atts  = ' pod="' . esc_attr( $pod_name ) . '"';
+				$atts .= ' id="' . esc_attr( $ID ) . '"';
+
+				if ( $field ) {
+					$atts .= ' field="' . esc_attr( $field ) . '"';
+				}
+
+				if ( null !== $value ) {
+					$atts .= ' value="' . esc_attr( $value ) . '"';
+				}
+
+				if ( null !== $compare ) {
+					$atts .= ' compare="' . esc_attr( $compare ) . '"';
+				}
+
+				$newtag              = $shortcode . '__' . $key;
+				$tags[ $indexCount ] = $newtag;
+				$aliases[]           = $newtag;
+
+				$code = preg_replace( '/(' . preg_quote( $tag, '/' ) . ')/m', '[' . $newtag . $atts . ' index="{_index}"]', $code, 1 );
+
+				$indexCount ++;
 			}//end foreach
-			if ( $command == 'if' ) {
-				// dump($pod);
-			}
 		}//end if
 	}//end foreach
-	// get new aliased shotcodes
+	// get new aliased shortcodes
 	if ( ! empty( $aliases ) ) {
 		$code = frontier_backtrack_template( $code, $aliases );
 	}
-	$code = str_replace( '@pod', $pod->pod, $code );
-	$code = str_replace( '@EntryID', '@' . $pod->api->pod_data['field_id'], $code );
+	$code = str_replace( '{@pod}', $pod->pod, $code );
+	$code = str_replace( '{@EntryID}', '{@' . $pod->pod_data['field_id'] . '}', $code );
 
 	return $code;
 }

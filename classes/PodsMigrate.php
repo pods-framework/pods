@@ -113,6 +113,21 @@ class PodsMigrate {
 	}
 
 	/**
+	 * Get items.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @return array List of data items.
+	 */
+	private function get_items() {
+
+		return empty( $this->data['single'] ) ?
+			$this->data['items'] :
+			array( $this->data['items'] );
+
+	}
+
+	/**
 	 * Importing / Parsing / Validating Code
 	 *
 	 * @param array  $data      Array of data
@@ -258,11 +273,22 @@ class PodsMigrate {
 				$data['items'][ $key ] = array();
 
 				foreach ( $data['columns'] as $ckey => $column ) {
-					$data['items'][ $key ][ $column ] = ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
+					$column_value = ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
 
-					if ( 'NULL' === $data['items'][ $key ][ $column ] ) {
-						$data['items'][ $key ][ $column ] = null;
+					if ( 'NULL' === $column_value ) {
+						// Maybe set the value as null.
+						$column_value = null;
+					} elseif (
+						0 === strpos( $column_value, '\\=' )
+						|| 0 === strpos( $column_value, '\\+' )
+						|| 0 === strpos( $column_value, '\\-' )
+						|| 0 === strpos( $column_value, '\\@' )
+					) {
+						// Maybe remove the first backslash.
+						$column_value = substr( $column_value, 1 );
 					}
+
+					$data['items'][ $key ][ $column ] = $column_value;
 				}
 			}
 		}
@@ -570,7 +596,9 @@ class PodsMigrate {
 
 		$head = substr( $head, 0, - 1 );
 
-		foreach ( $this->data['items'] as $item ) {
+		$items = $this->get_items();
+
+		foreach ( $items as $item ) {
 			$line = '';
 
 			foreach ( $this->data['columns'] as $column => $label ) {
@@ -606,6 +634,16 @@ class PodsMigrate {
 
 				$value = str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
 
+				// Maybe escape the first character to prevent formulas from getting used when opening the file with a spreadsheet app.
+				if (
+					0 === strpos( $value, '=' )
+					|| 0 === strpos( $value, '+' )
+					|| 0 === strpos( $value, '-' )
+					|| 0 === strpos( $value, '@' )
+				) {
+					$value = '\\' . $value;
+				}
+
 				$line .= '"' . $value . '"' . $this->delimiter;
 			}//end foreach
 
@@ -636,10 +674,12 @@ class PodsMigrate {
 			return false;
 		}
 
-		$head  = '<' . '?' . 'xml version="1.0" encoding="utf-8" ' . '?' . '>' . "\r\n<items count=\"" . count( $this->data['items'] ) . "\">\r\n";
+		$items = $this->get_items();
+
+		$head  = '<' . '?' . 'xml version="1.0" encoding="utf-8" ' . '?' . '>' . "\r\n<items count=\"" . count( $items ) . "\">\r\n";
 		$lines = '';
 
-		foreach ( $this->data['items'] as $item ) {
+		foreach ( $items as $item ) {
 			$line = "\t<item>\r\n";
 
 			foreach ( $this->data['columns'] as $column => $label ) {
@@ -1082,7 +1122,7 @@ class PodsMigrate {
 						$field_data = array();
 					}
 
-					$field_data = array_merge( $default_field_data, $field_data );
+					$field_data = pods_config_merge_data( $default_field_data, $field_data );
 
 					if ( null === $field_data['field'] ) {
 						$field_data['field'] = $field;
@@ -1258,9 +1298,23 @@ class PodsMigrate {
 		}
 
 		$migrate_data = array(
-			'items'  => array( $data ),
+			'items'  => $data,
 			'single' => $single,
 		);
+
+		// Try to guess the column labels based on the supplied data.
+		$first_item = null;
+
+		if ( $single ) {
+			$first_item = $data;
+		} elseif ( is_array( $data ) ) {
+			$first_item = reset( $data );
+		}
+
+		if ( is_array( $first_item ) ) {
+			$fields                  = array_keys( $first_item );
+			$migrate_data['columns'] = array_combine( $fields, $fields );
+		}
 
 		$migrate = new self( $format, null, $migrate_data );
 

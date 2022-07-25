@@ -54,7 +54,8 @@ class PodsField_OEmbed extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'oEmbed', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'oEmbed', 'pods' );
 	}
 
 	/**
@@ -120,12 +121,13 @@ class PodsField_OEmbed extends PodsField {
 			);
 			$options[ static::$type . '_enable_providers' ]   = array(
 				'label'      => __( 'Select enabled providers', 'pods' ),
+				'type'  => 'boolean_group',
 				'depends-on' => array( static::$type . '_restrict_providers' => true ),
-				'group'      => array(),
+				'boolean_group'      => array(),
 			);
 			// Add all the oEmbed providers
 			foreach ( $unique_providers as $provider ) {
-				$options[ static::$type . '_enable_providers' ]['group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
+				$options[ static::$type . '_enable_providers' ]['boolean_group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
 					'label'   => $provider,
 					'type'    => 'boolean',
 					'default' => 0,
@@ -173,14 +175,14 @@ class PodsField_OEmbed extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
 			$value = implode( ' ', $value );
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
@@ -190,15 +192,29 @@ class PodsField_OEmbed extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -206,7 +222,7 @@ class PodsField_OEmbed extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}
@@ -216,15 +232,16 @@ class PodsField_OEmbed extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		// Only allow ONE URL
 		if ( ! empty( $value ) ) {
@@ -472,13 +489,14 @@ class PodsField_OEmbed extends PodsField {
 		$params = pods_unslash( (array) $_POST );
 
 		if ( ! empty( $params['_nonce_pods_oembed'] ) && ! empty( $params['pods_field_oembed_value'] ) && wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) ) {
-			$value = $this->strip_html( $params['pods_field_oembed_value'] );
-
 			$name    = '';
 			$options = array();
 
 			if ( ! empty( $params['pods_field_oembed_name'] ) ) {
-				$name = $this->strip_html( $params['pods_field_oembed_name'] );
+				$name = $params['pods_field_oembed_value'];
+				$name = $this->strip_html( $name );
+				$name = $this->strip_shortcodes( $name );
+				$name = $this->trim_whitespace( $name );
 			}
 
 			if ( ! empty( $params['pods_field_oembed_options'] ) ) {
@@ -486,7 +504,7 @@ class PodsField_OEmbed extends PodsField {
 			}
 
 			// Load the field to get it's options.
-			$options = pods_api()->load_field( (object) $options );
+			$options = pods_api()->load_field( $options );
 
 			// Field options are stored here, if not, just stay with the full options array.
 			if ( ! empty( $options['options'] ) ) {

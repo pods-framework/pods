@@ -1,0 +1,66 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": "1",
+  "name": "pods/pods-block-field",
+  "title": "Pods Field Value",
+  "description": "Display a single Pod item's field value (custom fields).",
+  "category": "pods",
+  "icon": "admin-page",
+  "keywords": [
+    "pods",
+    "field",
+    "value",
+    "custom",
+    "meta"
+  ],
+  "editorScript": "file:../../pods-blocks-api.min.js",
+  "editorStyle": "file:../../../../styles/dist/pods.css",
+  "supports": {
+    "html": false,
+    "align": true,
+    "alignWide": true,
+    "anchor": true,
+    "customClassName": true,
+    "inserter": true,
+    "multiple": true,
+    "reusable": true,
+    "__experimentalColor": true,
+    "__experimentalFontSize": true,
+    "__experimentalPadding": true,
+    "__experimentalLineHeight": true,
+    "jsx": false
+  },
+  "attributes": {
+    "align": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "name": {
+      "type": "object",
+      "default": {
+        "label": "- Use Current Pod -",
+        "value": ""
+      }
+    },
+    "slug": {
+      "type": "string"
+    },
+    "field": {
+      "type": "string"
+    }
+  }
+}

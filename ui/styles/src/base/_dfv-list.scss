@@ -11,9 +11,6 @@ ul.pods-dfv-list,
 	padding: 0;
 	border-radius: 0;
 	border: 1px solid #dfdfdf;
-	overflow: hidden;
-	max-height: 220px;
-	overflow-y: auto;
 }
 
 ul.pods-dfv-list:empty {
@@ -25,6 +22,7 @@ ul.pods-dfv-list-meta {
 	overflow: hidden;
 	zoom: 1;
 	position: relative;
+	user-select: none;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-col {
@@ -146,12 +144,12 @@ ul.pods-dfv-list li.pods-dfv-list-remove a {
 }
 
 ul.pods-dfv-list li.pods-dfv-list-name {
-	position: absolute;
 	left: 80px;
 	right: 105px; /* needed for action buttons */
 	padding: 3px 0;
 	line-height: 24px;
 	overflow: visible;
+	user-select: none;
 	white-space: nowrap;
 }
 
@@ -221,10 +219,6 @@ ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
 /**
  * Tiles view
  */
-.pods-field-template-tiles ul.pods-dfv-list {
-	max-height: 500px;
-}
-
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-item {
 	display: inline-block;
 	width: 150px;

@@ -30,8 +30,14 @@
 	border-bottom: none;
 }
 
-.form-table td .pods-form-ui-field {
-	max-width: 95%;
+.form-table td {
+	.pods-form-ui-field {
+		max-width: 95%;
+	}
+
+	.pods-form-ui-comment {
+		clear: both;
+	}
 }
 
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
@@ -43,18 +49,22 @@
 	Form fields.
  */
 
+.pods-field-option .pods-dfv-container {
+	max-width: 800px;
+}
+
 .pods-field {
 	padding: 10px 0;
+}
+
+tr.pods-field {
+	padding: 0;
 }
 
 .pods-field label {
 	cursor: pointer;
 	display: block;
 	padding: 0 0 4px 2px;
-}
-
-.pods-field input, .pods-field textarea {
-	display: block;
 }
 
 .pods-field .quicktags-toolbar input {
@@ -91,6 +101,7 @@ textarea.pods-form-ui-field-type-paragraph {
 	padding: 5px 10px 10px;
 	border: 1px solid #dfdfdf;
 }
+
 .pods-link-options > div {
 	display: inline-block;
 }
@@ -116,79 +127,16 @@ input.pods-form-ui-field-type-color {
 	margin: 0;
 }
 
-/* Currency */
-.pods-currency-container {
-	position: relative;
-
-	code {
-		position: absolute;
-		transform: translate(0, -50%);
-		top: 50%;
-		pointer-events: none;
-		min-width: 10px;
-		text-align: center;
-		padding: 1px 5px;
-		line-height: 25px;
-	}
-
-	input {
-		padding-left: 25px;
-	}
-}
-
-/**
-	Form fields - boolean/pick/select values.
- */
-
-.pods-boolean {
-	position: relative;
-	padding: 0;
-}
-
-.form-field .pods-boolean input,
-.pods-boolean input {
-	display: block;
-	min-height: 16px;
-	left: 2px;
-	margin-left: 3px;
-	padding: 0;
-	position: absolute;
-	top: 10px;
-	overflow: hidden;
-}
-
-.pods-boolean label {
-	padding: 7px 5px 7px 26px;
-	line-height: 1;
-	display: inline-block;
-}
-
-.pods-pick select {
-	display: block;
-	min-width: 125px;
-}
-
-.pods-pick-values {
-	border: 1px solid #dfdfdf;
-	border-radius: 3px;
-	min-width: 125px;
-	max-height: 250px;
-	overflow-y: auto;
-	padding: 2px 0;
-}
-
-/* Newer DFV based views don't all need borders but we don't want to break other applications of the rule above */
-.pods-form-ui-field .pods-pick-values,
-.pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
-	border: none;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
 /* HTML select field fix */
 .pods-form-ui-row-type-pick .pods-form-ui-field select {
 	width: 25em;
 }
+
+tr.pods-form-ui-row-type-heading td {
+	padding: 0;
+}
+
+/* Pick field */
 
 /* This one does need a border, however */
 .pods-pick-values .pods-checkbox-view {
@@ -248,14 +196,6 @@ select.pods-pick-multi {
 	padding: 0;
 }
 
-.pods-pick-values .pods-boolean label {
-	display: block;
-}
-
-.pods-pick-values .pods-radio {
-	border: 1px solid #dfdfdf;
-}
-
 p.pods-add-file {
 	padding: 5px 0 10px;
 }
@@ -263,6 +203,7 @@ p.pods-add-file {
 .pods-metabox tr.pods-field {
 	border-top: 1px solid #ececec;
 }
+
 .pods-metabox tr.pods-field:first-child {
 	border-top: 0;
 }
@@ -293,10 +234,12 @@ p.pods-add-file {
 	padding: 0 0 10px;
 	margin: 0;
 }
+
+#side-sortables .form-table tr.pods-field__container > td,
 #side-sortables .form-table tr.pods-field > td {
 	display: block;
 	line-height: inherit;
-	padding: 0;
+	padding: 0 0 20px;
 	margin: 0;
 }
 
@@ -326,17 +269,8 @@ p.pods-add-file {
 	width: 95%;
 }
 
-.pods-form .pods-field-input textarea {
-	width: 95%;
-	min-height: 200px;
-}
-
 .pods-form-front .pods-field-input .quicktags-toolbar input {
 	display: inline-block;
-	width: auto;
-}
-
-.pods-form-front .pods-field-input .pods-boolean input {
 	width: auto;
 }
 
@@ -428,30 +362,10 @@ p.pods-add-file {
 }
 
 @media screen and (max-width: 782px) {
-	.pods-boolean input,
-	.form-field .pods-boolean input,
-	.pods-pick-values li .pods-boolean input {
-		height: 25px;
-		width: 25px;
-		top: 4px;
-		margin: 0 3px;
-	}
-
-	.pods-boolean label,
-	.pods-pick-values .pods-boolean label {
-		margin-left: 36px;
-		padding: 10px 0;
-	}
-
 	.form-table td .pods-form-ui-field {
 		max-width: none;
 	}
 
-	/* WP fix */
-	.form-table td input,
-	.form-table td select {
-		margin: 0;
-	}
 	/* Fix for Pods field bottom border */
 	.pods-metabox tr.pods-field > th {
 		padding-top: 15px;
@@ -471,18 +385,22 @@ p.pods-add-file {
 .pods-modal-frame.hide-menu .media-frame-title {
 	left: 0;
 }
+
 .media-modal .media-modal-content .pods-modal-frame {
 	height: 100%;
 }
+
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe {
 	height: 100%;
 	padding-top: 50px;
 	box-sizing: border-box;
 }
+
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
 	height: 100%;
 	position: relative;
 }
+
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
 	position: absolute;
 	height: 100%;

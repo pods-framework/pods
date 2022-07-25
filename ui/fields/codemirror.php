@@ -1,7 +1,7 @@
 <?php
-wp_enqueue_script( 'pods-codemirror' );
-wp_enqueue_style( 'pods-styles' );
-wp_enqueue_script( 'pods-codemirror-loadmode' );
+pods_form_enqueue_script( 'pods-codemirror' );
+pods_form_enqueue_style( 'pods-styles' );
+pods_form_enqueue_script( 'pods-codemirror-loadmode' );
 
 $type                   = 'textarea';
 $attributes             = array();

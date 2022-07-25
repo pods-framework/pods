@@ -30,7 +30,8 @@ class PodsField_Number extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Plain Number', 'pods' );
+		static::$group = __( 'Number', 'pods' );
+		static::$label = __( 'Plain Number', 'pods' );
 	}
 
 	/**
@@ -56,29 +57,33 @@ class PodsField_Number extends PodsField {
 					'number' => __( 'Freeform Number', 'pods' ),
 					'slider' => __( 'Slider', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_format'      => array(
-				'label'   => __( 'Format', 'pods' ),
+				'label'   => __( 'Number Format', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_number_format_default', 'i18n' ),
 				'type'    => 'pick',
 				'data'    => array(
-					'i18n'     => __( 'Localized Default', 'pods' ),
-					'9,999.99' => '1,234.00',
-					'9.999,99' => '1.234,00',
-					'9 999,99' => '1 234,00',
-					'9999.99'  => '1234.00',
-					'9999,99'  => '1234,00',
+					'i18n'      => __( 'Localized Default', 'pods' ),
+					'9,999.99'  => '1,234.00',
+					'9999.99'   => '1234.00',
+					'9.999,99'  => '1.234,00',
+					'9999,99'   => '1234,00',
+					'9 999,99'  => '1 234,00',
+					'9\'999.99' => '1\'234.00',
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_decimals'    => array(
 				'label'      => __( 'Decimals', 'pods' ),
 				'default'    => 0,
 				'type'       => 'number',
 				'dependency' => true,
+				'help'    => __( 'Set to a positive number to enable decimals. The upper limit in the database for this field is 30 decimals.', 'pods' ),
 			),
 			static::$type . '_format_soft' => array(
-				'label'       => __( 'Soft format?', 'pods' ),
+				'label'       => __( 'Soft Formatting', 'pods' ),
 				'help'        => __( 'Remove trailing decimals (0)', 'pods' ),
 				'default'     => 0,
 				'type'        => 'boolean',
@@ -92,21 +97,33 @@ class PodsField_Number extends PodsField {
 			),
 			static::$type . '_min'         => array(
 				'label'      => __( 'Minimum Number', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
-				'default'    => 0,
+				'depends-on-any' => array(
+					static::$type . '_format_type' => 'slider',
+					static::$type . '_html5' => true,
+				),
+				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max'         => array(
 				'label'      => __( 'Maximum Number', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
-				'default'    => 100,
+				'depends-on-any' => array(
+					static::$type . '_format_type' => 'slider',
+					static::$type . '_html5' => true,
+				),
+				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max_length'  => array(
-				'label'   => __( 'Maximum Length', 'pods' ),
+				'label'   => __( 'Maximum Digits', 'pods' ),
 				'default' => 12,
 				'type'    => 'number',
-				'help'    => __( 'Set to -1 for no limit', 'pods' ),
+				'help'    => __( 'Set to -1 for no limit. The upper limit in the database for this field is 64 digits.', 'pods' ),
+			),
+			static::$type . '_html5'       => array(
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
+				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
+				'depends-on' => array( static::$type . '_format_type' => 'number' ),
+				'type'    => 'boolean',
 			),
 			static::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
@@ -162,13 +179,14 @@ class PodsField_Number extends PodsField {
 	}
 
 	/**
+	 * @todo 2.8 Centralize the usage of this method. See PR #5540.
 	 * {@inheritdoc}
 	 */
 	public function is_empty( $value = null ) {
 
 		$is_empty = false;
 
-		$value += 0;
+		$value = (float) $value;
 
 		if ( empty( $value ) ) {
 			$is_empty = true;
@@ -193,8 +211,9 @@ class PodsField_Number extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
+		$is_read_only    = false;
 
 		if ( is_array( $value ) ) {
 			$value = implode( '', $value );
@@ -206,26 +225,41 @@ class PodsField_Number extends PodsField {
 			$field_type = static::$type;
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
-
-				$field_type = 'text';
-
-				$value = $this->format( $value, $name, $options, $pod, $id );
+				$is_read_only = true;
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
+			$is_read_only = true;
+		}
+
+		if ( $is_read_only ) {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
+		}
 
+		// Enforce boolean.
+		$options[ static::$type . '_html5' ]       = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
+		$options[ static::$type . '_format_soft' ] = filter_var( pods_v( static::$type . '_format_soft', $options, false ), FILTER_VALIDATE_BOOLEAN );
+
+		// Only format the value for non-HTML5 inputs.
+		if ( ! $options[ static::$type . '_html5' ] ) {
 			$value = $this->format( $value, $name, $options, $pod, $id );
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
@@ -244,18 +278,24 @@ class PodsField_Number extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
+		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$format_args = $this->get_number_format_args( $options );
 		$thousands   = $format_args['thousands'];
 		$dot         = $format_args['dot'];
 
 		$check = str_replace(
-			array( $thousands, $dot, html_entity_decode( $thousands ) ), array(
-				'',
-				'.',
-				'',
-			), $value
+			array( $thousands, $dot, html_entity_decode( $thousands ) ),
+			array( '', '.', '' ),
+			$value
 		);
+
 		$check = trim( $check );
 
 		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );
@@ -263,10 +303,15 @@ class PodsField_Number extends PodsField {
 		$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
 		if ( 0 < strlen( $check ) ) {
-			return sprintf( __( '%s is not numeric', 'pods' ), $label );
+			// Translators: %s stands for the input value.
+			$errors[] = sprintf( esc_html__( '%s is not numeric', 'pods' ), $label );
 		}
 
-		return true;
+		if ( ! empty( $errors ) ) {
+			return $errors;
+		}
+
+		return $validate;
 	}
 
 	/**
@@ -281,12 +326,21 @@ class PodsField_Number extends PodsField {
 
 		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
 			// Slider only supports `1234.00` format so no need for replacing characters.
-			$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+			$value = str_replace(
+				array( $thousands, html_entity_decode( $thousands ), $dot, html_entity_decode( $dot ) ),
+				array( '', '', '.', '.' ),
+				$value
+			);
 		}
 
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
+
+		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
+			// Don't enforce a default value here.
+			return null;
+		}
 
 		$value = number_format( (float) $value, $decimals, '.', '' );
 
@@ -303,7 +357,7 @@ class PodsField_Number extends PodsField {
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		if ( null === $value ) {
+		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
 			// Don't enforce a default value here.
 			return null;
 		}
@@ -366,30 +420,40 @@ class PodsField_Number extends PodsField {
 	 */
 	public function get_number_format_args( $options ) {
 
-		global $wp_locale;
+		$format = pods_v( static::$type . '_format', $options );
+		$format = pods_unslash( $format );
 
-		if ( '9.999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '.';
-			$dot       = ',';
-		} elseif ( '9,999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = ',';
-			$dot       = '.';
-		} elseif ( '9\'999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '\'';
-			$dot       = '.';
-		} elseif ( '9 999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = ' ';
-			$dot       = ',';
-		} elseif ( '9999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '';
-			$dot       = '.';
-		} elseif ( '9999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '';
-			$dot       = ',';
-		} else {
-			$thousands = $wp_locale->number_format['thousands_sep'];
-			$dot       = $wp_locale->number_format['decimal_point'];
-		}//end if
+		switch ( $format ) {
+			case '9.999,99':
+				$thousands = '.';
+				$dot       = ',';
+				break;
+			case '9,999.99':
+				$thousands = ',';
+				$dot       = '.';
+				break;
+			case '9\'999.99':
+				$thousands = '\'';
+				$dot       = '.';
+				break;
+			case '9 999,99':
+				$thousands = ' ';
+				$dot       = ',';
+				break;
+			case '9999.99':
+				$thousands = '';
+				$dot       = '.';
+				break;
+			case '9999,99':
+				$thousands = '';
+				$dot       = ',';
+				break;
+			default:
+				global $wp_locale;
+				$thousands = $wp_locale->number_format['thousands_sep'];
+				$dot       = $wp_locale->number_format['decimal_point'];
+				break;
+		}
 
 		$decimals = $this->get_max_decimals( $options );
 

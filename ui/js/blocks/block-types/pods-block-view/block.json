@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": "1",
+  "name": "pods/pods-block-view",
+  "title": "Pods View",
+  "description": "Include a file from a theme, with caching options",
+  "category": "pods",
+  "icon": "admin-page",
+  "keywords": [
+    "pods",
+    "view",
+    "include"
+  ],
+  "editorScript": "file:../../pods-blocks-api.min.js",
+  "editorStyle": "file:../../../../styles/dist/pods.css",
+  "supports": {
+    "html": false,
+    "align": true,
+    "alignWide": true,
+    "anchor": true,
+    "customClassName": true,
+    "inserter": true,
+    "multiple": true,
+    "reusable": true,
+    "__experimentalColor": true,
+    "__experimentalFontSize": true,
+    "__experimentalPadding": true,
+    "__experimentalLineHeight": true,
+    "jsx": false
+  },
+  "attributes": {
+    "align": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "view": {
+      "type": "string"
+    },
+    "expires": {
+      "type": "number",
+      "default": 300
+    },
+    "cache_mode": {
+      "type": "object",
+      "default": {
+        "label": "Disable Caching",
+        "value": "none"
+      }
+    }
+  }
+}

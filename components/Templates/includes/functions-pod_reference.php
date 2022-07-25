@@ -45,13 +45,15 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 	if ( empty( $pod_name ) ) {
 		return $fields;
 	}
-	$pod           = pods( $pod_name );
+
+	$pod = pods( $pod_name );
+
+	if ( empty( $pod ) || ! $pod->valid() ) {
+		return $fields;
+	}
+
 	$recurse_queue = array();
 
-	foreach ( $pod->pod_data['object_fields'] as $name => $field ) {
-		// Add WordPress object fields
-		$fields[] = $prefix . $name;
-	}
 	if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
 		$fields[] = "{$prefix}post_thumbnail";
 		$fields[] = "{$prefix}post_thumbnail_url";
@@ -61,7 +63,9 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 			$fields[] = "{$prefix}post_thumbnail_url.{$size}";
 		}
 	}
+
 	$pod_fields = $pod->fields();
+
 	foreach ( $pod_fields as $name => $field ) {
 		// Add base field name
 		$fields[] = $prefix . $name;

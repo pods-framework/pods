@@ -5750,8 +5750,11 @@ class PodsAPI {
 					$v_data = false;
 
 					if ( false !== $find_rel_params ) {
-						$rel_params          = $find_rel_params;
-						$rel_params['where'] = $wpdb->prepare( $rel_params['where'], array( $v, $v ) );
+						$rel_params = $find_rel_params;
+
+						$prepared_data = array_fill( 0, substr_count( $rel_params['where'], '%s' ), $v );
+
+						$rel_params['where'] = $wpdb->prepare( $rel_params['where'], $prepared_data );
 
 						$search_data->select( $rel_params );
 

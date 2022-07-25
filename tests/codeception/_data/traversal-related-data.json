@@ -83,11 +83,6 @@
     "name": "Related post tag fb48dd92f3198ce5cfeac554c9fb2867",
     "description": "fb48dd92f3198ce5cfeac554c9fb2867",
     "test_text_field": "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867",
-    "test_text_field_repeat": [
-      "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867 1",
-      "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867 2",
-      "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867 3"
-    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -145,11 +140,6 @@
     "permalink": "related-pod-item",
     "author": 0,
     "test_text_field": "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d",
-    "test_text_field_repeat": [
-      "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d 1",
-      "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d 2",
-      "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d 3"
-    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],

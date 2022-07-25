@@ -1055,11 +1055,12 @@ class Pods implements Iterator {
 						}
 					}//end if
 
-					$last_type           = '';
-					$last_object         = '';
-					$last_pick_val       = '';
-					$last_options        = [];
-					$last_object_options = [];
+					$last_type                = '';
+					$last_object              = '';
+					$last_pick_val            = '';
+					$last_options             = [];
+					$last_object_options      = [];
+					$last_is_repeatable_field = false;
 
 					$single_multi = pods_v( $field_type . '_format_type', $field_data, 'single' );
 
@@ -1081,7 +1082,6 @@ class Pods implements Iterator {
 
 						$current_field       = null;
 						$simple              = false;
-						$is_repeatable_field = false;
 
 						if ( $field_exists ) {
 							/** @var \Pods\Whatsit\Field $current_field */
@@ -1094,8 +1094,16 @@ class Pods implements Iterator {
 									$simple = true;
 								}
 							}
+						} elseif ( $last_options ) {
+							$current_related_pod = $last_options->get_related_object();
 
-							$is_repeatable_field = $current_field->is_repeatable();
+							if ( $current_related_pod ) {
+								$current_related_pod_field = $current_related_pod->get_field( $field );
+
+								if ( $current_related_pod_field ) {
+									$current_field = $current_related_pod_field;
+								}
+							}
 						}
 
 						// Tableless handler.
@@ -1196,6 +1204,8 @@ class Pods implements Iterator {
 								} else {
 									$table = $last_options->get_table_info();
 								}
+
+								$last_is_repeatable_field = $current_field instanceof Field && $current_field->is_repeatable();
 							}
 
 							$join  = array();
@@ -1566,7 +1576,7 @@ class Pods implements Iterator {
 											/** This filter is documented earlier in this method */
 											$metadata_object_id = apply_filters( 'pods_pods_field_get_metadata_object_id', $metadata_object_id, $metadata_type, $params, $this );
 
-											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, ! $is_repeatable_field );
+											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, ! $last_is_repeatable_field );
 
 											$value[] = pods_traverse( $traverse_fields, $meta_value );
 										} elseif ( 'settings' === $object_type ) {
@@ -1640,8 +1650,6 @@ class Pods implements Iterator {
 				$old_post    = null;
 				$old_post_id = null;
 				$post_ID     = null;
-
-				$is_repeatable_field = $field_data instanceof Field && $field_data->is_repeatable();
 
 				if ( empty( $GLOBALS['post'] ) && 'post_type' === pods_v( 'type', $this->pod_data ) && 0 < $this->id() ) {
 					global $post_ID, $post;

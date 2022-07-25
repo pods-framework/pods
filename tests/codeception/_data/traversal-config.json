@@ -58,7 +58,7 @@
       {
         "name": "test_text_field_repeat",
         "type": "text",
-        "repeatable" 1
+        "repeatable": 1
       }
     ],
     "options": [],

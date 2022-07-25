@@ -137,13 +137,15 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				$pod['create_extend'] = 'extend';
 			}
 
+			pods_debug( 'Setting up pod: ' . $pod['name'] );
+
 			$pods_api->save_pod( $pod );
 
 			$pod = $pods_api->load_pod( $pod['name'] );
 
 			if ( 'media' === $pod['name'] ) {
-				codecept_debug( 'Media orig: ' . var_export( $config[ $k ], true ) );
-				codecept_debug( 'Media debug: ' . var_export( $pod->export(), true ) );
+				pods_debug( 'Media orig: ' . var_export( $config[ $k ], true ) );
+				pods_debug( 'Media debug: ' . var_export( $pod->export(), true ) );
 			}
 
 			if ( ! empty( $pod['fields'] ) ) {
@@ -221,7 +223,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			}
 
 			if ( ! isset( self::$related_fields[ $field_name ] ) ) {
-				codecept_debug( 'Field invalid: ' . $field_name );
+				pods_debug( 'Field invalid: ' . $field_name );
 
 				continue;
 			}
@@ -240,6 +242,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 					continue;
 				}
+
+				pods_debug( 'Adding related term: ' . $pod_name . '/' . $field_name . ' (depth: ' . $depth . ')' );
 
 				$term = wp_insert_term( $item['name'], 'test_non_pod_ct', [ 'description' => $item['description'] ] );
 
@@ -287,7 +291,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			$pod = pods( $pod_name, null, false );
 
 			if ( ! $pod || ! $pod->valid() ) {
-				codecept_debug( 'Pod invalid: ' . $pod_name . ' ' . __LINE__ );
+				pods_debug( 'Pod invalid: ' . $pod_name . ' ' . __LINE__ );
 
 				continue;
 			}
@@ -320,6 +324,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 			if ( 0 === $depth ) {
 				if ( 0 < $is_multi ) {
+					pods_debug( 'Adding multi related pod item: ' . $pod_name . '/' . $field_name . ' (depth: ' . $depth . ')' );
+
 					$id = $pod->add( $item );
 
 					self::$related_fields[ $field_name ]['id']     = self::$related_fields[ $field_name ]['id'];
@@ -343,8 +349,12 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 					self::$related_fields[ $field_name ]['_items'][ $id ] = $item;
 				} else {
 					if ( ! empty( self::$related_fields[ $field_name ]['id'] ) ) {
+						pods_debug( 'Saving related pod item: ' . $pod_name . '/' . $field_name . ' (depth: ' . $depth . ')' );
+
 						$id = $pod->save( $item, null, self::$related_fields[ $field_name ]['id'] );
 					} else {
+						pods_debug( 'Adding related pod item: ' . $pod_name . '/' . $field_name . ' (depth: ' . $depth . ')' );
+
 						$id = $pod->add( $item );
 					}
 
@@ -375,6 +385,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 					$item[ $pod->pod_data['field_index'] ] = $index;
 				}
+
+				pods_debug( 'Saving related pod item: ' . $pod_name . '/' . $field_name . ' (depth: ' . $depth . ')' );
 
 				$pod->save( $item, null, $id );
 
@@ -442,7 +454,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			$pod = pods( $pod_name, null, false );
 
 			if ( ! $pod || ! $pod->valid() ) {
-				codecept_debug( 'Pod invalid: ' . $pod_name . ' ' . __LINE__ );
+				pods_debug( 'Pod invalid: ' . $pod_name . ' ' . __LINE__ );
 
 				continue;
 			}
@@ -468,6 +480,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			}
 
 			if ( 0 === $depth ) {
+				pods_debug( 'Adding pod item: ' . $pod_name . ' (depth: ' . $depth . ')' );
+
 				$item['id'] = $pod->add( $item );
 
 				$item[ $pod->pod_data['field_id'] ] = $item['id'];

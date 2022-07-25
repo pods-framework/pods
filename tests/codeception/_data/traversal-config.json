@@ -745,7 +745,7 @@
       {
         "name": "test_text_field",
         "type": "text"
-      },,
+      },
       {
         "name": "test_text_field_repeat",
         "type": "text",
@@ -947,7 +947,7 @@
       {
         "name": "test_text_field",
         "type": "text"
-      },,
+      },
       {
         "name": "test_text_field_repeat",
         "type": "text",

@@ -343,11 +343,23 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
+		static $timer;
+
+		$now = microtime( true );
+
+		if ( ! $timer ) {
+			$timer = $now;
+		}
+
+		$timing = $now - $timer;
+
 		if ( ! is_string( $debug ) ) {
 			$debug = var_export( $debug, true );
 		}
 
-		codecept_debug( 'Pods Debug: ' . $debug );
+		codecept_debug( 'Pods Debug: ' . $debug . ' [debug timing: ' . number_format( $timing, 4 ) . 's]' );
+
+		$timer = $now;
 
 		return;
 	}

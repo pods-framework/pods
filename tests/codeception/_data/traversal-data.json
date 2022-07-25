@@ -4,6 +4,11 @@
     "post_title": "Testing index a66d982c8099d014bc1fa2937e55c912",
     "post_author": 0,
     "test_text_field": "Testing a66d982c8099d014bc1fa2937e55c912",
+    "test_text_field_repeat":[
+      "Testing a66d982c8099d014bc1fa2937e55c912 1",
+      "Testing a66d982c8099d014bc1fa2937e55c912 2",
+      "Testing a66d982c8099d014bc1fa2937e55c912 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -19,6 +24,11 @@
     "post_title": "Testing index fd1100433cbdb1a88065aa30720e3b40",
     "post_author": 0,
     "test_text_field": "Testing fd1100433cbdb1a88065aa30720e3b40",
+    "test_text_field_repeat": [
+      "Testing fd1100433cbdb1a88065aa30720e3b40 1",
+      "Testing fd1100433cbdb1a88065aa30720e3b40 2",
+      "Testing fd1100433cbdb1a88065aa30720e3b40 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -34,6 +44,11 @@
     "post_title": "Testing index 5999153530660d496e23b334a6befe6d",
     "post_author": 0,
     "test_text_field": "Testing 5999153530660d496e23b334a6befe6d",
+    "test_text_field_repeat": [
+      "Testing 5999153530660d496e23b334a6befe6d 1",
+      "Testing 5999153530660d496e23b334a6befe6d 2",
+      "Testing 5999153530660d496e23b334a6befe6d 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -49,6 +64,11 @@
     "post_title": "Testing index 6dbbdb9022e2d0cd9a3664e421571379",
     "post_author": 0,
     "test_text_field": "Testing 6dbbdb9022e2d0cd9a3664e421571379",
+    "test_text_field_repeat": [
+      "Testing 6dbbdb9022e2d0cd9a3664e421571379 1",
+      "Testing 6dbbdb9022e2d0cd9a3664e421571379 2",
+      "Testing 6dbbdb9022e2d0cd9a3664e421571379 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -64,6 +84,11 @@
     "post_title": "Testing index 25b0cd30b4b87446f5bf1695769cd47d",
     "post_author": 0,
     "test_text_field": "Testing 25b0cd30b4b87446f5bf1695769cd47d",
+    "test_text_field_repeat": [
+      "Testing 25b0cd30b4b87446f5bf1695769cd47d 1",
+      "Testing 25b0cd30b4b87446f5bf1695769cd47d 2",
+      "Testing 25b0cd30b4b87446f5bf1695769cd47d 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -77,6 +102,11 @@
   "test_tax_table": {
     "name": "Testing index dd10ac7ca2da6c9ab585c0e2d22cb11b",
     "test_text_field": "Testing dd10ac7ca2da6c9ab585c0e2d22cb11b",
+    "test_text_field_repeat": [
+      "Testing dd10ac7ca2da6c9ab585c0e2d22cb11b 1",
+      "Testing dd10ac7ca2da6c9ab585c0e2d22cb11b 2",
+      "Testing dd10ac7ca2da6c9ab585c0e2d22cb11b 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -89,6 +119,11 @@
   "test_tax_meta": {
     "name": "Testing index 61f604e848ee443d6747bb464a883a1e",
     "test_text_field": "Testing 61f604e848ee443d6747bb464a883a1e",
+    "test_text_field_repeat": [
+      "Testing 61f604e848ee443d6747bb464a883a1e 1",
+      "Testing 61f604e848ee443d6747bb464a883a1e 2",
+      "Testing 61f604e848ee443d6747bb464a883a1e 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -101,6 +136,11 @@
   "category": {
     "name": "Testing index f27f6aa87ec90698cc92add87c329889",
     "test_text_field": "Testing f27f6aa87ec90698cc92add87c329889",
+    "test_text_field_repeat": [
+      "Testing f27f6aa87ec90698cc92add87c329889 1",
+      "Testing f27f6aa87ec90698cc92add87c329889 2",
+      "Testing f27f6aa87ec90698cc92add87c329889 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -113,6 +153,11 @@
   "post_tag": {
     "name": "Testing index ec6294c1df2cae4b69b7158bd5b7e527",
     "test_text_field": "Testing ec6294c1df2cae4b69b7158bd5b7e527",
+    "test_text_field_repeat": [
+      "Testing ec6294c1df2cae4b69b7158bd5b7e527 1",
+      "Testing ec6294c1df2cae4b69b7158bd5b7e527 2",
+      "Testing ec6294c1df2cae4b69b7158bd5b7e527 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -125,6 +170,11 @@
   "nav_menu": {
     "name": "Testing index b6e16087c5789b81d87ca565346fd337",
     "test_text_field": "Testing b6e16087c5789b81d87ca565346fd337",
+    "test_text_field_repeat": [
+      "Testing b6e16087c5789b81d87ca565346fd337 1",
+      "Testing b6e16087c5789b81d87ca565346fd337 2",
+      "Testing b6e16087c5789b81d87ca565346fd337 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -140,6 +190,11 @@
     "user_email": "f4d6ab3edb68db2f4399cb493a7b435b@user.com",
     "user_pass": "test-pw-f4d6ab3edb68db2f4399cb493a7b435b",
     "test_text_field": "Testing f4d6ab3edb68db2f4399cb493a7b435b",
+    "test_text_field_repeat": [
+      "Testing f4d6ab3edb68db2f4399cb493a7b435b 1",
+      "Testing f4d6ab3edb68db2f4399cb493a7b435b 2",
+      "Testing f4d6ab3edb68db2f4399cb493a7b435b 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -155,6 +210,11 @@
     "post_title": "Testing index 14228bf1d952618086f315a46a57a05a",
     "post_author": 0,
     "test_text_field": "Testing 14228bf1d952618086f315a46a57a05a",
+    "test_text_field_repeat": [
+      "Testing 14228bf1d952618086f315a46a57a05a 1",
+      "Testing 14228bf1d952618086f315a46a57a05a 2",
+      "Testing 14228bf1d952618086f315a46a57a05a 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -175,6 +235,11 @@
     "comment_date": "2014-11-11",
     "user_id": 0,
     "test_text_field": "Testing 84492f44425413f9ec236fcb3ca7ff61",
+    "test_text_field_repeat": [
+      "Testing 84492f44425413f9ec236fcb3ca7ff61 1",
+      "Testing 84492f44425413f9ec236fcb3ca7ff61 2",
+      "Testing 84492f44425413f9ec236fcb3ca7ff61 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -189,6 +254,11 @@
     "name": "Testing index 95f74c8e1f0e49ef288c74494e5d4d47",
     "author": 0,
     "test_text_field": "Testing 95f74c8e1f0e49ef288c74494e5d4d47",
+    "test_text_field_repeat": [
+      "Testing 95f74c8e1f0e49ef288c74494e5d4d47 1",
+      "Testing 95f74c8e1f0e49ef288c74494e5d4d47 2",
+      "Testing 95f74c8e1f0e49ef288c74494e5d4d47 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],

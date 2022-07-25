@@ -5,6 +5,11 @@
     "user_email": "related@user.com",
     "user_pass": "changeme",
     "test_text_field": "Test related user text field 03d5942f91be7863929f02c5287b439a",
+    "test_text_field_repeat": [
+      "Test related user text field 03d5942f91be7863929f02c5287b439a 1",
+      "Test related user text field 03d5942f91be7863929f02c5287b439a 2",
+      "Test related user text field 03d5942f91be7863929f02c5287b439a 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -19,6 +24,11 @@
     "post_content": "957094053317a49eb5f8db0bc71430da",
     "post_status": "publish",
     "test_text_field": "Test related post text field 957094053317a49eb5f8db0bc71430da",
+    "test_text_field_repeat": [
+      "Test related post text field 957094053317a49eb5f8db0bc71430da 1",
+      "Test related post text field 957094053317a49eb5f8db0bc71430da 2",
+      "Test related post text field 957094053317a49eb5f8db0bc71430da 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -34,6 +44,11 @@
     "post_content": "f820300a0ff832c3a0b9cd9a6f2bf7ba",
     "post_status": "publish",
     "test_text_field": "Test related page text field f820300a0ff832c3a0b9cd9a6f2bf7ba",
+    "test_text_field_repeat": [
+      "Test related page text field f820300a0ff832c3a0b9cd9a6f2bf7ba 1",
+      "Test related page text field f820300a0ff832c3a0b9cd9a6f2bf7ba 2",
+      "Test related page text field f820300a0ff832c3a0b9cd9a6f2bf7ba 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -49,6 +64,11 @@
     "post_content": "b56642438d7bc780f732c893356d9897",
     "post_status": "publish",
     "test_text_field": "Test related page text field b56642438d7bc780f732c893356d9897",
+    "test_text_field_repeat": [
+      "Test related page text field b56642438d7bc780f732c893356d9897 1",
+      "Test related page text field b56642438d7bc780f732c893356d9897 2",
+      "Test related page text field b56642438d7bc780f732c893356d9897 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -63,6 +83,11 @@
     "name": "Related post tag fb48dd92f3198ce5cfeac554c9fb2867",
     "description": "fb48dd92f3198ce5cfeac554c9fb2867",
     "test_text_field": "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867",
+    "test_text_field_repeat": [
+      "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867 1",
+      "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867 2",
+      "Test related tag text field fb48dd92f3198ce5cfeac554c9fb2867 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -77,6 +102,11 @@
     "post_content": "08fc45387cdce771f30cf311ae34fa17",
     "post_status": "publish",
     "test_text_field": "Test related media text field 08fc45387cdce771f30cf311ae34fa17",
+    "test_text_field_repeat": [
+      "Test related media text field 08fc45387cdce771f30cf311ae34fa17 1",
+      "Test related media text field 08fc45387cdce771f30cf311ae34fa17 2",
+      "Test related media text field 08fc45387cdce771f30cf311ae34fa17 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -96,6 +126,11 @@
     "comment_approved": 1,
     "comment_date": "2014-11-11 00:00:00",
     "test_text_field": "Test related comment text field e697208650b932f4d5e7902f1218007d",
+    "test_text_field_repeat": [
+      "Test related comment text field e697208650b932f4d5e7902f1218007d 1",
+      "Test related comment text field e697208650b932f4d5e7902f1218007d 2",
+      "Test related comment text field e697208650b932f4d5e7902f1218007d 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -110,6 +145,11 @@
     "permalink": "related-pod-item",
     "author": 0,
     "test_text_field": "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d",
+    "test_text_field_repeat": [
+      "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d 1",
+      "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d 2",
+      "Test related pod text field c4aa9cb17a4cf2fcfc7e8fb840d42a8d 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -124,6 +164,11 @@
     "post_content": "b583076ded12c15bc9e87d7057a18180",
     "post_status": "publish",
     "test_text_field": "Test avatar text field",
+    "test_text_field_repeat": [
+      "Test avatar text field 1",
+      "Test avatar text field 2",
+      "Test avatar text field 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],
@@ -139,6 +184,11 @@
     "user_email": "author@user.com",
     "user_pass": "changeme",
     "test_text_field": "Test related author text field fbd428d3fbb75b82756772e5a1428566",
+    "test_text_field_repeat": [
+      "Test related author text field fbd428d3fbb75b82756772e5a1428566 1",
+      "Test related author text field fbd428d3fbb75b82756772e5a1428566 2",
+      "Test related author text field fbd428d3fbb75b82756772e5a1428566 3"
+    ],
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],

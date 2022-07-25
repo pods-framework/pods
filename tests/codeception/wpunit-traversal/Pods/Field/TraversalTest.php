@@ -440,13 +440,13 @@ class TraversalTest extends Pods_TraversalTestCase {
 							'$check_value'                            => $check_value,
 							'$check_index'                            => $check_index,
 							'$related_traverse_id'                    => $related_traverse_id,
-							'$p->field( $related_traverse_id, true )' => $p->field( $related_traverse_id, ! is_array( $check_value ) ),
+							'$p->field( $related_traverse_id, ! is_array( $check_value ) )' => $p->field( $related_traverse_id, ! is_array( $check_value ) ),
 						), true ) ) );
 						$this->assertEquals( $check_index, $p->field( $related_traverse_index, ! is_array( $check_index ) ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array(
 							'$check_value'                               => $check_value,
 							'$check_index'                               => $check_index,
 							'$related_traverse_index'                    => $related_traverse_index,
-							'$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_value ) ),
+							'$p->field( $related_traverse_index, ! is_array( $check_value ) )' => $p->field( $related_traverse_index, ! is_array( $check_value ) ),
 						), true ) ) );
 
 						if ( 'meta' === $storage_type && 'taxonomy' !== $related_pod_field['type'] ) {
@@ -527,10 +527,11 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 					if ( 'field' === $method ) {
 						$this->assertEquals( $check_related_value, $p->field( $related_traverse_index, ! is_array( $check_related_value ) ), sprintf( 'Deep Related Item related field index not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array(
-							'$check_related_value'                       => $check_related_value,
-							'$check_related_index'                       => $check_related_index,
-							'$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_related_value ) ),
-							'$related_data'                              => $related_data,
+							'$related_traverse_index'                                                  => $related_traverse_index,
+							'$check_related_value'                                                     => $check_related_value,
+							'$check_related_index'                                                     => $check_related_index,
+							'$p->field( $related_traverse_index, ! is_array( $check_related_value ) )' => $p->field( $related_traverse_index, ! is_array( $check_related_value ) ),
+							'$related_data'                                                            => $related_data,
 						), true ) ) );
 
 						if ( 'meta' === $storage_type && 'taxonomy' !== $related_pod_field['type'] ) {
@@ -545,7 +546,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 							'$check_related_index'                         => $check_related_index,
 							'$check_related_display_value'                 => $check_related_display_value,
 							'$check_related_display_index'                 => $check_related_display_index,
-							'$p->display( $related_traverse_index, true )' => $p->display( $related_traverse_index, ! is_array( $check_related_value ) ),
+							'$p->display( $related_traverse_index, ! is_array( $check_related_value ) )' => $p->display( $related_traverse_index, ! is_array( $check_related_value ) ),
 							'$related_data'                                => $related_data,
 						), true ) ) );
 					}//end if

@@ -39,15 +39,6 @@ class PodsField_Website extends PodsField {
 	 */
 	public function options() {
 		$options = array(
-			static::$type . '_repeatable'  => array(
-				'label'             => __( 'Repeatable Field', 'pods' ),
-				'default'           => 0,
-				'type'              => 'boolean',
-				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
-				'boolean_yes_label' => '',
-				'dependency'        => true,
-				'developer_mode'    => true,
-			),
 			static::$type . '_format'      => array(
 				'label'      => __( 'Format', 'pods' ),
 				'default'    => 'normal',
@@ -79,6 +70,12 @@ class PodsField_Website extends PodsField {
 			static::$type . '_new_window'  => array(
 				'label'      => __( 'Open link in new window', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_new_window', 0, static::$type ),
+				'type'       => 'boolean',
+				'depends-on' => array( static::$type . '_clickable' => true ),
+			),
+			static::$type . '_nofollow'  => array(
+				'label'      => __( 'Make link "nofollow" to exclude from search engines', 'pods' ),
+				'default'    => apply_filters( 'pods_form_ui_field_website_nofollow', 0, static::$type ),
 				'type'       => 'boolean',
 				'depends-on' => array( static::$type . '_clickable' => true ),
 			),
@@ -133,9 +130,21 @@ class PodsField_Website extends PodsField {
 			$link = '<a href="%s"%s>%s</a>';
 
 			$atts = '';
+			$rel  = [];
+
+			if ( 1 === (int) pods_v( static::$type . '_nofollow', $options ) ) {
+				$rel[] = 'nofollow';
+			}
 
 			if ( 1 === (int) pods_v( static::$type . '_new_window', $options ) ) {
-				$atts .= ' target="_blank" rel="noopener noreferrer"';
+				$rel[] = 'noopener';
+				$rel[] = 'noreferrer';
+
+				$atts .= ' target="_blank"';
+			}
+
+			if ( ! empty( $rel ) ) {
+				$atts .= ' rel="' . esc_attr( implode( ' ', $rel ) ) . '"';
 			}
 
 			$value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );
@@ -151,8 +160,16 @@ class PodsField_Website extends PodsField {
 		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
+		$value = $this->normalize_value_for_input( $value, $options );
+
 		// Ensure proper format
-		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $repeatable_value ) {
+				$value[ $k ] = $this->pre_save( $repeatable_value, $id, $name, $options, null, $pod );
+			}
+		} else {
+			$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		}
 
 		$field_type = 'website';
 
@@ -228,7 +245,9 @@ class PodsField_Website extends PodsField {
 			if ( isset( $value['url'] ) ) {
 				$value = $value['url'];
 			} else {
-				$value = implode( ' ', $value );
+				$value = $this->normalize_value_for_input( $value, $options );
+
+				// @todo Eventually rework this further.
 			}
 		}
 

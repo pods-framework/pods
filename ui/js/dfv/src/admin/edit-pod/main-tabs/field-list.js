@@ -1,23 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import { omit } from 'lodash';
+import { useDroppable } from '@dnd-kit/core';
 import {
-	DndContext,
-	closestCenter,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-} from '@dnd-kit/core';
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis,
-} from '@dnd-kit/modifiers';
-import {
-	arrayMove,
 	SortableContext,
-	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
@@ -35,7 +21,7 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
  * Internal dependencies
  */
 import SettingsModal from './settings-modal';
-import FieldListItem from './field-list-item';
+import DraggableFieldListItem from './draggable-field-list-item';
 
 import './field-list.scss';
 
@@ -53,21 +39,20 @@ const FieldList = ( {
 	editFieldPod,
 	saveField,
 	fields,
-	setGroupFields,
-	podSaveStatus,
+	fieldsMovedSinceLastSave,
 } ) => {
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
 	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
 	const [ newFieldIndex, setNewFieldIndex ] = useState( null );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
-	const [ movedFieldIDs, setMovedFieldIDs ] = useState( [] );
 
-	const sensors = useSensors(
-		useSensor( PointerSensor ),
-		useSensor( KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		} ),
-	);
+	const { setNodeRef } = useDroppable( {
+		id: groupName,
+		data: {
+			accepts: [ 'field' ],
+			type: 'empty-group',
+		},
+	} );
 
 	const handleAddField = ( options = {} ) => ( event ) => {
 		event.stopPropagation();
@@ -121,47 +106,10 @@ const FieldList = ( {
 		}
 	}, [ addedFieldName, setShowAddFieldModal, fieldSaveStatuses ] );
 
-	// Reset the "unsaved" indicators after the pod has been saved.
-	useEffect( () => {
-		if ( SAVE_STATUSES.SAVE_SUCCESS === podSaveStatus ) {
-			setMovedFieldIDs( [] );
-		}
-	}, [ podSaveStatus ] );
-
 	const isEmpty = 0 === fields.length;
 
-	const classes = classnames(
-		'pods-field-list',
-		isEmpty && 'pods-field-list--no-fields',
-	);
-
-	const handleFieldDragEnd = ( event ) => {
-		const { active, over } = event;
-
-		if ( ! over?.id || active.id === over.id ) {
-			return;
-		}
-
-		const oldIndex = fields.findIndex(
-			( item ) => ( item.id.toString() === active.id ),
-		);
-
-		const newIndex = fields.findIndex(
-			( item ) => ( item.id.toString() === over.id ),
-		);
-
-		const reorderedItems = arrayMove( fields, oldIndex, newIndex );
-
-		setGroupFields( groupName, reorderedItems );
-
-		setMovedFieldIDs( ( prevState ) => [
-			...prevState,
-			parseInt( active.id, 10 ),
-		] );
-	};
-
 	return (
-		<div className={ classes }>
+		<div className="pods-field-list">
 			{ showAddFieldModal && (
 				<SettingsModal
 					storeKey={ storeKey }
@@ -194,17 +142,14 @@ const FieldList = ( {
 			) }
 
 			{ isEmpty ? (
-				<>
-					<p>{ __( 'There are no fields in this group.', 'pods' ) }</p>
-
-					<Button
-						isPrimary
-						className="pods-field-group_add_field_link"
-						onClick={ () => setShowAddFieldModal( true ) }
-					>
-						{ __( 'Add Field', 'pods' ) }
-					</Button>
-				</>
+				<div
+					className="pods-field-list__empty"
+					ref={ setNodeRef }
+				>
+					<p className="pods-field-list__empty-message">
+						{ __( 'There are no fields in this group.', 'pods' ) }
+					</p>
+				</div>
 			) : (
 				<>
 					<Button
@@ -221,51 +166,44 @@ const FieldList = ( {
 						<div className="pods-field_wrapper-label_type">{ __( 'Type', 'pods' ) }</div>
 					</div>
 
-					<DndContext
-						sensors={ sensors }
-						collisionDetection={ closestCenter }
-						onDragEnd={ handleFieldDragEnd }
-						modifiers={ [
-							restrictToParentElement,
-							restrictToVerticalAxis,
-						] }
+					<SortableContext
+						id={ groupName }
+						items={ fields.map( ( field ) => field.id.toString() ) }
+						strategy={ verticalListSortingStrategy }
 					>
-						<SortableContext
-							items={ fields.map( ( field ) => field.id.toString() ) }
-							strategy={ verticalListSortingStrategy }
-						>
-							<div className="pods-field_wrapper-items">
-								{ fields.map( ( field ) => {
-									return (
-										<FieldListItem
-											storeKey={ storeKey }
-											podType={ podType }
-											podName={ podName }
-											key={ field.id }
-											podID={ podID }
-											podLabel={ podLabel }
-											groupLabel={ groupLabel }
-											field={ field }
-											groupName={ groupName }
-											groupID={ groupID }
-											cloneField={ handleCloneField( field ) }
-											hasMoved={ movedFieldIDs.includes( field.id ) }
-										/>
-									);
-								} ) }
-							</div>
-						</SortableContext>
-					</DndContext>
-
-					<Button
-						isSecondary
-						className="pods-field-group_add_field_link"
-						onClick={ () => setShowAddFieldModal( true ) }
-					>
-						{ __( 'Add Field', 'pods' ) }
-					</Button>
+						<div className="pods-field_wrapper-items">
+							{ fields.map( ( field ) => {
+								return (
+									<DraggableFieldListItem
+										storeKey={ storeKey }
+										podType={ podType }
+										podName={ podName }
+										key={ field.id }
+										podID={ podID }
+										podLabel={ podLabel }
+										groupLabel={ groupLabel }
+										field={ field }
+										groupName={ groupName }
+										groupID={ groupID }
+										cloneField={ handleCloneField( field ) }
+										hasMoved={
+											-1 !== fieldsMovedSinceLastSave.findIndex( ( id ) => id.toString() === field.id.toString() )
+										}
+									/>
+								);
+							} ) }
+						</div>
+					</SortableContext>
 				</>
 			) }
+
+			<Button
+				isSecondary
+				className="pods-field-group_add_field_link"
+				onClick={ () => setShowAddFieldModal( true ) }
+			>
+				{ __( 'Add Field', 'pods' ) }
+			</Button>
 		</div>
 	);
 };
@@ -286,7 +224,7 @@ FieldList.propTypes = {
 	fieldSaveMessages: PropTypes.object.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
 	saveField: PropTypes.func.isRequired,
-	podSaveStatus: PropTypes.string.isRequired,
+	fieldsMovedSinceLastSave: PropTypes.array.isRequired,
 };
 
 export default compose( [
@@ -299,7 +237,6 @@ export default compose( [
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
 			fieldSaveMessages: storeSelect.getFieldSaveMessages(),
-			podSaveStatus: storeSelect.getSaveStatus(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
@@ -308,7 +245,6 @@ export default compose( [
 		const storeDispatch = dispatch( storeKey );
 
 		return {
-			setGroupFields: storeDispatch.setGroupFields,
 			saveField: storeDispatch.saveField,
 		};
 	} ),

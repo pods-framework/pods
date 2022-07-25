@@ -136,6 +136,78 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a required field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a required field.
+	 */
+	public function is_required() {
+		return filter_var( $this->get_arg( 'required', false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
+	 * Determine whether this is a unique field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a unique field.
+	 */
+	public function is_unique() {
+		$parent_object = $this->get_parent_object();
+
+		if ( ! $parent_object instanceof Pod ) {
+			return false;
+		}
+
+		// Only table-based Pods can have unique fields.
+		if ( ! $parent_object->is_table_based() ) {
+			return false;
+		}
+
+		return filter_var( $this->get_arg( 'unique', false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
+	 * Determine whether this is a repeatable field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a repeatable field.
+	 */
+	public function is_repeatable() {
+		$parent_object = $this->get_parent_object();
+
+		if ( ! $parent_object instanceof Pod ) {
+			return false;
+		}
+
+		// Only non table-based Pods can have repeatable fields.
+		if ( $parent_object->is_table_based() ) {
+			return false;
+		}
+
+		$repeatable_field_types = PodsForm::repeatable_field_types();
+
+		$type = $this->get_type();
+
+		// It must be a repeatable field type.
+		if ( ! in_array( $type, $repeatable_field_types, true ) ) {
+			return false;
+		}
+
+		// Disable repeatable for WYSIWYG TinyMCE fields.
+		if ( 'wysiwyg' === $type && 'tinymce' === $this->get_arg( 'wysiwyg_editor', 'tinymce' ) ) {
+			return false;
+		}
+
+		return (
+			filter_var( $this->get_arg( 'repeatable', false ), FILTER_VALIDATE_BOOLEAN )
+			&& 1 !== (int) $this->get_arg( 'repeatable_limit', 0 )
+		);
+	}
+
+	/**
 	 * Get related object type from field.
 	 *
 	 * @since 2.8.0
@@ -303,6 +375,11 @@ class Field extends Whatsit {
 	 * @return Whatsit|null The bi-directional field if it is set.
 	 */
 	public function get_bidirectional_field() {
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
 		$sister_id = $this->get_arg( 'sister_id' );
 
 		if ( ! $sister_id ) {
@@ -327,7 +404,10 @@ class Field extends Whatsit {
 	 * @return int The field value limit.
 	 */
 	public function get_limit() {
-		$type = $this->get_type();
+		// If this is a repeatable field then use the repeatable limit (if any).
+		if ( $this->is_repeatable() ) {
+			return $this->get_arg( 'repeatable_limit', 0 );
+		}
 
 		if ( 'multi' === $this->get_single_multi() ) {
 			return (int) $this->get_type_arg( 'limit', 0 );
@@ -355,6 +435,18 @@ class Field extends Whatsit {
 		}
 
 		return $format_type;
+	}
+
+	/**
+	 * Determine whether this is a multiple value field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a multiple value field.
+	 */
+	public function is_multi_value() {
+		// This is a multiple value field if the limit is not 1 (0 for no limit or 2+).
+		return 1 !== $this->get_limit();
 	}
 
 	/**

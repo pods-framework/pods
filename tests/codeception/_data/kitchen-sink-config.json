@@ -31,7 +31,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "text_repeatable": "0",
+    "repeatable": "0",
     "text_placeholder": ""
   },
   "demo_boolean_group": {
@@ -115,7 +115,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "text_repeatable": "0",
+    "repeatable": "0",
     "text_placeholder": ""
   },
   "demo_website": {
@@ -152,7 +152,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "website_repeatable": "0",
+    "repeatable": "0",
     "website_placeholder": ""
   },
   "demo_website_html5": {
@@ -190,7 +190,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "website_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_phone_us_dash": {
     "name": "demo_phone_us_dash",
@@ -224,7 +224,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_dash_html5": {
@@ -259,7 +259,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_dash_ext": {
@@ -294,7 +294,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_dash_ext_html5": {
@@ -329,7 +329,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_parenthesis": {
@@ -364,7 +364,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_parenthesis_ext": {
@@ -399,7 +399,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_parenthesis_html5": {
@@ -434,7 +434,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_dot": {
@@ -469,7 +469,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_dot_ext": {
@@ -504,7 +504,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_us_dot_html5": {
@@ -539,7 +539,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_international": {
@@ -574,7 +574,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_international_ext": {
@@ -609,7 +609,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_phone_international_html5": {
@@ -644,7 +644,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "phone_repeatable": "0",
+    "repeatable": "0",
     "phone_placeholder": ""
   },
   "demo_e-mail": {
@@ -677,7 +677,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "email_repeatable": "0",
+    "repeatable": "0",
     "email_placeholder": ""
   },
   "demo_e-mail_html5": {
@@ -711,7 +711,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "email_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_password": {
     "name": "demo_password",
@@ -811,7 +811,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "paragraph_repeatable": "0",
+    "repeatable": "0",
     "paragraph_placeholder": ""
   },
   "demo_plain_paragraph_text_placeholder": {
@@ -851,7 +851,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "paragraph_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_wysiwyg_tinymce": {
     "name": "demo_wysiwyg_tinymce",
@@ -889,7 +889,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "wysiwyg_repeatable": "0",
+    "repeatable": "0",
     "wysiwyg_allowed_html_tags": ""
   },
   "demo_wysiwyg_tinymce_wmedia_buttons": {
@@ -927,7 +927,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "wysiwyg_repeatable": "0",
+    "repeatable": "0",
     "wysiwyg_editor_height": "",
     "wysiwyg_allowed_html_tags": ""
   },
@@ -966,7 +966,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "wysiwyg_repeatable": "0",
+    "repeatable": "0",
     "wysiwyg_editor_height": "",
     "wysiwyg_allowed_html_tags": ""
   },
@@ -1000,7 +1000,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "code_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_code_no_limit": {
     "name": "demo_code_no_limit",
@@ -1032,7 +1032,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "code_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_datetime_wp_default": {
     "name": "demo_datetime_wp_default",
@@ -1069,7 +1069,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1112,7 +1112,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1154,7 +1154,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1195,7 +1195,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1237,7 +1237,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1279,7 +1279,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1321,7 +1321,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1363,7 +1363,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1409,7 +1409,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_year_range_custom": ""
   },
   "demo_datetime_custom_js": {
@@ -1451,7 +1451,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_year_range_custom": ""
   },
   "demo_datetime_12_hour": {
@@ -1489,7 +1489,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1531,7 +1531,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1573,7 +1573,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1615,7 +1615,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "datetime_repeatable": "0",
+    "repeatable": "0",
     "datetime_format_custom": "",
     "datetime_format_custom_js": "",
     "datetime_time_format_custom": "",
@@ -1654,7 +1654,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": "",
     "date_year_range_custom": ""
@@ -1692,7 +1692,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": ""
   },
@@ -1729,7 +1729,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": ""
   },
@@ -1765,7 +1765,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": "",
     "date_year_range_custom": ""
@@ -1802,7 +1802,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": "",
     "date_year_range_custom": ""
@@ -1839,7 +1839,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": "",
     "date_year_range_custom": ""
@@ -1876,7 +1876,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": "",
     "date_year_range_custom": ""
@@ -1913,7 +1913,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "",
     "date_format_custom_js": "",
     "date_year_range_custom": ""
@@ -1950,7 +1950,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "date_repeatable": "0",
+    "repeatable": "0",
     "date_format_custom": "d-m-Y",
     "date_format_custom_js": "",
     "date_year_range_custom": ""
@@ -1988,7 +1988,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0",
+    "repeatable": "0",
     "time_format_custom": "",
     "time_format_custom_js": ""
   },
@@ -2025,7 +2025,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0",
+    "repeatable": "0",
     "time_format_custom": "",
     "time_format_custom_js": ""
   },
@@ -2062,7 +2062,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0",
+    "repeatable": "0",
     "time_format_custom": "",
     "time_format_custom_js": ""
   },
@@ -2099,7 +2099,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0",
+    "repeatable": "0",
     "time_format_custom": "",
     "time_format_custom_js": ""
   },
@@ -2136,7 +2136,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0",
+    "repeatable": "0",
     "time_format_custom": "",
     "time_format_custom_js": ""
   },
@@ -2173,7 +2173,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0",
+    "repeatable": "0",
     "time_format_custom": "",
     "time_format_custom_js": ""
   },
@@ -2210,7 +2210,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0",
+    "repeatable": "0",
     "time_format_custom": "",
     "time_format_custom_js": ""
   },
@@ -2249,7 +2249,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "time_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_plain_number_freeform_default": {
     "name": "demo_plain_number_freeform_default",
@@ -2287,7 +2287,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_plain_number_freeform_default_placeholder": {
@@ -2327,7 +2327,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_plain_number_freeform_default_copy": {
     "name": "demo_plain_number_freeform_default_copy",
@@ -2365,7 +2365,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_plain_number_freeform_other": {
@@ -2404,7 +2404,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_plain_number_freeform_us_no_comma": {
@@ -2443,7 +2443,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_plain_number_slider_default": {
@@ -2482,7 +2482,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_plain_number_slider_us": {
@@ -2521,7 +2521,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_plain_number_slider_other": {
@@ -2560,7 +2560,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_plain_number_slider_us_no_comma": {
@@ -2599,7 +2599,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "number_repeatable": "0",
+    "repeatable": "0",
     "number_placeholder": ""
   },
   "demo_currency_freeform_usd_default": {
@@ -2640,7 +2640,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_currency_freeform_usd_default_placeholder": {
@@ -2682,7 +2682,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "currency_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_currency_freeform_usdalt_default": {
     "name": "demo_currency_freeform_usdalt_default",
@@ -2722,7 +2722,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_currency_freeform_x_usd_default": {
@@ -2763,7 +2763,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_currency_freeform_usd_us": {
@@ -2804,7 +2804,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_currency_freeform_usd_other": {
@@ -2845,7 +2845,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_currency_freeform_usd_us_no_comma": {
@@ -2886,7 +2886,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_currency_freeform_euro_default": {
@@ -2927,7 +2927,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_currency_slider_default": {
@@ -2968,7 +2968,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "currency_repeatable": "0",
+    "repeatable": "0",
     "currency_placeholder": ""
   },
   "demo_single_file_default_media_library_upload_tab": {
@@ -4094,7 +4094,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "oembed_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_oembed_preview": {
     "name": "demo_oembed_preview",
@@ -4163,7 +4163,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "oembed_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_oembed_width_height": {
     "name": "demo_oembed_width_height",
@@ -4232,7 +4232,7 @@
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
     "unique": "0",
-    "oembed_repeatable": "0"
+    "repeatable": "0"
   },
   "demo_relationship_simple_list_single_drop_down": {
     "name": "demo_relationship_simple_list_single_drop_down",
@@ -5459,7 +5459,7 @@
     "rest_write": "0",
     "rest_pick_response": "array",
     "rest_pick_depth": "2",
-    "color_repeatable": 0
+    "repeatable": 0
   },
   "demo_heading_field": {
     "name": "demo_heading_field",

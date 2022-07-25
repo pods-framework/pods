@@ -77,7 +77,7 @@ function frontier_decode_template( $code, $atts ) {
 	$code = base64_decode( $code );
 
 	if ( isset( $atts['pod'] ) ) {
-		$code = str_replace( '@pod', $atts['pod'], $code );
+		$code = str_replace( '{@pod}', $atts['pod'], $code );
 	}
 	if ( isset( $atts['id'] ) ) {
 		$code = str_replace( '{@EntryID}', $atts['id'], $code );
@@ -409,8 +409,7 @@ function frontier_template_once_blocks( $atts, $code ) {
  * @since 2.4.0
  */
 function frontier_do_subtemplate( $atts, $content ) {
-
-	$out        = null;
+	$out        = '';
 	$field_name = $atts['field'];
 
 	$pod = Pods_Templates::get_obj( $atts['pod'], $atts['id'] );
@@ -419,21 +418,49 @@ function frontier_do_subtemplate( $atts, $content ) {
 		return '';
 	}
 
-	$entries = $pod->field( $field_name );
-
 	$field = $pod->fields( $field_name );
 
-	if ( ! empty( $entries ) && $field ) {
+	$is_repeatable_field = $field && $field->is_repeatable();
+
+	$entries = $pod->field( [
+		'name'                         => $field_name,
+		'display'                      => $is_repeatable_field,
+		'display_process_individually' => $is_repeatable_field,
+	] );
+
+	if ( $field && ! empty( $entries ) ) {
 		$entries = (array) $entries;
 
 		// Force array even for single items since the logic below is using loops.
-		if ( 'single' === pods_v( $field['type'] . '_format_type', $field, 'single' ) && ! isset( $entries[0] ) ) {
+		if (
+			(
+				$is_repeatable_field
+				|| 'single' === $field->get_single_multi()
+			)
+			&& ! isset( $entries[0] )
+		) {
 			$entries = array( $entries );
 		}
 
 		// Object types that could be Pods
 		$object_types = array( 'post_type', 'pod' );
 
+		if ( $is_repeatable_field ) {
+			foreach ( $entries as $key => $entry ) {
+				$template = frontier_decode_template( $content, $atts );
+
+				$template = str_replace( '{_key}', '{@_index}', $template );
+				$template = str_replace( '{@_key}', '{@_index}', $template );
+				$template = str_replace( '{_index}', '{@_index}', $template );
+
+				$entry = array(
+					'_index' => $key,
+					'_value' => $entry,
+				);
+
+				$out .= frontier_pseudo_magic_tags( $template, $entry, $pod, true );
+			}
+		}
 		/**
 		 * Note on the change below for issue #3018:
 		 * ... || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ]
@@ -445,7 +472,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 		 * the $pod->fields array and is something to not expect to be there in
 		 * 3.0 as this was unintentional.
 		 */
-		if ( 'taxonomy' === $field['type'] || in_array( $field['pick_object'], $object_types, true ) ) {
+		elseif ( 'taxonomy' === $field['type'] || in_array( $field['pick_object'], $object_types, true ) ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );
@@ -460,6 +487,8 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+				$template = str_replace( '{_key}', $key, $template );
+				$template = str_replace( '{@_key}', $key, $template );
 				$template = str_replace( '{_index}', $key, $template );
 				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
 
@@ -488,28 +517,30 @@ function frontier_do_subtemplate( $atts, $content ) {
 			$media_pod = pods( 'media' );
 
 			foreach ( $entries as $key => $entry ) {
-				$content = str_replace( '{_index}', $key, $template );
+				$template = str_replace( '{_key}', $key, $template );
+				$template = str_replace( '{@_key}', $key, $template );
+				$template = str_replace( '{_index}', $key, $template );
 
 				if ( $media_pod && $media_pod->valid() && $media_pod->fetch( $entry['ID'] ) ) {
-					$content   = str_replace( '{@' . $field_name . '.', '{@', $content );
+					$template   = str_replace( '{@' . $field_name . '.', '{@', $template );
 
 					$entry_pod = $media_pod;
 				} else {
-					$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
-					$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
-					$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
+					$template = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $template );
+					$template = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $template );
+					$template = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $template );
 
 					// Fix for lowercase ID's.
 					$entry['id'] = $entry['ID'];
 
 					// Allow array-like tags.
-					$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
+					$template = frontier_pseudo_magic_tags( $template, $entry, $pod, true );
 
 					// Fallback to parent Pod so above tags still work.
 					$entry_pod = $pod;
 				}
 
-				$out .= pods_do_shortcode( $entry_pod->do_magic_tags( $content ), frontier_get_shortcodes() );
+				$out .= pods_do_shortcode( $entry_pod->do_magic_tags( $template ), frontier_get_shortcodes() );
 			}
 		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
 			// Relationship to something that is extended by Pods
@@ -518,25 +549,36 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$subatts = array(
 					'id' => $entry->id,
 					'pod' => $entry->pod,
+					'index' => $key,
 				);
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+
+				$template = str_replace( '{_key}', $key, $template );
+				$template = str_replace( '{@_key}', $key, $template );
 				$template = str_replace( '{_index}', $key, $template );
 				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
 
 				$out .= pods_do_shortcode( $entry->do_magic_tags( $template ), frontier_get_shortcodes() );
 			}
 		} else {
+			$template = frontier_decode_template( $content, $atts );
+
 			// Relationship to something other than a Pod (ie: user)
 			foreach ( $entries as $key => $entry ) {
 				$template = frontier_decode_template( $content, $atts );
-				$template = str_replace( '{_index}', $key, $template );
+
+				$template = str_replace( '{_key}', '{@_index}', $template );
+				$template = str_replace( '{@_key}', '{@_index}', $template );
+				$template = str_replace( '{_index}', '{@_index}', $template );
+
 				if ( ! is_array( $entry ) ) {
 					$entry = array(
-						'_key'   => $key,
+						'_index' => $key,
 						'_value' => $entry,
 					);
 				}
+
 				$out .= pods_do_shortcode( frontier_pseudo_magic_tags( $template, $entry, $pod ), frontier_get_shortcodes() );
 			}
 		}//end if
@@ -806,19 +848,46 @@ function frontier_backtrack_template( $code, $aliases ) {
 			$shortcodes = explode( '__', $alias );
 			$content    = $used[5][ $key ];
 			$atts       = shortcode_parse_atts( $used[3][ $key ] );
+
+			$new_shortcode_name = $shortcodes[0];
+
+			$new_shortcode_atts_data = [
+				'seq' => $shortcodes[1],
+			];
+
 			if ( ! empty( $atts ) ) {
 				if ( ! empty( $atts['field'] ) && false !== strpos( $atts['field'], '.' ) ) {
 					$content = str_replace( $atts['field'] . '.', '', $content );
 				}
+
 				preg_match_all( '/' . $regex . '/s', $content, $subused );
+
 				if ( ! empty( $subused[2] ) ) {
 					$content = frontier_backtrack_template( $content, $aliases );
 				}
-				$codecontent = '[' . $shortcodes[0] . ' ' . trim( $used[3][ $key ] ) . ' seq="' . $shortcodes[1] . '"]' . base64_encode( $content ) . '[/' . $shortcodes[0] . ']';
-			} else {
-				$codecontent = '[' . $shortcodes[0] . ' seq="' . $shortcodes[1] . '"]' . base64_encode( $content ) . '[/' . $shortcodes[0] . ']';
+
+				$new_shortcode_atts_data[] = trim( $used[3][ $key ] );
 			}
-			$code = str_replace( $used[0][ $key ], $codecontent, $code );
+
+			$new_shortcode_atts = '';
+
+			foreach ( $new_shortcode_atts_data as $new_shortcode_att_key => $new_shortcode_att_data ) {
+				if ( is_int( $new_shortcode_att_key ) ) {
+					$new_shortcode_atts .= ' ' . $new_shortcode_att_data;
+				} else {
+					$new_shortcode_atts .= ' ' . $new_shortcode_att_key . '="' . esc_attr( $new_shortcode_att_data ) . '"';
+				}
+			}
+
+			// Build the new shortcode.
+			$new_shortcode = sprintf(
+				'[%1$s %2$s]%3$s[/%1$s]',
+				$new_shortcode_name,
+				$new_shortcode_atts,
+				base64_encode( $content )
+			);
+
+			$code = str_replace( $used[0][ $key ], $new_shortcode, $code );
 		}
 	}//end if
 

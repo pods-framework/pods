@@ -1,8 +1,10 @@
 <?php
 /**
- * Name: Migrate: Packages
+ * ID: migrate-packages
  *
- * Menu Name: Migrate Packages
+ * Name: Import/Export Packages
+ *
+ * Menu Name: Import/Export Packages
  *
  * Description: Import/Export your Pods, Fields, and other settings from any Pods site; Includes an API to Import/Export Packages via PHP
  *

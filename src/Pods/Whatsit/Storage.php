@@ -39,6 +39,13 @@ abstract class Storage {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function get_label() {
+		return __( 'Object Storage', 'pods' );
+	}
+
+	/**
 	 * Get the object storage type.
 	 *
 	 * @return string The object storage type.

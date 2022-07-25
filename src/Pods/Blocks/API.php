@@ -29,7 +29,18 @@ class API {
 		// The Pods Blocks JS API.
 		$pods_blocks_options_file = file_get_contents( PODS_DIR . 'ui/js/blocks/pods-blocks-api.min.asset.json' );
 
-		$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
+		$pods_blocks_options = null;
+
+		if ( $pods_blocks_options_file ) {
+			$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
+		}
+
+		if ( ! is_array( $pods_blocks_options ) ) {
+			$pods_blocks_options = [
+				'dependencies' => [],
+				'version'      => false,
+			];
+		}
 
 		wp_register_script( 'pods-blocks-api', PODS_URL . 'ui/js/blocks/pods-blocks-api.min.js', $pods_blocks_options['dependencies'], $pods_blocks_options['version'], true );
 

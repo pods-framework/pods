@@ -114,7 +114,7 @@
     "faker": "^5.5.3",
     "html-react-parser": "^1.4.12",
     "immutability-helper": "^3.1.1",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "react-datetime": "^3.1.1",
     "react-quill": "^2.0.0-beta.4",
     "react-select": "^4.3.1",

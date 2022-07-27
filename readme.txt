@@ -162,6 +162,21 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.9 - TBD =
+
+* Feature: Simple Repeatable Fields offers the ability to turn almost any field into a repeatable field. With repeatable fields, you can add multiple values for a field. You can use repeatable fields with the Pods template tag `[each your_repeatable_field]` to easily loop and display information with `{@_value}` Supported field types include: Plain Text, Website, Phone, Email, Password, Date / Time, Date, Time, oEmbed, Plain Paragraph text, WYSIWYG, Plain Number, Currency, and Color Picker. Supported Pod Types include: Post Types (meta-based), Taxonomies (meta-based), Users (meta-based), and Comments (meta-based). #1095 #6304 (@sc0ttkclark, @zrothauser)
+* Feature: Register Pods configurations with JSON/YML files in your theme when stored in `pods.json`, `pods/pods.json`, `pods/templates.json`, etc. Custom paths can be registered to support third party plugins as well. Register new paths using `pods_register_config_path( $full_directory_path )` that contain a `/pods/` directory to automatically pull from. #4856 (@sc0ttkclark)
+* Feature: Full support for DB (Post Types), Code (PHP), and File (JSON/YML) configurations on the Pods Admin > Edit Pods screen. If you have configurations for multiple sources, you will see a new Source column (with file path) and you can filter by source. Pods with non-DB sources currently do not have Edit/Duplicate/Reset Content/Delete links. (@sc0ttkclark) 
+* Feature: Website fields can now be set to output links with `rel="nofollow"` on them. (@sc0ttkclark)
+* Enhancement: New `\Pods\Pod_Manager` class allows reusing Pods instances when working with the same Pod across many areas of the code. (@sc0ttkclark)
+* Enhancement: Added PodsAdmin::check_requirements() helper method. (@sc0ttkclark)
+* Enhancement: Migrate Packages component is now enabled by default on new Pods installs. (@sc0ttkclark)
+* Changed: Removed special logic intended for PHP 5.3 and earlier. (@sc0ttkclark)
+* Fixed: Set the default sort to Pod Label now that more sources are supported on Pods Admin > Edit Pods. (@sc0ttkclark) 
+* Fixed: Prevent potential issues with `$wpdb->prepare()` when a related object does not have an index field set. (@sc0ttkclark)
+* Fixed: Resolve issue with not reading cache when no ID is passed into Pods objects for Settings pods. #3582 #3583 (@pcfreak30, @sc0ttkclark, @JoryHogeveen)
+* Fixed: Don't show the edit link in PodsUI if access is restricted, previously going to edit would show the access message but now the link won't show at all in those restricted cases. (@sc0ttkclark)
+
 = 2.8.23 - July 4th, 2022 =
 
 * Tweak: Added support for exporting post types and taxonomies to PHP for debugging purposes. While logged in as an admin, add `?pods_debug_register_export=1` to expose textareas on the page to get the code. (@sc0ttkclark)

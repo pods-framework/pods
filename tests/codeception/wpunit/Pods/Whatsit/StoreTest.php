@@ -94,7 +94,7 @@ class StoreTest extends Pods_UnitTestCase {
 		$this->pods_object_collection->register_object( $object );
 
 		$this->assertCount( 10, $this->pods_object_collection->get_object_types() );
-		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_storage_types() );
 		$this->assertCount( 6, $this->pods_object_collection->get_objects() );
 
 		Store::destroy();
@@ -102,7 +102,7 @@ class StoreTest extends Pods_UnitTestCase {
 		$this->pods_object_collection = Store::get_instance();
 
 		$this->assertCount( 9, $this->pods_object_collection->get_object_types() );
-		$this->assertCount( 2, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
 		$this->assertCount( 5, $this->pods_object_collection->get_objects() );
 	}
 
@@ -187,7 +187,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', Whatsit__Storage__Custom::class );
 
-		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_storage_types() );
 	}
 
 	/**
@@ -200,11 +200,11 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', Whatsit__Storage__Custom::class );
 
-		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_storage_types() );
 
 		$this->assertTrue( $this->pods_object_collection->unregister_storage_type( 'custom' ) );
 
-		$this->assertCount( 2, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
 
 		$this->assertFalse( $this->pods_object_collection->unregister_storage_type( 'nope' ) );
 	}
@@ -219,11 +219,11 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', Whatsit__Storage__Custom::class );
 
-		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_storage_types() );
 
 		$this->pods_object_collection->flush_storage_types();
 
-		$this->assertCount( 2, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
 	}
 
 	/**
@@ -235,7 +235,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', Whatsit__Storage__Custom::class );
 
-		$this->assertCount( 3, $this->pods_object_collection->get_object_storage_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_storage_types() );
 	}
 
 	/**

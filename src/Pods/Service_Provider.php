@@ -20,6 +20,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 * @since 2.8.0
 	 */
 	public function register() {
+		$this->container->singleton( Config_Handler::class, Config_Handler::class );
 		$this->container->singleton( Map_Field_Values::class, Map_Field_Values::class );
 		$this->container->singleton( Permissions::class, Permissions::class );
 		$this->container->singleton( Pod_Manager::class, Pod_Manager::class );

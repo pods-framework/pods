@@ -16,7 +16,7 @@
  * Text Domain:       pods
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Requires at least: 5.5
+ * Requires at least: 5.7
  * Requires PHP:      5.6
  * GitHub Plugin URI: https://github.com/pods-framework/pods
  * Primary Branch:    main
@@ -56,7 +56,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * To be updated each Major x.x Pods release.
 	 */
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '5.5' );
+		define( 'PODS_WP_VERSION_MINIMUM', '5.7' );
 	}
 
 	/**
@@ -64,7 +64,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 *
 	 * Found at: https://wordpress.org/about/stats/
 	 *
-	 * Next planned minimum PHP version: 7.0
+	 * Next planned minimum PHP version: 7.2 (to match WooCommerce and others pushing WP forward).
 	 */
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
 		define( 'PODS_PHP_VERSION_MINIMUM', '5.6' );

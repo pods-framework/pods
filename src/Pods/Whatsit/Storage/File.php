@@ -5,7 +5,7 @@ namespace Pods\Whatsit\Storage;
 /**
  * File class.
  *
- * @since TBD
+ * @since 2.9.0
  */
 class File extends Collection {
 

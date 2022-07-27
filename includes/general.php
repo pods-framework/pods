@@ -2818,7 +2818,7 @@ function pods_register_block_collection( array $collection ) {
 /**
  * Register a custom config file to use with Pods configs.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $file        The config file to use.
  * @param string $config_type The config file type to use (defaults to json).
@@ -2836,7 +2836,7 @@ function pods_register_config_file( $file, $config_type = 'json' ) {
 /**
  * Register a custom config path to use with Pods configs.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $path The config path to use.
  */
@@ -2857,7 +2857,7 @@ function pods_register_config_path( $path ) {
  *
  * Default support for json and yml can be filtered with the pods_config_parse filter to override them.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $type The config type to use.
  */
@@ -2874,7 +2874,7 @@ function pods_register_config_type( $type ) {
 /**
  * Register a custom config item type to use with Pods configs.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $item_type The config path to use.
  */

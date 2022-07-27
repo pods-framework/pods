@@ -15,7 +15,7 @@ class Config_Handler {
 	/**
 	 * List of registered config types.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -27,7 +27,7 @@ class Config_Handler {
 	/**
 	 * List of registered config item types.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -42,7 +42,7 @@ class Config_Handler {
 	/**
 	 * List of registered paths.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -51,7 +51,7 @@ class Config_Handler {
 	/**
 	 * List of registered files.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -60,7 +60,7 @@ class Config_Handler {
 	/**
 	 * List of registered Pods configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -69,7 +69,7 @@ class Config_Handler {
 	/**
 	 * List of registered Pods Template configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -78,7 +78,7 @@ class Config_Handler {
 	/**
 	 * List of registered Pods Page configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -87,7 +87,7 @@ class Config_Handler {
 	/**
 	 * List of registered Pods Helper configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -96,7 +96,7 @@ class Config_Handler {
 	/**
 	 * Associative array list of other registered configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -105,7 +105,7 @@ class Config_Handler {
 	/**
 	 * List of config names for each file path.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @var array
 	 */
@@ -114,7 +114,7 @@ class Config_Handler {
 	/**
 	 * Config constructor.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 */
 	public function __construct() {
 		// Nothing to see here.
@@ -123,7 +123,7 @@ class Config_Handler {
 	/**
 	 * Setup initial registered paths and load configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 */
 	public function setup() {
 		// Register theme.
@@ -141,7 +141,7 @@ class Config_Handler {
 	/**
 	 * Register a config type.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $config_type Config type.
 	 */
@@ -155,7 +155,7 @@ class Config_Handler {
 	/**
 	 * Unregister a config type.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $config_type Config type.
 	 */
@@ -171,7 +171,7 @@ class Config_Handler {
 	/**
 	 * Register a config item type.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $item_type Config item type.
 	 */
@@ -185,7 +185,7 @@ class Config_Handler {
 	/**
 	 * Unregister a config item type.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $item_type Config item type.
 	 */
@@ -201,7 +201,7 @@ class Config_Handler {
 	/**
 	 * Register a config file path.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $path The config file path to use.
 	 */
@@ -218,7 +218,7 @@ class Config_Handler {
 	/**
 	 * Unregister a config file path.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $path The config file path to use.
 	 */
@@ -237,7 +237,7 @@ class Config_Handler {
 	/**
 	 * Register a config file.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $file        Config file to use.
 	 * @param string $config_type Config type to use.
@@ -253,7 +253,7 @@ class Config_Handler {
 	/**
 	 * Unregister a config file file.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $file        Config file to use.
 	 * @param string $config_type Config type to use.
@@ -267,7 +267,7 @@ class Config_Handler {
 	/**
 	 * Get file configs based on registered config types and config item types.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @return array File configs.
 	 */
@@ -311,13 +311,13 @@ class Config_Handler {
 	/**
 	 * Load configs from registered file paths.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 */
 	protected function load_configs() {
 		/**
 		 * Allow plugins/themes to hook into config loading.
 		 *
-		 * @since TBD
+		 * @since 2.9.0
 		 *
 		 * @param Config $pods_config Pods config object.
 		 *
@@ -409,7 +409,7 @@ class Config_Handler {
 	/**
 	 * Load config from registered file path.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $config_type Config type.
 	 * @param string $raw_config  Raw config content.
@@ -431,7 +431,7 @@ class Config_Handler {
 			/**
 			 * Parse Pods config from a custom config type.
 			 *
-			 * @since TBD
+			 * @since 2.9.0
 			 *
 			 * @param array  $config      Config data.
 			 * @param string $raw_config  Raw config content.
@@ -442,7 +442,7 @@ class Config_Handler {
 		/**
 		 * Allow filtering the config for additional parsing customization.
 		 *
-		 * @since TBD
+		 * @since 2.9.0
 		 *
 		 * @param array  $config      Config data.
 		 * @param string $config_type Config type.
@@ -462,7 +462,7 @@ class Config_Handler {
 	/**
 	 * Register config for different item types.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param array  $config      Config data.
 	 * @param string $file_path   The config file path to use.
@@ -513,7 +513,7 @@ class Config_Handler {
 	/**
 	 * Register pod configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param array  $items     Config items.
 	 * @param string $file_path The config file path to use.
@@ -549,7 +549,7 @@ class Config_Handler {
 	/**
 	 * Register pod field configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param array  $items     Config items.
 	 * @param string $file_path The config file path to use.
@@ -595,7 +595,7 @@ class Config_Handler {
 	/**
 	 * Register template configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param array  $items     Config items.
 	 * @param string $file_path The config file path to use.
@@ -630,7 +630,7 @@ class Config_Handler {
 	/**
 	 * Register page configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param array  $items     Config items.
 	 * @param string $file_path The config file path to use.
@@ -665,7 +665,7 @@ class Config_Handler {
 	/**
 	 * Register helper configs.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param array  $items     Config items.
 	 * @param string $file_path The config file path to use.
@@ -700,7 +700,7 @@ class Config_Handler {
 	/**
 	 * Register config items for custom config item type.
 	 *
-	 * @since TBD
+	 * @since 2.9.0
 	 *
 	 * @param string $item_type Config Item type.
 	 * @param array  $items     Config items.
@@ -715,7 +715,7 @@ class Config_Handler {
 			/**
 			 * Pre-process the item to be saved for a custom item type.
 			 *
-			 * @since TBD
+			 * @since 2.9.0
 			 *
 			 * @param string $item_type Item type.
 			 * @param string $file_path The config file path to use.

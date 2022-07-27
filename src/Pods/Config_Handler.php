@@ -49,6 +49,15 @@ class Config_Handler {
 	protected $registered_paths = [];
 
 	/**
+	 * List of registered files.
+	 *
+	 * @since TBD
+	 *
+	 * @var array
+	 */
+	protected $registered_files = [];
+
+	/**
 	 * List of registered Pods configs.
 	 *
 	 * @since TBD
@@ -194,7 +203,7 @@ class Config_Handler {
 	 *
 	 * @since TBD
 	 *
-	 * @param string $path Config file path.
+	 * @param string $path The config file path to use.
 	 */
 	public function register_path( $path ) {
 		$path = trailingslashit( $path );
@@ -211,7 +220,7 @@ class Config_Handler {
 	 *
 	 * @since TBD
 	 *
-	 * @param string $path Config file path.
+	 * @param string $path The config file path to use.
 	 */
 	public function unregister_path( $path ) {
 		$path = trailingslashit( $path );
@@ -222,6 +231,36 @@ class Config_Handler {
 
 		if ( isset( $this->registered_paths[ $path ] ) ) {
 			unset( $this->registered_paths[ $path ] );
+		}
+	}
+
+	/**
+	 * Register a config file.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $file        Config file to use.
+	 * @param string $config_type Config type to use.
+	 */
+	public function register_file( $file, $config_type ) {
+		if ( ! isset( $this->registered_files[ $config_type ] ) ) {
+			$this->registered_files[ $config_type ] = [];
+		}
+
+		$this->registered_files[ $config_type ][ $file ] = $file;
+	}
+
+	/**
+	 * Unregister a config file file.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $file        Config file to use.
+	 * @param string $config_type Config type to use.
+	 */
+	public function unregister_file( $file, $config_type ) {
+		if ( isset( $this->registered_files[ $config_type ][ $file ] ) ) {
+			unset( $this->registered_files[ $config_type ][ $file ] );
 		}
 	}
 
@@ -285,6 +324,60 @@ class Config_Handler {
 		 */
 		do_action( 'pods_config_pre_load_configs', $this );
 
+		$file_configs = $this->get_file_configs();
+
+		$theme_dirs = [
+			trailingslashit( get_template_directory() )   => true,
+			trailingslashit( get_stylesheet_directory() ) => true,
+		];
+
+		$cached_found_configs = pods_transient_get( 'pods_config_handler_found_configs' );
+
+		if ( empty( $cached_found_configs ) ) {
+			$cached_found_configs = false;
+		}
+
+		$found_configs = [];
+
+		foreach ( $this->registered_paths as $config_path ) {
+			foreach ( $file_configs as $file_config ) {
+				if ( empty( $file_config['theme_support'] ) && isset( $theme_dirs[ $config_path ] ) ) {
+					continue;
+				}
+
+				$file_path = $config_path . $file_config['file'];
+
+				if ( $cached_found_configs && ! isset( $cached_found_configs[ $file_path ] ) ) {
+					continue;
+				}
+
+				$found_config = $this->load_config_file( $file_path, $file_config['type'], $file_config );
+
+				if ( $found_config ) {
+					$found_configs[ $file_path ] = true;
+				}
+			}
+		}
+
+		pods_transient_set( 'pods_config_handler_found_configs', $found_configs, DAY_IN_SECONDS );
+
+		foreach ( $this->registered_files as $config_type => $files ) {
+			foreach ( $files as $file ) {
+				$this->load_config_file( $file, $config_type );
+			}
+		}
+	}
+
+	/**
+	 * Load the config file for a config type from a specific file path.
+	 *
+	 * @param string $file_path   The config file path to use.
+	 * @param string $config_type The config type to use.
+	 * @param array  $file_config File config.
+	 *
+	 * @return bool Whether the config file was found and loaded.
+	 */
+	protected function load_config_file( $file_path, $config_type, array $file_config = [] ) {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		/**
@@ -295,38 +388,22 @@ class Config_Handler {
 		WP_Filesystem();
 
 		if ( ! $wp_filesystem ) {
-			return;
+			return false;
 		}
 
-		$file_configs = $this->get_file_configs();
-
-		$theme_dirs = [
-			trailingslashit( get_template_directory() ),
-			trailingslashit( get_stylesheet_directory() ),
-		];
-
-		foreach ( $this->registered_paths as $config_path ) {
-			foreach ( $file_configs as $file_config ) {
-				if ( empty( $file_config['theme_support'] ) && in_array( $config_path, $theme_dirs, true ) ) {
-					continue;
-				}
-
-				$file_path = $config_path . $file_config['file'];
-
-				if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
-					continue;
-				}
-
-				$raw_config = $wp_filesystem->get_contents( $file_path );
-
-				if ( empty( $raw_config ) ) {
-					continue;
-				}
-
-				$this->load_config( $file_config['type'], $raw_config, $file_path, $file_config );
-			}
+		if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
+			return false;
 		}
 
+		$raw_config = $wp_filesystem->get_contents( $file_path );
+
+		if ( empty( $raw_config ) ) {
+			return false;
+		}
+
+		$file_config['type'] = $config_type;
+
+		return $this->load_config( $config_type, $raw_config, $file_path, $file_config );
 	}
 
 	/**
@@ -336,8 +413,10 @@ class Config_Handler {
 	 *
 	 * @param string $config_type Config type.
 	 * @param string $raw_config  Raw config content.
-	 * @param string $file_path   Config file path.
+	 * @param string $file_path   The config file path to use.
 	 * @param array  $file_config File config.
+	 *
+	 * @return bool Whether the config was loaded.
 	 */
 	protected function load_config( $config_type, $raw_config, $file_path, array $file_config ) {
 		$config = null;
@@ -373,7 +452,11 @@ class Config_Handler {
 
 		if ( $config && is_array( $config ) ) {
 			$this->register_config( $config, $file_path, $file_config );
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -382,7 +465,7 @@ class Config_Handler {
 	 * @since TBD
 	 *
 	 * @param array  $config      Config data.
-	 * @param string $file_path   Config file path.
+	 * @param string $file_path   The config file path to use.
 	 * @param array  $file_config File config.
 	 */
 	protected function register_config( array $config, $file_path, array $file_config = [] ) {
@@ -433,7 +516,7 @@ class Config_Handler {
 	 * @since TBD
 	 *
 	 * @param array  $items     Config items.
-	 * @param string $file_path Config file path.
+	 * @param string $file_path The config file path to use.
 	 */
 	protected function register_config_pods( array $items, $file_path = '' ) {
 		foreach ( $items as $item ) {
@@ -469,7 +552,7 @@ class Config_Handler {
 	 * @since TBD
 	 *
 	 * @param array  $items     Config items.
-	 * @param string $file_path Config file path.
+	 * @param string $file_path The config file path to use.
 	 */
 	protected function register_config_fields( array $items, $file_path = '' ) {
 		foreach ( $items as $item ) {
@@ -515,7 +598,7 @@ class Config_Handler {
 	 * @since TBD
 	 *
 	 * @param array  $items     Config items.
-	 * @param string $file_path Config file path.
+	 * @param string $file_path The config file path to use.
 	 */
 	protected function register_config_templates( array $items, $file_path = '' ) {
 		foreach ( $items as $item ) {
@@ -550,7 +633,7 @@ class Config_Handler {
 	 * @since TBD
 	 *
 	 * @param array  $items     Config items.
-	 * @param string $file_path Config file path.
+	 * @param string $file_path The config file path to use.
 	 */
 	protected function register_config_pages( array $items, $file_path = '' ) {
 		foreach ( $items as $item ) {
@@ -585,7 +668,7 @@ class Config_Handler {
 	 * @since TBD
 	 *
 	 * @param array  $items     Config items.
-	 * @param string $file_path Config file path.
+	 * @param string $file_path The config file path to use.
 	 */
 	protected function register_config_helpers( array $items, $file_path = '' ) {
 		foreach ( $items as $item ) {
@@ -621,7 +704,7 @@ class Config_Handler {
 	 *
 	 * @param string $item_type Config Item type.
 	 * @param array  $items     Config items.
-	 * @param string $file_path Config file path.
+	 * @param string $file_path The config file path to use.
 	 */
 	protected function register_config_custom_item_type( $item_type, array $items, $file_path = '' ) {
 		if ( ! isset( $this->custom_configs[ $item_type ] ) ) {
@@ -635,7 +718,7 @@ class Config_Handler {
 			 * @since TBD
 			 *
 			 * @param string $item_type Item type.
-			 * @param string $file_path Config file path.
+			 * @param string $file_path The config file path to use.
 			 *
 			 * @param array  $item      Item to pre-process.
 			 */

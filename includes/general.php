@@ -2816,6 +2816,24 @@ function pods_register_block_collection( array $collection ) {
 }
 
 /**
+ * Register a custom config file to use with Pods configs.
+ *
+ * @since TBD
+ *
+ * @param string $file        The config file to use.
+ * @param string $config_type The config file type to use (defaults to json).
+ */
+function pods_register_config_file( $file, $config_type = 'json' ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_file( $file, $config_type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
  * Register a custom config path to use with Pods configs.
  *
  * @since TBD

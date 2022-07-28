@@ -1061,11 +1061,6 @@ class PodsAdmin {
 				continue;
 			}//end if
 
-			// @codingStandardsIgnoreLine
-			if ( 'delete' !== pods_v( 'action' ) && $pod['id'] === (int) pods_v( 'id' ) ) {
-				$row = $pod;
-			}
-
 			$group_count    = 0;
 			$field_count    = 0;
 			$row_count      = 0;
@@ -1141,14 +1136,15 @@ class PodsAdmin {
 			}
 
 			$pod = [
-				'id'        => $pod['id'],
-				'label'     => $pod['label'],
-				'name'      => $pod['name'],
-				'object'    => $pod['object'],
-				'type'      => $pod_type,
-				'real_type' => $pod_real_type,
-				'storage'   => $storage_type_label,
-				'source'    => $source,
+				'id'         => $pod['id'],
+				'label'      => $pod['label'],
+				'name'       => $pod['name'],
+				'object'     => $pod['object'],
+				'type'       => $pod_type,
+				'real_type'  => $pod_real_type,
+				'storage'    => $storage_type_label,
+				'source'     => $source,
+				'pod_object' => $pod,
 			];
 
 			if ( ! pods_is_types_only() ) {
@@ -1177,6 +1173,25 @@ class PodsAdmin {
 					$pod['podsrel_count'] = number_format_i18n( $row_counts['podsrel_count'] );
 
 					$total_podsrel_rows += $row_counts['podsrel_count'];
+				}
+			}
+
+			// @codingStandardsIgnoreLine
+			if ( 'manage' !== pods_v( 'action' ) ) {
+				$found_id   = (int) pods_v( 'id' );
+				$found_name = pods_v( 'name' );
+
+				if (
+					(
+						$found_id
+						&& $pod['id'] === $found_id
+					)
+					|| (
+						$found_name
+						&& $pod['name'] === $found_name
+					)
+				) {
+					$row = $pod;
 				}
 			}
 
@@ -1237,18 +1252,20 @@ class PodsAdmin {
 				'field_id'    => 'id',
 				'field_index' => 'label',
 			],
-			'actions_disabled' => [ 'view', 'export', 'delete' ],
+			'actions_disabled' => [ 'view', 'export', 'delete', 'duplicate' ],
 			'actions_custom'   => [
-				'add'        => [ $this, 'admin_setup_add' ],
-				'edit'       => [
+				'add'           => [ $this, 'admin_setup_add' ],
+				'edit'          => [
 					'callback'          => [ $this, 'admin_setup_edit' ],
 					'restrict_callback' => [ $this, 'admin_setup_edit_restrict' ],
 				],
-				'duplicate'  => [
+				'duplicate_pod' => [
+					'label'             => __( 'Duplicate', 'pods' ),
 					'callback'          => [ $this, 'admin_setup_duplicate' ],
 					'restrict_callback' => [ $this, 'admin_setup_duplicate_restrict' ],
+					'nonce'             => true,
 				],
-				'reset'      => [
+				'reset_pod'     => [
 					'label'             => __( 'Delete All Items', 'pods' ),
 					'confirm'           => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
 					'callback'          => [ $this, 'admin_setup_reset' ],
@@ -1256,7 +1273,7 @@ class PodsAdmin {
 					'nonce'             => true,
 					'span_class'        => 'delete',
 				],
-				'delete_pod' => [
+				'delete_pod'    => [
 					'label'             => __( 'Delete', 'pods' ),
 					'confirm'           => __( 'Are you sure you want to delete this Pod? All of the content and items will remain in the database, you may want to Delete All Items first.', 'pods' ),
 					'callback'          => [ $this, 'admin_setup_delete' ],
@@ -1265,21 +1282,23 @@ class PodsAdmin {
 					'span_class'        => 'delete',
 				],
 			],
-			'action_links'     => [
-				'add'       => pods_query_arg( [
+			'action_links' => [
+				'add'           => pods_query_arg( [
 					'page'     => 'pods-add-new',
 					'action'   => '',
 					'id'       => '',
 					'do'       => '',
 					'_wpnonce' => '',
 				] ),
-				'duplicate' => pods_query_arg( [
-					'id'   => '{@id}',
-					'name' => '{@name}',
+				'duplicate_pod' => pods_query_arg( [
+					'action' => 'duplicate_pod',
+					'id'     => '{@id}',
+					'name'   => '{@name}',
 				] ),
-				'reset'     => pods_query_arg( [
-					'id'   => '{@id}',
-					'name' => '{@name}',
+				'reset_pod'     => pods_query_arg( [
+					'action' => 'reset_pod',
+					'id'     => '{@id}',
+					'name'   => '{@name}',
 				] ),
 			],
 			'search'           => false,
@@ -1452,7 +1471,7 @@ class PodsAdmin {
 	public function admin_setup_edit( $duplicate, $obj ) {
 		$api = pods_api();
 
-		$pod = $obj->row;
+		$pod = $obj->row['pod_object'];
 
 		if ( ! $pod instanceof Pod ) {
 			$obj->id = null;
@@ -2036,7 +2055,7 @@ class PodsAdmin {
 	 * @param PodsUI $obj PodsUI object.
 	 */
 	public function admin_setup_duplicate( $obj ) {
-		$new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
+		$new_id = pods_api()->duplicate_pod( array( 'name' => $obj->row['name'] ) );
 
 		if ( 0 < $new_id ) {
 			pods_redirect(
@@ -2045,6 +2064,7 @@ class PodsAdmin {
 						'action' => 'edit',
 						'id'     => $new_id,
 						'do'     => 'duplicate',
+						'name'   => null,
 					)
 				)
 			);
@@ -2069,9 +2089,7 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
-			$restricted = true;
-		} elseif ( in_array(
+		if ( in_array(
 			$row['real_type'], array(
 				'user',
 				'media',
@@ -2087,20 +2105,18 @@ class PodsAdmin {
 	/**
 	 * Reset a pod
 	 *
-	 * @param PodsUI     $obj PodsUI object.
-	 * @param int|string $id  Item ID.
+	 * @param PodsUI $obj PodsUI object.
 	 *
 	 * @return mixed
 	 */
-	public function admin_setup_reset( $obj, $id ) {
-
-		$pod = pods_api()->load_pod( array( 'id' => $id ), false );
+	public function admin_setup_reset( $obj ) {
+		$pod = pods_api()->load_pod( array( 'name' => $obj->row['name'] ), false );
 
 		if ( empty( $pod ) ) {
 			return $obj->error( __( 'Pod not found.', 'pods' ) );
 		}
 
-		pods_api()->reset_pod( array( 'id' => $id ) );
+		pods_api()->reset_pod( array( 'name' => $obj->row['name'] ) );
 
 		$obj->message( __( 'Pod reset successfully.', 'pods' ) );
 
@@ -2119,9 +2135,7 @@ class PodsAdmin {
 	 * @since 2.3.10
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
-			$restricted = true;
-		} elseif ( in_array(
+		if ( in_array(
 			$row['real_type'], array(
 				'user',
 				'media',

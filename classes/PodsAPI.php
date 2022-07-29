@@ -861,6 +861,7 @@ class PodsAPI {
 					'alias'   => [ 'content' ],
 					'options' => [
 						'wysiwyg_allowed_html_tags' => '',
+						'wysiwyg_media_buttons'     => 1,
 						'display_filter'            => 'the_content',
 						'pre_save'                  => 0,
 					],

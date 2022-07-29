@@ -73,7 +73,7 @@ const formatValuesForReactSelectComponent = (
 	fieldItemData = [],
 	isMulti = false
 ) => {
-	console.log( 'formatValuesForReactSelectComponent', value, fieldItemData );
+	//console.log( 'formatValuesForReactSelectComponent', value, fieldItemData );
 
 	if ( ! value ) {
 		return isMulti ? [] : [];
@@ -179,6 +179,12 @@ const Pick = ( props ) => {
 		allPodValues,
 	} = props;
 
+	let fieldValue = value;
+
+	if ( 'object' === typeof value ) {
+		fieldValue = Object.values( value );
+	}
+
 	// translators: %s is the field label.
 	const fieldPlaceholder = pickPlaceholder || sprintf( __( 'Search %s…', 'pods' ), label );
 
@@ -272,7 +278,7 @@ const Pick = ( props ) => {
 			] );
 
 			setValueWithLimit( [
-				...( value || [] ),
+				...( fieldValue || [] ),
 				newData?.id.toString(),
 			] );
 		};
@@ -296,7 +302,7 @@ const Pick = ( props ) => {
 				<RadioSelect
 					htmlAttributes={ htmlAttributes }
 					name={ name }
-					value={ value || '' }
+					value={ fieldValue || '' }
 					setValue={ setValueWithLimit }
 					options={ modifiedFieldItemData }
 					readOnly={ !! readOnly }
@@ -308,15 +314,13 @@ const Pick = ( props ) => {
 			( isSingle && 'checkbox' === formatSingle ) ||
 			( isMulti && 'checkbox' === formatMulti )
 		) {
-			let formattedValue = value;
+			let formattedValue = fieldValue;
 
 			if ( isMulti ) {
-				if ( 'object' === typeof value ) {
-					formattedValue = Object.values( value );
-				} else if ( Array.isArray( value ) ) {
-					formattedValue = value;
-				} else if ( 'string' === typeof value ) {
-					formattedValue = ( value || '' ).split( ',' );
+				if ( Array.isArray( fieldValue ) ) {
+					formattedValue = fieldValue;
+				} else if ( 'string' === typeof fieldValue ) {
+					formattedValue = ( fieldValue || '' ).split( ',' );
 				} else {
 					formattedValue = [];
 				}
@@ -344,7 +348,7 @@ const Pick = ( props ) => {
 			const isListSelect = ( isSingle && 'list' === formatSingle ) || ( isMulti && 'list' === formatMulti );
 
 			const formattedValue = formatValuesForReactSelectComponent(
-				value,
+				fieldValue,
 				modifiedFieldItemData,
 				isMulti,
 			);
@@ -392,7 +396,7 @@ const Pick = ( props ) => {
 				}
 			};
 
-			console.log( 'formattedValue', formattedValue );
+			//console.log( 'formattedValue', formattedValue );
 
 			return (
 				<>
@@ -444,7 +448,7 @@ const Pick = ( props ) => {
 			<SimpleSelect
 				htmlAttributes={ htmlAttributes }
 				name={ name }
-				value={ formatValuesForHTMLSelectElement( value, isMulti ) }
+				value={ formatValuesForHTMLSelectElement( fieldValue, isMulti ) }
 				setValue={ ( newValue ) => setValueWithLimit( newValue ) }
 				options={ modifiedFieldItemData }
 				isMulti={ isMulti }

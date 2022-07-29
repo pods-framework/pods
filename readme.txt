@@ -181,6 +181,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Resolve issues with Media modal fields showing duplicate fields. #6564 (@JoryHogeveen)
 * Fixed: Handle processing the Pods display tags in a more dynamic way for attributes and passing them down to the tag handlers. (@sc0ttkclark)
 * Fixed: Enable media buttons for the post_content field like they should so that forms outside the admin screen continue to function as expected. #6525 (@sc0ttkclark)
+* Fixed: Resolve issues with values that are objects and convert them to arrays for relationship value formatting in DFV field renders. #6566 (@sc0ttkclark)
 * New minimum WP version required: WordPress 5.7+ (previously: WP 5.5+)
 * No minimum PHP version changes (currently: PHP 5.6+) but please be aware that PHP 7.2+ will be required for the Pods 3.0+ feature release. You should take the time to update to PHP 8.0+ because there’s major speed improvements to be had 🙂
 

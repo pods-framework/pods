@@ -1130,7 +1130,7 @@ class PodsField_File extends PodsField {
 			$limit_file_type = pods_v( $field['type'] . '_type', $field['options'], 'images' );
 
 			if ( 'images' === $limit_file_type ) {
-				$limit_types = 'jpg,jpeg,png,gif';
+				$limit_types = 'jpg,jpeg,png,gif,webp';
 			} elseif ( 'video' === $limit_file_type ) {
 				$limit_types = 'mpg,mov,flv,mp4';
 			} elseif ( 'audio' === $limit_file_type ) {

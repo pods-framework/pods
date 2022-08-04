@@ -1,34 +1,45 @@
 {
-  "parser": "babel-eslint",
-
-  "parserOptions": {
-    "ecmaVersion": 2016,
-    "ecmaFeatures": {
-      "jsx": true
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "ecmaVersion": 2016,
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "requireConfigFile": false,
+        "sourceType": "module"
     },
-    "sourceType": "module"
-  },
-
-  "extends": [
-    "plugin:@wordpress/eslint-plugin/custom",
-    "plugin:@wordpress/eslint-plugin/esnext",
-    "plugin:@wordpress/eslint-plugin/es5",
-    "plugin:@wordpress/eslint-plugin/jsx-a11y",
-    "plugin:@wordpress/eslint-plugin/react",
-    "plugin:@wordpress/eslint-plugin/i18n",
-    "plugin:@wordpress/eslint-plugin/test-e2e",
-    "plugin:@wordpress/eslint-plugin/test-unit"
-  ],
-
-  "rules": {},
-
-  "overrides": [
-    {
-      "excludedFiles": "*.min.js",
-      "files": [ "**/test/*.js" ],
-      "env": {
-        "jest": true
-      }
-    }
-  ]
+    "extends": [
+        "plugin:@wordpress/eslint-plugin/custom",
+        "plugin:@wordpress/eslint-plugin/esnext",
+        "plugin:@wordpress/eslint-plugin/es5",
+        "plugin:@wordpress/eslint-plugin/jsx-a11y",
+        "plugin:@wordpress/eslint-plugin/react",
+        "plugin:@wordpress/eslint-plugin/i18n",
+        "plugin:@wordpress/eslint-plugin/test-e2e",
+        "plugin:@wordpress/eslint-plugin/test-unit"
+    ],
+    "rules": {
+        "no-unused-vars": [
+            "error",
+            {
+                "vars": "all",
+                "args": "after-used",
+                "ignoreRestSiblings": false
+            }
+        ],
+        "no-undef": [
+          "error"
+        ]
+    },
+    "overrides": [
+        {
+            "excludedFiles": "*.min.js",
+            "files": [
+                "**/test/*.js"
+            ],
+            "env": {
+                "jest": true
+            }
+        }
+    ]
 }

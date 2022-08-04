@@ -54,6 +54,11 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
       }
     ],
     "options": [],
@@ -182,6 +187,11 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
       }
     ],
     "options": [],
@@ -247,6 +257,11 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
       }
     ],
     "options": [],
@@ -312,6 +327,11 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
       }
     ],
     "options": [],
@@ -440,6 +460,11 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
       }
     ],
     "options": [],
@@ -697,6 +722,11 @@
         "type": "text"
       },
       {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
+      },
+      {
         "name": "avatar",
         "type": "avatar"
       }
@@ -760,6 +790,11 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
       }
     ],
     "options": [],
@@ -821,6 +856,11 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_text_field_repeat",
+        "type": "text",
+        "repeatable": 1
       }
     ],
     "options": [],
@@ -890,10 +930,6 @@
       {
         "name": "permalink",
         "type": "slug"
-      },
-      {
-        "name": "test_text_field",
-        "type": "test"
       },
       {
         "name": "author",

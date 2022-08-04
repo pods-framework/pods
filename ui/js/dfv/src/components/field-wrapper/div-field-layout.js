@@ -23,7 +23,7 @@ const DivFieldLayout = ( {
 			<div className="pods-field-option__field">
 				<div className={ dfvContainerClass }>
 					{ inputComponent }
-					{ validationMessagesComponent ? validationMessagesComponent : undefined }
+					{ validationMessagesComponent }
 				</div>
 
 				{ descriptionComponent ? descriptionComponent : undefined }

@@ -7,7 +7,7 @@ import { omit } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { registerGenericStore } from '@wordpress/data';
+import { register } from '@wordpress/data';
 
 /**
  * Pods dependencies
@@ -52,16 +52,15 @@ const initStore = ( initialState, storeKey ) => {
 	}, {} );
 
 	const genericStore = {
-		getSelectors() {
-			return mappedSelectors;
-		},
-		getActions() {
-			return mappedActions;
-		},
-		subscribe: reduxStore.subscribe,
+		name: storeKey,
+		instantiate: () => ( {
+			getSelectors: () => mappedSelectors,
+			getActions: () => mappedActions,
+			subscribe: reduxStore.subscribe,
+		} ),
 	};
 
-	registerGenericStore( storeKey, genericStore );
+	register( genericStore );
 
 	return storeKey;
 };

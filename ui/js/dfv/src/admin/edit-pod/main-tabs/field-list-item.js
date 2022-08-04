@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { omit } from 'lodash';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -21,6 +19,8 @@ import SettingsModal from './settings-modal';
 import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import './field-list-item.scss';
 
@@ -49,6 +49,12 @@ export const FieldListItem = ( props ) => {
 		cloneField,
 		deleteField,
 		removeFieldFromGroup,
+		isDragging,
+		isOverlay,
+		style = {},
+		draggableAttributes = {},
+		draggableListeners = {},
+		draggableSetNodeRef = () => {},
 	} = props;
 
 	const {
@@ -65,20 +71,6 @@ export const FieldListItem = ( props ) => {
 
 	const [ showEditFieldSettings, setShowEditFieldSettings ] = useState( false );
 
-	const {
-		attributes,
-		listeners,
-		setNodeRef,
-		transform,
-		transition,
-		isDragging,
-	} = useSortable( { id: id.toString() } );
-
-	const style = {
-		transform: CSS.Translate.toString( transform ),
-		transition,
-	};
-
 	const handleKeyPress = ( event ) => {
 		if ( event.charCode === ENTER_KEY ) {
 			event.stopPropagation();
@@ -93,12 +85,22 @@ export const FieldListItem = ( props ) => {
 
 	const onEditFieldCancel = ( event ) => {
 		event.stopPropagation();
+
 		setShowEditFieldSettings( false );
+
+		if ( ! resetFieldSaveStatus ) {
+			return;
+		}
+
 		resetFieldSaveStatus( name );
 	};
 
 	const onEditFieldSave = ( updatedOptions = {} ) => ( event ) => {
 		event.stopPropagation();
+
+		if ( ! saveField ) {
+			return;
+		}
 
 		saveField(
 			podID,
@@ -135,6 +137,10 @@ export const FieldListItem = ( props ) => {
 	}, [ saveStatus ] );
 
 	useEffect( () => {
+		if ( ! removeFieldFromGroup ) {
+			return;
+		}
+
 		// After the field deletion is finished, remove the field from its group.
 		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
 			removeFieldFromGroup();
@@ -144,52 +150,28 @@ export const FieldListItem = ( props ) => {
 	const classes = classnames(
 		'pods-field_wrapper',
 		isDragging && 'pods-field_wrapper--dragging',
+		isOverlay && 'pods-field_wrapper--overlay',
 		hasMoved && 'pods-field_wrapper--unsaved',
 		isDeleting && 'pods-field_wrapper--deleting',
 		hasDeleteFailed && 'pods-field_wrapper--errored',
 	);
 
+	const isRepeatable = toBool( field?.repeatable );
+
 	return (
 		<div
-			ref={ setNodeRef }
+			ref={ draggableSetNodeRef }
 			className="pods-field_outer-wrapper"
-			style={ style }
+			style={ style || {} }
 		>
 			<div className={ classes }>
-				{ showEditFieldSettings && (
-					<SettingsModal
-						storeKey={ storeKey }
-						podType={ podType }
-						podName={ podName }
-						optionsPod={ editFieldPod }
-						selectedOptions={ field }
-						title={ sprintf(
-							// @todo Zack: Make these into elements we can style the parent pod / group label differently.
-							/* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
-							__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
-							podLabel,
-							groupLabel,
-							label
-						) }
-						isSaving={ saveStatus === SAVE_STATUSES.SAVING }
-						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
-						errorMessage={
-							saveMessage ||
-							__( 'There was an error saving the field, please try again.', 'pods' )
-						}
-						saveButtonText={ __( 'Save Field', 'pods' ) }
-						cancelEditing={ onEditFieldCancel }
-						save={ onEditFieldSave }
-					/>
-				) }
-
 				<div
 					className="pods-field pods-field_handle"
 					aria-label="drag"
 					// eslint-disable-next-line react/jsx-props-no-spreading
-					{ ...listeners }
+					{ ...draggableListeners }
 					// eslint-disable-next-line react/jsx-props-no-spreading
-					{ ...attributes }
+					{ ...draggableAttributes }
 				>
 					<Dashicon icon="menu" />
 				</div>
@@ -206,7 +188,7 @@ export const FieldListItem = ( props ) => {
 						{ required && ( <span className="pods-field_required">&nbsp;*</span> ) }
 					</span>
 
-					<div className="pods-field_id"> id = { id }</div>
+					<div className="pods-field_id"> [id = { id }]</div>
 
 					{ hasDeleteFailed ? (
 						<div className="pods-field_controls-container__error">
@@ -221,23 +203,38 @@ export const FieldListItem = ( props ) => {
 						>
 							{ __( 'Edit', 'pods' ) }
 						</button>
-						|
-						<button
-							className="pods-field_button pods-field_duplicate"
-							onClick={ ( e ) => {
-								e.stopPropagation();
-								cloneField( typeObject.type );
-							} }
-						>
-							{ __( 'Duplicate', 'pods' ) }
-						</button>
-						|
-						<button
-							className="pods-field_button pods-field_delete"
-							onClick={ onDeleteFieldClick }
-						>
-							{ __( 'Delete', 'pods' ) }
-						</button>
+
+						{ cloneField ? (
+							<>
+								|
+								<button
+									className="pods-field_button pods-field_duplicate"
+									onClick={ ( e ) => {
+										if ( ! typeObject ) {
+											return;
+										}
+
+										e.stopPropagation();
+
+										cloneField( typeObject.type );
+									} }
+								>
+									{ __( 'Duplicate', 'pods' ) }
+								</button>
+							</>
+						) : null }
+
+						{ deleteField ? (
+							<>
+								|
+								<button
+									className="pods-field_button pods-field_delete"
+									onClick={ onDeleteFieldClick }
+								>
+									{ __( 'Delete', 'pods' ) }
+								</button>
+							</>
+						) : null }
 					</div>
 				</div>
 
@@ -253,6 +250,9 @@ export const FieldListItem = ( props ) => {
 
 				<div className="pods-field pods-field_type">
 					{ typeObject?.label }
+					{ isRepeatable && (
+						<span className="pods-field_repeatable"> ({ __( 'repeatable', 'pods' ) })</span>
+					) }
 					{ typeObject?.type && (
 						<div className="pods-field_id"> [type = { typeObject.type }]</div>
 					) }
@@ -264,6 +264,33 @@ export const FieldListItem = ( props ) => {
 					) }
 				</div>
 			</div>
+
+			{ ( showEditFieldSettings && editFieldPod ) ? (
+				<SettingsModal
+					storeKey={ storeKey }
+					podType={ podType }
+					podName={ podName }
+					optionsPod={ editFieldPod }
+					selectedOptions={ field }
+					title={ sprintf(
+						// @todo Zack: Make these into elements we can style the parent pod / group label differently.
+						/* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
+						__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
+						podLabel,
+						groupLabel,
+						label
+					) }
+					isSaving={ saveStatus === SAVE_STATUSES.SAVING }
+					hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
+					errorMessage={
+						saveMessage ||
+						__( 'There was an error saving the field, please try again.', 'pods' )
+					}
+					saveButtonText={ __( 'Save Field', 'pods' ) }
+					cancelEditing={ onEditFieldCancel }
+					save={ onEditFieldSave }
+				/>
+			) : null }
 		</div>
 	);
 };
@@ -275,25 +302,38 @@ FieldListItem.propTypes = {
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
-	saveStatus: PropTypes.string,
-	deleteStatus: PropTypes.string,
-	saveMessage: PropTypes.string,
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
-	typeObject: PropTypes.object.isRequired,
-	relatedObject: PropTypes.object,
-	editFieldPod: PropTypes.object.isRequired,
-	hasMoved: PropTypes.bool.isRequired,
+	hasMoved: PropTypes.bool,
 
-	saveField: PropTypes.func.isRequired,
-	resetFieldSaveStatus: PropTypes.func.isRequired,
-	cloneField: PropTypes.func.isRequired,
-	deleteField: PropTypes.func.isRequired,
-	removeFieldFromGroup: PropTypes.func.isRequired,
+	// Props from withSelect:
+	editFieldPod: PropTypes.object,
+	relatedObject: PropTypes.object,
+	typeObject: PropTypes.object.isRequired,
+	saveStatus: PropTypes.string,
+	deleteStatus: PropTypes.string,
+	saveMessage: PropTypes.string,
+
+	// Props from withDispatch:
+	saveField: PropTypes.func,
+	resetFieldSaveStatus: PropTypes.func,
+	cloneField: PropTypes.func,
+	deleteField: PropTypes.func,
+	removeFieldFromGroup: PropTypes.func,
+
+	// Props from the DraggableFieldItem wrapper:
+	isDragging: PropTypes.bool,
+	style: PropTypes.object,
+	draggableAttributes: PropTypes.object,
+	draggableListeners: PropTypes.object,
+	draggableSetNodeRef: PropTypes.func,
+
+	// From FieldGroups (as drag overlay):
+	isOverlay: PropTypes.bool,
 };
 
-export default compose( [
+const ConnectedFieldListItem = compose( [
 	withSelect( ( select, ownProps ) => {
 		const {
 			field = {},
@@ -343,3 +383,5 @@ export default compose( [
 		};
 	} ),
 ] )( FieldListItem );
+
+export default ConnectedFieldListItem;

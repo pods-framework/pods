@@ -201,8 +201,16 @@ class PodsField_Link extends PodsField_Website {
 		$form_field_type = PodsForm::$field_type;
 		$field_type      = 'link';
 
+		$value = $this->normalize_value_for_input( $value, $options );
+
 		// Ensure proper format
-		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $repeatable_value ) {
+				$value[ $k ] = $this->pre_save( $repeatable_value, $id, $name, $options, null, $pod );
+			}
+		} else {
+			$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+		}
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 	}

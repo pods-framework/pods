@@ -56,9 +56,9 @@ const PodsDFVApp = ( {
 	// We don't *really* render anything in the main app, all
 	// the fields get set up in Portals.
 	return (
-		<>
+		<React.StrictMode>
 			{ fieldComponents }
-		</>
+		</React.StrictMode>
 	);
 };
 

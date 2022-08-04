@@ -241,13 +241,22 @@ class PodsMeta {
 	 *
 	 */
 	public static function enqueue() {
+		$type_map = [
+			'post_type'  => 'post_types',
+			'taxonomies' => 'taxonomies',
+			'setting'    => 'settings',
+		];
 
 		foreach ( self::$queue as $type => $objects ) {
-			foreach ( $objects as $pod_name => $pod ) {
-				pods_transient_set( 'pods_pod_' . $pod_name, $pod, WEEK_IN_SECONDS );
+			if ( isset( $type_map[ $type ] ) ) {
+				$type = $type_map[ $type ];
 			}
 
-			self::${$type} = array_merge( self::${$type}, $objects );
+			foreach ( $objects as $name => $object ) {
+				self::${$type}[ $name ] = $object;
+			}
+
+			unset( self::$queue[ $type ] );
 		}
 	}
 
@@ -1486,6 +1495,8 @@ class PodsMeta {
 
 		$meta_nonce = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_media' ), 'hidden' );
 
+		$did_init = false;
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -1498,8 +1509,6 @@ class PodsMeta {
 			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
 				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'media' );
 			}
-
-			$did_init = false;
 
 			foreach ( $group['fields'] as $field ) {
 				if ( ! pods_permission( $field ) ) {
@@ -3611,11 +3620,13 @@ class PodsMeta {
 
 		// Return first created by Pods, save extended for later
 		foreach ( $objects as $pod ) {
-			if ( $object_name === $pod['object'] ) {
+			$pod_object = pods_v( 'object', $pod );
+
+			if ( $object_name === $pod_object ) {
 				$recheck[] = $pod;
 			}
 
-			if ( '' === $pod['object'] && $object_name === $pod['name'] ) {
+			if ( '' === $pod_object && $object_name === $pod['name'] ) {
 				return $pod;
 			}
 		}

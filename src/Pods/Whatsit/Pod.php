@@ -128,6 +128,28 @@ class Pod extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a table-based Pod.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a table-based Pod.
+	 */
+	public function is_table_based() {
+		return 'table' === $this->get_storage() || 'pod' === $this->get_type();
+	}
+
+	/**
+	 * Determine whether this is a meta-based Pod.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a meta-based Pod.
+	 */
+	public function is_meta_based() {
+		return 'meta' === $this->get_storage();
+	}
+
+	/**
 	 * Determine whether the Pod is an extending an existing content type.
 	 *
 	 * @since 2.8.4

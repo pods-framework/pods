@@ -1,8 +1,10 @@
 <?php
 /**
- * Name: Migrate: Packages
+ * ID: migrate-packages
  *
- * Menu Name: Migrate Packages
+ * Name: Import/Export Packages
+ *
+ * Menu Name: Import/Export Packages
  *
  * Description: Import/Export your Pods, Fields, and other settings from any Pods site; Includes an API to Import/Export Packages via PHP
  *
@@ -197,7 +199,13 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		self::$package_meta_version = $data['meta']['version'];
 
-		$found = array();
+		$found = [];
+
+		if ( isset( $data['settings'] ) && is_array( $data['settings'] ) ) {
+			self::import_settings( $data['settings'] );
+
+			$found['settings']['all'] = __( 'All Settings', 'pods' );
+		}//end if
 
 		if ( isset( $data['pods'] ) && is_array( $data['pods'] ) ) {
 			foreach ( $data['pods'] as $pod_data ) {
@@ -279,6 +287,17 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Handle importing of the settings.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $data The import data.
+	 */
+	public static function import_settings( $data ) {
+		pods_update_settings( $data );
 	}
 
 	/**
@@ -857,10 +876,40 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		self::$api = pods_api();
 
+		$setting_keys = pods_v( 'settings', $params );
 		$pod_ids      = pods_v( 'pods', $params );
 		$template_ids = pods_v( 'templates', $params );
 		$page_ids     = pods_v( 'pages', $params );
 		$helper_ids   = pods_v( 'helpers', $params );
+
+		if ( ! empty( $setting_keys ) ) {
+			$export['settings'] = [];
+
+			if ( in_array( 'all', $setting_keys, true ) ) {
+				$export['settings'] = pods_get_settings();
+
+				if ( isset( $export['settings']['wisdom_registered_setting'] ) ) {
+					unset( $export['settings']['wisdom_registered_setting'] );
+				}
+			} else {
+				foreach ( $setting_keys as $setting_key ) {
+					$setting = pods_get_setting( $setting_key );
+
+					if ( null !== $setting ) {
+						$export['settings'][ $setting_key ] = $setting;
+					}
+				}
+			}
+
+			/**
+			 * Allow filtering the list of settings being exported to prevent potentially sensitive third-party settings from being exposed.
+			 *
+			 * @since 2.9.0
+			 *
+			 * @param array $settings The list of settings being exported.
+			 */
+			$export['settings'] = apply_filters( 'pods_migrate_packages_export_settings', $export['settings'] );
+		}
 
 		if ( ! empty( $pod_ids ) ) {
 			$api_params = [];

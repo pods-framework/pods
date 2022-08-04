@@ -25,6 +25,7 @@ const FieldGroup = ( props ) => {
 		podID,
 		podLabel,
 		group,
+		fieldsMovedSinceLastSave,
 		isExpanded,
 		hasMoved,
 		saveStatus,
@@ -56,7 +57,12 @@ const FieldGroup = ( props ) => {
 		transform,
 		transition,
 		isDragging,
-	} = useSortable( { id: groupName } );
+	} = useSortable( {
+		id: groupName,
+		data: {
+			type: 'group',
+		},
+	} );
 
 	const style = {
 		transform: CSS.Translate.toString( transform ),
@@ -180,7 +186,7 @@ const FieldGroup = ( props ) => {
 
 					{ !! groupID && (
 						<span className="pods-field-group_name__id">
-							{ `\u00A0 id = ${ groupID }` }
+							{ `\u00A0 [id = ${ groupID }]` }
 						</span>
 					) }
 				</div>
@@ -257,6 +263,7 @@ const FieldGroup = ( props ) => {
 					groupName={ groupName }
 					groupID={ groupID }
 					groupLabel={ groupLabel }
+					fieldsMovedSinceLastSave={ fieldsMovedSinceLastSave }
 				/>
 			) }
 		</div>
@@ -270,6 +277,7 @@ FieldGroup.propTypes = {
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	group: GROUP_PROP_TYPE_SHAPE,
+	fieldsMovedSinceLastSave: PropTypes.array.isRequired,
 
 	index: PropTypes.number.isRequired,
 	isExpanded: PropTypes.bool.isRequired,

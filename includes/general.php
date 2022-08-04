@@ -5,12 +5,12 @@
 
 use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
+use Pods\Config_Handler;
+use Pods\Permissions;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
-use Pods\Permissions;
-use Pods\Static_Cache;
 
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
@@ -343,11 +343,23 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
+		static $timer;
+
+		$now = microtime( true );
+
+		if ( ! $timer ) {
+			$timer = $now;
+		}
+
+		$timing = $now - $timer;
+
 		if ( ! is_string( $debug ) ) {
 			$debug = var_export( $debug, true );
 		}
 
-		codecept_debug( 'Pods Debug: ' . $debug );
+		codecept_debug( 'Pods Debug: ' . $debug . ' [debug timing: ' . number_format( $timing, 4 ) . 's]' );
+
+		$timer = $now;
 
 		return;
 	}
@@ -368,11 +380,23 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		var_dump( $prefix );
 	}
 
+	$debug_line_number = 0;
+
 	if ( '_null' !== $debug ) {
 		var_dump( $debug );
+
+		$debug_line_number = __LINE__ - 2;
 	} else {
 		var_dump( 'Pods Debug #' . $pods_debug );
+
+		$debug_line_number = __LINE__ - 2;
 	}
+
+	$debug_line_check = sprintf(
+		'<small>%s:%s:</small>',
+		__FILE__,
+		$debug_line_number
+	);
 
 	$debug = ob_get_clean();
 
@@ -382,6 +406,19 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		}
 
 		$debug = '<pre>' . $debug . '</pre>';
+	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		if ( ! empty( $backtrace[0] ) ) {
+			$debug_line_replace = sprintf(
+				'<small>%s:%s:</small>',
+				$backtrace[0]['file'],
+				$backtrace[0]['line']
+			);
+
+			$debug = str_replace( $debug_line_check, $debug_line_replace, $debug );
+		}
 	}
 
 	$debug = '<e>' . $debug;
@@ -2507,31 +2544,76 @@ function pods_template_part( $template, $data = null, $return = false ) {
 }
 
 /**
- * Add a new Pod outside of the DB
- *
- * @see   PodsMeta::register
+ * Add a new Pod outside of the DB.
  *
  * @param string $type   The pod type ('post_type', 'taxonomy', 'media', 'user', 'comment')
  * @param string $name   The pod name
- * @param array  $object (optional) Pod array, including any 'fields' arrays
+ * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
  *
  * @return array|boolean Pod data or false if unsuccessful
  * @since 2.1.0
  */
 function pods_register_type( $type, $name, $object = null ) {
 	if ( empty( $object ) ) {
-		$object = array();
+		$object = [];
 	}
 
 	if ( ! empty( $name ) ) {
 		$object['name'] = $name;
 	}
 
-	return pods_meta()->register( $type, $object );
+	if ( ! empty( $type ) ) {
+		$object['type'] = $type;
+	}
+
+	if ( ! isset( PodsMeta::$queue[ $object['type'] ] ) ) {
+		PodsMeta::$queue[ $object['type'] ] = [];
+	}
+
+	$groups = [];
+	$fields = [];
+
+	if ( isset( $object['groups'] ) ) {
+		$groups = $object['groups'];
+
+		unset( $object['groups'] );
+	}
+
+	if ( isset( $object['fields'] ) ) {
+		$fields = $object['fields'];
+
+		unset( $object['fields'] );
+	}
+
+	$registered = pods_register_object( $object, 'pod' );
+
+	if ( true === $registered ) {
+		try {
+			$object_collection = Store::get_instance();
+
+			$registered_object = $object_collection->get_object( 'pod/' . $object['name'] );
+
+			if ( $registered_object ) {
+				PodsMeta::$queue[ $object['type'] ][ $object['name'] ] = $registered_object;
+			}
+		} catch ( Exception $exception ) {
+			return new WP_Error( 'pods-register-type-error', $exception->getMessage() );
+		}
+	}
+
+	foreach ( $groups as $group ) {
+		pods_register_group( $group, $object['name'] );
+	}
+
+	foreach ( $fields as $field ) {
+		pods_register_field( $object['name'], $field['name'], $field );
+	}
+
+	return $registered;
 }
 
 /**
- * Add a new Pod field outside of the DB
+ * Add a new Pod field outside of the DB.
  *
  * @see   PodsMeta::register_field
  *
@@ -2539,19 +2621,23 @@ function pods_register_type( $type, $name, $object = null ) {
  * @param string       $name   The name of the Pod
  * @param array        $object (optional) Pod array, including any 'fields' arrays
  *
- * @return array|boolean Field data or false if unsuccessful
+ * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
  * @since 2.1.0
  */
 function pods_register_field( $pod, $name, $field = null ) {
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
 	if ( empty( $field ) ) {
-		$field = array();
+		$field = [];
 	}
 
 	if ( ! empty( $name ) ) {
 		$field['name'] = $name;
 	}
 
-	return pods_meta()->register_field( $pod, $field );
+	$field['parent'] = 'pod/' . $pod_name;
+
+	return pods_register_object( $field, 'field' );
 }
 
 /**
@@ -2594,11 +2680,18 @@ function pods_register_related_object( $name, $label, $options = null ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_object( array $object, $type ) {
-	$object['object_type']  = $type;
-	$object['object_storage_type'] = 'collection';
+	$object['object_type'] = $type;
 
-	$object_collection = Store::get_instance();
-	$object_collection->register_object( $object );
+	if ( ! isset( $object['object_storage_type'] ) || 'post_type' === $object['object_storage_type'] ) {
+		$object['object_storage_type'] = 'collection';
+	}
+
+	try {
+		$object_collection = Store::get_instance();
+		$object_collection->register_object( $object );
+	} catch ( Exception $exception ) {
+		return new WP_Error( 'pods-register-object-error', $exception->getMessage() );
+	}
 
 	return true;
 }
@@ -2614,13 +2707,21 @@ function pods_register_object( array $object, $type ) {
  *
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
-function pods_register_group( array $group, $pod, array $fields ) {
-	$group['parent'] = 'pod/' . $pod;
+function pods_register_group( array $group, $pod, array $fields = [] ) {
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
+	$group['parent'] = 'pod/' . $pod_name;
+
+	if ( isset( $group['fields'] ) ) {
+		$fields = $group['fields'];
+
+		unset( $group['fields'] );
+	}
 
 	pods_register_object( $group, 'group' );
 
 	foreach ( $fields as $field ) {
-		pods_register_group_field( $field, $group['name'], $pod );
+		pods_register_group_field( $field, $group['name'], $pod_name );
 	}
 
 	return true;
@@ -2638,7 +2739,9 @@ function pods_register_group( array $group, $pod, array $fields ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_group_field( array $field, $group, $pod ) {
-	$field['parent'] = 'pod/' . $pod;
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
+	$field['parent'] = 'pod/' . $pod_name;
 	$field['group']  = $group;
 
 	pods_register_object( $field, 'field' );
@@ -2710,6 +2813,79 @@ function pods_register_block_collection( array $collection ) {
 	$object_collection->register_object( $collection );
 
 	return true;
+}
+
+/**
+ * Register a custom config file to use with Pods configs.
+ *
+ * @since TBD
+ *
+ * @param string $file        The config file to use.
+ * @param string $config_type The config file type to use (defaults to json).
+ */
+function pods_register_config_file( $file, $config_type = 'json' ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_file( $file, $config_type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config path to use with Pods configs.
+ *
+ * @since TBD
+ *
+ * @param string $path The config path to use.
+ */
+function pods_register_config_path( $path ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_path( $path );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config type to use with Pods configs.
+ *
+ * For custom config types, use the pods_config_parse_$type filter along with this to support other format parsing.
+ *
+ * Default support for json and yml can be filtered with the pods_config_parse filter to override them.
+ *
+ * @since TBD
+ *
+ * @param string $type The config type to use.
+ */
+function pods_register_config_type( $type ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_config_type( $type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config item type to use with Pods configs.
+ *
+ * @since TBD
+ *
+ * @param string $item_type The config path to use.
+ */
+function pods_register_config_item_type( $item_type ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_config_item_type( $item_type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
 }
 
 /**

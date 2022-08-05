@@ -1335,6 +1335,11 @@ class PodsField_File extends PodsField {
 			return null;
 		}
 
+		// Map images to image for mime type comparisons.
+		if ( 'images' === $media_type ) {
+			$media_type = 'image';
+		}
+
 		if ( ! $other_extensions ) {
 			$other_extensions = [];
 		} elseif ( ! is_array( $other_extensions ) ) {

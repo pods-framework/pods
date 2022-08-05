@@ -177,14 +177,27 @@ class PodsField_File extends PodsField {
 				'type'       => 'pick',
 				'data'       => apply_filters(
 					"pods_form_ui_field_{$type}_type_options",
-					array(
-						'images' => __( 'Images (jpg, png, gif, webp, and others supported by WP)', 'pods' ),
-						'video'  => __( 'Video (mpg, mov, flv, mp4, and others supported by WP)', 'pods' ),
-						'audio'  => __( 'Audio (mp3, m4a, wav, wma, and others supported by WP)', 'pods' ),
-						'text'   => __( 'Text (txt, csv, tsv, rtx)', 'pods' ),
-						'any'    => __( 'Any Type (no restriction)', 'pods' ),
-						'other'  => __( 'Other (customize allowed extensions)', 'pods' ),
-					)
+					[
+						'Images' => [
+							'images'     => __( 'Images (ONLY jpg, jpeg, png, gif, and webp)', 'pods' ),
+							'images-any' => __( 'Images - Any (jpg, jpeg, png, gif, webp, and others supported by WP)', 'pods' ),
+						],
+						'Video' => [
+							'video'      => __( 'Video (ONLY mpg, mov, flv, and mp4)', 'pods' ),
+							'video-any'  => __( 'Video - Any (mpg, mov, flv, mp4, and others supported by WP)', 'pods' ),
+						],
+						'Audio' => [
+							'audio'      => __( 'Audio (ONLY mp3, m4a, wav, and wma)', 'pods' ),
+							'audio-any'  => __( 'Audio - Any (mp3, m4a, wav, wma, and others supported by WP)', 'pods' ),
+						],
+						'Text' => [
+							'text'       => __( 'Text (txt, csv, tsv, rtx)', 'pods' ),
+						],
+						'More Options' => [
+							'any'        => __( 'Any Type (no restriction)', 'pods' ),
+							'other'      => __( 'Other (customize allowed extensions)', 'pods' ),
+						],
+					]
 				),
 				'pick_show_select_text' => 0,
 				'dependency' => true,
@@ -200,7 +213,12 @@ class PodsField_File extends PodsField {
 			static::$type . '_field_template'         => array(
 				'label'      => __( 'List Style', 'pods' ),
 				'help'       => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
-				'depends-on' => array( static::$type . '_type' => 'images' ),
+				'depends-on' => array(
+					static::$type . '_type' => [
+						'images',
+						'images-any',
+					]
+				),
 				'default'    => apply_filters( "pods_form_ui_field_{$type}_template_default", 'rows' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
@@ -234,7 +252,12 @@ class PodsField_File extends PodsField {
 			static::$type . '_wp_gallery_output'      => array(
 				'label'      => __( 'Output as a WP Gallery', 'pods' ),
 				'help'       => sprintf( __( '<a href="%s" target="_blank" rel="noopener noreferrer">Click here for more info</a>', 'pods' ), 'https://wordpress.org/support/article/inserting-images-into-posts-and-pages/' ),
-				'depends-on' => array( static::$type . '_type' => 'images' ),
+				'depends-on' => [
+					static::$type . '_type' => [
+						'images',
+						'images-any',
+					]
+				],
 				'dependency' => true,
 				'type'       => 'boolean',
 			),
@@ -420,7 +443,7 @@ class PodsField_File extends PodsField {
 		$options[ $args->type . '_type' ] = $limit_file_type;
 
 		// Non-image file types are forced to rows template right now.
-		if ( 'images' !== $limit_file_type ) {
+		if ( ! in_array( $limit_file_type, [ 'images', 'images-any' ], true ) ) {
 			$file_field_template = 'rows';
 		}
 
@@ -482,7 +505,7 @@ class PodsField_File extends PodsField {
 				'filters'             => [
 					[
 						'title'      => __( 'Allowed Files', 'pods' ),
-						'extensions' => '*',
+						'extensions' => $limit_extensions,
 					],
 				],
 				'multipart'           => true,
@@ -1091,7 +1114,7 @@ class PodsField_File extends PodsField {
 					} elseif ( extension_loaded( 'fileinfo' ) ) {
 						// Use finfo to get the mime type information.
 						$finfo_resource = finfo_open( FILEINFO_MIME_TYPE );
-						$real_mime      = finfo_file( $finfo_resource, $file );
+						$real_mime      = finfo_file( $finfo_resource, $file['name'] );
 						finfo_close( $finfo_resource );
 					} else {
 						// No other validation we can do, just make the mime type match to bypass the next check.
@@ -1290,7 +1313,45 @@ class PodsField_File extends PodsField {
 
 		$other_extensions = [];
 
-		if ( 'other' === $media_type ) {
+		if ( 'images' === $media_type ) {
+			// Limit to basic images.
+			$media_type       = 'other';
+			$other_extensions = [
+				'jpg',
+				'jpeg',
+				'png',
+				'gif',
+				'webp',
+			];
+		} elseif ( 'video' === $media_type ) {
+			// Limit to basic video.
+			$media_type       = 'other';
+			$other_extensions = [
+				'mpg',
+				'mov',
+				'flv',
+				'mp4',
+			];
+		} elseif ( 'audio' === $media_type ) {
+			// Limit to basic audio.
+			$media_type       = 'other';
+			$other_extensions = [
+				'mp3',
+				'm4a',
+				'wav',
+				'wma',
+			];
+		} elseif ( 'text' === $media_type ) {
+			// Limit to basic text.
+			$media_type       = 'other';
+			$other_extensions = [
+				'txt',
+				'csv',
+				'tsv',
+				'rtx'
+			];
+		} elseif ( 'other' === $media_type ) {
+			// Allow specifying allowed extensions.
 			$other_extensions = pods_v( $field['type'] . '_allowed_extensions', $field, '', true );
 
 			$other_extensions = trim(
@@ -1314,6 +1375,14 @@ class PodsField_File extends PodsField {
 				),
 				', '
 			);
+		} elseif ( false !== strpos( $media_type, '-any' ) ) {
+			// Handle cases where we want to support any of a specific mime type grouping.
+			$media_type = str_replace( '-any', '', $media_type );
+
+			// Images should map to 'image/' mime type.
+			if ( 'images' === $media_type ) {
+				$media_type = 'image';
+			}
 		}
 
 		return $this->get_file_mime_types_for_media_type( $media_type, $other_extensions );
@@ -1335,11 +1404,6 @@ class PodsField_File extends PodsField {
 			return null;
 		}
 
-		// Map images to image for mime type comparisons.
-		if ( 'images' === $media_type ) {
-			$media_type = 'image';
-		}
-
 		if ( ! $other_extensions ) {
 			$other_extensions = [];
 		} elseif ( ! is_array( $other_extensions ) ) {
@@ -1350,26 +1414,7 @@ class PodsField_File extends PodsField {
 
 		$file_extensions = [];
 
-		// This is a hardcoded limitation to prevent non-basic text extensions from being used (like .html).
-		if ( 'text' === $media_type ) {
-			$media_type       = 'other';
-			$other_extensions = 'txt,csv,tsv,rtx';
-		}
-
-		if ( 'other' !== $media_type ) {
-			// Handle specific media type as a mime type prefix like (image/, audio/, video/, etc).
-			foreach ( $mime_types as $extension => $mime_type ) {
-				if ( 0 !== strpos( $mime_type, $media_type . '/' ) ) {
-					continue;
-				}
-
-				$extensions = explode( '|', $extension );
-
-				foreach ( $extensions as $file_extension ) {
-					$file_extensions[ $file_extension ] = $mime_type;
-				}
-			}
-		} else {
+		if ( $other_extensions ) {
 			// Handle custom list of extensions and map them to mime types if we can.
 			foreach ( $other_extensions as $other_extension ) {
 				$found = false;
@@ -1390,6 +1435,19 @@ class PodsField_File extends PodsField {
 
 				if ( ! $found ) {
 					$file_extensions[ $other_extension ] = '';
+				}
+			}
+		} elseif ( 'other' !== $media_type ) {
+			// Handle specific media type as a mime type prefix like (image/, audio/, video/, etc).
+			foreach ( $mime_types as $extension => $mime_type ) {
+				if ( 0 !== strpos( $mime_type, $media_type . '/' ) ) {
+					continue;
+				}
+
+				$extensions = explode( '|', $extension );
+
+				foreach ( $extensions as $file_extension ) {
+					$file_extensions[ $file_extension ] = $mime_type;
 				}
 			}
 		}

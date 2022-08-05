@@ -1051,7 +1051,7 @@ class PodsField_File extends PodsField {
 		if ( 'upload' === $method ) {
 			$file = $_FILES['Filedata'];
 
-			$limit_size = pods_v( $field['type'] . '_restrict_filesize', $field['options'] );
+			$limit_size = pods_v( $field['type'] . '_restrict_filesize', $field );
 
 			if ( ! empty( $limit_size ) ) {
 				if ( false !== stripos( $limit_size, 'GB' ) ) {
@@ -1075,7 +1075,7 @@ class PodsField_File extends PodsField {
 				if ( 0 < $limit_size && $limit_size < $file['size'] ) {
 					$error = sprintf(
 						__( 'Error: File size too large, max size is %s', 'pods' ),
-						pods_v( $field['type'] . '_restrict_filesize', $field['options'] )
+						pods_v( $field['type'] . '_restrict_filesize', $field )
 					);
 
 					pods_error( '<div style="color:#FF0000">' . $error . '</div>' );
@@ -1139,10 +1139,10 @@ class PodsField_File extends PodsField {
 			if ( null === $custom_handler ) {
 
 				// Start custom directory.
-				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field['options'], 'wp' );
+				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field, 'wp' );
 
 				if ( 'wp' !== $upload_dir ) {
-					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
+					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field, '' );
 					$context_pod = null;
 
 					if ( $params->item_id ) {
@@ -1309,7 +1309,7 @@ class PodsField_File extends PodsField {
 	 *                    list of extensions, mime types, and mapping of extensions to mime types.
 	 */
 	public function get_file_mime_types_for_field( $field ) {
-		$media_type  = pods_v( $field['type'] . '_type', $field['options'], 'images', true );
+		$media_type  = pods_v( $field['type'] . '_type', $field, 'images', true );
 
 		$other_extensions = [];
 

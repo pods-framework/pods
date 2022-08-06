@@ -97,6 +97,45 @@ class PodsField_File extends PodsField {
 				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
+			static::$type . '_type'                   => array(
+				'label'      => __( 'Restrict File Types', 'pods' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
+				'type'       => 'pick',
+				'data'       => apply_filters(
+					"pods_form_ui_field_{$type}_type_options",
+					[
+						'Images' => [
+							'images'     => __( 'Images (ONLY jpg, jpeg, png, gif, and webp)', 'pods' ),
+							'images-any' => __( 'Images - Any (jpg, jpeg, png, gif, webp, and others supported by WP)', 'pods' ),
+						],
+						'Video' => [
+							'video'      => __( 'Video (ONLY mpg, mov, flv, and mp4)', 'pods' ),
+							'video-any'  => __( 'Video - Any (mpg, mov, flv, mp4, and others supported by WP)', 'pods' ),
+						],
+						'Audio' => [
+							'audio'      => __( 'Audio (ONLY mp3, m4a, wav, and wma)', 'pods' ),
+							'audio-any'  => __( 'Audio - Any (mp3, m4a, wav, wma, and others supported by WP)', 'pods' ),
+						],
+						'Text' => [
+							'text'       => __( 'Text (txt, csv, tsv, rtx)', 'pods' ),
+						],
+						'More Options' => [
+							'any'        => __( 'Any Type (no restriction)', 'pods' ),
+							'other'      => __( 'Other (customize allowed extensions)', 'pods' ),
+						],
+					]
+				),
+				'pick_show_select_text' => 0,
+				'dependency' => true,
+			),
+			static::$type . '_allowed_extensions'     => array(
+				'label'       => __( 'Allowed File Extensions', 'pods' ),
+				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime type group like Images, Video, etc.', 'pods' ),
+				'depends-on'  => array( static::$type . '_type' => 'other' ),
+				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
+				'text_placeholder' => 'jpg,png,mp4,mov',
+				'type'        => 'text',
+			),
 			static::$type . '_attachment_tab'         => array(
 				'label'      => __( 'Media Library Default Tab', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
@@ -170,45 +209,6 @@ class PodsField_File extends PodsField {
 				'default'    => '',
 				'text_placeholder' => '10MB',
 				'type'       => 'text',
-			),
-			static::$type . '_type'                   => array(
-				'label'      => __( 'Restrict File Types', 'pods' ),
-				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
-				'type'       => 'pick',
-				'data'       => apply_filters(
-					"pods_form_ui_field_{$type}_type_options",
-					[
-						'Images' => [
-							'images'     => __( 'Images (ONLY jpg, jpeg, png, gif, and webp)', 'pods' ),
-							'images-any' => __( 'Images - Any (jpg, jpeg, png, gif, webp, and others supported by WP)', 'pods' ),
-						],
-						'Video' => [
-							'video'      => __( 'Video (ONLY mpg, mov, flv, and mp4)', 'pods' ),
-							'video-any'  => __( 'Video - Any (mpg, mov, flv, mp4, and others supported by WP)', 'pods' ),
-						],
-						'Audio' => [
-							'audio'      => __( 'Audio (ONLY mp3, m4a, wav, and wma)', 'pods' ),
-							'audio-any'  => __( 'Audio - Any (mp3, m4a, wav, wma, and others supported by WP)', 'pods' ),
-						],
-						'Text' => [
-							'text'       => __( 'Text (txt, csv, tsv, rtx)', 'pods' ),
-						],
-						'More Options' => [
-							'any'        => __( 'Any Type (no restriction)', 'pods' ),
-							'other'      => __( 'Other (customize allowed extensions)', 'pods' ),
-						],
-					]
-				),
-				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			static::$type . '_allowed_extensions'     => array(
-				'label'       => __( 'Allowed File Extensions', 'pods' ),
-				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime type group like Images, Video, etc.', 'pods' ),
-				'depends-on'  => array( static::$type . '_type' => 'other' ),
-				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
-				'text_placeholder' => 'jpg,png,mp4,mov',
-				'type'        => 'text',
 			),
 			static::$type . '_field_template'         => array(
 				'label'      => __( 'List Style', 'pods' ),

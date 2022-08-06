@@ -1452,6 +1452,24 @@ class PodsField_File extends PodsField {
 			}
 		}
 
+		/**
+		 * Allow filtering the file extensions allowed for a media type and other file extensions provided.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param null|array   $file_extensions  Null if any are allowed, otherwise an array with the file mime type
+		 *                                       information including the list of extensions, mime types, and mapping
+		 *                                       of extensions to mime types.
+		 * @param string       $media_type       The media type to use for looking up by mime type.
+		 * @param string|array $other_extensions The other file extensions that may have been provided.
+		 */
+		$file_extensions = apply_filters(
+			'pods_form_ui_field_file_mime_types_for_media_type',
+			$file_extensions,
+			$media_type,
+			$other_extensions
+		);
+
 		return [
 			'mime_types' => array_filter( array_unique( array_values( $file_extensions ) ) ),
 			'extensions' => array_filter( array_unique( array_keys( $file_extensions ) ) ),

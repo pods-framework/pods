@@ -204,7 +204,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_allowed_extensions'     => array(
 				'label'       => __( 'Allowed File Extensions', 'pods' ),
-				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime-type group like Images, Video, etc.', 'pods' ),
+				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime type group like Images, Video, etc.', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
 				'text_placeholder' => 'jpg,png,mp4,mov',
@@ -1393,7 +1393,7 @@ class PodsField_File extends PodsField {
 	 *
 	 * @since 2.9.0
 	 *
-	 * @param string       $media_type       The media type to use.
+	 * @param string       $media_type       The media type to use for looking up by mime type.
 	 * @param string|array $other_extensions The other file extensions that may have been provided.
 	 *
 	 * @return null|array Null if any are allowed, otherwise an array with the file mime type information including the

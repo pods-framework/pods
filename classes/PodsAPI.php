@@ -2533,7 +2533,7 @@ class PodsAPI {
 		}
 
 		// Skip if not using table storage.
-		if ( isset( $pod['storage'] ) && 'table' !== $pod['storage'] ) {
+		if ( ! isset( $pod['storage'] ) || 'table' !== $pod['storage'] ) {
 			return;
 		}
 

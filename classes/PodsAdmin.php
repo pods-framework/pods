@@ -936,7 +936,8 @@ class PodsAdmin {
 			],
 			'source'      => [
 				'label' => __( 'Source', 'pods' ),
-				'width' => '8%',
+				'width' => '10%',
+				'type'  => 'raw',
 			],
 			'storage'     => [
 				'label' => __( 'Storage Type', 'pods' ),

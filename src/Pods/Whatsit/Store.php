@@ -4,6 +4,7 @@ namespace Pods\Whatsit;
 
 use Pods\Whatsit;
 use Pods\Whatsit\Storage\Collection;
+use Pods\Whatsit\Storage\File;
 use Pods\Whatsit\Storage\Post_Type;
 
 /**
@@ -84,6 +85,7 @@ class Store {
 	public function get_default_storage_types() {
 		return [
 			'collection' => Collection::class,
+			'file'       => File::class,
 			'post_type'  => Post_Type::class,
 		];
 	}

@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Config_Handler;
 use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Wisdom_Tracker;
@@ -1199,6 +1200,9 @@ class PodsInit {
 		$args = self::object_label_fix( $args, 'post_type' );
 
 		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
+
+		$config_handler = pods_container( Config_Handler::class );
+		$config_handler->setup();
 	}
 
 	/**
@@ -1285,6 +1289,10 @@ class PodsInit {
 		}
 
 		$save_transient = ! did_action( 'pods_init' ) && ( doing_action( 'init' ) || did_action( 'init' ) );
+
+		if ( $save_transient ) {
+			PodsMeta::enqueue();
+		}
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -1842,7 +1850,8 @@ class PodsInit {
 			}
 
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				echo '<textarea cols="100" rows="24">' . esc_textarea( 'register_taxonomy( ' . var_export( $taxonomy, true ) . ', ' . var_export( $ct_post_types, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
+				echo '<h3>' . esc_html( $taxonomy ) . '</h3>';
+				echo '<textarea rows="15" style="width:100%">' . esc_textarea( 'register_taxonomy( ' . var_export( $taxonomy, true ) . ', ' . var_export( $ct_post_types, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
 			}
 
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
@@ -1894,7 +1903,8 @@ class PodsInit {
 			}
 
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				echo '<textarea cols="100" rows="24">' . esc_textarea( 'register_post_type( ' . var_export( $post_type, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
+				echo '<h3>' . esc_html( $post_type ) . '</h3>';
+				echo '<textarea rows="15" style="width:100%">' . esc_textarea( 'register_post_type( ' . var_export( $post_type, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
 			}
 
 			register_post_type( $post_type, $options );
@@ -2536,6 +2546,7 @@ class PodsInit {
 		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
 		tribe_register_provider( \Pods\Integrations\Service_Provider::class );
 		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+		tribe_register_provider( \Pods\Integrations\WPGraphQL\Service_Provider::class );
 
 		// Add WP-CLI commands.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {

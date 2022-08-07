@@ -2,6 +2,9 @@
 /**
  * @package Pods\Global\Functions\Data
  */
+
+use Pods\Whatsit\Field;
+
 /**
  * Filter input and return sanitized output
  *
@@ -1916,6 +1919,24 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	}
 
 	$original_value = $value;
+
+	$separator_excluded = [
+		'avatar',
+		'code',
+		'link',
+		'oembed',
+		'paragraph',
+		'website',
+		'wysiwyg',
+	];
+
+	$basic_separator = $params->field && in_array( $params->field['type'], $separator_excluded, true );
+
+	if ( $basic_separator ) {
+		$params->separator = ' ';
+		$params->and       = ' ';
+		$params->serial    = false;
+	}
 
 	if ( in_array( $params->separator, array( '', null ), true ) ) {
 		$params->separator = ', ';

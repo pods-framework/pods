@@ -838,12 +838,7 @@ class PodsComponents {
 	 * @param array $settings Component settings.
 	 */
 	public function update_settings( $settings ) {
-
-		if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
-			$settings = wp_json_encode( $settings, JSON_UNESCAPED_UNICODE );
-		} else {
-			$settings = wp_json_encode( $settings );
-		}
+		$settings = wp_json_encode( $settings, JSON_UNESCAPED_UNICODE );
 
 		update_option( 'pods_component_settings', $settings );
 

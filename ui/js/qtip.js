@@ -22,7 +22,7 @@ jQuery( document ).ready( function ( $ ) {
 			},
 
 			position: {
-				container: $( element ).closest( '.pods-submittable' ),
+				container: $( element ).parent(),
 				my: 'bottom left',
 				adjust: {
 					y: -14

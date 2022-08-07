@@ -4171,7 +4171,17 @@ class PodsUI {
 									 */
 									$row_value = apply_filters( 'pods_ui_field_display_value', $row_value, $field, $attributes, $row, $this );
 
-									if ( ! in_array( 'edit', $this->actions_disabled ) && ! in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder['on'] ) && 'edit' === $default_action ) {
+									if (
+										'edit' === $default_action
+										&& ! in_array( 'edit', $this->actions_disabled, true )
+										&& ! in_array( 'edit', $this->actions_hidden, true )
+										&& (
+											false === $reorder
+											|| in_array( 'reorder', $this->actions_disabled, true )
+											|| false === $this->reorder['on']
+										)
+										&& ! $this->restricted( 'edit', $row )
+									) {
 										$link = pods_query_arg(
 											array(
 												$this->num_prefix . 'action' . $this->num => 'edit',

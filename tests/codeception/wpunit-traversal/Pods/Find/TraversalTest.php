@@ -578,7 +578,13 @@ class TraversalTest extends Pods_TraversalTestCase {
 					}
 
 					// Temporarily check against null too, recursive data not saved fully yet
-					if ( '.`meta_value`' === $related_suffix && '' === $check_related_value ) {
+					if (
+						'.`meta_value`' === $related_suffix
+						&& (
+							'' === $check_related_value
+							|| [] === $check_related_value
+						)
+					) {
 						if ( $query_fields ) {
 							$related_where[] = array(
 								'field'   => $field_name . '.' . $related_pod_field['name'],
@@ -597,9 +603,17 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 						$related_where['relation'] = 'OR';
 					} else {
-						$related_where[] = "
-							{$prefix}{$related_prefix}`{$related_pod_field['name']}`{$related_suffix} = '" . pods_sanitize( $check_related_value ) . "'
-						";
+						if ( is_array( $check_related_value ) ) {
+							foreach ( $check_related_value as $check_related_value_item ) {
+								$related_where[] = "
+									{$prefix}{$related_prefix}`{$related_pod_field['name']}`{$related_suffix} = '" . pods_sanitize( $check_related_value_item ) . "'
+								";
+							}
+						} else {
+							$related_where[] = "
+								{$prefix}{$related_prefix}`{$related_pod_field['name']}`{$related_suffix} = '" . pods_sanitize( $check_related_value ) . "'
+							";
+						}
 
 						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}

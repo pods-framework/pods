@@ -40,15 +40,6 @@ class PodsField_Number extends PodsField {
 	public function options() {
 
 		$options = array(
-			static::$type . '_repeatable'  => array(
-				'label'             => __( 'Repeatable Field', 'pods' ),
-				'default'           => 0,
-				'type'              => 'boolean',
-				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
-				'boolean_yes_label' => '',
-				'dependency'        => true,
-				'developer_mode'    => true,
-			),
 			static::$type . '_format_type' => array(
 				'label'      => __( 'Input Type', 'pods' ),
 				'default'    => 'number',
@@ -215,9 +206,7 @@ class PodsField_Number extends PodsField {
 		$form_field_type = PodsForm::$field_type;
 		$is_read_only    = false;
 
-		if ( is_array( $value ) ) {
-			$value = implode( '', $value );
-		}
+		$value = $this->normalize_value_for_input( $value, $options, '' );
 
 		if ( 'slider' === pods_v( static::$type . '_format_type', $options, 'number' ) ) {
 			$field_type = 'slider';
@@ -247,7 +236,14 @@ class PodsField_Number extends PodsField {
 
 		// Only format the value for non-HTML5 inputs.
 		if ( ! $options[ static::$type . '_html5' ] ) {
-			$value = $this->format( $value, $name, $options, $pod, $id );
+			// Ensure proper format
+			if ( is_array( $value ) ) {
+				foreach ( $value as $k => $repeatable_value ) {
+					$value[ $k ] = $this->format( $repeatable_value, $name, $options, $pod, $id );
+				}
+			} else {
+				$value = $this->format( $value, $name, $options, $pod, $id );
+			}
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {

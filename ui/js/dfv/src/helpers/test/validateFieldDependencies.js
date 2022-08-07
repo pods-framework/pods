@@ -218,3 +218,24 @@ test( 'correctly validates wildcard-on dependencies', () => {
 	expect( validateFieldDependencies( podValuesSuccess1, wildcardOnRules, 'wildcard-on' ) ).toBe( true );
 	expect( validateFieldDependencies( podValuesSuccess2, wildcardOnRules, 'wildcard-on' ) ).toBe( true );
 } );
+
+test( 'correctly validates an item from an array of values', () => {
+	const podValuesFail = {
+		first_dep: [ 'first', '' ],
+		// second_repeatable_value: [ 'a' ],
+	};
+
+	const podValuesSuccess = {
+		first_dep: [ 'first', 'second' ],
+		// second_repeatable_value: [ 'a' ],
+	};
+
+	const dependsOnRules = {
+		first_dep: 'second',
+		// second_dep: 'a',
+	};
+
+	expect( validateFieldDependencies( podValuesFail, dependsOnRules ) ).toBe( false );
+
+	expect( validateFieldDependencies( podValuesSuccess, dependsOnRules ) ).toBe( true );
+} );

@@ -85,15 +85,19 @@
 }
 
 .qtip-default {
+	background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: normal;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #F1D031;
-	background-color: #FFFFA3;
-	color: #555;
+	border-color: #000;
 }
 
 .qtip-default .qtip-titlebar {
-	background-color: #FFEF93;
+	background-color: #333;
 }
 
 .qtip-default .qtip-icon {

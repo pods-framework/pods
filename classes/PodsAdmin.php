@@ -1120,6 +1120,8 @@ class PodsAdmin {
 				}
 			}
 
+			$source = esc_html( $source );
+
 			if ( 'post_type' !== $object_storage_type ) {
 				$has_source = true;
 
@@ -1131,9 +1133,21 @@ class PodsAdmin {
 							$file_source = str_replace( ABSPATH, '', $file_source );
 						}
 
-						$source .= ' (' . $file_source . ')';
+						ob_start();
+
+						pods_help(
+							sprintf(
+								'<strong>%s:</strong> %s',
+								esc_html__( 'File source', 'pods' ),
+								esc_html( $file_source )
+							),
+							null,
+							'.pods-admin-container'
+						);
+
+						$source .= ' ' . ob_get_clean();
 					}
-				} else {
+				} elseif ( 'collection' === $object_storage_type ) {
 					$code_source = $pod->get_arg( '_pods_code_source' );
 
 					if ( $code_source ) {
@@ -1141,7 +1155,19 @@ class PodsAdmin {
 							$code_source = str_replace( ABSPATH, '', $code_source );
 						}
 
-						$source .= ' (' . $code_source . ')';
+						ob_start();
+
+						pods_help(
+							sprintf(
+								'<strong>%s:</strong> %s',
+								esc_html__( 'Code source', 'pods' ),
+								esc_html( $code_source )
+							),
+							null,
+							'.pods-admin-container'
+						);
+
+						$source .= ' ' . ob_get_clean();
 					}
 				}
 			}

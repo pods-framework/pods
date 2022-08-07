@@ -785,16 +785,18 @@ function pods_deprecated( $function, $version, $replacement = null ) {
 /**
  * Inline help
  *
- * @param string $text Help text
- * @param string $url  Documentation URL
+ * @param string      $text      Help text.
+ * @param null|string $url       Documentation URL.
+ * @param null|string $container The HTML container path for where the inline help will live.
  *
  * @return void
  *
  * @since 2.0.0
  */
-function pods_help( $text, $url = null ) {
+function pods_help( $text, $url = null, $container = null ) {
 	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
 		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/qtip/jquery.qtip.min.js', array( 'jquery' ), '3.0.3' );
+		wp_enqueue_script( 'jquery-qtip2' );
 	} elseif ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
 		wp_enqueue_script( 'jquery-qtip2' );
 	}
@@ -807,6 +809,24 @@ function pods_help( $text, $url = null ) {
 		pods_form_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
 		pods_form_enqueue_script( 'pods-qtip-init' );
+	}
+
+	pods_form_enqueue_script( 'pods' );
+	pods_form_enqueue_style( 'pods' );
+
+	static $pods_qtip_added = [];
+
+	if ( null !== $container && ! isset( $pods_qtip_added[ $container ] ) ) {
+		wp_add_inline_script(
+			'pods',
+			"
+				jQuery( function ( $ ) {
+					$( document ).Pods( 'qtip', '" . esc_js( $container ) . "' );
+				} );
+			"
+		);
+
+		$pods_qtip_added[ $container ] = true;
 	}
 
 	if ( is_array( $text ) ) {

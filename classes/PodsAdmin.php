@@ -1632,7 +1632,7 @@ class PodsAdmin {
 		}
 
 		if ( 'settings' === $config['currentPod']['type'] ) {
-			$config['currentPod']['storageType']['name'] = 'options';
+			$config['currentPod']['storageType']['name'] = 'option';
 		}
 
 		$config['currentPod']['storageType']['label'] = ucwords( $config['currentPod']['storageType']['name'] );

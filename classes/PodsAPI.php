@@ -11397,10 +11397,10 @@ class PodsAPI {
 	 */
 	public function get_storage_types() {
 		$storage_types = [
-			'none'    => _x( 'None (No Fields)', 'storage type label', 'pods' ),
-			'options' => _x( 'Options', 'storage type label', 'pods' ),
-			'meta'    => _x( 'Meta', 'storage type label', 'pods' ),
-			'table'   => _x( 'Table', 'storage type label', 'pods' ),
+			'none'   => _x( 'None (No Fields)', 'storage type label', 'pods' ),
+			'option' => _x( 'Options', 'storage type label', 'pods' ),
+			'meta'   => _x( 'Meta', 'storage type label', 'pods' ),
+			'table'  => _x( 'Table', 'storage type label', 'pods' ),
 		];
 
 		/**

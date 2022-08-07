@@ -1123,14 +1123,24 @@ class PodsAdmin {
 				$has_source = true;
 
 				if ( 'file' === $object_storage_type ) {
-					$file_path = $pod->get_arg( '_pods_file_source' );
+					$file_source = $pod->get_arg( '_pods_file_source' );
 
-					if ( $file_path ) {
-						if ( 0 === strpos( $file_path, ABSPATH ) ) {
-							$file_path = str_replace( ABSPATH, '', $file_path );
+					if ( $file_source ) {
+						if ( 0 === strpos( $file_source, ABSPATH ) ) {
+							$file_source = str_replace( ABSPATH, '', $file_source );
 						}
 
-						$source .= ' (' . $file_path . ')';
+						$source .= ' (' . $file_source . ')';
+					}
+				} else {
+					$code_source = $pod->get_arg( '_pods_code_source' );
+
+					if ( $code_source ) {
+						if ( 0 === strpos( $code_source, ABSPATH ) ) {
+							$code_source = str_replace( ABSPATH, '', $code_source );
+						}
+
+						$source .= ' (' . $code_source . ')';
 					}
 				}
 			}

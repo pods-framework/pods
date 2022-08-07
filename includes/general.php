@@ -2585,6 +2585,33 @@ function pods_register_type( $type, $name, $object = null ) {
 		unset( $object['fields'] );
 	}
 
+	// Maybe set the code source for this type.
+	if (
+		! isset( $object['_pods_code_source'] )
+		&& (
+			! isset( $object['object_storage_type'] )
+			|| 'file' !== $object['object_storage_type']
+		)
+	) {
+		$debug_info = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
+
+		foreach ( $debug_info as $debug ) {
+			// Skip Pods-related and WP-related hook registrations.
+			if ( 0 === strpos( $debug['file'], PODS_DIR ) || 0 === strpos( $debug['file'], WPINC ) ) {
+				continue;
+			}
+
+			$object['_pods_code_source'] = sprintf(
+				'%s : %s %d',
+				$debug['file'],
+				esc_html__( 'Line', 'pods' ),
+				$debug['line']
+			);
+
+			break;
+		}
+	}
+
 	$registered = pods_register_object( $object, 'pod' );
 
 	if ( true === $registered ) {

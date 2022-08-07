@@ -170,6 +170,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Feature: Website fields can now be set to output links with `rel="nofollow"` on them. (@sc0ttkclark)
 * Feature: Drag and drop fields from one group to another. #5937 #6114 #6123 #6456 (@sc0ttkclark)
 * Feature: Support importing and exporting Pods Settings in Pods Packages. #6455 (@sc0ttkclark)
+* Feature: The file field can now support any image, video, or audio mime types that are supported by WordPress. #6577 #6578 (@sc0ttkclark, @JoryHogeveen)
 * Enhancement: New `\Pods\Pod_Manager` class allows reusing Pods instances when working with the same Pod across many areas of the code. (@sc0ttkclark)
 * Enhancement: Added PodsAdmin::check_requirements() helper method. (@sc0ttkclark)
 * Enhancement: Migrate Packages component is now enabled by default on new Pods installs. (@sc0ttkclark)
@@ -182,6 +183,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Handle processing the Pods display tags in a more dynamic way for attributes and passing them down to the tag handlers. (@sc0ttkclark)
 * Fixed: Enable media buttons for the post_content field like they should so that forms outside the admin screen continue to function as expected. #6525 (@sc0ttkclark)
 * Fixed: Resolve issues with values that are objects and convert them to arrays for relationship value formatting in DFV field renders. #6566 (@sc0ttkclark)
+* Fixed: Show the Add Media button in forms that use the post_content field. #6569 (@sc0ttkclark)
 * New minimum WP version required: WordPress 5.7+ (previously: WP 5.5+)
 * No minimum PHP version changes (currently: PHP 5.6+) but please be aware that PHP 7.2+ will be required for the Pods 3.0+ feature release. You should take the time to update to PHP 8.0+ because there’s major speed improvements to be had 🙂
 

@@ -240,6 +240,14 @@ class Field extends Base {
 				'label' => __( 'Visual', 'pods' ),
 				'type'  => 'heading',
 			],
+			'help'                    => [
+				'name'        => 'help',
+				'label'       => __( 'Tooltip description', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'description' => __( 'You can use tooltips if you would like to describe your field more but hide it from view until needed.', 'pods' ),
+				'help'        => __( 'This is an example of what your tooltip would look like.', 'pods' ),
+			],
 			'class'                   => [
 				'name'    => 'class',
 				'label'   => __( 'Additional CSS Classes', 'pods' ),

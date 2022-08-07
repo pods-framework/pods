@@ -243,7 +243,7 @@ class Field extends Base {
 			'class'                   => [
 				'name'    => 'class',
 				'label'   => __( 'Additional CSS Classes', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'You can provide additional CSS classes separated by spaces to be output for the field markup.', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
@@ -255,7 +255,7 @@ class Field extends Base {
 			'default_value'           => [
 				'name'    => 'default_value',
 				'label'   => __( 'Default Value', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'This is the default value used when the Add New form is used.', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 				'options' => [
@@ -265,7 +265,7 @@ class Field extends Base {
 			'default_value_parameter' => [
 				'name'    => 'default_value_parameter',
 				'label'   => __( 'Set Default Value via Parameter', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'You can automatically populate the value of this field from the URL parameter "your_field" such as ?your_field=1234', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],

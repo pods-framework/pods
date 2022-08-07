@@ -953,11 +953,6 @@ class PodsAdmin {
 			],
 		];
 
-		// Do not show Groups/Fields if in types-only mode.
-		if ( pods_is_types_only() ) {
-			unset( $fields['group_count'], $fields['field_count'] );
-		}
-
 		if ( $include_row_counts ) {
 			$fields['row_count'] = [
 				'label' => __( 'Data Rows', 'pods' ),
@@ -996,6 +991,7 @@ class PodsAdmin {
 		$is_tableless = pods_tableless();
 
 		$has_source = false;
+		$has_storage_type = false;
 
 		foreach ( $pods as $k => $pod ) {
 			$pod_type       = $pod['type'];
@@ -1015,7 +1011,11 @@ class PodsAdmin {
 			}
 
 			if ( 'settings' === $pod_type ) {
-				$pod_storage = 'options';
+				$pod_storage = 'option';
+			}
+
+			if ( 'meta' !== $pod_storage ) {
+				$has_storage_type = true;
 			}
 
 			if ( isset( $pod_types[ $pod_type ] ) ) {
@@ -1026,8 +1026,8 @@ class PodsAdmin {
 
 			$storage_type_label = ucwords( $pod_storage );
 
-			if ( isset( $storage_types[ $pod_type ] ) ) {
-				$storage_type_label = $storage_types[ $pod_type ];
+			if ( isset( $storage_types[ $pod_storage ] ) ) {
+				$storage_type_label = $storage_types[ $pod_storage ];
 			}
 
 			if ( null !== $pod_type_label ) {
@@ -1209,8 +1209,22 @@ class PodsAdmin {
 			$pod_list[] = $pod;
 		}//end foreach
 
+		if ( ! $has_storage_type ) {
+			unset( $fields['storage'] );
+		}
+
 		if ( ! $has_source ) {
 			unset( $fields['source'] );
+		}
+
+		if (
+			(
+				0 === $total_groups
+				&& 0 === $total_fields
+			)
+			|| pods_is_types_only()
+		) {
+			unset( $fields['group_count'], $fields['field_count'] );
 		}
 
 		if ( false === $row && 0 < pods_v( 'id' ) && 'delete' !== pods_v( 'action' ) ) {

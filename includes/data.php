@@ -2594,3 +2594,28 @@ function pods_clean_memory( $sleep_time = 0 ) {
 		call_user_func( [ $wp_object_cache, '__remoteset' ] ); // important
 	}
 }
+
+/**
+ * Get the host from a URL.
+ *
+ * @since 2.9.0
+ *
+ * @param string $url The URL to get the host from.
+ *
+ * @return string The host if found, otherwise the URL.
+ */
+function pods_host_from_url( $url ) {
+	$url_parsed = wp_parse_url( $url );
+
+	// Check if we have a valid URL.
+	if ( empty( $url_parsed ) || count( $url_parsed ) < 2 ) {
+		return esc_html( $url );
+	}
+
+	// Check if we should remove the www from the host.
+	if ( 0 === strpos( $url_parsed['host'], 'www.' ) ) {
+		$url_parsed['host'] = substr( $url_parsed['host'], 4 );
+	}
+
+	return esc_html( $url_parsed['host'] );
+}

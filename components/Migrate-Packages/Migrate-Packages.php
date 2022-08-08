@@ -185,19 +185,13 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		self::$api = pods_api();
 
-		if ( ! isset( $data['meta'] ) || ! isset( $data['meta']['version'] ) || empty( $data['meta']['version'] ) ) {
+		$meta = self::get_meta_from_package( $data );
+
+		if ( ! $meta ) {
 			return false;
 		}
 
-		if ( false === strpos( $data['meta']['version'], '.' ) && (int) $data['meta']['version'] < 1000 ) {
-			// Pods 1.x < 1.10
-			$data['meta']['version'] = implode( '.', str_split( $data['meta']['version'] ) );
-		} elseif ( false === strpos( $data['meta']['version'], '.' ) ) {
-			// Pods 1.10 <= 2.0
-			$data['meta']['version'] = pods_version_to_point( $data['meta']['version'] );
-		}
-
-		self::$package_meta_version = $data['meta']['version'];
+		self::$package_meta_version = $meta['version'];
 
 		$found = [];
 
@@ -287,6 +281,48 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the metadata from the package data.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $data The package data.
+	 *
+	 * @return false|array The metadata or false if no metadata is found.
+	 */
+	public static function get_meta_from_package( array $data ) {
+		// Get the meta property if set.
+		if ( isset( $data['@meta'] ) ) {
+			$meta = $data['@meta'];
+		} elseif ( isset( $data['meta'] ) ) {
+			$meta = $data['meta'];
+		} else {
+			return false;
+		}
+
+		if ( empty( $meta['version'] ) ) {
+			return false;
+		}
+
+		// Attempt to adjust the version if needed for compatibility.
+		$has_dot_versioning = false !== strpos( $meta['version'], '.' );
+
+		if ( ! $has_dot_versioning ) {
+			if ( (int) $meta['version'] < 1000 ) {
+				// Pods 1.x < 1.10
+				$meta['version'] = implode( '.', str_split( $meta['version'] ) );
+			} elseif ( function_exists( 'pods_version_to_point' ) ) {
+				// Pods 1.10 <= 2.0
+				$meta['version'] = pods_version_to_point( $meta['version'] );
+			} else {
+				// Default to 1.10 if we can't convert it.
+				$meta['version'] = '1.10';
+			}
+		}
+
+		return $meta;
 	}
 
 	/**
@@ -847,28 +883,27 @@ class Pods_Migrate_Packages extends PodsComponent {
 	}
 
 	/**
-	 * Export a Package
+	 * Export a Package.
 	 *
 	 * $params['pods'] string|array|bool Pod IDs to export, or set to true to export all
 	 * $params['templates'] string|array|bool Template IDs to export, or set to true to export all
 	 * $params['pages'] string|array|bool Page IDs to export, or set to true to export all
 	 * $params['helpers'] string|array|bool Helper IDs to export, or set to true to export all
 	 *
-	 * @param array $params Array of things to export
-	 *
-	 * @return array|bool
-	 *
-	 * @static
 	 * @since 2.0.5
+	 *
+	 * @param array $params The list of things to export.
+	 *
+	 * @return array|false The package export or false if there was a failure.
+	 *
 	 */
 	public static function export( $params ) {
-
-		$export = array(
-			'meta' => array(
+		$export = [
+			'@meta' => [
 				'version' => PODS_VERSION,
 				'build'   => time(),
-			),
-		);
+			],
+		];
 
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( $params );
@@ -979,7 +1014,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			foreach ( $export['pods'] as $pod_key => $pod ) {
 				foreach ( $pod as $option => $option_value ) {
-					if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
+					if ( null === $option_value || in_array( $option, $options_ignore, true ) ) {
 						unset( $pod[ $option ] );
 					}
 				}
@@ -987,7 +1022,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				if ( ! empty( $pod['groups'] ) ) {
 					foreach ( $pod['groups'] as $group_key => $group ) {
 						foreach ( $group as $option => $option_value ) {
-							if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
+							if ( null === $option_value || in_array( $option, $options_ignore, true ) ) {
 								unset( $group[ $option ] );
 							}
 						}
@@ -995,7 +1030,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 						if ( ! empty( $group['fields'] ) ) {
 							foreach ( $group['fields'] as $field_key => $field ) {
 								foreach ( $field as $option => $option_value ) {
-									if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
+									if ( null === $option_value || in_array( $option, $options_ignore, true ) ) {
 										unset( $field[ $option ] );
 									}
 								}
@@ -1006,7 +1041,11 @@ class Pods_Migrate_Packages extends PodsComponent {
 									}
 
 									foreach ( $options as $option_data ) {
-										if ( isset( $option_data['group'] ) && is_array( $option_data['group'] ) && ! empty( $option_data['group'] ) ) {
+										if (
+											isset( $option_data['group'] )
+											&& is_array( $option_data['group'] )
+											&& ! empty( $option_data['group'] )
+										) {
 											if ( isset( $field[ $option_data['name'] ] ) ) {
 												unset( $field[ $option_data['name'] ] );
 											}
@@ -1113,9 +1152,17 @@ class Pods_Migrate_Packages extends PodsComponent {
 			}
 		}
 
+		/**
+		 * Allow filtering the package being exported.
+		 *
+		 * @since 2.0.5
+		 *
+		 * @param array $export The export package.
+		 * @param array $params The list of things to export.
+		 */
 		$export = apply_filters( 'pods_packages_export', $export, $params );
 
-		if ( 1 == count( $export ) ) {
+		if ( 1 === count( $export ) ) {
 			return false;
 		}
 

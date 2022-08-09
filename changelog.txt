@@ -2,6 +2,44 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9 - August 9th, 2022 =
+
+* Feature: Simple Repeatable Fields offers the ability to turn almost any field into a repeatable field. With repeatable fields, you can add multiple values for a field. You can use repeatable fields with the Pods template tag `[each your_repeatable_field]` to easily loop and display information with `{@_value}` Supported field types include: Plain Text, Website, Phone, Email, Password, Date / Time, Date, Time, oEmbed, Plain Paragraph text, WYSIWYG, Plain Number, Currency, and Color Picker. Supported Pod Types include: Post Types (meta-based), Taxonomies (meta-based), Users (meta-based), and Comments (meta-based). #1095 #6304 (@sc0ttkclark, @zrothauser)
+* Feature: Register Pods configurations with JSON/YML files in your theme when stored in `pods.json`, `pods/pods.json`, `pods/templates.json`, etc. Custom paths can be registered to support third party plugins as well. Register new paths using `pods_register_config_path( $full_directory_path )` that contain a `/pods/` directory to automatically pull from or use `pods_register_config_file( $full_file_path, 'json' )` to register a specific file. #4856 (@sc0ttkclark)
+* Feature: The initial integration for WPGraphQL has been merged from the WPGraphQL Integration Add-On for Pods Pro by SKCDEV. The Add-On itself will continue to be developed with new features that are focused on Advanced Content Types and other enhancements in the future that will still remain outside of Pods core. (@sc0ttkclark) 
+* Feature: Drag and drop fields from one group to another. #5937 #6114 #6123 #6456 (@sc0ttkclark)
+* Feature: Support importing and exporting Pods Settings in Pods Packages. #6455 (@sc0ttkclark)
+* Feature: Website fields can now be set to output links with `rel="nofollow"` on them. (@sc0ttkclark)
+* Feature: Full support for DB (Post Types), Code (PHP), and File (JSON/YML) configurations on the Pods Admin > Edit Pods screen. If you have configurations for multiple sources, you will see a new Source column (with file path) and you can filter by source. Pods with non-DB sources currently do not have Edit/Duplicate/Reset Content/Delete links. (@sc0ttkclark)
+* Feature: The file field can now support any image, video, or audio mime types that are supported by WordPress. #6577 #6578 (@sc0ttkclark, @JoryHogeveen)
+* Enhancement: New `\Pods\Pod_Manager` class allows reusing Pods instances when working with the same Pod across many areas of the code. (@sc0ttkclark)
+* Enhancement: Added PodsAdmin::check_requirements() helper method. (@sc0ttkclark)
+* Enhancement: Migrate Packages component is now enabled by default on new Pods installs. (@sc0ttkclark)
+* Tweak: Removed special logic intended for PHP 5.3 and earlier. (@sc0ttkclark)
+* Tweak: Improved performance when getting Pods configs from post type storage. #6561 #6562 (@JoryHogeveen)
+* Fixed: Set the default sort to Pod Label now that more sources are supported on Pods Admin > Edit Pods. (@sc0ttkclark) 
+* Fixed: Prevent potential issues with `$wpdb->prepare()` when a related object does not have an index field set. (@sc0ttkclark)
+* Fixed: Resolve issue with not reading cache when no ID is passed into Pods objects for Settings pods. #3582 #3583 (@pcfreak30, @sc0ttkclark, @JoryHogeveen)
+* Fixed: Don't show the edit link in PodsUI if access is restricted, previously going to edit would show the access message but now the link won't show at all in those restricted cases. (@sc0ttkclark)
+* Fixed: Resolve issues with Media modal fields showing duplicate fields. #6564 (@JoryHogeveen)
+* Fixed: Handle processing the Pods display tags in a more dynamic way for attributes and passing them down to the tag handlers. (@sc0ttkclark)
+* Fixed: Enable media buttons for the post_content field like they should so that forms outside the admin screen continue to function as expected. #6525 (@sc0ttkclark)
+* Fixed: Resolve issues with values that are objects and convert them to arrays for relationship value formatting in DFV field renders. #6566 (@sc0ttkclark)
+* Fixed: Show the Add Media button in forms that use the post_content field. #6569 (@sc0ttkclark)
+* New minimum WP version required: WordPress 5.7+ (previously: WP 5.5+)
+* No minimum PHP version changes (currently: PHP 5.6+) but please be aware that PHP 7.2+ will be required for the Pods 3.0+ feature release. You should take the time to update to PHP 8.0+ because there’s major speed improvements to be had 🙂
+
+= 2.8.23 - July 4th, 2022 =
+
+* Tweak: Added support for exporting post types and taxonomies to PHP for debugging purposes. While logged in as an admin, add `?pods_debug_register_export=1` to expose textareas on the page to get the code. (@sc0ttkclark)
+* Tweak: Added support for new `{@_current_page}` calculation value. (@sc0ttkclark)
+* Tweak: Added support for calculation values in conditional display tags like `[if field="_position" value="2"]`. #6513 (@sc0ttkclark)
+* Fixed: Resolved revision issues when `revisions_to_keep_limit` is set to 0 in the post type. It was supposed to see 0 and use the default revision limit. Instead, it was disabling the revisions for that post type. #6499 (@sc0ttkclark)
+* Fixed: Resolved potential PHP warnings on certain sites by preparing SQL queries separately from other string processing. #6556 #6555 #6554 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Resolved potential PHP notices when getting table information in `PodsData::table()`. (@JoryHogeveen)
+* Fixed: Resolved potential PHP type conversion warnings by passing `SORT_REGULAR` to `array_unique()`` in the File field saving process. (@JoryHogeveen)
+* Fixed: Pods Auto Templates defaults for some fields were set to "true" and that is now treated as empty. The default for those fields are now empty as intended. This resolves notices on the Edit Pod screen about templates being used for Archives when Archives are disabled, but there was no template intentionally set for Archive. (@sc0ttkclark)
+
 = 2.8.22.1 - July 3rd, 2022 =
 
 * Fixed: Resolve potential PHP errors from Relationship/File field saves by ensuring consistent array structures.

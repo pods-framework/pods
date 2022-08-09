@@ -73,15 +73,6 @@ class PodsField_OEmbed extends PodsField {
 	public function options() {
 
 		$options = array(
-			static::$type . '_repeatable'   => array(
-				'label'             => __( 'Repeatable Field', 'pods' ),
-				'default'           => 0,
-				'type'              => 'boolean',
-				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
-				'boolean_yes_label' => '',
-				'dependency'        => true,
-				'developer_mode'    => true,
-			),
 			static::$type . '_width'        => array(
 				'label'   => __( 'Embed Width', 'pods' ),
 				'default' => 0,
@@ -178,9 +169,7 @@ class PodsField_OEmbed extends PodsField {
 		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
-		if ( is_array( $value ) ) {
-			$value = implode( ' ', $value );
-		}
+		$value = $this->normalize_value_for_input( $value, $options );
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {

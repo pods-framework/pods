@@ -36,6 +36,9 @@ $RECYCLE.BIN/
 /composer.lock
 /node_modules/
 vendor/*
+!/vendor/mustangostang/COPYING
+!/vendor/mustangostang/README.md
+!/vendor/mustangostang/Spyc.php
 npm-debug.log
 
 # Source maps should just be built locally

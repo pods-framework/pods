@@ -41,6 +41,13 @@ class Post_Type extends Collection {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_label() {
+		return __( 'DB', 'pods' );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get( array $args = [] ) {
 		// Object type is required.
 		if ( empty( $args['object_type'] ) ) {
@@ -299,7 +306,7 @@ class Post_Type extends Collection {
 		 */
 		$post_args = apply_filters( 'pods_whatsit_storage_post_type_find_args', $post_args, $args );
 
-		$post_args['fields'] = 'ids';
+		$post_args['fields'] = ( ! empty( $args['ids'] ) ) ? 'ids' : 'all';
 
 		if ( empty( $post_args['meta_query'] ) ) {
 			unset( $post_args['meta_query'] );
@@ -309,6 +316,7 @@ class Post_Type extends Collection {
 
 		$current_language = pods_i18n()->get_current_language();
 
+		$query        = null;
 		$cache_key    = null;
 		$posts        = false;
 		$post_objects = false;
@@ -390,6 +398,9 @@ class Post_Type extends Collection {
 				// We only receive the first post, so let's just override the posts with the count.
 				if ( ! empty( $args['count'] ) ) {
 					$posts = array_fill( 0, $query->found_posts, 'temp_count_holder' );
+				} elseif ( 'ids' !== $post_args['fields'] ) {
+					// This variable should always containt the post ID's.
+					$posts = wp_list_pluck( $posts, 'ID' );
 				}
 
 				if ( empty( $args['bypass_cache'] ) ) {
@@ -421,7 +432,12 @@ class Post_Type extends Collection {
 					}, $posts );
 				} else {
 					// Get the post objects.
-					$post_objects = array_map( 'get_post', $posts );
+					if ( $query instanceof WP_Query ) {
+						$post_objects = $query->posts;
+					} else {
+						_prime_post_caches( $posts, false, false ); // Prevent separate queries for each iteration.
+						$post_objects = array_map( 'get_post', $posts );
+					}
 				}
 			}
 
@@ -446,6 +462,7 @@ class Post_Type extends Collection {
 				}, $post_objects );
 			} else {
 				// Handle normal Whatsit object setup.
+				update_postmeta_cache( $posts ); // Prevent separate queries for each iteration.
 				$posts = array_map( [ $this, 'to_object' ], $post_objects );
 				$posts = array_filter( $posts );
 			}

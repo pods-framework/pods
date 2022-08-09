@@ -221,8 +221,6 @@ class PodsForm {
 		$value           = apply_filters( "pods_form_ui_field_{$type}_value", $value, $name, $options, $pod, $id );
 		$form_field_type = self::$field_type;
 
-		ob_start();
-
 		$helper = false;
 
 		/**
@@ -245,6 +243,9 @@ class PodsForm {
 			$options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
 			$data            = $options['data'];
 		}
+
+		// Start field render.
+		ob_start();
 
 		/**
 		 * pods_form_ui_field_{$type}_override filter leaves too much to be done by developer.
@@ -1008,8 +1009,27 @@ class PodsForm {
 
 		self::field_loader( $type );
 
-		if ( in_array( $type, self::repeatable_field_types() ) && 1 == pods_v( $type . '_repeatable', $options, 0 ) && ! is_array( $value ) ) {
-			if ( 0 < strlen( $value ) ) {
+		$is_repeatable_field = (
+			(
+				(
+					$options instanceof Field
+					|| $options instanceof Value_Field
+				)
+				&& $options->is_repeatable()
+			)
+			|| (
+				is_array( $options )
+				&& in_array( $type, self::repeatable_field_types(), true )
+				&& 1 === (int) pods_v( 'repeatable', $options )
+				&& (
+					'wysiwyg' !== $type
+					|| 'tinymce' !== pods_v( 'wysiwyg_editor', $options, 'tinymce', true )
+				)
+			)
+		);
+
+		if ( $is_repeatable_field && ! is_array( $value ) ) {
+			if ( is_string( $value ) && 0 < strlen( $value ) ) {
 				$simple = @json_decode( $value, true );
 
 				if ( is_array( $simple ) ) {
@@ -1018,7 +1038,7 @@ class PodsForm {
 					$value = (array) $value;
 				}
 			} else {
-				$value = array();
+				$value = [];
 			}
 		}
 
@@ -1734,14 +1754,15 @@ class PodsForm {
 
 		if ( null === $field_types ) {
 			$field_types = [
-				'code',
 				'color',
 				'currency',
 				'date',
 				'datetime',
 				'email',
 				'number',
+				'oembed',
 				'paragraph',
+				'password',
 				'phone',
 				'text',
 				'time',

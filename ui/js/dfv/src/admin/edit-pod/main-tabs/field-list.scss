@@ -9,12 +9,21 @@
 	overflow: visible !important; // TODO: this is being overridden by old 2.x styles
 	display: flex;
 	flex-flow: column nowrap;
-	align-items: flex-end;
 }
 
-.pods-field-list.no-fields {
-	font-weight: bold;
-	padding: 1em;
-	align-items: center;
-	justify-content: center;
+.pods-field-list__empty {
+	padding: 2em 0;
+}
+
+.pods-field-list__empty--dropping {
+	background: $color--light-grey;
+}
+
+.pods-field-list__empty-message {
+	margin: 0;
+	text-align: right;
+}
+
+.pods-field-group_add_field_link {
+	align-self: flex-end;
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { basicSetup } from '@codemirror/basic-setup';
+import { basicSetup, EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
 import { php } from '@codemirror/lang-php';
 
 import PropTypes from 'prop-types';

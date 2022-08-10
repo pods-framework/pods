@@ -3,7 +3,6 @@
 namespace Pods;
 
 use Spyc;
-use WP_Filesystem_Base;
 
 /**
  * Class to handle registration of Pods configs and loading/saving of config files.
@@ -378,24 +377,11 @@ class Config_Handler {
 	 * @return bool Whether the config file was found and loaded.
 	 */
 	protected function load_config_file( $file_path, $config_type, array $file_config = [] ) {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-
-		/**
-		 * @var $wp_filesystem WP_Filesystem_Base
-		 */
-		global $wp_filesystem;
-
-		WP_Filesystem();
-
-		if ( ! $wp_filesystem ) {
+		if ( ! file_exists( $file_path ) || ! is_readable( $file_path ) ) {
 			return false;
 		}
 
-		if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
-			return false;
-		}
-
-		$raw_config = $wp_filesystem->get_contents( $file_path );
+		$raw_config = file_get_contents( $file_path );
 
 		if ( empty( $raw_config ) ) {
 			return false;

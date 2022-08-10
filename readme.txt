@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.0
+Stable tag: 2.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ Check out our [Documentation](https://docs.pods.io/), [Support Forums](https://w
 
 = Introduction =
 
-[youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
+[youtube https://www.youtube.com/watch?v=0WqKZr2gPZY]
 
 = Content types that evolve with your needs =
 
@@ -164,6 +164,11 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.1 - August 10th, 2022 =
+
+* Fixed: CodeMirror compatibility updated after some packages in the build caused Code fields to not show in the Pods forms. #6580 #6584 (@zrothauser, @sc0ttkclark)
+* Fixed: Resolve potential fatal errors when interacting with WP_Filesystem by reading files using normal PHP functions and bypassing those edge cases. #6581 #6582 (@sc0ttkclark)
 
 = 2.9 - August 9th, 2022 =
 

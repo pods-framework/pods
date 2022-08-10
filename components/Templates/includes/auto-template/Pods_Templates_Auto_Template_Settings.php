@@ -191,6 +191,7 @@ class Pods_Templates_Auto_Template_Settings {
 			'pfat_append_single' => array(
 				'label'      => __( 'Singular Template Location', 'pods' ),
 				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
+				'default'    => 'after',
 				'depends-on' => array( 'pfat_enable' => true ),
 				'excludes-on' => array( 'pfat_single' => '' ),
 			),
@@ -226,6 +227,7 @@ class Pods_Templates_Auto_Template_Settings {
 			'pfat_append_archive'   => array(
 				'label'      => __( 'List Template Location', 'pods' ),
 				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
+				'default'    => 'after',
 				'depends-on' => array( 'pfat_enable' => true ),
 				'excludes-on' => array( 'pfat_archive' => '' ),
 			),

@@ -2,6 +2,11 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.1 - August 10th, 2022 =
+
+* Fixed: CodeMirror compatibility updated after some packages in the build caused Code fields to not show in the Pods forms. #6580 #6584 (@zrothauser, @sc0ttkclark)
+* Fixed: Resolve potential fatal errors when interacting with WP_Filesystem by reading files using normal PHP functions and bypassing those edge cases. #6581 #6582 (@sc0ttkclark)
+
 = 2.9 - August 9th, 2022 =
 
 * Feature: Simple Repeatable Fields offers the ability to turn almost any field into a repeatable field. With repeatable fields, you can add multiple values for a field. You can use repeatable fields with the Pods template tag `[each your_repeatable_field]` to easily loop and display information with `{@_value}` Supported field types include: Plain Text, Website, Phone, Email, Password, Date / Time, Date, Time, oEmbed, Plain Paragraph text, WYSIWYG, Plain Number, Currency, and Color Picker. Supported Pod Types include: Post Types (meta-based), Taxonomies (meta-based), Users (meta-based), and Comments (meta-based). #1095 #6304 (@sc0ttkclark, @zrothauser)

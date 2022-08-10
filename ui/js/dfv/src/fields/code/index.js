@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { basicSetup } from '@codemirror/basic-setup';
+import { basicSetup, EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
 import { php } from '@codemirror/lang-php';
 
 import PropTypes from 'prop-types';
@@ -22,7 +21,6 @@ const Code = ( {
 	const editorRef = useRef();
 
 	const [ view, setView ] = useState();
-	const [ state, setState ] = useState();
 
 	// NOTE: This callback doesn't quite work properly, possibly due to
 	// a scope issue when it gets called inside the EditorView object. I (Zack) haven't
@@ -52,34 +50,28 @@ const Code = ( {
 			return;
 		}
 
-		if ( ! state ) {
-			const stateCurrent = EditorState.create( {
-				doc: value,
-				extensions: [
-					// Basic setup for CodeMirror.
-					// @see https://codemirror.net/6/docs/ref/#basic-setup
-					basicSetup,
-					// Set the language to PHP.
-					php(),
-					// Set the tab size to 4.
-					( new Compartment ).of( EditorState.tabSize.of( 4 ) ),
-					// Handle updates and focus changes.
-					EditorView.updateListener.of( handleViewUpdate ),
-				],
-			} );
+		const stateCurrent = EditorState.create( {
+			doc: value,
+			extensions: [
+				// Basic setup for CodeMirror.
+				// @see https://codemirror.net/6/docs/ref/#basic-setup
+				basicSetup,
+				// Set the language to PHP.
+				php(),
+				// Set the tab size to 4.
+				( new Compartment ).of( EditorState.tabSize.of( 4 ) ),
+				// Handle updates and focus changes.
+				EditorView.updateListener.of( handleViewUpdate ),
+			],
+		} );
 
-			setState( stateCurrent );
-		}
+		const viewCurrent = new EditorView( {
+			state: stateCurrent,
+			parent: editorRef.current,
+		} );
 
-		if ( ! view ) {
-			const viewCurrent = new EditorView( {
-				state,
-				parent: editorRef.current,
-			} );
-
-			setView( viewCurrent );
-		}
-	}, [ state ] );
+		setView( viewCurrent );
+	}, [] );
 
 	useEffect( () => {
 		return () => {
@@ -92,6 +84,11 @@ const Code = ( {
 	// Handle receiving new a new value prop.
 	useEffect( () => {
 		if ( ! view ) {
+			return;
+		}
+
+		// Don't do anything if the view hasn't been set up yet.
+		if ( ! editorViewRef?.current ) {
 			return;
 		}
 

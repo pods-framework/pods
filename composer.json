@@ -41,9 +41,9 @@
   },
   "repositories": [
     {
-      "name": "the-events-calendar/tribalscents",
+      "name": "the-events-calendar/coding-standards",
       "type": "github",
-      "url": "https://github.com/the-events-calendar/tribalscents",
+      "url": "https://github.com/the-events-calendar/coding-standards",
       "no-api": true
     }
   ],
@@ -72,7 +72,7 @@
     "lucatume/wp-snaphot-assertions": "^1.0",
     "phpunit/phpunit": "^6.5",
     "spatie/phpunit-snapshot-assertions": "^1.4.2",
-    "the-events-calendar/tribalscents": "dev-master",
+    "the-events-calendar/coding-standards": "dev-master",
     "wp-cli/wp-cli": "2.*",
     "wp-coding-standards/wpcs": "^2.1"
   },
@@ -87,7 +87,8 @@
   "config": {
     "allow-plugins": {
       "composer/installers": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "kylekatarnls/update-helper": true
     }
   }
 }

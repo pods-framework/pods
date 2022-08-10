@@ -3,10 +3,10 @@
  * @var bool $force_callouts Whether to force the callouts.
  */
 
-$callout = 'friends_2021_29';
+$callout = 'friends_2022_30';
 
-$donor_count    = 18;
-$donor_goal     = 100;
+$donor_count    = 3233;
+$donor_goal     = 6500;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 
 $feature_callout_link = 'https://docs.pods.io/fields/simple-repeatable-fields/';
@@ -17,7 +17,7 @@ $donate_now_link      = 'https://friends.pods.io/donations/become-a-friend/';
 $campaign_args = [
 	'utm_source'   => 'pods_plugin_callout',
 	'utm_medium'   => 'link',
-	'utm_campaign' => 'friends_of_pods_2021',
+	'utm_campaign' => $callout,
 ];
 
 $feature_callout_link = add_query_arg( $campaign_args, $feature_callout_link );
@@ -50,11 +50,16 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 			🎉&nbsp;
 			<?php
 				printf(
-					'%1$s: <a href="%2$s" target="_blank" rel="noreferrer">%3$s</a>',
-					esc_html__( 'Pods 2.8 is out and we are building the next feature for Pods 2.9', 'pods' ),
-					esc_url( $feature_callout_link ),
-					esc_html__( 'Simple Repeatable Fields', 'pods' )
+					'%1$s: %2$s',
+					esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
+					esc_html__( 'Conditional Logic for Fields', 'pods' )
 				);
+				/*printf(
+					'%1$s: <a href="%2$s" target="_blank" rel="noreferrer">%3$s</a>',
+					esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
+					esc_url( $feature_callout_link ),
+					esc_html__( 'Conditional Logic for Fields', 'pods' )
+				);*/
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
@@ -64,7 +69,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 				echo ' ';
 				esc_html_e( 'Pods is fully funded by donations and powered by our community contributors.', 'pods' );
 				echo ' ';
-				esc_html_e( 'Help us continue our work and get Pods 2.9 finished.', 'pods' );
+				esc_html_e( 'Help us continue our work and get Pods 3.0 completed.', 'pods' );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
@@ -73,12 +78,11 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 				esc_html_e( 'Donors get to vote on the next feature we work on, they decide what we do next.', 'pods' );
 			?>
 		</p>
-		<?php /*
 		<p class="pods-admin_friends-callout_text">
 			<?php
 				printf(
 					'<strong>%s</strong>',
-					esc_html__( 'Pods 2.9 Funding Progress', 'pods' )
+					esc_html__( 'Pods 3.0 Funding Progress', 'pods' )
 				);
 			?>
 		</p>
@@ -87,7 +91,6 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 				<?php echo esc_attr( ceil( $progress_width ) ); ?>%
 			</div>
 		</div>
- 		*/ ?>
 		<div class="pods-admin_friends-callout_button-group">
 			<a href="<?php echo esc_url( $learn_more_link ); ?>"
 				target="_blank" rel="noreferrer"

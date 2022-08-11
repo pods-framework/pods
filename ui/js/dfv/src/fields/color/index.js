@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { __ } from '@wordpress/i18n';
-import { ColorIndicator, ColorPicker, Dropdown } from '@wordpress/components';
+import { ColorIndicator, ColorPicker, Dropdown, Button } from '@wordpress/components';
 
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
@@ -31,17 +31,17 @@ const Color = ( {
 							value={ value || '' }
 						/>
 
-						<button
+						<Button
 							onClick={ state.onToggle }
 							className="button pods-color-select-button"
 						>
 							<ColorIndicator colorValue={ value || '' } />
 
 							{ selectLabel }
-						</button>
+						</Button>
 
 						{ value && (
-							<button
+							<Button
 								onClick={ ( event ) => {
 									event.preventDefault();
 									setValue( '' );
@@ -49,7 +49,7 @@ const Color = ( {
 								className="button"
 							>
 								{ clearLabel }
-							</button>
+							</Button>
 						) }
 					</div>
 				) }

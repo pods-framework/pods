@@ -12,15 +12,18 @@ $color--grey: #82878c;
 
 .pods-field-wrapper__repeatable {
 	align-items: center;
-	background: #f9f9f9;
 	border: 1px solid $color--grey;
 	margin-bottom: 0;
-	padding: 10px;
+	padding: 0;
 	position: relative;
 	border-top: none;
 
 	&:first-child {
 		border-top: 1px solid $color--grey;
+	}
+
+	.components-accessible-toolbar {
+		border: 0;
 	}
 
 	.components-button {

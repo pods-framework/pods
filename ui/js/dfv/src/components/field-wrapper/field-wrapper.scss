@@ -22,6 +22,10 @@ $color--grey: #82878c;
 		border-top: 1px solid $color--grey;
 	}
 
+	.pods-field-wrapper__field {
+		padding: 8px 0;
+	}
+
 	.components-accessible-toolbar {
 		border: 0;
 	}

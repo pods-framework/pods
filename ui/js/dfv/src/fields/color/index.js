@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { __ } from '@wordpress/i18n';
-import { ColorIndicator, ColorPicker } from '@wordpress/components';
+import { ColorIndicator, ColorPicker, Dropdown } from '@wordpress/components';
 
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
@@ -24,49 +24,49 @@ const Color = ( {
 
 	return (
 		<div>
-			<div className="pods-color-buttons">
-				<input
-					name={ name }
-					type="hidden"
-					value={ value || '' }
-				/>
+			<Dropdown
+				renderToggle={ ( state ) => (
+					<div className="pods-color-buttons">
+						<input
+							name={ name }
+							type="hidden"
+							value={ value || '' }
+						/>
 
-				<button
-					onClick={ ( event ) => {
-						event.preventDefault();
-						setIsOpen( ( prevValue ) => ! prevValue );
-					} }
-					className="button pods-color-select-button"
-				>
-					<ColorIndicator colorValue={ value || '' } />
+						<button
+							onClick={ state.onToggle }
+							className="button pods-color-select-button"
+						>
+							<ColorIndicator colorValue={ value || '' } />
 
-					{ selectLabel }
-				</button>
+							{ selectLabel }
+						</button>
 
-				{ value && (
-					<button
-						onClick={ ( event ) => {
-							event.preventDefault();
-							setValue( '' );
-						} }
-						className="button"
-					>
-						{ clearLabel }
-					</button>
+						{ value && (
+							<button
+								onClick={ ( event ) => {
+									event.preventDefault();
+									setValue( '' );
+								} }
+								className="button"
+							>
+								{ clearLabel }
+							</button>
+						) }
+					</div>
 				) }
-			</div>
-
-			{ isOpen && (
-				<ColorPicker
-					color={ value }
-					onChangeComplete={ ( newValue ) => {
-						setValue( newValue.hex );
-						setHasBlurred();
-					} }
-					disableAlpha
-					className="pods-color-picker"
-				/>
-			) }
+				renderContent={ () => (
+					<ColorPicker
+						color={ value }
+						onChangeComplete={ ( newValue ) => {
+							setValue( newValue.hex );
+							setHasBlurred();
+						} }
+						disableAlpha
+						className="pods-color-picker"
+					/>
+				) }
+			/>
 		</div>
 	);
 };

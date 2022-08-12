@@ -324,6 +324,12 @@ const DateTime = ( {
 
 	return (
 		<div>
+			<input
+				readOnly={ true }
+				hidden={ true }
+				value={ value }
+				name={ htmlAttributes.name || name }
+			/>
 			<Dropdown
 				renderToggle={ ( state ) => (
 					<input
@@ -337,7 +343,6 @@ const DateTime = ( {
 						} }
 						onBlur={ ( event ) => handleChange( event.target.value ) }
 						id={ htmlAttributes.id || `pods-form-ui-${ name }` }
-						name={ htmlAttributes.name || name }
 						className={
 							classnames(
 								'pods-form-ui-field pods-form-ui-field-type-datetime',

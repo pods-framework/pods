@@ -18,11 +18,11 @@ $background--hover: #f0f0f0;
 	margin-bottom: 0;
 	padding: 0;
 	position: relative;
-	border-top: none;
+	margin-top: -1px;
 	transition: 0.1s background ease-in-out;
 
 	&:first-child {
-		border-top: 1px solid $color--grey;
+		margin-top: 0;
 	}
 
 	&:hover {

@@ -249,13 +249,19 @@ const DateTime = ( {
 	);
 
 	const handleChange = ( newValue ) => {
+		let momentObject = newValue;
+
+		if ( momentObject && ! moment.isMoment( momentObject ) ) {
+			momentObject = moment( newValue, [ getDBFormat(), getFullFormat() ] );
+		}
+
 		// Receives the selected moment object, if the date in the input is valid.
 		// If the date in the input is not valid, the callback receives the value of
 		// the input a string.
-		if ( moment.isMoment( newValue ) ) {
-			setValue( formatMomentObject( newValue ) );
-			setLocalStringValue( formatMomentObject( newValue ) );
-			setLocalMomentValue( newValue );
+		if ( moment.isMoment( momentObject ) ) {
+			setValue( formatMomentObjectForDB( momentObject ) );
+			setLocalStringValue( formatMomentObject( momentObject ) );
+			setLocalMomentValue( momentObject );
 		} else {
 			setValue( newValue );
 			setLocalStringValue( newValue );
@@ -325,8 +331,7 @@ const DateTime = ( {
 						value={ localStringValue }
 						onClick={ state.onToggle }
 						onChange={ ( event ) => {
-							// Track local values, but don't change actual value
-							// until blur event.
+							// Track local values, but don't change actual value until blur event.
 							setLocalStringValue( event.target.value );
 							setLocalMomentValue( moment( event.target.value, [ getDBFormat(), getFullFormat() ] ) );
 						} }

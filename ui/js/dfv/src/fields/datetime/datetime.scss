@@ -9,6 +9,12 @@
 	.pods-form-ui-field.pods-form-ui-field-type-time {
 		max-width: 300px;
 	}
+
+	.rdtPicker td,
+	.rdtPicker th {
+		padding: 10px;
+		vertical-align: middle;
+	}
 }
 
 #side-sortables {

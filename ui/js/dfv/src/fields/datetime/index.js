@@ -209,6 +209,14 @@ const DateTime = ( {
 		return momentObject.format( getFullFormat() );
 	};
 
+	const formatMomentObjectForDB = ( momentObject, defaultValue = '' ) => {
+		if ( ! momentObject.isValid() ) {
+			return defaultValue;
+		}
+
+		return momentObject.format( getDBFormat() );
+	};
+
 	const handleHTML5InputFieldChange = ( event ) => setValue( event.target.value );
 
 	// Keep local versions as a string (formatted and ready to display, and in case

@@ -16,6 +16,12 @@
 		vertical-align: top;
 		line-height: 1;
 	}
+
+	/* Fix arrow alignment */
+	.rdtPicker th.rdtNext span,
+	.rdtPicker th.rdtPrev span {
+		line-height: .6;
+	}
 }
 
 .pods-field-option {

@@ -5731,7 +5731,7 @@ class PodsAPI {
 		// @todo Handle simple relationships eventually
 		foreach ( $values as $v ) {
 			if ( ! is_array( $v ) ) {
-				if ( ! preg_match( '/[^\D]/', $v ) ) {
+				if ( is_numeric( $v ) ) {
 					$v = (int) $v;
 				} elseif ( $is_file_field ) {
 					// File handling

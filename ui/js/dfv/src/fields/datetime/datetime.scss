@@ -1,6 +1,27 @@
-.pods-react-datetime-fix .rdtPicker {
-	position: sticky !important;
-	max-width: 500px;
+.pods-react-datetime-fix {
+
+	.rdtPicker {
+		position: sticky !important;
+		max-width: 500px;
+	}
+
+	.rdtPicker td,
+	.rdtPicker th {
+		padding: 10px;
+		vertical-align: middle;
+	}
+
+	.rdtPicker th.rdtNext,
+	.rdtPicker th.rdtPrev {
+		vertical-align: top;
+		line-height: 1;
+	}
+
+	/* Fix arrow alignment */
+	.rdtPicker th.rdtNext span,
+	.rdtPicker th.rdtPrev span {
+		line-height: .6;
+	}
 }
 
 .pods-field-option {

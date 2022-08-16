@@ -158,7 +158,8 @@ class PodsInit {
 
 		// Setup common info for after TEC/ET load.
 		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
-		add_action( 'tribe_common_loaded', [ $this, 'run' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'maybe_load_common' ], 11 );
+		add_action( 'tribe_common_loaded', [ $this, 'run' ], 11 );
 	}
 
 	/**
@@ -289,6 +290,23 @@ class PodsInit {
 				add_filter( 'tribe_debug_bar_panels', '__return_empty_array', 15 );
 			}
 		}
+	}
+
+	/**
+	 * If common was registered but not ultimately loaded, register ours and load it.
+	 *
+	 * @since 2.9.2
+	 */
+	public function maybe_load_common() {
+		// Don't load if Common is already loaded or if Common info was never registered.
+		if ( empty( $GLOBALS['tribe-common-info'] ) || did_action( 'tribe_common_loaded' ) ) {
+			return;
+		}
+
+		// Reset common info so we can register ours.
+		$GLOBALS['tribe-common-info'] = null;
+
+		$this->maybe_set_common_lib_info();
 	}
 
 	/**
@@ -2532,7 +2550,6 @@ class PodsInit {
 	}
 
 	public function run() {
-
 		static $ran;
 
 		if ( ! empty( $ran ) ) {

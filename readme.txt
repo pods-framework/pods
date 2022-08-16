@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.1
+Stable tag: 2.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,17 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.2 - August 16th, 2022 =
+
+* Tweak: Improve the repeatable field UI elements so they blend in more. #6853 #6854 (@JoryHogeveen, @sc0ttkclark)
+* Tweak: Use a popover UI for color fields. #6858 #6859 (@JoryHogeveen)
+* Tweak: Use a popover UI for date, date/time, and time fields. #6857 #6389 #6860 (@JoryHogeveen)
+* Fixed: Resolve conflicts with Restrict Content Pro to deal with how it uses the shared Common library. (@sc0ttkclark)
+* Fixed: Resolve issues with taggable relationships not saving string values. #6862 #6863 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Resolve formatting issues with saved date/time field variations on save. #6389 #6860 (@JoryHogeveen)
+* Fixed: Resolve error with WPGraphQL on some PHP configurations. #6865 (@sc0ttkclark)
+* Fixed: Resolve error in the field settings for Files with Gallery enabled. #6864 (@sc0ttkclark)
 
 = 2.9.1 - August 10th, 2022 =
 

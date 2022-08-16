@@ -265,6 +265,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Gallery Image Links', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
+				'default'    => 'file',
 				'data'       => array(
 					'post' => __( 'Attachment Page', 'pods' ),
 					'file' => __( 'Media File', 'pods' ),
@@ -276,6 +277,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Gallery Image Columns', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
+				'default'    => '3',
 				'data'       => array(
 					'1' => '1',
 					'2' => '2',
@@ -298,6 +300,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Gallery Image Size', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
+				'default'    => 'thumbnail',
 				'data'       => $this->data_image_sizes(),
 				'pick_show_select_text' => 0,
 			),

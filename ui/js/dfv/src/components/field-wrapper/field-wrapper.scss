@@ -1,4 +1,5 @@
 $color--grey: #82878c;
+$background--hover: #f0f0f0;
 
 .pods-field-wrapper__repeatable-field-table {
 	margin-bottom: 10px;
@@ -15,16 +16,29 @@ $color--grey: #82878c;
 	background: #f9f9f9;
 	border: 1px solid $color--grey;
 	margin-bottom: 0;
-	padding: 10px;
-	positio: relative;
-	border-top: none;
+	padding: 0;
+	position: relative;
+	margin-top: -1px;
+	transition: 0.1s background ease-in-out;
 
 	&:first-child {
-		border-top: 1px solid $color--grey;
+		margin-top: 0;
 	}
 
-	.components-button {
-		background: white;
+	&:hover {
+		background: $background--hover;
+	}
+
+	.pods-field-wrapper__field {
+		padding: 8px;
+	}
+
+	.components-accessible-toolbar {
+		border: 0;
+	}
+
+	.components-toolbar-group {
+		background: transparent;
 	}
 }
 

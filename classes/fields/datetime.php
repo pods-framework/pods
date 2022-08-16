@@ -333,6 +333,7 @@ class PodsField_DateTime extends PodsField {
 		if ( ! $this->is_empty( $value ) ) {
 
 			// Value should always be passed as storage format since 2.7.15.
+			// This was broken since 2.8.x and restored in 2.9.2 (#6389).
 			$formats = [
 				static::$storage_format,
 			];

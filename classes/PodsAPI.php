@@ -5452,7 +5452,8 @@ class PodsAPI {
 				$post_terms = (array) $post_terms;
 
 				foreach ( $post_terms as $k => $v ) {
-					if ( ! preg_match( '/[^0-9]/', $v ) ) {
+					// Enforce integers for numeric strings or else fallback to slugs.
+					if ( is_numeric( $v ) ) {
 						$v = (int) $v;
 					}
 

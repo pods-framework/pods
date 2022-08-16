@@ -9,22 +9,17 @@
 }
 
 .button.pods-color-select-button {
-	align-items: stretch;
+	align-items: center;
 	display: flex;
 	flex-flow: row nowrap;
-	padding-left: 0;
 
 	> .component-color-indicator {
-		border: 0;
 		display: block;
-		height: auto;
-		margin-left: 0;
 		margin-right: 0.5em;
-		width: 2.5em;
-		border-radius: 0;
 	}
 }
 
+/* @todo Maybe remove since we switched to a popover. */
 .pods-color-picker {
 	padding: 0.5em;
 	border: 1px solid #ccd0d4;

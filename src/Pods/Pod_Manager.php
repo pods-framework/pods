@@ -60,14 +60,14 @@ class Pod_Manager {
 			$key .= '/' . $id;
 		}
 
-		if ( isset( self::$pods[ $key ] ) ) {
-			if ( $id && ! $store_by_id && (int) self::$pods[ $key ]->id() !== (int) $id ) {
-				self::$pods[ $key ]->fetch( $id );
+		if ( isset( $this->instances[ $key ] ) ) {
+			if ( $id && ! $store_by_id && (int) $this->instances[ $key ]->id() !== (int) $id ) {
+				$this->instances[ $key ]->fetch( $id );
 			} elseif ( $find ) {
-				self::$pods[ $key ]->find( $find );
+				$this->instances[ $key ]->find( $find );
 			}
 
-			return self::$pods[ $key ];
+			return $this->instances[ $key ];
 		}
 
 		$pod = pods( $args['name'], $id );
@@ -87,7 +87,7 @@ class Pod_Manager {
 		}
 
 		if ( $pod ) {
-			self::$pods[ $key ] = $pod;
+			$this->instances[ $key ] = $pod;
 		}
 
 		return $pod;

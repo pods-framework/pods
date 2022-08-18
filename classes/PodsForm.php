@@ -244,6 +244,8 @@ class PodsForm {
 			$data            = $options['data'];
 		}
 
+		$repeatable_field_types = self::repeatable_field_types();
+
 		// Start field render.
 		ob_start();
 
@@ -276,6 +278,11 @@ class PodsForm {
 			// @todo Move these custom field methods into real/faux field classes
 			echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
 		} elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
+			// Force non-repeatable field types to be non-repeatable even if option is set to 1.
+			if ( ! empty( $options['repeatable'] ) && ! in_array( $type, $repeatable_field_types, true ) ) {
+				$options['repeatable'] = 0;
+			}
+
 			self::$loaded[ $type ]->input( $name, $value, $options, $pod, $id );
 		} else {
 			/**
@@ -1770,7 +1777,7 @@ class PodsForm {
 				'wysiwyg',
 			];
 
-			$field_types = apply_filters( 'pods_repeatable_field_types', $field_types );
+			$field_types = (array) apply_filters( 'pods_repeatable_field_types', $field_types );
 		}
 
 		return $field_types;

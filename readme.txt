@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.2
+Stable tag: 2.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,13 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.3 - August 18th, 2022 =
+
+* Fixed: Resolve additional issue with WPGraphQL on some PHP configurations. #6868 (@sc0ttkclark)
+* Fixed: Code field and others that do not support repeatable inputs are now forced to show non-repeatable inputs even if the setting was saved as on. #6855 (@sc0ttkclark)
+* Fixed: TinyMCE WYSIWYG fields are now no longer showing as repeatable since they are not fully supported. Quill Editor remains supported for repeatable input. #6855 (@sc0ttkclark)
+* Fixed: A development build has been resolved which broke the Code editor field. #6870 (@JoryHogeveen, @sc0ttkclark)
 
 = 2.9.2 - August 16th, 2022 =
 

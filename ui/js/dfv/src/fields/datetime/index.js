@@ -111,6 +111,7 @@ const DateTime = ( {
 		datetime_time_type: timeFormatType = 'wp', // 'wp, '12', '24', or 'custom'
 		datetime_type: dateFormatType = 'wp', // 'wp', 'format', or 'custom'
 		datetime_year_range_custom: yearRangeCustom,
+		readonly: readOnly,
 	} = fieldConfig;
 
 	const includeTimeField = 'datetime' === type || 'time' === type;
@@ -318,6 +319,7 @@ const DateTime = ( {
 				value={ formatValueForHTML5Field( value ) }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -335,12 +337,13 @@ const DateTime = ( {
 					<input
 						type="text"
 						value={ localStringValue }
-						onClick={ state.onToggle }
+						onClick={ () => readOnly ? state.onToggle : undefined }
 						onChange={ ( event ) => {
 							// Track local values, but don't change actual value until blur event.
 							setLocalStringValue( event.target.value );
 							setLocalMomentValue( moment( event.target.value, [ getDBFormat(), getFullFormat() ] ) );
 						} }
+						readOnly={ !! readOnly }
 						onBlur={ ( event ) => handleChange( event.target.value ) }
 						id={ htmlAttributes.id || `pods-form-ui-${ name }` }
 						className={

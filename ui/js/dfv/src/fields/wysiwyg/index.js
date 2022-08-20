@@ -69,6 +69,19 @@ const Wysiwyg = ( props ) => {
 		);
 	}
 
+	// If it's readonly and would normally be a TinyMCE field, we don't load the TinyMCE editor.
+	if ( toBool( readOnly ) ) {
+		return (
+			<textarea
+				name={ htmlAttributes.name || name }
+				value={ value || '' }
+				readOnly={ toBool( readOnly ) }
+			>
+				{ value }
+			</textarea>
+		);
+	}
+
 	return (
 		<TinyMCE
 			name={ htmlAttributes.name || name }

@@ -20,7 +20,7 @@ const BaseInput = ( {
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
-		readonly: readOnly,
+		read_only: readOnly,
 		name,
 	} = fieldConfig;
 

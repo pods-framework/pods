@@ -23,7 +23,7 @@ const Currency = ( {
 	const {
 		htmlAttr: htmlAttributes = {},
 		name,
-		readonly: readOnly,
+		read_only: readOnly,
 		currency_decimal_handling: decimalHandling = 'none',
 		currency_decimals: decimalMaxLength = 'auto',
 		currency_format: format,

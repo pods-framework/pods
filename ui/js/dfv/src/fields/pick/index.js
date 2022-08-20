@@ -131,7 +131,7 @@ const Pick = ( props ) => {
 		fieldConfig: {
 			ajax_data: ajaxData,
 			htmlAttr: htmlAttributes = {},
-			readonly: readOnly,
+			read_only: readOnly,
 			fieldItemData,
 			data = [],
 			label,

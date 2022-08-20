@@ -23,7 +23,7 @@ const NumberField = ( {
 	const {
 		htmlAttr: htmlAttributes = {},
 		name,
-		readonly: readOnly,
+		read_only: readOnly,
 		number_decimals: decimalMaxLength = 'auto',
 		number_format: format,
 		number_format_soft: softFormat,

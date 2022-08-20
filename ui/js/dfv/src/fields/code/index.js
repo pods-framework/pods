@@ -127,7 +127,10 @@ const Code = ( {
 				value={ value || '' }
 			/>
 
-			<div ref={ editorRef } />
+			<div
+				className={ !! readOnly ? 'pods-code-field__input--readonly' : '' }
+				ref={ editorRef }
+			/>
 		</div>
 	);
 };

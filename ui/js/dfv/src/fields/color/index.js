@@ -18,7 +18,7 @@ const Color = ( {
 		name,
 		color_select_label: selectLabel = __( 'Select Color', 'pods' ),
 		color_clear_label: clearLabel = __( 'Clear', 'pods' ),
-		readonly: readOnly,
+		read_only: readOnly,
 	} = fieldConfig;
 
 	return (

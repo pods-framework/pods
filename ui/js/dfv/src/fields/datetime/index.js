@@ -111,7 +111,7 @@ const DateTime = ( {
 		datetime_time_type: timeFormatType = 'wp', // 'wp, '12', '24', or 'custom'
 		datetime_type: dateFormatType = 'wp', // 'wp', 'format', or 'custom'
 		datetime_year_range_custom: yearRangeCustom,
-		readonly: readOnly,
+		read_only: readOnly,
 	} = fieldConfig;
 
 	const includeTimeField = 'datetime' === type || 'time' === type;

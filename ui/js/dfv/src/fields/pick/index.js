@@ -73,8 +73,6 @@ const formatValuesForReactSelectComponent = (
 	fieldItemData = [],
 	isMulti = false
 ) => {
-	//console.log( 'formatValuesForReactSelectComponent', value, fieldItemData );
-
 	if ( ! value ) {
 		return isMulti ? [] : [];
 	}
@@ -461,7 +459,7 @@ const Pick = ( props ) => {
 		<>
 			{ renderSelectComponent() }
 
-			{ ( allowAddNew && addNewIframeSrc ) ? (
+			{ ( allowAddNew && addNewIframeSrc && ! toBool( readOnly ) ) ? (
 				<Button
 					className="pods-related-add-new pods-modal"
 					onClick={ () => setShowAddNewIframe( true ) }

@@ -56,6 +56,12 @@ const NumberField = ( {
 	}, [] );
 
 	const handleChange = ( event ) => {
+		// The "range" (slider) input doesn't support the readonly attribute,
+		// so handle readOnly here.
+		if ( toBool( readOnly ) ) {
+			return;
+		}
+
 		// Slider input is always format: `9999.99`.
 		if ( isSlider ) {
 			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
@@ -91,7 +97,6 @@ const NumberField = ( {
 					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-number-slider', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
-					readOnly={ toBool( readOnly ) }
 					onChange={ handleChange }
 					onBlur={ handleBlur }
 					min={ parseInt( min, 10 ) || undefined }

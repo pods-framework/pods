@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 import './checkbox-select.scss';
@@ -99,7 +100,7 @@ const CheckboxSelect = ( {
 											setValue( value === optionValue ? unsetValue : optionValue );
 										}
 									} }
-									readOnly={ !! readOnly }
+									readOnly={ toBool( readOnly ) }
 								/>
 								{ optionLabel }
 							</label>

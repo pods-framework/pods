@@ -319,7 +319,7 @@ const DateTime = ( {
 				value={ formatValueForHTML5Field( value ) }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
-				readOnly={ !! readOnly }
+				readOnly={ toBool( readOnly ) }
 			/>
 		);
 	}
@@ -343,7 +343,7 @@ const DateTime = ( {
 							setLocalStringValue( event.target.value );
 							setLocalMomentValue( moment( event.target.value, [ getDBFormat(), getFullFormat() ] ) );
 						} }
-						readOnly={ !! readOnly }
+						readOnly={ toBool( readOnly ) }
 						onBlur={ ( event ) => handleChange( event.target.value ) }
 						id={ htmlAttributes.id || `pods-form-ui-${ name }` }
 						className={

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
 import {
 	parseFloatWithPodsFormat,
 	formatNumberWithPodsFormat,
@@ -94,7 +95,7 @@ const Currency = ( {
 					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-currency-slider', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
-					readOnly={ !! readOnly }
+					readOnly={ toBool( readOnly ) }
 					onChange={ handleChange }
 					onBlur={ handleBlur }
 					min={ parseInt( min, 10 ) || undefined }
@@ -131,7 +132,7 @@ const Currency = ( {
 				step={ html5 ? 'any' : undefined }
 				min={ html5 ? ( parseInt( min, 10 ) || undefined ) : undefined }
 				max={ html5 ? ( parseInt( max, 10 ) || undefined ) : undefined }
-				readOnly={ !! readOnly }
+				readOnly={ toBool( readOnly ) }
 				onChange={ handleChange }
 				onBlur={ reformatFormattedValue }
 			/>

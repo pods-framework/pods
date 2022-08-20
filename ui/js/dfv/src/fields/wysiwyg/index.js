@@ -42,6 +42,7 @@ const Wysiwyg = ( props ) => {
 		wysiwyg_editor_height: editorHeight = 400,
 		wysiwyg_media_buttons: mediaButtons,
 		wysiwyg_default_editor: defaultEditor = 'tinymce',
+		read_only: readOnly,
 	} = fieldConfig;
 
 	if ( 'quill' === editor || 'cleditor' === editor ) {
@@ -56,6 +57,7 @@ const Wysiwyg = ( props ) => {
 					modules={ {
 						toolbar: QUILL_TOOLBAR_OPTIONS,
 					} }
+					readOnly={ toBool( readOnly ) }
 				/>
 
 				<input

@@ -305,7 +305,7 @@ const Pick = ( props ) => {
 					value={ fieldValue || '' }
 					setValue={ setValueWithLimit }
 					options={ modifiedFieldItemData }
-					readOnly={ !! readOnly }
+					readOnly={ toBool( readOnly ) }
 				/>
 			);
 		}
@@ -334,7 +334,7 @@ const Pick = ( props ) => {
 					isMulti={ isMulti }
 					setValue={ setValueWithLimit }
 					options={ modifiedFieldItemData }
-					readOnly={ !! readOnly }
+					readOnly={ toBool( readOnly ) }
 				/>
 			);
 		}
@@ -428,7 +428,7 @@ const Pick = ( props ) => {
 							showViewLink={ toBool( showViewLink ) }
 							showEditLink={ toBool( showEditLink ) }
 							editIframeTitle={ editIframeTitle }
-							readOnly={ !! readOnly }
+							readOnly={ toBool( readOnly ) }
 						/>
 					) : null }
 
@@ -452,7 +452,7 @@ const Pick = ( props ) => {
 				setValue={ ( newValue ) => setValueWithLimit( newValue ) }
 				options={ modifiedFieldItemData }
 				isMulti={ isMulti }
-				readOnly={ !! readOnly }
+				readOnly={ toBool( readOnly ) }
 			/>
 		);
 	};

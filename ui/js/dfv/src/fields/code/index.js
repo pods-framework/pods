@@ -128,7 +128,7 @@ const Code = ( {
 			/>
 
 			<div
-				className={ !! readOnly ? 'pods-code-field__input--readonly' : '' }
+				className={ toBool( readOnly ) ? 'pods-code-field__input--readonly' : '' }
 				ref={ editorRef }
 			/>
 		</div>

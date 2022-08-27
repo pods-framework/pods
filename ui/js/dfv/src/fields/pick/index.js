@@ -394,8 +394,6 @@ const Pick = ( props ) => {
 				}
 			};
 
-			//console.log( 'formattedValue', formattedValue );
-
 			return (
 				<>
 					<FullSelect

@@ -337,7 +337,7 @@ const DateTime = ( {
 					<input
 						type="text"
 						value={ localStringValue }
-						onClick={ () => readOnly ? state.onToggle : undefined }
+						onClick={ () => ! toBool( readOnly ) ? state.onToggle() : undefined }
 						onChange={ ( event ) => {
 							// Track local values, but don't change actual value until blur event.
 							setLocalStringValue( event.target.value );

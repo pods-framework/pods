@@ -333,6 +333,7 @@ class PodsField_DateTime extends PodsField {
 		if ( ! $this->is_empty( $value ) ) {
 
 			// Value should always be passed as storage format since 2.7.15.
+			// This was broken since 2.8.x and restored in 2.9.2 (#6389).
 			$formats = [
 				static::$storage_format,
 			];
@@ -1261,9 +1262,7 @@ class PodsField_DateTime extends PodsField {
 	 * @since 2.7.0
 	 */
 	public function enqueue_jquery_ui_i18n() {
-		$static_cache = tribe( Static_Cache::class );
-
-		$done = (array) $static_cache->get( 'done', __METHOD__ );
+		$done = (array) pods_static_cache_get( 'done', __METHOD__ );
 
 		$types = array();
 

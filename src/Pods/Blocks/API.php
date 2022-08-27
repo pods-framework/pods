@@ -120,6 +120,12 @@ class API {
 			return $blocks;
 		}
 
+		$cached = pods_transient_get( 'pods_blocks' );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
 		$this->setup_core_blocks();
 
 		$api = pods_api();
@@ -138,6 +144,8 @@ class API {
 			return $block->get_block_args();
 		}, $blocks );
 
+		pods_transient_set( 'pods_blocks', $blocks, DAY_IN_SECONDS * 7 );
+
 		return $blocks;
 	}
 
@@ -153,6 +161,12 @@ class API {
 
 		if ( ! empty( $js_blocks ) ) {
 			return $js_blocks;
+		}
+
+		$cached = pods_transient_get( 'pods_blocks_js' );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
 		}
 
 		$blocks = $this->get_blocks();
@@ -184,6 +198,8 @@ class API {
 
 			$js_blocks[ $block_key ] = $js_block;
 		}
+
+		pods_transient_set( 'pods_blocks_js', $js_blocks, DAY_IN_SECONDS * 7 );
 
 		return $js_blocks;
 	}

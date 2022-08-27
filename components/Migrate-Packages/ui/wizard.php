@@ -117,6 +117,47 @@
 								<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
 							</div>
 
+							<div class="stuffbox pods-package-import-group">
+								<h3>
+									<label for="link_name"><?php _e( 'Choose whether to export Settings', 'pods' ); ?></label>
+								</h3>
+
+								<div class="inside pods-manage-field pods-dependency">
+									<div class="pods-field-option-group">
+										<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+											<ul>
+												<?php
+												$data_name = 'settings';
+												$data = [
+													'all' => __( 'All Settings', 'pods' ),
+												];
+
+												$zebra = false;
+
+												foreach ( $data as $key => $label ) {
+													$checked = true;
+
+													$class = ( $zebra ? 'even' : 'odd' );
+
+													$zebra = ( ! $zebra );
+													?>
+													<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+														<?php
+														echo PodsForm::field( $data_name . '[' . $key . ']', true, 'boolean', [
+															'boolean_yes_label' => $label,
+															'disable_dfv'       => true,
+														] );
+														?>
+													</li>
+													<?php
+												}
+												?>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+
 							<?php
 							if ( ! empty( $pods ) ) {
 								$data      = $pods;

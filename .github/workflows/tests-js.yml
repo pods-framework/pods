@@ -21,6 +21,6 @@ jobs:
         with:
           node-version: '16.x'
       - name: Install dependencies
-        run: npm install
+        run: npm ci --force --legacy-peer-deps
       - name: Run JS test suite
         run: npm run ${{ matrix.suite }}

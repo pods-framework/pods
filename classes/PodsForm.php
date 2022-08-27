@@ -221,8 +221,6 @@ class PodsForm {
 		$value           = apply_filters( "pods_form_ui_field_{$type}_value", $value, $name, $options, $pod, $id );
 		$form_field_type = self::$field_type;
 
-		ob_start();
-
 		$helper = false;
 
 		/**
@@ -245,6 +243,11 @@ class PodsForm {
 			$options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
 			$data            = $options['data'];
 		}
+
+		$repeatable_field_types = self::repeatable_field_types();
+
+		// Start field render.
+		ob_start();
 
 		/**
 		 * pods_form_ui_field_{$type}_override filter leaves too much to be done by developer.
@@ -275,6 +278,11 @@ class PodsForm {
 			// @todo Move these custom field methods into real/faux field classes
 			echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
 		} elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
+			// Force non-repeatable field types to be non-repeatable even if option is set to 1.
+			if ( ! empty( $options['repeatable'] ) && ! in_array( $type, $repeatable_field_types, true ) ) {
+				$options['repeatable'] = 0;
+			}
+
 			self::$loaded[ $type ]->input( $name, $value, $options, $pod, $id );
 		} else {
 			/**
@@ -1473,28 +1481,27 @@ class PodsForm {
 		$class_name = ucfirst( $field_type );
 		$class_name = "PodsField_{$class_name}";
 
-		$content_dir   = realpath( WP_CONTENT_DIR );
-		$plugins_dir   = realpath( WP_PLUGIN_DIR );
-		$muplugins_dir = realpath( WPMU_PLUGIN_DIR );
-		$abspath_dir   = realpath( ABSPATH );
-		$pods_dir      = realpath( PODS_DIR );
-
 		if ( ! class_exists( $class_name ) ) {
 			if ( isset( self::$field_types[ $field_type ] ) && ! empty( self::$field_types[ $field_type ]['file'] ) ) {
 				$file = realpath( self::$field_types[ $field_type ]['file'] );
 			}
 
-			if ( ! empty( $file ) && 0 === strpos( $file, $abspath_dir ) && file_exists( $file ) ) {
-				include_once $file;
-			} else {
-				$file = str_replace( '../', '', apply_filters( 'pods_form_field_include', '', $field_type ) );
+			/**
+			 * The field type include path.
+			 *
+			 * @since unknown
+			 *
+			 * @param string $file The file path to include for the field type.
+			 */
+			$file = apply_filters( 'pods_form_field_include', $file, $field_type );
 
-				if ( ! empty( $file ) ) {
-					$file = realpath( $file );
+			$file = trim( $file );
 
-					if ( file_exists( $file ) && ( 0 === strpos( $file, $pods_dir ) || 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) ) {
-						include_once $file;
-					}
+			if ( '' !== $file ) {
+				$located = pods_validate_safe_path( $file, 'all' );
+
+				if ( $located ) {
+					include_once $located;
 				}
 			}
 		}
@@ -1770,7 +1777,7 @@ class PodsForm {
 				'wysiwyg',
 			];
 
-			$field_types = apply_filters( 'pods_repeatable_field_types', $field_types );
+			$field_types = (array) apply_filters( 'pods_repeatable_field_types', $field_types );
 		}
 
 		return $field_types;

@@ -20,8 +20,12 @@
 	@import "libs/jquery-ui-custom";
 }
 
-.pods-submittable {
+.pods-submittable,
+.pods-admin-container {
 	@import "libs/jquery-qtip";
+}
+
+.pods-submittable {
 	@import "overrides/jquery-cleditor";
 	@import "overrides/select-woo";
 }

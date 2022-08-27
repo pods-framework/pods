@@ -917,15 +917,28 @@ class PodsAdmin {
 
 		$row = false;
 
-		$pod_types_found = array();
+		$pod_types_found = [];
+		$sources_found   = [];
+		$source_types    = [];
 
 		$include_row_counts         = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
 		$include_row_counts_refresh = filter_var( pods_v( 'pods_include_row_counts_refresh' ), FILTER_VALIDATE_BOOLEAN );
 
 		$fields = [
-			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
-			'name'        => [ 'label' => __( 'Name', 'pods' ) ],
-			'type'        => [ 'label' => __( 'Type', 'pods' ) ],
+			'label'       => [
+				'label' => __( 'Label', 'pods' ),
+			],
+			'name'        => [
+				'label' => __( 'Name', 'pods' ),
+			],
+			'type'        => [
+				'label' => __( 'Type', 'pods' ),
+			],
+			'source'      => [
+				'label' => __( 'Source', 'pods' ),
+				'width' => '10%',
+				'type'  => 'raw',
+			],
 			'storage'     => [
 				'label' => __( 'Storage Type', 'pods' ),
 				'width' => '10%',
@@ -939,11 +952,6 @@ class PodsAdmin {
 				'width' => '8%',
 			],
 		];
-
-		// Do not show Groups/Fields if in types-only mode.
-		if ( pods_is_types_only() ) {
-			unset( $fields['group_count'], $fields['field_count'] );
-		}
 
 		if ( $include_row_counts ) {
 			$fields['row_count'] = [
@@ -982,6 +990,9 @@ class PodsAdmin {
 
 		$is_tableless = pods_tableless();
 
+		$has_source = false;
+		$has_storage_type = false;
+
 		foreach ( $pods as $k => $pod ) {
 			$pod_type       = $pod['type'];
 			$pod_type_label = null;
@@ -1000,7 +1011,11 @@ class PodsAdmin {
 			}
 
 			if ( 'settings' === $pod_type ) {
-				$pod_storage = 'options';
+				$pod_storage = 'option';
+			}
+
+			if ( 'meta' !== $pod_storage ) {
+				$has_storage_type = true;
 			}
 
 			if ( isset( $pod_types[ $pod_type ] ) ) {
@@ -1011,8 +1026,8 @@ class PodsAdmin {
 
 			$storage_type_label = ucwords( $pod_storage );
 
-			if ( isset( $storage_types[ $pod_type ] ) ) {
-				$storage_type_label = $storage_types[ $pod_type ];
+			if ( isset( $storage_types[ $pod_storage ] ) ) {
+				$storage_type_label = $storage_types[ $pod_storage ];
 			}
 
 			if ( null !== $pod_type_label ) {
@@ -1046,11 +1061,6 @@ class PodsAdmin {
 			} elseif ( 'all' !== $view ) {
 				continue;
 			}//end if
-
-			// @codingStandardsIgnoreLine
-			if ( 'delete' !== pods_v( 'action' ) && $pod['id'] === (int) pods_v( 'id' ) ) {
-				$row = $pod;
-			}
 
 			$group_count    = 0;
 			$field_count    = 0;
@@ -1097,14 +1107,81 @@ class PodsAdmin {
 				}
 			}
 
+			$object_storage_type = $pod->get_object_storage_type();
+			$source              = $pod->get_object_storage_type_label();
+
+			if ( $source ) {
+				$source_types[ $object_storage_type ] = $source;
+
+				if ( ! isset( $sources_found[ $object_storage_type ] ) ) {
+					$sources_found[ $object_storage_type ] = 1;
+				} else {
+					$sources_found[ $object_storage_type ] ++;
+				}
+			}
+
+			$source = esc_html( $source );
+
+			if ( 'post_type' !== $object_storage_type ) {
+				$has_source = true;
+
+				if ( 'file' === $object_storage_type ) {
+					$file_source = $pod->get_arg( '_pods_file_source' );
+
+					if ( $file_source ) {
+						if ( 0 === strpos( $file_source, ABSPATH ) ) {
+							$file_source = str_replace( ABSPATH, '', $file_source );
+						}
+
+						ob_start();
+
+						pods_help(
+							sprintf(
+								'<strong>%s:</strong> %s',
+								esc_html__( 'File source', 'pods' ),
+								esc_html( $file_source )
+							),
+							null,
+							'.pods-admin-container'
+						);
+
+						$source .= ' ' . ob_get_clean();
+					}
+				} elseif ( 'collection' === $object_storage_type ) {
+					$code_source = $pod->get_arg( '_pods_code_source' );
+
+					if ( $code_source ) {
+						if ( 0 === strpos( $code_source, ABSPATH ) ) {
+							$code_source = str_replace( ABSPATH, '', $code_source );
+						}
+
+						ob_start();
+
+						pods_help(
+							sprintf(
+								'<strong>%s:</strong> %s',
+								esc_html__( 'Code source', 'pods' ),
+								esc_html( $code_source )
+							),
+							null,
+							'.pods-admin-container'
+						);
+
+						$source .= ' ' . ob_get_clean();
+					}
+				}
+			}
+
 			$pod = [
-				'id'        => $pod['id'],
-				'label'     => $pod['label'],
-				'name'      => $pod['name'],
-				'object'    => $pod['object'],
-				'type'      => $pod_type,
-				'real_type' => $pod_real_type,
-				'storage'   => $storage_type_label,
+				'id'         => $pod['id'],
+				'label'      => $pod['label'],
+				'name'       => $pod['name'],
+				'object'     => $pod['object'],
+				'type'       => $pod_type,
+				'real_type'  => $pod_real_type,
+				'storage'    => $storage_type_label,
+				'source'     => $source,
+				'pod_object' => $pod,
 			];
 
 			if ( ! pods_is_types_only() ) {
@@ -1136,8 +1213,45 @@ class PodsAdmin {
 				}
 			}
 
+			// @codingStandardsIgnoreLine
+			if ( 'manage' !== pods_v( 'action' ) ) {
+				$found_id   = (int) pods_v( 'id' );
+				$found_name = pods_v( 'name' );
+
+				if (
+					(
+						$found_id
+						&& $pod['id'] === $found_id
+					)
+					|| (
+						$found_name
+						&& $pod['name'] === $found_name
+					)
+				) {
+					$row = $pod;
+				}
+			}
+
 			$pod_list[] = $pod;
 		}//end foreach
+
+		if ( ! $has_storage_type ) {
+			unset( $fields['storage'] );
+		}
+
+		if ( ! $has_source ) {
+			unset( $fields['source'] );
+		}
+
+		if (
+			(
+				0 === $total_groups
+				&& 0 === $total_fields
+			)
+			|| pods_is_types_only()
+		) {
+			unset( $fields['group_count'], $fields['field_count'] );
+		}
 
 		if ( false === $row && 0 < pods_v( 'id' ) && 'delete' !== pods_v( 'action' ) ) {
 			pods_message( 'Pod not found', 'error' );
@@ -1173,6 +1287,8 @@ class PodsAdmin {
 			);
 		}
 
+		$pod_list = wp_list_sort( $pod_list, 'label', 'ASC', true );
+
 		$ui = [
 			'data'             => $pod_list,
 			'row'              => $row,
@@ -1187,15 +1303,20 @@ class PodsAdmin {
 				'field_id'    => 'id',
 				'field_index' => 'label',
 			],
-			'actions_disabled' => [ 'view', 'export', 'delete' ],
+			'actions_disabled' => [ 'view', 'export', 'delete', 'duplicate' ],
 			'actions_custom'   => [
-				'add'        => [ $this, 'admin_setup_add' ],
-				'edit'       => [ $this, 'admin_setup_edit' ],
-				'duplicate'  => [
+				'add'           => [ $this, 'admin_setup_add' ],
+				'edit'          => [
+					'callback'          => [ $this, 'admin_setup_edit' ],
+					'restrict_callback' => [ $this, 'admin_setup_edit_restrict' ],
+				],
+				'duplicate_pod' => [
+					'label'             => __( 'Duplicate', 'pods' ),
 					'callback'          => [ $this, 'admin_setup_duplicate' ],
 					'restrict_callback' => [ $this, 'admin_setup_duplicate_restrict' ],
+					'nonce'             => true,
 				],
-				'reset'      => [
+				'reset_pod'     => [
 					'label'             => __( 'Delete All Items', 'pods' ),
 					'confirm'           => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
 					'callback'          => [ $this, 'admin_setup_reset' ],
@@ -1203,21 +1324,32 @@ class PodsAdmin {
 					'nonce'             => true,
 					'span_class'        => 'delete',
 				],
-				'delete_pod' => [
-					'label'      => __( 'Delete', 'pods' ),
-					'confirm'    => __( 'Are you sure you want to delete this Pod? All of the content and items will remain in the database, you may want to Delete All Items first.', 'pods' ),
-					'callback'   => [ $this, 'admin_setup_delete' ],
-					'nonce'      => true,
-					'span_class' => 'delete',
+				'delete_pod'    => [
+					'label'             => __( 'Delete', 'pods' ),
+					'confirm'           => __( 'Are you sure you want to delete this Pod? All of the content and items will remain in the database, you may want to Delete All Items first.', 'pods' ),
+					'callback'          => [ $this, 'admin_setup_delete' ],
+					'restrict_callback' => [ $this, 'admin_setup_delete_restrict' ],
+					'nonce'             => true,
+					'span_class'        => 'delete',
 				],
 			],
-			'action_links'     => [
-				'add' => pods_query_arg( [
+			'action_links' => [
+				'add'           => pods_query_arg( [
 					'page'     => 'pods-add-new',
 					'action'   => '',
 					'id'       => '',
 					'do'       => '',
 					'_wpnonce' => '',
+				] ),
+				'duplicate_pod' => pods_query_arg( [
+					'action' => 'duplicate_pod',
+					'id'     => '{@id}',
+					'name'   => '{@name}',
+				] ),
+				'reset_pod'     => pods_query_arg( [
+					'action' => 'reset_pod',
+					'id'     => '{@id}',
+					'name'   => '{@name}',
 				] ),
 			],
 			'search'           => false,
@@ -1236,7 +1368,22 @@ class PodsAdmin {
 			$ui['filters_enhanced'] = true;
 
 			foreach ( $pod_types_found as $pod_type => $number_found ) {
-				$ui['views'][ $pod_type ] = $pod_types[ $pod_type ] . ' (' . $number_found . ')';
+				$ui['views'][ $pod_type ] = sprintf(
+					'%1$s (%2$s)',
+					$pod_types[ $pod_type ],
+					number_format_i18n( $number_found )
+				);
+			}
+
+			if ( $has_source && 1 < count( $sources_found ) ) {
+				foreach ( $sources_found as $source_type => $number_found ) {
+					$ui['views'][ 'source/' . $source_type ] = sprintf(
+						'%1$s: %2$s (%3$s)',
+						__( 'Source', 'pods' ),
+						$source_types[ $source_type ],
+						$number_found
+					);
+				}
 			}
 		}
 
@@ -1269,12 +1416,12 @@ class PodsAdmin {
 
 		if ( ! $callouts ) {
 			$callouts = array(
-				'friends_2021_29' => 1,
+				'friends_2022_30' => 1,
 			);
 		}
 
-		// Handle Friends of Pods 2021 callout logic.
-		$callouts['friends_2021_29'] = ! isset( $callouts['friends_2021_29'] ) || $callouts['friends_2021_29'] || $force_callouts ? 1 : 0;
+		// Handle Friends of Pods callout logic.
+		$callouts['friends_2022_30'] = ! isset( $callouts['friends_2022_30'] ) || $callouts['friends_2022_30'] || $force_callouts ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.
@@ -1302,9 +1449,9 @@ class PodsAdmin {
 
 		$disable_pods = pods_v( 'pods_callout_dismiss' );
 
-		// Disable Friends of Pods 2021 callout.
-		if ( 'friends_2021_29' === $disable_pods ) {
-			$callouts['friends_2021_29'] = 0;
+		// Disable Friends of Pods callout.
+		if ( 'friends_2022_30' === $disable_pods ) {
+			$callouts['friends_2022_30'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
 		} elseif ( 'reset' === $disable_pods ) {
@@ -1352,8 +1499,8 @@ class PodsAdmin {
 
 		$callouts = $this->get_callouts();
 
-		if ( ! empty( $callouts['friends_2021_29'] ) ) {
-			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2021_29.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $callouts['friends_2022_30'] ) ) {
+			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2022_30.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 	}
 
@@ -1375,7 +1522,7 @@ class PodsAdmin {
 	public function admin_setup_edit( $duplicate, $obj ) {
 		$api = pods_api();
 
-		$pod = $obj->row;
+		$pod = $obj->row['pod_object'];
 
 		if ( ! $pod instanceof Pod ) {
 			$obj->id = null;
@@ -1511,7 +1658,7 @@ class PodsAdmin {
 		}
 
 		if ( 'settings' === $config['currentPod']['type'] ) {
-			$config['currentPod']['storageType']['name'] = 'options';
+			$config['currentPod']['storageType']['name'] = 'option';
 		}
 
 		$config['currentPod']['storageType']['label'] = ucwords( $config['currentPod']['storageType']['name'] );
@@ -1534,6 +1681,27 @@ class PodsAdmin {
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
 		pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
+	}
+
+	/**
+	 * Restrict Edit action.
+	 *
+	 * @param bool   $restricted Whether action is restricted.
+	 * @param array  $restrict   Restriction array.
+	 * @param string $action     Current action.
+	 * @param array  $row        Item data row.
+	 * @param PodsUI $obj        PodsUI object.
+	 *
+	 * @since 2.3.10
+	 *
+	 * @return bool
+	 */
+	public function admin_setup_edit_restrict( $restricted, $restrict, $action, $row, $obj ) {
+		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
+			$restricted = true;
+		}
+
+		return $restricted;
 	}
 
 	/**
@@ -1938,7 +2106,7 @@ class PodsAdmin {
 	 * @param PodsUI $obj PodsUI object.
 	 */
 	public function admin_setup_duplicate( $obj ) {
-		$new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
+		$new_id = pods_api()->duplicate_pod( array( 'name' => $obj->row['name'] ) );
 
 		if ( 0 < $new_id ) {
 			pods_redirect(
@@ -1947,6 +2115,7 @@ class PodsAdmin {
 						'action' => 'edit',
 						'id'     => $new_id,
 						'do'     => 'duplicate',
+						'name'   => null,
 					)
 				)
 			);
@@ -1971,7 +2140,6 @@ class PodsAdmin {
 	 * @return bool
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
-
 		if ( in_array(
 			$row['real_type'], array(
 				'user',
@@ -1983,26 +2151,23 @@ class PodsAdmin {
 		}
 
 		return $restricted;
-
 	}
 
 	/**
 	 * Reset a pod
 	 *
-	 * @param PodsUI     $obj PodsUI object.
-	 * @param int|string $id  Item ID.
+	 * @param PodsUI $obj PodsUI object.
 	 *
 	 * @return mixed
 	 */
-	public function admin_setup_reset( $obj, $id ) {
-
-		$pod = pods_api()->load_pod( array( 'id' => $id ), false );
+	public function admin_setup_reset( $obj ) {
+		$pod = pods_api()->load_pod( array( 'name' => $obj->row['name'] ), false );
 
 		if ( empty( $pod ) ) {
 			return $obj->error( __( 'Pod not found.', 'pods' ) );
 		}
 
-		pods_api()->reset_pod( array( 'id' => $id ) );
+		pods_api()->reset_pod( array( 'name' => $obj->row['name'] ) );
 
 		$obj->message( __( 'Pod reset successfully.', 'pods' ) );
 
@@ -2021,7 +2186,6 @@ class PodsAdmin {
 	 * @since 2.3.10
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
-
 		if ( in_array(
 			$row['real_type'], array(
 				'user',
@@ -2032,7 +2196,6 @@ class PodsAdmin {
 		}
 
 		return $restricted;
-
 	}
 
 	/**
@@ -2065,6 +2228,27 @@ class PodsAdmin {
 		$obj->message( __( 'Pod deleted successfully.', 'pods' ) );
 
 		$obj->manage();
+	}
+
+	/**
+	 * Restrict Delete action.
+	 *
+	 * @param bool   $restricted Whether action is restricted.
+	 * @param array  $restrict   Restriction array.
+	 * @param string $action     Current action.
+	 * @param array  $row        Item data row.
+	 * @param PodsUI $obj        PodsUI object.
+	 *
+	 * @since 2.3.10
+	 *
+	 * @return bool
+	 */
+	public function admin_setup_delete_restrict( $restricted, $restrict, $action, $row, $obj ) {
+		if ( __( 'DB', 'pods' ) !== $row['source'] ) {
+			$restricted = true;
+		}
+
+		return $restricted;
 	}
 
 	/**

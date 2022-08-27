@@ -44,7 +44,13 @@ class Settings {
 	public function get_setting( $setting_name, $default = null ) {
 		$settings = $this->get_settings();
 
-		return pods_v( $setting_name, $settings, $default );
+		$setting = pods_v( $setting_name, $settings, $default );
+
+		if ( null !== $default && ( null === $setting || '' === $setting ) ) {
+			return $default;
+		}
+
+		return $setting;
 	}
 
 	/**
@@ -64,7 +70,11 @@ class Settings {
 		// Register settings with Wisdom Tracker.
 		$settings['wisdom_registered_setting'] = 1;
 
-		$defaults = $this->get_setting_fields();
+		static $defaults;
+
+		if ( null === $defaults ) {
+			$defaults = $this->get_setting_fields();
+		}
 
 		$layout_field_types = PodsForm::layout_field_types();
 
@@ -75,7 +85,13 @@ class Settings {
 				continue;
 			}
 
-			if ( isset( $settings[ $setting_name ] ) || ! isset( $setting['default'] ) ) {
+			// Skip if we do not have a default to set.
+			if ( ! isset( $setting['default'] ) ) {
+				continue;
+			}
+
+			// Skip if we do not
+			if ( isset( $settings[ $setting_name ] ) && ! in_array( $settings[ $setting_name ], [ null, '' ], true ) ) {
 				continue;
 			}
 
@@ -178,9 +194,61 @@ class Settings {
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
-				'0'    => __( 'Enable creating custom fields with Pods', 'pods' ),
-				'1'    => __( 'Disable creating custom fields with Pods (for when using Pods only for content types)', 'pods' ),
+				'0' => __( 'Enable creating custom fields with Pods', 'pods' ),
+				'1' => __( 'Disable creating custom fields with Pods (for when using Pods only for content types)', 'pods' ),
 			],
+		];
+
+		$fields['performance'] = [
+			'label' => __( 'Performance', 'pods' ),
+			'type'  => 'heading',
+		];
+
+		$first_pods_version = get_option( 'pods_framework_version_first' );
+		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+
+		$fields['watch_changed_fields'] = [
+			'name'               => 'watch_changed_fields',
+			'label'              => __( 'Watch changed fields for use in hooks', 'pods' ),
+			'help'               => __( 'By default, Pods does not watch changed fields when a post, term, user, or other Pods items are saved. Enabling this will allow you to use PHP hooks to reference the previous values of those fields after the save has happened.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable watching changed fields (may reduce performance with large processes)', 'pods' ),
+				'0' => __( 'Disable watching changed fields', 'pods' ),
+			],
+		];
+
+		$fields['metadata_integration'] = [
+			'name'               => 'metadata_integration',
+			'label'              => __( 'Watch WP Metadata calls', 'pods' ),
+			'help'               => __( 'By default, Pods will watch Metadata calls and send any values to table-based fields as well as index relationship IDs when they are saved. You can disable this if you do not use table-based Pods and you only want to query meta-based Pods or settings.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => '1',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable watching WP Metadata calls (may reduce performance with large processes)', 'pods' ),
+				'0' => __( 'Disable watching WP Metadata calls', 'pods' ),
+			],
+			'dependency'         => true,
+		];
+
+		$fields['metadata_override_get'] = [
+			'name'               => 'metadata_override_get',
+			'label'              => __( 'Override WP Metadata values', 'pods' ),
+			'help'               => __( 'By default, Pods will override Metadata values when calling functions like get_post_meta() so that it can provide more Relationship / File field context.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable overriding WP Metadata values (may conflict with certain plugins and decrease performance with large processes)', 'pods' ),
+				'0' => __( 'Disable overriding WP Metadata values', 'pods' ),
+			],
+			'depends-on' => [ 'pods_field_metadata_integration' => '1' ],
 		];
 
 		$session_auto_start            = pods_session_auto_start( true );
@@ -210,7 +278,7 @@ class Settings {
 			'pick_format_single' => 'radio',
 			'data'               => [
 				'auto' => __( 'Auto-detect sessions (enable on first anonymous submission)', 'pods' ),
-				'1'    => __( 'Enable sessions', 'pods' ),
+				'1'    => __( 'Enable sessions (may decrease performance)', 'pods' ),
 				'0'    => __( 'Disable sessions', 'pods' ),
 			],
 		];

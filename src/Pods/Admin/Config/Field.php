@@ -243,7 +243,7 @@ class Field extends Base {
 			'class'                   => [
 				'name'    => 'class',
 				'label'   => __( 'Additional CSS Classes', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'You can provide additional CSS classes separated by spaces to be output for the field markup.', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
@@ -255,7 +255,7 @@ class Field extends Base {
 			'default_value'           => [
 				'name'    => 'default_value',
 				'label'   => __( 'Default Value', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'This is the default value used when the Add New form is used.', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 				'options' => [
@@ -265,7 +265,7 @@ class Field extends Base {
 			'default_value_parameter' => [
 				'name'    => 'default_value_parameter',
 				'label'   => __( 'Set Default Value via Parameter', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'You can automatically populate the value of this field from the URL parameter "your_field" such as ?your_field=1234', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
@@ -321,7 +321,7 @@ class Field extends Base {
 						'label'      => __( 'Make field "Read Only" in UI', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
-						'help'       => __( 'This option is overridden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only.', 'pods' ),
+						'help'       => __( 'This option is overridden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only. This does not prevent the field from being changed manually through HTML DOM manipulation, this just shows the field as a read-only text field that cannot be normally changed without developer intervention.', 'pods' ),
 						'depends-on' => [
 							'type' => [
 								'boolean',

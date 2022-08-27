@@ -2259,14 +2259,14 @@ class PodsUI {
 			return $callback;
 		}
 
-		if ( isset( $this->row[ $field ] ) ) {
-			$value = $this->row[ $field ];
-		} elseif ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
+		if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
 			if ( 'Pod' == get_class( $this->pod ) ) {
 				$value = $this->pod->get_field( $field );
 			} else {
 				$value = $this->pod->field( $field );
 			}
+		} elseif ( isset( $this->row[ $field ] ) ) {
+			$value = $this->row[ $field ];
 		}
 
 		return $this->do_hook( 'get_field', $value, $field );
@@ -3977,9 +3977,7 @@ class PodsUI {
 									continue;
 								}
 
-								if ( ! isset( $row[ $field ] ) ) {
-									$row[ $field ] = $this->get_field( $field );
-								}
+								$row[ $field ] = $this->get_field( $field );
 
 								$row_value = $row[ $field ];
 
@@ -4173,7 +4171,17 @@ class PodsUI {
 									 */
 									$row_value = apply_filters( 'pods_ui_field_display_value', $row_value, $field, $attributes, $row, $this );
 
-									if ( ! in_array( 'edit', $this->actions_disabled ) && ! in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder['on'] ) && 'edit' === $default_action ) {
+									if (
+										'edit' === $default_action
+										&& ! in_array( 'edit', $this->actions_disabled, true )
+										&& ! in_array( 'edit', $this->actions_hidden, true )
+										&& (
+											false === $reorder
+											|| in_array( 'reorder', $this->actions_disabled, true )
+											|| false === $this->reorder['on']
+										)
+										&& ! $this->restricted( 'edit', $row )
+									) {
 										$link = pods_query_arg(
 											array(
 												$this->num_prefix . 'action' . $this->num => 'edit',

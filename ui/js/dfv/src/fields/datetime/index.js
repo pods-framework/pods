@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { Dropdown } from '@wordpress/components';
 import Datetime from 'react-datetime';
 import moment from 'moment';
 import classnames from 'classnames';
@@ -208,6 +209,14 @@ const DateTime = ( {
 		return momentObject.format( getFullFormat() );
 	};
 
+	const formatMomentObjectForDB = ( momentObject, defaultValue = '' ) => {
+		if ( ! momentObject.isValid() ) {
+			return defaultValue;
+		}
+
+		return momentObject.format( getDBFormat() );
+	};
+
 	const handleHTML5InputFieldChange = ( event ) => setValue( event.target.value );
 
 	// Keep local versions as a string (formatted and ready to display, and in case
@@ -240,13 +249,19 @@ const DateTime = ( {
 	);
 
 	const handleChange = ( newValue ) => {
+		let momentObject = newValue;
+
+		if ( momentObject && ! moment.isMoment( momentObject ) ) {
+			momentObject = moment( newValue, [ getDBFormat(), getFullFormat() ] );
+		}
+
 		// Receives the selected moment object, if the date in the input is valid.
 		// If the date in the input is not valid, the callback receives the value of
 		// the input a string.
-		if ( moment.isMoment( newValue ) ) {
-			setValue( formatMomentObject( newValue ) );
-			setLocalStringValue( formatMomentObject( newValue ) );
-			setLocalMomentValue( newValue );
+		if ( moment.isMoment( momentObject ) ) {
+			setValue( formatMomentObjectForDB( momentObject ) );
+			setLocalStringValue( formatMomentObject( momentObject ) );
+			setLocalMomentValue( momentObject );
 		} else {
 			setValue( newValue );
 			setLocalStringValue( newValue );
@@ -308,36 +323,49 @@ const DateTime = ( {
 	}
 
 	return (
-		<Datetime
-			className="pods-react-datetime-fix"
-			value={ localMomentValue }
-			onChange={ ( newValue ) => handleChange( newValue ) }
-			dateFormat={ includeDateField ? momentDateFormat : false }
-			timeFormat={ includeTimeField ? momentTimeFormat : false }
-			isValidDate={ isValidDate }
-			initialViewDate={ initialViewDate }
-			renderInput={ ( props ) => (
-				<input
-					{ ...props }
-					value={ localStringValue }
-					onChange={ ( event ) => {
-						// Track local values, but don't change actual value
-						// until blur event.
-						setLocalStringValue( event.target.value );
-						setLocalMomentValue( moment( event.target.value, [ getDBFormat(), getFullFormat() ] ) );
-					} }
-					onBlur={ ( event ) => handleChange( event.target.value ) }
-					id={ htmlAttributes.id || `pods-form-ui-${ name }` }
-					name={ htmlAttributes.name || name }
-					className={
-						classnames(
-							'pods-form-ui-field pods-form-ui-field-type-datetime',
-							htmlAttributes.class
-						)
-					}
-				/>
-			) }
-		/>
+		<div>
+			<input
+				readOnly={ true }
+				hidden={ true }
+				value={ value }
+				name={ htmlAttributes.name || name }
+			/>
+			<Dropdown
+				renderToggle={ ( state ) => (
+					<input
+						type="text"
+						value={ localStringValue }
+						onClick={ state.onToggle }
+						onChange={ ( event ) => {
+							// Track local values, but don't change actual value until blur event.
+							setLocalStringValue( event.target.value );
+							setLocalMomentValue( moment( event.target.value, [ getDBFormat(), getFullFormat() ] ) );
+						} }
+						onBlur={ ( event ) => handleChange( event.target.value ) }
+						id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+						className={
+							classnames(
+								'pods-form-ui-field pods-form-ui-field-type-datetime',
+								htmlAttributes.class
+							)
+						}
+					/>
+				) }
+				renderContent={ () => (
+					<Datetime
+						className="pods-react-datetime-fix"
+						value={ localMomentValue }
+						onChange={ ( newValue ) => handleChange( newValue ) }
+						dateFormat={ includeDateField ? momentDateFormat : false }
+						timeFormat={ includeTimeField ? momentTimeFormat : false }
+						isValidDate={ isValidDate }
+						initialViewDate={ initialViewDate }
+						input={ false }
+						renderInput={ null }
+					/>
+				) }
+			/>
+		</div>
 	);
 };
 

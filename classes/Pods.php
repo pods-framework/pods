@@ -183,13 +183,24 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Whether this Pod object is valid or not
+	 * Determine whether this Pod object was defined or was built adhoc.
 	 *
-	 * @return bool
+	 * @since 2.8.18
 	 *
-	 * @since 2.0.0
+	 * @return bool Whether this Pod object was defined or was built adhoc.
 	 */
-	public function valid() {
+	public function is_defined() {
+		return $this->pod_data && empty( $this->pod_data['adhoc'] );
+	}
+
+	/**
+	 * Determine whether this Pod object is valid or not.
+	 *
+	 * @since 2.8.18
+	 *
+	 * @return bool Whether this Pod object is valid or not.
+	 */
+	public function is_valid() {
 		if ( empty( $this->pod_data ) ) {
 			return false;
 		}
@@ -199,6 +210,19 @@ class Pods implements Iterator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Whether this Pod object is valid or not
+	 *
+	 * @return bool
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Pods::is_valid()
+	 */
+	public function valid() {
+		return $this->is_valid();
 	}
 
 	/**
@@ -1031,11 +1055,12 @@ class Pods implements Iterator {
 						}
 					}//end if
 
-					$last_type           = '';
-					$last_object         = '';
-					$last_pick_val       = '';
-					$last_options        = [];
-					$last_object_options = [];
+					$last_type                = '';
+					$last_object              = '';
+					$last_pick_val            = '';
+					$last_options             = [];
+					$last_object_options      = [];
+					$last_is_repeatable_field = false;
 
 					$single_multi = pods_v( $field_type . '_format_type', $field_data, 'single' );
 
@@ -1057,7 +1082,6 @@ class Pods implements Iterator {
 
 						$current_field       = null;
 						$simple              = false;
-						$is_repeatable_field = false;
 
 						if ( $field_exists ) {
 							/** @var \Pods\Whatsit\Field $current_field */
@@ -1070,8 +1094,16 @@ class Pods implements Iterator {
 									$simple = true;
 								}
 							}
+						} elseif ( $last_options ) {
+							$current_related_pod = $last_options->get_related_object();
 
-							$is_repeatable_field = $current_field->is_repeatable();
+							if ( $current_related_pod ) {
+								$current_related_pod_field = $current_related_pod->get_field( $field );
+
+								if ( $current_related_pod_field ) {
+									$current_field = $current_related_pod_field;
+								}
+							}
 						}
 
 						// Tableless handler.
@@ -1172,6 +1204,8 @@ class Pods implements Iterator {
 								} else {
 									$table = $last_options->get_table_info();
 								}
+
+								$last_is_repeatable_field = $current_field instanceof Field && $current_field->is_repeatable();
 							}
 
 							$join  = array();
@@ -1542,7 +1576,7 @@ class Pods implements Iterator {
 											/** This filter is documented earlier in this method */
 											$metadata_object_id = apply_filters( 'pods_pods_field_get_metadata_object_id', $metadata_object_id, $metadata_type, $params, $this );
 
-											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, ! $is_repeatable_field );
+											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, ! $last_is_repeatable_field );
 
 											$value[] = pods_traverse( $traverse_fields, $meta_value );
 										} elseif ( 'settings' === $object_type ) {
@@ -1663,15 +1697,27 @@ class Pods implements Iterator {
 					if ( $value_reset ) {
 						$value = reset( $value );
 					}
-				} elseif ( 1 === (int) pods_v( 'display_process', $field_data, 1 ) ) {
-					if ( ! is_array( $value ) || ! $params->display_process_individually ) {
-						// Do the normal display handling.
-						$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
-					} else {
+				} elseif ( $is_repeatable_field || 1 === (int) pods_v( 'display_process', $field_data, 1 ) ) {
+					if ( $is_repeatable_field && $value && ! is_array( $value ) ) {
+						$value = [
+							$value,
+						];
+					}
+
+					if (
+						is_array( $value )
+						&& (
+							$is_repeatable_field
+							|| $params->display_process_individually
+						)
+					) {
 						// Attempt to process each value independently.
 						foreach ( $value as $k => $val ) {
 							$value[ $k ] = PodsForm::display( $field_data['type'], $val, $params->name, $field_data, $this->pod_data, $this->id() );
 						}
+					} else {
+						// Do the normal display handling.
+						$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
 					}
 				}
 

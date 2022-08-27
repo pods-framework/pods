@@ -1337,6 +1337,31 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Get the object storage type label.
+	 *
+	 * @since 2.8.24
+	 *
+	 * @return string|null
+	 */
+	public function get_object_storage_type_label() {
+		$object_storage_type = $this->get_arg( 'object_storage_type', 'collection' );
+
+		if ( ! $object_storage_type ) {
+			return null;
+		}
+
+		$object_collection = Store::get_instance();
+
+		$storage_type_obj = $object_collection->get_storage_object( $object_storage_type );
+
+		if ( ! $storage_type_obj ) {
+			return null;
+		}
+
+		return $storage_type_obj->get_label();
+	}
+
+	/**
 	 * Get the full data from the object.
 	 *
 	 * @param array $args List of arguments.

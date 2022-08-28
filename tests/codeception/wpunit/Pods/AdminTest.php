@@ -2,7 +2,6 @@
 
 namespace Pods_Unit_Tests\Pods;
 
-use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use PodsAdmin;
@@ -139,6 +138,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'additional-field-heading',
 			'additional-field-html',
 			'advanced',
+			'conditional-logic',
 		];
 
 		yield 'new post type with meta storage' => [

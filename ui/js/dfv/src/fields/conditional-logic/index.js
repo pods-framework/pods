@@ -30,7 +30,11 @@ const UNSUPPORTED_FIELD_TYPES = [
 const NUMERIC_FIELD_TYPES = [
 	'currency',
 	'number',
-]
+];
+
+const FIELD_TYPES_WITH_NO_BLANK_COMPARISONS = [
+	'boolean',
+];
 
 const FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS = [
 	'file',
@@ -228,8 +232,13 @@ const ConditionalLogic = ( {
 						>
 							<option value="=">{ __( 'is', 'pods' ) }</option>
 							<option value="!=">{ __( 'is not', 'pods' ) }</option>
-							<option value="empty">{ __( 'is blank', 'pods' ) }</option>
-							<option value="not-empty">{ __( 'is not blank', 'pods' ) }</option>
+
+							{ ! FIELD_TYPES_WITH_NO_BLANK_COMPARISONS.includes( ruleFieldType ) ? (
+								<>
+									<option value="empty">{ __( 'is blank', 'pods' ) }</option>
+									<option value="not-empty">{ __( 'is not blank', 'pods' ) }</option>
+								</>
+							) : null }
 
 							{ isNumericFieldType ? (
 								<>

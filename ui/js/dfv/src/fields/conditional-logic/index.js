@@ -221,9 +221,9 @@ const ConditionalLogic = ( {
 							{ NUMERIC_FIELD_TYPES.includes( ruleFieldType ) ? (
 								<>
 									<option value=">">{ __( 'greater than', 'pods' ) }</option>
-									<option value=">=">{ __( 'greater than or equal to', 'pods' ) }</option>
+									<option value=">=">{ __( 'greater than or equal', 'pods' ) }</option>
 									<option value="<">{ __( 'lesser than', 'pods' ) }</option>
-									<option value="<=">{ __( 'lesser than or equal to', 'pods' ) }</option>
+									<option value="<=">{ __( 'lesser than or equal', 'pods' ) }</option>
 								</>
 							) : null }
 

@@ -1,132 +1,38 @@
-// @todo add tests
-import React, { useState, useEffect } from 'react';
+/**
+ * External dependencies
+ */
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import apiFetch from '@wordpress/api-fetch';
+/**
+ * Pods components
+ */
+import FileFull from './file-full';
+import FileReadOnly from './file-read-only';
 
-import MarionetteAdapter from 'dfv/src/fields/marionette-adapter';
-import { File as FileView } from './file-upload';
+/**
+ * Other Pods dependencies
+ */
+import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
-const getMediaItemData = async ( mediaID ) => {
-	try {
-		const result = await apiFetch( { path: `/wp/v2/media/${ mediaID }` } );
-
-		return {
-			id: mediaID,
-			icon: result?.media_details?.sizes?.thumbnail?.source_url,
-			name: result.title.rendered,
-			// @todo This should be based on the adminurl instead of hardcoded to /wp-admin/ -- fix this later.
-			edit_link: `/wp-admin/post.php?post=${ mediaID }&action=edit`,
-			link: result.link,
-			download: result.source_url,
-		};
-	} catch ( e ) {
-		return {
-			id: mediaID,
-		};
-	}
-};
-
 const File = ( props ) => {
-	const {
-		fieldConfig = {},
-		value,
-		setValue,
-		setHasBlurred,
-	} = props;
-
-	const htmlAttr = fieldConfig?.htmlAttr || {};
+	const { fieldConfig } = props;
 
 	const {
-		fieldItemData = [],
+		read_only: readOnly,
 	} = fieldConfig;
 
-	const [ collectionData, setCollectionData ] = useState( [] );
-
-	const setValueFromModels = ( models ) => {
-		if ( Array.isArray( models ) ) {
-			setValue( models.map( ( model ) => model.id ).join( ',' ) );
-
-			setCollectionData( models.map( ( model ) => model.attributes ) );
-		} else {
-			setValue( models.get( 'id' ) );
-
-			setCollectionData( models.get( 'attributes' ) );
-		}
-
-		setHasBlurred( true );
-	};
-
-	// Force the limit to 1 if this the field only allows a single upload.
-	const correctedLimit = fieldConfig.file_format_type === 'single'
-		? '1'
-		: fieldConfig.file_limit;
-
-	// The `value` prop will be a comma-separated string of media post IDs,
-	// but we need to pass an array of objects with data about the media
-	// to the Backbone view/model. Only make the expensive API requests if
-	// we don't have data about a media post on initial page load.
-	useEffect( () => {
-		if ( ! value ) {
-			setCollectionData( [] );
-			return;
-		}
-
-		const getAndSetMediaData = async ( mediaIDs ) => {
-			// Check first if all items are available in fieldItemData,
-			// if not we need to do a REST API request to get the data.
-			let areAllItemsAvailableFromFieldItemData = true;
-
-			const dataFromFieldItemData = mediaIDs.map( ( mediaID ) => {
-				const matchingFieldItemData = fieldItemData.find(
-					( fieldItem ) => Number( fieldItem.id ) === Number( mediaID ),
-				);
-
-				if ( ! matchingFieldItemData ) {
-					areAllItemsAvailableFromFieldItemData = false;
-					return null;
-				}
-
-				return matchingFieldItemData;
-			} );
-
-			if ( areAllItemsAvailableFromFieldItemData ) {
-				setCollectionData( dataFromFieldItemData );
-				return;
-			}
-
-			// If we didn't find everything, fall back to the API request.
-			const results = await Promise.all( mediaIDs.map( getMediaItemData ) );
-			setCollectionData( results );
-		};
-
-		if ( Array.isArray( value ) ) {
-			getAndSetMediaData( value );
-		} else if ( 'object' === typeof value ) {
-			setCollectionData( value );
-		} else if ( 'string' === typeof value ) {
-			getAndSetMediaData( value.split( ',' ) );
-		} else if ( 'number' === typeof value ) {
-			getAndSetMediaData( [ value ] );
-		} else {
-			// eslint-disable-next-line no-console
-			console.error( `Invalid value type for file field: ${ fieldConfig.name }` );
-		}
-	}, [] );
+	// The read-only version of the field is a full React component,
+	// which will eventually be used to build out the React version of the
+	// File field. If its not set to read-only, then we use the old Marionette
+	// version of the field.
+	if ( toBool( readOnly ) ) {
+		return <FileReadOnly { ...props } />;
+	}
 
 	return (
-		<MarionetteAdapter
-			{ ...props }
-			fieldConfig={ {
-				...fieldConfig,
-				file_limit: correctedLimit,
-				htmlAttr,
-			} }
-			View={ FileView }
-			value={ collectionData }
-			setValue={ setValueFromModels }
-		/>
+		<FileFull { ...props } />
 	);
 };
 

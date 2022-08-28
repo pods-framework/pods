@@ -193,7 +193,13 @@ class Collection extends Storage {
 
 			if ( $value ) {
 				foreach ( $objects as $k => $object ) {
-					if ( in_array( (string) $object->get_arg( $arg ), $value, true ) ) {
+					$arg_value = $object->get_arg( $arg );
+
+					if ( null !== $arg_value && ! is_scalar( $arg_value ) ) {
+						$arg_value = serialize( $arg_value );
+					}
+
+					if ( in_array( (string) $arg_value, $value, true ) ) {
 						continue;
 					}
 

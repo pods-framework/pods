@@ -312,6 +312,14 @@ class Conditional_Logic {
 
 		$check_value = pods_v( $field, $values );
 
+		if ( is_bool( $value ) ) {
+			$value = (int) $value;
+		}
+
+		if ( is_bool( $check_value ) ) {
+			$check_value = (int) $check_value;
+		}
+
 		if ( 'LIKE' === $compare ) {
 			if ( '' === $value ) {
 				return true;
@@ -329,7 +337,7 @@ class Conditional_Logic {
 				return str_contains( strtolower( (string) $check_value ), strtolower( (string) $value ) );
 			}
 
-			return false !== stripos( $check_value, $value );
+			return false !== stripos( (string) $check_value, (string) $value );
 		}
 
 		if ( 'NOT LIKE' === $compare ) {
@@ -349,7 +357,7 @@ class Conditional_Logic {
 				return ! str_contains( strtolower( (string) $check_value ), strtolower( (string) $value ) );
 			}
 
-			return false === stripos( $check_value, $value );
+			return false === stripos( (string) $check_value, (string) $value );
 		}
 
 		if ( 'BEGINS' === $compare ) {
@@ -369,7 +377,7 @@ class Conditional_Logic {
 				return str_starts_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
 			}
 
-			return 0 === stripos( $check_value, $value );
+			return 0 === stripos( (string) $check_value, (string) $value );
 		}
 
 		if ( 'NOT BEGINS' === $compare ) {
@@ -389,7 +397,7 @@ class Conditional_Logic {
 				return ! str_starts_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
 			}
 
-			return 0 !== stripos( $check_value, $value );
+			return 0 !== stripos( (string) $check_value, (string) $value );
 		}
 
 		if ( 'ENDS' === $compare ) {
@@ -409,7 +417,7 @@ class Conditional_Logic {
 				return str_ends_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
 			}
 
-			return 0 === substr_compare( $check_value, $value, - strlen( $value ) );
+			return 0 === substr_compare( (string) $check_value, (string) $value, - strlen( (string) $value ) );
 		}
 
 		if ( 'NOT ENDS' === $compare ) {
@@ -429,27 +437,27 @@ class Conditional_Logic {
 				return ! str_ends_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
 			}
 
-			return 0 !== substr_compare( $check_value, $value, - strlen( $value ) );
+			return 0 !== substr_compare( (string) $check_value, (string) $value, - strlen( (string) $value ) );
 		}
 
 		if ( 'MATCHES' === $compare ) {
-			if ( is_array( $check_value ) ) {
+			if ( ! is_scalar( $check_value ) ) {
 				return false;
 			}
 
-			return 1 === preg_match( '/' . str_replace( '/', '\/', $value ) . '/', $check_value );
+			return 1 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value );
 		}
 
 		if ( 'NOT MATCHES' === $compare ) {
-			if ( is_array( $check_value ) ) {
+			if ( ! is_scalar( $check_value ) ) {
 				return false;
 			}
 
-			return 0 === preg_match( '/' . str_replace( '/', '\/', $value ) . '/', $check_value );
+			return 0 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value );
 		}
 
 		if ( 'IN' === $compare ) {
-			if ( is_array( $check_value ) ) {
+			if ( ! is_scalar( $check_value ) ) {
 				return false;
 			}
 
@@ -457,11 +465,19 @@ class Conditional_Logic {
 		}
 
 		if ( 'NOT IN' === $compare ) {
-			if ( is_array( $check_value ) ) {
+			if ( ! is_scalar( $check_value ) ) {
 				return false;
 			}
 
 			return ! in_array( $check_value, (array) $value, false );
+		}
+
+		if ( 'EMPTY' === $compare ) {
+			return in_array( $check_value, [ '', null, [] ], true );
+		}
+
+		if ( 'NOT EMPTY' === $compare ) {
+			return ! in_array( $check_value, [ '', null, [] ], true );
 		}
 
 		if ( is_numeric( $value ) ) {
@@ -481,19 +497,19 @@ class Conditional_Logic {
 		}
 
 		if ( '<' === $compare ) {
-			return (float) $check_value < (float) $value;
+			return (float) $value < (float) $check_value;
 		}
 
 		if ( '<=' === $compare ) {
-			return (float) $check_value <= (float) $value;
+			return (float) $value <= (float) $check_value;
 		}
 
 		if ( '>' === $compare ) {
-			return (float) $check_value > (float) $value;
+			return (float) $value > (float) $check_value;
 		}
 
 		if ( '>=' === $compare ) {
-			return (float) $check_value >= (float) $value;
+			return (float) $value >= (float) $check_value;
 		}
 
 		return false;

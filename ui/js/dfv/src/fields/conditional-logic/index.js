@@ -179,6 +179,8 @@ const ConditionalLogic = ( {
 
 				const ruleFieldType = ruleFieldObject?.type;
 
+				const isNumericFieldType = NUMERIC_FIELD_TYPES.includes( ruleFieldType );
+
 				return (
 					<div
 						className="pods-conditional-logic-rule"
@@ -226,8 +228,10 @@ const ConditionalLogic = ( {
 						>
 							<option value="=">{ __( 'is', 'pods' ) }</option>
 							<option value="!=">{ __( 'is not', 'pods' ) }</option>
+							<option value="empty">{ __( 'is blank', 'pods' ) }</option>
+							<option value="not-empty">{ __( 'is not blank', 'pods' ) }</option>
 
-							{ NUMERIC_FIELD_TYPES.includes( ruleFieldType ) ? (
+							{ isNumericFieldType ? (
 								<>
 									<option value=">">{ __( 'greater than', 'pods' ) }</option>
 									<option value=">=">{ __( 'greater than or equal', 'pods' ) }</option>
@@ -236,7 +240,7 @@ const ConditionalLogic = ( {
 								</>
 							) : null }
 
-							{ ! FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS.includes( ruleFieldType ) ? (
+							{ ! isNumericFieldType && ! FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS.includes( ruleFieldType ) ? (
 								<>
 									<option value="like">{ __( 'contains', 'pods' ) }</option>
 									<option value="not-like">{ __( 'does not contain', 'pods' ) }</option>

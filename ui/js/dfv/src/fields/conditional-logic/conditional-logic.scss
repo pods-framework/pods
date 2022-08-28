@@ -20,6 +20,14 @@
 	margin-bottom: 0.5em;
 }
 
+select.pods-conditional-logic-rule__field {
+	max-width: 16em;
+}
+
+select.pods-conditional-logic-rule__compare {
+	max-width: 12em;
+}
+
 .pods-conditional-logic-rule__field,
 .pods-conditional-logic-rule__compare,
 .pods-conditional-logic-rule__value {

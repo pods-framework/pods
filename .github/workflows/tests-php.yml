@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: the-events-calendar/tric
-          ref: main
+          ref: 0.5.35
           path: tric
           fetch-depth: 1
       # ------------------------------------------------------------------------------

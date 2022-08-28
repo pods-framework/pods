@@ -626,7 +626,7 @@ class PodsField {
 		}
 
 		// Handle conditional logic with backcompat handling.
-		$config['conditional_logic'] = $this->get_dfv_conditional_logic_json( $config );
+		$config['conditional_logic'] = $this->get_dfv_conditional_logic( $config );
 
 		return $config;
 
@@ -641,7 +641,7 @@ class PodsField {
 	 *
 	 * @return array The list of conditional logic rules for the field.
 	 */
-	public function get_dfv_conditional_logic_json( $field ) {
+	public function get_dfv_conditional_logic( $field ) {
 		$conditional_logic = Conditional_Logic::maybe_setup_from_object( $field );
 
 		if ( $conditional_logic ) {

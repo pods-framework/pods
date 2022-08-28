@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const RadioSelect = ( {
@@ -36,7 +37,7 @@ const RadioSelect = ( {
 									type="radio"
 									value={ optionValue }
 									onChange={ ( event ) => {
-										if ( readOnly ) {
+										if ( toBool( readOnly ) ) {
 											return;
 										}
 
@@ -44,7 +45,7 @@ const RadioSelect = ( {
 											setValue( event.target.value );
 										}
 									} }
-									readOnly={ !! readOnly }
+									readOnly={ toBool( readOnly ) }
 								/>
 								{ optionLabel }
 							</label>

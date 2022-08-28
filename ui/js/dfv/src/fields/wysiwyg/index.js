@@ -42,6 +42,7 @@ const Wysiwyg = ( props ) => {
 		wysiwyg_editor_height: editorHeight = 400,
 		wysiwyg_media_buttons: mediaButtons,
 		wysiwyg_default_editor: defaultEditor = 'tinymce',
+		read_only: readOnly,
 	} = fieldConfig;
 
 	if ( 'quill' === editor || 'cleditor' === editor ) {
@@ -56,6 +57,7 @@ const Wysiwyg = ( props ) => {
 					modules={ {
 						toolbar: QUILL_TOOLBAR_OPTIONS,
 					} }
+					readOnly={ toBool( readOnly ) }
 				/>
 
 				<input
@@ -64,6 +66,19 @@ const Wysiwyg = ( props ) => {
 					name={ htmlAttributes.name || name }
 				/>
 			</>
+		);
+	}
+
+	// If it's readonly and would normally be a TinyMCE field, we don't load the TinyMCE editor.
+	if ( toBool( readOnly ) ) {
+		return (
+			<textarea
+				name={ htmlAttributes.name || name }
+				value={ value || '' }
+				readOnly={ toBool( readOnly ) }
+			>
+				{ value }
+			</textarea>
 		);
 	}
 

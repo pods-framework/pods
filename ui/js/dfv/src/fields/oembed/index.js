@@ -22,6 +22,7 @@ const Oembed = ( {
 		oembed_height: height,
 		oembed_show_preview: showPreview,
 		oembed_width: width,
+		read_only: readOnly,
 	} = fieldConfig;
 
 	const [ preview, setPreview ] = useState( null );
@@ -78,6 +79,7 @@ const Oembed = ( {
 				value={ value || '' }
 				onChange={ handleChange }
 				onBlur={ handleBlur }
+				readOnly={ readOnly }
 			/>
 
 			{ showPreview && !! preview && (

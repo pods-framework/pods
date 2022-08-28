@@ -73,8 +73,6 @@ const formatValuesForReactSelectComponent = (
 	fieldItemData = [],
 	isMulti = false
 ) => {
-	//console.log( 'formatValuesForReactSelectComponent', value, fieldItemData );
-
 	if ( ! value ) {
 		return isMulti ? [] : [];
 	}
@@ -131,7 +129,7 @@ const Pick = ( props ) => {
 		fieldConfig: {
 			ajax_data: ajaxData,
 			htmlAttr: htmlAttributes = {},
-			readonly: readOnly,
+			read_only: readOnly,
 			fieldItemData,
 			data = [],
 			label,
@@ -305,7 +303,7 @@ const Pick = ( props ) => {
 					value={ fieldValue || '' }
 					setValue={ setValueWithLimit }
 					options={ modifiedFieldItemData }
-					readOnly={ !! readOnly }
+					readOnly={ toBool( readOnly ) }
 				/>
 			);
 		}
@@ -334,7 +332,7 @@ const Pick = ( props ) => {
 					isMulti={ isMulti }
 					setValue={ setValueWithLimit }
 					options={ modifiedFieldItemData }
-					readOnly={ !! readOnly }
+					readOnly={ toBool( readOnly ) }
 				/>
 			);
 		}
@@ -396,8 +394,6 @@ const Pick = ( props ) => {
 				}
 			};
 
-			//console.log( 'formattedValue', formattedValue );
-
 			return (
 				<>
 					<FullSelect
@@ -428,7 +424,7 @@ const Pick = ( props ) => {
 							showViewLink={ toBool( showViewLink ) }
 							showEditLink={ toBool( showEditLink ) }
 							editIframeTitle={ editIframeTitle }
-							readOnly={ !! readOnly }
+							readOnly={ toBool( readOnly ) }
 						/>
 					) : null }
 
@@ -452,7 +448,7 @@ const Pick = ( props ) => {
 				setValue={ ( newValue ) => setValueWithLimit( newValue ) }
 				options={ modifiedFieldItemData }
 				isMulti={ isMulti }
-				readOnly={ !! readOnly }
+				readOnly={ toBool( readOnly ) }
 			/>
 		);
 	};
@@ -461,7 +457,7 @@ const Pick = ( props ) => {
 		<>
 			{ renderSelectComponent() }
 
-			{ ( allowAddNew && addNewIframeSrc ) ? (
+			{ ( allowAddNew && addNewIframeSrc && ! toBool( readOnly ) ) ? (
 				<Button
 					className="pods-related-add-new pods-modal"
 					onClick={ () => setShowAddNewIframe( true ) }

@@ -584,6 +584,15 @@ class PodsField {
 			$config = (array) $args->options;
 		}
 
+		// Backcompat readonly argument handling.
+		if ( isset( $config['readonly'] ) ) {
+			if ( ! isset( $config['read_only'] ) ) {
+				$config['read_only'] = (int) $config['readonly'];
+			}
+
+			unset( $config['readonly'] );
+		}
+
 		unset( $config['data'] );
 
 		$config['item_id'] = (int) $args->id;

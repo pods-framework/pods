@@ -21,7 +21,7 @@ const Paragraph = ( {
 		name,
 		paragraph_max_length: maxLength,
 		paragraph_placeholder: placeholder = fieldConfig.placeholder,
-		readonly: readOnly,
+		read_only: readOnly,
 	} = fieldConfig;
 
 	// Default implementation if onChange is omitted from props

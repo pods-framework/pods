@@ -221,7 +221,7 @@ class Pods implements Iterator {
 	 *
 	 * @see Pods::is_valid()
 	 */
-	public function valid() {
+	public function valid(): bool {
 		return $this->is_valid();
 	}
 
@@ -248,9 +248,7 @@ class Pods implements Iterator {
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
 	public function stop_iterator() {
-
 		$this->iterator = false;
-
 	}
 
 	/**
@@ -260,8 +258,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
-	public function rewind() {
-
+	public function rewind() : void {
 		if ( ! $this->iterator ) {
 			$this->iterator = true;
 
@@ -278,8 +275,8 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
-
 		if ( $this->iterator && $this->fetch() ) {
 			return $this;
 		}
@@ -295,9 +292,10 @@ class Pods implements Iterator {
 	 * @since 2.3.4
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
+	 *
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
-
 		return $this->data->row_number;
 	}
 
@@ -310,8 +308,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
-	public function next() {
-
+	public function next(): void {
 		$this->data->row_number ++;
 	}
 
@@ -323,7 +320,6 @@ class Pods implements Iterator {
 	 * @since 2.0.0
 	 */
 	public function exists() {
-
 		if ( empty( $this->data->row ) ) {
 			return false;
 		}

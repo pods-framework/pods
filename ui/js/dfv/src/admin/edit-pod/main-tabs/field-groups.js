@@ -142,6 +142,13 @@ const FieldGroups = ( {
 			return;
 		}
 
+		// Don't do anything if we're dragging over a group (we may encounter these
+		// because groups themselves are a draggable/sortable type) - see just below
+		// this, that we CAN drag over an empty group, because they have a different "type".
+		if ( 'group' === over.data?.current?.type ) {
+			return;
+		}
+
 		// We only need to move items if we're going from one group to another.
 		// (The containerId for a group's SortableContext is the same as the groupName.)
 		// If we're dragging over an empty list, we get the ID passed to useDroppable
@@ -205,7 +212,6 @@ const FieldGroups = ( {
 			( field ) => field.id.toString() !== active.id.toString()
 		);
 
-		// @todo should there be an action for moving a field from one group to another?
 		setGroupFields( overGroupName, newOverGroupFields );
 		setGroupFields( activeGroupName, newActiveGroupFields );
 	};

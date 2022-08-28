@@ -129,7 +129,6 @@ export const FIELD_PROP_TYPE = {
 	placeholder_param: PropTypes.string,
 	placeholder_param_default: PropTypes.string,
 	post_status: PropTypes.string,
-	readonly: BOOLEAN_ALL_TYPES,
 	read_only: BOOLEAN_ALL_TYPES,
 	rest_pick_response: PropTypes.string,
 	rest_pick_depth: NUMBER_OR_NUMBER_AS_STRING,

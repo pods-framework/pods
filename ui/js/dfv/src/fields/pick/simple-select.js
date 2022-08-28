@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const SimpleSelect = ( {
@@ -49,7 +50,7 @@ const SimpleSelect = ( {
 				);
 			} }
 			multiple={ isMulti }
-			readOnly={ !! readOnly }
+			readOnly={ toBool( readOnly ) }
 		>
 			<>
 				{ options.map( ( { name: optionLabel, id: optionValue } ) => {

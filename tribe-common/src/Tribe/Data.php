@@ -67,6 +67,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *                      The return value will be casted to boolean if non-boolean was returned.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return isset( $this->data[ $offset ] );
 	}
@@ -81,6 +82,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return mixed Can return all value types.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		return isset( $this->data[ $offset ] )
 			? $this->data[ $offset ]
@@ -100,6 +102,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return void
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		$this->data[ $offset ] = $value;
 	}
@@ -114,6 +117,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return void
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		unset( $this->data[ $offset ] );
 	}
@@ -161,6 +165,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return mixed Can return any type.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 		$keys = array_keys( $this->data );
 
@@ -174,6 +179,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return void Any returned value is ignored.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 		$keys = array_keys( $this->data );
 
@@ -191,6 +197,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return mixed scalar on success, or null on failure.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 		$keys = array_keys( $this->data );
 
@@ -205,6 +212,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * Returns true on success or false on failure.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		$keys = array_keys( $this->data );
 
@@ -218,6 +226,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return void Any returned value is ignored.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 		$this->index = 0;
 	}

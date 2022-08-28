@@ -357,44 +357,9 @@ const ConnectedFieldListItem = compose( [
 			relatedObject = storeSelect.getFieldRelatedObjects()[ key ];
 		}
 
-		// @todo This is a temporary way to add the Conditional Logic options,
-		// this should really go in the backend.
-		const editFieldPod = {
-			...(storeSelect.getGlobalFieldOptions()),
-			groups: [
-				...(storeSelect.getGlobalFieldOptions()?.groups || []),
-				{
-					id: '',
-					label: __( 'Conditional Logic', 'pods' ),
-					name: 'conditional-logic-group',
-					fields: [
-						{
-							id: '',
-							group: 'group/pod/_pods_field/conditional-logic',
-							label: __( 'Enable Conditional Logic', 'pods' ),
-							name: 'enable-conditional-logic',
-							parent: 'pod/_pods_field',
-							type: 'boolean',
-						},
-						{
-							id: '',
-							group: 'group/pod/_pods_field/conditional-logic',
-							label: __( 'Conditional Logic', 'pods' ),
-							name: 'conditional-logic',
-							parent: 'pod/_pods_field',
-							type: 'conditional-logic',
-							// Field attribute only used by the "Conditional Logic"
-							// field: we need to know which field this affects, so that
-							// it can't reference itself.
-							conditional_logic_affected_field_name: field.name,
-						},
-					],
-				},
-			]
-		};
-
 		return {
-			editFieldPod: editFieldPod,
+			editFieldPod: storeSelect.getGlobalFieldOptions(),
+			currentFieldName: field.name,
 			relatedObject,
 			typeObject: storeSelect.getFieldTypeObject( field.type ),
 			saveStatus: storeSelect.getFieldSaveStatus( field.name ),

@@ -121,7 +121,7 @@ class Conditional_Logic {
 			foreach ( $old_syntax['excludes-on'] as $field_name => $value ) {
 				$rules[] = [
 					'field'   => $field_name,
-					'compare' => ( is_array( $value ) ? 'not in' : '!=' ),
+					'compare' => ( is_array( $value ) ? 'not-in' : '!=' ),
 					'value'   => $value,
 				];
 			}

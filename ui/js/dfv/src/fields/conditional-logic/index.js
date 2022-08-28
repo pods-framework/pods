@@ -284,7 +284,7 @@ ConditionalLogic.propTypes = {
 	/**
 	 * Redux store key.
 	 */
-	 storeKey: PropTypes.string.isRequired,
+	storeKey: PropTypes.string.isRequired,
 
 	/**
 	 * Value stored as a JSON string.

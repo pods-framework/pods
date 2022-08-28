@@ -303,13 +303,16 @@ class Conditional_Logic {
 		$compare = $rule['compare'];
 		$value   = $rule['value'];
 
-		if ( empty( $field ) ) {
+		if ( empty( $field ) || empty( $compare ) ) {
 			return true;
 		}
 
+		// Format for easier readability.
+		$compare = strtoupper( str_replace( '-', ' ', $compare ) );
+
 		$check_value = pods_v( $field, $values );
 
-		if ( 'like' === $compare ) {
+		if ( 'LIKE' === $compare ) {
 			if ( '' === $value ) {
 				return true;
 			}
@@ -329,7 +332,7 @@ class Conditional_Logic {
 			return false !== stripos( $check_value, $value );
 		}
 
-		if ( 'not like' === $compare ) {
+		if ( 'NOT LIKE' === $compare ) {
 			if ( '' === $value ) {
 				return false;
 			}
@@ -349,7 +352,7 @@ class Conditional_Logic {
 			return false === stripos( $check_value, $value );
 		}
 
-		if ( 'begins' === $compare ) {
+		if ( 'BEGINS' === $compare ) {
 			if ( '' === $value ) {
 				return true;
 			}
@@ -369,7 +372,7 @@ class Conditional_Logic {
 			return 0 === stripos( $check_value, $value );
 		}
 
-		if ( 'not begins' === $compare ) {
+		if ( 'NOT BEGINS' === $compare ) {
 			if ( '' === $value ) {
 				return false;
 			}
@@ -389,7 +392,7 @@ class Conditional_Logic {
 			return 0 !== stripos( $check_value, $value );
 		}
 
-		if ( 'ends' === $compare ) {
+		if ( 'ENDS' === $compare ) {
 			if ( '' === $value ) {
 				return true;
 			}
@@ -409,7 +412,7 @@ class Conditional_Logic {
 			return 0 === substr_compare( $check_value, $value, - strlen( $value ) );
 		}
 
-		if ( 'not ends' === $compare ) {
+		if ( 'NOT ENDS' === $compare ) {
 			if ( '' === $value ) {
 				return false;
 			}
@@ -429,7 +432,23 @@ class Conditional_Logic {
 			return 0 !== substr_compare( $check_value, $value, - strlen( $value ) );
 		}
 
-		if ( 'in' === $compare ) {
+		if ( 'MATCHES' === $compare ) {
+			if ( is_array( $check_value ) ) {
+				return false;
+			}
+
+			return 1 === preg_match( '/' . str_replace( '/', '\/', $value ) . '/', $check_value );
+		}
+
+		if ( 'NOT MATCHES' === $compare ) {
+			if ( is_array( $check_value ) ) {
+				return false;
+			}
+
+			return 0 === preg_match( '/' . str_replace( '/', '\/', $value ) . '/', $check_value );
+		}
+
+		if ( 'IN' === $compare ) {
 			if ( is_array( $check_value ) ) {
 				return false;
 			}
@@ -437,7 +456,7 @@ class Conditional_Logic {
 			return in_array( $check_value, (array) $value, false );
 		}
 
-		if ( 'not in' === $compare ) {
+		if ( 'NOT IN' === $compare ) {
 			if ( is_array( $check_value ) ) {
 				return false;
 			}

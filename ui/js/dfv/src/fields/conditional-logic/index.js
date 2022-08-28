@@ -239,9 +239,13 @@ const ConditionalLogic = ( {
 							{ ! FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS.includes( ruleFieldType ) ? (
 								<>
 									<option value="like">{ __( 'contains', 'pods' ) }</option>
+									<option value="not-like">{ __( 'does not contain', 'pods' ) }</option>
 									<option value="begins">{ __( 'starts with', 'pods' ) }</option>
+									<option value="not-begins">{ __( 'does not start with', 'pods' ) }</option>
 									<option value="ends">{ __( 'ends with', 'pods' ) }</option>
+									<option value="not-ends">{ __( 'does not end with', 'pods' ) }</option>
 									<option value="matches">{ __( 'matches pattern', 'pods' ) }</option>
+									<option value="not-matches">{ __( 'does not match pattern', 'pods' ) }</option>
 								</>
 							) : null }
 

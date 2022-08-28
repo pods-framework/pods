@@ -24,6 +24,11 @@ export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 	PropTypes.number,
 ] );
 
+export const OBJECT_OR_JSON_STRING = PropTypes.oneOfType( [
+	PropTypes.object,
+	PropTypes.string,
+] );
+
 export const PICK_OPTIONS = PropTypes.arrayOf(
 	PropTypes.shape( {
 		id: PropTypes.oneOfType( [

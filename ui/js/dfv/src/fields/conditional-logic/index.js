@@ -12,6 +12,7 @@ import {
 	FIELD_PROP_TYPE_SHAPE,
 	GROUP_PROP_TYPE_SHAPE,
 	FIELD_COMPONENT_BASE_PROPS,
+	OBJECT_OR_JSON_STRING,
 } from 'dfv/src/config/prop-types';
 
 import './conditional-logic.scss';
@@ -70,6 +71,14 @@ const ConditionalLogic = ( {
 			return;
 		}
 
+		// The value is already an object.
+		if ( 'object' === typeof value ) {
+			setConditions( value );
+
+			return;
+		}
+
+		// Try to parse the string as JSON.
 		try {
 			const parsedValue = JSON.parse( value );
 
@@ -287,9 +296,9 @@ ConditionalLogic.propTypes = {
 	storeKey: PropTypes.string.isRequired,
 
 	/**
-	 * Value stored as a JSON string.
+	 * Value stored as a object or JSON string.
 	 */
-	value: PropTypes.string,
+	value: OBJECT_OR_JSON_STRING,
 
 	/**
 	 * Full array of Pod groups (and fields).
@@ -319,4 +328,4 @@ const ConnectedConditionalLogic = withSelect(
 	}
 )( ConditionalLogic );
 
-export default ConnectedConditionalLogic
+export default ConnectedConditionalLogic;

@@ -572,15 +572,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$arg = (string) $arg;
 
 		$special_args = [
-			'identifier'    => 'get_identifier',
-			'label'         => 'get_label',
-			'description'   => 'get_description',
-			'fields'        => 'get_fields',
-			'object_fields' => 'get_object_fields',
-			'all_fields'    => 'get_all_fields',
-			'groups'        => 'get_groups',
-			'table_info'    => 'get_table_info',
-			'options'       => 'get_args',
+			'identifier'        => 'get_identifier',
+			'label'             => 'get_label',
+			'description'       => 'get_description',
+			'fields'            => 'get_fields',
+			'object_fields'     => 'get_object_fields',
+			'all_fields'        => 'get_all_fields',
+			'groups'            => 'get_groups',
+			'table_info'        => 'get_table_info',
+			'options'           => 'get_args',
+			'conditional_logic' => 'get_conditional_logic',
 		];
 
 		if ( isset( $special_args[ $arg ] ) ) {
@@ -1363,6 +1364,56 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		return $storage_type_obj->get_label();
+	}
+
+	/**
+	 * Determine whether conditional logic is enabled.
+	 *
+	 * @since TBD
+	 *
+	 * @return bool Whether conditional logic is enabled.
+	 */
+	public function is_conditional_logic_enabled(): bool {
+		return filter_var( $this->get_arg( 'enable_conditional_logic', false ), FILTER_VALIDATE_BOOL );
+	}
+
+	/**
+	 * Get the conditional logic.
+	 *
+	 * @return array|null The conditional logic or null if not set.
+	 */
+	public function get_conditional_logic(): ?array {
+		if ( $this->is_conditional_logic_enabled() ) {
+			return null;
+		}
+
+		if ( empty( $this->args['conditional_logic'] ) ) {
+			return null;
+		}
+
+		$conditional_logic = $this->args['conditional_logic'];
+
+		if ( ! is_array( $conditional_logic ) ) {
+			$conditional_logic = json_decode( $conditional_logic, true );
+
+			if ( empty( $conditional_logic ) || ! is_array( $conditional_logic ) ) {
+				return null;
+			}
+		}
+
+		if ( empty( $conditional_logic['rules'] ) ) {
+			return null;
+		}
+
+		if ( empty( $conditional_logic['action'] ) ) {
+			$conditional_logic['action'] = 'show';
+		}
+
+		if ( empty( $conditional_logic['logic'] ) ) {
+			$conditional_logic['logic'] = 'any';
+		}
+
+		return $conditional_logic;
 	}
 
 	/**

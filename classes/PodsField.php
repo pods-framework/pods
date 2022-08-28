@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Value_Field;
@@ -580,6 +581,7 @@ class PodsField {
 			$config['repeatable_add_new_label'] = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
 			$config['repeatable_reorder']       = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
 			$config['repeatable_limit']         = $args->options->get_limit();
+			$config['conditional_logic']        = $args->options->get_conditional_logic();
 		} else {
 			$config = (array) $args->options;
 		}
@@ -623,8 +625,30 @@ class PodsField {
 			$config['placeholder'] = '';
 		}
 
+		// Handle conditional logic with backcompat handling.
+		$config['conditional_logic'] = $this->get_dfv_conditional_logic_json( $config );
+
 		return $config;
 
+	}
+
+	/**
+	 * Get the list of conditional logic rules for the field.
+	 *
+	 * @since TBD
+	 *
+	 * @param Field|array $field The field object.
+	 *
+	 * @return array The list of conditional logic rules for the field.
+	 */
+	public function get_dfv_conditional_logic_json( $field ) {
+		$conditional_logic = Conditional_Logic::maybe_setup_from_object( $field );
+
+		if ( $conditional_logic ) {
+			return $conditional_logic->to_array();
+		}
+
+		return '';
 	}
 
 	/**

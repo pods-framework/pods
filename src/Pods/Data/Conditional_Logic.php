@@ -241,7 +241,7 @@ class Conditional_Logic {
 	public function is_field_visible( array $values ): bool {
 		$rules_passed = $this->validate_rules( $values );
 
-		if ( 'show' === $this->conditions['action'] ) {
+		if ( 'show' === $this->action ) {
 			// Determine whether rules passed and this field should be shown.
 			return $rules_passed;
 		}
@@ -260,14 +260,14 @@ class Conditional_Logic {
 	 * @return bool Whether the rules validate for the field values provided.
 	 */
 	public function validate_rules( array $values ): bool {
-		if ( empty( $this->conditions['rules'] ) ) {
+		if ( empty( $this->rules ) ) {
 			return true;
 		}
 
 		$rules_passed     = 0;
 		$rules_not_passed = 0;
 
-		foreach ( $this->conditions['rules'] as $rule ) {
+		foreach ( $this->rules as $rule ) {
 			$passed = $this->validate_rule( $rule, $values );
 
 			if ( $passed ) {
@@ -277,11 +277,11 @@ class Conditional_Logic {
 			}
 		}
 
-		if ( 'any' === $this->conditions['logic'] ) {
+		if ( 'any' === $this->logic ) {
 			return 0 < $rules_passed;
 		}
 
-		if ( 'all' === $this->conditions['logic'] ) {
+		if ( 'all' === $this->logic ) {
 			return 0 === $rules_not_passed;
 		}
 
@@ -312,12 +312,21 @@ class Conditional_Logic {
 
 		$check_value = pods_v( $field, $values );
 
-		if ( is_bool( $value ) ) {
-			$value = (int) $value;
-		}
+		if ( ! in_array( $compare, [
+			'EMPTY',
+			'NOT EMPTY',
+		], true ) ) {
+			if ( null === $value ) {
+				$value = '';
+			} elseif ( is_bool( $value ) ) {
+				$value = (int) $value;
+			}
 
-		if ( is_bool( $check_value ) ) {
-			$check_value = (int) $check_value;
+			if ( null === $check_value ) {
+				$check_value = '';
+			} elseif ( is_bool( $check_value ) ) {
+				$check_value = (int) $check_value;
+			}
 		}
 
 		if ( 'LIKE' === $compare ) {
@@ -346,11 +355,11 @@ class Conditional_Logic {
 			}
 
 			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return false;
+				return true;
 			}
 
 			if ( null !== $value && ! is_scalar( $value ) ) {
-				return false;
+				return true;
 			}
 
 			if ( function_exists( 'str_contains' ) ) {
@@ -386,11 +395,11 @@ class Conditional_Logic {
 			}
 
 			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return false;
+				return true;
 			}
 
 			if ( null !== $value && ! is_scalar( $value ) ) {
-				return false;
+				return true;
 			}
 
 			if ( function_exists( 'str_starts_with' ) ) {
@@ -426,11 +435,11 @@ class Conditional_Logic {
 			}
 
 			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return false;
+				return true;
 			}
 
 			if ( null !== $value && ! is_scalar( $value ) ) {
-				return false;
+				return true;
 			}
 
 			if ( function_exists( 'str_ends_with' ) ) {
@@ -450,7 +459,7 @@ class Conditional_Logic {
 
 		if ( 'NOT MATCHES' === $compare ) {
 			if ( ! is_scalar( $check_value ) ) {
-				return false;
+				return true;
 			}
 
 			return 0 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value );
@@ -466,20 +475,21 @@ class Conditional_Logic {
 
 		if ( 'NOT IN' === $compare ) {
 			if ( ! is_scalar( $check_value ) ) {
-				return false;
+				return true;
 			}
 
 			return ! in_array( $check_value, (array) $value, false );
 		}
 
 		if ( 'EMPTY' === $compare ) {
-			return in_array( $check_value, [ '', null, [] ], true );
+			return in_array( $check_value, [ '', null, [], false ], true );
 		}
 
 		if ( 'NOT EMPTY' === $compare ) {
-			return ! in_array( $check_value, [ '', null, [] ], true );
+			return ! in_array( $check_value, [ '', null, [], false ], true );
 		}
 
+		// Numeric comparisons enforce floats on numeric values for strict checks.
 		if ( is_numeric( $value ) ) {
 			$value = (float) $value;
 		}
@@ -489,11 +499,23 @@ class Conditional_Logic {
 		}
 
 		if ( '=' === $compare ) {
+			if ( ! is_scalar( $check_value ) ) {
+				return false;
+			}
+
 			return $check_value === $value;
 		}
 
 		if ( '!=' === $compare ) {
+			if ( ! is_scalar( $check_value ) ) {
+				return true;
+			}
+
 			return $check_value !== $value;
+		}
+
+		if ( ! is_scalar( $check_value ) ) {
+			return false;
 		}
 
 		if ( '<' === $compare ) {

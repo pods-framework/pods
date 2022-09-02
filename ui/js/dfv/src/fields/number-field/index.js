@@ -58,7 +58,7 @@ const NumberField = ( {
 		// Slider input is always format: `9999.99`.
 		if ( isSlider ) {
 			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
-			setFormattedValue( formatNumberWithPodsFormat( value, format, softFormat ) );
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
 		} else {
 			setValue( parseFloatWithPodsFormat( event.target.value, format ) );
 			setFormattedValue( event.target.value );

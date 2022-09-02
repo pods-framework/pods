@@ -81,6 +81,7 @@ jobs:
       - name: Set up slic for CI
         run: |
           cd ${GITHUB_WORKSPACE}/..
+          ${SLIC_BIN} up
           ${SLIC_BIN} here
           ${SLIC_BIN} interactive off
           ${SLIC_BIN} build-prompt off

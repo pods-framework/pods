@@ -26,7 +26,7 @@ tests/_support/_generated/* linguist-generated=true
 .editorconfig export-ignore
 .env export-ignore
 .env.example export-ignore
-.env.testing.tric export-ignore
+.env.testing.slic export-ignore
 .eslintignore export-ignore
 .eslintrc.json export-ignore
 .gitattributes export-ignore
@@ -41,7 +41,7 @@ tests/_support/_generated/* linguist-generated=true
 CODE_OF_CONDUCT.md export-ignore
 codeception.dist.yml export-ignore
 codeception.example.yml export-ignore
-codeception.tric.yml export-ignore
+codeception.slic.yml export-ignore
 CODEOWNERS export-ignore
 composer.json export-ignore
 CONTRIBUTING.md export-ignore

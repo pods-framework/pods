@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # ------------------------------------------------------------------------------
-      # Checkout the repo and tric
+      # Checkout the repo and slic
       # ------------------------------------------------------------------------------
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -34,12 +34,19 @@ jobs:
           fetch-depth: 1
           token: ${{ secrets.GH_BOT_TOKEN }}
           submodules: recursive
-      - name: Checkout tric
+      # ------------------------------------------------------------------------------
+      # Set up PHP to run slic
+      # ------------------------------------------------------------------------------
+      - name: Configure PHP environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+      - name: Checkout slic
         uses: actions/checkout@v2
         with:
-          repository: the-events-calendar/tric
-          ref: 0.5.35
-          path: tric
+          repository: stellarwp/slic
+          ref: main
+          path: slic
           fetch-depth: 1
       # ------------------------------------------------------------------------------
       # Prepare our composer cache directory
@@ -56,67 +63,67 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
       # ------------------------------------------------------------------------------
-      # Initialize tric
+      # Initialize slic
       # ------------------------------------------------------------------------------
-      - name: Set up tric env vars
+      - name: Set up slic env vars
         run: |
-          echo "TRIC_BIN=${GITHUB_WORKSPACE}/tric/tric" >> $GITHUB_ENV
-          echo "TRIC_WP_DIR=${GITHUB_WORKSPACE}/tric/_wordpress" >> $GITHUB_ENV
-          echo "TRIC_WORDPRESS_DOCKERFILE=Dockerfile.base" >> $GITHUB_ENV
-      - name: Set run context for tric
-        run: echo "TRIC=1" >> $GITHUB_ENV && echo "CI=1" >> $GITHUB_ENV
+          echo "SLIC_BIN=${GITHUB_WORKSPACE}/slic/slic" >> $GITHUB_ENV
+          echo "SLIC_WP_DIR=${GITHUB_WORKSPACE}/slic/_wordpress" >> $GITHUB_ENV
+          echo "SLIC_WORDPRESS_DOCKERFILE=Dockerfile.base" >> $GITHUB_ENV
+      - name: Set run context for slic
+        run: echo "SLIC=1" >> $GITHUB_ENV && echo "CI=1" >> $GITHUB_ENV
       - name: Start ssh-agent
         run: |
           mkdir -p "${HOME}/.ssh";
           ssh-agent -a /tmp/ssh_agent.sock;
       - name: Export SSH_AUTH_SOCK env var
         run: echo "SSH_AUTH_SOCK=/tmp/ssh_agent.sock" >> $GITHUB_ENV
-      - name: Set up tric for CI
+      - name: Set up slic for CI
         run: |
           cd ${GITHUB_WORKSPACE}/..
-          ${TRIC_BIN} here
-          ${TRIC_BIN} interactive off
-          ${TRIC_BIN} build-prompt off
-          ${TRIC_BIN} build-subdir off
-          ${TRIC_BIN} xdebug off
-          ${TRIC_BIN} composer-cache set /home/runner/.cache/composer
-          ${TRIC_BIN} debug on
-          ${TRIC_BIN} info
-          ${TRIC_BIN} config
+          ${SLIC_BIN} here
+          ${SLIC_BIN} interactive off
+          ${SLIC_BIN} build-prompt off
+          ${SLIC_BIN} build-subdir off
+          ${SLIC_BIN} xdebug off
+          ${SLIC_BIN} composer-cache set /home/runner/.cache/composer
+          ${SLIC_BIN} debug on
+          ${SLIC_BIN} info
+          ${SLIC_BIN} config
       # ------------------------------------------------------------------------------
       # Set up Pods
       # ------------------------------------------------------------------------------
       - name: Set up pods
         run: |
           docker network prune -f
-          ${TRIC_BIN} use pods
-          ${TRIC_BIN} composer install
+          ${SLIC_BIN} use pods
+          ${SLIC_BIN} composer install
       # ------------------------------------------------------------------------------
       # Set up ET (npm install and build)
       # ------------------------------------------------------------------------------
       - name: Set up Pods (npm)
         if: ${{ matrix.suite == 'acceptance' }}
         run: |
-          ${TRIC_BIN} npm install
-          ${TRIC_BIN} npm run build
+          ${SLIC_BIN} npm install
+          ${SLIC_BIN} npm run build
       # ------------------------------------------------------------------------------
       # Init WordPress container
       # ------------------------------------------------------------------------------
       - name: Init the WordPress container
         run: |
-          ${TRIC_BIN} up wordpress
-          ${TRIC_BIN} site-cli core version
+          ${SLIC_BIN} up wordpress
+          ${SLIC_BIN} site-cli core version
       # ------------------------------------------------------------------------------
       # Install and activate TwentyTwenty
       # ------------------------------------------------------------------------------
       - name: Install and activate TwentyTwenty
         if: ${{ matrix.suite == 'acceptance' }}
-        run:  ${TRIC_BIN} site-cli theme install twentytwenty --activate
+        run:  ${SLIC_BIN} site-cli theme install twentytwenty --activate
       # ------------------------------------------------------------------------------
       # Run tests
       # ------------------------------------------------------------------------------
       - name: Run suite tests
-        run: ${TRIC_BIN} run ${{ matrix.suite }} --ext DotReporter
+        run: ${SLIC_BIN} run ${{ matrix.suite }} --ext DotReporter
       # ------------------------------------------------------------------------------
       # Upload artifacts (On failure)
       # ------------------------------------------------------------------------------

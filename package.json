@@ -50,6 +50,7 @@
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@babel/register": "^7.17.7",
+    "@testing-library/react-hooks": "^8.0.1",
     "@wordpress/api-fetch": "6.4.0",
     "@wordpress/block-editor": "8.6.0",
     "@wordpress/components": "19.9.0",

@@ -1383,7 +1383,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array|null The conditional logic or null if not set.
 	 */
 	public function get_conditional_logic(): ?array {
-		if ( $this->is_conditional_logic_enabled() ) {
+		if ( ! $this->is_conditional_logic_enabled() ) {
 			return null;
 		}
 

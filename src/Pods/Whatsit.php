@@ -1374,7 +1374,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return bool Whether conditional logic is enabled.
 	 */
 	public function is_conditional_logic_enabled(): bool {
-		return filter_var( $this->get_arg( 'enable_conditional_logic', false ), FILTER_VALIDATE_BOOL );
+		return filter_var( $this->get_arg( 'enable_conditional_logic', false ), FILTER_VALIDATE_BOOLEAN );
 	}
 
 	/**

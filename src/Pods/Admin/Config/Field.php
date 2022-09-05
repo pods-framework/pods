@@ -232,6 +232,35 @@ class Field extends Base {
 					'repeatable' => true,
 				],
 			],
+			'repeatable_format' => [
+				'label'                 => __( 'Repeatable - Display Format', 'pods' ),
+				'help'                  => __( 'Used as format for front-end display', 'pods' ),
+				'depends-on'  => [
+					'type'       => PodsForm::repeatable_field_types(),
+					'repeatable' => true,
+				],
+				'default'               => 'default',
+				'required'              => true,
+				'type'                  => 'pick',
+				'data'                  => [
+					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
+					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
+				],
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
+			],
+			'repeatable_format_separator' => [
+				'label'      => __( 'Repeatable - Display Format Separator', 'pods' ),
+				'help'       => __( 'Used as separator for front-end display.', 'pods' ),
+				'depends-on' => [
+					'type'              => PodsForm::repeatable_field_types(),
+					'repeatable'        => true,
+					'repeatable_format' => 'custom',
+				],
+				'default'    => ', ',
+				'type'       => 'text',
+			]
 		];
 
 		$options['advanced'] = [

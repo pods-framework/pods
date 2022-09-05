@@ -100,8 +100,20 @@ class Field extends Base {
 	 * @return array List of fields for the Field object.
 	 */
 	public function get_fields( \Pods\Whatsit\Pod $pod, array $tabs ) {
-		$field_types           = PodsForm::field_types();
-		$tableless_field_types = PodsForm::tableless_field_types();
+		$field_types            = PodsForm::field_types();
+		$tableless_field_types  = PodsForm::tableless_field_types();
+		$repeatable_field_types = PodsForm::repeatable_field_types();
+
+		// Remove repeatable fields custom separator options.
+		$serial_repeatable_field_types = array_diff( $repeatable_field_types, [
+			'avatar',
+			'code',
+			'link',
+			'oembed',
+			'paragraph',
+			'website',
+			'wysiwyg',
+		] );
 
 		$options = [];
 
@@ -206,7 +218,7 @@ class Field extends Base {
 				'type'         => 'html',
 				'html_content' => '<hr />',
 				'depends-on'   => [
-					'type' => PodsForm::repeatable_field_types(),
+					'type' => $repeatable_field_types,
 				],
 			],
 			'repeatable'  => [
@@ -218,7 +230,7 @@ class Field extends Base {
 				'boolean_yes_label' => __( 'Allow multiple values', 'pods' ),
 				'dependency'        => true,
 				'depends-on'        => [
-					'type' => PodsForm::repeatable_field_types(),
+					'type' => $repeatable_field_types,
 				],
 			],
 			'repeatable_add_new_label'  => [
@@ -228,7 +240,7 @@ class Field extends Base {
 				'default'     => '',
 				'type'        => 'text',
 				'depends-on'  => [
-					'type'       => PodsForm::repeatable_field_types(),
+					'type'       => $repeatable_field_types,
 					'repeatable' => true,
 				],
 			],
@@ -236,7 +248,7 @@ class Field extends Base {
 				'label'                 => __( 'Repeatable - Display Format', 'pods' ),
 				'help'                  => __( 'Used as format for front-end display', 'pods' ),
 				'depends-on'  => [
-					'type'       => PodsForm::repeatable_field_types(),
+					'type'       => $serial_repeatable_field_types,
 					'repeatable' => true,
 				],
 				'default'               => 'default',
@@ -254,7 +266,7 @@ class Field extends Base {
 				'label'      => __( 'Repeatable - Display Format Separator', 'pods' ),
 				'help'       => __( 'Used as separator for front-end display.', 'pods' ),
 				'depends-on' => [
-					'type'              => PodsForm::repeatable_field_types(),
+					'type'              => $serial_repeatable_field_types,
 					'repeatable'        => true,
 					'repeatable_format' => 'custom',
 				],

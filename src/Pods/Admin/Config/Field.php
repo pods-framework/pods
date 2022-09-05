@@ -105,7 +105,7 @@ class Field extends Base {
 		$repeatable_field_types = PodsForm::repeatable_field_types();
 
 		// Remove repeatable fields custom separator options.
-		$serial_repeatable_field_types = array_diff( $repeatable_field_types, [
+		$serial_repeatable_field_types = array_values( array_diff( $repeatable_field_types, [
 			'avatar',
 			'code',
 			'link',
@@ -113,7 +113,7 @@ class Field extends Base {
 			'paragraph',
 			'website',
 			'wysiwyg',
-		] );
+		] ) );
 
 		$options = [];
 

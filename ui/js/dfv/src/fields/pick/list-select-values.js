@@ -129,7 +129,7 @@ const ListSelectValues = ( {
 		return {
 			label: matchingFieldItemData?.name ? matchingFieldItemData.name : label,
 			value,
-		}
+		};
 	};
 
 	return (

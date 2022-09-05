@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
- import React, { useState, useEffect, forwardRef } from 'react';
- import classnames from 'classnames';
- import PropTypes from 'prop-types';
+import React, { useState, useEffect, forwardRef } from 'react';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
- /**
-  * WordPress dependencies
-  */
- import {
-	 Button,
-	 Dashicon,
+/**
+ * WordPress dependencies
+ */
+import {
+	Button,
+	Dashicon,
 } from '@wordpress/components';
- import { __ } from '@wordpress/i18n';
- import {
-	 chevronUp,
-	 chevronDown,
- } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
+import {
+	chevronUp,
+	chevronDown,
+} from '@wordpress/icons';
 
- /**
-  * Other Pods dependencies
-  */
- import IframeModal from 'dfv/src/components/iframe-modal';
+/**
+ * Other Pods dependencies
+ */
+import IframeModal from 'dfv/src/components/iframe-modal';
 
 const ListSelectItem = forwardRef( ( {
 	fieldName,

@@ -1,10 +1,16 @@
+/**
+ * External dependencies
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { basicSetup, EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { php } from '@codemirror/lang-php';
-
 import PropTypes from 'prop-types';
 
+/**
+ * Other Pods dependencies
+ */
+import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './code.scss';
@@ -15,7 +21,10 @@ const Code = ( {
 	value,
 	setHasBlurred,
 } ) => {
-	const { name } = fieldConfig;
+	const {
+		name,
+		read_only: readOnly,
+	} = fieldConfig;
 
 	const editorViewRef = useRef();
 	const editorRef = useRef();
@@ -62,6 +71,8 @@ const Code = ( {
 				( new Compartment ).of( EditorState.tabSize.of( 4 ) ),
 				// Handle updates and focus changes.
 				EditorView.updateListener.of( handleViewUpdate ),
+				EditorState.readOnly.of( toBool( readOnly ) ),
+				EditorView.editable.of( ! toBool( readOnly ) ),
 			],
 		} );
 
@@ -116,7 +127,10 @@ const Code = ( {
 				value={ value || '' }
 			/>
 
-			<div ref={ editorRef } />
+			<div
+				className={ toBool( readOnly ) ? 'pods-code-field__input--readonly' : '' }
+				ref={ editorRef }
+			/>
 		</div>
 	);
 };

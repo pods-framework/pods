@@ -29,11 +29,23 @@ const BASE_PROPS = {
 	},
 };
 
+// Fixes issue with ResizeObserver,
+// see https://github.com/ZeeCoder/use-resize-observer/issues/40#issuecomment-644536259
+class ResizeObserver {
+	observe() {}
+	unobserve() {}
+}
+
 describe( 'DateTime field component', () => {
+	window.ResizeObserver = ResizeObserver;
+
 	it( 'renders the DateTime component with the correct formats', () => {
 		const props = { ...BASE_PROPS };
 
 		const wrapper = mount( <DateTime { ...props } /> );
+
+		// Click Dropdown to open and render the actual field.
+		wrapper.find( 'input[type="text"]' ).simulate( 'click' );
 
 		expect( wrapper.find( ReactDatetime ).props().dateFormat ).toEqual( 'MM-DD-YYYY' );
 		expect( wrapper.find( ReactDatetime ).props().timeFormat ).toEqual( 'h:mm A' );
@@ -50,6 +62,9 @@ describe( 'DateTime field component', () => {
 
 		const wrapper = mount( <DateTime { ...props } /> );
 
+		// Click Dropdown to open and render the actual field.
+		wrapper.find( 'input[type="text"]' ).simulate( 'click' );
+
 		expect( wrapper.find( ReactDatetime ).props().dateFormat ).toEqual( false );
 		expect( wrapper.find( ReactDatetime ).props().timeFormat ).toEqual( 'h:mm A' );
 	} );
@@ -64,6 +79,9 @@ describe( 'DateTime field component', () => {
 		};
 
 		const wrapper = mount( <DateTime { ...props } /> );
+
+		// Click Dropdown to open and render the actual field.
+		wrapper.find( 'input[type="text"]' ).simulate( 'click' );
 
 		expect( wrapper.find( ReactDatetime ).props().dateFormat ).toEqual( 'MM-DD-YYYY' );
 		expect( wrapper.find( ReactDatetime ).props().timeFormat ).toEqual( false );

@@ -81,10 +81,14 @@
 
 .pods-list-select-item__icon {
 	width: 40px;
-	margin: 0 5px;
+	margin: 0 10px;
 	font-size: 0; /* for aligning image */
 	line-height: 32px;
 	text-align: center;
+
+	&:first-child {
+		margin-left: 0;
+	}
 
 	& > img {
 		display: inline-block;

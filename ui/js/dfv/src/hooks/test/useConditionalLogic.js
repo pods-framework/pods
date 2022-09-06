@@ -20,8 +20,9 @@ const generateFieldConfigWithConditionalRules = (
 	action,
 	logic,
 	rules,
+	fieldName = 'test_text_field',
 ) => generateFieldConfig(
-	'test_text_field',
+	fieldName,
 	{
 		enable_conditional_logic: enableConditionalLogic,
 		conditional_logic: {
@@ -394,7 +395,111 @@ describe( 'conditional logic validation hook', () => {
 		}
 	);
 
-	it( 'should validate based on parent field conditional logic', () => {} );
+	it( 'should validate based "any" logic on parent field conditional logic', () => {
+		const fieldConfig = generateFieldConfigWithConditionalRules(
+			true,
+			'show',
+			'any',
+			[
+				{
+					field: 'field_one',
+					compare: '=',
+					value: 'abc',
+				},
+				{
+					field: 'field_two',
+					compare: '=',
+					value: 'def',
+				},
+			]
+		);
 
-	it( 'should validate based on grandparent field conditional logic', () => {} );
+		const fieldsMap = new Map(
+			[
+				[
+					'field_one',
+					generateFieldConfigWithConditionalRules(
+						true,
+						'show',
+						'any',
+						[],
+						'field_one'
+					),
+				],
+				[
+					'field_two',
+					generateFieldConfigWithConditionalRules(
+						true,
+						'show',
+						'all',
+						[
+							{
+								field: 'field_three',
+								compare: '=',
+								value: 'abc',
+							},
+							{
+								field: 'field_four',
+								compare: '=',
+								value: 'def',
+							},
+						],
+						'field_two'
+					),
+				],
+				[
+					'field_three',
+					generateFieldConfigWithConditionalRules(
+						true,
+						'show',
+						'any',
+						[],
+						'field_three'
+					),
+				],
+				[
+					'field_four',
+					generateFieldConfigWithConditionalRules(
+						true,
+						'show',
+						'any',
+						[],
+						'field_four'
+					),
+				],
+			]
+		);
+
+		// Field 1 does not have parents with any conditional logic, so it should pass.
+		expect(
+			renderHook(
+				() => useConditionalLogic( fieldConfig, { field_one: 'abc' }, fieldsMap )
+			).result.current
+		).toBe( true );
+
+		// Field 2 has ALL logic based on fields 3 and 4, so it should fail until both also are met.
+		expect(
+			renderHook(
+				() => useConditionalLogic( fieldConfig, { field_two: 'def' }, fieldsMap )
+			).result.current
+		).toBe( false );
+
+		expect(
+			renderHook(
+				() => useConditionalLogic( fieldConfig, { field_three: 'abc', field_four: 'def' }, fieldsMap )
+			).result.current
+		).toBe( false );
+
+		expect(
+			renderHook(
+				() => useConditionalLogic( fieldConfig, { field_two: 'def', field_three: 'abc' }, fieldsMap )
+			).result.current
+		).toBe( false );
+
+		expect(
+			renderHook(
+				() => useConditionalLogic( fieldConfig, { field_two: 'def', field_three: 'abc', field_four: 'def' }, fieldsMap )
+			).result.current
+		).toBe( true );
+	} );
 } );

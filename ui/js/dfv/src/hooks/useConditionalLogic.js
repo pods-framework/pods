@@ -54,9 +54,9 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 		case 'not ends':
 			return ! valueToTest.toLowerCase().endsWith( ruleValue.toLowerCase() );
 		case 'matches':
-			return valueToTest.match( ruleValue );
+			return Boolean( valueToTest.match( ruleValue ) );
 		case 'not matches':
-			return ! valueToTest.match( ruleValue );
+			return ! Boolean( valueToTest.match( ruleValue ) );
 		case 'in': {
 			// We can't compare 'in' if the rule's value is not an array.
 			if ( ! Array.isArray( ruleValue ) ) {
@@ -145,17 +145,24 @@ const recursiveCheckConditionalLogicForField = (
 ) => {
 	const {
 		enable_conditional_logic: enableConditionalLogic,
-		conditional_logic: {
-			action,
-			logic,
-			rules,
-		},
+		conditional_logic: conditionalLogic,
 	} = fieldConfig;
 
-	// The field is always enabled if "conditional logic" is not turned on.
+	// The field is always enabled if "conditional logic" is not turned on,
+	// and/or if the 'conditional_logic' value is empty.
 	if ( ! toBool( enableConditionalLogic ) ) {
 		return true;
 	}
+
+	if ( 'object' !== typeof conditionalLogic ) {
+		return true;
+	}
+
+	const {
+		action,
+		logic,
+		rules,
+	} = conditionalLogic;
 
 	// No need to go through rules if the array is empty.
 	if ( 0 === rules.length ) {
@@ -164,44 +171,55 @@ const recursiveCheckConditionalLogicForField = (
 
 	// If logic is set to 'any', we just need to find the first rule that matches.
 	// If logic is set to 'all', we need to go through each rule.
-	let meetsRules = false;
-
 	const rulesCallback = ( rule ) => {
 		const {
 			compare,
 			value: ruleValue,
-			field: fieldToTest,
+			field: fieldNameToTest,
 		} = rule;
 
 		// Return if the rule is invalid.
-		if ( ! compare || ! fieldToTest ) {
+		if ( ! compare || ! fieldNameToTest ) {
 			return true;
 		}
 
-		const valueToTest = allPodValues[ fieldToTest ];
+		const valueToTest = allPodValues[ fieldNameToTest ];
 
 		// If the value to test is not set, then it can't pass.
 		if ( 'undefined' === typeof valueToTest ) {
 			return false;
 		}
 
-		return validateConditionalValue(
+		const doesValueMatch = validateConditionalValue(
 			compare,
 			ruleValue,
 			valueToTest,
 		);
+
+		// No need to go up the tree of dependencies if it already failed.
+		if ( false === doesValueMatch ) {
+			return false;
+		}
+
+		// Check up the tree of dependencies.
+		const parentFieldConfig = allPodFieldsMap.get( fieldNameToTest );
+
+		const doParentDepenenciesMatch = recursiveCheckConditionalLogicForField(
+			parentFieldConfig,
+			allPodValues,
+			allPodFieldsMap,
+		);
+
+		return doParentDepenenciesMatch;
 	};
+
+	let meetsRules = false;
 
 	if ( 'all' === logic ) {
 		meetsRules = rules.every( rulesCallback );
 	} else {
 		meetsRules = rules.some( rulesCallback );
 	}
-
-	// @todo
-	// Go up the tree of dependencies. This works two different ways:
-	// parents from a 'depends-on-any' match should have at least one
-	// where the whole tree passes. For the other types, all parents need to match.
 
 	// Inverse the result if the action is 'hide' instead of 'show'.
 	if ( 'hide' === action ) {

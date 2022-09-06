@@ -115,18 +115,9 @@
 	flex-grow: 1;
 }
 
-.pods-list-select-item__edit {
-	margin: 0 0 0 auto;
-	width: 25px;
-}
-
-.pods-list-select-item__view {
-	margin: 0;
-	width: 25px;
-}
-
+.pods-list-select-item__edit,
+.pods-list-select-item__view,
 .pods-list-select-item__remove {
-	margin: 0;
 	width: 25px;
 }
 

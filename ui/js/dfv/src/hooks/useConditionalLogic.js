@@ -204,6 +204,10 @@ const recursiveCheckConditionalLogicForField = (
 		// Check up the tree of dependencies.
 		const parentFieldConfig = allPodFieldsMap.get( fieldNameToTest );
 
+		if ( ! parentFieldConfig ) {
+			return true;
+		}
+
 		const doParentDepenenciesMatch = recursiveCheckConditionalLogicForField(
 			parentFieldConfig,
 			allPodValues,

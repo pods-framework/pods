@@ -13,7 +13,7 @@ import HelpTooltip from 'dfv/src/components/help-tooltip';
 /**
  * Other Pods dependencies
  */
-import useDependencyCheck from 'dfv/src/hooks/useDependencyCheck';
+import useConditionalLogic from 'dfv/src/hooks/useConditionalLogic';
 import { FIELD_PROP_TYPE } from 'dfv/src/config/prop-types';
 
 const BooleanGroupSubfield = ( {
@@ -30,7 +30,7 @@ const BooleanGroupSubfield = ( {
 		name,
 	} = subfieldConfig;
 
-	const meetsDependencies = useDependencyCheck(
+	const meetsConditionalLogic = useConditionalLogic(
 		subfieldConfig,
 		allPodValues,
 		allPodFieldsMap,
@@ -48,7 +48,7 @@ const BooleanGroupSubfield = ( {
 		? helpText[ 1 ]
 		: undefined;
 
-	if ( ! meetsDependencies ) {
+	if ( ! meetsConditionalLogic ) {
 		return null;
 	}
 

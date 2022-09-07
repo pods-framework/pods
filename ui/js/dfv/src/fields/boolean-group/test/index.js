@@ -45,12 +45,21 @@ const BASE_PROPS = {
 				default: 0,
 				type: 'boolean',
 				help: 'Some help text.',
-				'depends-on': {
-					type: [
-						'boolean',
-						'color',
-						'currency',
-						'date',
+				enable_conditional_logic: '1',
+				conditional_logic: {
+					action: 'show',
+					logic: 'any',
+					rules: [
+						{
+							field: 'type',
+							compare: 'in',
+							value: [
+								'boolean',
+								'color',
+								'currency',
+								'date',
+							],
+						},
 					],
 				},
 			},

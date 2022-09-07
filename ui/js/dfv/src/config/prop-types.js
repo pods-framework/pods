@@ -70,6 +70,15 @@ export const FIELD_PROP_TYPE = {
 	attributes: OBJECT_OR_ARRAY,
 	class: PropTypes.string,
 	data: PropTypes.any,
+	conditional_logic: PropTypes.shape( {
+		action: PropTypes.string,
+		logic: PropTypes.string,
+		rules: PropTypes.arrayOf( PropTypes.shape( {
+			field: PropTypes.string,
+			compare: PropTypes.string,
+			value: PropTypes.any,
+		} ) ),
+	} ),
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
@@ -81,8 +90,6 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.number,
 	] ),
 	default_value_param: PropTypes.string,
-	'depends-on': OBJECT_OR_ARRAY,
-	'depends-on-any': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
 	description_param: PropTypes.string,
@@ -95,7 +102,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.string, // @todo is this an error message, or a back-end bug?
 		PropTypes.object,
 	] ),
-	'excludes-on': OBJECT_OR_ARRAY,
+	enable_conditional_logic: BOOLEAN_ALL_TYPES,
 	field_type: PropTypes.string,
 	group: NUMBER_OR_NUMBER_AS_STRING,
 	fields: PropTypes.arrayOf(
@@ -157,7 +164,6 @@ export const FIELD_PROP_TYPE = {
 	repeatable_reorder: BOOLEAN_ALL_TYPES,
 	repeatable_limit: NUMBER_OR_NUMBER_AS_STRING,
 	weight: PropTypes.number,
-	'wildcard-on': OBJECT_OR_ARRAY,
 	_locale: PropTypes.string,
 
 	// Avatar fields

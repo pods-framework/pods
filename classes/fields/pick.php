@@ -5,6 +5,7 @@ use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Object_Field;
 use Pods\API\Whatsit\Value_Field;
+use Pods\Whatsit\Store;
 
 /**
  * @package Pods\Fields
@@ -2939,12 +2940,18 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$pod   = self::$api->load_pod( array( 'id' => (int) $params->pod ) );
-		$field = self::$api->load_field(
-			array(
-				'id'         => (int) $params->field,
-				'table_info' => true,
-			)
-		);
+
+		$field = Store::get_instance()->get_object( $params->field );
+
+		if ( ! $field ) {
+			$field = self::$api->load_field(
+					array(
+							'id'         => (int) $params->field,
+							'table_info' => true,
+					)
+			);
+		}
+
 		$id    = (int) $params->id;
 
 		$limit = 15;

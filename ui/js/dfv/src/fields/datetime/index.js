@@ -301,7 +301,7 @@ const DateTime = ( {
 
 	useEffect( () => {
 		const rangeValidationRule = {
-			rule: dateTimeValidator( yearRange, getFullFormat() ),
+			rule: dateTimeValidator( yearRange, getDBFormat() ),
 			condition: () => true,
 		};
 

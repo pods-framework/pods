@@ -1865,16 +1865,22 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	if ( ! empty( $params->fields ) && is_array( $params->fields ) && isset( $params->fields[ $params->field ] ) ) {
 		$params->field = $params->fields[ $params->field ];
 
-		if ( pods_v( 'repeatable', $params->field, false ) ) {
-			$format = pods_v( 'repeatable_format', $params->field, 'default' );
+		if ( 1 === (int) pods_v( 'repeatable', $params->field, 0 ) ) {
+			$format = pods_v( 'repeatable_format', $params->field, 'default', true );
+
 			if ( 'default' !== $format ) {
 				$params->serial = false;
+
 				if ( 'custom' === $format ) {
-					$separator = pods_v( 'repeatable_format_separator', $params->field, $params->separator );
-					if ( $separator ) {
-						$params->and       = $separator;
-						$params->separator = $separator;
+					$separator = pods_v( 'repeatable_format_separator', $params->field );
+
+					// Default to comma separator.
+					if ( '' === $separator ) {
+						$separator = ', ';
 					}
+
+					$params->and       = $separator;
+					$params->separator = $separator;
 				}
 			}
 		}

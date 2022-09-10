@@ -139,7 +139,7 @@ const FullSelect = ( {
 						isMulti={ isMulti }
 						isClearable={ isClearable }
 						onChange={ addNewItem }
-						readOnly={ isReadOnly }
+						isDisabled={ isReadOnly }
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
@@ -153,11 +153,11 @@ const FullSelect = ( {
 						isMulti={ isMulti }
 						isClearable={ isClearable }
 						onChange={ addNewItem }
-						readOnly={ isReadOnly }
+						isDisabled={ isReadOnly }
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
-						styles={{ menu: (base) => ({ ...base, zIndex: 2 }) }}
+						styles={ { menu: ( base ) => ( { ...base, zIndex: 2 } ) } }
 					/>
 				) }
 			</SortableContext>

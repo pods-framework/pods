@@ -14,7 +14,7 @@
 // List Items
 .pods-list-select-item {
 	display: block;
-	padding: 6px 5px 6px 10px;
+	padding: 6px 10px;
 	margin: 0;
 	border-bottom: 1px solid #efefef;
 
@@ -52,6 +52,7 @@
 	display: block;
 	margin: 0;
 	padding: 0;
+	text-align: center;
 }
 
 .pods-list-select-item__drag-handle {
@@ -81,10 +82,14 @@
 
 .pods-list-select-item__icon {
 	width: 40px;
-	margin: 0 5px;
+	margin: 0 10px;
 	font-size: 0; /* for aligning image */
 	line-height: 32px;
 	text-align: center;
+
+	&:first-child {
+		margin-left: 0;
+	}
 
 	& > img {
 		display: inline-block;
@@ -112,20 +117,12 @@
 	padding: 3px 0;
 	user-select: none;
 	white-space: nowrap;
+	flex-grow: 1;
 }
 
-.pods-list-select-item__edit {
-	margin: 0 0 0 auto;
-	width: 25px;
-}
-
-.pods-list-select-item__view {
-	margin: 0;
-	width: 25px;
-}
-
+.pods-list-select-item__edit,
+.pods-list-select-item__view,
 .pods-list-select-item__remove {
-	margin: 0;
 	width: 25px;
 }
 

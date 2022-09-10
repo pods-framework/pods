@@ -22,8 +22,17 @@ class Field extends Base {
 	 * @return array List of tabs for the Field object.
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
+		$repeatable_field_types = PodsForm::repeatable_field_types();
+
 		$core_tabs = [
-			'basic' => __( 'Field Details', 'pods' ),
+			'basic'      => __( 'Field Details', 'pods' ),
+			'repeatable' => [
+				'name'       => 'repeatable',
+				'label'      => __( 'Repeatable', 'pods' ),
+				'depends-on' => [
+					'type' => $repeatable_field_types,
+				],
+			],
 		];
 
 		$field_types = PodsForm::field_types();
@@ -100,8 +109,13 @@ class Field extends Base {
 	 * @return array List of fields for the Field object.
 	 */
 	public function get_fields( \Pods\Whatsit\Pod $pod, array $tabs ) {
-		$field_types           = PodsForm::field_types();
-		$tableless_field_types = PodsForm::tableless_field_types();
+		$field_types                    = PodsForm::field_types();
+		$tableless_field_types          = PodsForm::tableless_field_types();
+		$repeatable_field_types         = PodsForm::repeatable_field_types();
+		$separator_excluded_field_types = PodsForm::separator_excluded_field_types();
+
+		// Remove repeatable fields custom separator options.
+		$serial_repeatable_field_types = array_values( array_diff( $repeatable_field_types, $separator_excluded_field_types ) );
 
 		$options = [];
 
@@ -201,15 +215,10 @@ class Field extends Base {
 				'boolean_yes_label' => '',
 				'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 			],
-			'repeatable_separator'  => [
-				'name'         => 'repeatable_separator',
-				'type'         => 'html',
-				'html_content' => '<hr />',
-				'depends-on'   => [
-					'type' => PodsForm::repeatable_field_types(),
-				],
-			],
-			'repeatable'  => [
+		];
+
+		$options['repeatable'] = [
+			'repeatable'                  => [
 				'name'              => 'repeatable',
 				'label'             => __( 'Repeatable', 'pods' ),
 				'default'           => 0,
@@ -218,19 +227,49 @@ class Field extends Base {
 				'boolean_yes_label' => __( 'Allow multiple values', 'pods' ),
 				'dependency'        => true,
 				'depends-on'        => [
-					'type' => PodsForm::repeatable_field_types(),
+					'type' => $repeatable_field_types,
 				],
 			],
-			'repeatable_add_new_label'  => [
+			'repeatable_add_new_label'    => [
 				'name'        => 'repeatable_add_new_label',
 				'label'       => __( 'Repeatable - Add New Label', 'pods' ),
 				'placeholder' => __( 'Add New', 'pods' ),
 				'default'     => '',
 				'type'        => 'text',
 				'depends-on'  => [
-					'type'       => PodsForm::repeatable_field_types(),
+					'type'       => $repeatable_field_types,
 					'repeatable' => true,
 				],
+			],
+			'repeatable_format'           => [
+				'label'                 => __( 'Repeatable - Display Format', 'pods' ),
+				'help'                  => __( 'Used as format for front-end display', 'pods' ),
+				'depends-on'            => [
+					'type'       => $serial_repeatable_field_types,
+					'repeatable' => true,
+				],
+				'default'               => 'default',
+				'required'              => true,
+				'type'                  => 'pick',
+				'data'                  => [
+					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
+					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
+				],
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
+			],
+			'repeatable_format_separator' => [
+				'label'       => __( 'Repeatable - Display Format Separator', 'pods' ),
+				'help'        => __( 'Used as separator for front-end display. Be sure to include exactly the spaces that you need since the separator is used literally between values. For example, you would use ", " to have values like "One, Two, Three". You would also use " | " to have values like "One | Two | Three".', 'pods' ),
+				'description' => __( 'This option will default to ", "', 'pods' ),
+				'depends-on'  => [
+					'type'              => $serial_repeatable_field_types,
+					'repeatable'        => true,
+					'repeatable_format' => 'custom',
+				],
+				'placeholder' => '',
+				'type'        => 'text',
 			],
 		];
 

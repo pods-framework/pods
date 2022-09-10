@@ -3524,25 +3524,65 @@ class Pods implements Iterator {
 			}
 		}
 
-		$disallowed = array(
-			'system',
-			'exec',
-			'popen',
-			'eval',
+		$disallowed = [
+			// Regex related.
 			'preg_replace',
 			'preg_replace_array',
 			'preg_replace_callback',
 			'preg_replace_callback_array',
 			'preg_match',
 			'preg_match_all',
+			// Eval related.
+			'system',
+			'exec',
+			'eval',
 			'create_function',
+			// File related.
+			'popen',
 			'include',
 			'include_once',
 			'require',
 			'require_once',
-		);
+			'file_get_contents',
+			'file_put_contents',
+			'get_template_part',
+			// Nonce related.
+			'wp_nonce_url',
+			'wp_nonce_field',
+			'wp_create_nonce',
+			'check_admin_referer',
+			'check_ajax_referer',
+			'wp_verify_nonce',
+			// PHP related.
+			'constant',
+			'defined',
+			'get_current_user',
+			'get_defined_constants',
+			'get_defined_functions',
+			'get_defined_vars',
+			'get_extension_funcs',
+			'get_include_path',
+			'get_included_files',
+			'get_loaded_extensions',
+			'get_required_files',
+			'get_resources',
+			'getenv',
+			'getopt',
+			'ini_alter',
+			'ini_get',
+			'ini_get_all',
+			'ini_restore',
+			'ini_set',
+			'php_ini_loaded_file',
+			'php_ini_scanned_files',
+			'php_sapi_name',
+			'php_uname',
+			'phpinfo',
+			'phpversion',
+			'putenv',
+		];
 
-		$allowed = array();
+		$allowed = [];
 
 		/**
 		 * Allows adjusting the disallowed callbacks as needed.

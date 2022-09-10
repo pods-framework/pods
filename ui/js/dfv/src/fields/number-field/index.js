@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
 import {
 	parseFloatWithPodsFormat,
 	formatNumberWithPodsFormat,
@@ -23,7 +24,7 @@ const NumberField = ( {
 	const {
 		htmlAttr: htmlAttributes = {},
 		name,
-		readonly: readOnly,
+		read_only: readOnly,
 		number_decimals: decimalMaxLength = 'auto',
 		number_format: format,
 		number_format_soft: softFormat,
@@ -55,10 +56,16 @@ const NumberField = ( {
 	}, [] );
 
 	const handleChange = ( event ) => {
+		// The "range" (slider) input doesn't support the readonly attribute,
+		// so handle readOnly here.
+		if ( toBool( readOnly ) ) {
+			return;
+		}
+
 		// Slider input is always format: `9999.99`.
 		if ( isSlider ) {
 			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
-			setFormattedValue( formatNumberWithPodsFormat( value, format, softFormat ) );
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
 		} else {
 			setValue( parseFloatWithPodsFormat( event.target.value, format ) );
 			setFormattedValue( event.target.value );
@@ -90,7 +97,6 @@ const NumberField = ( {
 					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-number-slider', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
-					readOnly={ !! readOnly }
 					onChange={ handleChange }
 					onBlur={ handleBlur }
 					min={ parseInt( min, 10 ) || undefined }
@@ -123,7 +129,7 @@ const NumberField = ( {
 			step={ html5 ? 'any' : undefined }
 			min={ html5 ? ( parseInt( min, 10 ) || undefined ) : undefined }
 			max={ html5 ? ( parseInt( max, 10 ) || undefined ) : undefined }
-			readOnly={ !! readOnly }
+			readOnly={ toBool( readOnly ) }
 			onChange={ handleChange }
 			onBlur={ reformatFormattedValue }
 		/>

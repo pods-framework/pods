@@ -361,6 +361,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 	$defaults = array(
 		'casting' => false,
 		'allowed' => null,
+		'source'  => null,
 	);
 
 	$params = (object) array_merge( $defaults, (array) $params );
@@ -379,6 +380,46 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 		}
 	} else {
 		$type = strtolower( (string) $type );
+
+		if ( $params->source ) {
+			// Using keys for faster isset() checks instead of in_array().
+			$disallowed_types = [];
+
+			if ( 'magic-tag' === $params->source ) {
+				$disallowed_types = [
+					'server'              => false,
+					'session'             => false,
+					'global'              => false,
+					'globals'             => false,
+					'cookie'              => false,
+					'constant'            => false,
+					'option'              => false,
+					'site-option'         => false,
+					'transient'           => false,
+					'site-transient'      => false,
+					'cache'               => false,
+					'pods-transient'      => false,
+					'pods-site-transient' => false,
+					'pods-cache'          => false,
+					'pods-option-cache'   => false,
+				];
+			}
+
+			/**
+			 * Allow filtering the list of disallowed variable types for the source.
+			 *
+			 * @since 2.9.4
+			 *
+			 * @param array  $disallowed_types The list of disallowed variable types for the source.
+			 * @param string $source           The source calling pods_v().
+			 */
+			$disallowed_types = apply_filters( "pods_v_disallowed_types_for_source_{$params->source}", $disallowed_types, $params->source );
+
+			if ( isset( $disallowed_types[ $type ] ) ) {
+				return $default;
+			}
+		}
+
 		switch ( $type ) {
 			case 'get':
 				if ( isset( $_GET[ $var ] ) ) {
@@ -640,7 +681,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 						$var = 'ID';
 					}
 
-					if ( isset( $user->{$var} ) ) {
+					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
+						$value = '';
+					} elseif ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {
 						$value = '';
@@ -1780,24 +1823,43 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		'prefix',
 	);
 
+	$pods_v_var  = '';
+	$pods_v_type = 'get';
+
 	if ( in_array( $tag[0], $single_supported, true ) ) {
-		$value = pods_v( '', $tag[0], null );
+		$pods_v_type = $tag[0];
 	} elseif ( 1 === count( $tag ) ) {
-		$value = pods_v( $tag[0], 'get', null );
+		$pods_v_var = $tag[0];
 	} elseif ( 2 === count( $tag ) ) {
-		$value = pods_v( $tag[1], $tag[0], null );
+		$pods_v_var  = $tag[1];
+		$pods_v_type = $tag[0];
 	} else {
 		// Some magic tags support traversal.
-		$value = pods_v( array_slice( $tag, 1 ), $tag[0], null );
+		$pods_v_var  = array_slice( $tag, 1 );
+		$pods_v_type = $tag[0];
 	}
+
+	$value = pods_v( $pods_v_var, $pods_v_type, null, false, [
+		'source' => 'magic-tag',
+	] );
 
 	if ( $helper ) {
 		if ( ! $pod instanceof Pods ) {
 			$pod = pods();
 		}
+
 		$value = $pod->helper( $helper, $value );
 	}
 
+	/**
+	 * Allow filtering the evaluated tag value.
+	 *
+	 * @since unknown
+	 *
+	 * @param mixed      $value    The evaluated tag value.
+	 * @param string     $tag      The evaluated tag name.
+	 * @param null|mixed $fallback The fallback value to use if not set, should already be sanitized.
+	 */
 	$value = apply_filters( 'pods_evaluate_tag', $value, $tag, $fallback );
 
 	if ( is_array( $value ) && 1 === count( $value ) ) {

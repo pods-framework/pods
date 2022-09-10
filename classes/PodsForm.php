@@ -1928,6 +1928,40 @@ class PodsForm {
 	}
 
 	/**
+	 * Get the list of field types that do not use serial comma separators.
+	 *
+	 * @since 2.9.4
+	 *
+	 * @return array The list of field types that do not use serial comma separators.
+	 */
+	public static function separator_excluded_field_types() {
+		static $field_types = null;
+
+		if ( null === $field_types ) {
+			$field_types = [
+				'avatar',
+				'code',
+				'link',
+				'oembed',
+				'paragraph',
+				'website',
+				'wysiwyg',
+			];
+
+			/**
+			 * Allow filtering of the list of field types that do not use serial comma separators.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param array $field_types The list of field types that do not use serial comma separators.
+			 */
+			$field_types = apply_filters( 'pods_separator_excluded_field_types', $field_types );
+		}
+
+		return $field_types;
+	}
+
+	/**
 	 * Get the list of simple tableless objects.
 	 *
 	 * @since 2.3.0

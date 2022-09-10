@@ -1865,6 +1865,26 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	if ( ! empty( $params->fields ) && is_array( $params->fields ) && isset( $params->fields[ $params->field ] ) ) {
 		$params->field = $params->fields[ $params->field ];
 
+		if ( 1 === (int) pods_v( 'repeatable', $params->field, 0 ) ) {
+			$format = pods_v( 'repeatable_format', $params->field, 'default', true );
+
+			if ( 'default' !== $format ) {
+				$params->serial = false;
+
+				if ( 'custom' === $format ) {
+					$separator = pods_v( 'repeatable_format_separator', $params->field );
+
+					// Default to comma separator.
+					if ( '' === $separator ) {
+						$separator = ', ';
+					}
+
+					$params->and       = $separator;
+					$params->separator = $separator;
+				}
+			}
+		}
+
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
 		if ( ! empty( $params->field ) && ! is_string( $params->field ) && in_array( $params->field['type'], PodsForm::tableless_field_types(), true ) ) {
@@ -1920,15 +1940,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 	$original_value = $value;
 
-	$separator_excluded = [
-		'avatar',
-		'code',
-		'link',
-		'oembed',
-		'paragraph',
-		'website',
-		'wysiwyg',
-	];
+	$separator_excluded = PodsForm::separator_excluded_field_types();
 
 	$basic_separator = $params->field && in_array( $params->field['type'], $separator_excluded, true );
 

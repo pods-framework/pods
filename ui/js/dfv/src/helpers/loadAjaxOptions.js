@@ -5,10 +5,10 @@ const loadAjaxOptions = ( ajaxData = {} ) => async ( inputValue = '' ) => {
 		_wpnonce: ajaxData?._wpnonce,
 		action: 'pods_relationship',
 		method: 'select2',
-		pod: ajaxData?.pod,
-		field: ajaxData?.field,
-		uri: ajaxData?.uri,
-		id: ajaxData?.id,
+		pod: ajaxData?.pod_name ?? '',
+		field: ajaxData?.field_name ?? '',
+		uri_hash: ajaxData?.uri_hash ?? '',
+		id: ajaxData?.id ?? 0,
 		query: inputValue,
 	};
 

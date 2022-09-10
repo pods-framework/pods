@@ -1056,7 +1056,7 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Build DFV autocomplete AJAX data.
 	 *
-	 * @param array  $options DFV options.
+	 * @param array|Field  $options DFV options.
 	 * @param object $args    {
 	 *  Field information arguments.
 	 *
@@ -1073,13 +1073,23 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function build_dfv_autocomplete_ajax_data( $options, $args, $ajax = false ) {
 
-		if ( is_object( $args->pod ) ) {
-			$pod_id = (int) $args->pod->pod_id;
+		if ( is_array( $args->pod ) ) {
+			$pod_name = $args->pod['name'];
+		} elseif ( $args->pod instanceof Pods ) {
+			$pod_name = $args->pod->pod;
+		} elseif ( $args->pod instanceof Pod ) {
+			$pod_name = $args->pod->get_name();
 		} else {
-			$pod_id = 0;
+			$pod_name = '';
 		}
 
-		$field_id = (int) pods_v( 'id', $options );
+		if ( is_array( $options ) ) {
+			$field_name = $options['name'];
+		} elseif ( $options instanceof Field ) {
+			$field_name = $options->get_name();
+		} else {
+			$field_name = '';
+		}
 
 		$id = (int) $args->id;
 
@@ -1091,20 +1101,20 @@ class PodsField_Pick extends PodsField {
 
 		$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 
-		$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
+		$nonce_name  = 'pods_relationship:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
+		$field_nonce = wp_create_nonce( $nonce_name );
 
 		// Values can be overridden via the `pods_field_dfv_data` filter in $data['fieldConfig']['ajax_data'].
-		return array(
+		return [
 			'ajax'                 => $ajax,
 			'delay'                => 300,
 			'minimum_input_length' => 1,
-			'pod'                  => $pod_id,
-			'field'                => $field_id,
+			'pod_name'             => $pod_name,
+			'field_name'           => $field_name,
 			'id'                   => $id,
-			'uri'                  => $uri_hash,
+			'uri_hash'             => $uri_hash,
 			'_wpnonce'             => $field_nonce,
-		);
-
+		];
 	}
 
 	/**
@@ -2923,15 +2933,33 @@ class PodsField_Pick extends PodsField {
 
 		$params = (object) $params;
 
+		if ( ! isset( $params->_wpnonce, $params->pod_name, $params->field_name, $params->uri_hash, $params->id ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
+			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+		}
+
+		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
+			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+		}
+
+		$_wpnonce   = $params->_wpnonce;
+		$pod_name   = $params->pod_name;
+		$field_name = $params->field_name;
+		$uri_hash   = $params->uri_hash;
+		$id         = (int) $params->id;
+
+		$query = $params->query;
+		$limit = pods_v( 'limit', $params, 15, true );
+		$page  = pods_v( 'page', $params, 1, true );
+
 		$uid = pods_session_id();
 
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();
 		}
 
-		$nonce_check = 'pods_relationship_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
+		$nonce_name = 'pods_relationship:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
 
-		if ( ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
+		if ( false === wp_verify_nonce( $_wpnonce, $nonce_name ) ) {
 			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
@@ -2939,31 +2967,18 @@ class PodsField_Pick extends PodsField {
 			self::$api = pods_api();
 		}
 
-		$pod   = self::$api->load_pod( array( 'id' => (int) $params->pod ) );
+		$pod = self::$api->load_pod( [
+			'name' => $pod_name,
+		] );
 
-		$field = Store::get_instance()->get_object( $params->field );
+		if ( ! $pod ) {
+			pods_error( __( 'Invalid Pod configuration', 'pods' ), PodsInit::$admin );
+		}
+
+		$field = $pod->get_field( $field_name );
 
 		if ( ! $field ) {
-			$field = self::$api->load_field(
-					array(
-							'id'         => (int) $params->field,
-							'table_info' => true,
-					)
-			);
-		}
-
-		$id    = (int) $params->id;
-
-		$limit = 15;
-
-		if ( isset( $params->limit ) ) {
-			$limit = (int) $params->limit;
-		}
-
-		$page = 1;
-
-		if ( isset( $params->page ) ) {
-			$page = (int) $params->page;
+			pods_error( __( 'Invalid Field configuration', 'pods' ), PodsInit::$admin );
 		}
 
 		$autocomplete_formats = [
@@ -2971,15 +2986,7 @@ class PodsField_Pick extends PodsField {
 			'list',
 		];
 
-		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
-			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
-		} elseif ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
-			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
-		} elseif ( 'pick' !== $field['type'] || empty( $field['table_info'] ) ) {
-			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'single' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_single', $field ), $autocomplete_formats, true ) ) {
-			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'multi' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_multi', $field ), $autocomplete_formats, true ) ) {
+		if ( ! $field->is_autocomplete_relationship() ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
 		}
 

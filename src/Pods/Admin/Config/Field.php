@@ -100,20 +100,13 @@ class Field extends Base {
 	 * @return array List of fields for the Field object.
 	 */
 	public function get_fields( \Pods\Whatsit\Pod $pod, array $tabs ) {
-		$field_types            = PodsForm::field_types();
-		$tableless_field_types  = PodsForm::tableless_field_types();
-		$repeatable_field_types = PodsForm::repeatable_field_types();
+		$field_types                    = PodsForm::field_types();
+		$tableless_field_types          = PodsForm::tableless_field_types();
+		$repeatable_field_types         = PodsForm::repeatable_field_types();
+		$separator_excluded_field_types = PodsForm::separator_excluded_field_types();
 
 		// Remove repeatable fields custom separator options.
-		$serial_repeatable_field_types = array_values( array_diff( $repeatable_field_types, [
-			'avatar',
-			'code',
-			'link',
-			'oembed',
-			'paragraph',
-			'website',
-			'wysiwyg',
-		] ) );
+		$serial_repeatable_field_types = array_values( array_diff( $repeatable_field_types, $separator_excluded_field_types ) );
 
 		$options = [];
 

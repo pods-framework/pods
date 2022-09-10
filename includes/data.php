@@ -1934,15 +1934,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 	$original_value = $value;
 
-	$separator_excluded = [
-		'avatar',
-		'code',
-		'link',
-		'oembed',
-		'paragraph',
-		'website',
-		'wysiwyg',
-	];
+	$separator_excluded = PodsForm::separator_excluded_field_types();
 
 	$basic_separator = $params->field && in_array( $params->field['type'], $separator_excluded, true );
 

@@ -99,14 +99,6 @@ jobs:
           ${SLIC_BIN} use pods
           ${SLIC_BIN} composer install
       # ------------------------------------------------------------------------------
-      # Set up ET (npm install and build)
-      # ------------------------------------------------------------------------------
-      - name: Set up Pods (npm)
-        if: ${{ matrix.suite == 'acceptance' }}
-        run: |
-          ${SLIC_BIN} npm install
-          ${SLIC_BIN} npm run build
-      # ------------------------------------------------------------------------------
       # Init WordPress container
       # ------------------------------------------------------------------------------
       - name: Init the WordPress container

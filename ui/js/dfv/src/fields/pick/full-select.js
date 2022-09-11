@@ -115,6 +115,23 @@ const FullSelect = ( {
 		);
 	};
 
+	const selectStyles = {
+		multiValueLabel: (provided, state) => ({
+			...provided,
+			wordBreak: 'break-word',
+			whiteSpace: 'break-spaces',
+		}),
+		singleValue: (provided, state) => ({
+			...provided,
+			wordBreak: 'break-word',
+			whiteSpace: 'break-spaces',
+		}),
+		menu: (provided, state) => ({
+			...provided,
+			zIndex: 2,
+		}),
+	};
+
 	return (
 		<DndContext
 			sensors={ sensors }
@@ -143,6 +160,8 @@ const FullSelect = ( {
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
+						styles={ selectStyles }
+						classNamePrefix="pods-dfv-pick-full-select"
 					/>
 				) : (
 					<Select
@@ -157,7 +176,8 @@ const FullSelect = ( {
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
-						styles={ { menu: ( base ) => ( { ...base, zIndex: 2 } ) } }
+						styles={ selectStyles }
+						classNamePrefix="pods-dfv-pick-full-select"
 					/>
 				) }
 			</SortableContext>

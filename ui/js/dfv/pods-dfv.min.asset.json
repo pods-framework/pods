@@ -1,1 +1,1 @@
-{"dependencies":["lodash","moment","react","react-dom","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-polyfill","wp-primitives","wp-url"],"version":"f503439596a2361fb582"}
+{"dependencies":["lodash","moment","react","react-dom","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-polyfill","wp-primitives","wp-url"],"version":"1198d87cf891ac047b46"}

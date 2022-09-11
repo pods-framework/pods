@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # ------------------------------------------------------------------------------
-      # Checkout the repo and slic
+      # Checkout the repo
       # ------------------------------------------------------------------------------
       - name: Checkout the repository
         uses: actions/checkout@v2

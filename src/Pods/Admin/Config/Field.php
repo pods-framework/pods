@@ -26,13 +26,6 @@ class Field extends Base {
 
 		$core_tabs = [
 			'basic'      => __( 'Field Details', 'pods' ),
-			'repeatable' => [
-				'name'       => 'repeatable',
-				'label'      => __( 'Repeatable', 'pods' ),
-				'depends-on' => [
-					'type' => $repeatable_field_types,
-				],
-			],
 		];
 
 		$field_types = PodsForm::field_types();
@@ -47,6 +40,14 @@ class Field extends Base {
 				],
 			];
 		}
+
+		$core_tabs['repeatable'] = [
+			'name'       => 'repeatable',
+			'label'      => __( 'Repeatable', 'pods' ),
+			'depends-on' => [
+				'type' => $repeatable_field_types,
+			],
+		];
 
 		$core_tabs['advanced'] = __( 'Advanced', 'pods' );
 

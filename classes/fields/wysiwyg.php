@@ -306,7 +306,14 @@ class PodsField_WYSIWYG extends PodsField {
 				unset( $styles->done[ $found_editor_buttons ] );
 			}
 
+			$found_dashicons = array_search( 'dashicons', $styles->done, true );
+
+			if ( false !== $found_dashicons ) {
+				unset( $styles->done[ $found_dashicons ] );
+			}
+
 			wp_print_styles( 'editor-buttons' );
+			wp_print_styles( 'dashicons' );
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {

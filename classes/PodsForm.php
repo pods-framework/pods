@@ -188,7 +188,6 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function field( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
-
 		// Take a field array
 		if ( is_array( $name ) || is_object( $name ) ) {
 			$options = $name;
@@ -234,8 +233,8 @@ class PodsForm {
 			$helper = pods_api()->load_helper( array( 'name' => $options['input_helper'] ) );
 		}
 
-		if ( empty( $type ) ) {
-			return pods_error( __( 'Invalid field configuration', 'pods' ) );
+		if ( empty( $type ) || empty( $options['type'] ) ) {
+			return;
 		}
 
 		// @todo Move into DFV field method or Pods\Whatsit later

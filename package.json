@@ -115,7 +115,7 @@
     "moment": "^2.29.4",
     "react-datetime": "^3.1.1",
     "react-quill": "^2.0.0-beta.4",
-    "react-select": "^4.3.1",
+    "react-select": "^5.4.0",
     "sanitize-html": "^2.7.0",
     "uuid": "^8.3.2"
   }

@@ -113,11 +113,12 @@
 	border-bottom: none;
 	line-height: 24px;
 	margin: 0;
-	overflow: visible;
+	overflow: hidden;
 	padding: 3px 0;
 	user-select: none;
 	white-space: nowrap;
 	flex-grow: 1;
+	word-break: break-word;
 }
 
 .pods-list-select-item__edit,

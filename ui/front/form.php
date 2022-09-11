@@ -57,13 +57,13 @@ foreach ( $submittable_fields as $k => $field ) {
 	unset( $submittable_fields[ $k ] );
 }
 
-$uri_hash   = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
+$uri_hash   = wp_create_nonce( 'pods_uri_' . pods_current_path() );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
-
-$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();
+} else {
+	$uid = pods_session_id();
 }
 
 $nonce = wp_create_nonce( 'pods_form_' . $pod_name . '_' . $uid . '_' . $id . '_' . $uri_hash . '_' . $field_hash );
@@ -77,11 +77,26 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 }
 
 $field_prefix = '';
+
+$counter = (int) pods_static_cache_get( $pod->pod . '-counter', 'pods-forms' );
+
+$counter ++;
+
+pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 ?>
 
 <?php if ( ! $fields_only ) : ?>
 <?php $field_prefix = 'pods_field_'; ?>
-<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod_name ); ?> pods-submittable-ajax" data-location="<?php echo esc_attr( $thank_you ); ?>">
+<form
+	action=""
+	method="post"
+	class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod_name ); ?> pods-submittable-ajax"
+	data-location="<?php echo esc_attr( $thank_you ); ?>"
+	id="pods-form-<?php echo esc_attr( $pod_name . '-' . $counter ); ?>"
+	data-pods-pod-name="<?php echo esc_attr( $pod_name ); ?>"
+	data-pods-item-id="<?php echo esc_attr( $id ); ?>"
+	data-pods-form-counter="<?php echo esc_attr( $counter ); ?>"
+>
 	<div class="pods-submittable-fields">
 		<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
 		<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>

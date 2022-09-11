@@ -705,7 +705,6 @@ class PodsMeta {
 
 			$defaults = array(
 				'name' => $name,
-				'type' => 'text'
 			);
 
 			$is_field_object = $field instanceof Field;
@@ -735,6 +734,11 @@ class PodsMeta {
 				if ( ! $is_field_hidden && isset( $pod['fields'][ $field['name'] ]['hidden'] ) && 1 === (int) $pod['fields'][ $field['name'] ]['hidden'] ) {
                     $field['hidden'] = 0;
                 }
+			}
+
+			// Set the default type.
+			if ( empty( $field['type'] ) ) {
+				$field['type'] = 'text';
 			}
 
 			if ( empty( $field['label'] ) ) {

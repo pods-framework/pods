@@ -261,7 +261,7 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'tinymce';
 
 			// Enforce boolean.
-			$options[ static::$type . '_media_buttons' ]  = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_media_buttons' ]  = filter_var( pods_v( static::$type . '_media_buttons', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			// Set up default editor.
 			// @todo Support this properly in React, which will be a challenge.
@@ -279,7 +279,9 @@ class PodsField_WYSIWYG extends PodsField {
 			$settings['media_buttons'] = false;
 
 			if ( ! ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) ) {
-				$settings['media_buttons'] = (boolean) pods_v( static::$type . '_media_buttons', $options, true );
+				$settings['media_buttons'] = $options[ static::$type . '_media_buttons' ];
+			} else {
+				$options[ static::$type . '_media_buttons' ] = false;
 			}
 
 			$editor_height = (int) pods_v( static::$type . '_editor_height', $options, false );

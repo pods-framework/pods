@@ -722,7 +722,7 @@ class PodsMeta {
 			$field['name'] = trim( $field['name'] );
 
 			if ( isset( $pod['fields'] ) && isset( $pod['fields'][ $field['name'] ] ) ) {
-				$is_field_hidden = (bool) pods_v( 'hidden', $field, 0 );
+				$is_field_hidden = 1 === (int) pods_v( 'hidden', $field, 0 );
 
 				$field = pods_config_merge_data( $pod['fields'][ $field['name'] ], $field );
 
@@ -1395,7 +1395,7 @@ class PodsMeta {
 					}
 
 					if ( ! pods_permission( $field ) ) {
-						if ( ! pods_v( 'hidden', $field, false ) ) {
+						if ( 1 !== (int) pods_v( 'hidden', $field, 0 ) ) {
 							continue;
 						}
 					}
@@ -1516,7 +1516,7 @@ class PodsMeta {
 
 			foreach ( $group['fields'] as $field ) {
 				if ( ! pods_permission( $field ) ) {
-					if ( ! pods_var( 'hidden', $field, false ) ) {
+					if ( 1 !== (int) pods_v( 'hidden', $field, 0 ) ) {
 						continue;
 					}
 				}
@@ -2118,7 +2118,7 @@ class PodsMeta {
 					}
 
 					if ( ! pods_permission( $field ) ) {
-						if ( ! pods_v( 'hidden', $field, false ) ) {
+						if ( 1 !== (int) pods_v( 'hidden', $field, 0 ) ) {
 							continue;
 						}
 					}
@@ -2268,7 +2268,7 @@ class PodsMeta {
 			};
 
 			foreach ( $fields as $field ) {
-				$hidden_field = (boolean) pods_v( 'hidden', $field, false );
+				$hidden_field = 1 === (int) pods_v( 'hidden', $field, 0 );
 
 				if (
 					! pods_permission( $field )
@@ -2344,7 +2344,7 @@ class PodsMeta {
 
 			foreach ( $group['fields'] as $field ) {
 				if ( ! PodsForm::permission( $field ) ) {
-					if ( pods_v( 'hidden', $field, false ) ) {
+					if ( 1 === (int) pods_v( 'hidden', $field, 0 ) ) {
 						$field_found = true;
 						break;
 					} else {

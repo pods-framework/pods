@@ -97,6 +97,7 @@ jobs:
         run: |
           docker network prune -f
           ${SLIC_BIN} use pods
+          ${SLIC_BIN} composer set-version 2
           ${SLIC_BIN} composer install
       # ------------------------------------------------------------------------------
       # Init WordPress container

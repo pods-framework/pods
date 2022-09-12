@@ -1174,10 +1174,12 @@ class PodsMeta {
 		pods_form_enqueue_style( 'pods-form' );
 		pods_form_enqueue_script( 'pods' );
 
-		$pod_type = 'post';
+		$pod_type      = 'post_type';
+		$pod_meta_type = 'post';
 
 		if ( 'attachment' == $post->post_type ) {
-			$pod_type = 'media';
+			$pod_type      = 'media';
+			$pod_meta_type = 'media';
 		}
 
 		do_action( 'pods_meta_meta_post', $post );
@@ -1188,7 +1190,7 @@ class PodsMeta {
 			$id = $post->ID;
 		}
 
-		$pod = $this->maybe_set_up_pod( $metabox['args']['group']['pod']['name'], $id, 'post_type' );
+		$pod = $this->maybe_set_up_pod( $metabox['args']['group']['pod']['name'], $id, $pod_type );
 
 		$fields = $metabox['args']['group']['fields'];
 
@@ -1211,7 +1213,7 @@ class PodsMeta {
 			return;
 		}
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
+		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_meta_type ), 'hidden' );
 		?>
 		<table class="form-table pods-metabox pods-admin pods-dependency">
 			<?php
@@ -1219,13 +1221,13 @@ class PodsMeta {
 			$field_row_classes = 'form-field pods-field-input';
 			$th_scope          = 'row';
 
-			$value_callback = static function( $field_name, $id, $field, $pod ) {
-				pods_no_conflict_on( 'post' );
+			$value_callback = static function( $field_name, $id, $field, $pod ) use ( $pod_meta_type ) {
+				pods_no_conflict_on( $pod_meta_type );
 
 				$value = null;
 
 				if ( ! empty( $pod ) ) {
-					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true, 'single' => true ] );
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 				} elseif ( ! empty( $id ) ) {
 					$value = get_post_meta( $id, $field['name'], true );
 				}
@@ -1239,7 +1241,7 @@ class PodsMeta {
 					}
 				}
 
-				pods_no_conflict_off( 'post' );
+				pods_no_conflict_off( $pod_meta_type );
 
 				return $value;
 			};

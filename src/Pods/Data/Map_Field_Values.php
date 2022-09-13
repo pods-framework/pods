@@ -21,11 +21,11 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of all fields in the path.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching image field value or null if there was no match.
 	 */
-	public function map_value( $field, $traverse, $field_data, $obj ) {
+	public function map_value( $field, $traverse, $field_data, $obj = null ) {
 		// Remove the first field from $traverse.
 		if ( $field === reset( $traverse ) ) {
 			array_shift( $traverse );
@@ -40,7 +40,7 @@ class Map_Field_Values {
 		 * @param string                  $field      The first field name in the path.
 		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-		 * @param Pods                    $obj        The Pods object.
+		 * @param Pods|null               $obj        The Pods object or null if not set.
 		 */
 		$value = apply_filters( 'pods_data_map_field_values_map_value_pre_check', null, $field, $traverse, $field_data, $obj );
 
@@ -80,7 +80,7 @@ class Map_Field_Values {
 		 * @param string                  $field      The first field name in the path.
 		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-		 * @param Pods                    $obj        The Pods object.
+		 * @param Pods|null               $obj        The Pods object or null if not set.
 		 * @param string|false            $method     The matching mapping method or false if there was no match.
 		 */
 		return apply_filters( 'pods_data_map_field_values_map_value', $value, $field, $traverse, $field_data, $obj, $method );
@@ -94,7 +94,7 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching field value or null if there was no match.
 	 */
@@ -108,7 +108,7 @@ class Map_Field_Values {
 		 * @param string                  $field      The first field name in the path.
 		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-		 * @param Pods                    $obj        The Pods object.
+		 * @param Pods|null               $obj        The Pods object or null if not set.
 		 */
 		return apply_filters( 'pods_data_map_field_values_custom', null, $field, $traverse, $field_data, $obj );
 	}
@@ -121,7 +121,7 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching pod info value or null if there was no match.
 	 */
@@ -133,6 +133,11 @@ class Map_Field_Values {
 
 		// Skip if not the field we are looking for.
 		if ( '_pod' !== $field ) {
+			return null;
+		}
+
+		// Skip if there is no Pods object.
+		if ( ! $obj ) {
 			return null;
 		}
 
@@ -149,7 +154,7 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching field info value or null if there was no match.
 	 */
@@ -161,6 +166,11 @@ class Map_Field_Values {
 
 		// Skip if not the field we are looking for.
 		if ( '_field' !== $field ) {
+			return null;
+		}
+
+		// Skip if there is no Pods object.
+		if ( ! $obj ) {
 			return null;
 		}
 
@@ -183,7 +193,7 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching all fields value or null if there was no match.
 	 */
@@ -193,14 +203,26 @@ class Map_Field_Values {
 			return null;
 		}
 
+		$is_all_fields = '_all_fields' === $field;
+
 		// Skip if not the field we are looking for.
-		if ( '_display_fields' !== $field ) {
+		if ( '_display_fields' !== $field && ! $is_all_fields ) {
+			return null;
+		}
+
+		// Skip if there is no Pods object.
+		if ( ! $obj ) {
 			return null;
 		}
 
 		$output_type       = ! empty( $traverse[0] ) ? $traverse[0] : 'ul';
-		$include_index     = 'no_index' !== ( ! empty( $traverse[1] ) ? $traverse[1] : 'no_index' );
-		$fields_to_display = ( ! empty( $traverse[2] ) ? $traverse[2] : '_all' );
+		$include_index     = false;
+		$fields_to_display = '_all';
+
+		if ( ! $is_all_fields ) {
+			$include_index     = 'no_index' !== ( ! empty( $traverse[1] ) ? $traverse[1] : 'no_index' );
+			$fields_to_display = ( ! empty( $traverse[2] ) ? $traverse[2] : '_all' );
+		}
 
 		$pod = $obj->pod_data;
 
@@ -274,7 +296,7 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching context info value or null if there was no match.
 	 */
@@ -317,8 +339,6 @@ class Map_Field_Values {
 			'network-admin-url',
 			'user-admin-url',
 			'prefix',
-			'session',
-			'cookie',
 			'user',
 			'option',
 			'site-option',
@@ -359,13 +379,18 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching calculation value or null if there was no match.
 	 */
 	public function calculation( $field, $traverse, $field_data, $obj ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
+			return null;
+		}
+
+		// Skip if there is no Pods object.
+		if ( ! $obj ) {
 			return null;
 		}
 
@@ -428,7 +453,7 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching image field value or null if there was no match.
 	 */
@@ -462,7 +487,7 @@ class Map_Field_Values {
 			return null;
 		}
 
-		$item_id = $obj->id();
+		$item_id = $obj ? $obj->id() : 0;
 
 		// Copy for further modification.
 		$image_field     = $field;
@@ -494,7 +519,9 @@ class Map_Field_Values {
 
 			// All other pods.
 			case 'post_thumbnail':
-				$attachment_id = get_post_thumbnail_id( $item_id );
+				if ( $item_id ) {
+					$attachment_id = get_post_thumbnail_id( $item_id );
+				}
 
 				break;
 			case 'image_attachment':
@@ -582,13 +609,18 @@ class Map_Field_Values {
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
-	 * @param Pods                    $obj        The Pods object.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
 	 * @return null|mixed The matching avatar field value or null if there was no match.
 	 */
 	public function avatar( $field, $traverse, $field_data, $obj ) {
 		// Skip if not the field we are looking for.
 		if ( 'avatar' !== $field ) {
+			return null;
+		}
+
+		// Skip if there is no Pods object.
+		if ( ! $obj ) {
 			return null;
 		}
 
@@ -601,6 +633,11 @@ class Map_Field_Values {
 
 		$size    = 0;
 		$item_id = $obj->id();
+
+		// Skip if the item ID is not set.
+		if ( empty( $item_id ) ) {
+			return null;
+		}
 
 		// Copy for further modification.
 		$image_field     = $field;

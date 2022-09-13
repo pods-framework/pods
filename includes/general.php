@@ -7,6 +7,7 @@ use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
 use Pods\Config_Handler;
 use Pods\Permissions;
+use Pods\Data\Map_Field_Values;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
@@ -2124,6 +2125,56 @@ function pods_field( $pod, $id = null, $name = null, $single = false ) {
 	}
 
 	return null;
+}
+
+/**
+ * Get the data field value.
+ *
+ * @since 2.9.4
+ *
+ * @param Pods|string|null $obj        The pod name or Pods object.
+ * @param string           $field_name The field name.
+ *
+ * @return mixed The data field value.
+ */
+function pods_data_field( $obj, $field_name ) {
+	if ( is_string( $obj ) ) {
+		$obj = pods( $obj );
+	}
+
+	$traverse_fields = explode( '.', $field_name );
+	$is_traversal    = 1 < count( $traverse_fields );
+	$first_field     = $traverse_fields[0];
+
+	// Get the first field name data.
+	$field_data = $obj ? $obj->fields( $first_field ) : null;
+
+	// Ensure the field name is using the correct name and not the alias.
+	if ( $field_data ) {
+		$first_field = $field_data['name'];
+
+		if ( ! $is_traversal ) {
+			$field_name = $first_field;
+		}
+	}
+
+	if ( $obj && ! $field_data && ! $is_traversal ) {
+		// Get the full field name data.
+		$field_data = $obj->fields( $field_name );
+	}
+
+	$is_field_set = false;
+
+	if ( $field_data instanceof Object_Field ) {
+		$is_field_set = true;
+	} elseif ( $field_data instanceof Field ) {
+		$is_field_set = true;
+	}
+
+	// Handle custom/supported value mappings.
+	$map_field_values = pods_container( Map_Field_Values::class );
+
+	return $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $obj );
 }
 
 /**

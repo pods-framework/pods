@@ -52,6 +52,7 @@ class Map_Field_Values {
 			'custom',
 			'pod_info',
 			'field_info',
+			'all_fields',
 			'context_info',
 			'calculation',
 			'image_fields',
@@ -172,6 +173,72 @@ class Map_Field_Values {
 		$field_option = ! empty( $traverse[1] ) ? $traverse[1] : 'label';
 
 		return $obj->fields( $field_match, $field_option );
+	}
+
+	/**
+	 * Map the matching all fields value.
+	 *
+	 * @since 2.9.4
+	 *
+	 * @param string                  $field      The first field name in the path.
+	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
+	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
+	 * @param Pods                    $obj        The Pods object.
+	 *
+	 * @return null|mixed The matching all fields value or null if there was no match.
+	 */
+	public function all_fields( $field, $traverse, $field_data, $obj ) {
+		// Skip if the field exists.
+		if ( $field_data ) {
+			return null;
+		}
+
+		// Skip if not the field we are looking for.
+		if ( '_all_fields' !== $field ) {
+			return null;
+		}
+
+		$output_type = ! empty( $traverse[0] ) ? $traverse[0] : 'ul';
+
+		$fields = $obj->pod_data->get_fields();
+
+		$include_index = false;
+
+		if ( $include_index && $obj->pod_data->get_object_fields() ) {
+			$fields = array_merge( [
+				$obj->data->field_index => $obj->pod_data->get_field( $obj->data->field_index ),
+			], $fields );
+		}
+
+		if ( 'div' === $output_type ) {
+			$display_file = 'list.php';
+			$list_type    = 'div';
+			$tag_name     = 'div';
+			$sub_tag_name = 'div';
+		} elseif ( 'p' === $output_type ) {
+			$display_file = 'list.php';
+			$list_type    = 'p';
+			$tag_name     = 'div';
+			$sub_tag_name = 'p';
+		} elseif ( 'table' === $output_type ) {
+			$display_file = 'table.php';
+			$list_type    = 'table';
+			$tag_name     = 'table';
+			$sub_tag_name = 'td';
+		} elseif ( 'ol' === $output_type ) {
+			$display_file = 'list.php';
+			$list_type    = 'ol';
+			$tag_name     = 'ol';
+			$sub_tag_name = 'li';
+		} else {
+			// Default to ul / li list.
+			$display_file = 'list.php';
+			$list_type    = 'ul';
+			$tag_name     = 'ul';
+			$sub_tag_name = 'li';
+		}
+
+		return pods_view( PODS_DIR . 'ui/front/display/' . $display_file, compact( array_keys( get_defined_vars() ) ) );
 	}
 
 	/**

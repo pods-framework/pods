@@ -194,20 +194,40 @@ class Map_Field_Values {
 		}
 
 		// Skip if not the field we are looking for.
-		if ( '_all_fields' !== $field ) {
+		if ( '_display_fields' !== $field ) {
 			return null;
 		}
 
-		$output_type = ! empty( $traverse[0] ) ? $traverse[0] : 'ul';
+		$output_type       = ! empty( $traverse[0] ) ? $traverse[0] : 'ul';
+		$include_index     = 'no_index' !== ( ! empty( $traverse[1] ) ? $traverse[1] : 'no_index' );
+		$fields_to_display = ( ! empty( $traverse[2] ) ? $traverse[2] : '_all' );
 
-		$fields = $obj->pod_data->get_fields();
+		$pod = $obj->pod_data;
 
-		$include_index = false;
+		if ( '_all' === $fields_to_display ) {
+			$display_fields = $pod->get_fields();
+		} else {
+			$display_fields = [];
 
-		if ( $include_index && $obj->pod_data->get_object_fields() ) {
-			$fields = array_merge( [
-				$obj->data->field_index => $obj->pod_data->get_field( $obj->data->field_index ),
-			], $fields );
+			$fields_to_display = explode( '|', $fields_to_display );
+
+			foreach ( $fields_to_display as $field_to_display ) {
+				$display_field = $pod->get_field( $field_to_display );
+
+				if ( $display_field ) {
+					$display_fields[ $field_to_display ] = $display_field;
+				}
+			}
+		}
+
+		if ( $include_index && ! empty( $obj->data->field_index ) ) {
+			$display_field = $pod->get_field( $obj->data->field_index );
+
+			if ( $display_field ) {
+				$display_fields = array_merge( [
+					$display_field->get_name() => $display_field,
+				], $display_fields );
+			}
 		}
 
 		if ( 'div' === $output_type ) {
@@ -230,6 +250,11 @@ class Map_Field_Values {
 			$list_type    = 'ol';
 			$tag_name     = 'ol';
 			$sub_tag_name = 'li';
+		} elseif ( 'dl' === $output_type ) {
+			$display_file = 'dl.php';
+			$list_type    = 'dl';
+			$tag_name     = 'dl';
+			$sub_tag_name = 'dd';
 		} else {
 			// Default to ul / li list.
 			$display_file = 'list.php';

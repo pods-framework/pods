@@ -1,24 +1,24 @@
 <?php
 /**
  * @var string                $list_type
- * @var string                $tag_name
- * @var string                $sub_tag_name
  * @var \Pods\Whatsit\Field[] $display_fields
  * @var Pods                  $obj
  */
 ?>
 
-<<?php echo $tag_name; ?>
+<dl
 	class="pods-all-fields pods-all-fields-<?php echo esc_attr( $list_type ); ?>">
 	<?php foreach ( $display_fields as $field_name => $field ) : ?>
 		<?php $field_label = $field->get_label(); ?>
-		<<?php echo $sub_tag_name; ?>
-			class="pods-all-fields-row pods-all-fields-row-name-<?php echo esc_attr( PodsForm::clean( $field_label, true ) ); ?>">
+		<dt
+			class="pods-all-fields-row-label pods-all-fields-row-label-<?php echo esc_attr( PodsForm::clean( $field_label, true ) ); ?>">
 			<strong>
-				<?php echo $field_label; // @codingStandardsIgnoreLine ?>:
+				<?php echo $field_label; // @codingStandardsIgnoreLine ?>
 			</strong>
-
+		</dt>
+		<dd
+			class="pods-all-fields-row-value pods-all-fields-row-value-<?php echo esc_attr( PodsForm::clean( $field_label, true ) ); ?>">
 			<?php echo $obj->display( $field_name ); // @codingStandardsIgnoreLine ?>
-		</<?php echo sanitize_key( $sub_tag_name ); ?>>
+		</dd>
 	<?php endforeach; ?>
-</<?php echo $tag_name; ?>>
+</dl>

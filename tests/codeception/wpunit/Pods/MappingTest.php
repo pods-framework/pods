@@ -4,6 +4,8 @@ namespace Pods_Unit_Tests\Pods;
 
 use Pods;
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use Spatie\Snapshots\MatchesSnapshots;
+use tad\WP\Snapshots\WPHtmlOutputDriver;
 
 /**
  * Class MappingTest
@@ -16,6 +18,7 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
  * @group   pods-field
  */
 class MappingTest extends Pods_UnitTestCase {
+	use MatchesSnapshots;
 
 	public static $db_reset_teardown = false;
 
@@ -89,19 +92,35 @@ class MappingTest extends Pods_UnitTestCase {
 		$pod = pods( $this->pod_name, $this->item_id );
 
 		$this->assertEquals( [], $pod->field( 'any_map' ) );
+
+		$this->assertNull( pods_data_field( $this->pod_name, 'any_map' ) );
+		$this->assertNull( pods_data_field( $pod, 'any_map' ) );
+		$this->assertNull( pods_data_field( null, 'any_map' ) );
 	}
 
 	/**
 	 * @covers \Pods\Data\Map_Field_Values::custom
 	 */
 	public function test_custom() {
-		add_filter( 'pods_data_map_field_values_custom', '__return_zero' );
+		$callback = static function( $value, $field ) {
+			if ( 'any_map' !== $field ) {
+				return $value;
+			}
+
+			return 'my-custom-value';
+		};
+
+		add_filter( 'pods_data_map_field_values_custom', $callback, 10, 2 );
 
 		$pod = pods( $this->pod_name, $this->item_id );
 
-		$this->assertEquals( 0, $pod->field( 'any_map' ) );
+		$this->assertEquals( 'my-custom-value', $pod->field( 'any_map' ) );
 
-		remove_filter( 'pods_data_map_field_values_custom', '__return_zero' );
+		$this->assertEquals( 'my-custom-value', pods_data_field( $this->pod_name, 'any_map' ) );
+		$this->assertEquals( 'my-custom-value', pods_data_field( $pod, 'any_map' ) );
+		$this->assertEquals( 'my-custom-value', pods_data_field( null, 'any_map' ) );
+
+		remove_filter( 'pods_data_map_field_values_custom', $callback );
 	}
 
 	/**
@@ -120,6 +139,10 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertEquals( $this->pod_storage, $pod->field( '_pod.storage' ) );
 
 		$this->assertEquals( '', $pod->field( '_pod.any_non_option' ) );
+
+		$this->assertEquals( $this->pod_label, pods_data_field( $this->pod_name, '_pod.label' ) );
+		$this->assertEquals( $this->pod_label, pods_data_field( $pod, '_pod.label' ) );
+		$this->assertEquals( $this->pod_label, pods_data_field( $pod, '_pod.label' ) );
 	}
 
 	/**
@@ -137,6 +160,61 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertEquals( $this->field_type, $pod->field( '_field.' . $this->field_name . '.type' ) );
 
 		$this->assertEquals( '', $pod->field( '_field.' . $this->field_name . '.any_non_option' ) );
+
+		$this->assertEquals( $this->field_label, pods_data_field( $this->pod_name, '_field.' . $this->field_name . '.label' ) );
+		$this->assertEquals( $this->field_label, pods_data_field( $pod, '_field.' . $this->field_name . '.label' ) );
+		$this->assertNull( pods_data_field( null, '_field.' . $this->field_name . '.label' ) );
+	}
+
+	/**
+	 * @covers \Pods\Data\Map_Field_Values::all_fields
+	 */
+	public function test_all_fields() {
+		$pod = pods( $this->pod_name, $this->item_id );
+
+		$current_wp_url = getenv( 'WP_URL' );
+		$snapshot_url   = 'https://wp.localhost';
+
+		$driver = new WPHtmlOutputDriver( $current_wp_url, $snapshot_url );
+
+		$all_fields_ul = $pod->display( '_all_fields' );
+
+		$this->assertContains( '</ul>', $all_fields_ul );
+		$this->assertMatchesSnapshot( $all_fields_ul, $driver );
+
+		$all_fields_ul2 = $pod->display( '_all_fields.ul' );
+
+		$this->assertContains( '</ul>', $all_fields_ul2 );
+		$this->assertMatchesSnapshot( $all_fields_ul2, $driver );
+
+		$all_fields_div = $pod->display( '_all_fields.div' );
+
+		$this->assertContains( '</div>', $all_fields_div );
+		$this->assertMatchesSnapshot( $all_fields_div, $driver );
+
+		$all_fields_p = $pod->display( '_all_fields.p' );
+
+		$this->assertContains( '</p>', $all_fields_p );
+		$this->assertMatchesSnapshot( $all_fields_p, $driver );
+
+		$all_fields_table = $pod->display( '_all_fields.table' );
+
+		$this->assertContains( '</table>', $all_fields_table );
+		$this->assertMatchesSnapshot( $all_fields_table, $driver );
+
+		$all_fields_ol = $pod->display( '_all_fields.ol' );
+
+		$this->assertContains( '</ol>', $all_fields_ol );
+		$this->assertMatchesSnapshot( $all_fields_ol, $driver );
+
+		$all_fields_dl = $pod->display( '_all_fields.dl' );
+
+		$this->assertContains( '</dl>', $all_fields_dl );
+		$this->assertMatchesSnapshot( $all_fields_dl, $driver );
+
+		$this->assertNull( pods_data_field( $this->pod_name, '_all_fields' ) );
+		$this->assertNotNull( pods_data_field( $pod, '_all_fields' ) );
+		$this->assertNull( pods_data_field( null, '_all_fields' ) );
 	}
 
 	/**
@@ -169,6 +247,10 @@ class MappingTest extends Pods_UnitTestCase {
 		global $wpdb;
 
 		$this->assertEquals( $wpdb->prefix, $pod->field( '_context.prefix' ) );
+
+		$this->assertEquals( $_POST['some-value3'], pods_data_field( $this->pod_name, '_context.post.some-value3.raw' ) );
+		$this->assertEquals( $_POST['some-value3'], pods_data_field( $pod, '_context.post.some-value3.raw' ) );
+		$this->assertEquals( $_POST['some-value3'], pods_data_field( null, '_context.post.some-value3.raw' ) );
 	}
 
 	/**
@@ -215,7 +297,7 @@ class MappingTest extends Pods_UnitTestCase {
 		$zebra    = true;
 		$position = 0;
 
-		$this->assertEquals( (int) $zebra, $pod->zebra() );
+		$this->assertEquals( 1, $pod->zebra() );
 		$this->assertEquals( $position, $pod->position() );
 		$this->assertEquals( 2, $pod->total() );
 		$this->assertEquals( 5, $pod->total_found() );
@@ -230,6 +312,10 @@ class MappingTest extends Pods_UnitTestCase {
 			$this->assertEquals( 2, $pod->field( '_total' ) );
 			$this->assertEquals( 5, $pod->field( '_total_found' ) );
 			$this->assertEquals( 3, $pod->field( '_total_pages' ) );
+
+			$this->assertNull( pods_data_field( $this->pod_name, '_position' ) );
+			$this->assertEquals( $position, pods_data_field( $pod, '_position' ) );
+			$this->assertNull( pods_data_field( null, '_position' ) );
 		}
 	}
 
@@ -256,6 +342,10 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_src' ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_src.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'post_thumbnail_src.123x123' ) );
+
+		$this->assertNull( pods_data_field( $this->pod_name, 'post_thumbnail_src.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'post_thumbnail_src.123x123' ) );
+		$this->assertNull( pods_data_field( null, 'post_thumbnail_src.123x123' ) );
 	}
 
 	/**
@@ -283,6 +373,14 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_src.' . $attachment_id ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+
+		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+
+		$this->assertNull( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertNull( '-123x123.jpg', pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}
 
 }

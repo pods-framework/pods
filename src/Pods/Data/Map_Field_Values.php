@@ -479,13 +479,13 @@ class Map_Field_Values {
 			'image_attachment_src',
 		];
 
-		$object_type = $obj->pod_data->get_type();
+		$object_type = $obj ? $obj->pod_data->get_type() : null;
 
 		if ( 'post_type' === $object_type ) {
 			$image_fields[] = 'post_thumbnail';
 			$image_fields[] = 'post_thumbnail_url';
 			$image_fields[] = 'post_thumbnail_src';
-		} elseif ( 'media' === $obj->pod_data->get_type() ) {
+		} elseif ( 'media' === $object_type ) {
 			$image_fields[] = '_img';
 			$image_fields[] = '_url';
 			$image_fields[] = '_src';

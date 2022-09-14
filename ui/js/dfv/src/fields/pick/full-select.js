@@ -53,7 +53,7 @@ const SortableMultiValue = ( props ) => {
 	const removeProps = {
 		...props.removeProps,
 		style: {
-			cursor: 'pointer',
+			cursor: isDragging ? 'grabbing' : 'pointer',
 		},
 	};
 

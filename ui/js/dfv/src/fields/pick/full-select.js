@@ -50,6 +50,13 @@ const SortableMultiValue = ( props ) => {
 		cursor: isDragging ? 'grabbing' : 'grab',
 	};
 
+	const removeProps = {
+		...props.removeProps,
+		style: {
+			cursor: 'pointer',
+		},
+	};
+
 	return (
 		<span
 			ref={ setNodeRef }
@@ -60,7 +67,10 @@ const SortableMultiValue = ( props ) => {
 			// eslint-disable-next-line react/jsx-props-no-spreading
 			{ ...attributes }
 		>
-			<components.MultiValue { ...props } />
+			<components.MultiValue
+				{ ...props }
+				removeProps={ removeProps }
+			/>
 		</span>
 	);
 };

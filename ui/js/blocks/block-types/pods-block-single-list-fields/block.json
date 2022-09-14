@@ -59,19 +59,18 @@
     "slug": {
       "type": "string"
     },
-    "display_fields": {
-      "type": "string"
-    },
-    "display_include_title": {
-      "type": "boolean",
-      "default": false
-    },
     "display_output_type": {
       "type": "object",
       "default": {
         "label": "Unordered list (<ul>)",
         "value": "ul"
       }
+    },
+    "display_fields": {
+      "type": "string"
+    },
+    "exclude_fields": {
+      "type": "string"
     }
   }
 }

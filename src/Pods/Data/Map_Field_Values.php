@@ -52,7 +52,7 @@ class Map_Field_Values {
 			'custom',
 			'pod_info',
 			'field_info',
-			'all_fields',
+			'display_fields',
 			'context_info',
 			'calculation',
 			'image_fields',
@@ -186,7 +186,7 @@ class Map_Field_Values {
 	}
 
 	/**
-	 * Map the matching all fields value.
+	 * Map the matching _display_fields value.
 	 *
 	 * @since 2.9.4
 	 *
@@ -195,9 +195,9 @@ class Map_Field_Values {
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
 	 *
-	 * @return null|mixed The matching all fields value or null if there was no match.
+	 * @return null|mixed The matching _display_fields value or null if there was no match.
 	 */
-	public function all_fields( $field, $traverse, $field_data, $obj ) {
+	public function display_fields( $field, $traverse, $field_data, $obj ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
 			return null;
@@ -223,39 +223,64 @@ class Map_Field_Values {
 		}
 
 		$output_type       = ! empty( $traverse[0] ) ? $traverse[0] : 'ul';
-		$include_index     = false;
 		$fields_to_display = '_all';
 
 		if ( ! $is_all_fields ) {
-			$include_index     = 'no_index' !== ( ! empty( $traverse[1] ) ? $traverse[1] : 'no_index' );
-			$fields_to_display = ( ! empty( $traverse[2] ) ? $traverse[2] : '_all' );
+			$fields_to_display = ( ! empty( $traverse[1] ) ? $traverse[1] : '_all' );
 		}
 
 		$pod = $obj->pod_data;
 
-		if ( '_all' === $fields_to_display ) {
+		$are_fields_excluded = 0 === strpos( $fields_to_display, 'exclude=' );
+
+		if ( '_all' === $fields_to_display || $are_fields_excluded ) {
 			$display_fields = $pod->get_fields();
+
+			if ( ! empty( $obj->data->field_index ) ) {
+				$display_field = $pod->get_field( $obj->data->field_index );
+
+				if ( $display_field ) {
+					$display_fields = array_merge( [
+						$display_field->get_name() => $display_field,
+					], $display_fields );
+				}
+			}
+
+			if ( $are_fields_excluded ) {
+				// Handle excluded fields.
+				$fields_to_exclude = substr( $fields_to_display, strlen( 'exclude=' ) );
+				$fields_to_exclude = explode( '|', $fields_to_exclude );
+				$fields_to_exclude = array_filter( array_unique( $fields_to_exclude ) );
+
+				foreach ( $fields_to_exclude as $field_to_exclude ) {
+					$field_to_exclude = str_replace( ':', '.', $field_to_exclude );
+
+					$field_name = explode( '.', $field_to_exclude );
+					$field_name = $field_name[0];
+
+					if ( isset( $display_fields[ $field_name ] ) ) {
+						unset( $display_fields[ $field_name ] );
+					}
+				}
+			}
 		} else {
 			$display_fields = [];
 
+			// Handle included fields.
 			$fields_to_display = explode( '|', $fields_to_display );
+			$fields_to_display = array_filter( array_unique( $fields_to_display ) );
 
 			foreach ( $fields_to_display as $field_to_display ) {
-				$display_field = $pod->get_field( $field_to_display );
+				$field_to_display = str_replace( ':', '.', $field_to_display );
+
+				$field_name = explode( '.', $field_to_display );
+				$field_name = $field_name[0];
+
+				$display_field = $pod->get_field( $field_name );
 
 				if ( $display_field ) {
 					$display_fields[ $field_to_display ] = $display_field;
 				}
-			}
-		}
-
-		if ( $include_index && ! empty( $obj->data->field_index ) ) {
-			$display_field = $pod->get_field( $obj->data->field_index );
-
-			if ( $display_field ) {
-				$display_fields = array_merge( [
-					$display_field->get_name() => $display_field,
-				], $display_fields );
 			}
 		}
 

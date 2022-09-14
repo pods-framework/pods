@@ -84,18 +84,6 @@ class Item_Single_List_Fields extends Item_Single {
 				'description' => __( 'Defaults to using the current pod item.', 'pods' ),
 			],
 			[
-				'name'        => 'display_fields',
-				'label'       => __( 'Display Fields', 'pods' ),
-				'type'        => 'paragraph',
-				'description' => __( 'Comma-separated list of the Pod Fields you want to display. Default is to show all.', 'pods' ),
-			],
-			[
-				'name'        => 'display_include_title',
-				'label'       => __( 'Include Title Field', 'pods' ),
-				'type'        => 'boolean',
-				'description' => __( 'Whether to include the Title field (default off) when showing all fields.', 'pods' ),
-			],
-			[
 				'name'        => 'display_output_type',
 				'label'       => __( 'Output Type', 'pods' ),
 				'type'        => 'pick',
@@ -108,6 +96,18 @@ class Item_Single_List_Fields extends Item_Single {
 				],
 				'default'     => 'ul',
 				'description' => __( 'Choose how you want your output HTML to be set up. This allows you flexibility to build and style your output with any CSS customizations you would like. Some output types are naturally laid out better in certain themes.', 'pods' ),
+			],
+			[
+				'name'        => 'display_fields',
+				'label'       => __( 'Display Fields', 'pods' ),
+				'type'        => 'paragraph',
+				'description' => __( 'Comma-separated list of the Pod Fields you want to display. Default is to show all. Use this OR the Exclude Fields option.', 'pods' ),
+			],
+			[
+				'name'        => 'exclude_fields',
+				'label'       => __( 'Exclude Fields', 'pods' ),
+				'type'        => 'paragraph',
+				'description' => __( 'Comma-separated list of the Pod Fields you want to exclude from display. Default is to show all. Use this OR the Display Fields option.', 'pods' ),
 			],
 		];
 	}
@@ -131,33 +131,48 @@ class Item_Single_List_Fields extends Item_Single {
 			$attributes['display_output_type'] = 'ul';
 		}
 
-		if ( empty( $attributes['display_include_title'] ) ) {
-			$attributes['display_include_title'] = 'no_index';
-		} else {
-			$attributes['display_include_title'] = 'include_index';
-		}
-
-		$_all_fields = [
+		$magic_tag_data = [
+			'_all_fields',
 			$attributes['display_output_type'],
-			$attributes['display_include_title'],
 		];
 
 		if ( ! empty( $attributes['display_fields'] ) ) {
-			$display_fields = $attributes['display_fields'];
+			$magic_tag_data[0] = '_display_fields';
 
-			$display_fields = preg_replace( '/[^a-z0-9_\-]/', '|', $display_fields );
-			$display_fields = preg_replace( '/[\s\,\|]+/', '|', $display_fields );
-			$display_fields = explode( '|', $display_fields );
-			$display_fields = array_unique( array_filter( $display_fields ) );
-			$display_fields = implode( '|', $display_fields );
+			$display_fields = $this->prepare_formatted_fields_by_pipe( $attributes['display_fields'] );
 
 			if ( '' !== $display_fields ) {
-				$_all_fields[] = $display_fields;
+				$magic_tag_data[] = $display_fields;
+			}
+		} elseif ( ! empty( $attributes['exclude_fields'] ) ) {
+			$magic_tag_data[0] = '_display_fields';
+
+			$exclude_fields = $this->prepare_formatted_fields_by_pipe( $attributes['exclude_fields'] );
+
+			if ( '' !== $exclude_fields ) {
+				$magic_tag_data[] = 'exclude=' . $exclude_fields;
 			}
 		}
 
-		$attributes['template_custom'] = '{@_display_fields.' . implode( '.', $_all_fields ) . '}';
+		$attributes['template_custom'] = '{@' . implode( '.', $magic_tag_data ) . '}';
 
 		return parent::render( $attributes, $content, $block );
+	}
+
+	/**
+	 * Prepare the list of formatted fields separated by pipe.
+	 *
+	 * @param string $fields The list of fields.
+	 *
+	 * @return string The list of formatted fields separated by pipe.
+	 */
+	private function prepare_formatted_fields_by_pipe( $fields ) {
+		$fields = str_replace( '.', ':', $fields );
+		$fields = preg_replace( '/[^a-zA-Z0-9\:\_\-]/', '|', $fields );
+		$fields = preg_replace( '/[\s\,\|]+/', '|', $fields );
+		$fields = explode( '|', $fields );
+		$fields = array_unique( array_filter( $fields ) );
+
+		return implode( '|', $fields );
 	}
 }

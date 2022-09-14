@@ -236,6 +236,7 @@ class Map_Field_Values {
 		if ( '_all' === $fields_to_display || $are_fields_excluded ) {
 			$display_fields = $pod->get_fields();
 
+			// @todo For post types -- handle checking if the post type supported title / editor, include them only if they are enabled.
 			if ( ! empty( $obj->data->field_index ) ) {
 				$display_field = $pod->get_field( $obj->data->field_index );
 

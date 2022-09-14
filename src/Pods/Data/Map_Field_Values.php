@@ -292,7 +292,9 @@ class Map_Field_Values {
 			$sub_tag_name = 'li';
 		}
 
-		return pods_view( PODS_DIR . 'ui/front/display/' . $display_file, compact( array_keys( get_defined_vars() ) ) );
+		$bypass_map_field_values = true;
+
+		return pods_view( PODS_DIR . 'ui/front/display/' . $display_file, compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
 	}
 
 	/**

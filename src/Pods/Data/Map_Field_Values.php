@@ -582,7 +582,10 @@ class Map_Field_Values {
 			$media = pods( 'media', $attachment_id, false );
 
 			if ( $media && $media->valid() && $media->exists() ) {
-				return $media->field( implode( '.', $traverse_params ) );
+				return $media->field( [
+					'name'                    => implode( '.', $traverse_params ),
+					'bypass_map_field_values' => true,
+				] );
 			}
 
 			// Fallback to default attachment object.

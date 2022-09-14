@@ -3,6 +3,7 @@
  * @var string                $list_type
  * @var \Pods\Whatsit\Field[] $display_fields
  * @var Pods                  $obj
+ * @var boolean               $bypass_map_field_values
  */
 ?>
 
@@ -18,7 +19,7 @@
 		</dt>
 		<dd
 			class="pods-all-fields-row-value pods-all-fields-row-value-<?php echo esc_attr( PodsForm::clean( $field_label, true ) ); ?>">
-			<?php echo $obj->display( $field_name ); // @codingStandardsIgnoreLine ?>
+			<?php echo $obj->display( [ 'name' => $field_name, 'bypass_map_field_values' => $bypass_map_field_values ] ); // @codingStandardsIgnoreLine ?>
 		</dd>
 	<?php endforeach; ?>
 </dl>

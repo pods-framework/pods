@@ -5,6 +5,7 @@
  * @var string                $sub_tag_name
  * @var \Pods\Whatsit\Field[] $display_fields
  * @var Pods                  $obj
+ * @var boolean               $bypass_map_field_values
  */
 ?>
 
@@ -18,7 +19,7 @@
 				<?php echo $field_label; // @codingStandardsIgnoreLine ?>:
 			</strong>
 
-			<?php echo $obj->display( $field_name ); // @codingStandardsIgnoreLine ?>
+			<?php echo $obj->display( [ 'name' => $field_name, 'bypass_map_field_values' => $bypass_map_field_values ] ); // @codingStandardsIgnoreLine ?>
 		</<?php echo sanitize_key( $sub_tag_name ); ?>>
 	<?php endforeach; ?>
 </<?php echo $tag_name; ?>>

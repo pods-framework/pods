@@ -2,6 +2,7 @@
 /**
  * @var \Pods\Whatsit\Field[] $display_fields
  * @var Pods                  $obj
+ * @var boolean               $bypass_map_field_values
  */
 ?>
 
@@ -16,7 +17,7 @@
 				</strong>
 			</th>
 			<td>
-				<?php echo $obj->display( $field_name ); // @codingStandardsIgnoreLine ?>
+				<?php echo $obj->display( [ 'name' => $field_name, 'bypass_map_field_values' => $bypass_map_field_values ] ); // @codingStandardsIgnoreLine ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

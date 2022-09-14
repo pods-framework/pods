@@ -594,6 +594,7 @@ class Pods implements Iterator {
 			'pods_callback'                => 'pods',
 			'deprecated'                   => false,
 			'keyed'                        => false,
+			'bypass_map_field_values'      => false,
 			// extra data to send to field handlers.
 			'args'                         => [],
 		];
@@ -889,7 +890,7 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
-			} else {
+			} elseif ( ! $params->bypass_map_field_values ) {
 				// Handle custom/supported value mappings.
 				$map_field_values = pods_container( Map_Field_Values::class );
 

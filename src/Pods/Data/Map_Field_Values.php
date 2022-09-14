@@ -215,6 +215,13 @@ class Map_Field_Values {
 			return null;
 		}
 
+		$item_id = $obj->id();
+
+		// Skip if there is no item data.
+		if ( empty( $item_id ) ) {
+			return null;
+		}
+
 		$output_type       = ! empty( $traverse[0] ) ? $traverse[0] : 'ul';
 		$include_index     = false;
 		$fields_to_display = '_all';

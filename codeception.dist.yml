@@ -5,8 +5,8 @@ paths:
     data: tests/codeception/_data
     helpers: tests/codeception/_support
     wp_root: "%WP_ROOT_FOLDER%"
+bootstrap: _bootstrap.php
 settings:
-    bootstrap: _bootstrap.php
     colors: true
     memory_limit: 1024M
 params:

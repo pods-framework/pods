@@ -262,6 +262,7 @@ function pods_error( $error, $obj = null ) {
 	// Support testing debug messages.
 	if ( function_exists( 'codecept_debug' ) ) {
 		codecept_debug( 'Pods Debug Error: ' . $error );
+		pods_debug( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ) );
 	}
 
 	if ( ! empty( $error ) ) {

@@ -461,7 +461,7 @@ class MappingTest extends Pods_UnitTestCase {
 			$zebra = ! $zebra;
 
 			$this->assertEquals( (int) $zebra, $pod->field( '_zebra' ) );
-			$this->assertEquals( 0, pods_data_field( $this->pod_name, '_zebra' ) );
+			$this->assertEquals( 1, pods_data_field( $this->pod_name, '_zebra' ) );
 			$this->assertEquals( (int) $zebra, pods_data_field( $pod, '_zebra' ) );
 			$this->assertNull( pods_data_field( null, '_zebra' ) );
 
@@ -502,9 +502,9 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertStringStartsWith( '<img width="150" height="150" src="', $pod->field( 'post_thumbnail' ) );
 		$this->assertStringStartsWith( '<img width="200" height="300" src="', $pod->field( 'post_thumbnail.medium' ) );
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', $pod->field( 'post_thumbnail.123x123' ) );
-		$this->assertNull( '<img width="123" height="123" src="', pods_data_field( $this->pod_name, 'post_thumbnail.123x123' ) );
+		$this->assertNull( pods_data_field( $this->pod_name, 'post_thumbnail.123x123' ) );
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $pod, 'post_thumbnail.123x123' ) );
-		$this->assertNull( '<img width="123" height="123" src="', pods_data_field( null, 'post_thumbnail.123x123' ) );
+		$this->assertNull( pods_data_field( null, 'post_thumbnail.123x123' ) );
 
 		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_url' ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_url.medium' ) );
@@ -540,21 +540,21 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', $pod->field( 'image_attachment.' . $attachment_id . '.123x123' ) );
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $this->pod_name, 'image_attachment.' . $attachment_id . '.123x123' ) );
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $pod, 'image_attachment.' . $attachment_id . '.123x123' ) );
-		$this->assertNull( pods_data_field( null, 'image_attachment.' . $attachment_id . '.123x123' ) );
+		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( null, 'image_attachment.' . $attachment_id . '.123x123' ) );
 
 		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_url.' . $attachment_id ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.123x123' ) );
 		$this->assertContains( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
 		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
-		$this->assertNull( pods_data_field( null, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( null, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
 
 		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_src.' . $attachment_id ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 		$this->assertContains( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-		$this->assertNull( pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}
 
 }

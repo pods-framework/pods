@@ -469,7 +469,7 @@ class MappingTest extends Pods_UnitTestCase {
 			$this->assertEquals( 5, $pod->field( '_total_found' ) );
 			$this->assertEquals( 3, $pod->field( '_total_pages' ) );
 
-			$this->assertNull( pods_data_field( $this->pod_name, '_position' ) );
+			$this->assertEquals( 0, pods_data_field( $this->pod_name, '_position' ) );
 			$this->assertEquals( $position, pods_data_field( $pod, '_position' ) );
 			$this->assertNull( pods_data_field( null, '_position' ) );
 		}
@@ -534,9 +534,9 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 
-		$this->assertNull( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertNull( pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-		$this->assertNull( '-123x123.jpg', pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertNull( pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}
 
 }

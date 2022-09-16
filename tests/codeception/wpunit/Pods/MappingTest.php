@@ -107,7 +107,6 @@ class MappingTest extends Pods_UnitTestCase {
 		$pod = pods( $this->pod_name, $this->item_id );
 
 		$this->assertEquals( [], $pod->field( 'any_map' ) );
-
 		$this->assertNull( pods_data_field( $this->pod_name, 'any_map' ) );
 		$this->assertNull( pods_data_field( $pod, 'any_map' ) );
 		$this->assertNull( pods_data_field( null, 'any_map' ) );
@@ -130,7 +129,6 @@ class MappingTest extends Pods_UnitTestCase {
 		$pod = pods( $this->pod_name, $this->item_id );
 
 		$this->assertEquals( 'my-custom-value', $pod->field( 'any_map' ) );
-
 		$this->assertEquals( 'my-custom-value', pods_data_field( $this->pod_name, 'any_map' ) );
 		$this->assertEquals( 'my-custom-value', pods_data_field( $pod, 'any_map' ) );
 		$this->assertEquals( 'my-custom-value', pods_data_field( null, 'any_map' ) );
@@ -149,15 +147,15 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertEquals( $this->pod_id, $pod->field( '_pod.id' ) );
 		$this->assertEquals( $this->pod_id, $pod->field( '_pod.ID' ) );
 		$this->assertEquals( $this->pod_name, $pod->field( '_pod.name' ) );
-		$this->assertEquals( $this->pod_label, $pod->field( '_pod.label' ) );
 		$this->assertEquals( $this->pod_type, $pod->field( '_pod.type' ) );
 		$this->assertEquals( $this->pod_storage, $pod->field( '_pod.storage' ) );
 
-		$this->assertEquals( '', $pod->field( '_pod.any_non_option' ) );
-
+		$this->assertEquals( $this->pod_label, $pod->field( '_pod.label' ) );
 		$this->assertEquals( $this->pod_label, pods_data_field( $this->pod_name, '_pod.label' ) );
 		$this->assertEquals( $this->pod_label, pods_data_field( $pod, '_pod.label' ) );
 		$this->assertEquals( $this->pod_label, pods_data_field( $pod, '_pod.label' ) );
+
+		$this->assertEquals( '', $pod->field( '_pod.any_non_option' ) );
 	}
 
 	/**
@@ -171,14 +169,14 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertEquals( $this->field_id, $pod->field( '_field.' . $this->field_name . '.id' ) );
 		$this->assertEquals( $this->field_id, $pod->field( '_field.' . $this->field_name . '.ID' ) );
 		$this->assertEquals( $this->field_name, $pod->field( '_field.' . $this->field_name . '.name' ) );
-		$this->assertEquals( $this->field_label, $pod->field( '_field.' . $this->field_name . '.label' ) );
 		$this->assertEquals( $this->field_type, $pod->field( '_field.' . $this->field_name . '.type' ) );
 
-		$this->assertEquals( '', $pod->field( '_field.' . $this->field_name . '.any_non_option' ) );
-
+		$this->assertEquals( $this->field_label, $pod->field( '_field.' . $this->field_name . '.label' ) );
 		$this->assertEquals( $this->field_label, pods_data_field( $this->pod_name, '_field.' . $this->field_name . '.label' ) );
 		$this->assertEquals( $this->field_label, pods_data_field( $pod, '_field.' . $this->field_name . '.label' ) );
 		$this->assertNull( pods_data_field( null, '_field.' . $this->field_name . '.label' ) );
+
+		$this->assertEquals( '', $pod->field( '_field.' . $this->field_name . '.any_non_option' ) );
 	}
 
 	/**
@@ -398,15 +396,14 @@ class MappingTest extends Pods_UnitTestCase {
 		$_POST['some-value3'] = '<a href="https://gosomewhere.com">Go somewhere</a>';
 
 		$this->assertEquals( $_POST['some-value3'], $pod->field( '_context.post.some-value3.raw' ) );
+		$this->assertEquals( $_POST['some-value3'], pods_data_field( $this->pod_name, '_context.post.some-value3.raw' ) );
+		$this->assertEquals( $_POST['some-value3'], pods_data_field( $pod, '_context.post.some-value3.raw' ) );
+		$this->assertEquals( $_POST['some-value3'], pods_data_field( null, '_context.post.some-value3.raw' ) );
 
 		// Test prefix.
 		global $wpdb;
 
 		$this->assertEquals( $wpdb->prefix, $pod->field( '_context.prefix' ) );
-
-		$this->assertEquals( $_POST['some-value3'], pods_data_field( $this->pod_name, '_context.post.some-value3.raw' ) );
-		$this->assertEquals( $_POST['some-value3'], pods_data_field( $pod, '_context.post.some-value3.raw' ) );
-		$this->assertEquals( $_POST['some-value3'], pods_data_field( null, '_context.post.some-value3.raw' ) );
 	}
 
 	/**
@@ -464,14 +461,29 @@ class MappingTest extends Pods_UnitTestCase {
 			$zebra = ! $zebra;
 
 			$this->assertEquals( (int) $zebra, $pod->field( '_zebra' ) );
-			$this->assertEquals( $position, $pod->field( '_position' ) );
-			$this->assertEquals( 2, $pod->field( '_total' ) );
-			$this->assertEquals( 5, $pod->field( '_total_found' ) );
-			$this->assertEquals( 3, $pod->field( '_total_pages' ) );
+			$this->assertEquals( 0, pods_data_field( $this->pod_name, '_zebra' ) );
+			$this->assertEquals( (int) $zebra, pods_data_field( $pod, '_zebra' ) );
+			$this->assertNull( pods_data_field( null, '_zebra' ) );
 
+			$this->assertEquals( $position, $pod->field( '_position' ) );
 			$this->assertEquals( 0, pods_data_field( $this->pod_name, '_position' ) );
 			$this->assertEquals( $position, pods_data_field( $pod, '_position' ) );
 			$this->assertNull( pods_data_field( null, '_position' ) );
+
+			$this->assertEquals( 2, $pod->field( '_total' ) );
+			$this->assertEquals( 0, pods_data_field( $this->pod_name, '_total' ) );
+			$this->assertEquals( 2, pods_data_field( $pod, '_total' ) );
+			$this->assertNull( pods_data_field( null, '_total' ) );
+
+			$this->assertEquals( 5, $pod->field( '_total_found' ) );
+			$this->assertEquals( 0, pods_data_field( $this->pod_name, '_total_found' ) );
+			$this->assertEquals( 5, pods_data_field( $pod, '_total_found' ) );
+			$this->assertNull( pods_data_field( null, '_total_found' ) );
+
+			$this->assertEquals( 3, $pod->field( '_total_pages' ) );
+			$this->assertEquals( 0, pods_data_field( $this->pod_name, '_total_pages' ) );
+			$this->assertEquals( 3, pods_data_field( $pod, '_total_pages' ) );
+			$this->assertNull( pods_data_field( null, '_total_pages' ) );
 		}
 	}
 
@@ -490,15 +502,20 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertStringStartsWith( '<img width="150" height="150" src="', $pod->field( 'post_thumbnail' ) );
 		$this->assertStringStartsWith( '<img width="200" height="300" src="', $pod->field( 'post_thumbnail.medium' ) );
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', $pod->field( 'post_thumbnail.123x123' ) );
+		$this->assertNull( '<img width="123" height="123" src="', pods_data_field( $this->pod_name, 'post_thumbnail.123x123' ) );
+		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $pod, 'post_thumbnail.123x123' ) );
+		$this->assertNull( '<img width="123" height="123" src="', pods_data_field( null, 'post_thumbnail.123x123' ) );
 
 		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_url' ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_url.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'post_thumbnail_url.123x123' ) );
+		$this->assertNull( pods_data_field( $this->pod_name, 'post_thumbnail_url.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'post_thumbnail_url.123x123' ) );
+		$this->assertNull( pods_data_field( null, 'post_thumbnail_url.123x123' ) );
 
 		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_src' ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_src.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'post_thumbnail_src.123x123' ) );
-
 		$this->assertNull( pods_data_field( $this->pod_name, 'post_thumbnail_src.123x123' ) );
 		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'post_thumbnail_src.123x123' ) );
 		$this->assertNull( pods_data_field( null, 'post_thumbnail_src.123x123' ) );
@@ -521,20 +538,21 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertStringStartsWith( '<img width="150" height="150" src="', $pod->field( 'image_attachment.' . $attachment_id ) );
 		$this->assertStringStartsWith( '<img width="200" height="300" src="', $pod->field( 'image_attachment.' . $attachment_id . '.medium' ) );
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', $pod->field( 'image_attachment.' . $attachment_id . '.123x123' ) );
+		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $this->pod_name, 'image_attachment.' . $attachment_id . '.123x123' ) );
+		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $pod, 'image_attachment.' . $attachment_id . '.123x123' ) );
+		$this->assertNull( pods_data_field( null, 'image_attachment.' . $attachment_id . '.123x123' ) );
 
 		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_url.' . $attachment_id ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertNull( pods_data_field( null, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
 
 		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_src.' . $attachment_id ) );
 		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.medium' ) );
 		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-
-		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-
-		$this->assertNull( pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertContains( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 		$this->assertNull( pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}

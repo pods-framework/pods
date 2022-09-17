@@ -2,8 +2,6 @@
 /** @var $pods_init PodsInit */
 global $pods_init, $wpdb;
 
-$relationship_table = $wpdb->prefix . 'podsrel';
-
 $excluded_pod_types_from_reset = [
 	'user',
 	'media',

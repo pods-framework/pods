@@ -1,4 +1,6 @@
 <?php
+global $wpdb;
+
 $pods_api = pods_api();
 
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
@@ -83,6 +85,10 @@ asort( $recover_pods );
 </p>
 
 <hr />
+
+<?php
+$relationship_table = $wpdb->prefix . 'podsrel';
+?>
 
 <h3><?php esc_html_e( 'Recreate missing tables', 'pods' ); ?></h3>
 

@@ -1177,7 +1177,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 	$allowed  = array_unique( array_merge( $pods_query_args['allowed'], $allowed ) );
 	$excluded = array_unique( array_merge( $pods_query_args['excluded'], $excluded ) );
 
-	if ( ! isset( $_GET ) ) {
+	if ( ! isset( $_GET ) || $url ) {
 		$query_args = array();
 	} else {
 		$query_args = pods_unsanitize( $_GET );

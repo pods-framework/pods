@@ -90,30 +90,37 @@ You can enable some of our included components to extend your WordPress site eve
 * **Advanced Content Types** - Create entirely custom content types that have their own database table, and they will exist outside the normal WordPress context avoiding meta database tables
 * **Pods Pages** - Create custom pages that function off of your site's URL path with wildcard support and choose the Page Template in the theme to use -- most useful paired with Advanced Content Types
 
-= Plays well with others =
+= Plugins that integrate with Pods =
 
-We also do our best to integrate and play nicely with other projects:
+* [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using premium [Admin Columns Pro](https://www.admincolumns.com/pods/) Pods integration
+* [Conductor](https://conductorplugin.com/)
+* [Elementor Pro](https://elementor.com/pro/)
+* [Polylang](https://wordpress.org/plugins/polylang/) has direct integration in Pods itself
+* [Timber](https://wordpress.org/plugins/timber-library/)
+* [WPGraphQL](https://wordpress.org/plugins/wp-graphql/) has direct integration in Pods itself
+* [WPML](http://wpml.org/) has direct integration in Pods itself
+* [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/) has direct integration in Pods itself
 
-* **Plugins we've integrated with**
- * [Beaver Builder](https://wordpress.org/plugins/beaver-builder-lite-version/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
- * [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
- * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using the [Pods Add-On for Admin Columns Pro](https://www.admincolumns.com/pods/)
- * [Conductor](https://conductorplugin.com/)
- * [Elementor](https://wordpress.org/plugins/elementor/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
- * [Elementor Pro](https://elementor.com/pro/) directly integrates with Pods
- * [GenerateBlocks](https://wordpress.org/plugins/generateblocks/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
- * [Gravity Forms](https://www.gravityforms.com/) using the free [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
- * [Oxygen Builder](https://oxygenbuilder.com/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
- * [Paid Memberships Pro](https://wordpress.org/plugins/paid-memberships-pro/) using the free [Paid Memberships Pro - Pods Add On](https://wordpress.org/plugins/pmpro-pods/)
- * [Polylang](https://wordpress.org/plugins/polylang/) has direct integration in Pods
- * [TablePress](https://wordpress.org/plugins/tablepress/) using the premium [Pods Pro by SKCDEV Add-On: TablePress Integration](https://pods-pro.skc.dev/downloads/tablepress-integration/)
- * [Timber](https://wordpress.org/plugins/timber-library/)
- * [WPGraphQL](https://wordpress.org/plugins/wp-graphql/) has direct integration in Pods
- * [WPML](http://wpml.org/) has direct integration in Pods
- * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/) has direct integration in Pods
-* **Themes we've integrated with**
- * [Divi Theme](https://www.elegantthemes.com/gallery/divi/) using the premium [Pods Pro by SKCDEV Add-On: Page Builder Toolkit](https://pods-pro.skc.dev/downloads/page-builder-toolkit/)
- * [Genesis](https://www.studiopress.com/themes/genesis/) (StudioPress) directly integrates with Pods
+= Themes that integrate with Pods =
+
+* [Genesis](https://www.studiopress.com/themes/genesis/) (StudioPress) has direct integration in Pods itself
+
+= Extend Pods with Free Add-Ons =
+
+* [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/) - Integrates Pods with [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/)
+* [Pods Gravity Forms Add-On](https://wordpress.org/plugins/pods-gravity-forms/) - Integrates Pods with [Gravity Forms](https://www.gravityforms.com/)
+* [Pods Alternative Cache Add-On](https://wordpress.org/plugins/pods-alternative-cache/) - Speed up Pods on servers with limited object caching capabilities
+* [Pods SEO Add-On](https://wordpress.org/plugins/pods-seo/) - Integrates Pods Advanced Content Types with Yoast SEO
+* [Pods AJAX Views Add-On](https://wordpress.org/plugins/pods-ajax-views/) - Adds new functions you can use to output template parts that load via AJAX after other page elements
+* [Paid Memberships Pro - Pods Add On](https://wordpress.org/plugins/pmpro-pods/) - Integrates Pods with [Paid Memberships Pro](https://wordpress.org/plugins/paid-memberships-pro/)
+
+= Extend Pods with Premium Add-Ons =
+
+* [List Tables Add-On](https://pods-pro.skc.dev/downloads/list-tables/) - A new block and shortcode to list/filter content from Pods in a table format
+* [Page Builder Toolkit Add-On](https://pods-pro.skc.dev/downloads/page-builder-toolkit/) - Integrates Pods with [Beaver Builder](https://wordpress.org/plugins/beaver-builder-lite-version/), [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/), [Divi Theme](https://www.elegantthemes.com/gallery/divi/), [Elementor](https://wordpress.org/plugins/elementor/), [GenerateBlocks](https://wordpress.org/plugins/generateblocks/), and [Oxygen Builder](https://oxygenbuilder.com/)
+* [Advanced Relationships Storage Add-On](https://pods-pro.skc.dev/downloads/advanced-relationship-storage/) - Advanced options for relationship storage
+* [TablePress Integration Add-On](https://pods-pro.skc.dev/downloads/tablepress-integration/) - Integrates Pods with [TablePress](https://wordpress.org/plugins/tablepress/)
+* [Advanced Permalinks Add-On](https://pods-pro.skc.dev/downloads/advanced-permalinks/) - Advanced permalink structures and taxonomy landing pages
 
 == Installation ==
 

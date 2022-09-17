@@ -113,8 +113,9 @@ You can enable some of our included components to extend your WordPress site eve
 * [Pods SEO Add-On](https://wordpress.org/plugins/pods-seo/) - Integrates Pods Advanced Content Types with Yoast SEO
 * [Pods AJAX Views Add-On](https://wordpress.org/plugins/pods-ajax-views/) - Adds new functions you can use to output template parts that load via AJAX after other page elements
 * [Paid Memberships Pro - Pods Add On](https://wordpress.org/plugins/pmpro-pods/) - Integrates Pods with [Paid Memberships Pro](https://wordpress.org/plugins/paid-memberships-pro/)
+* [Panda Pods Repeater Field Add-On](https://wordpress.org/plugins/panda-pods-repeater-field/) - (Advanced setup required) Add groups of fields that repeat and are stored in their own custom database table
 
-= Extend Pods with Premium Add-Ons =
+= Pods Pro by SKCDEV Premium Add-Ons =
 
 * [List Tables Add-On](https://pods-pro.skc.dev/downloads/list-tables/) - A new block and shortcode to list/filter content from Pods in a table format
 * [Page Builder Toolkit Add-On](https://pods-pro.skc.dev/downloads/page-builder-toolkit/) - Integrates Pods with [Beaver Builder](https://wordpress.org/plugins/beaver-builder-lite-version/), [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/), [Divi Theme](https://www.elegantthemes.com/gallery/divi/), [Elementor](https://wordpress.org/plugins/elementor/), [GenerateBlocks](https://wordpress.org/plugins/generateblocks/), and [Oxygen Builder](https://oxygenbuilder.com/)

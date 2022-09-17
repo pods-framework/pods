@@ -70,7 +70,7 @@
 		pods_view( PODS_DIR . 'ui/admin/help-addons.php', compact( array_keys( get_defined_vars() ) ) );
 		?>
 
-		<h2><?php esc_html_e( 'Free Add-Ons by our team', 'pods' ); ?></h2>
+		<h2><?php esc_html_e( 'Free Add-Ons', 'pods' ); ?></h2>
 
 		<?php
 		$addons = [
@@ -206,6 +206,59 @@
 					[
 						'label' => __( 'GitHub', 'pods' ),
 						'url'   => 'https://github.com/pods-framework/pods-ajax-views',
+					],
+				],
+			],
+			[
+				'label'       => 'Paid Memberships Pro - Pods Add-On',
+				'description' => __( 'Integrates Pods with Paid Memberships Pro', 'pods' ),
+				'icon'        => 'https://ps.w.org/pmpro-pods/assets/icon-256x256.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/pmpro-pods.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/pmpro-pods/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/pmpro-pods/',
+					],
+					[
+						'label' => __( 'Docs', 'pods' ),
+						'title' => __( 'Documentation', 'pods' ),
+						'url'   => 'https://www.paidmembershipspro.com/add-ons/pods-integration/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/strangerstudios/pmpro-pods',
+					],
+				],
+			],
+			[
+				'label'       => 'Panda Pods Repeater Field Add-On',
+				'description' => __( '(Advanced setup required) Add groups of fields that repeat and are stored in their own custom database table', 'pods' ),
+				'icon'        => 'https://ps.w.org/panda-pods-repeater-field/assets/icon-128x128.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/panda-pods-repeater-field.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/panda-pods-repeater-field/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/panda-pods-repeater-field/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/coding-panda/panda-pods-repeater-field',
 					],
 				],
 			],

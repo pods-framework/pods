@@ -15,15 +15,17 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 
 		pods_redirect( pods_query_arg( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
 	} elseif ( isset( $_POST['pods_reset_pod'] ) ) {
-		if ( empty( $_POST['pods_field_reset_pod'] ) ) {
+		$pod_name = pods_v( 'pods_field_reset_pod', 'post' );
+
+		if ( is_array( $pod_name ) ) {
+			$pod_name = $pod_name[0];
+		}
+
+		$pod_name = sanitize_text_field( $pod_name );
+
+		if ( empty( $pod_name ) ) {
 			pods_message( __( 'No Pod selected.', 'pods' ), 'error' );
 		} else {
-			$pod_name = sanitize_text_field( $_POST['pods_field_reset_pod'] );
-
-			if ( is_array( $pod_name ) ) {
-				$pod_name = reset( $pod_name );
-			}
-
 			$pod = $pods_api->load_pod( [ 'name' => $pod_name ], false );
 
 			if ( empty( $pod ) ) {

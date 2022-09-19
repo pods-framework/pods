@@ -136,6 +136,9 @@ asort( $reset_pods );
 	$field_prefix      = 'pods_field_';
 	$field_row_classes = '';
 	$id                = '';
+	$value_callback    = static function( $field_name, $id, $field, $pod ) use ( $field_prefix ) {
+		return pods_v( $field_prefix . $field_name, 'post', '' );
+	};
 
 	pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 ?>

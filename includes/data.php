@@ -1950,16 +1950,17 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
 		if ( ! empty( $params->field ) && ! is_string( $params->field ) && in_array( $params->field['type'], PodsForm::tableless_field_types(), true ) ) {
+			$pick_object = pods_v( 'pick_object', $params->field );
+
 			if ( in_array( $params->field['type'], PodsForm::file_field_types(), true ) ) {
 				if ( null === $params->field_index ) {
 					$params->field_index = 'guid';
 				}
-			} elseif ( in_array( $params->field['pick_object'], $simple_tableless_objects, true ) ) {
+			} elseif ( in_array( $pick_object, $simple_tableless_objects, true ) ) {
 				$simple = true;
 			} else {
-				$pick_object = pods_v( 'pick_object', $params->field );
-				$pick_val    = pods_v( 'pick_val', $params->field );
-				$table       = null;
+				$pick_val = pods_v( 'pick_val', $params->field );
+				$table    = null;
 
 				if ( ! empty( $pick_object ) && ( ! empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ), true ) ) ) {
 					$table = pods_api()->get_table_info(

@@ -1375,7 +1375,7 @@ class PodsForm {
 			$value = $default;
 		}
 
-		if ( is_array( $value ) && 'multi' !== pods_v( $args->type . '_format_type' ) ) {
+		if ( is_array( $value ) && 'multi' !== pods_v( $type . '_format_type' ) ) {
 			$value = pods_serial_comma( $value, $name, [ $name => $options ] );
 		}
 

@@ -3,7 +3,9 @@
 namespace Pods\Tools;
 
 use Exception;
+use Throwable;
 use PodsAPI;
+use PodsForm;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Pod;
@@ -21,6 +23,11 @@ class Recover {
 	private $api;
 
 	/**
+	 * @var array
+	 */
+	private $errors = [];
+
+	/**
 	 * Recover Groups and Fields for a Pod.
 	 *
 	 * @since 2.9.4
@@ -31,7 +38,8 @@ class Recover {
 	 * @return array The results with information about the recovery done.
 	 */
 	public function recover_groups_and_fields_for_pod( Pod $pod, $mode ) {
-		$this->api = pods_api();
+		$this->api    = pods_api();
+		$this->errors = [];
 
 		$is_upgrade_mode = 'upgrade' === $mode;
 		$is_migrated     = 1 === (int) $pod->get_arg( '_migrated_28' );
@@ -78,13 +86,16 @@ class Recover {
 			$results['maybe_reassign_orphan_fields'] = $this->maybe_reassign_orphan_fields( $pod, $group_id );
 		}
 
+		// Maybe fix fields with invalid field type.
+		$results['maybe_fix_fields_with_invalid_field_type'] = $this->maybe_fix_fields_with_invalid_field_type( $pod );
+
 		// Mark the pod as migrated if upgrading.
 		if ( $is_upgrade_mode ) {
 			$pod->set_arg( '_migrated_28', 1 );
 
 			try {
 				$this->api->save_pod( $pod );
-			} catch ( Exception $e ) {
+			} catch ( Throwable $exception ) {
 				// Do nothing.
 			}
 		}
@@ -124,7 +135,7 @@ class Recover {
 			$recovery_result = $results['maybe_setup_group_if_no_groups'];
 
 			$messages[] = sprintf(
-				'<h4>%1$s</h4><ul><li>%2$s</li></ul>',
+				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Setup group if there were no groups', 'pods' ),
 				esc_html( $recovery_result )
 			);
@@ -135,7 +146,7 @@ class Recover {
 			$recovery_result = array_map( 'esc_html', $recovery_result );
 
 			$messages[] = sprintf(
-				'<h4>%1$s</h4><ul><li>%2$s</li></ul>',
+				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Resolved group conflicts', 'pods' ),
 				implode( '</li><li>', $recovery_result )
 			);
@@ -146,7 +157,7 @@ class Recover {
 			$recovery_result = array_map( 'esc_html', $recovery_result );
 
 			$messages[] = sprintf(
-				'<h4>%1$s</h4><ul><li>%2$s</li></ul>',
+				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Resolved field conflicts', 'pods' ),
 				implode( '</li><li>', $recovery_result )
 			);
@@ -157,7 +168,7 @@ class Recover {
 			$recovery_result = array_map( 'esc_html', $recovery_result );
 
 			$messages[] = sprintf(
-				'<h4>%1$s</h4><ul><li>%2$s</li></ul>',
+				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Reassigned fields with invalid groups', 'pods' ),
 				implode( '</li><li>', $recovery_result )
 			);
@@ -168,8 +179,30 @@ class Recover {
 			$recovery_result = array_map( 'esc_html', $recovery_result );
 
 			$messages[] = sprintf(
-				'<h4>%1$s</h4><ul><li>%2$s</li></ul>',
+				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Reassigned orphan fields', 'pods' ),
+				implode( '</li><li>', $recovery_result )
+			);
+		}
+
+		if ( ! empty( $results['maybe_fix_fields_with_invalid_field_type'] ) ) {
+			$recovery_result = $results['maybe_fix_fields_with_invalid_field_type'];
+			$recovery_result = array_map( 'esc_html', $recovery_result );
+
+			$messages[] = sprintf(
+				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
+				esc_html__( 'Fixed fields with invalid field type', 'pods' ),
+				implode( '</li><li>', $recovery_result )
+			);
+		}
+
+		if ( ! empty( $this->errors ) ) {
+			$recovery_result = $this->errors;
+			$recovery_result = array_map( 'esc_html', $recovery_result );
+
+			$messages[] = sprintf(
+				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
+				esc_html__( 'Recovery errors', 'pods' ),
 				implode( '</li><li>', $recovery_result )
 			);
 		}
@@ -199,10 +232,10 @@ class Recover {
 			return null;
 		}
 
-		$label = __( 'Details', 'pods' );
+		$group_label = __( 'Details', 'pods' );
 
 		if ( in_array( $pod->get_type(), [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
-			$label = __( 'More Fields', 'pods' );
+			$group_label = __( 'More Fields', 'pods' );
 		}
 
 		/**
@@ -216,23 +249,30 @@ class Recover {
 		 * @param string  $type   The type of Pod.
 		 * @param string  $name   Name of the Pod.
 		 */
-		$label = apply_filters( 'pods_meta_default_box_title', $label, $pod, $pod->get_fields(), $pod->get_type(), $pod->get_name() );
+		$group_label = apply_filters( 'pods_meta_default_box_title', $group_label, $pod, $pod->get_fields(), $pod->get_type(), $pod->get_name() );
 
-		$name  = sanitize_key( pods_js_name( sanitize_title( $label ) ) );
+		$group_name  = sanitize_key( pods_js_name( sanitize_title( $group_label ) ) );
 
 		try {
+			pods_debug( $pod->get_label() );
+			pods_debug( 'setting up first group' );
+
 			// Setup first group.
 			$group_id = $this->api->save_group( [
 				'pod'   => $pod,
-				'name'  => $name,
-				'label' => $label,
+				'name'  => $group_name,
+				'label' => $group_label,
 			] );
+
+			pods_debug( compact( 'group_id' ) );
 
 			if ( $group_id && is_numeric( $group_id ) ) {
 				return $group_id;
 			}
-		} catch ( Exception $exception ) {
-			// Nothing to do for now.
+
+			throw new Exception( __( 'Failed to create new default group.', 'pods' ) );
+		} catch ( Throwable $exception ) {
+			$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $group_name . ')';
 		}
 
 		return null;
@@ -252,17 +292,18 @@ class Recover {
 		global $wpdb;
 
 		$sql = "
-			SELECT
+			SELECT DISTINCT
 				`primary`.`ID`,
 				`primary`.`post_name`
-			FROM `$wpdb->posts}` AS `primary`
-			LEFT JOIN `$wpdb->posts}` AS `duplicate`
+			FROM `{$wpdb->posts}` AS `primary`
+			LEFT JOIN `{$wpdb->posts}` AS `duplicate`
 				ON `duplicate`.`post_name` = `primary`.`post_name`
-				       AND `duplicate`.`ID` != `primary`.`ID`
 			WHERE
 				`primary`.`post_type` = %s
 				AND `primary`.`post_parent` = %d
-				AND `duplicate`.`post_type` = %s
+				AND `duplicate`.`ID` != `primary`.`ID`
+				AND `duplicate`.`post_type` = `primary`.`post_type`
+				AND `duplicate`.`post_parent` = `primary`.`post_parent`
 			ORDER BY `primary`.`ID`
 		";
 
@@ -273,6 +314,7 @@ class Recover {
 					'_pods_group',
 					$pod->get_id(),
 					'_pods_group',
+					$pod->get_id(),
 				]
 			)
 		);
@@ -287,9 +329,13 @@ class Recover {
 			try {
 				$group = $this->api->load_group( [ 'id' => $duplicate_group->ID ] );
 
-				$groups_to_resolve[ $duplicate_group->post_name ][] = $group;
-			} catch ( Exception $exception ) {
-				// Nothing to do for now.
+				if ( $group ) {
+					$groups_to_resolve[ $duplicate_group->post_name ][] = $group;
+				} else {
+					throw new Exception( __( 'Failed to load duplicate group to resolve.', 'pods' ) );
+				}
+			} catch ( Throwable $exception ) {
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $duplicate_group->post_name . ' - #' . $duplicate_group->ID . ')';
 			}
 		}
 
@@ -309,10 +355,10 @@ class Recover {
 						'pod_data' => $pod,
 						'group'    => $group,
 						'new_name' => $group_name . '_' . $group->get_id(),
-					], false );
+					] );
 
 					$resolved_groups[] = sprintf(
-						'%1$s (%2$s: %3$s | %4$s: %5$d | %6$s: %7$s)',
+						'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',
 						$group->get_label(),
 						__( 'Old Name', 'pods' ),
 						$group_name,
@@ -321,8 +367,8 @@ class Recover {
 						__( 'ID', 'pods' ),
 						$group->get_id()
 					);
-				} catch ( Exception $exception ) {
-					// Nothing to do for now.
+				} catch ( Throwable $exception ) {
+					$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $group->get_name() . ' - #' . $group->get_id() . ')';
 				}
 			}
 		}
@@ -344,17 +390,18 @@ class Recover {
 		global $wpdb;
 
 		$sql = "
-			SELECT
+			SELECT DISTINCT
 				`primary`.`ID`,
 				`primary`.`post_name`
-			FROM `$wpdb->posts}` AS `primary`
-			LEFT JOIN `$wpdb->posts}` AS `duplicate`
+			FROM `{$wpdb->posts}` AS `primary`
+			LEFT JOIN `{$wpdb->posts}` AS `duplicate`
 				ON `duplicate`.`post_name` = `primary`.`post_name`
-				       AND `duplicate`.`ID` != `primary`.`ID`
 			WHERE
 				`primary`.`post_type` = %s
 				AND `primary`.`post_parent` = %d
-				AND `duplicate`.`post_type` = %s
+				AND `duplicate`.`ID` != `primary`.`ID`
+				AND `duplicate`.`post_type` = `primary`.`post_type`
+				AND `duplicate`.`post_parent` = `primary`.`post_parent`
 			ORDER BY `primary`.`ID`
 		";
 
@@ -364,7 +411,6 @@ class Recover {
 				[
 					'_pods_field',
 					$pod->get_id(),
-					'_pods_field',
 				]
 			)
 		);
@@ -379,9 +425,13 @@ class Recover {
 			try {
 				$field = $this->api->load_field( [ 'id' => $duplicate_field->ID ] );
 
-				$fields_to_resolve[ $duplicate_field->post_name ][] = $field;
-			} catch ( Exception $exception ) {
-				// Nothing to do for now.
+				if ( $field ) {
+					$fields_to_resolve[ $duplicate_field->post_name ][] = $field;
+				} else {
+					throw new Exception( __( 'Failed to load duplicate field to resolve.', 'pods' ) );
+				}
+			} catch ( Throwable $exception ) {
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $duplicate_field->post_name . ' - #' . $duplicate_field->ID . ')';
 			}
 		}
 
@@ -401,10 +451,10 @@ class Recover {
 						'pod_data' => $pod,
 						'field'    => $field,
 						'new_name' => $field_name . '_' . $field->get_id(),
-					], false );
+					] );
 
 					$resolved_fields[] = sprintf(
-						'%1$s (%2$s: %3$s | %4$s: %5$d | %6$s: %7$s)',
+						'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',
 						$field->get_label(),
 						__( 'Old Name', 'pods' ),
 						$field_name,
@@ -413,8 +463,8 @@ class Recover {
 						__( 'ID', 'pods' ),
 						$field->get_id()
 					);
-				} catch ( Exception $exception ) {
-					// Nothing to do for now.
+				} catch ( Throwable $exception ) {
+					$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
 				}
 			}
 		}
@@ -494,9 +544,9 @@ class Recover {
 					'pod_data'     => $pod,
 					'field'        => $field,
 					'new_group_id' => $group_id,
-				], false );
+				] );
 
-				$field->set_arg( 'group_id', $group_id );
+				$field->set_arg( 'group', $group_id );
 
 				$reassigned_fields[] = sprintf(
 					'%1$s (Name: %2$s | ID: %3$d)',
@@ -504,12 +554,67 @@ class Recover {
 					$field->get_name(),
 					$field->get_id()
 				);
-			} catch ( Exception $exception ) {
-				// Nothing to do for now.
+			} catch ( Throwable $exception ) {
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
 			}
 		}
 
 		return $reassigned_fields;
+	}
+
+	/**
+	 * Maybe fix fields with invalid field type.
+	 *
+	 * @since 2.9.4
+	 *
+	 * @param Pod $pod The Pod object.
+	 *
+	 * @return string[] The label, name, and ID for each field fixed.
+	 */
+	protected function maybe_fix_fields_with_invalid_field_type( Pod $pod ) {
+		$supported_field_types = PodsForm::field_types_list();
+
+		$fields = $pod->get_fields( [
+			'fallback_mode' => false,
+			'meta_query'    => [
+				'relation' => 'OR',
+				[
+					'key'     => 'type',
+					'value'   => $supported_field_types,
+					'compare' => 'NOT IN',
+				],
+				[
+					'key'     => 'type',
+					'compare' => 'NOT EXISTS',
+				],
+			],
+		] );
+
+		$fixed_fields = [];
+
+		foreach ( $fields as $field ) {
+			try {
+				$this->api->save_field( [
+					'id'       => $field->get_id(),
+					'pod_data' => $pod,
+					'field'    => $field,
+					'type'     => 'text',
+				] );
+
+				$field->set_arg( 'type', 'text' );
+
+				$fixed_fields[] = sprintf(
+					'%1$s (Name: %2$s | ID: %3$d)',
+					$field->get_label(),
+					$field->get_name(),
+					$field->get_id()
+				);
+			} catch ( Throwable $exception ) {
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
+			}
+		}
+
+		return $fixed_fields;
 	}
 
 }

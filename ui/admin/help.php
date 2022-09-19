@@ -13,6 +13,15 @@
 			<li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank" rel="noopener noreferrer">GitHub</a>.', 'pods' ); ?></li>
 
 			<li><?php _e( 'Pods is open source, so you can get into the code and submit your own fixes or features. We would love to help you contribute on our project over on our <a href="https://github.com/pods-framework/pods/blob/main/docs/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">GitHub</a>', 'pods'); ?>.</li>
+
+			<li><?php
+				echo sprintf(
+					// translators: %1$s: The opening tag for the link; %2$s: The ending tag for the link.
+					esc_html__( 'Check out the complete list of %1$sFree and Premium add-ons%2$s to explore great features and integrations.', 'pods'),
+					'<a href="https://pods.io/plugins/" target="_blank" rel="noopener noreferrer">',
+					'</a>'
+				);
+			?></li>
 		</ul>
 
 		<hr />

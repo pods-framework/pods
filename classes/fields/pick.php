@@ -2743,8 +2743,6 @@ class PodsField_Pick extends PodsField {
 				$ids = array();
 
 				if ( ! empty( $results ) ) {
-					$display_filter = pods_v( 'display_filter', pods_v( $search_data->field_index, $search_data->object_fields ) );
-
 					foreach ( $results as $result ) {
 						$result      = get_object_vars( $result );
 						$field_id    = $search_data->field_id;
@@ -2770,6 +2768,8 @@ class PodsField_Pick extends PodsField {
 							$object      = $result['taxonomy'];
 							$object_type = 'taxonomy';
 						}
+
+						$display_filter = pods_v( 'display_filter', pods_v( $field_index, $search_data->object_fields ) );
 
 						if ( 0 < strlen( $display_filter ) ) {
 							$display_filter_args = pods_v( 'display_filter_args', pods_v( $field_index, $search_data->pod_data['object_fields'] ) );

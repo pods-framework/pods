@@ -147,6 +147,17 @@ function pods_message( $message, $type = null, $return = false ) {
 $GLOBALS['pods_errors'] = array();
 
 /**
+ * The default exception handler for Pods errors.
+ *
+ * @since 2.9.4
+ *
+ * @param string|array $error The error message(s) to be thrown / displayed.
+ */
+function pods_error_exception( $error ) {
+	pods_error( $error, 'final_exception' );
+}
+
+/**
  * Error Handling which throws / displays errors
  *
  * @param string|array        $error The error message(s) to be thrown / displayed.
@@ -178,10 +189,14 @@ function pods_error( $error, $obj = null ) {
 	}
 
 	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		$error_mode = 'exception';
+
+		if ( 'final_exception' === $display_errors ) {
+			$error_mode = 'exit';
+		}
+
 		/** @var Exception $error */
 		$error = $error->getMessage();
-
-		$error_mode = 'exception';
 	}
 
 	/**
@@ -208,15 +223,6 @@ function pods_error( $error, $obj = null ) {
 	 * @param object|boolean|string|null $obj
 	 */
 	$error_mode = apply_filters( 'pods_error_mode', $error_mode, $error, $obj );
-
-	/**
-	 * Allow filtering whether to force the error mode in cases where multiple exceptions have been used.
-	 *
-	 * @since 2.8.11
-	 *
-	 * @param bool $error_mode_force Whether to force the error mode in cases where multiple exceptions have been used.
-	 */
-	$error_mode_force = apply_filters( 'pods_error_mode_force', false );
 
 	if ( is_array( $error ) ) {
 		$error = array_map( 'wp_kses_post', $error );
@@ -251,13 +257,7 @@ function pods_error( $error, $obj = null ) {
 		$wp_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 	}//end if
 
-	$last_error = $pods_errors;
-
 	$pods_errors = array();
-
-	if ( $last_error === $error && 'exception' === $error_mode && ! $error_mode_force ) {
-		$error_mode = 'exit';
-	}
 
 	// Support testing debug messages.
 	if ( function_exists( 'codecept_debug' ) ) {
@@ -286,7 +286,7 @@ function pods_error( $error, $obj = null ) {
 			$exception_fallback_enabled = apply_filters( 'pods_error_exception_fallback_enabled', true, $error );
 
 			if ( $exception_fallback_enabled ) {
-				set_exception_handler( 'pods_error' );
+				set_exception_handler( 'pods_error_exception' );
 			}
 
 			throw new Exception( $error );

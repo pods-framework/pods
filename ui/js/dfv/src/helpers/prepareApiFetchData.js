@@ -4,6 +4,11 @@
  * @returns object
  */
 const prepareApiFetchData = ( data ) => {
+	// Only process objects.
+	if ( 'object' !== typeof data ) {
+		return data;
+	}
+
 	// Map true/false to 1/0 in data because the API will not send through true/false values to the request.
 	Object.entries( data ).forEach( ( [ key, value ] ) => {
 		if ( 'boolean' === typeof value ) {

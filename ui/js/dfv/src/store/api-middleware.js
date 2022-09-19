@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 
 import { CURRENT_POD_ACTIONS } from 'dfv/src/store/constants';
-import prepareApiFetchData from "dfv/src/helpers/prepareApiFetchData";
+import prepareApiFetchData from 'dfv/src/helpers/prepareApiFetchData';
 
 const {
 	API_REQUEST,

@@ -1,10 +1,47 @@
 <?php
+
+use Pods\Tools\Recover;
+
 global $wpdb;
 
 $pods_api = pods_api();
 
+$all_pods = $pods_api->load_pods();
+
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
-	if ( isset( $_POST['pods_recreate_tables'] ) ) {
+	if ( isset( $_POST['pods_recover_pod'] ) ) {
+		$pod_name = pods_v( 'pods_field_recover_pod', 'post' );
+
+		if ( is_array( $pod_name ) ) {
+			$pod_name = $pod_name[0];
+		}
+
+		$pod_name = sanitize_text_field( $pod_name );
+
+		if ( empty( $pod_name ) ) {
+			pods_message( __( 'No Pod selected.', 'pods' ), 'error' );
+		} else {
+			if ( '__all_pods' === $pod_name ) {
+				$pods_to_recover = wp_list_pluck( $all_pods, 'name' );
+			} else {
+				$pods_to_recover = [ $pod_name ];
+			}
+
+			foreach ( $pods_to_recover as $pod_to_recover ) {
+				$pod = $pods_api->load_pod( [ 'name' => $pod_to_recover ], false );
+
+				if ( empty( $pod ) ) {
+					pods_message( __( 'Pod not found.', 'pods' ) . ' (' . $pod_to_recover . ')', 'error' );
+				} else {
+					$recover = pods_container( Recover::class );
+
+					$results = $recover->recover_groups_and_fields_for_pod( $pod, 'full' );
+
+					pods_message( $results['message_html'] );
+				}
+			}
+		}
+	} elseif ( isset( $_POST['pods_recreate_tables'] ) ) {
 		pods_upgrade()->delta_tables();
 
 		pods_redirect( pods_query_arg( array( 'pods_recreate_tables_success' => 1 ), array( 'page', 'tab' ) ) );
@@ -12,8 +49,6 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 } elseif ( 1 === (int) pods_v( 'pods_recreate_tables_success' ) ) {
 	pods_message( 'Pods tables have been recreated.' );
 }
-
-$all_pods = $pods_api->load_pods();
 ?>
 
 <h3><?php esc_html_e( 'Recover Groups and Fields', 'pods' ); ?></h3>
@@ -29,26 +64,16 @@ $all_pods = $pods_api->load_pods();
 </ul>
 
 <?php
-$recover_pods = [];
+$recover_pods = [
+	'__all_pods' => '-- ' . __( 'Run Recovery for All Pods', 'pods' ) . ' --',
+];
 
 foreach ( $all_pods as $pod ) {
 	if ( 'post_type' !== $pod->get_object_storage_type() ) {
 		continue;
 	}
 
-	$redirect_url = pods_query_arg(
-		[
-			'page'                          => 'pods',
-			'action'                        => 'edit',
-			'name'                          => $pod->get_name(),
-			'pods_debug_find_orphan_fields' => 1,
-		],
-		null,
-		null,
-		admin_url( 'admin.php' )
-	);
-
-	$recover_pods[ $redirect_url ] = sprintf(
+	$recover_pods[ $pod->get_name() ] = sprintf(
 		'%1$s (%2$s)',
 		$pod->get_label(),
 		$pod->get_name()
@@ -74,13 +99,16 @@ asort( $recover_pods );
 	$field_prefix      = 'pods_field_';
 	$field_row_classes = '';
 	$id                = '';
+	$value_callback    = static function( $field_name, $id, $field, $pod ) use ( $field_prefix ) {
+		return pods_v( $field_prefix . $field_name, 'post', '' );
+	};
 
 	pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 ?>
 </table>
 
 <p class="submit">
-	<input type="submit" class="button button-primary" name="pods_recover_pod_submit"
+	<input type="submit" class="button button-primary" name="pods_recover_pod"
 		value="<?php esc_attr_e( 'Recover Groups and Fields', 'pods' ); ?> " />
 </p>
 

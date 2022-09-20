@@ -45,7 +45,7 @@ class Repair {
 		$is_migrated     = 1 === (int) $pod->get_arg( '_migrated_28' );
 
 		// Maybe set up a new group if no groups are found for the Pod.
-		$group_id = $this->maybe_setup_group_if_no_groups( $pod );
+		$group_id = $this->maybe_setup_group_if_no_groups( $pod, $mode );
 
 		$results = [];
 
@@ -219,17 +219,31 @@ class Repair {
 	 *
 	 * @since 2.9.4
 	 *
-	 * @param Pod $pod The Pod object.
+	 * @param Pod    $pod  The Pod object.
+	 * @param string $mode The repair mode (upgrade or full).
 	 *
 	 * @return int|null The group ID if created, otherwise null if repair not needed.
 	 */
-	protected function maybe_setup_group_if_no_groups( Pod $pod ) {
+	protected function maybe_setup_group_if_no_groups( Pod $pod, $mode ) {
 		$groups = $pod->get_groups( [
 			'fallback_mode' => false,
 		] );
 
+		// Groups exist, no need to create a group.
 		if ( ! empty( $groups ) ) {
 			return null;
+		}
+
+		// For upgrade mode, we create the first group even if there are no fields.
+		if ( 'upgrade' !== $mode ) {
+			$fields = $pod->get_fields( [
+				'fallback_mode' => false,
+			] );
+
+			// No fields, no need to create a group.
+			if ( empty( $fields ) ) {
+				return null;
+			}
 		}
 
 		$group_label = __( 'Details', 'pods' );

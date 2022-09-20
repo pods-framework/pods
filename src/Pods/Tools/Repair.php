@@ -11,11 +11,11 @@ use Pods\Whatsit\Group;
 use Pods\Whatsit\Pod;
 
 /**
- * Recover tool functionality.
+ * Repair tool functionality.
  *
  * @since 2.9.4
  */
-class Recover {
+class Repair {
 
 	/**
 	 * @var PodsAPI
@@ -28,16 +28,16 @@ class Recover {
 	private $errors = [];
 
 	/**
-	 * Recover Groups and Fields for a Pod.
+	 * Repair Groups and Fields for a Pod.
 	 *
 	 * @since 2.9.4
 	 *
 	 * @param Pod    $pod  The Pod object.
-	 * @param string $mode The recover mode (upgrade or full).
+	 * @param string $mode The repair mode (upgrade or full).
 	 *
-	 * @return array The results with information about the recovery done.
+	 * @return array The results with information about the repair done.
 	 */
-	public function recover_groups_and_fields_for_pod( Pod $pod, $mode ) {
+	public function repair_groups_and_fields_for_pod( Pod $pod, $mode ) {
 		$this->api    = pods_api();
 		$this->errors = [];
 
@@ -110,12 +110,12 @@ class Recover {
 	}
 
 	/**
-	 * Get the message HTML from the recovery results.
+	 * Get the message HTML from the repair results.
 	 *
 	 * @since 2.9.4
 	 *
 	 * @param Pod   $pod  The Pod object.
-	 * @param array $results The recovery results.
+	 * @param array $results The repair results.
 	 *
 	 * @return string The message HTML.
 	 */
@@ -125,90 +125,90 @@ class Recover {
 				'<h3>%s</h3>',
 				// translators: The Pod label.
 				sprintf(
-					esc_html__( 'Recovery results for %s', 'pods' ),
+					esc_html__( 'Repair results for %s', 'pods' ),
 					$pod->get_label() . ' (' . $pod->get_name() . ')'
 				)
 			),
 		];
 
 		if ( ! empty( $results['maybe_setup_group_if_no_groups'] ) ) {
-			$recovery_result = $results['maybe_setup_group_if_no_groups'];
+			$repair_result = $results['maybe_setup_group_if_no_groups'];
 
 			$messages[] = sprintf(
 				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Setup group if there were no groups', 'pods' ),
-				esc_html( $recovery_result )
+				esc_html( $repair_result )
 			);
 		}
 
 		if ( ! empty( $results['maybe_resolve_group_conflicts'] ) ) {
-			$recovery_result = $results['maybe_resolve_group_conflicts'];
-			$recovery_result = array_map( 'esc_html', $recovery_result );
+			$repair_result = $results['maybe_resolve_group_conflicts'];
+			$repair_result = array_map( 'esc_html', $repair_result );
 
 			$messages[] = sprintf(
 				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Resolved group conflicts', 'pods' ),
-				implode( '</li><li>', $recovery_result )
+				implode( '</li><li>', $repair_result )
 			);
 		}
 
 		if ( ! empty( $results['maybe_resolve_field_conflicts'] ) ) {
-			$recovery_result = $results['maybe_resolve_field_conflicts'];
-			$recovery_result = array_map( 'esc_html', $recovery_result );
+			$repair_result = $results['maybe_resolve_field_conflicts'];
+			$repair_result = array_map( 'esc_html', $repair_result );
 
 			$messages[] = sprintf(
 				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Resolved field conflicts', 'pods' ),
-				implode( '</li><li>', $recovery_result )
+				implode( '</li><li>', $repair_result )
 			);
 		}
 
 		if ( ! empty( $results['maybe_reassign_fields_with_invalid_groups'] ) ) {
-			$recovery_result = $results['maybe_reassign_fields_with_invalid_groups'];
-			$recovery_result = array_map( 'esc_html', $recovery_result );
+			$repair_result = $results['maybe_reassign_fields_with_invalid_groups'];
+			$repair_result = array_map( 'esc_html', $repair_result );
 
 			$messages[] = sprintf(
 				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Reassigned fields with invalid groups', 'pods' ),
-				implode( '</li><li>', $recovery_result )
+				implode( '</li><li>', $repair_result )
 			);
 		}
 
 		if ( ! empty( $results['maybe_reassign_orphan_fields'] ) ) {
-			$recovery_result = $results['maybe_reassign_orphan_fields'];
-			$recovery_result = array_map( 'esc_html', $recovery_result );
+			$repair_result = $results['maybe_reassign_orphan_fields'];
+			$repair_result = array_map( 'esc_html', $repair_result );
 
 			$messages[] = sprintf(
 				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Reassigned orphan fields', 'pods' ),
-				implode( '</li><li>', $recovery_result )
+				implode( '</li><li>', $repair_result )
 			);
 		}
 
 		if ( ! empty( $results['maybe_fix_fields_with_invalid_field_type'] ) ) {
-			$recovery_result = $results['maybe_fix_fields_with_invalid_field_type'];
-			$recovery_result = array_map( 'esc_html', $recovery_result );
+			$repair_result = $results['maybe_fix_fields_with_invalid_field_type'];
+			$repair_result = array_map( 'esc_html', $repair_result );
 
 			$messages[] = sprintf(
 				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
 				esc_html__( 'Fixed fields with invalid field type', 'pods' ),
-				implode( '</li><li>', $recovery_result )
+				implode( '</li><li>', $repair_result )
 			);
 		}
 
 		if ( ! empty( $this->errors ) ) {
-			$recovery_result = $this->errors;
-			$recovery_result = array_map( 'esc_html', $recovery_result );
+			$repair_result = $this->errors;
+			$repair_result = array_map( 'esc_html', $repair_result );
 
 			$messages[] = sprintf(
 				'<h4>%1$s</h4><ul class="ul-disc"><li>%2$s</li></ul>',
-				esc_html__( 'Recovery errors', 'pods' ),
-				implode( '</li><li>', $recovery_result )
+				esc_html__( 'Repair errors', 'pods' ),
+				implode( '</li><li>', $repair_result )
 			);
 		}
 
 		if ( 1 === count( $messages ) ) {
-			$messages[] = esc_html__( 'No recovery actions were needed.', 'pods' );
+			$messages[] = esc_html__( 'No repair actions were needed.', 'pods' );
 		}
 
 		return wpautop( implode( "\n\n", $messages ) );
@@ -221,7 +221,7 @@ class Recover {
 	 *
 	 * @param Pod $pod The Pod object.
 	 *
-	 * @return int|null The group ID if created, otherwise null if recovery not needed.
+	 * @return int|null The group ID if created, otherwise null if repair not needed.
 	 */
 	protected function maybe_setup_group_if_no_groups( Pod $pod ) {
 		$groups = $pod->get_groups( [
@@ -254,8 +254,25 @@ class Recover {
 		$group_name  = sanitize_key( pods_js_name( sanitize_title( $group_label ) ) );
 
 		try {
-			pods_debug( $pod->get_label() );
-			pods_debug( 'setting up first group' );
+			$new_group_name = $group_name;
+
+			$counter = 2;
+
+			do {
+				$conflicting_group_found = $this->api->load_group( [
+					'pod'  => $pod,
+					'name' => $group_name,
+				] );
+
+				if ( $conflicting_group_found ) {
+					$group_name = $new_group_name . '-' . $counter;
+				}
+
+				$counter ++;
+			} while ( $this->api->load_group( [
+				'pod'  => $pod,
+				'name' => $group_name,
+			] ) );
 
 			// Setup first group.
 			$group_id = $this->api->save_group( [
@@ -263,8 +280,6 @@ class Recover {
 				'name'  => $group_name,
 				'label' => $group_label,
 			] );
-
-			pods_debug( compact( 'group_id' ) );
 
 			if ( $group_id && is_numeric( $group_id ) ) {
 				return $group_id;

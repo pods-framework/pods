@@ -1,6 +1,6 @@
 <?php
 
-use Pods\Tools\Recover;
+use Pods\Tools\Repair;
 
 global $wpdb;
 
@@ -9,8 +9,8 @@ $pods_api = pods_api();
 $all_pods = $pods_api->load_pods();
 
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
-	if ( isset( $_POST['pods_recover_pod'] ) ) {
-		$pod_name = pods_v( 'pods_field_recover_pod', 'post' );
+	if ( isset( $_POST['pods_repair_pod'] ) ) {
+		$pod_name = pods_v( 'pods_field_repair_pod', 'post' );
 
 		if ( is_array( $pod_name ) ) {
 			$pod_name = $pod_name[0];
@@ -22,20 +22,28 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 			pods_message( __( 'No Pod selected.', 'pods' ), 'error' );
 		} else {
 			if ( '__all_pods' === $pod_name ) {
-				$pods_to_recover = wp_list_pluck( $all_pods, 'name' );
+				$pods_to_repair = [];
+
+				foreach ( $all_pods as $pod ) {
+					if ( 'post_type' !== $pod->get_object_storage_type() ) {
+						continue;
+					}
+
+					$pods_to_repair[] = $pod->get_name();
+				}
 			} else {
-				$pods_to_recover = [ $pod_name ];
+				$pods_to_repair = [ $pod_name ];
 			}
 
-			foreach ( $pods_to_recover as $pod_to_recover ) {
-				$pod = $pods_api->load_pod( [ 'name' => $pod_to_recover ], false );
+			foreach ( $pods_to_repair as $pod_to_repair ) {
+				$pod = $pods_api->load_pod( [ 'name' => $pod_to_repair ], false );
 
 				if ( empty( $pod ) ) {
-					pods_message( __( 'Pod not found.', 'pods' ) . ' (' . $pod_to_recover . ')', 'error' );
+					pods_message( __( 'Pod not found.', 'pods' ) . ' (' . $pod_to_repair . ')', 'error' );
 				} else {
-					$recover = pods_container( Recover::class );
+					$repair = pods_container( Repair::class );
 
-					$results = $recover->recover_groups_and_fields_for_pod( $pod, 'full' );
+					$results = $repair->repair_groups_and_fields_for_pod( $pod, 'full' );
 
 					pods_message( $results['message_html'] );
 				}
@@ -51,66 +59,73 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 }
 ?>
 
-<h3><?php esc_html_e( 'Recover Groups and Fields', 'pods' ); ?></h3>
+<h3><?php esc_html_e( 'Repair Pod, Groups, and Fields', 'pods' ); ?></h3>
 
-<p><?php esc_html_e( 'This tool will attempt to recover Groups and Fields that do not appear when editing a Pod. After selecting the Pod, you will be redirected to the Edit Pod screen to see the full list of Groups and Fields available after the recovery process.', 'pods' ); ?></p>
+<p><?php esc_html_e( 'This tool will attempt to repair a Pod, Groups, and Fields. When the tool runs you will be provided with a complete list of repairs made.', 'pods' ); ?></p>
 
 <h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
 
 <ul class="ul-disc">
-	<li><?php esc_html_e( 'All conflicted Groups will be auto-renamed to prevent conflict with other registered Groups', 'pods' ); ?></li>
-	<li><?php esc_html_e( 'All conflicted Fields will be auto-renamed to prevent conflict with other registered Fields', 'pods' ); ?></li>
+	<li><?php esc_html_e( 'If the Pod has Fields but no Groups yet, the first Group will be automatically created', 'pods' ); ?></li>
+	<li><?php esc_html_e( 'All Groups with conflicting names will be renamed to prevent conflicts with other registered Groups', 'pods' ); ?></li>
+	<li><?php esc_html_e( 'All Fields with conflicting names will be renamed to prevent conflicts with other registered Fields', 'pods' ); ?></li>
+	<li><?php esc_html_e( 'All orphaned Fields that belong to a Group that no longer exists will be auto-assigned to the first available Group', 'pods' ); ?></li>
 	<li><?php esc_html_e( 'All orphaned Fields that do not belong to a Group will be auto-assigned to the first available Group', 'pods' ); ?></li>
+	<li><?php esc_html_e( 'All Fields that have an invalid Field type set will be changed to Plain Text', 'pods' ); ?></li>
 </ul>
 
 <?php
-$recover_pods = [
-	'__all_pods' => '-- ' . __( 'Run Recovery for All Pods', 'pods' ) . ' --',
-];
+$repair_pods = [];
 
 foreach ( $all_pods as $pod ) {
 	if ( 'post_type' !== $pod->get_object_storage_type() ) {
 		continue;
 	}
 
-	$recover_pods[ $pod->get_name() ] = sprintf(
+	$repair_pods[ $pod->get_name() ] = sprintf(
 		'%1$s (%2$s)',
 		$pod->get_label(),
 		$pod->get_name()
 	);
 }
 
-asort( $recover_pods );
+asort( $repair_pods );
+
+$repair_pods['__all_pods'] = '-- ' . __( 'Run Repair for All Pods', 'pods' ) . ' (' . __( 'Warning: This may be slow on large configurations', 'pods' ) . ') --';
 ?>
 
-<table class="form-table pods-manage-field">
-	<?php
-	$fields = [
-		'recover_pod' => [
-			'name'               => 'recover_pod',
-			'label'              => __( 'Pod', 'pods' ),
-			'type'               => 'pick',
-			'pick_format_type'   => 'single',
-			'pick_format_single' => 'autocomplete',
-			'data'               => $recover_pods,
-		],
-	];
+<?php if ( 1 < count( $repair_pods ) ) : ?>
+	<table class="form-table pods-manage-field">
+		<?php
+		$fields = [
+			'repair_pod' => [
+				'name'               => 'repair_pod',
+				'label'              => __( 'Pod', 'pods' ),
+				'type'               => 'pick',
+				'pick_format_type'   => 'single',
+				'pick_format_single' => 'autocomplete',
+				'data'               => $repair_pods,
+			],
+		];
 
-	$field_prefix      = 'pods_field_';
-	$field_row_classes = '';
-	$id                = '';
-	$value_callback    = static function( $field_name, $id, $field, $pod ) use ( $field_prefix ) {
-		return pods_v( $field_prefix . $field_name, 'post', '' );
-	};
+		$field_prefix      = 'pods_field_';
+		$field_row_classes = '';
+		$id                = '';
+		$value_callback    = static function( $field_name, $id, $field, $pod ) use ( $field_prefix ) {
+			return pods_v( $field_prefix . $field_name, 'post', '' );
+		};
 
-	pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
-?>
-</table>
+		pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+	?>
+	</table>
 
-<p class="submit">
-	<input type="submit" class="button button-primary" name="pods_recover_pod"
-		value="<?php esc_attr_e( 'Recover Groups and Fields', 'pods' ); ?> " />
-</p>
+	<p class="submit">
+		<input type="submit" class="button button-primary" name="pods_repair_pod"
+			value="<?php esc_attr_e( 'Repair Pod, Groups, and Fields', 'pods' ); ?> " />
+	</p>
+<?php else : ?>
+	<p><em><?php esc_html_e( 'No Pods available to repair.', 'pods' ); ?></em></p>
+<?php endif; ?>
 
 <hr />
 

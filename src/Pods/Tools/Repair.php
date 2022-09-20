@@ -576,9 +576,11 @@ class Repair {
 				$field->set_arg( 'group', $group_id );
 
 				$reassigned_fields[] = sprintf(
-					'%1$s (Name: %2$s | ID: %3$d)',
+					'%1$s (%2$s: %3$s | %4$s: %5$d)',
 					$field->get_label(),
+					__( 'Name', 'pods' ),
 					$field->get_name(),
+					__( 'ID', 'pods' ),
 					$field->get_id()
 				);
 			} catch ( Throwable $exception ) {
@@ -621,6 +623,12 @@ class Repair {
 
 		foreach ( $fields as $field ) {
 			try {
+				$old_type = $field->get_type();
+
+				if ( empty( $old_type ) ) {
+					$old_type = __( 'N/A', 'pods' );
+				}
+
 				$this->api->save_field( [
 					'id'       => $field->get_id(),
 					'pod_data' => $pod,
@@ -631,9 +639,13 @@ class Repair {
 				$field->set_arg( 'type', 'text' );
 
 				$fixed_fields[] = sprintf(
-					'%1$s (Name: %2$s | ID: %3$d)',
+					'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',
 					$field->get_label(),
+					__( 'Old Type', 'pods' ),
+					$old_type,
+					__( 'Name', 'pods' ),
 					$field->get_name(),
+					__( 'ID', 'pods' ),
 					$field->get_id()
 				);
 			} catch ( Throwable $exception ) {

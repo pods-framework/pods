@@ -79,7 +79,7 @@
 		pods_view( PODS_DIR . 'ui/admin/help-addons.php', compact( array_keys( get_defined_vars() ) ) );
 		?>
 
-		<h2><?php esc_html_e( 'Free Add-Ons', 'pods' ); ?></h2>
+		<h2><?php esc_html_e( 'Official Free Add-Ons', 'pods' ); ?></h2>
 
 		<?php
 		$addons = [
@@ -218,6 +218,15 @@
 					],
 				],
 			],
+		];
+
+		pods_view( PODS_DIR . 'ui/admin/help-addons.php', compact( array_keys( get_defined_vars() ) ) );
+		?>
+
+		<h2><?php esc_html_e( 'Third-party Free Add-Ons', 'pods' ); ?></h2>
+
+		<?php
+		$addons = [
 			[
 				'label'       => 'Paid Memberships Pro - Pods Add-On',
 				'description' => __( 'Integrates Pods with Paid Memberships Pro', 'pods' ),

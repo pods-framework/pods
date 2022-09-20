@@ -1084,7 +1084,7 @@ class PodsField_Pick extends PodsField {
 		}
 
 		if ( is_array( $options ) ) {
-			$field_name = $options['name'];
+			$field_name = pods_v( 'name', $options );
 		} elseif ( $options instanceof Field ) {
 			$field_name = $options->get_name();
 		} else {

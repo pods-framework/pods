@@ -328,8 +328,6 @@ class Repair {
 				[
 					'_pods_group',
 					$pod->get_id(),
-					'_pods_group',
-					$pod->get_id(),
 				]
 			)
 		);
@@ -466,7 +464,7 @@ class Repair {
 						'pod_data' => $pod,
 						'field'    => $field,
 						'new_name' => $field_name . '_' . $field->get_id(),
-					] );
+					], false );
 
 					$resolved_fields[] = sprintf(
 						'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',

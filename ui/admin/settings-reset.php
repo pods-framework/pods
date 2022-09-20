@@ -147,7 +147,7 @@ asort( $reset_pods );
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe will delete ALL of the content for the Pod you selected.", 'pods' ); ?>
-		<input type="submit" class="button button-primary" name="pods_reset_pod" value="<?php esc_attr_e( 'Reset Pod', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+		<input type="submit" class="button button-primary" name="pods_reset_pod" value=" <?php esc_attr_e( 'Reset Pod', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 <?php else : ?>
 	<p><em><?php esc_html_e( 'No Pods available to reset.', 'pods' ); ?></em></p>

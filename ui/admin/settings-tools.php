@@ -120,8 +120,13 @@ $repair_pods['__all_pods'] = '-- ' . __( 'Run Repair for All Pods', 'pods' ) . '
 	</table>
 
 	<p class="submit">
+		<?php
+		$confirm = esc_html__( 'Are you sure you want to do this?', 'pods' )
+			 . "\n\n" . esc_html__( 'This is a good time to make sure you have a backup.', 'pods' )
+			 . "\n\n" . esc_html__( 'We will be making a few repairs to your configuration that should not be destructive to your data but you should be always have a backup just in case.', 'pods' );
+		?>
 		<input type="submit" class="button button-primary" name="pods_repair_pod"
-			value="<?php esc_attr_e( 'Repair Pod, Groups, and Fields', 'pods' ); ?> " />
+			value=" <?php esc_attr_e( 'Repair Pod, Groups, and Fields', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 <?php else : ?>
 	<p><em><?php esc_html_e( 'No Pods available to repair.', 'pods' ); ?></em></p>

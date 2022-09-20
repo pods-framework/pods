@@ -120,34 +120,38 @@ foreach ( $all_pods as $pod ) {
 asort( $reset_pods );
 ?>
 
-<table class="form-table pods-manage-field">
-	<?php
-	$fields = [
-		'reset_pod' => [
-			'name'               => 'reset_pod',
-			'label'              => __( 'Pod', 'pods' ),
-			'type'               => 'pick',
-			'pick_format_type'   => 'single',
-			'pick_format_single' => 'autocomplete',
-			'data'               => $reset_pods,
-		],
-	];
+<?php if ( ! empty( $reset_pods ) ) : ?>
+	<table class="form-table pods-manage-field">
+		<?php
+		$fields = [
+			'reset_pod' => [
+				'name'               => 'reset_pod',
+				'label'              => __( 'Pod', 'pods' ),
+				'type'               => 'pick',
+				'pick_format_type'   => 'single',
+				'pick_format_single' => 'autocomplete',
+				'data'               => $reset_pods,
+			],
+		];
 
-	$field_prefix      = 'pods_field_';
-	$field_row_classes = '';
-	$id                = '';
-	$value_callback    = static function( $field_name, $id, $field, $pod ) use ( $field_prefix ) {
-		return pods_v( $field_prefix . $field_name, 'post', '' );
-	};
+		$field_prefix      = 'pods_field_';
+		$field_row_classes = '';
+		$id                = '';
+		$value_callback    = static function( $field_name, $id, $field, $pod ) use ( $field_prefix ) {
+			return pods_v( $field_prefix . $field_name, 'post', '' );
+		};
 
-	pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
-?>
-</table>
+		pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+	?>
+	</table>
 
-<p class="submit">
-	<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe will delete ALL of the content for the Pod you selected.", 'pods' ); ?>
-	<input type="submit" class="button button-primary" name="pods_reset_pod" value="<?php esc_attr_e( 'Reset Pod', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
-</p>
+	<p class="submit">
+		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe will delete ALL of the content for the Pod you selected.", 'pods' ); ?>
+		<input type="submit" class="button button-primary" name="pods_reset_pod" value="<?php esc_attr_e( 'Reset Pod', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+	</p>
+<?php else : ?>
+	<p><em><?php esc_html_e( 'No Pods available to reset.', 'pods' ); ?></em></p>
+<?php endif; ?>
 
 <hr />
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
 import {
 	parseFloatWithPodsFormat,
 	formatNumberWithPodsFormat,
@@ -23,7 +24,7 @@ const Currency = ( {
 	const {
 		htmlAttr: htmlAttributes = {},
 		name,
-		readonly: readOnly,
+		read_only: readOnly,
 		currency_decimal_handling: decimalHandling = 'none',
 		currency_decimals: decimalMaxLength = 'auto',
 		currency_format: format,
@@ -60,7 +61,7 @@ const Currency = ( {
 		// Slider input is always format: `9999.99`.
 		if ( isSlider ) {
 			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
-			setFormattedValue( formatNumberWithPodsFormat( value, format, softFormat ) );
+			setFormattedValue( formatNumberWithPodsFormat( value.target.value, format, softFormat ) );
 		} else {
 			setValue( parseFloatWithPodsFormat( event.target.value, format ) );
 			setFormattedValue( event.target.value );
@@ -94,7 +95,7 @@ const Currency = ( {
 					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-currency-slider', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
-					readOnly={ !! readOnly }
+					readOnly={ toBool( readOnly ) }
 					onChange={ handleChange }
 					onBlur={ handleBlur }
 					min={ parseInt( min, 10 ) || undefined }
@@ -131,7 +132,7 @@ const Currency = ( {
 				step={ html5 ? 'any' : undefined }
 				min={ html5 ? ( parseInt( min, 10 ) || undefined ) : undefined }
 				max={ html5 ? ( parseInt( max, 10 ) || undefined ) : undefined }
-				readOnly={ !! readOnly }
+				readOnly={ toBool( readOnly ) }
 				onChange={ handleChange }
 				onBlur={ reformatFormattedValue }
 			/>

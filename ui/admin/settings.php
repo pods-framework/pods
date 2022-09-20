@@ -9,6 +9,7 @@
 
 			$tabs = [
 				'settings' => __( 'Settings', 'pods' ),
+				'tools'    => __( 'Tools', 'pods' ),
 				'reset'    => __( 'Cleanup &amp; Reset', 'pods' ),
 			];
 

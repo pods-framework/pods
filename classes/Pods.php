@@ -594,6 +594,7 @@ class Pods implements Iterator {
 			'pods_callback'                => 'pods',
 			'deprecated'                   => false,
 			'keyed'                        => false,
+			'bypass_map_field_values'      => false,
 			// extra data to send to field handlers.
 			'args'                         => [],
 		];
@@ -889,7 +890,7 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
-			} else {
+			} elseif ( ! $params->bypass_map_field_values ) {
 				// Handle custom/supported value mappings.
 				$map_field_values = pods_container( Map_Field_Values::class );
 
@@ -1147,12 +1148,8 @@ class Pods implements Iterator {
 
 							// No items found.
 							if ( empty( $ids ) ) {
-								// pods_debug( 'No related IDs found! ' . var_export( array( 'id' => $current_field['id'], 'pod_id' => $current_field->get_parent_id(), 'ids' => $ids, 'current_field' => empty( $current_field['id'] ) ? $current_field : 'has field id tho' ), true ) );
-
 								return false;
 							}
-
-							// pods_debug( 'Related IDs found! ' . var_export( array( 'id' => $current_field['id'], 'pod_id' => $current_field->get_parent_id(), 'ids' => $ids ), true ) );
 
 							if ( 0 < $last_limit ) {
 								// @todo This should return array() if not $params->single.
@@ -1214,8 +1211,6 @@ class Pods implements Iterator {
 							if ( ! empty( $table['join'] ) ) {
 								$join = (array) $table['join'];
 							}
-
-							// pods_debug( 'IDs found: ' . var_export( $ids, true ) );
 
 							if ( $table && ( ! empty( $ids ) || ! empty( $table['where'] ) ) ) {
 								foreach ( $ids as $id ) {
@@ -1608,9 +1603,6 @@ class Pods implements Iterator {
 									$value = current( $value );
 								}
 							}//end if
-
-							// pods_debug( 'value' );
-							// pods_debug( compact( 'value', 'data' ) );
 
 							if ( $last_options ) {
 								$last_field_data = $last_options;
@@ -3524,25 +3516,65 @@ class Pods implements Iterator {
 			}
 		}
 
-		$disallowed = array(
-			'system',
-			'exec',
-			'popen',
-			'eval',
+		$disallowed = [
+			// Regex related.
 			'preg_replace',
 			'preg_replace_array',
 			'preg_replace_callback',
 			'preg_replace_callback_array',
 			'preg_match',
 			'preg_match_all',
+			// Eval related.
+			'system',
+			'exec',
+			'eval',
 			'create_function',
+			// File related.
+			'popen',
 			'include',
 			'include_once',
 			'require',
 			'require_once',
-		);
+			'file_get_contents',
+			'file_put_contents',
+			'get_template_part',
+			// Nonce related.
+			'wp_nonce_url',
+			'wp_nonce_field',
+			'wp_create_nonce',
+			'check_admin_referer',
+			'check_ajax_referer',
+			'wp_verify_nonce',
+			// PHP related.
+			'constant',
+			'defined',
+			'get_current_user',
+			'get_defined_constants',
+			'get_defined_functions',
+			'get_defined_vars',
+			'get_extension_funcs',
+			'get_include_path',
+			'get_included_files',
+			'get_loaded_extensions',
+			'get_required_files',
+			'get_resources',
+			'getenv',
+			'getopt',
+			'ini_alter',
+			'ini_get',
+			'ini_get_all',
+			'ini_restore',
+			'ini_set',
+			'php_ini_loaded_file',
+			'php_ini_scanned_files',
+			'php_sapi_name',
+			'php_uname',
+			'phpinfo',
+			'phpversion',
+			'putenv',
+		];
 
-		$allowed = array();
+		$allowed = [];
 
 		/**
 		 * Allows adjusting the disallowed callbacks as needed.

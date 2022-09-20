@@ -2,13 +2,40 @@
 /** @var $pods_init PodsInit */
 global $pods_init, $wpdb;
 
-$relationship_table = $wpdb->prefix . 'podsrel';
+$excluded_pod_types_from_reset = [
+	'user',
+	'media',
+];
+
+$pods_api = pods_api();
 
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
 	if ( isset( $_POST['pods_cleanup_1x'] ) ) {
 		pods_upgrade( '2.0.0' )->cleanup();
 
 		pods_redirect( pods_query_arg( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
+	} elseif ( isset( $_POST['pods_reset_pod'] ) ) {
+		$pod_name = pods_v( 'pods_field_reset_pod', 'post' );
+
+		if ( is_array( $pod_name ) ) {
+			$pod_name = $pod_name[0];
+		}
+
+		$pod_name = sanitize_text_field( $pod_name );
+
+		if ( empty( $pod_name ) ) {
+			pods_message( __( 'No Pod selected.', 'pods' ), 'error' );
+		} else {
+			$pod = $pods_api->load_pod( [ 'name' => $pod_name ], false );
+
+			if ( empty( $pod ) ) {
+				pods_message( __( 'Pod not found.', 'pods' ), 'error' );
+			} else {
+				$pods_api->reset_pod( [], $pod );
+
+				pods_redirect( pods_query_arg( [ 'pods_reset_pod_success' => 1 ], [ 'page', 'tab' ] ) );
+			}
+		}
 	} elseif ( isset( $_POST['pods_reset'] ) ) {
 		$pods_init->reset();
 		$pods_init->setup();
@@ -20,17 +47,13 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 		deactivate_plugins( PODS_DIR . 'init.php' );
 
 		pods_redirect( 'index.php' );
-	} elseif ( isset( $_POST['pods_recreate_tables'] ) ) {
-		pods_upgrade()->delta_tables();
-
-		pods_redirect( pods_query_arg( array( 'pods_recreate_tables_success' => 1 ), array( 'page', 'tab' ) ) );
 	}
+} elseif ( 1 === (int) pods_v( 'pods_reset_pod_success' ) ) {
+	pods_message( 'Pod content has been deleted.' );
 } elseif ( 1 === (int) pods_v( 'pods_reset_success' ) ) {
-	pods_message( 'Pods 2.x settings and data have been reset.' );
+	pods_message( 'Pods settings and data have been reset.' );
 } elseif ( 1 === (int) pods_v( 'pods_cleanup_1x_success' ) ) {
 	pods_message( 'Pods 1.x data has been deleted.' );
-} elseif ( 1 === (int) pods_v( 'pods_recreate_tables_success' ) ) {
-	pods_message( 'Pods tables have been recreated.' );
 }
 
 // Monday Mode
@@ -49,6 +72,90 @@ if ( pods_v_sanitized( 'pods_reset_weekend', 'post', pods_v_sanitized( 'pods_res
 // Please Note:
 $please_note = __( 'Please Note:' );
 
+$all_pods = $pods_api->load_pods();
+?>
+<h3><?php esc_html_e( 'Delete all content for a Pod', 'pods' ); ?></h3>
+
+<p><?php esc_html_e( 'This will delete ALL stored content in the database for your Pod.', 'pods' ); ?></p>
+
+<h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
+
+<ul>
+	<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'Your Pod configuration will remain', 'pods' ); ?></li>
+	<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'Your Group configurations will remain', 'pods' ); ?></li>
+	<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'Your Field configurations will remain', 'pods' ); ?></li>
+	<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'Previously uploaded media will remain in the Media Library but will no longer be attached to their corresponding posts', 'pods' ); ?></li>
+	<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All items for this Pod stored will be deleted from the database', 'pods' ); ?></li>
+	<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All custom fields for the items stored will be deleted from the database', 'pods' ); ?></li>
+	<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All files and relationships for the items stored will be deleted from the database', 'pods' ); ?></li>
+</ul>
+
+<?php
+$reset_pods = [];
+
+foreach ( $all_pods as $pod ) {
+	if ( in_array( $pod->get_type(), $excluded_pod_types_from_reset, true ) ) {
+		continue;
+	}
+
+	$redirect_url = pods_query_arg(
+		[
+			'page'                          => 'pods',
+			'action'                        => 'edit',
+			'name'                          => $pod->get_name(),
+			'pods_debug_find_orphan_fields' => 1,
+		],
+		null,
+		null,
+		admin_url( 'admin.php' )
+	);
+
+	$reset_pods[ $redirect_url ] = sprintf(
+		'%1$s (%2$s)',
+		$pod->get_label(),
+		$pod->get_name()
+	);
+}
+
+asort( $reset_pods );
+?>
+
+<?php if ( ! empty( $reset_pods ) ) : ?>
+	<table class="form-table pods-manage-field">
+		<?php
+		$fields = [
+			'reset_pod' => [
+				'name'               => 'reset_pod',
+				'label'              => __( 'Pod', 'pods' ),
+				'type'               => 'pick',
+				'pick_format_type'   => 'single',
+				'pick_format_single' => 'autocomplete',
+				'data'               => $reset_pods,
+			],
+		];
+
+		$field_prefix      = 'pods_field_';
+		$field_row_classes = '';
+		$id                = '';
+		$value_callback    = static function( $field_name, $id, $field, $pod ) use ( $field_prefix ) {
+			return pods_v( $field_prefix . $field_name, 'post', '' );
+		};
+
+		pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+	?>
+	</table>
+
+	<p class="submit">
+		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe will delete ALL of the content for the Pod you selected.", 'pods' ); ?>
+		<input type="submit" class="button button-primary" name="pods_reset_pod" value=" <?php esc_attr_e( 'Reset Pod', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+	</p>
+<?php else : ?>
+	<p><em><?php esc_html_e( 'No Pods available to reset.', 'pods' ); ?></em></p>
+<?php endif; ?>
+
+<hr />
+
+<?php
 $old_version = get_option( 'pods_version' );
 
 if ( ! empty( $old_version ) ) {
@@ -58,7 +165,7 @@ if ( ! empty( $old_version ) ) {
 	<p><?php esc_html_e( 'This will delete all of your Pods 1.x data, it\'s only recommended if you\'ve verified your data has been properly migrated into Pods 2.x.', 'pods' ); ?></p>
 
 	<p class="submit">
-		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install.", 'pods' ); ?>
+		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe are deleting ALL of the data that surrounds 1.x, resetting it to a clean first install.", 'pods' ); ?>
 		<input type="submit" class="button button-primary" name="pods_cleanup_1x" value=" <?php esc_attr_e( 'Delete Pods 1.x settings and data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 
@@ -82,13 +189,13 @@ if ( ! empty( $old_version ) ) {
 	<p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
 
 	<p class="submit">
-		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back.", 'pods' ); ?>
+		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe are deleting ALL of the data that surrounds 2.x with no turning back.", 'pods' ); ?>
 		<input type="submit" class="button button-primary" name="pods_reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 	<?php
 } else {
 	?>
-	<h3><?php esc_html_e( 'Reset Pods', 'pods' ); ?></h3>
+	<h3><?php esc_html_e( 'Reset Pods entirely', 'pods' ); ?></h3>
 
 	<p><?php esc_html_e( 'This will reset Pods settings, remove all of your Pod configurations, and perform a fresh install.', 'pods' ); ?></p>
 	<h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
@@ -109,7 +216,7 @@ if ( ! empty( $old_version ) ) {
 	</ul>
 
 	<p class="submit">
-		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install.", 'pods' ); ?>
+		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe are deleting ALL of the data that surrounds Pods, resetting it to a clean, first install.", 'pods' ); ?>
 		<input type="submit" class="button button-primary" name="pods_reset" value="<?php esc_attr_e( 'Reset Pods settings and data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 
@@ -136,30 +243,8 @@ if ( ! empty( $old_version ) ) {
 	</ul>
 
 	<p class="submit">
-		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back.", 'pods' ); ?>
+		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe are deleting ALL of the data that surrounds with no turning back.", 'pods' ); ?>
 		<input type="submit" class="button button-primary" name="pods_reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
-	</p>
-
-	<hr />
-
-	<h3><?php esc_html_e( 'Recreate missing tables', 'pods' ); ?></h3>
-
-	<p><?php esc_html_e( 'This will recreate missing tables if there are any that do not exist.', 'pods' ); ?></p>
-	<h4><?php esc_html_e( 'What you can expect', 'pods' ); ?></h4>
-	<ul>
-		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php
-			// translators: %s is the name of the wp_podsrel table in the database.
-			printf( esc_html__( '%s will remain untouched if it already exists', 'pods' ), esc_html( $relationship_table ) );
-			?></li>
-		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'CREATE', 'pods' ); ?>:</strong> <?php
-			// translators: %s is the name of the wp_podsrel table in the database.
-			printf( esc_html__( '%s will be created if it does not exist', 'pods' ), esc_html( $relationship_table ) );
-			?></li>
-	</ul>
-
-	<p class="submit">
-		<?php $confirm = __( "Are you sure you want to do this?", 'pods' ); ?>
-		<input type="submit" class="button button-primary" name="pods_recreate_tables" value=" <?php esc_attr_e( 'Recreate missing tables', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 	<?php
 }//end if

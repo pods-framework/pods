@@ -20,7 +20,7 @@ const BaseInput = ( {
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
-		readonly: readOnly,
+		read_only: readOnly,
 		name,
 	} = fieldConfig;
 
@@ -42,7 +42,7 @@ const BaseInput = ( {
 			maxLength={ 0 < parseInt( maxLength, 10 ) ? parseInt( maxLength, 10 ) : undefined }
 			value={ type !== 'checkbox' ? value : undefined }
 			checked={ type === 'checkbox' ? toBool( value ) : undefined }
-			readOnly={ !! readOnly }
+			readOnly={ toBool( readOnly ) }
 			onChange={ onChange || handleChange }
 			onBlur={ ( event ) => {
 				setHasBlurred();

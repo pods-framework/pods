@@ -343,6 +343,30 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is an autocomplete relationship field.
+	 *
+	 * @since 2.9.4
+	 *
+	 * @return bool Whether this is an autocomplete relationship field.
+	 */
+	public function is_autocomplete_relationship() {
+		if ( ! $this->is_relationship() ) {
+			return false;
+		}
+
+		$autocomplete_formats = [
+			'autocomplete',
+			'list',
+		];
+
+		$single_multi = $this->get_single_multi();
+
+		$format = $this->get_type_arg( '_format_' . $single_multi );
+
+		return in_array( $format, $autocomplete_formats, true );
+	}
+
+	/**
 	 * Determine whether the relationship field is a simple relationship.
 	 *
 	 * @since 2.8.9

@@ -173,6 +173,36 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.9.4 - September 21st, 2022 =
+
+* Feature: New block alert! "Pods Single Item - List Fields" opens the doors towards listing a list of fields in variety of format styles automatically for you. You don't have to write any HTML, just specify the field(s) you'd like to show and let the block do the rest for you. The block will display the Field Labels and the Field Values in a nice readable format. Display formats available include: ul, ol, dl, p, div, and table. Want to show all but a few fields? Just specify which fields to exclude if that's what you're after :) (@sc0ttkclark)
+* Feature: New `{@_all_fields}` magic tag (or `$pod->field('_all_fields')` call) will automatically output all field values for the current Pod item in the specified format which includes showing the Field labels. Specify the format using this syntax: `{@_all_fields.ul}` (default is ul, but ol, dl, p, div, and table are also supported). (@sc0ttkclark)
+* Feature: New `{@_display_fields....}` magic tag (or `$pod->field('_display_fields....')` call) will automatically output all field values for the current Pod item in the specified format which includes showing the Field labels. Specify the format using this syntax: `{@_display_fields.ul.field_name|another_field|related_post:post_title}` (default is ul, but ol, dl, p, div, and table are also supported) -- Separate your fields with a pipe "|" character and then if you need to traverse into any relationship field then just traverse each level with a colon ":" character between those fields. (@sc0ttkclark)
+* Feature: New `pods_data_field()` function allows you to get special data fields directly instead of requiring you to use a full Pods object. (@sc0ttkclark)
+* Feature: New Repair tool on the Pods Admin > Settings > Tools page helps to repair Pod, Group, and Field configuration issues that can be annoying to deal with or would normally require Database access to resolve. (@sc0ttkclark)
+* Enhancement: You can now specify a custom display separator for repeateable fields to use when rendering. #6892 #6890 (@JoryHogeveen)
+* Changed: Resetting a Pod has been removed from the Pods Admin > Edit Pods page, instead of clicking "Delete All Items" there, you can now access this directly from Pods Admin > Settings > Cleanup & Reset as the new "Delete all content for a Pod" option. You can specify the Pod you want to delete content for and it explains exactly what you can expect from running it. (@sc0ttkclark)
+* Tweak: Updated Pods Admin > Help page now lists more add-ons and where to get them / get support for them. (@sc0ttkclark)
+* Fixed: `pods_query_arg()` now correctly excludes all `$_GET` parameters when passing a manual URL into the function. (@sc0ttkclark)
+* Fixed: Legacy WP-CLI commands for Pods are now showing up again, however they will be replaced in a future release with a more comprehensive solution. In the meantime, you can use those commands by calling `wp pods-legacy` and `wp pods-legacy-api`.
+* Fixed: Prevent conflicting filter calls when filtering things other than post_title in the Display Field in Selection List option. #6909 #6907 (@therealgilles, @sc0ttkclark)
+* Fixed: The autocomplete field now lets you click the "X" delete icon properly instead of starting drag-and-drop event. #6905 #6878 (@JoryHogeveen) 
+* Fixed: Resolved saving multiple files to a Media pod which would result in only the first file being saved. #6450 (@sc0ttkclark)
+* Fixed: Resolved TinyMCE media button handling in some cases so that it checks the correct place in the field configuration. #6569 (@sc0ttkclark)
+* Fixed: Resolved overflow issues in small screens for relationship field List View. #6542 (@sc0ttkclark)
+* Fixed: Resolved issue with some TinyMCE scripts not being included on certain screens that use the TinyMCE WYSIWYG field. #6525 (@sc0ttkclark)
+* Fixed: Pod/Group/Field configurations being saved now get their null-ish values (from empty select fields) sent as empty strings so they are not reverted to the previously saved value on next load. #6558 (@sc0ttkclark)
+* Fixed: Pod/Group/Field configurations being saved now get their checkbox boolean options properly enforced as 0/1 and sent so they are not reverted to the default value on next load. #6485 (@sc0ttkclark)
+* Fixed: Fields added manually through the older `pods_group_add()` function now get their field types properly recognized. #6381 (@sc0ttkclark)
+* Fixed: Field config overrides for requiring a field when outputting via PHP are now properly recognized by DFV JS logic for validation and form submission prevention. #6352 (@sc0ttkclark)
+* Fixed: Autocomplete field AJAX calls are now able to correctly reference the field object for code-based registered fields. #6896 (@naveen17797, @sc0ttkclark)
+* Fixed: Display of the buttons in the list fields now properly aligns to the right side. #6894 #6893 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Date range validation now validate sbased on the internal format instead of only on the display format. #6882 #6881 (@JoryHogeveen)
+* Fixed: Number field type with slider inputs now use the correct number references. #6885 #6884 (@JoryHogeveen)
+* Fixed: Currency field type now appears correctly on non-HTML5 fields. #6887 #6886 (@JoryHogeveen)
+* Fixed: Resolved read-only fields functionality which was initially missing from the Pods 2.8+ DFV functionality. #6875 #6583 (@zrothauser, @sc0ttkclark)
+* Fixed: Resolved issue where fields can disappear while being dragged from one group to another. #6873 #6867 (@zrothauser)
+
 = 2.9.3 - August 18th, 2022 =
 
 * Fixed: Resolve additional issue with WPGraphQL on some PHP configurations. #6868 (@sc0ttkclark)

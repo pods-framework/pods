@@ -83,7 +83,7 @@ $do = 'save';
 
 <h3><?php _e( 'Clear Pods Cache', 'pods' ); ?></h3>
 
-<p><?php esc_html_e( 'This tool will clear all of the transients and object cache that are used by Pods and your site.', 'pods' ); ?></p>
+<p><?php esc_html_e( 'This will clear all of the transients and object cache that are used by Pods and your site.', 'pods' ); ?></p>
 
 <p class="submit">
 	<input type="submit" class="button button-primary" name="pods_cache_flush" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />

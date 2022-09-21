@@ -210,6 +210,18 @@ class PodsRESTHandlers {
 			if ( ! $value && ! is_array( $value ) ) {
 				$value = $pod->field( $field_name, $params );
 			}
+
+			$field_mode = pods_v( 'rest_api_field_mode', $pod->pod_data, 'value' );
+
+			// Handle other field modes.
+			if ( 'value_and_render' === $field_mode ) {
+				$value = [
+					'value'    => $value,
+					'rendered' => $pod->display( $field_name ),
+				];
+			} elseif ( 'render' === $field_mode ) {
+				$value = $pod->display( $field_name );
+			}
 		}//end if
 
 		return $value;

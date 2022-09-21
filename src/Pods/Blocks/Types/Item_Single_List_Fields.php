@@ -19,7 +19,7 @@ class Item_Single_List_Fields extends Item_Single {
 	 * @return string
 	 */
 	public function slug() {
-		return 'pods-block-single-all-fields';
+		return 'pods-block-single-list-fields';
 	}
 
 	/**

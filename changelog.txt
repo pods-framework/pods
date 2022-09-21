@@ -14,6 +14,7 @@ Our GitHub has the full list of all prior releases of Pods: https://github.com/p
 * Enhancement: You can now specify a custom display separator for repeateable fields to use when rendering. #6892 #6890 (@JoryHogeveen)
 * Changed: Resetting a Pod has been removed from the Pods Admin > Edit Pods page, instead of clicking "Delete All Items" there, you can now access this directly from Pods Admin > Settings > Cleanup & Reset as the new "Delete all content for a Pod" option. You can specify the Pod you want to delete content for and it explains exactly what you can expect from running it. (@sc0ttkclark)
 * Tweak: Updated Pods Admin > Help page now lists more add-ons and where to get them / get support for them. (@sc0ttkclark)
+* Fixed: Properly convert accents when creating a new pod and using the label to generate the pod name. #6874 (@sc0ttkclark)
 * Fixed: Relationship/file fields that are hidden on the screen will now have all field values referenced instead of only the first value when multiple is enabled for that field. #6913 (@sc0ttkclark)
 * Fixed: `pods_query_arg()` now correctly excludes all `$_GET` parameters when passing a manual URL into the function. (@sc0ttkclark)
 * Fixed: Legacy WP-CLI commands for Pods are now showing up again, however they will be replaced in a future release with a more comprehensive solution. In the meantime, you can use those commands by calling `wp pods-legacy` and `wp pods-legacy-api`.

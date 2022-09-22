@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 import { ColorIndicator, ColorPicker, Dropdown, Button } from '@wordpress/components';
 
+import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './color.scss';
@@ -29,7 +30,7 @@ const Color = ( {
 				value={ value || '' }
 			/>
 
-			{ readOnly ? (
+			{ toBool( readOnly ) ? (
 				<div className="pods-color-buttons__buttons pods-color-buttons__buttons--disabled">
 					<ColorIndicator colorValue={ value || '' } />
 

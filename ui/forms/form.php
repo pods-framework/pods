@@ -184,9 +184,8 @@ if ( 0 < $pod->id() ) {
 	}
 }
 
-$counter = (int) pods_static_cache_get( $pod->pod . '-counter', 'pods-forms' );
-
-$counter ++;
+$counter = pods_static_cache_get( $pod->pod . '-counter', 'pods-forms' );
+$counter = is_numeric( $counter ) ? $counter++ : 0;
 
 pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 ?>

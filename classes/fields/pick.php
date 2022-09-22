@@ -1550,7 +1550,13 @@ class PodsField_Pick extends PodsField {
 		}
 
 		// Cast values in array as string.
-		$values = array_map( 'strval', $values );
+		$values = array_map( static function( $value ) {
+			if ( ! is_scalar( $value ) ) {
+				return $value;
+			}
+
+			return (string) $value;
+		}, $values );
 
 		// If the value array has keys as IDs, let's check for matches from the keys first.
 		if ( ! isset( $values[0] ) ) {
@@ -1558,7 +1564,13 @@ class PodsField_Pick extends PodsField {
 			$key_values = array_keys( $values );
 
 			// Cast key values in array as string.
-			$key_values = array_map( 'strval', $key_values );
+			$key_values = array_map( static function( $value ) {
+				if ( ! is_scalar( $value ) ) {
+					return $value;
+				}
+
+				return (string) $value;
+			}, $values );
 
 			// Let's check to see if the current $item_id matches any key values.
 			if ( in_array( (string) $item_id, $key_values, true ) ) {

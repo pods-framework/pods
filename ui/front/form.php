@@ -80,7 +80,11 @@ $field_prefix = '';
 
 $counter = (int) pods_static_cache_get( $pod->pod . '-counter', 'pods-forms' );
 
+// Shift counter by 1 so that it always starts at 1.
 $counter ++;
+
+// Enforce the counter.
+PodsForm::$form_counter = $counter;
 
 pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 ?>

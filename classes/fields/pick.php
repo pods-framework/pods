@@ -2947,7 +2947,7 @@ class PodsField_Pick extends PodsField {
 
 		$params = (object) $params;
 
-		if ( ! isset( $params->_wpnonce, $params->pod_name, $params->field_name, $params->uri_hash, $params->id ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
+		if ( ! isset( $params->_wpnonce, $params->pod_name, $params->field_name, $params->uri_hash, $params->id ) ) {
 			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
@@ -2994,11 +2994,6 @@ class PodsField_Pick extends PodsField {
 		if ( ! $field ) {
 			pods_error( __( 'Invalid Field configuration', 'pods' ), PodsInit::$admin );
 		}
-
-		$autocomplete_formats = [
-			'autocomplete',
-			'list',
-		];
 
 		if ( ! $field->is_autocomplete_relationship() ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );

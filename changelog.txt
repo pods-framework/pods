@@ -2,6 +2,12 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.5 - September 22nd, 2022 =
+
+* Fixed: Resolved reported issues with Pods Templates saving and loading values incorrectly for Restrict Content fields. #6916 (@sc0ttkclark, @JoryHogeveen)
+* Fixed: Color fields are no longer forced as a read only input. #6915 (@sc0ttkclark)
+* Fixed: Settings forms are no longer out of sync between the form and fields on which form instance they belong to. #6915 (@sc0ttkclark, @JoryHogeveen)
+
 = 2.9.4 - September 21st, 2022 =
 
 * Feature: New block alert! "Pods Single Item - List Fields" opens the doors towards listing a list of fields in variety of format styles automatically for you. You don't have to write any HTML, just specify the field(s) you'd like to show and let the block do the rest for you. The block will display the Field Labels and the Field Values in a nice readable format. Display formats available include: ul, ol, dl, p, div, and table. Want to show all but a few fields? Just specify which fields to exclude if that's what you're after :) (@sc0ttkclark)

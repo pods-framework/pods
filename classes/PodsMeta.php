@@ -1408,6 +1408,10 @@ class PodsMeta {
 					if ( isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
 						$data[ $field['name'] ] = $_POST[ 'pods_meta_' . $field['name'] ];
 					}
+
+					if ( 'boolean' === $field['type'] ) {
+						$data[ $field['name'] ] = (int) $data[ $field['name'] ];
+					}
 				}
 			}
 

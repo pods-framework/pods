@@ -361,7 +361,9 @@ class Field extends Whatsit {
 
 		$single_multi = $this->get_single_multi();
 
-		$format = $this->get_type_arg( '_format_' . $single_multi );
+		$default = 'single' === $single_multi ? 'dropdown' : 'list';
+
+		$format = $this->get_type_arg( 'format_' . $single_multi, $default, true );
 
 		return in_array( $format, $autocomplete_formats, true );
 	}

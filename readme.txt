@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.4
+Stable tag: 2.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -172,6 +172,12 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.5 - September 22nd, 2022 =
+
+* Fixed: Resolved reported issues with Pods Templates saving and loading values incorrectly for Restrict Content fields. #6916 (@sc0ttkclark, @JoryHogeveen)
+* Fixed: Color fields are no longer forced as a read only input. #6915 (@sc0ttkclark)
+* Fixed: Settings forms are no longer out of sync between the form and fields on which form instance they belong to. #6915 (@sc0ttkclark, @JoryHogeveen)
 
 = 2.9.4 - September 21st, 2022 =
 

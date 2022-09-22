@@ -245,17 +245,19 @@
 						const dfvFields = window.PodsDFV.getFieldValuesWithConfigs( podName, itemId, formCounter );
 
 						// @todo Replace this with a future method like window.PodsDFV.getValidationMessagesForFields( podName, itemId, formCounter )
-						Object.entries( dfvFields ).forEach( ( [ fieldName, field ] ) => {
-							// Check for required fields.
-							let fieldRequired = field?.fieldConfig?.required ?? false;
-							let fieldValue = field?.value ?? '';
+						if ( dfvFields && Object.entries( dfvFields ) ) {
+							Object.entries( dfvFields ).forEach( ( [ fieldName, field ] ) => {
+								// Check for required fields.
+								let fieldRequired = field?.fieldConfig?.required ?? false;
+								let fieldValue = field?.value ?? '';
 
-							if ( Boolean( fieldRequired ) && '0' !== fieldRequired ) {
-								if ( '' === fieldValue || null === fieldValue || undefined === fieldValue ) {
-									valid_form = false;
+								if ( Boolean( fieldRequired ) && '0' !== fieldRequired ) {
+									if ( '' === fieldValue || null === fieldValue || undefined === fieldValue ) {
+										valid_form = false;
+									}
 								}
-							}
-						} );
+							} );
+						}
 					}
 
                     if ( 'undefined' != typeof pods_admin_submit_validation )

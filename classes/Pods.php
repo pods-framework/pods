@@ -1142,9 +1142,9 @@ class Pods implements Iterator {
 							$limit = $last_limit;
 
 							// Get related IDs.
-							if ( isset( $current_field['id'] ) ) {
-								$ids = $this->data->api->lookup_related_items( $current_field['id'], $current_field->get_parent_id(), $ids, $current_field );
-							}
+							$lookup_related_items_field = ! empty( $current_field['id'] ) ? $current_field['id'] : $current_field['name'];
+
+							$ids = $this->data->api->lookup_related_items( $lookup_related_items_field, $current_field->get_parent_id(), $ids, $current_field );
 
 							// No items found.
 							if ( empty( $ids ) ) {

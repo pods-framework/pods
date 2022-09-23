@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.7-a-1
+Stable tag: 2.9.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -172,6 +172,15 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.7 - September 23rd, 2022 =
+
+* Enhancement: You can now toggle every checkbox at once on the Packages > Export screen instead of just by section. (@sc0ttkclark)
+* Enhancement: The `Field` object now has a new `is_file()` method to determine whether the field is a recognized file field type (file or avatar). (@sc0ttkclark)
+* Tweak: Post Type Objects and Taxonomy Objects are now available through Relationships and have been moved from the Advanced Relationships component. (@sc0ttkclark)
+* Fixed: Resolve issue with some sites having an asset issue with the Pods Template editor. #6924 #6921 (@JoryHogeveen)
+* Fixed: Code-based file fields now work correctly with the plupload AJAX handler. (@sc0ttkclark)
+* Fixed: Code-based relationship fields now lookup their data correctly in more places like in `Pods::field()`. (@sc0ttkclark)
 
 = 2.9.6 - September 22nd, 2022 =
 

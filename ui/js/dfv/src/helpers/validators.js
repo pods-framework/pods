@@ -113,7 +113,7 @@ export const dateTimeValidator = (
 ) => ( value ) => {
 	if ( ! value ) {
 		if ( ! allowEmpty ) {
-			throw __( 'Invalid date.', 'pods' );
+			throw __( 'Empty date.', 'pods' );
 		}
 		return true;
 	}

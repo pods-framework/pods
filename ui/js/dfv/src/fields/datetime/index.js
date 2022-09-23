@@ -98,6 +98,7 @@ const DateTime = ( {
 		htmlAttr: htmlAttributes = {},
 		name,
 		type = 'datetime', // 'datetime', 'time', or 'date'
+		datetime_allow_empty: allowEmpty,
 		datetime_date_format_moment_js: dateFormatMomentJS,
 		datetime_format: podsFormat,
 		datetime_format_custom: formatCustom,
@@ -268,7 +269,7 @@ const DateTime = ( {
 			setLocalMomentValue( null );
 		}
 
-		setValue( isValueEmpty ? '' : newValue );
+		setValue( isValueEmpty && allowEmpty ? '' : newValue );
 
 		setHasBlurred();
 	};
@@ -301,7 +302,7 @@ const DateTime = ( {
 	};
 
 	useEffect( () => {
-		if ( ! isValueEmpty ) {
+		if ( ! isValueEmpty || ! allowEmpty ) {
 			const rangeValidationRule = {
 				rule: dateTimeValidator( yearRange, getDBFormat() ),
 				condition: () => true,

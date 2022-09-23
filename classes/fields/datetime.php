@@ -379,10 +379,12 @@ class PodsField_DateTime extends PodsField {
 				$format = $this->format_display( $options, false );
 			}
 			$value = $this->convert_date( $value, static::$storage_format, $format );
-		} elseif ( pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
-			$value = static::$empty_value;
-		} else {
+		} elseif ( ! pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
+			// Empty is not allowed.
 			$value = date_i18n( static::$storage_format );
+		} elseif ( $value !== static::$empty_value ) {
+			// Empty is allowed. Set to empty string if the value is different than the default empty value.
+			$value = '';
 		}
 
 		return $value;

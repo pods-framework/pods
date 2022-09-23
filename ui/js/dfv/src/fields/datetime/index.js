@@ -260,14 +260,15 @@ const DateTime = ( {
 		// If the date in the input is not valid, the callback receives the value of
 		// the input a string.
 		if ( moment.isMoment( momentObject ) ) {
-			setValue( formatMomentObjectForDB( momentObject ) );
+			newValue = formatMomentObjectForDB( momentObject );
 			setLocalStringValue( formatMomentObject( momentObject ) );
 			setLocalMomentValue( momentObject );
 		} else {
-			setValue( newValue );
 			setLocalStringValue( newValue );
 			setLocalMomentValue( null );
 		}
+
+		setValue( isValueEmpty ? '' : newValue );
 
 		setHasBlurred();
 	};

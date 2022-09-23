@@ -304,14 +304,12 @@ const DateTime = ( {
 	};
 
 	useEffect( () => {
-		if ( ! isValueEmpty || ! allowEmpty ) {
-			const rangeValidationRule = {
-				rule: dateTimeValidator( yearRange, getDBFormat() ),
-				condition: () => true,
-			};
+		const rangeValidationRule = {
+			rule: dateTimeValidator( yearRange, getDBFormat(), allowEmpty ),
+			condition: () => true,
+		};
 
-			addValidationRules( [ rangeValidationRule ] );
-		}
+		addValidationRules( [ rangeValidationRule ] );
 	}, [] );
 
 	// If we can use an HTML5 input field, we can just return an input field.

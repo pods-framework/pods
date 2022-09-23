@@ -109,7 +109,15 @@ export const numberValidator = (
 export const dateTimeValidator = (
 	yearRange,
 	momentFormat,
+	allowEmpty
 ) => ( value ) => {
+	if ( ! value ) {
+		if ( ! allowEmpty ) {
+			throw __( 'Invalid date.', 'pods' );
+		}
+		return true;
+	}
+
 	if ( 'undefined' === typeof yearRange || ! yearRange.length ) {
 		return true;
 	}

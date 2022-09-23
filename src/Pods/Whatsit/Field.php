@@ -343,6 +343,21 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a relationship field (pick/file/etc).
+	 *
+	 * @since 2.9.7
+	 *
+	 * @return bool Whether this is a relationship field (pick/file/etc).
+	 */
+	public function is_file() {
+		$type = $this->get_type();
+
+		$file_field_types = PodsForm::file_field_types();
+
+		return in_array( $type, $file_field_types, true );
+	}
+
+	/**
 	 * Determine whether this is an autocomplete relationship field.
 	 *
 	 * @since 2.9.4

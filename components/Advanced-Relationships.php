@@ -79,20 +79,6 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			'simple'        => true,
 			'data_callback' => array( $this, 'data_sidebars' ),
 		);
-
-		PodsField_Pick::$related_objects['post-types'] = array(
-			'label'         => __( 'Post Type Objects', 'pods' ),
-			'group'         => __( 'Advanced Objects', 'pods' ),
-			'simple'        => true,
-			'data_callback' => array( $this, 'data_post_types' ),
-		);
-
-		PodsField_Pick::$related_objects['taxonomies'] = array(
-			'label'         => __( 'Taxonomy Objects', 'pods' ),
-			'group'         => __( 'Advanced Objects', 'pods' ),
-			'simple'        => true,
-			'data_callback' => array( $this, 'data_taxonomies' ),
-		);
 	}
 
 	/**
@@ -189,70 +175,6 @@ class Pods_Advanced_Relationships extends PodsComponent {
 		}
 
 		return apply_filters( 'pods_form_ui_field_pick_data_sidebars', $data, $name, $value, $options, $pod, $id );
-	}
-
-	/**
-	 * Data callback for Post Types
-	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
-	 *
-	 * @return array
-	 *
-	 * @since 2.3.0
-	 */
-	public function data_post_types( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
-
-		$data = array();
-
-		$post_types = get_post_types( array(), 'objects' );
-
-		$ignore = array( 'revision', 'nav_menu_item' );
-
-		foreach ( $post_types as $post_type ) {
-			if ( in_array( $post_type->name, $ignore, true ) || 0 === strpos( $post_type->name, '_pods_' ) ) {
-				continue;
-			}
-
-			$data[ $post_type->name ] = $post_type->label;
-		}
-
-		return apply_filters( 'pods_form_ui_field_pick_data_post_types', $data, $name, $value, $options, $pod, $id );
-	}
-
-	/**
-	 * Data callback for Taxonomies
-	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
-	 *
-	 * @return array
-	 *
-	 * @since 2.3.0
-	 */
-	public function data_taxonomies( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
-
-		$data = array();
-
-		$taxonomies = get_taxonomies( array(), 'objects' );
-
-		$ignore = array( 'nav_menu', 'post_format' );
-
-		foreach ( $taxonomies as $taxonomy ) {
-			if ( in_array( $taxonomy->name, $ignore, true ) ) {
-				continue;
-			}
-
-			$data[ $taxonomy->name ] = $taxonomy->label;
-		}
-
-		return apply_filters( 'pods_form_ui_field_pick_data_taxonomies', $data, $name, $value, $options, $pod, $id );
 	}
 
 }

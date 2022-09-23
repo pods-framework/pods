@@ -432,6 +432,7 @@ class Pods_Templates extends PodsComponent {
 			return;
 		}
 
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
 		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
 	}
 

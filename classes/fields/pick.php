@@ -684,6 +684,20 @@ class PodsField_Pick extends PodsField {
 				'data_callback' => array( $this, 'data_post_stati' ),
 			);
 
+			self::$related_objects['post-types'] = [
+				'label'         => __( 'Post Type Objects', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => [ $this, 'data_post_types' ],
+			];
+
+			self::$related_objects['taxonomies'] = [
+				'label'         => __( 'Taxonomy Objects', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => [ $this, 'data_taxonomies' ],
+			];
+
 			do_action( 'pods_form_ui_field_pick_related_objects_other' );
 
 			self::$related_objects['country'] = array(
@@ -3234,6 +3248,83 @@ class PodsField_Pick extends PodsField {
 
 		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 
+	}
+
+	/**
+	 * Data callback for Post Types
+	 *
+	 * @param string       $name    The name of the field
+	 * @param string|array $value   The value of the field
+	 * @param array        $options Field options
+	 * @param array        $pod     Pod data
+	 * @param int          $id      Item ID
+	 *
+	 * @return array
+	 *
+	 * @since 2.3.0
+	 */
+	public function data_post_types( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$data = array();
+
+		$post_types = get_post_types( array(), 'objects' );
+
+		$ignore = [
+			'revision',
+			'nav_menu_item',
+			'custom_css',
+			'customize_changeset',
+			'attachment',
+			'oembed_cache',
+			'user_request',
+			'wp_block',
+			'wp_template',
+			'wp_template_part',
+			'wp_global_styles',
+			'wp_navigation',
+		];
+
+		foreach ( $post_types as $post_type ) {
+			if ( in_array( $post_type->name, $ignore, true ) || 0 === strpos( $post_type->name, '_pods_' ) ) {
+				continue;
+			}
+
+			$data[ $post_type->name ] = $post_type->label;
+		}
+
+		return apply_filters( 'pods_form_ui_field_pick_data_post_types', $data, $name, $value, $options, $pod, $id );
+	}
+
+	/**
+	 * Data callback for Taxonomies
+	 *
+	 * @param string       $name    The name of the field
+	 * @param string|array $value   The value of the field
+	 * @param array        $options Field options
+	 * @param array        $pod     Pod data
+	 * @param int          $id      Item ID
+	 *
+	 * @return array
+	 *
+	 * @since 2.3.0
+	 */
+	public function data_taxonomies( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$data = array();
+
+		$taxonomies = get_taxonomies( array(), 'objects' );
+
+		$ignore = array( 'nav_menu', 'post_format' );
+
+		foreach ( $taxonomies as $taxonomy ) {
+			if ( in_array( $taxonomy->name, $ignore, true ) ) {
+				continue;
+			}
+
+			$data[ $taxonomy->name ] = $taxonomy->label;
+		}
+
+		return apply_filters( 'pods_form_ui_field_pick_data_taxonomies', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**

@@ -120,6 +120,8 @@ const DateTime = ( {
 
 	const useHTML5Field = toBool( html5 ) && checkForHTML5BrowserSupport( 'datetime-local' );
 
+	const emptyValues = [ '0000-00-00', '0000-00-00 00:00:00', '00:00:00', '' ];
+
 	const yearRange = useMemo(
 		() => getArrayOfYearsFromJqueryUIYearRange(
 			yearRangeCustom,
@@ -223,7 +225,7 @@ const DateTime = ( {
 
 	// Keep local versions as a string (formatted and ready to display, and in case
 	// the Moment object is invalid) and as a Moment object.
-	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '00:00:00', '' ].includes( value );
+	const isValueEmpty = emptyValues.includes( value );
 
 	const [ localStringValue, setLocalStringValue ] = useState(
 		() => {
@@ -269,7 +271,7 @@ const DateTime = ( {
 			setLocalMomentValue( null );
 		}
 
-		setValue( isValueEmpty && allowEmpty ? '' : newValue );
+		setValue( emptyValues.includes( newValue ) && allowEmpty ? '' : newValue );
 
 		setHasBlurred();
 	};

@@ -191,8 +191,6 @@ class Pods_Templates extends PodsComponent {
 
 			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
 
-			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
-
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
 			add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
@@ -434,24 +432,6 @@ class Pods_Templates extends PodsComponent {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
 		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
-	}
-
-	/**
-	 * Add meta boxes to the page
-	 *
-	 * @since 2.0.0
-	 */
-	public function add_meta_boxes() {
-		$pod = array(
-			'name' => $this->object_type,
-			'type' => 'post_type',
-		);
-
-		if ( isset( PodsMeta::$post_types[ $pod['name'] ] ) ) {
-			return;
-		}
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
 	}
 
 	/**

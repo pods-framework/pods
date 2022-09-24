@@ -4055,10 +4055,10 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
  * Get a normalized Pod configuration.
  *
  * @since 2.8.0
+ *e.
+ * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
  *
- * @param Pod|Pods|string $pod The Pod configuration object, Pods() object, or name.
- *
- * @return false|Pod The Pod object.
+ * @return false|Pod The Pod object or false if invalid.
  */
 function pods_config_for_pod( $pod ) {
 	if ( $pod instanceof Pod ) {
@@ -4091,9 +4091,70 @@ function pods_config_for_pod( $pod ) {
 		return $pod;
 	}
 
-	// @todo Support arrays in the future by migrating them into a Pod() object.
+	if ( ! is_array( $pod ) ) {
+		return false;
+	}
 
-	return false;
+	$pod = new Pod( $pod );
+
+	if ( ! $pod->is_valid() ) {
+		return false;
+	}
+
+	return $pod;
+}
+
+/**
+ * Get a normalized Field configuration.
+ *
+ * @since 2.9.8
+ *
+ * @param Field|array|string    $field The Field configuration object, Pods() object, old-style array, or name.
+ * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
+ *
+ * @return false|Field The Field object or false if invalid.
+ */
+function pods_config_for_field( $field, $pod = null ) {
+	if ( $pod ) {
+		$pod = pods_config_for_pod( $pod );
+
+		if ( ! $pod ) {
+			$pod = null;
+		}
+	}
+
+	if ( $field instanceof Field ) {
+		return $field;
+	}
+
+	if ( is_string( $field ) ) {
+		try {
+			$api = pods_api();
+
+			$field = $api->load_field( [ 'name' => $field, 'pod' => $pod ] );
+		} catch ( Exception $exception ) {
+			return false;
+		}
+
+		// Check if the $field is invalid.
+		if ( ! $field ) {
+			return false;
+		}
+
+		return $field;
+	}
+
+	if ( ! is_array( $field ) ) {
+		return false;
+	}
+
+	$field = new Field( $field );
+
+	if ( ! $field->is_valid() ) {
+		return false;
+	}
+
+	return $field;
 }
 
 function is_pods_alternative_cache_activated() {

@@ -4115,6 +4115,10 @@ function pods_config_for_pod( $pod ) {
  * @return false|Field The Field object or false if invalid.
  */
 function pods_config_for_field( $field, $pod = null ) {
+	if ( $field instanceof Field ) {
+		return $field;
+	}
+
 	if ( $pod ) {
 		$pod = pods_config_for_pod( $pod );
 
@@ -4123,11 +4127,7 @@ function pods_config_for_field( $field, $pod = null ) {
 		}
 	}
 
-	if ( $field instanceof Field ) {
-		return $field;
-	}
-
-	if ( is_string( $field ) ) {
+	if ( is_string( $field ) && $pod ) {
 		try {
 			$api = pods_api();
 

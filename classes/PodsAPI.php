@@ -5137,7 +5137,15 @@ class PodsAPI {
 					$has_object_data_to_save = true;
 				}
 			} else {
-				$simple = ( 'pick' === $type && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true ) );
+				$pick_object = pods_v( 'pick_object', $field_data );
+
+				$simple = (
+					'pick' === $type
+					&& (
+						empty( $pick_object )
+						|| in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true )
+					)
+				);
 				$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
 
 				$is_repeatable_field = (

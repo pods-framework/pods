@@ -400,7 +400,7 @@ class Field extends Whatsit {
 
 		// Only continue if this is related to an object.
 		if ( null === $related_type ) {
-			return null;
+			return true;
 		}
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();

@@ -409,6 +409,21 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether the separator is excluded for this field.
+	 *
+	 * @since 2.9.8
+	 *
+	 * @return bool Whether the separator is excluded for this field.
+	 */
+	public function is_separator_excluded() {
+		$type = $this->get_type();
+
+		$separator_excluded_field_types = PodsForm::separator_excluded_field_types();
+
+		return in_array( $type, $separator_excluded_field_types, true );
+	}
+
+	/**
 	 * Get the bi-directional field if it is set.
 	 *
 	 * @since 2.8.0

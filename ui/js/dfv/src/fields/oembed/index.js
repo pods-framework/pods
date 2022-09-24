@@ -79,7 +79,7 @@ const Oembed = ( {
 				value={ value || '' }
 				onChange={ handleChange }
 				onBlur={ handleBlur }
-				readOnly={ readOnly }
+				readOnly={ toBool( readOnly ) }
 			/>
 
 			{ showPreview && !! preview && (

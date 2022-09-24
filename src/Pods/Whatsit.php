@@ -501,6 +501,37 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$this->set_arg( $arg, $value );
 		}
 
+		/**
+		 * Allow further adjustments after a Whatsit object is set up.
+		 *
+		 * @since 2.9.8
+		 *
+		 * @param Whatsit $object      Whatsit object.
+		 * @param string  $object_type The Whatsit object type.
+		 */
+		do_action( 'pods_whatsit_setup', $this, static::$type );
+
+		// Make a hook friendly name.
+		$class_hook = static::$type;
+
+		/**
+		 * Allow further adjustments after a Whatsit object is set up for a specific object class.
+		 *
+		 * Example hook names:
+		 * - pods_whatsit_setup_pod
+		 * - pods_whatsit_setup_group
+		 * - pods_whatsit_setup_object-field
+		 * - pods_whatsit_setup_field
+		 * - pods_whatsit_setup_template
+		 * - pods_whatsit_setup_page
+		 *
+		 * @since 2.9.8
+		 *
+		 * @param Whatsit $object     Whatsit object.
+		 * @param string  $object_type The Whatsit object type.
+		 */
+		do_action( "pods_whatsit_setup_{$class_hook}", $this, static::$type );
+
 		// If the type is a Pod or Group and types-only mode is enabled, force the groups/fields to be empty.
 		if (
 			(

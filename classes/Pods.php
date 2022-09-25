@@ -416,13 +416,11 @@ class Pods implements Iterator {
 			// Return all fields.
 			$field_data = pods_config_get_all_fields( $this->pod_data );
 		} else {
-			$tableless_field_types = PodsForm::tableless_field_types();
-
 			$field = pods_config_get_field_from_all_fields( $field_name, $this->pod_data );
 
 			if ( empty( $field ) || empty( $option ) ) {
 				$field_data = $field;
-			} elseif ( 'data' === $option && in_array( $field['type'], $tableless_field_types, true ) ) {
+			} elseif ( 'data' === $option && $field->is_relationship() ) {
 				// Get a list of available items from a relationship field.
 				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $field );
 			} elseif ( isset( $field[ $option ] ) ) {
@@ -454,7 +452,6 @@ class Pods implements Iterator {
 	 * @since 2.0.0
 	 */
 	public function row() {
-
 		do_action( 'pods_pods_row', $this );
 
 		if ( ! is_array( $this->data->row ) ) {
@@ -478,7 +475,6 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/display/
 	 */
 	public function display( $name, $single = null ) {
-
 		$defaults = array(
 			'name'          => $name,
 			'single'        => $single,
@@ -534,7 +530,6 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/display/
 	 */
 	public function raw( $name, $single = null ) {
-
 		$defaults = array(
 			'name'   => $name,
 			'single' => $single,
@@ -691,8 +686,7 @@ class Pods implements Iterator {
 			return 0;
 		}
 
-		$tableless_field_types    = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+		$tableless_field_types = PodsForm::tableless_field_types();
 
 		$params->traverse = array();
 
@@ -751,7 +745,7 @@ class Pods implements Iterator {
 
 		/**
 		 * @var bool   $is_field_set       Is the field found.
-		 * @var bool   $is_tableless_field Is it a tableless field.
+		 * @var bool   $is_relationship_field Is it a tableless field.
 		 * @var string $field_source       Regular field or object field.
 		 * @var array  $field_data         The field data.
 		 * @var string $field_type         The field type.
@@ -762,16 +756,12 @@ class Pods implements Iterator {
 		 * @var array  $last_field_data    The field data used in traversal loop.
 		 */
 
-		$is_field_set       = false;
-		$is_tableless_field = false;
-		$field_source       = '';
-		$field_data         = array();
-		$field_type         = '';
-		$field_options      = array();
-		$traverse_fields    = explode( '.', $params->name );
-		$is_traversal       = 1 < count( $traverse_fields );
-		$first_field        = $traverse_fields[0];
-		$last_field_data    = null;
+		$is_field_set          = false;
+		$field_source          = '';
+		$traverse_fields       = explode( '.', $params->name );
+		$is_traversal          = 1 < count( $traverse_fields );
+		$first_field           = $traverse_fields[0];
+		$last_field_data       = null;
 
 		// Get the first field name data.
 		$field_data = $this->fields( $first_field );
@@ -790,6 +780,10 @@ class Pods implements Iterator {
 			$field_data = $this->fields( $params->name );
 		}
 
+		if ( is_array( $field_data ) ) {
+			$field_data = pods_config_for_field( $field_data, $this->pod_data );
+		}
+
 		$override_object_field = false;
 
 		if ( $field_data instanceof \Pods\Whatsit\Object_Field ) {
@@ -803,31 +797,33 @@ class Pods implements Iterator {
 		}
 
 		// Store field info.
-		$field_type          = pods_v( 'type', $field_data, '' );
-		$field_options       = $field_data;
-		$is_tableless_field  = in_array( $field_type, $tableless_field_types, true );
-		$is_repeatable_field = $field_data instanceof Field && $field_data->is_repeatable();
+		$field_type                   = pods_v( 'type', $field_data, 'text' );
+		$field_options                = $field_data;
+		$is_valid_field               = $field_data instanceof Field;
+		$is_relationship_field        = $is_valid_field && $field_data->is_relationship();
+		$is_simple_relationship_field = $is_valid_field && $field_data->is_simple_relationship();
+		$is_repeatable_field          = $is_valid_field && $field_data->is_repeatable();
 
 		// Simple fields have no other output options.
-		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
+		if ( $is_simple_relationship_field ) {
 			$params->output = 'arrays';
 		}
 
-		$is_tableless_field_and_not_simple = (
+		$is_relationship_field_and_not_simple = (
 			! $is_traversal
 			&& $field_data
 			&& ! $field_data instanceof Object_Field
-			&& $is_tableless_field
-			&& ! $field_data->is_simple_relationship()
+			&& $is_relationship_field
+			&& ! $is_simple_relationship_field
 		);
 
 		// If a relationship is returned from the table as an ID but the parameter is not traversal, we need to run traversal logic.
-		if ( $is_tableless_field_and_not_simple && isset( $this->data->row[ $params->name ] ) && ! is_array( $this->data->row[ $params->name ] ) ) {
+		if ( $is_relationship_field_and_not_simple && isset( $this->data->row[ $params->name ] ) && ! is_array( $this->data->row[ $params->name ] ) ) {
 			unset( $this->data->row[ $params->name ] );
 		}
 
 		// Enforce output type for tableless fields in forms.
-		if ( empty( $value ) && $is_tableless_field ) {
+		if ( empty( $value ) && $is_relationship_field ) {
 			$params->raw = true;
 
 			$value = false;
@@ -841,10 +837,9 @@ class Pods implements Iterator {
 			}
 
 			if (
-				false !== $value &&
-				! is_array( $value ) &&
-				'pick' === $field_type &&
-				in_array( $field_data['pick_object'], $simple_tableless_objects, true )
+				false !== $value
+				&& ! is_array( $value )
+				&& $is_simple_relationship_field
 			) {
 				$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
 			}
@@ -854,7 +849,7 @@ class Pods implements Iterator {
 			! $override_object_field
 			&& empty( $value )
 			&& isset( $this->data->row[ $params->name ] )
-			&& ( ! $is_tableless_field || 'arrays' === $params->output )
+			&& ( ! $is_relationship_field || 'arrays' === $params->output )
 		) {
 			if ( empty( $field_data ) || in_array( $field_type, [
 					'boolean',
@@ -865,7 +860,7 @@ class Pods implements Iterator {
 			}
 
 			if ( null === $params->single ) {
-				if ( ! $is_tableless_field ) {
+				if ( ! $is_relationship_field ) {
 					$params->single = true;
 				} else {
 					$params->single = false;
@@ -881,7 +876,7 @@ class Pods implements Iterator {
 
 				if ( isset( $this->data->row[ $first_field ] ) ) {
 					$value = $this->data->row[ $first_field ];
-				} elseif ( $is_tableless_field ) {
+				} elseif ( $is_relationship_field ) {
 					$object_field_found = false;
 				} else {
 					return null;
@@ -927,14 +922,14 @@ class Pods implements Iterator {
 						return $v;
 					}
 
-					if ( 'meta' === $this->pod_data['storage'] && ! $is_tableless_field ) {
+					if ( 'meta' === $this->pod_data['storage'] && ! $is_relationship_field ) {
 						$simple = true;
 					}
 
-					if ( $is_tableless_field ) {
+					if ( $is_relationship_field ) {
 						$params->raw = true;
 
-						if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
+						if ( $is_simple_relationship_field ) {
 							$simple         = true;
 							$params->single = true;
 						}
@@ -947,9 +942,9 @@ class Pods implements Iterator {
 					}
 				}
 
-				if ( ! $is_traversal && ( $simple || $is_repeatable_field || ! $is_field_set || ! $is_tableless_field ) ) {
+				if ( ! $is_traversal && ( $simple || $is_repeatable_field || ! $is_field_set || ! $is_relationship_field ) ) {
 					if ( null === $params->single ) {
-						if ( $is_field_set && ! $is_tableless_field && ! $is_repeatable_field ) {
+						if ( $is_field_set && ! $is_relationship_field && ! $is_repeatable_field ) {
 							$params->single = true;
 						} else {
 							$params->single = false;
@@ -1052,20 +1047,16 @@ class Pods implements Iterator {
 						}
 					}//end if
 
-					$last_type                = '';
-					$last_object              = '';
-					$last_pick_val            = '';
-					$last_options             = [];
-					$last_object_options      = [];
-					$last_is_repeatable_field = false;
+					$last_type                         = '';
+					$last_object                       = '';
+					$last_pick_val                     = '';
+					$last_options                      = [];
+					$last_object_options               = [];
+					$last_is_relationship_field        = false;
+					$last_is_simple_relationship_field = false;
+					$last_is_repeatable_field          = false;
 
-					$single_multi = pods_v( $field_type . '_format_type', $field_data, 'single' );
-
-					if ( 'multi' === $single_multi ) {
-						$limit = (int) pods_v( $field_type . '_limit', $field_data, 0 );
-					} else {
-						$limit = 1;
-					}
+					$limit = $field_data->get_limit();
 
 					// Loop through each traversal level.
 					foreach ( $params->traverse as $key => $field ) {
@@ -1084,10 +1075,10 @@ class Pods implements Iterator {
 							/** @var \Pods\Whatsit\Field $current_field */
 							$current_field = $all_fields[ $pod ][ $field ];
 
-							if ( in_array( $current_field['type'], $tableless_field_types, true ) ) {
+							if ( $current_field->is_relationship() ) {
 								$last_options = $current_field;
 
-								if ( 'pick' === $current_field['type'] && in_array( $current_field->get_related_object_type(), $simple_tableless_objects, true ) ) {
+								if ( $current_field->is_simple_relationship() ) {
 									$simple = true;
 								}
 							}
@@ -1115,14 +1106,8 @@ class Pods implements Iterator {
 
 							$last_limit = 0;
 
-							if ( in_array( $type, $tableless_field_types, true ) ) {
-								$single_multi = $current_field->get_arg( "{$type}_format_type", 'single' );
-
-								if ( 'multi' === $single_multi ) {
-									$last_limit = (int) $current_field->get_arg( "{$type}_limit", 0 );
-								} else {
-									$last_limit = 1;
-								}
+							if ( $current_field->is_relationship() ) {
+								$last_limit = $current_field->get_limit();
 							}
 
 							$last_type           = $type;
@@ -1198,7 +1183,10 @@ class Pods implements Iterator {
 									$table = $last_options->get_table_info();
 								}
 
-								$last_is_repeatable_field = $current_field instanceof Field && $current_field->is_repeatable();
+								$last_is_valid_field               = $current_field instanceof Field;
+								$last_is_relationship_field        = $last_is_valid_field && $current_field->is_relationship();
+								$last_is_simple_relationship_field = $last_is_valid_field && $current_field->is_simple_relationship();
+								$last_is_repeatable_field          = $last_is_valid_field && $current_field->is_repeatable();
 							}
 
 							$join  = array();
@@ -1233,7 +1221,13 @@ class Pods implements Iterator {
 							// Check if we can return the full object/array or if we need to traverse into it.
 							$is_field_output_full = false;
 
-							if ( false !== $field_exists && ( in_array( $last_type, $tableless_field_types, true ) && ! $simple ) ) {
+							if (
+								false !== $field_exists
+								&& (
+									$last_is_relationship_field
+									&& ! $simple
+								)
+							) {
 								$is_field_output_full = true;
 							}
 
@@ -1408,7 +1402,7 @@ class Pods implements Iterator {
 								}//end if
 							}//end if
 
-							if ( in_array( $last_type, $tableless_field_types, true ) || in_array( $last_type, array(
+							if ( $last_is_relationship_field || in_array( $last_type, array(
 								'boolean',
 								'number',
 								'currency',
@@ -1618,9 +1612,9 @@ class Pods implements Iterator {
 			$field_names = implode( '.', $params->traverse );
 
 			$this->data->row[ $field_names ] = $value;
-		} elseif ( 'arrays' !== $params->output && $field_data && in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		} elseif ( 'arrays' !== $params->output && $field_data && $is_relationship_field ) {
 			$this->data->row[ '_' . $params->output . '_' . $params->full_name ] = $value;
-		} elseif ( 'arrays' === $params->output || ! $field_data || ! in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		} elseif ( 'arrays' === $params->output || ! $field_data || ! $is_relationship_field ) {
 			$this->data->row[ $params->full_name ] = $value;
 		}
 
@@ -1633,7 +1627,7 @@ class Pods implements Iterator {
 		}
 
 		if ( ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {
-			if ( $params->display || ( ( $params->get_meta || $params->deprecated ) && ! in_array( $field_data['type'], $tableless_field_types, true ) ) ) {
+			if ( $params->display || ( ( $params->get_meta || $params->deprecated ) && ! $is_relationship_field ) ) {
 				$post_temp   = false;
 				$old_post    = null;
 				$old_post_id = null;
@@ -2255,10 +2249,6 @@ class Pods implements Iterator {
 	 * @link  https://docs.pods.io/code/pods/find/
 	 */
 	public function find( $params = null, $limit = 15, $where = null, $sql = null ) {
-
-		$tableless_field_types    = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
-
 		$this->params = $params;
 
 		$select = '`t`.*';
@@ -2401,10 +2391,10 @@ class Pods implements Iterator {
 					$is_object_field      = $order_field instanceof Object_Field;
 					$is_pod_or_table_type = in_array( $pod_type, [ 'pod', 'table' ], true );
 
-					if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
+					if ( $order_field->is_relationship() ) {
 						$order_object_type = $order_field->get_related_object_type();
 
-						if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
+						if ( $order_field->is_simple_relationship() ) {
 							if ( $is_object_field || 'table' === $storage_type ) {
 								if ( ! $is_object_field && ! $is_pod_or_table_type ) {
 									$field_name = "`d`.`{$field_name}`";

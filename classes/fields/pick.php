@@ -860,17 +860,13 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+		$field = pods_config_for_field( $options );
 
-		$schema = false;
-
-		$simple_tableless_objects = $this->simple_objects();
-
-		if ( in_array( pods_v( static::$type . '_object', $options ), $simple_tableless_objects, true ) ) {
-			$schema = 'LONGTEXT';
+		if ( $field && $field->is_simple_relationship() ) {
+			return 'LONGTEXT';
 		}
 
-		return $schema;
-
+		return false;
 	}
 
 	/**
@@ -1631,7 +1627,7 @@ class PodsField_Pick extends PodsField {
 			self::$api = pods_api();
 		}
 
-		$simple_tableless_objects = $this->simple_objects();
+		$field = pods_config_for_field( $options, $pod );
 
 		$related_pick_limit  = 0;
 		$related_field       = false;
@@ -1659,7 +1655,12 @@ class PodsField_Pick extends PodsField {
 
 		$related_data = pods_static_cache_get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
-		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
+		if (
+			! empty( $related_sister_id )
+			&& ! empty( $related_object )
+			&& $field
+			&& ! $field->is_simple_relationship()
+		) {
 			$related_pod = self::$api->load_pod( [
 				'name'       => $related_val,
 				'auto_setup' => true,
@@ -1906,7 +1907,7 @@ class PodsField_Pick extends PodsField {
 			self::$api = pods_api();
 		}
 
-		$simple_tableless_objects = $this->simple_objects();
+		$field = pods_config_for_field( $options, $pod );
 
 		// Bidirectional relationship requirement checks.
 		$related_object = pods_v( static::$type . '_object', $options, '' );
@@ -1923,7 +1924,12 @@ class PodsField_Pick extends PodsField {
 			$related_sister_id = 0;
 		}
 
-		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
+		if (
+			! empty( $related_sister_id )
+			&& ! empty( $related_object )
+			&& $field
+			&& ! $field->is_simple_relationship()
+		) {
 			$related_pod = self::$api->load_pod( [
 				'name'       => $related_val,
 				'auto_setup' => true,

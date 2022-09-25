@@ -9330,20 +9330,22 @@ class PodsAPI {
 		$params->ids = array_map( 'absint', $params->ids );
 		$params->ids = array_unique( array_filter( $params->ids ) );
 
+		if ( empty( $params->ids ) ) {
+			return [];
+		}
+
 		$idstring = implode( ',', $params->ids );
 
 		$cache_key = $params->pod_id . '|' . $params->field_id;
 
 		// Check cache first, no point in running the same query multiple times
-		if ( $params->pod_id && $params->field_id ) {
+		if ( 0 !== (int) $params->pod_id && 0 !== (int) $params->field_id ) {
 			$cache_value = pods_static_cache_get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
 
 			if ( isset( $cache_value[ $idstring ] ) && is_array( $cache_value[ $idstring ] ) ) {
 				return $cache_value[ $idstring ];
 			}
 		}
-
-		$tableless_field_types = PodsForm::tableless_field_types();
 
 		if ( empty( $params->field ) ) {
 			$load_params = array(
@@ -9361,10 +9363,14 @@ class PodsAPI {
 			$params->field = $this->load_field( $load_params );
 		}
 
+		if ( empty( $params->field ) ) {
+			return [];
+		}
+
 		$field_type = pods_v( 'type', $params->field );
 
-		if ( empty( $params->ids ) || ! in_array( $field_type, $tableless_field_types, true ) ) {
-			return array();
+		if ( ! $params->field->is_relationship() ) {
+			return [];
 		}
 
 		$related_pick_limit = 0;
@@ -9632,7 +9638,7 @@ class PodsAPI {
 			}
 		}
 
-		if ( 0 != $params->pod_id && 0 != $params->field_id && ! empty( $related_ids ) ) {
+		if ( 0 !== (int) $params->pod_id && 0 !== (int) $params->field_id && ! empty( $related_ids ) ) {
 			// Only cache if $params->pod_id and $params->field_id were passed
 			$cache_value = pods_static_cache_get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
 

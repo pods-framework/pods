@@ -3615,11 +3615,23 @@ class Pods implements Iterator {
 			return $value;
 		}
 
-		if ( $include_obj ) {
-			return call_user_func( $params['helper'], $value, $this );
+		try {
+			if ( $include_obj ) {
+				return call_user_func( $params['helper'], $value, $this );
+			}
+
+			return call_user_func( $params['helper'], $value );
+		} catch ( Throwable $error ) {
+			if ( pods_is_debug_display() ) {
+				throw $error;
+			}
+		} catch ( Exception $error ) {
+			if ( pods_is_debug_display() ) {
+				throw $error;
+			}
 		}
 
-		return call_user_func( $params['helper'], $value );
+		return '';
 	}
 
 	/**

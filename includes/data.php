@@ -1949,35 +1949,20 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			}
 		}
 
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+		$params->field = pods_config_for_field( $params->field );
 
-		if ( ! empty( $params->field ) && ! is_string( $params->field ) && in_array( $params->field['type'], PodsForm::tableless_field_types(), true ) ) {
-			$pick_object = pods_v( 'pick_object', $params->field );
-
-			if ( in_array( $params->field['type'], PodsForm::file_field_types(), true ) ) {
+		if ( ! empty( $params->field ) && $params->field->is_relationship() ) {
+			if ( $params->field->is_file() ) {
 				if ( null === $params->field_index ) {
 					$params->field_index = 'guid';
 				}
-			} elseif ( in_array( $pick_object, $simple_tableless_objects, true ) ) {
+			} elseif ( $params->field->is_simple_relationship() ) {
 				$simple = true;
-			} else {
-				$pick_val = pods_v( 'pick_val', $params->field );
-				$table    = null;
-
-				if ( ! empty( $pick_object ) && ( ! empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ), true ) ) ) {
-					$table = pods_api()->get_table_info(
-						$pick_object,
-						$pick_val,
-						null,
-						null,
-						$params->field
-					);
-				}
+			} elseif ( empty( $params->field_index ) ) {
+				$table = $params->field->get_table_info();
 
 				if ( ! empty( $table ) ) {
-					if ( null === $params->field_index ) {
-						$params->field_index = $table['field_index'];
-					}
+					$params->field_index = $table['field_index'];
 				}
 			}
 		}
@@ -1985,8 +1970,8 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		$params->field = null;
 	}//end if
 
-	if ( $simple && ! is_array( $value ) && '' !== $value && null !== $value ) {
-		$value = PodsForm::field_method( 'pick', 'simple_value', $params->field['name'], $value, $params->field );
+	if ( $simple && $params->field && ! is_array( $value ) && '' !== $value && null !== $value ) {
+		$value = PodsForm::field_method( 'pick', 'simple_value', $params->field->get_name(), $value, $params->field );
 	}
 
 	if ( ! is_array( $value ) ) {
@@ -2005,9 +1990,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 	$original_value = $value;
 
-	$separator_excluded = PodsForm::separator_excluded_field_types();
-
-	$basic_separator = $params->field && in_array( $params->field['type'], $separator_excluded, true );
+	$basic_separator = $params->field && $params->field->is_separator_excluded();
 
 	if ( $basic_separator ) {
 		$params->separator = ' ';

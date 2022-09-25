@@ -106,6 +106,12 @@ class Post_Type extends Collection {
 			$fallback_mode = (boolean) $args['fallback_mode'];
 		}
 
+		$meta_query = [];
+
+		if ( ! empty( $args['meta_query'] ) ) {
+			$meta_query = (array) $args['meta_query'];
+		}
+
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
@@ -120,7 +126,7 @@ class Post_Type extends Collection {
 			'order'            => 'ASC',
 			'orderby'          => 'title',
 			'posts_per_page'   => $limit,
-			'meta_query'       => [],
+			'meta_query'       => $meta_query,
 			'post_type'        => 'any',
 			'post_status'      => [
 				'publish',

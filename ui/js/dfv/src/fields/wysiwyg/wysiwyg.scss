@@ -5,6 +5,7 @@
 
 .pods-tinymce-editor-container .mce-tinymce {
 	border: 1px solid #e5e5e5;
+	box-sizing: border-box;
 }
 
 .pods-alternate-editor {
@@ -18,6 +19,7 @@
 		width: 100%;
 		border: none;
 		margin-bottom: 0;
+		box-sizing: border-box;
 	}
 }
 

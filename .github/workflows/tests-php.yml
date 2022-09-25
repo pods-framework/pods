@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # ------------------------------------------------------------------------------
-      # Checkout the repo and slic
+      # Checkout the repo
       # ------------------------------------------------------------------------------
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -97,15 +97,8 @@ jobs:
         run: |
           docker network prune -f
           ${SLIC_BIN} use pods
+          ${SLIC_BIN} composer set-version 2
           ${SLIC_BIN} composer install
-      # ------------------------------------------------------------------------------
-      # Set up ET (npm install and build)
-      # ------------------------------------------------------------------------------
-      - name: Set up Pods (npm)
-        if: ${{ matrix.suite == 'acceptance' }}
-        run: |
-          ${SLIC_BIN} npm install
-          ${SLIC_BIN} npm run build
       # ------------------------------------------------------------------------------
       # Init WordPress container
       # ------------------------------------------------------------------------------

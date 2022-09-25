@@ -343,6 +343,47 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a relationship field (pick/file/etc).
+	 *
+	 * @since 2.9.7
+	 *
+	 * @return bool Whether this is a relationship field (pick/file/etc).
+	 */
+	public function is_file() {
+		$type = $this->get_type();
+
+		$file_field_types = PodsForm::file_field_types();
+
+		return in_array( $type, $file_field_types, true );
+	}
+
+	/**
+	 * Determine whether this is an autocomplete relationship field.
+	 *
+	 * @since 2.9.4
+	 *
+	 * @return bool Whether this is an autocomplete relationship field.
+	 */
+	public function is_autocomplete_relationship() {
+		if ( ! $this->is_relationship() ) {
+			return false;
+		}
+
+		$autocomplete_formats = [
+			'autocomplete',
+			'list',
+		];
+
+		$single_multi = $this->get_single_multi();
+
+		$default = 'single' === $single_multi ? 'dropdown' : 'list';
+
+		$format = $this->get_type_arg( 'format_' . $single_multi, $default, true );
+
+		return in_array( $format, $autocomplete_formats, true );
+	}
+
+	/**
 	 * Determine whether the relationship field is a simple relationship.
 	 *
 	 * @since 2.8.9

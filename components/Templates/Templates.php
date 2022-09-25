@@ -100,12 +100,96 @@ class Pods_Templates extends PodsComponent {
 
 		register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
+		$args = [
+			'internal'           => true,
+			'type'               => 'post_type',
+			'storage'            => 'meta',
+			'name'               => $this->object_type,
+			'label'              => 'Pod Templates',
+			'label_singular'     => 'Pod Template',
+			'description'        => '',
+			'public'             => 0,
+			'show_ui'            => 1,
+			'rest_enable'        => 0,
+			'supports_title'     => 1,
+			'supports_editor'    => 0,
+			'supports_author'    => 1,
+			'supports_revisions' => 1,
+		];
+
+		if ( ! pods_is_admin() ) {
+			$args['capability_type']        = 'custom';
+			$args['capability_type_custom'] = $this->capability_type;
+		}
+
+		pods_register_type( 'post_type', $this->object_type, $args );
+
+		$group = [
+			'name'              => 'restrict-content',
+			'label'             => __( 'Restrict Content', 'pods' ),
+			'description'       => '',
+			'weight'            => 0,
+			'meta_box_context'  => 'normal',
+			'meta_box_priority' => 'high',
+		];
+
+		$fields = [
+			[
+				'name'       => 'admin_only',
+				'label'      => __( 'Show to Admins Only', 'pods' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+				'dependency' => true,
+			],
+			[
+				'name'       => 'restrict_capability',
+				'label'      => __( 'Restrict access by Capability', 'pods' ),
+				'help'       => [
+					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
+					'http://codex.wordpress.org/Roles_and_Capabilities',
+				],
+				'default'    => 0,
+				'type'       => 'boolean',
+				'dependency' => true,
+			],
+			[
+				'name'              => 'capability_allowed',
+				'label'             => __( 'Capability Allowed', 'pods' ),
+				'type'              => 'pick',
+				'pick_object'       => 'capability',
+				'pick_format_type'  => 'multi',
+				'pick_format_multi' => 'autocomplete',
+				'pick_ajax'         => false,
+				'default'           => '',
+				'depends-on'        => [
+					'pods_meta_restrict_capability' => true,
+				],
+			],
+			[
+				'name'       => 'show_restrict_message',
+				'label'      => __( 'Show no access message', 'pods' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+				'dependency' => true,
+			],
+			[
+				'name'                  => 'restrict_message',
+				'label'                 => __( 'No access message', 'pods' ),
+				'type'                  => 'wysiwyg',
+				'default'               => __( 'You do not have access to view this content.', 'pods' ),
+				'wysiwyg_editor_height' => 200,
+				'depends-on'            => [
+					'pods_meta_show_restrict_message' => true,
+				],
+			],
+		];
+
+		pods_register_group( $group, $this->object_type, $fields );
+
 		if ( is_admin() ) {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
 			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
-
-			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
 			add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
@@ -346,79 +430,8 @@ class Pods_Templates extends PodsComponent {
 			return;
 		}
 
-		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
-	}
-
-	/**
-	 * Add meta boxes to the page
-	 *
-	 * @since 2.0.0
-	 */
-	public function add_meta_boxes() {
-
-		$pod = array(
-			'name' => $this->object_type,
-			'type' => 'post_type',
-		);
-
-		if ( isset( PodsMeta::$post_types[ $pod['name'] ] ) ) {
-			return;
-		}
-
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
-
-		$fields = array(
-			array(
-				'name'       => 'admin_only',
-				'label'      => __( 'Show to Admins Only', 'pods' ),
-				'default'    => 0,
-				'type'       => 'boolean',
-				'dependency' => true,
-			),
-			array(
-				'name'       => 'restrict_capability',
-				'label'      => __( 'Restrict access by Capability', 'pods' ),
-				'help'       => array(
-					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
-					'http://codex.wordpress.org/Roles_and_Capabilities',
-				),
-				'default'    => 0,
-				'type'       => 'boolean',
-				'dependency' => true,
-			),
-			array(
-				'name'              => 'capability_allowed',
-				'label'             => __( 'Capability Allowed', 'pods' ),
-				'type'              => 'pick',
-				'pick_object'       => 'capability',
-				'pick_format_type'  => 'multi',
-				'pick_format_multi' => 'autocomplete',
-				'pick_ajax'         => false,
-				'default'           => '',
-				'depends-on'        => array(
-					'pods_meta_restrict_capability' => true,
-				),
-			),
-			array(
-				'name'       => 'show_restrict_message',
-				'label'      => __( 'Show no access message', 'pods' ),
-				'default'    => 0,
-				'type'       => 'boolean',
-				'dependency' => true,
-			),
-			array(
-				'name'                  => 'restrict_message',
-				'label'                 => __( 'No access message', 'pods' ),
-				'type'                  => 'wysiwyg',
-				'default'               => __( 'You do not have access to view this content.', 'pods' ),
-				'wysiwyg_editor_height' => 200,
-				'depends-on'            => array(
-					'pods_meta_show_restrict_message' => true,
-				),
-			),
-		);
-
-		pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
+		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
 	}
 
 	/**

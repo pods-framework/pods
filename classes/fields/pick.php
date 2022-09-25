@@ -5,6 +5,7 @@ use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Object_Field;
 use Pods\API\Whatsit\Value_Field;
+use Pods\Whatsit\Store;
 
 /**
  * @package Pods\Fields
@@ -683,6 +684,20 @@ class PodsField_Pick extends PodsField {
 				'data_callback' => array( $this, 'data_post_stati' ),
 			);
 
+			self::$related_objects['post-types'] = [
+				'label'         => __( 'Post Type Objects', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => [ $this, 'data_post_types' ],
+			];
+
+			self::$related_objects['taxonomies'] = [
+				'label'         => __( 'Taxonomy Objects', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => [ $this, 'data_taxonomies' ],
+			];
+
 			do_action( 'pods_form_ui_field_pick_related_objects_other' );
 
 			self::$related_objects['country'] = array(
@@ -1055,7 +1070,7 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Build DFV autocomplete AJAX data.
 	 *
-	 * @param array  $options DFV options.
+	 * @param array|Field  $options DFV options.
 	 * @param object $args    {
 	 *  Field information arguments.
 	 *
@@ -1072,13 +1087,23 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function build_dfv_autocomplete_ajax_data( $options, $args, $ajax = false ) {
 
-		if ( is_object( $args->pod ) ) {
-			$pod_id = (int) $args->pod->pod_id;
+		if ( is_array( $args->pod ) ) {
+			$pod_name = $args->pod['name'];
+		} elseif ( $args->pod instanceof Pods ) {
+			$pod_name = $args->pod->pod;
+		} elseif ( $args->pod instanceof Pod ) {
+			$pod_name = $args->pod->get_name();
 		} else {
-			$pod_id = 0;
+			$pod_name = '';
 		}
 
-		$field_id = (int) pods_v( 'id', $options );
+		if ( is_array( $options ) ) {
+			$field_name = pods_v( 'name', $options );
+		} elseif ( $options instanceof Field ) {
+			$field_name = $options->get_name();
+		} else {
+			$field_name = '';
+		}
 
 		$id = (int) $args->id;
 
@@ -1090,20 +1115,20 @@ class PodsField_Pick extends PodsField {
 
 		$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 
-		$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
+		$nonce_name  = 'pods_relationship:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
+		$field_nonce = wp_create_nonce( $nonce_name );
 
 		// Values can be overridden via the `pods_field_dfv_data` filter in $data['fieldConfig']['ajax_data'].
-		return array(
+		return [
 			'ajax'                 => $ajax,
 			'delay'                => 300,
 			'minimum_input_length' => 1,
-			'pod'                  => $pod_id,
-			'field'                => $field_id,
+			'pod_name'             => $pod_name,
+			'field_name'           => $field_name,
 			'id'                   => $id,
-			'uri'                  => $uri_hash,
+			'uri_hash'             => $uri_hash,
 			'_wpnonce'             => $field_nonce,
-		);
-
+		];
 	}
 
 	/**
@@ -1539,7 +1564,13 @@ class PodsField_Pick extends PodsField {
 		}
 
 		// Cast values in array as string.
-		$values = array_map( 'strval', $values );
+		$values = array_map( static function( $value ) {
+			if ( ! is_scalar( $value ) ) {
+				return $value;
+			}
+
+			return (string) $value;
+		}, $values );
 
 		// If the value array has keys as IDs, let's check for matches from the keys first.
 		if ( ! isset( $values[0] ) ) {
@@ -1547,7 +1578,13 @@ class PodsField_Pick extends PodsField {
 			$key_values = array_keys( $values );
 
 			// Cast key values in array as string.
-			$key_values = array_map( 'strval', $key_values );
+			$key_values = array_map( static function( $value ) {
+				if ( ! is_scalar( $value ) ) {
+					return $value;
+				}
+
+				return (string) $value;
+			}, $values );
 
 			// Let's check to see if the current $item_id matches any key values.
 			if ( in_array( (string) $item_id, $key_values, true ) ) {
@@ -2743,8 +2780,6 @@ class PodsField_Pick extends PodsField {
 				$ids = array();
 
 				if ( ! empty( $results ) ) {
-					$display_filter = pods_v( 'display_filter', pods_v( $search_data->field_index, $search_data->object_fields ) );
-
 					foreach ( $results as $result ) {
 						$result      = get_object_vars( $result );
 						$field_id    = $search_data->field_id;
@@ -2771,8 +2806,12 @@ class PodsField_Pick extends PodsField {
 							$object_type = 'taxonomy';
 						}
 
+						$field_index_data_to_use = pods_v( $field_index, $search_data->object_fields );
+
+						$display_filter = pods_v( 'display_filter', $field_index_data_to_use );
+
 						if ( 0 < strlen( $display_filter ) ) {
-							$display_filter_args = pods_v( 'display_filter_args', pods_v( $field_index, $search_data->pod_data['object_fields'] ) );
+							$display_filter_args = pods_v( 'display_filter_args', $field_index_data_to_use );
 
 							$filter_args = array(
 								$display_filter,
@@ -2922,15 +2961,33 @@ class PodsField_Pick extends PodsField {
 
 		$params = (object) $params;
 
+		if ( ! isset( $params->_wpnonce, $params->pod_name, $params->field_name, $params->uri_hash, $params->id ) ) {
+			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+		}
+
+		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
+			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+		}
+
+		$_wpnonce   = $params->_wpnonce;
+		$pod_name   = $params->pod_name;
+		$field_name = $params->field_name;
+		$uri_hash   = $params->uri_hash;
+		$id         = (int) $params->id;
+
+		$query = $params->query;
+		$limit = pods_v( 'limit', $params, 15, true );
+		$page  = pods_v( 'page', $params, 1, true );
+
 		$uid = pods_session_id();
 
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();
 		}
 
-		$nonce_check = 'pods_relationship_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
+		$nonce_name = 'pods_relationship:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
 
-		if ( ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
+		if ( false === wp_verify_nonce( $_wpnonce, $nonce_name ) ) {
 			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
@@ -2938,41 +2995,21 @@ class PodsField_Pick extends PodsField {
 			self::$api = pods_api();
 		}
 
-		$pod   = self::$api->load_pod( array( 'id' => (int) $params->pod ) );
-		$field = self::$api->load_field(
-			array(
-				'id'         => (int) $params->field,
-				'table_info' => true,
-			)
-		);
-		$id    = (int) $params->id;
+		$pod = self::$api->load_pod( [
+			'name' => $pod_name,
+		] );
 
-		$limit = 15;
-
-		if ( isset( $params->limit ) ) {
-			$limit = (int) $params->limit;
+		if ( ! $pod ) {
+			pods_error( __( 'Invalid Pod configuration', 'pods' ), PodsInit::$admin );
 		}
 
-		$page = 1;
+		$field = $pod->get_field( $field_name );
 
-		if ( isset( $params->page ) ) {
-			$page = (int) $params->page;
+		if ( ! $field ) {
+			pods_error( __( 'Invalid Field configuration', 'pods' ), PodsInit::$admin );
 		}
 
-		$autocomplete_formats = [
-			'autocomplete',
-			'list',
-		];
-
-		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
-			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
-		} elseif ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
-			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
-		} elseif ( 'pick' !== $field['type'] || empty( $field['table_info'] ) ) {
-			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'single' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_single', $field ), $autocomplete_formats, true ) ) {
-			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'multi' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_multi', $field ), $autocomplete_formats, true ) ) {
+		if ( ! $field->is_autocomplete_relationship() ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
 		}
 
@@ -3211,6 +3248,83 @@ class PodsField_Pick extends PodsField {
 
 		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 
+	}
+
+	/**
+	 * Data callback for Post Types
+	 *
+	 * @param string       $name    The name of the field
+	 * @param string|array $value   The value of the field
+	 * @param array        $options Field options
+	 * @param array        $pod     Pod data
+	 * @param int          $id      Item ID
+	 *
+	 * @return array
+	 *
+	 * @since 2.3.0
+	 */
+	public function data_post_types( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$data = array();
+
+		$post_types = get_post_types( array(), 'objects' );
+
+		$ignore = [
+			'revision',
+			'nav_menu_item',
+			'custom_css',
+			'customize_changeset',
+			'attachment',
+			'oembed_cache',
+			'user_request',
+			'wp_block',
+			'wp_template',
+			'wp_template_part',
+			'wp_global_styles',
+			'wp_navigation',
+		];
+
+		foreach ( $post_types as $post_type ) {
+			if ( in_array( $post_type->name, $ignore, true ) || 0 === strpos( $post_type->name, '_pods_' ) ) {
+				continue;
+			}
+
+			$data[ $post_type->name ] = $post_type->label;
+		}
+
+		return apply_filters( 'pods_form_ui_field_pick_data_post_types', $data, $name, $value, $options, $pod, $id );
+	}
+
+	/**
+	 * Data callback for Taxonomies
+	 *
+	 * @param string       $name    The name of the field
+	 * @param string|array $value   The value of the field
+	 * @param array        $options Field options
+	 * @param array        $pod     Pod data
+	 * @param int          $id      Item ID
+	 *
+	 * @return array
+	 *
+	 * @since 2.3.0
+	 */
+	public function data_taxonomies( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$data = array();
+
+		$taxonomies = get_taxonomies( array(), 'objects' );
+
+		$ignore = array( 'nav_menu', 'post_format' );
+
+		foreach ( $taxonomies as $taxonomy ) {
+			if ( in_array( $taxonomy->name, $ignore, true ) ) {
+				continue;
+			}
+
+			$data[ $taxonomy->name ] = $taxonomy->label;
+		}
+
+		return apply_filters( 'pods_form_ui_field_pick_data_taxonomies', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**

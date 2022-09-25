@@ -1316,17 +1316,13 @@ class PodsAdmin {
 					'restrict_callback' => [ $this, 'admin_setup_duplicate_restrict' ],
 					'nonce'             => true,
 				],
-				'reset_pod'     => [
-					'label'             => __( 'Delete All Items', 'pods' ),
-					'confirm'           => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
-					'callback'          => [ $this, 'admin_setup_reset' ],
-					'restrict_callback' => [ $this, 'admin_setup_reset_restrict' ],
-					'nonce'             => true,
-					'span_class'        => 'delete',
-				],
 				'delete_pod'    => [
 					'label'             => __( 'Delete', 'pods' ),
-					'confirm'           => __( 'Are you sure you want to delete this Pod? All of the content and items will remain in the database, you may want to Delete All Items first.', 'pods' ),
+					'confirm'           => __( 'Are you sure you want to delete this Pod?', 'pods' )
+											. "\n\n"
+											. __( 'All of the content and items will remain in the database.', 'pods' )
+											. "\n\n"
+											. __( 'You may want to go to Pods Admin > Settings > Cleanup & Reset > "Delete all content for a Pod" first.', 'pods' ),
 					'callback'          => [ $this, 'admin_setup_delete' ],
 					'restrict_callback' => [ $this, 'admin_setup_delete_restrict' ],
 					'nonce'             => true,
@@ -1343,11 +1339,6 @@ class PodsAdmin {
 				] ),
 				'duplicate_pod' => pods_query_arg( [
 					'action' => 'duplicate_pod',
-					'id'     => '{@id}',
-					'name'   => '{@name}',
-				] ),
-				'reset_pod'     => pods_query_arg( [
-					'action' => 'reset_pod',
 					'id'     => '{@id}',
 					'name'   => '{@name}',
 				] ),
@@ -2145,51 +2136,6 @@ class PodsAdmin {
 				'user',
 				'media',
 				'comment',
-			), true
-		) ) {
-			$restricted = true;
-		}
-
-		return $restricted;
-	}
-
-	/**
-	 * Reset a pod
-	 *
-	 * @param PodsUI $obj PodsUI object.
-	 *
-	 * @return mixed
-	 */
-	public function admin_setup_reset( $obj ) {
-		$pod = pods_api()->load_pod( array( 'name' => $obj->row['name'] ), false );
-
-		if ( empty( $pod ) ) {
-			return $obj->error( __( 'Pod not found.', 'pods' ) );
-		}
-
-		pods_api()->reset_pod( array( 'name' => $obj->row['name'] ) );
-
-		$obj->message( __( 'Pod reset successfully.', 'pods' ) );
-
-		$obj->manage();
-	}
-
-	/**
-	 * Restrict Reset action from users and media
-	 *
-	 * @param bool   $restricted Whether action is restricted.
-	 * @param array  $restrict   Restriction array.
-	 * @param string $action     Current action.
-	 * @param array  $row        Item data row.
-	 * @param PodsUI $obj        PodsUI object.
-	 *
-	 * @since 2.3.10
-	 */
-	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
-		if ( in_array(
-			$row['real_type'], array(
-				'user',
-				'media',
 			), true
 		) ) {
 			$restricted = true;
@@ -3098,6 +3044,18 @@ class PodsAdmin {
 				'type'              => 'boolean',
 				'default'           => pods_v( 'name', $pod ),
 				'depends-on'        => [ 'rest_enable' => true, 'read_all' => true ],
+			],
+			'rest_api_field_mode'   => [
+				'label'             => __( 'Field Mode', 'pods' ),
+				'help'              => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
+				'type'              => 'pick',
+				'default'           => 'value',
+				'depends-on'        => [ 'rest_enable' => true ],
+				'data'       => [
+					'value'            => __( 'Raw values', 'pods' ),
+					'render'           => __( 'Rendered values', 'pods' ),
+					'value_and_render' => __( 'Both raw and rendered values {value: raw_value, rendered: rendered_value}', 'pods' ),
+				],
 			],
 		];
 

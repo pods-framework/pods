@@ -52,6 +52,10 @@ foreach ( $groups as $g => $group ) {
 			continue;
 		} elseif ( ! pods_permission( $field ) ) {
 			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
+				if ( $group['fields'][ $k ] instanceof \Pods\Whatsit\Field ) {
+					$group['fields'][ $k ] = clone $group['fields'][ $k ];
+				}
+
 				$group['fields'][ $k ]['type'] = 'hidden';
 			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
 				$group['fields'][ $k ]['readonly'] = true;
@@ -62,6 +66,10 @@ foreach ( $groups as $g => $group ) {
 			}
 		} elseif ( ! pods_has_permissions( $field ) ) {
 			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
+				if ( $group['fields'][ $k ] instanceof \Pods\Whatsit\Field ) {
+					$group['fields'][ $k ] = clone $group['fields'][ $k ];
+				}
+
 				$group['fields'][ $k ]['type'] = 'hidden';
 			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
 				$group['fields'][ $k ]['readonly'] = true;
@@ -90,16 +98,18 @@ if ( is_user_logged_in() ) {
 	$uid = pods_session_id();
 }
 
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $duplicate ? 0 : $pod->id() ) . '_' . $uri_hash . '_' . $field_hash );
+$item_id = $duplicate ? 0 : $pod->id();
+
+$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $item_id . '_' . $uri_hash . '_' . $field_hash );
 
 $submit_result = null;
 
 if ( isset( $_POST['_pods_nonce'] ) ) {
 	try {
 		$params = pods_unslash( (array) $_POST );
-		$id     = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
+		$new_id     = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 
-		$submit_result = 0 < $id;
+		$submit_result = 0 < $new_id;
 	} catch ( Exception $e ) {
 		echo $obj->error( $e->getMessage() );
 	}
@@ -176,14 +186,23 @@ if ( 0 < $pod->id() ) {
 
 $counter = (int) pods_static_cache_get( $pod->pod . '-counter', 'pods-forms' );
 
+// Shift counter by 1 so that it always starts at 1.
 $counter ++;
+
+// Enforce the counter.
+PodsForm::$form_counter = $counter;
 
 pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 ?>
 
-<form action="" method="post"
+<form
+	action=""
+	method="post"
 	class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax"
 	id="pods-form-<?php echo esc_attr( $pod->pod . '-' . $counter ); ?>"
+	data-pods-pod-name="<?php echo esc_attr( $pod->pod ); ?>"
+	data-pods-item-id="<?php echo esc_attr( $item_id ); ?>"
+	data-pods-form-counter="<?php echo esc_attr( $counter ); ?>"
 >
 	<div class="pods-submittable-fields">
 		<?php
@@ -192,7 +211,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		echo PodsForm::field( 'do', $do, 'hidden' );
 		echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' );
 		echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' );
-		echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $pod->id() ), 'hidden' );
+		echo PodsForm::field( '_pods_id', $item_id, 'hidden' );
 		echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' );
 		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
 		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
@@ -217,7 +236,6 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		}
 	<?php else : ?>
 		var pods_admin_submit_callback = function ( id ) {
-
 			id = parseInt( id, 10 );
 			var thank_you = '<?php echo esc_url_raw( $thank_you ); ?>';
 			var thank_you_alt = '<?php echo esc_url_raw( $thank_you_alt ); ?>';

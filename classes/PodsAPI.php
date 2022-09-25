@@ -3206,9 +3206,12 @@ class PodsAPI {
 		if ( ! empty( $field ) ) {
 			$old_id        = pods_v( 'id', $field );
 			$old_name      = pods_clean_name( $field['name'], true, 'meta' !== $pod['storage'] );
-			$old_type      = $field['type'];
+			$old_type      = pods_v( 'type', $field );
 			$old_options   = $field;
 			$old_sister_id = pods_v( 'sister_id', $old_options, 0 );
+
+			// Set a default just in case it was not set.
+			$field['type'] = $old_type;
 
 			// Maybe clone the field object if we need to.
 			if ( $old_options instanceof Field ) {
@@ -3229,14 +3232,16 @@ class PodsAPI {
 			$old_simple = ( 'pick' === $old_type && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 
 			if ( isset( $params->new_name ) && ! empty( $params->new_name ) ) {
-				$field['name'] = $params->new_name;
+				$params->name = $params->new_name;
 
 				unset( $params->new_name );
-			} elseif ( isset( $params->name ) && ! empty( $params->name ) ) {
+			}
+
+			if ( isset( $params->name ) ) {
 				$field['name'] = $params->name;
 			}
 
-			if ( $new_group && ( ! $group || $group->get_id() !== $new_group->get_id() ) ) {
+			if ( $new_group ) {
 				$field['group'] = $new_group->get_id();
 			}
 
@@ -3799,7 +3804,7 @@ class PodsAPI {
 					$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", false );
 
 					if ( false === $test ) {
-						pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` MODIFY {$definition}", __( 'Cannot create or update new field', 'pods' ) );
+						pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` MODIFY {$definition}", __( 'Cannot create or update new field, you may have reached the maximum limit of your table row size. Try reducing your fields or use higher than 255 maximum character limits (VARCHAR) to store in TEXT format.', 'pods' ) );
 					}
 				}
 
@@ -4158,10 +4163,12 @@ class PodsAPI {
 			}
 
 			if ( isset( $params->new_name ) && ! empty( $params->new_name ) ) {
-				$group['name'] = $params->new_name;
+				$params->name = $params->new_name;
 
 				unset( $params->new_name );
-			} elseif ( isset( $params->name ) ) {
+			}
+
+			if ( isset( $params->name ) ) {
 				$group['name'] = $params->name;
 			}
 
@@ -8284,7 +8291,9 @@ class PodsAPI {
 		}
 
 		if ( isset( $params['pod'] ) ) {
-			if ( empty( $params['parent'] ) ) {
+			if ( $params['pod'] instanceof Pod ) {
+				$params['parent'] = $params['pod']->get_id();
+			} elseif ( empty( $params['parent'] ) ) {
 				$pod = $this->load_pod( $params['pod'] );
 
 				if ( ! $pod ) {
@@ -8304,10 +8313,14 @@ class PodsAPI {
 		}
 
 		if ( isset( $params['group'] ) ) {
-			$group = $this->load_group( $params['group'], false );
+			if ( $params['group'] instanceof Group ) {
+				$params['group'] = $params['group']->get_id();
+			} else {
+				$group = $this->load_group( $params['group'], false );
 
-			if ( $group ) {
-				$params['group'] = $group->get_id();
+				if ( $group ) {
+					$params['group'] = $group->get_id();
+				}
 			}
 		}
 
@@ -8595,7 +8608,9 @@ class PodsAPI {
 		}
 
 		if ( isset( $params['pod'] ) ) {
-			if ( empty( $params['parent'] ) ) {
+			if ( $params['pod'] instanceof Pod ) {
+				$params['parent'] = $params['pod']->get_id();
+			} elseif ( empty( $params['parent'] ) ) {
 				$pod = $this->load_pod( $params['pod'] );
 
 				if ( ! $pod ) {
@@ -9328,7 +9343,11 @@ class PodsAPI {
 			);
 
 			if ( ! empty( $params->field_id ) ) {
-				$load_params['id'] = $params->field_id;
+				if ( is_string( $params->field_id ) && ! is_numeric( $params->field_id ) ) {
+					$load_params['name'] = $params->field_id;
+				} else {
+					$load_params['id'] = $params->field_id;
+				}
 			}
 
 			$params->field = $this->load_field( $load_params );
@@ -9343,14 +9362,16 @@ class PodsAPI {
 		$related_pick_limit = 0;
 
 		if ( ! empty( $params->field ) ) {
-			$params->field_id = $params->field['id'];
+			$params->field_id   = $params->field['id'];
+			$params->field_name = $params->field['name'];
 
 			if ( $params->field instanceof Field && empty( $params->pod ) ) {
 				$params->pod = $params->field->get_parent_object();
 			}
 
 			if ( ! empty( $params->pod ) ) {
-				$params->pod_id = $params->pod['id'];
+				$params->pod_id   = $params->pod['id'];
+				$params->pod_name = $params->pod['id'];
 			}
 
 			if ( 'multi' === pods_v( $field_type . '_format_type', $params->field, 'single' ) ) {
@@ -9392,7 +9413,12 @@ class PodsAPI {
 			if ( ! is_wp_error( $related ) ) {
 				$related_ids = $related;
 			}
-		} elseif ( ! $params->force_meta && ! pods_tableless() && pods_podsrel_enabled( $params->field, 'lookup' ) ) {
+		} elseif (
+			! $params->force_meta
+			&& ! empty( $params->field_id )
+			&& ! pods_tableless()
+			&& pods_podsrel_enabled( $params->field, 'lookup' )
+		) {
 			$params->field_id  = (int) $params->field_id;
 
 			$ids_in = implode( ', ', array_fill( 0, count( $params->ids ), '%d' ) );

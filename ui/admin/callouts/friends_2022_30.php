@@ -5,7 +5,7 @@
 
 $callout = 'friends_2022_30';
 
-$donor_count    = 3233;
+$donor_count    = 3691;
 $donor_goal     = 6500;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 

@@ -21,7 +21,7 @@ $post_callback     = isset( $post_callback ) ? $post_callback : null;
 $th_scope          = isset( $th_scope ) ? $th_scope : '';
 
 foreach ( $fields as $field ) {
-	$hidden_field = (boolean) pods_v( 'hidden', $field, false );
+	$hidden_field = 'hidden' === $field['type'] || filter_var( pods_v( 'hidden', $field, false ), FILTER_VALIDATE_BOOLEAN );
 
 	if (
 		! pods_permission( $field )
@@ -29,6 +29,10 @@ foreach ( $fields as $field ) {
 	) {
 		if ( ! $hidden_field ) {
 			continue;
+		}
+
+		if ( $field instanceof \Pods\Whatsit\Field ) {
+			$field = clone $field;
 		}
 
 		$field['type'] = 'hidden';

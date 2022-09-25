@@ -4107,7 +4107,7 @@ function pods_config_for_field( $field, $pod = null ) {
 		}
 	}
 
-	if ( is_string( $field ) && $pod ) {
+	if ( $pod && is_string( $field ) ) {
 		$field = $pod->get_field( $field );
 
 		// Check if the $field is invalid.

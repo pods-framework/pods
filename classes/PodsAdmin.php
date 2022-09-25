@@ -654,8 +654,7 @@ class PodsAdmin {
 	 * @since unknown
 	 */
 	public function parent_file( $parent_file ) {
-
-		global $current_screen;
+		global $current_screen, $submenu_file;
 
 		if ( isset( $current_screen ) && ! empty( $current_screen->taxonomy ) ) {
 			$taxonomies = PodsMeta::$taxonomies;
@@ -687,16 +686,14 @@ class PodsAdmin {
 		}//end if
 
 		if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) && is_object( PodsInit::$components ) ) {
-			global $submenu_file;
+			$components_menu_items = PodsInit::$components->components_menu_items;
 
-			$components = PodsInit::$components->components;
-
-			foreach ( $components as $component => $component_data ) {
-				if ( ! empty( $component_data['MenuPage'] ) && $parent_file === $component_data['MenuPage'] ) {
+			foreach ( $components_menu_items as $menu_item ) {
+				if ( ! empty( $menu_item['menu_page'] ) && $parent_file === $menu_item['menu_page'] ) {
 					$parent_file = 'pods';
 
 					// @codingStandardsIgnoreLine
-					$submenu_file = $component_data['MenuPage'];
+					$submenu_file = $menu_item['menu_page'];
 				}
 			}
 		}

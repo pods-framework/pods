@@ -150,6 +150,8 @@ class PodsField_Pick extends PodsField {
 
 		$fallback_help = sprintf( $fallback_help, $fallback_help_link );
 
+		$simple_objects = $this->simple_objects();
+
 		$options = [
 			static::$type . '_format_type'              => [
 				'label'                 => __( 'Selection Type', 'pods' ),
@@ -259,7 +261,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_object'        => array_merge( [
 						'site',
 						'network',
-					], $this->simple_objects() ),
+					], $simple_objects ),
 					static::$type . '_allow_add_new' => false,
 				],
 				'type'           => 'boolean',
@@ -273,7 +275,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $simple_objects ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -286,7 +288,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $simple_objects ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -299,7 +301,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_multi'  => 'list',
 				],
 				'excludes-on'    => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $simple_objects ),
 				],
 				'type'           => 'boolean',
 				'default'        => 1,
@@ -348,7 +350,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Display Field in Selection List', 'pods' ),
 				'help'        => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ) . ' ' . $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $simple_objects ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -368,7 +370,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>WHERE</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $simple_objects ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -377,7 +379,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>ORDER BY</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $simple_objects ),
 				],
 				'default'     => '',
 				'type'        => 'text',
@@ -386,7 +388,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Customized <em>GROUP BY</em>', 'pods' ),
 				'help'        => $fallback_help,
 				'excludes-on' => [
-					static::$type . '_object' => array_merge( [ 'site', 'network' ], $this->simple_objects() ),
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], $simple_objects ),
 				],
 				'default'     => '',
 				'type'        => 'text',

@@ -1743,8 +1743,13 @@ class Pods implements Iterator {
 	 * @since 2.3.3
 	 */
 	public function has( $field, $value, $id = null ) {
-
 		$pod =& $this;
+
+		$field_object = $this->fields( $field );
+
+		if ( ! $field_object ) {
+			return false;
+		}
 
 		if ( null === $id ) {
 			$id = $this->id();
@@ -1755,17 +1760,15 @@ class Pods implements Iterator {
 
 		$this->do_hook( 'has', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
-			return false;
-		}
+		$field_type = $field_object->get_type();
 
 		// Tableless fields.
-		if ( in_array( $this->fields[ $field ]['type'], PodsForm::tableless_field_types(), true ) ) {
+		if ( $field_object->is_relationship() ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' === $this->fields[ $field ]['type'] && in_array( $this->fields[ $field ]['pick_object'], PodsForm::simple_tableless_objects(), true ) ) {
+			if ( $field_object->is_simple_relationship() ) {
 				$current_value = $pod->raw( $field );
 
 				if ( ! empty( $current_value ) ) {
@@ -1779,7 +1782,7 @@ class Pods implements Iterator {
 					}
 				}
 			} else {
-				$related_ids = $this->data->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+				$related_ids = $this->data->api->lookup_related_items( $field_object->get_name(), $this->pod_data['name'], $id, $field_object, $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
 					if ( ! preg_match( '/[^\D]/', $v ) ) {
@@ -1796,7 +1799,7 @@ class Pods implements Iterator {
 					}
 				}
 			}//end if
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::text_field_types(), true ) ) {
 			// Text fields.
 			$current_value = $pod->raw( $field );
 
@@ -1823,8 +1826,13 @@ class Pods implements Iterator {
 	 * @since 2.3.3
 	 */
 	public function is( $field, $value, $id = null ) {
-
 		$pod =& $this;
+
+		$field_object = $this->fields( $field );
+
+		if ( ! $field_object ) {
+			return false;
+		}
 
 		if ( null === $id ) {
 			$id = $this->id();
@@ -1835,19 +1843,17 @@ class Pods implements Iterator {
 
 		$this->do_hook( 'is', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
-			return false;
-		}
+		$field_type = $field_object->get_type();
 
 		// Tableless fields.
-		if ( in_array( $this->fields[ $field ]['type'], PodsForm::tableless_field_types(), true ) ) {
+		if ( $field_object->is_relationship() ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
 			$current_value = array();
 
-			if ( 'pick' === $this->fields[ $field ]['type'] && in_array( $this->fields[ $field ]['pick_object'], PodsForm::simple_tableless_objects(), true ) ) {
+			if ( $field_object->is_simple_relationship() ) {
 				$current_value = $pod->raw( $field );
 
 				if ( ! empty( $current_value ) ) {
@@ -1861,7 +1867,7 @@ class Pods implements Iterator {
 					}
 				}
 			} else {
-				$related_ids = $this->data->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+				$related_ids = $this->data->api->lookup_related_items( $field_object->get_name(), $this->pod_data['name'], $id, $field_object, $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
 					if ( ! preg_match( '/[^\D]/', $v ) ) {
@@ -1897,14 +1903,14 @@ class Pods implements Iterator {
 			if ( $value === $current_value ) {
 				return true;
 			}
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::number_field_types(), true ) ) {
 			// Number fields.
 			$current_value = $pod->raw( $field );
 
 			if ( (float) $current_value === (float) $value ) {
 				return true;
 			}
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::date_field_types(), true ) ) {
 			// Date fields.
 			$current_value = $pod->raw( $field );
 
@@ -1915,7 +1921,7 @@ class Pods implements Iterator {
 			} elseif ( empty( $value ) ) {
 				return true;
 			}
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::text_field_types(), true ) ) {
 			// Text fields.
 			$current_value = $pod->raw( $field );
 
@@ -2721,6 +2727,12 @@ class Pods implements Iterator {
 
 		$pod =& $this;
 
+		$field_object = $this->fields( $field );
+
+		if ( ! $field_object ) {
+			return false;
+		}
+
 		$fetch = false;
 
 		if ( null === $id ) {
@@ -2734,17 +2746,15 @@ class Pods implements Iterator {
 
 		$this->do_hook( 'add_to', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
-			return $id;
-		}
+		$field_type = $field_object->get_type();
 
 		// Tableless fields.
-		if ( in_array( $this->fields[ $field ]['type'], PodsForm::tableless_field_types(), true ) ) {
+		if ( $field_object->is_relationship() ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' === $this->fields[ $field ]['type'] && in_array( $this->fields[ $field ]['pick_object'], PodsForm::simple_tableless_objects(), true ) ) {
+			if ( $field_object->is_simple_relationship() ) {
 				$current_value = $pod->raw( $field );
 
 				if ( ! empty( $current_value ) || ( ! is_array( $current_value ) && 0 < strlen( $current_value ) ) ) {
@@ -2755,7 +2765,7 @@ class Pods implements Iterator {
 
 				$value = array_merge( $current_value, $value );
 			} else {
-				$related_ids = $this->data->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+				$related_ids = $this->data->api->lookup_related_items( $field_object->get_name(), $this->pod_data['name'], $id, $field_object, $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
 					if ( ! preg_match( '/[^\D]/', $v ) ) {
@@ -2775,12 +2785,12 @@ class Pods implements Iterator {
 			if ( empty( $value ) ) {
 				return $id;
 			}
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::number_field_types(), true ) ) {
 			// Number fields.
 			$current_value = (float) $pod->raw( $field );
 
 			$value = ( $current_value + (float) $value );
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::date_field_types(), true ) ) {
 			// Date fields.
 			$current_value = $pod->raw( $field );
 
@@ -2789,7 +2799,7 @@ class Pods implements Iterator {
 			} else {
 				$value = strtotime( $value );
 			}
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::text_field_types(), true ) ) {
 			// Text fields.
 			$current_value = $pod->raw( $field );
 
@@ -2837,6 +2847,12 @@ class Pods implements Iterator {
 
 		$pod =& $this;
 
+		$field_object = $this->fields( $field );
+
+		if ( ! $field_object ) {
+			return false;
+		}
+
 		$fetch = false;
 
 		if ( null === $id ) {
@@ -2850,12 +2866,10 @@ class Pods implements Iterator {
 
 		$this->do_hook( 'remove_from', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
-			return $id;
-		}
+		$field_type = $field_object->get_type();
 
 		// Tableless fields.
-		if ( in_array( $this->fields[ $field ]['type'], PodsForm::tableless_field_types(), true ) ) {
+		if ( $field_object->is_relationship() ) {
 			if ( empty( $value ) ) {
 				$value = array();
 			}
@@ -2865,7 +2879,7 @@ class Pods implements Iterator {
 					$value = explode( ',', $value );
 				}
 
-				if ( 'pick' === $this->fields[ $field ]['type'] && in_array( $this->fields[ $field ]['pick_object'], PodsForm::simple_tableless_objects(), true ) ) {
+				if ( $field_object->is_simple_relationship() ) {
 					$current_value = $pod->raw( $field );
 
 					if ( ! empty( $current_value ) ) {
@@ -2881,7 +2895,7 @@ class Pods implements Iterator {
 
 					$value = $current_value;
 				} else {
-					$related_ids = $this->data->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+					$related_ids = $this->data->api->lookup_related_items( $field_object->get_name(), $this->pod_data['name'], $id, $field_object, $this->pod_data );
 
 					foreach ( $value as $k => $v ) {
 						if ( ! preg_match( '/[^\D]/', $v ) ) {
@@ -2907,7 +2921,7 @@ class Pods implements Iterator {
 					$value = array();
 				}
 			}//end if
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::number_field_types(), true ) ) {
 			// Number fields.
 			// Date fields don't support empty for removing.
 			if ( empty( $value ) ) {
@@ -2917,7 +2931,7 @@ class Pods implements Iterator {
 			$current_value = (float) $pod->raw( $field );
 
 			$value = ( $current_value - (float) $value );
-		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+		} elseif ( in_array( $field_type, PodsForm::date_field_types(), true ) ) {
 			// Date fields.
 			// Date fields don't support empty for removing.
 			if ( empty( $value ) ) {

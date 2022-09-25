@@ -3819,22 +3819,16 @@ function pods_is_modal_window() {
 }
 
 /**
- * Check if the pod object is valid and the pod exists.
+ * Check if the Pods object is exists and is valid.
  *
- * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ * @param Pods|mixed $pod The Pods object or something that isn't a pod object.
  *
- * @return bool Whether the pod object is valid and exists
+ * @return bool Whether the Pods object is exists and is valid.
  *
  * @since 2.7.0
  */
 function pod_is_valid( $pod ) {
-	$is_valid = false;
-
-	if ( $pod && $pod instanceof Pods && $pod->valid() ) {
-		$is_valid = true;
-	}
-
-	return $is_valid;
+	return $pod instanceof Pods && $pod->valid();
 }
 
 /**
@@ -3847,13 +3841,24 @@ function pod_is_valid( $pod ) {
  * @since 2.7.0
  */
 function pod_has_items( $pod ) {
-	$has_items = false;
-
-	if ( pod_is_valid( $pod ) && ( $pod->id && $pod->exists() ) || ( ! empty( $pod->params ) && 0 < $pod->total() ) ) {
-		$has_items = true;
+	if ( ! pod_is_valid( $pod ) ) {
+		return false;
 	}
 
-	return $has_items;
+	if (
+		(
+			$pod->id
+			&& $pod->exists()
+		)
+		|| (
+			! empty( $pod->params )
+			&& 0 < $pod->total()
+		)
+	) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -3949,16 +3954,13 @@ function pods_config_merge_fields( $configs_to_merge_into, $configs_to_merge_fro
  * @return array[]|Field[] The list of all fields, including object fields.
  */
 function pods_config_get_all_fields( $pod ) {
-	if ( $pod instanceof Pod ) {
-		return $pod->get_all_fields();
-	} elseif ( $pod instanceof Pods ) {
-		return $pod->pod_data->get_all_fields();
+	$pod = pods_config_for_pod( $pod );
+
+	if ( ! $pod ) {
+		return [];
 	}
 
-	$fields        = (array) pods_v( 'fields', $pod, [] );
-	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
-
-	return pods_config_merge_fields( $fields, $object_fields );
+	return $pod->get_all_fields();
 }
 
 /**
@@ -4019,36 +4021,14 @@ function pods_config_get_fields_from_value_fields( array $value_fields ) {
  * @return array|Field|null The field data or null if not found.
  */
 function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
-	// Get the pod data from the Pods object if it's there.
-	if ( $pod instanceof Pods ) {
-		$pod = $pod->pod_data;
-	}
-
-	// Get the field directly from the Pod.
-	if ( $pod instanceof Pod ) {
-		return $pod->get_field( $field, $arg );
-	}
+	$pod = pods_config_for_pod( $pod );
 
 	// The pod isn't there or valid.
 	if ( empty( $pod ) ) {
 		return null;
 	}
 
-	$fields        = (array) pods_v( 'fields', $pod, [] );
-	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
-
-	// Return the object field.
-	if ( isset( $object_fields[ $field ] ) ) {
-		return $object_fields[ $field ];
-	}
-
-	// Return the pod field.
-	if ( isset( $fields[ $field ] ) ) {
-		return $fields[ $field ];
-	}
-
-	// No field found.
-	return null;
+	return $pod->get_field( $field );
 }
 
 /**
@@ -4128,13 +4108,7 @@ function pods_config_for_field( $field, $pod = null ) {
 	}
 
 	if ( is_string( $field ) && $pod ) {
-		try {
-			$api = pods_api();
-
-			$field = $api->load_field( [ 'name' => $field, 'pod' => $pod ] );
-		} catch ( Exception $exception ) {
-			return false;
-		}
+		$field = $pod->get_field( $field );
 
 		// Check if the $field is invalid.
 		if ( ! $field ) {

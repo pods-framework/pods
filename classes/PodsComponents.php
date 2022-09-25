@@ -203,7 +203,13 @@ class PodsComponents {
 		ksort( $pods_component_menu_items );
 
 		foreach ( $pods_component_menu_items as $menu_title => $menu_data ) {
-			if ( ! is_callable( $menu_data['callback'] ) ) {
+			if (
+				(
+					'' !== $menu_data['callback']
+					|| false === strpos( $menu_data['menu_page'], '.php' )
+				)
+				&& ! is_callable( $menu_data['callback'] )
+			) {
 				continue;
 			}
 

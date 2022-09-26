@@ -4035,7 +4035,7 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
  * Get a normalized Pod configuration.
  *
  * @since 2.8.0
- *e.
+ *
  * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
  *
  * @return false|Pod The Pod object or false if invalid.

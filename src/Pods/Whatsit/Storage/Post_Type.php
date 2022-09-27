@@ -350,17 +350,13 @@ class Post_Type extends Collection {
 
 			$cache_key_parts[] = $current_language;
 
-			$cache_key_parts_post_args = $post_args;
-
 			$cache_key_post_type = 'any';
 
-			if ( isset( $cache_key_parts_post_args['post_type'] ) ) {
+			if ( isset( $post_args['post_type'] ) ) {
 				$cache_key_post_type = $cache_key_parts_post_args['post_type'];
-
-				unset( $cache_key_parts_post_args['post_type'] );
 			}
 
-			$cache_key_parts[] = wp_json_encode( $cache_key_parts_post_args );
+			$cache_key_parts[] = wp_json_encode( $post_args );
 
 			/**
 			 * Filter cache key parts used for generating the cache key.

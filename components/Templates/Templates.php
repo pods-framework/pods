@@ -496,6 +496,9 @@ class Pods_Templates extends PodsComponent {
 
 		wp_update_post( (object) $postdata );
 
+		// Flush the find posts cache.
+		pods_cache_clear( true, 'pods_post_type_storage_' . $this->object_type );
+
 		// objects will be automatically sanitized
 		if ( $revisions ) {
 			add_action( 'pre_post_update', 'wp_save_post_revision' );

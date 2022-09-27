@@ -349,7 +349,18 @@ class Post_Type extends Collection {
 			}
 
 			$cache_key_parts[] = $current_language;
-			$cache_key_parts[] = wp_json_encode( $post_args );
+
+			$cache_key_parts_post_args = $post_args;
+
+			$cache_key_post_type = 'any';
+
+			if ( isset( $cache_key_parts_post_args['post_type'] ) ) {
+				$cache_key_post_type = $cache_key_parts_post_args['post_type'];
+
+				unset( $cache_key_parts_post_args['post_type'] );
+			}
+
+			$cache_key_parts[] = wp_json_encode( $cache_key_parts_post_args );
 
 			/**
 			 * Filter cache key parts used for generating the cache key.
@@ -369,7 +380,7 @@ class Post_Type extends Collection {
 
 			if ( empty( $args['refresh'] ) ) {
 				$posts        = pods_transient_get( $cache_key );
-				$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage' );
+				$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage_' . $cache_key_post_type );
 			}
 		}//end if
 

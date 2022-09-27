@@ -243,6 +243,7 @@ class PodsMeta {
 	public static function enqueue() {
 		$type_map = [
 			'post_type'  => 'post_types',
+			'taxonomy'   => 'taxonomies',
 			'taxonomies' => 'taxonomies',
 			'setting'    => 'settings',
 		];

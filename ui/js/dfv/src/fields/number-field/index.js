@@ -62,9 +62,13 @@ const NumberField = ( {
 			return;
 		}
 
-		// Slider input is always format: `9999.99`.
 		if ( isSlider ) {
+			// Slider input is always format: `9999.99`.
 			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
+		} else if ( html5 ) {
+			// HTML5 input is always format: `9999.99` or `9999,99`.
+			setValue( parseFloatWithPodsFormat( event.target.value, 0 <= event.target.value.indexOf( ',' ) ? '9999.99' : '9999,99' ) );
 			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
 		} else {
 			setValue( parseFloatWithPodsFormat( event.target.value, format ) );

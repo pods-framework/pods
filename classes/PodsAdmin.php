@@ -689,12 +689,16 @@ class PodsAdmin {
 			$components_menu_items = PodsInit::$components->components_menu_items;
 
 			foreach ( $components_menu_items as $menu_item ) {
-				if ( ! empty( $menu_item['menu_page'] ) && $parent_file === $menu_item['menu_page'] ) {
-					$parent_file = 'pods';
-
-					// @codingStandardsIgnoreLine
-					$submenu_file = $menu_item['menu_page'];
+				if ( empty( $menu_item['menu_page'] ) || $parent_file !== $menu_item['menu_page'] ) {
+					continue;
 				}
+
+				$parent_file = 'pods';
+
+				// @codingStandardsIgnoreLine
+				$submenu_file = $menu_item['menu_page'];
+
+				break;
 			}
 		}
 

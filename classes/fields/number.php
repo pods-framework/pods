@@ -320,8 +320,9 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 		$decimals    = $format_args['decimals'];
 
+		// Slider only supports `1234.00` format so no need for replacing characters.
 		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
-			// Slider only supports `1234.00` format so no need for replacing characters.
+			// Not a slider so we need to replace format characters.
 			$value = str_replace(
 				array( $thousands, html_entity_decode( $thousands ), $dot, html_entity_decode( $dot ) ),
 				array( '', '', '.', '.' ),

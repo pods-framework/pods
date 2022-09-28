@@ -353,7 +353,7 @@ class Post_Type extends Collection {
 			$cache_key_post_type = 'any';
 
 			if ( isset( $post_args['post_type'] ) ) {
-				$cache_key_post_type = $cache_key_parts_post_args['post_type'];
+				$cache_key_post_type = $post_args['post_type'];
 			}
 
 			$cache_key_parts[] = wp_json_encode( $post_args );

@@ -327,6 +327,11 @@ class PodsField_Number extends PodsField {
 				array( '', '', '.', '.' ),
 				$value
 			);
+
+			if ( 1 !== (int) pods_v( static::$type . '_html5', $options, false ) ) {
+				// HTML5 supports `1234.00` and `1234,00` formats.
+				$value = str_replace( ',', '.', $value );
+			}
 		}
 
 		$value = trim( $value );

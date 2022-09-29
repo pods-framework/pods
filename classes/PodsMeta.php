@@ -242,10 +242,9 @@ class PodsMeta {
 	 */
 	public static function enqueue() {
 		$type_map = [
-			'post_type'  => 'post_types',
-			'taxonomy'   => 'taxonomies',
-			'taxonomies' => 'taxonomies',
-			'setting'    => 'settings',
+			'post_type' => 'post_types',
+			'taxonomy'  => 'taxonomies',
+			'setting'   => 'settings',
 		];
 
 		foreach ( self::$queue as $type => $objects ) {

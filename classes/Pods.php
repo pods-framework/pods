@@ -1587,6 +1587,11 @@ class Pods implements Iterator {
 									pods_no_conflict_off( $object_type );
 								}
 
+								if ( isset( $related_obj->fields[ $field ] ) ) {
+									// Set the last field options for formatting.
+									$last_options = $related_obj->fields[ $field ];
+								}
+
 								// Handle Simple Relationships.
 								if ( $simple ) {
 									if ( null === $params->single ) {

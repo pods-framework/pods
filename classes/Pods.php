@@ -1639,6 +1639,9 @@ class Pods implements Iterator {
 
 		if ( ! empty( $last_field_data ) ) {
 			$field_data = $last_field_data;
+			if ( isset( $last_is_repeatable_field ) ) {
+				$is_repeatable_field = $last_is_repeatable_field;
+			}
 		}
 
 		if ( ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {

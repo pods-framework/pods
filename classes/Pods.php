@@ -1611,7 +1611,7 @@ class Pods implements Iterator {
 
 							if ( $last_options ) {
 								$last_field_data = $last_options;
-							} elseif ( isset( $related_obj, $related_obj->fields, $related_obj->fields[ $field ] ) ) {
+							} elseif ( isset( $related_obj->fields[ $field ] ) ) {
 								// Save related field data for later to be used for display formatting
 								$last_field_data = $related_obj->fields[ $field ];
 							}

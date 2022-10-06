@@ -18,10 +18,10 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api add-pod --name=book
-	 * wp pods-api add-pod --name=book --type=post_type
-	 * wp pods-api add-pod --name=book --type=post_type --label=Books --singular_label=Book
-	 * wp pods-api add-pod --name=genre --type=taxonomy --label=Genres --singular_label=Genre
+	 * wp pods-legacy-api add-pod --name=book
+	 * wp pods-legacy-api add-pod --name=book --type=post_type
+	 * wp pods-legacy-api add-pod --name=book --type=post_type --label=Books --singular_label=Book
+	 * wp pods-legacy-api add-pod --name=genre --type=taxonomy --label=Genres --singular_label=Genre
 	 *
 	 * @subcommand add-pod
 	 *
@@ -67,9 +67,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api save-pod --name=book --type=post_type
-	 * wp pods-api save-pod --name=book --type=post_type --label=Books --singular_label=Book
-	 * wp pods-api save-pod --name=genre --type=taxonomy --label=Genres --singular_label=Genre
+	 * wp pods-legacy-api save-pod --name=book --type=post_type
+	 * wp pods-legacy-api save-pod --name=book --type=post_type --label=Books --singular_label=Book
+	 * wp pods-legacy-api save-pod --name=genre --type=taxonomy --label=Genres --singular_label=Genre
 	 *
 	 * @subcommand save-pod
 	 *
@@ -124,9 +124,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api duplicate-pod --name=book
-	 * wp pods-api duplicate-pod --name=book --new_name=book2
-	 * wp pods-api duplicate-pod --name=book --new_name=book2 --label="Books Two" --singular_label="Book Two"
+	 * wp pods-legacy-api duplicate-pod --name=book
+	 * wp pods-legacy-api duplicate-pod --name=book --new_name=book2
+	 * wp pods-legacy-api duplicate-pod --name=book --new_name=book2 --label="Books Two" --singular_label="Book Two"
 	 *
 	 * @subcommand duplicate-pod
 	 *
@@ -175,7 +175,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api reset-pod --name=book
+	 * wp pods-legacy-api reset-pod --name=book
 	 *
 	 * @subcommand reset-pod
 	 *
@@ -221,8 +221,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api delete-pod --name=book
-	 * wp pods-api delete-pod --name=book --delete_all
+	 * wp pods-legacy-api delete-pod --name=book
+	 * wp pods-legacy-api delete-pod --name=book --delete_all
 	 *
 	 * @subcommand delete-pod
 	 *
@@ -272,7 +272,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api activate-component --component=templates
+	 * wp pods-legacy-api activate-component --component=templates
 	 *
 	 * @subcommand activate-component
 	 *
@@ -311,7 +311,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api deactivate-component --component=templates
+	 * wp pods-legacy-api deactivate-component --component=templates
 	 *
 	 * @subcommand deactivate-component
 	 *
@@ -345,7 +345,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api clear-cache
+	 * wp pods-legacy-api clear-cache
 	 *
 	 * @subcommand clear-cache
 	 */
@@ -376,19 +376,19 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api export-pod --file="pods-package.json"
-	 * wp pods-api export-pod --file="pods-package.json" --pods="book,genre"
-	 * wp pods-api export-pod --file="/path/to/pods-package.json" --pods="book,genre"
-	 * wp pods-api export-pod --templates="book-single,book-list" --file="pods-package.json"
-	 * wp pods-api export-pod --pod-pages="books,books/*" --file="pods-package.json"
-	 * wp pods-api export-pod --pods="book,genre" --templates="book-single,book-list" --pod-pages="books,books/*" --file="pods-package.json"
+	 * wp pods-legacy-api export-pod --file="pods-package.json"
+	 * wp pods-legacy-api export-pod --file="pods-package.json" --pods="book,genre"
+	 * wp pods-legacy-api export-pod --file="/path/to/pods-package.json" --pods="book,genre"
+	 * wp pods-legacy-api export-pod --templates="book-single,book-list" --file="pods-package.json"
+	 * wp pods-legacy-api export-pod --pod-pages="books,books/*" --file="pods-package.json"
+	 * wp pods-legacy-api export-pod --pods="book,genre" --templates="book-single,book-list" --pod-pages="books,books/*" --file="pods-package.json"
 	 *
 	 * @subcommand export-pod
 	 */
 	public function export_pod( $args, $assoc_args ) {
 
 		if ( ! PodsInit::$components->is_component_active( 'migrate-packages' ) ) {
-			WP_CLI::error( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-api activate-component --component=migrate-packages' ) );
+			WP_CLI::error( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-legacy-api activate-component --component=migrate-packages' ) );
 		}
 
 		$params = array(
@@ -452,16 +452,16 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods-api import-pod --file="pods-package.json"
-	 * wp pods-api import-pod --file="/path/to/pods-package.json"
-	 * wp pods-api import-pod --file="pods-package.json" --replace
+	 * wp pods-legacy-api import-pod --file="pods-package.json"
+	 * wp pods-legacy-api import-pod --file="/path/to/pods-package.json"
+	 * wp pods-legacy-api import-pod --file="pods-package.json" --replace
 	 *
 	 * @subcommand import-pod
 	 */
 	public function import_pod( $args, $assoc_args ) {
 
 		if ( ! PodsInit::$components->is_component_active( 'migrate-packages' ) ) {
-			WP_CLI::error( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-api activate-component --component=migrate-packages' ) );
+			WP_CLI::error( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-legacy-api activate-component --component=migrate-packages' ) );
 		}
 
 		$replace = false;

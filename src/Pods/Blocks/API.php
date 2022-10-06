@@ -94,6 +94,7 @@ class API {
 		pods_container( 'pods.blocks.form' );
 		pods_container( 'pods.blocks.list' );
 		pods_container( 'pods.blocks.single' );
+		pods_container( 'pods.blocks.single-list-fields' );
 		pods_container( 'pods.blocks.view' );
 
 		/**

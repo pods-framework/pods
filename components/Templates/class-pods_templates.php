@@ -215,6 +215,7 @@ class Pods_Templates_Frontier {
 				'groups' => array(),
 			)
 		);
+
 		add_meta_box(
 			'pod_reference', __( 'Pod Reference', 'pods' ), array(
 				$this,

@@ -7,6 +7,7 @@ use Pods\Blocks\Types\Field;
 use Pods\Blocks\Types\Form;
 use Pods\Blocks\Types\Item_List;
 use Pods\Blocks\Types\Item_Single;
+use Pods\Blocks\Types\Item_Single_List_Fields;
 use Pods\Blocks\Types\View;
 use tad_DI52_ServiceProvider;
 
@@ -31,6 +32,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		$this->container->singleton( 'pods.blocks.form', Form::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.list', Item_List::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.single', Item_Single::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks.single-list-fields', Item_Single_List_Fields::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.view', View::class, [ 'register_with_pods' ] );
 
 		$this->hooks();

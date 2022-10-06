@@ -104,111 +104,126 @@ class PodsRESTHandlers {
 		$value = false;
 
 		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod, 'read' ) ) {
-			$params = null;
+			$field_mode = pods_v( 'rest_api_field_mode', $pod->pod_data, 'value', true );
 
-			$field_data = $pod->fields( $field_name );
+			// Only deal with raw values if not in rendered field mode.
+			if ( 'rendered' !== $field_mode ) {
+				$params = null;
 
-			if ( 'pick' === pods_v( 'type', $field_data ) ) {
-				$output_type = pods_v( 'rest_pick_response', $field_data, 'array' );
+				$field_data = $pod->fields( $field_name );
 
-				/**
-				 * What output type to use for a related field REST response.
-				 *
-				 * @since 2.7.0
-				 *
-				 * @param string                 $output_type The pick response output type.
-				 * @param string                 $field_name  The name of the field
-				 * @param array                  $field_data  The field data
-				 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
-				 * @param int                    $id          Current item ID
-				 * @param object|WP_REST_Request Current      request object.
-				 */
-				$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
+				if ( 'pick' === pods_v( 'type', $field_data ) ) {
+					$output_type = pods_v( 'rest_pick_response', $field_data, 'array' );
 
-				if ( 'custom' === $output_type ) {
-					// Support custom selectors for the response.
-					$custom_selector = pods_v( 'rest_pick_custom', $field_data, $field_name );
+					/**
+					 * What output type to use for a related field REST response.
+					 *
+					 * @since 2.7.0
+					 *
+					 * @param string                 $output_type The pick response output type.
+					 * @param string                 $field_name  The name of the field
+					 * @param array                  $field_data  The field data
+					 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
+					 * @param int                    $id          Current item ID
+					 * @param object|WP_REST_Request Current      request object.
+					 */
+					$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
 
-					if ( ! empty( $custom_selector ) ) {
-						$field_name = $custom_selector;
-					}
-				} elseif ( 'array' === $output_type ) {
-					// Support fully fleshed out data for the response.
-					$related_pod_items = $pod->field( $field_name, array( 'output' => 'pod' ) );
+					if ( 'custom' === $output_type ) {
+						// Support custom selectors for the response.
+						$custom_selector = pods_v( 'rest_pick_custom', $field_data, $field_name );
 
-					if ( $related_pod_items ) {
-						$fields = false;
-						$items  = array();
-						$depth  = (int) pods_v( 'rest_pick_depth', $field_data, 2 );
-
-						if ( ! is_array( $related_pod_items ) ) {
-							$related_pod_items = array( $related_pod_items );
+						if ( ! empty( $custom_selector ) ) {
+							$field_name = $custom_selector;
 						}
+					} elseif ( 'array' === $output_type ) {
+						// Support fully fleshed out data for the response.
+						$related_pod_items = $pod->field( $field_name, array( 'output' => 'pod' ) );
 
-						/**
-						 * @var $related_pod Pods
-						 */
-						foreach ( $related_pod_items as $related_pod ) {
-							if ( ! is_object( $related_pod ) || ! $related_pod instanceof Pods ) {
-								$items = $related_pod_items;
+						if ( $related_pod_items ) {
+							$fields = false;
+							$items  = array();
+							$depth  = (int) pods_v( 'rest_pick_depth', $field_data, 2 );
 
-								break;
+							if ( ! is_array( $related_pod_items ) ) {
+								$related_pod_items = array( $related_pod_items );
 							}
 
-							if ( false === $fields ) {
-								$fields = pods_config_get_all_fields( $related_pod );
-								$fields = array_keys( $fields );
+							/**
+							 * @var $related_pod Pods
+							 */
+							foreach ( $related_pod_items as $related_pod ) {
+								if ( ! is_object( $related_pod ) || ! $related_pod instanceof Pods ) {
+									$items = $related_pod_items;
+
+									break;
+								}
+
+								if ( false === $fields ) {
+									$fields = pods_config_get_all_fields( $related_pod );
+									$fields = array_keys( $fields );
+
+									/**
+									 * What fields to show in a related field REST response.
+									 *
+									 * @since 0.0.1
+									 *
+									 * @param array                  $fields      The fields to show
+									 * @param string                 $field_name  The name of the field
+									 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
+									 * @param object|Pods            $related_pod The Pods object for Pod relationship is to.
+									 * @param int                    $id          Current item ID
+									 * @param object|WP_REST_Request $request     Current request object.
+									 */
+									$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
+								}//end if
 
 								/**
-								 * What fields to show in a related field REST response.
+								 * What depth to use for a related field REST response.
 								 *
 								 * @since 0.0.1
 								 *
-								 * @param array                  $fields      The fields to show
+								 * @param int                    $depth      The depth number to limit to.
 								 * @param string                 $field_name  The name of the field
 								 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
 								 * @param object|Pods            $related_pod The Pods object for Pod relationship is to.
 								 * @param int                    $id          Current item ID
 								 * @param object|WP_REST_Request $request     Current request object.
 								 */
-								$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
-							}//end if
+								$related_depth = (int) apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
 
-							/**
-							 * What depth to use for a related field REST response.
-							 *
-							 * @since 0.0.1
-							 *
-							 * @param int                    $depth      The depth number to limit to.
-							 * @param string                 $field_name  The name of the field
-							 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
-							 * @param object|Pods            $related_pod The Pods object for Pod relationship is to.
-							 * @param int                    $id          Current item ID
-							 * @param object|WP_REST_Request $request     Current request object.
-							 */
-							$related_depth = (int) apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
+								$params = array(
+									'fields'  => $fields,
+									'depth'   => $related_depth,
+									'context' => 'rest',
+								);
 
-							$params = array(
-								'fields'  => $fields,
-								'depth'   => $related_depth,
-								'context' => 'rest',
-							);
+								$items[] = $related_pod->export( $params );
+							}//end foreach
 
-							$items[] = $related_pod->export( $params );
-						}//end foreach
-
-						$value = $items;
+							$value = $items;
+						}//end if
 					}//end if
+
+					$params = array(
+						'output' => $output_type,
+					);
 				}//end if
 
-				$params = array(
-					'output' => $output_type,
-				);
-			}//end if
+				// If no value set yet, get normal field value
+				if ( ! $value && ! is_array( $value ) ) {
+					$value = $pod->field( $field_name, $params );
+				}
+			}
 
-			// If no value set yet, get normal field value
-			if ( ! $value && ! is_array( $value ) ) {
-				$value = $pod->field( $field_name, $params );
+			// Handle other field modes.
+			if ( 'value_and_render' === $field_mode ) {
+				$value = [
+					'value'    => $value,
+					'rendered' => $pod->display( $field_name ),
+				];
+			} elseif ( 'render' === $field_mode ) {
+				$value = $pod->display( $field_name );
 			}
 		}//end if
 

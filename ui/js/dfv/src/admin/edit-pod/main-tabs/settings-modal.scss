@@ -146,6 +146,7 @@
 .pods-field-option input[type="text"],
 .pods-field-option textarea {
     width: 100%;
+	box-sizing: border-box;
 }
 
 .components-modal__frame .pods-field-option input[type="checkbox"]:checked {

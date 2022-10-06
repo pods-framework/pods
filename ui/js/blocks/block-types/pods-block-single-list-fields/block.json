@@ -1,0 +1,76 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": "1",
+  "name": "pods/pods-block-single-list-fields",
+  "title": "Pods Single Item - List Fields",
+  "description": "Display fields for a single Pod item.",
+  "category": "pods",
+  "icon": "admin-page",
+  "keywords": [
+    "pods",
+    "single",
+    "item",
+    "list",
+    "fields"
+  ],
+  "editorScript": "file:../../pods-blocks-api.min.js",
+  "editorStyle": "file:../../../../styles/dist/pods.css",
+  "supports": {
+    "html": false,
+    "align": true,
+    "alignWide": true,
+    "anchor": true,
+    "customClassName": true,
+    "inserter": true,
+    "multiple": true,
+    "reusable": true,
+    "__experimentalColor": true,
+    "__experimentalFontSize": true,
+    "__experimentalPadding": true,
+    "__experimentalLineHeight": true,
+    "jsx": false
+  },
+  "attributes": {
+    "align": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "name": {
+      "type": "object",
+      "default": {
+        "label": "- Use Current Pod -",
+        "value": ""
+      }
+    },
+    "slug": {
+      "type": "string"
+    },
+    "display_output_type": {
+      "type": "object",
+      "default": {
+        "label": "Unordered list (<ul>)",
+        "value": "ul"
+      }
+    },
+    "display_fields": {
+      "type": "string"
+    },
+    "exclude_fields": {
+      "type": "string"
+    }
+  }
+}

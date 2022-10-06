@@ -33,7 +33,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	}
 
 	public function hook_init() {
-		$integration = tribe( Integration::class );
+		$integration = pods_container( Integration::class );
 
 		$requirements = $integration->get_requirements();
 
@@ -47,7 +47,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		$integration->hook();
 
 		// Get the Settings instance and register the settings.
-		$settings = tribe( Settings::class );
+		$settings = pods_container( Settings::class );
 
 		$settings->hook();
 	}

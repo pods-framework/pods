@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
 
 /**
  * @package Pods\Fields
@@ -367,7 +368,6 @@ class PodsField_File extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$type = pods_v( 'type', $options, static::$type );
@@ -415,7 +415,6 @@ class PodsField_File extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function build_dfv_field_options( $options, $args ) {
-
 		if ( ! is_admin() ) {
 			include_once ABSPATH . '/wp-admin/includes/template.php';
 
@@ -484,18 +483,36 @@ class PodsField_File extends PodsField {
 		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
 
-			$pod_id   = (int) pods_v( 'pod_id', $args->pod, 0 );
-			$field_id = (int) pods_v( 'id', $options, 0 );
-			$item_id  = (int) pods_v( 'id', $args, 0 );
+			if ( is_array( $args->pod ) ) {
+				$pod_name = $args->pod['name'];
+			} elseif ( $args->pod instanceof Pods ) {
+				$pod_name = $args->pod->pod;
+			} elseif ( $args->pod instanceof Pod ) {
+				$pod_name = $args->pod->get_name();
+			} else {
+				$pod_name = '';
+			}
 
-			if ( $is_user_logged_in ) {
+			if ( is_array( $options ) ) {
+				$field_name = pods_v( 'name', $options );
+			} elseif ( $options instanceof Field ) {
+				$field_name = $options->get_name();
+			} else {
+				$field_name = '';
+			}
+
+			$id = (int) $args->id;
+
+			if ( is_user_logged_in() ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
 				$uid = pods_session_id();
 			}
 
-			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
-			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
+			$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
+
+			$nonce_name  = 'pods_upload:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
+			$field_nonce = wp_create_nonce( $nonce_name );
 
 			$plupload_init = [
 				'runtimes'            => 'html5,silverlight,flash,html4',
@@ -514,13 +531,13 @@ class PodsField_File extends PodsField {
 				'multipart'           => true,
 				'urlstream_upload'    => true,
 				'multipart_params'    => [
-					'_wpnonce' => $field_nonce,
-					'action'   => 'pods_upload',
-					'method'   => 'upload',
-					'pod'      => $pod_id,
-					'field'    => $field_id,
-					'item_id'  => $item_id,
-					'uri'      => $uri_hash,
+					'action'     => 'pods_upload',
+					'method'     => 'upload',
+					'pod_name'   => $pod_name,
+					'field_name' => $field_name,
+					'id'         => $id,
+					'uri_hash'   => $uri_hash,
+					'_wpnonce'   => $field_nonce,
 				],
 			];
 
@@ -960,11 +977,11 @@ class PodsField_File extends PodsField {
 			'upload',
 		);
 
-		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
+		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) ) {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
-		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
+		} elseif ( ! empty( $params->pod_name ) && empty( $params->field_name ) ) {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
-		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
+		} elseif ( empty( $params->pod_name ) && ! current_user_can( 'upload_files' ) ) {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		}
 
@@ -1004,23 +1021,53 @@ class PodsField_File extends PodsField {
 			}
 		}
 
-		$uid = pods_session_id();
-
-		if ( $is_user_logged_in ) {
-			$uid = 'user_' . get_current_user_id();
-		}
-
-		$nonce_check = 'pods_upload_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
-
-		if ( true === $upload_disabled || ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
+		if ( true === $upload_disabled ) {
 			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
-		$pod   = array();
-		$field = array(
-			'type'    => 'file',
-			'options' => array(),
-		);
+		if ( ! isset( $params->_wpnonce, $params->pod_name, $params->field_name, $params->uri_hash, $params->id ) ) {
+			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+		}
+
+		$_wpnonce   = $params->_wpnonce;
+		$pod_name   = $params->pod_name;
+		$field_name = $params->field_name;
+		$uri_hash   = $params->uri_hash;
+		$id         = (int) $params->id;
+
+		$uid = pods_session_id();
+
+		if ( is_user_logged_in() ) {
+			$uid = 'user_' . get_current_user_id();
+		}
+
+		$nonce_name = 'pods_upload:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
+
+		if ( false === wp_verify_nonce( $_wpnonce, $nonce_name ) ) {
+			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+		}
+
+		if ( empty( self::$api ) ) {
+			self::$api = pods_api();
+		}
+
+		$pod = self::$api->load_pod( [
+			'name' => $pod_name,
+		] );
+
+		if ( ! $pod ) {
+			pods_error( __( 'Invalid Pod configuration', 'pods' ), PodsInit::$admin );
+		}
+
+		$field = $pod->get_field( $field_name );
+
+		if ( ! $field ) {
+			pods_error( __( 'Invalid Field configuration', 'pods' ), PodsInit::$admin );
+		}
+
+		if ( ! $field->is_file() ) {
+			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+		}
 
 		if ( empty( self::$api ) ) {
 			self::$api = pods_api();
@@ -1028,25 +1075,12 @@ class PodsField_File extends PodsField {
 
 		self::$api->display_errors = false;
 
-		if ( ! empty( $params->pod ) ) {
-			$pod   = self::$api->load_pod( array( 'id' => (int) $params->pod ) );
-			$field = self::$api->load_field( array( 'id' => (int) $params->field ) );
-
-			if ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
-				pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
-			}
-
-			if ( ! in_array( $field['type'], PodsForm::file_field_types(), true ) ) {
-				pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-			}
-		}
-
 		$method = $params->method;
 
 		// Cleaning up $params
 		unset( $params->action, $params->method, $params->_wpnonce );
 
-		$params->item_id = (int) pods_v( 'item_id', $params, 0 );
+		$params->post_id = (int) pods_v( 'post_id', $params, 0 );
 
 		/**
 		 * Upload a new file (advanced - returns URL and ID)
@@ -1190,6 +1224,7 @@ class PodsField_File extends PodsField {
 
 				// Upload file.
 				$post_id = 0;
+
 				if ( 'post_type' === pods_v( 'type', $pod, null ) ) {
 					$post_id = $params->item_id;
 				}
@@ -1388,7 +1423,7 @@ class PodsField_File extends PodsField {
 			}
 		}
 
-		return $this->get_file_mime_types_for_media_type( $media_type, $other_extensions );
+		return $this->get_file_mime_types_for_media_type( $media_type, $other_extensions, $field );
 	}
 
 	/**
@@ -1396,13 +1431,14 @@ class PodsField_File extends PodsField {
 	 *
 	 * @since 2.9.0
 	 *
-	 * @param string       $media_type       The media type to use for looking up by mime type.
-	 * @param string|array $other_extensions The other file extensions that may have been provided.
+	 * @param string           $media_type       The media type to use for looking up by mime type.
+	 * @param string|array     $other_extensions The other file extensions that may have been provided.
+	 * @param Field|array|null $field            The field to use.
 	 *
 	 * @return null|array Null if any are allowed, otherwise an array with the file mime type information including the
 	 *                    list of extensions, mime types, and mapping of extensions to mime types.
 	 */
-	public function get_file_mime_types_for_media_type( $media_type, $other_extensions = [] ) {
+	public function get_file_mime_types_for_media_type( $media_type, $other_extensions = [], $field = null ) {
 		if ( 'any' === $media_type ) {
 			return null;
 		}
@@ -1460,17 +1496,19 @@ class PodsField_File extends PodsField {
 		 *
 		 * @since 2.9.0
 		 *
-		 * @param null|array   $file_extensions  Null if any are allowed, otherwise an array with the file mime type
-		 *                                       information including the list of extensions, mime types, and mapping
-		 *                                       of extensions to mime types.
-		 * @param string       $media_type       The media type to use for looking up by mime type.
-		 * @param string|array $other_extensions The other file extensions that may have been provided.
+		 * @param null|array       $file_extensions  Null if any are allowed, otherwise an array with the file mime type
+		 *                                           information including the list of extensions, mime types, and mapping
+		 *                                           of extensions to mime types.
+		 * @param string           $media_type       The media type to use for looking up by mime type.
+		 * @param string|array     $other_extensions The other file extensions that may have been provided.
+		 * @param Field|array|null $field            The field to use.
 		 */
 		$file_extensions = apply_filters(
 			'pods_form_ui_field_file_mime_types_for_media_type',
 			$file_extensions,
 			$media_type,
-			$other_extensions
+			$other_extensions,
+			$field
 		);
 
 		return [

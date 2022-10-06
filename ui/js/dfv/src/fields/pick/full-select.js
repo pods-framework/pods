@@ -50,6 +50,13 @@ const SortableMultiValue = ( props ) => {
 		cursor: isDragging ? 'grabbing' : 'grab',
 	};
 
+	const removeProps = {
+		...props.removeProps,
+		style: {
+			cursor: isDragging ? 'grabbing' : 'pointer',
+		},
+	};
+
 	return (
 		<span
 			ref={ setNodeRef }
@@ -60,7 +67,10 @@ const SortableMultiValue = ( props ) => {
 			// eslint-disable-next-line react/jsx-props-no-spreading
 			{ ...attributes }
 		>
-			<components.MultiValue { ...props } />
+			<components.MultiValue
+				{ ...props }
+				removeProps={ removeProps }
+			/>
 		</span>
 	);
 };
@@ -82,7 +92,11 @@ const FullSelect = ( {
 	const AsyncSelectComponent = isTaggable ? AsyncCreatableSelect : AsyncSelect;
 
 	const sensors = useSensors(
-		useSensor( PointerSensor ),
+		useSensor( PointerSensor, {
+			activationConstraint: {
+				distance: 1,
+			},
+		} ),
 		useSensor( KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
 		} ),
@@ -115,6 +129,23 @@ const FullSelect = ( {
 		);
 	};
 
+	const selectStyles = {
+		multiValueLabel: (provided, state) => ({
+			...provided,
+			wordBreak: 'break-word',
+			whiteSpace: 'break-spaces',
+		}),
+		singleValue: (provided, state) => ({
+			...provided,
+			wordBreak: 'break-word',
+			whiteSpace: 'break-spaces',
+		}),
+		menu: (provided, state) => ({
+			...provided,
+			zIndex: 2,
+		}),
+	};
+
 	return (
 		<DndContext
 			sensors={ sensors }
@@ -143,6 +174,8 @@ const FullSelect = ( {
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
+						styles={ selectStyles }
+						classNamePrefix="pods-dfv-pick-full-select"
 					/>
 				) : (
 					<Select
@@ -157,7 +190,8 @@ const FullSelect = ( {
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
-						styles={ { menu: ( base ) => ( { ...base, zIndex: 2 } ) } }
+						styles={ selectStyles }
+						classNamePrefix="pods-dfv-pick-full-select"
 					/>
 				) }
 			</SortableContext>

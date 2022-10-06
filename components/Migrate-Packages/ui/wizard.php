@@ -115,6 +115,10 @@
 						<div class="pods-wizard-option-content" id="pods-wizard-export">
 							<div class="pods-wizard-content">
 								<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+
+								<p>
+									<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="all"><?php _e( 'Toggle everything on / off', 'pods' ); ?></a>
+								</p>
 							</div>
 
 							<div class="stuffbox pods-package-import-group">
@@ -460,18 +464,30 @@
 		$( document ).Pods( 'confirm' );
 		$( document ).Pods( 'sluggable' );
 
-		const toggle_all = {};
+		const toggle_all = {
+			all: true
+		};
 
 		$( '.pods-wizard-toggle-all' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			if ( 'undefined' == typeof toggle_all[$( this ).data( 'toggle' )] ) {
-				toggle_all[$( this ).data( 'toggle' )] = true;
+			const toggleData = $( this ).data( 'toggle' );
+
+			if ( 'undefined' == typeof toggle_all[toggleData] ) {
+				toggle_all[toggleData] = true;
 			}
 
-			$( this ).closest( '.pods-field-option-group' ).find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', (!toggle_all[$( this ).data( 'toggle' )]) );
+			let $parent;
 
-			toggle_all[$( this ).data( 'toggle' )] = (!toggle_all[$( this ).data( 'toggle' )]);
+			if ( 'all' !== toggleData ) {
+				$parent = $( this ).closest( '.pods-field-option-group' );
+			} else {
+				$parent = $( this ).closest( '.pods-wizard-option-content' );
+			}
+
+			$parent.find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', (!toggle_all[toggleData]) );
+
+			toggle_all[toggleData] = (!toggle_all[toggleData]);
 		} );
 
 		const $import_package_reset = $( '#pods-form-ui-import-package-file-reset' );

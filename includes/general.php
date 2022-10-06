@@ -7,6 +7,7 @@ use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
 use Pods\Config_Handler;
 use Pods\Permissions;
+use Pods\Data\Map_Field_Values;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
@@ -146,6 +147,17 @@ function pods_message( $message, $type = null, $return = false ) {
 $GLOBALS['pods_errors'] = array();
 
 /**
+ * The default exception handler for Pods errors.
+ *
+ * @since 2.9.4
+ *
+ * @param string|array $error The error message(s) to be thrown / displayed.
+ */
+function pods_error_exception( $error ) {
+	pods_error( $error, 'final_exception' );
+}
+
+/**
  * Error Handling which throws / displays errors
  *
  * @param string|array        $error The error message(s) to be thrown / displayed.
@@ -177,10 +189,14 @@ function pods_error( $error, $obj = null ) {
 	}
 
 	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		$error_mode = 'exception';
+
+		if ( 'final_exception' === $display_errors ) {
+			$error_mode = 'exit';
+		}
+
 		/** @var Exception $error */
 		$error = $error->getMessage();
-
-		$error_mode = 'exception';
 	}
 
 	/**
@@ -207,15 +223,6 @@ function pods_error( $error, $obj = null ) {
 	 * @param object|boolean|string|null $obj
 	 */
 	$error_mode = apply_filters( 'pods_error_mode', $error_mode, $error, $obj );
-
-	/**
-	 * Allow filtering whether to force the error mode in cases where multiple exceptions have been used.
-	 *
-	 * @since 2.8.11
-	 *
-	 * @param bool $error_mode_force Whether to force the error mode in cases where multiple exceptions have been used.
-	 */
-	$error_mode_force = apply_filters( 'pods_error_mode_force', false );
 
 	if ( is_array( $error ) ) {
 		$error = array_map( 'wp_kses_post', $error );
@@ -250,17 +257,12 @@ function pods_error( $error, $obj = null ) {
 		$wp_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 	}//end if
 
-	$last_error = $pods_errors;
-
 	$pods_errors = array();
-
-	if ( $last_error === $error && 'exception' === $error_mode && ! $error_mode_force ) {
-		$error_mode = 'exit';
-	}
 
 	// Support testing debug messages.
 	if ( function_exists( 'codecept_debug' ) ) {
 		codecept_debug( 'Pods Debug Error: ' . $error );
+		pods_debug( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ) );
 	}
 
 	if ( ! empty( $error ) ) {
@@ -284,7 +286,7 @@ function pods_error( $error, $obj = null ) {
 			$exception_fallback_enabled = apply_filters( 'pods_error_exception_fallback_enabled', true, $error );
 
 			if ( $exception_fallback_enabled ) {
-				set_exception_handler( 'pods_error' );
+				set_exception_handler( 'pods_error_exception' );
 			}
 
 			throw new Exception( $error );
@@ -2127,6 +2129,56 @@ function pods_field( $pod, $id = null, $name = null, $single = false ) {
 }
 
 /**
+ * Get the data field value.
+ *
+ * @since 2.9.4
+ *
+ * @param Pods|string|null $obj        The pod name or Pods object.
+ * @param string           $field_name The field name.
+ *
+ * @return mixed The data field value.
+ */
+function pods_data_field( $obj, $field_name ) {
+	if ( is_string( $obj ) ) {
+		$obj = pods( $obj );
+	}
+
+	$traverse_fields = explode( '.', $field_name );
+	$is_traversal    = 1 < count( $traverse_fields );
+	$first_field     = $traverse_fields[0];
+
+	// Get the first field name data.
+	$field_data = $obj ? $obj->fields( $first_field ) : null;
+
+	// Ensure the field name is using the correct name and not the alias.
+	if ( $field_data ) {
+		$first_field = $field_data['name'];
+
+		if ( ! $is_traversal ) {
+			$field_name = $first_field;
+		}
+	}
+
+	if ( $obj && ! $field_data && ! $is_traversal ) {
+		// Get the full field name data.
+		$field_data = $obj->fields( $field_name );
+	}
+
+	$is_field_set = false;
+
+	if ( $field_data instanceof Object_Field ) {
+		$is_field_set = true;
+	} elseif ( $field_data instanceof Field ) {
+		$is_field_set = true;
+	}
+
+	// Handle custom/supported value mappings.
+	$map_field_values = pods_container( Map_Field_Values::class );
+
+	return $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $obj );
+}
+
+/**
  * Get a field display value from a Pod.
  *
  * @param string|null  $pod    The pod name.
@@ -2865,7 +2917,7 @@ function pods_register_block_collection( array $collection ) {
 /**
  * Register a custom config file to use with Pods configs.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $file        The config file to use.
  * @param string $config_type The config file type to use (defaults to json).
@@ -2883,7 +2935,7 @@ function pods_register_config_file( $file, $config_type = 'json' ) {
 /**
  * Register a custom config path to use with Pods configs.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $path The config path to use.
  */
@@ -2904,7 +2956,7 @@ function pods_register_config_path( $path ) {
  *
  * Default support for json and yml can be filtered with the pods_config_parse filter to override them.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $type The config type to use.
  */
@@ -2921,7 +2973,7 @@ function pods_register_config_type( $type ) {
 /**
  * Register a custom config item type to use with Pods configs.
  *
- * @since TBD
+ * @since 2.9.0
  *
  * @param string $item_type The config path to use.
  */
@@ -3767,22 +3819,16 @@ function pods_is_modal_window() {
 }
 
 /**
- * Check if the pod object is valid and the pod exists.
+ * Check if the Pods object is exists and is valid.
  *
- * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ * @param Pods|mixed $pod The Pods object or something that isn't a pod object.
  *
- * @return bool Whether the pod object is valid and exists
+ * @return bool Whether the Pods object is exists and is valid.
  *
  * @since 2.7.0
  */
 function pod_is_valid( $pod ) {
-	$is_valid = false;
-
-	if ( $pod && $pod instanceof Pods && $pod->valid() ) {
-		$is_valid = true;
-	}
-
-	return $is_valid;
+	return $pod instanceof Pods && $pod->valid();
 }
 
 /**
@@ -3795,13 +3841,24 @@ function pod_is_valid( $pod ) {
  * @since 2.7.0
  */
 function pod_has_items( $pod ) {
-	$has_items = false;
-
-	if ( pod_is_valid( $pod ) && ( $pod->id && $pod->exists() ) || ( ! empty( $pod->params ) && 0 < $pod->total() ) ) {
-		$has_items = true;
+	if ( ! pod_is_valid( $pod ) ) {
+		return false;
 	}
 
-	return $has_items;
+	if (
+		(
+			$pod->id
+			&& $pod->exists()
+		)
+		|| (
+			! empty( $pod->params )
+			&& 0 < $pod->total()
+		)
+	) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -3897,16 +3954,13 @@ function pods_config_merge_fields( $configs_to_merge_into, $configs_to_merge_fro
  * @return array[]|Field[] The list of all fields, including object fields.
  */
 function pods_config_get_all_fields( $pod ) {
-	if ( $pod instanceof Pod ) {
-		return $pod->get_all_fields();
-	} elseif ( $pod instanceof Pods ) {
-		return $pod->pod_data->get_all_fields();
+	$pod = pods_config_for_pod( $pod );
+
+	if ( ! $pod ) {
+		return [];
 	}
 
-	$fields        = (array) pods_v( 'fields', $pod, [] );
-	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
-
-	return pods_config_merge_fields( $fields, $object_fields );
+	return $pod->get_all_fields();
 }
 
 /**
@@ -3967,36 +4021,14 @@ function pods_config_get_fields_from_value_fields( array $value_fields ) {
  * @return array|Field|null The field data or null if not found.
  */
 function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
-	// Get the pod data from the Pods object if it's there.
-	if ( $pod instanceof Pods ) {
-		$pod = $pod->pod_data;
-	}
-
-	// Get the field directly from the Pod.
-	if ( $pod instanceof Pod ) {
-		return $pod->get_field( $field, $arg );
-	}
+	$pod = pods_config_for_pod( $pod );
 
 	// The pod isn't there or valid.
 	if ( empty( $pod ) ) {
 		return null;
 	}
 
-	$fields        = (array) pods_v( 'fields', $pod, [] );
-	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
-
-	// Return the object field.
-	if ( isset( $object_fields[ $field ] ) ) {
-		return $object_fields[ $field ];
-	}
-
-	// Return the pod field.
-	if ( isset( $fields[ $field ] ) ) {
-		return $fields[ $field ];
-	}
-
-	// No field found.
-	return null;
+	return $pod->get_field( $field );
 }
 
 /**
@@ -4004,9 +4036,9 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
  *
  * @since 2.8.0
  *
- * @param Pod|Pods|string $pod The Pod configuration object, Pods() object, or name.
+ * @param Pod|Pods|array|string $pod The Pod configuration object, Pods() object, old-style array, or name.
  *
- * @return false|Pod The Pod object.
+ * @return false|Pod The Pod object or false if invalid.
  */
 function pods_config_for_pod( $pod ) {
 	if ( $pod instanceof Pod ) {
@@ -4039,9 +4071,64 @@ function pods_config_for_pod( $pod ) {
 		return $pod;
 	}
 
-	// @todo Support arrays in the future by migrating them into a Pod() object.
+	if ( ! is_array( $pod ) ) {
+		return false;
+	}
 
-	return false;
+	$pod = new Pod( $pod );
+
+	if ( ! $pod->is_valid() ) {
+		return false;
+	}
+
+	return $pod;
+}
+
+/**
+ * Get a normalized Field configuration.
+ *
+ * @since 2.9.8
+ *
+ * @param Field|array|string    $field The Field configuration object, Pods() object, old-style array, or name.
+ * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
+ *
+ * @return false|Field The Field object or false if invalid.
+ */
+function pods_config_for_field( $field, $pod = null ) {
+	if ( $field instanceof Field ) {
+		return $field;
+	}
+
+	if ( $pod ) {
+		$pod = pods_config_for_pod( $pod );
+
+		if ( ! $pod ) {
+			$pod = null;
+		}
+	}
+
+	if ( $pod && is_string( $field ) ) {
+		$field = $pod->get_field( $field );
+
+		// Check if the $field is invalid.
+		if ( ! $field ) {
+			return false;
+		}
+
+		return $field;
+	}
+
+	if ( ! is_array( $field ) ) {
+		return false;
+	}
+
+	$field = new Field( $field );
+
+	if ( ! $field->is_valid() ) {
+		return false;
+	}
+
+	return $field;
 }
 
 function is_pods_alternative_cache_activated() {

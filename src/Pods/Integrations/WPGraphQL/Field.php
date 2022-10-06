@@ -212,7 +212,7 @@ class Field {
 			return '';
 		}
 
-		$pod = tribe( Pod_Manager::class )->get_pod( $this->pod->get_name(), $id );
+		$pod = pods_container( Pod_Manager::class )->get_pod( $this->pod->get_name(), $id );
 
 		$field_name = $this->field->get_name();
 

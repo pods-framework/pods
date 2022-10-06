@@ -188,7 +188,6 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function field( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
-
 		// Take a field array
 		if ( is_array( $name ) || is_object( $name ) ) {
 			$options = $name;
@@ -204,6 +203,10 @@ class PodsForm {
 
 		$options = self::options( $type, $options );
 		$options = apply_filters( "pods_form_ui_field_{$type}_options", $options, $value, $name, $pod, $id );
+
+		if ( empty( $options['type'] ) ) {
+			$options['type'] = $type;
+		}
 
 		if ( null === $value || ( '' === $value && 'boolean' === $type ) || ( ! empty( $pod ) && empty( $id ) ) ) {
 			$value = self::default_value( $value, $type, $name, $options, $pod, $id );
@@ -235,7 +238,7 @@ class PodsForm {
 		}
 
 		if ( empty( $type ) ) {
-			return pods_error( __( 'Invalid field configuration', 'pods' ) );
+			return;
 		}
 
 		// @todo Move into DFV field method or Pods\Whatsit later
@@ -1372,7 +1375,7 @@ class PodsForm {
 			$value = $default;
 		}
 
-		if ( is_array( $value ) && 'multi' !== pods_v( $args->type . '_format_type' ) ) {
+		if ( is_array( $value ) && 'multi' !== pods_v( $type . '_format_type' ) ) {
 			$value = pods_serial_comma( $value, $name, [ $name => $options ] );
 		}
 
@@ -1922,6 +1925,40 @@ class PodsForm {
 			 * @param array $field_types The list of Non-Input field types.
 			 */
 			$field_types = apply_filters( 'pods_non_input_field_types', $field_types );
+		}
+
+		return $field_types;
+	}
+
+	/**
+	 * Get the list of field types that do not use serial comma separators.
+	 *
+	 * @since 2.9.4
+	 *
+	 * @return array The list of field types that do not use serial comma separators.
+	 */
+	public static function separator_excluded_field_types() {
+		static $field_types = null;
+
+		if ( null === $field_types ) {
+			$field_types = [
+				'avatar',
+				'code',
+				'link',
+				'oembed',
+				'paragraph',
+				'website',
+				'wysiwyg',
+			];
+
+			/**
+			 * Allow filtering of the list of field types that do not use serial comma separators.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param array $field_types The list of field types that do not use serial comma separators.
+			 */
+			$field_types = apply_filters( 'pods_separator_excluded_field_types', $field_types );
 		}
 
 		return $field_types;

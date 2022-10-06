@@ -29,7 +29,16 @@ class PodsComponents {
 	 *
 	 * @since 2.0.0
 	 */
-	public $components = array();
+	public $components = [];
+
+	/**
+	 * Registered component menu items.
+	 *
+	 * @var array
+	 *
+	 * @since 2.9.8
+	 */
+	public $components_menu_items = [];
 
 	/**
 	 * Components settings
@@ -38,7 +47,7 @@ class PodsComponents {
 	 *
 	 * @since 2.0.0
 	 */
-	public $settings = array();
+	public $settings = [];
 
 	/**
 	 * Singleton handling for a basic pods_components() request
@@ -202,8 +211,16 @@ class PodsComponents {
 
 		ksort( $pods_component_menu_items );
 
+		$this->components_menu_items = $pods_component_menu_items;
+
 		foreach ( $pods_component_menu_items as $menu_title => $menu_data ) {
-			if ( ! is_callable( $menu_data['callback'] ) ) {
+			if (
+				(
+					'' !== $menu_data['callback']
+					|| false === strpos( $menu_data['menu_page'], '.php' )
+				)
+				&& ! is_callable( $menu_data['callback'] )
+			) {
 				continue;
 			}
 
@@ -537,7 +554,6 @@ class PodsComponents {
 	 * @since 2.0.0
 	 */
 	public function admin_handler() {
-
 		$component = str_replace( 'pods-component-', '', pods_v_sanitized( 'page' ) );
 
 		if ( isset( $this->components[ $component ] ) && isset( $this->components[ $component ]['object'] ) && is_object( $this->components[ $component ]['object'] ) ) {

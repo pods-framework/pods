@@ -173,6 +173,19 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.9.8 - September 29th, 2022 =
+
+* Enhancement: New `pods_config_for_field` function helps to set up consistent field objects when custom arrays are used. (@sc0ttkclark)
+* Enhancement: The `pods_config_for_pod` function now handles basic Pod arrays as well. (@sc0ttkclark)
+* Enhancement: New `Whatsit` object now runs the `pods_whatsit_setup` and `pods_whatsit_setup_(pod|field)` actions during setup so the objects can easily be overridden. (@sc0ttkclark)
+* Enhancement: New `Field::is_separator_excluded()` method to help determine if current field is excluded from separators using `pods_serial_comma()`. (@sc0ttkclark)
+* Tweak: Minor code and performance optimizations. (@sc0ttkclark)
+* Fixed: Resolved PHP error registering code-based taxonomies. (@naveen17797) 
+* Fixed: Resolved cache that wasn't getting cleared when a Template was saved. (@sc0ttkclark)
+* Fixed: oEmbed fields are editable again after fixing an issue with the readonly option. (@sc0ttkclark)
+* Fixed: Help to prevent magic tag helpers from causing fatal errors when they are used improperly. (@sc0ttkclark)
+* Fixed: Resolved issue with getting field values from Pods::field() for code-based relationships that have no ID. (@sc0ttkclark)
+
 = 2.9.7 - September 23rd, 2022 =
 
 * Enhancement: You can now toggle every checkbox at once on the Packages > Export screen instead of just by section. (@sc0ttkclark)

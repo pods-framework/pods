@@ -327,6 +327,12 @@ class Post_Type extends Collection {
 		$posts        = false;
 		$post_objects = false;
 
+		$cache_key_post_type = 'any';
+
+		if ( isset( $post_args['post_type'] ) ) {
+			$cache_key_post_type = $post_args['post_type'];
+		}
+
 		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
 			$cache_key_parts = [
 				'pods_whatsit_storage_post_type_find',
@@ -349,6 +355,7 @@ class Post_Type extends Collection {
 			}
 
 			$cache_key_parts[] = $current_language;
+
 			$cache_key_parts[] = wp_json_encode( $post_args );
 
 			/**
@@ -369,7 +376,7 @@ class Post_Type extends Collection {
 
 			if ( empty( $args['refresh'] ) ) {
 				$posts        = pods_transient_get( $cache_key );
-				$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage' );
+				$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage_' . $cache_key_post_type );
 			}
 		}//end if
 
@@ -448,7 +455,7 @@ class Post_Type extends Collection {
 			}
 
 			if ( empty( $args['bypass_post_type_find'] ) && empty( $args['bypass_cache'] ) ) {
-				pods_cache_set( $cache_key . '_objects', $post_objects, 'pods_post_type_storage', WEEK_IN_SECONDS );
+				pods_cache_set( $cache_key . '_objects', $post_objects, 'pods_post_type_storage_' . $cache_key_post_type, WEEK_IN_SECONDS );
 			}
 		}
 

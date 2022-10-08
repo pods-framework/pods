@@ -1560,7 +1560,7 @@ class PodsField_Pick extends PodsField {
 		$values = array();
 
 		// If we have values, let's cast them.
-		if ( ! empty( $args->value ) ) {
+		if ( isset( $args->value ) ) {
 			// The value may be a single non-array value.
 			$values = (array) $args->value;
 		}
@@ -1586,7 +1586,7 @@ class PodsField_Pick extends PodsField {
 				}
 
 				return (string) $value;
-			}, $values );
+			}, $key_values );
 
 			// Let's check to see if the current $item_id matches any key values.
 			if ( in_array( (string) $item_id, $key_values, true ) ) {

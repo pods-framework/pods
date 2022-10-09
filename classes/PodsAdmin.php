@@ -1063,15 +1063,12 @@ class PodsAdmin {
 				continue;
 			}//end if
 
-			$group_count    = 0;
-			$field_count    = 0;
-			$row_count      = 0;
-			$row_meta_count = 0;
-			$podsrel_count  = 0;
+			$group_count = 0;
+			$field_count = 0;
 
 			if ( ! pods_is_types_only() ) {
-				$group_count    = $pod->count_groups();
-				$field_count    = $pod->count_fields();
+				$group_count = $pod->count_groups();
+				$field_count = $pod->count_fields();
 			}
 
 			if ( $include_row_counts ) {

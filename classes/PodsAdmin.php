@@ -3028,6 +3028,14 @@ class PodsAdmin {
 				'default'    => '',
 				'depends-on' => [ 'rest_enable' => true ],
 			],
+			'rest_namespace'   => [
+				'label'       => __( 'REST API namespace', 'pods' ),
+				'help'        => __( 'This will change the namespace URL of the REST API route to a different one from the default one that all normal route endpoints use.', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'wp/v2',
+				'depends-on'  => [ 'rest_enable' => true ],
+			],
 			'read_all'    => [
 				'label'      => __( 'Show All Fields (read-only)', 'pods' ),
 				'help'       => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),

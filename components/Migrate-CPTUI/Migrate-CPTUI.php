@@ -289,7 +289,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 			'query_var_string'               => pods_v( 'query_var_slug', $post_type ),
 			'menu_position'                  => pods_v( 'menu_position', $post_type ),
 			'show_in_menu'                   => (int) pods_v( 'show_in_menu', $post_type ),
-			'menu_string'                    => pods_v( 'show_in_menu_string', $post_type ),
+			'menu_location_custom'           => pods_v( 'show_in_menu_string', $post_type ),
 			'menu_icon'                      => pods_v( 'menu_icon', $post_type ),
 			'register_meta_box_cb'           => pods_v( 'register_meta_box_cb', $post_type ), // Not currently used.
 		];

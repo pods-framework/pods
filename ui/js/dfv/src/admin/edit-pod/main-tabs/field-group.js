@@ -28,6 +28,7 @@ const FieldGroup = ( props ) => {
 		fieldsMovedSinceLastSave,
 		isExpanded,
 		hasMoved,
+		hasMovedFields,
 		saveStatus,
 		saveMessage,
 		deleteStatus,
@@ -130,6 +131,15 @@ const FieldGroup = ( props ) => {
 
 	const onDeleteGroupClick = ( event ) => {
 		event.stopPropagation();
+
+		if ( hasMovedFields ) {
+			// eslint-disable-next-line no-alert
+			alert(
+				__( 'You must save your changes before you can delete this group.', 'pods' ),
+			);
+
+			return;
+		}
 
 		// eslint-disable-next-line no-alert
 		const confirmation = confirm(
@@ -283,6 +293,7 @@ FieldGroup.propTypes = {
 	isExpanded: PropTypes.bool.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 	hasMoved: PropTypes.bool.isRequired,
+	hasMovedFields: PropTypes.bool.isRequired,
 	saveStatus: PropTypes.string,
 	saveMessage: PropTypes.string,
 	deleteStatus: PropTypes.string,

@@ -71,8 +71,10 @@ const FieldGroups = ( {
 		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
 	);
 
-	// Use an array of names for groups, but an array of IDs for fields:
+	// Use an array of names for groups, but an array of IDs for fields.
+	// Also track which groups have had fields moved in/out since the last save.
 	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( [] );
+	const [ groupsWithMovedFields, setGroupsWithMovedFields ] = useState( [] );
 	const [ fieldsMovedSinceLastSave, setFieldsMovedSinceLastSave ] = useState( [] );
 
 	// During drag-and-drop operations, we need to find a specific group (or an array
@@ -214,6 +216,11 @@ const FieldGroups = ( {
 
 		setGroupFields( overGroupName, newOverGroupFields );
 		setGroupFields( activeGroupName, newActiveGroupFields );
+
+		setGroupsWithMovedFields( ( prevState ) => [
+			...prevState,
+			activeGroupName,
+		] );
 	};
 
 	const handleDragEnd = ( event ) => {
@@ -262,6 +269,11 @@ const FieldGroups = ( {
 			...prevState,
 			parseInt( active.id, 10 ),
 		] );
+
+		setGroupsWithMovedFields( ( prevState ) => [
+			...prevState,
+			overGroupName,
+		] );
 	};
 
 	const handleDragCancel = () => {
@@ -279,6 +291,7 @@ const FieldGroups = ( {
 		if ( podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS ) {
 			setGroupsMovedSinceLastSave( [] );
 			setFieldsMovedSinceLastSave( [] );
+			setGroupsMovedSinceLastSave( [] );
 		}
 	}, [ podSaveStatus ] );
 
@@ -375,6 +388,7 @@ const FieldGroups = ( {
 									isExpanded={ expandedGroups[ group.name ] || false }
 									toggleExpanded={ toggleExpandGroup( group.name ) }
 									hasMoved={ hasMoved }
+									hasMovedFields={ groupsWithMovedFields.includes( group.name ) }
 									fieldsMovedSinceLastSave={ fieldsMovedSinceLastSave }
 								/>
 							);

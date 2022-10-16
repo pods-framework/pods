@@ -56,9 +56,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       }
     ],
     "options": [],
@@ -189,9 +202,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       }
     ],
     "options": [],
@@ -259,9 +285,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       }
     ],
     "options": [],
@@ -329,9 +368,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       }
     ],
     "options": [],
@@ -462,9 +514,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       }
     ],
     "options": [],
@@ -722,9 +787,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       },
       {
         "name": "avatar",
@@ -792,9 +870,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       }
     ],
     "options": [],
@@ -858,9 +949,22 @@
         "type": "text"
       },
       {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
+      },
+      {
         "name": "test_text_field_repeat",
         "type": "text",
         "repeatable": 1
+      },
+      {
+        "name": "test_number_field_repeat",
+        "type": "number",
+        "repeatable": 1,
+        "number_format": "9,999.99",
+        "number_decimals": 0
       }
     ],
     "options": [],
@@ -922,6 +1026,12 @@
       {
         "name": "test_text_field",
         "type": "text"
+      },
+      {
+        "name": "test_number_field",
+        "type": "number",
+        "number_format": "9,999.99",
+        "number_decimals": 0
       },
       {
         "name": "name",

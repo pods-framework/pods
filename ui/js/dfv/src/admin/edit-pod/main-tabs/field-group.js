@@ -135,7 +135,7 @@ const FieldGroup = ( props ) => {
 		if ( hasMovedFields ) {
 			// eslint-disable-next-line no-alert
 			alert(
-				__( 'You must save your changes before you can delete this group.', 'pods' ),
+				__( 'You moved fields outside of this group but did not save your changes to the Pod yet. To delete this Group, save changes for your Pod first.', 'pods' ),
 			);
 
 			return;

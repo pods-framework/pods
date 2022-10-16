@@ -10880,6 +10880,10 @@ class PodsAPI {
 			pods_transient_clear( 'pods_wp_cpt_ct' );
 		}
 
+		pods_cache_clear( true, 'pods_post_type_storage_pod' );
+		pods_cache_clear( true, 'pods_post_type_storage_group' );
+		pods_cache_clear( true, 'pods_post_type_storage_field' );
+
 		pods_static_cache_clear( true, __CLASS__ );
 		pods_static_cache_clear( true, __CLASS__ . '/table_info_cache' );
 		pods_static_cache_clear( true, __CLASS__ . '/related_item_cache' );

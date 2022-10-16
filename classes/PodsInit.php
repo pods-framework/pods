@@ -1533,6 +1533,7 @@ class PodsInit {
 					// 'capabilities' => $cpt_capabilities,
 					'map_meta_cap'        => (boolean) pods_v( 'capability_type_extra', $post_type, true ),
 					'hierarchical'        => (boolean) pods_v( 'hierarchical', $post_type, false ),
+					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
 					'supports'            => $cpt_supports,
 					// 'register_meta_box_cb' => array($this, 'manage_meta_box'),
 					// 'permalink_epmask' => EP_PERMALINK,
@@ -1629,7 +1630,7 @@ class PodsInit {
 				$ct_label    = esc_html( pods_v( 'label', $taxonomy, ucwords( str_replace( '_', ' ', pods_v( 'name', $taxonomy ) ) ), true ) );
 				$ct_singular = esc_html( pods_v( 'label_singular', $taxonomy, ucwords( str_replace( '_', ' ', pods_v( 'label', $taxonomy, pods_v( 'name', $taxonomy ), true ) ) ), true ) );
 
-				$ct_labels                               = array();
+				$ct_labels                               = [];
 				$ct_labels['name']                       = $ct_label;
 				$ct_labels['singular_name']              = $ct_singular;
 				$ct_labels['menu_name']                  = strip_tags( pods_v( 'menu_name', $taxonomy, '', true ) );
@@ -1651,6 +1652,11 @@ class PodsInit {
 				$ct_labels['items_list']                 = pods_v( 'label_items_list', $taxonomy, '', true );
 				$ct_labels['items_list_navigation']      = pods_v( 'label_items_list_navigation', $taxonomy, '', true );
 				$ct_labels['filter_by_item']             = pods_v( 'label_filter_by_item', $taxonomy, '', true );
+				$ct_labels['back_to_items']              = pods_v( 'label_back_to_items', $taxonomy, '', true );
+				$ct_labels['name_field_description']     = pods_v( 'label_name_field_description', $taxonomy, '', true );
+				$ct_labels['parent_field_description']   = pods_v( 'label_parent_field_description', $taxonomy, '', true );
+				$ct_labels['slug_field_description']     = pods_v( 'label_slug_field_description', $taxonomy, '', true );
+				$ct_labels['desc_field_description']     = pods_v( 'label_desc_field_description', $taxonomy, '', true );
 
 				// Rewrite
 				$ct_rewrite       = (boolean) pods_v( 'rewrite', $taxonomy, true );
@@ -1704,7 +1710,6 @@ class PodsInit {
 					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_nav_menus'     => (boolean) pods_v( 'show_in_nav_menus', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_tagcloud'         => (boolean) pods_v( 'show_tagcloud', $taxonomy, (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ) ),
-					'show_tagcloud_in_edit' => (boolean) pods_v( 'show_tagcloud_in_edit', $taxonomy, (boolean) pods_v( 'show_tagcloud', $taxonomy, (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ) ) ),
 					'show_in_quick_edit'    => (boolean) pods_v( 'show_in_quick_edit', $taxonomy, (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ) ),
 					'hierarchical'          => (boolean) pods_v( 'hierarchical', $taxonomy, false ),
 					// 'capability_type'       => $capability_type,
@@ -1831,16 +1836,6 @@ class PodsInit {
 			$options       = $options['options'];
 
 			$options = self::object_label_fix( $options, 'taxonomy' );
-
-			/**
-			 * Hide tagcloud compatibility
-			 *
-			 * @todo check https://core.trac.wordpress.org/ticket/36964
-			 * @see  wp-admin/edit-tags.php L389
-			 */
-			if ( true !== (boolean) pods_v( 'show_tagcloud_in_edit', $options, (boolean) pods_v( 'show_tagcloud', $options, true ) ) ) {
-				$options['labels']['popular_items'] = null;
-			}
 
 			// Max length for taxonomies are 32 characters
 			$taxonomy = substr( $taxonomy, 0, 32 );

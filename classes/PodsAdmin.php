@@ -1063,15 +1063,12 @@ class PodsAdmin {
 				continue;
 			}//end if
 
-			$group_count    = 0;
-			$field_count    = 0;
-			$row_count      = 0;
-			$row_meta_count = 0;
-			$podsrel_count  = 0;
+			$group_count = 0;
+			$field_count = 0;
 
 			if ( ! pods_is_types_only() ) {
-				$group_count    = $pod->count_groups();
-				$field_count    = $pod->count_fields();
+				$group_count = $pod->count_groups();
+				$field_count = $pod->count_fields();
 			}
 
 			if ( $include_row_counts ) {
@@ -3030,6 +3027,14 @@ class PodsAdmin {
 				'type'       => 'text',
 				'default'    => '',
 				'depends-on' => [ 'rest_enable' => true ],
+			],
+			'rest_namespace'   => [
+				'label'       => __( 'REST API namespace', 'pods' ),
+				'help'        => __( 'This will change the namespace URL of the REST API route to a different one from the default one that all normal route endpoints use.', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'wp/v2',
+				'depends-on'  => [ 'rest_enable' => true ],
 			],
 			'read_all'    => [
 				'label'      => __( 'Show All Fields (read-only)', 'pods' ),

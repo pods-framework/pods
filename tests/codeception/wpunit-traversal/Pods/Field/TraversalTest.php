@@ -592,6 +592,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 					if (
 						! empty( $check_related_value )
+						&& is_array( $check_related_value )
 						&& is_array( current( $check_related_value ) )
 						&& 1 === (int) pods_v( 'repeatable', $related_pod_field )
 					) {
@@ -641,7 +642,12 @@ class TraversalTest extends Pods_TraversalTestCase {
 			} elseif ( 'display' === $method ) {
 				$check_display_value = $check_value;
 
-				if ( is_array( $check_display_value ) && 1 === (int) pods_v( 'repeatable', $field ) ) {
+				if (
+					! empty( $check_display_value )
+					&& is_array( $check_display_value )
+					&& is_array( current( $check_display_value ) )
+					&& 1 === (int) pods_v( 'repeatable', $field )
+				) {
 					$check_display_value = array_merge( ...$check_display_value );
 				}
 

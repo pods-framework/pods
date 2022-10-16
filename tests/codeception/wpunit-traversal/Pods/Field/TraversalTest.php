@@ -475,6 +475,16 @@ class TraversalTest extends Pods_TraversalTestCase {
 						$check_index = array_values( $check_index );
 					}
 
+					if ( 1 === (int) pods_v( 'repeatable', $related_pod_field ) ) {
+						if ( ! empty( $check_value ) && is_array( current( $check_value ) ) ) {
+							$check_value = array_merge( ...$check_value );
+						}
+
+						if ( ! empty( $check_index ) && is_array( current( $check_index ) ) ) {
+							$check_index = array_merge( ...$check_index );
+						}
+					}
+
 					if ( 'field' === $method ) {
 						$this->assertEquals( $check_value, $p->field( $related_traverse_id, ! is_array( $check_value ) ), sprintf( 'Deep Related Item field value not as expected (%s) [%s] | %s', $related_traverse_id, $variant_id, var_export( array(
 							'$check_value'                            => $check_value,
@@ -578,6 +588,14 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 					if ( is_array( $check_related_display_index ) ) {
 						$check_related_display_index = array_values( $check_related_display_index );
+					}
+
+					if (
+						! empty( $check_related_value )
+						&& is_array( current( $check_related_value ) )
+						&& 1 === (int) pods_v( 'repeatable', $related_pod_field )
+					) {
+						$check_related_value = array_merge( ...$check_related_value );
 					}
 
 					if ( 'field' === $method ) {

@@ -291,7 +291,7 @@ const FieldGroups = ( {
 		if ( podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS ) {
 			setGroupsMovedSinceLastSave( [] );
 			setFieldsMovedSinceLastSave( [] );
-			setGroupsMovedSinceLastSave( [] );
+			setGroupsWithMovedFields( [] );
 		}
 	}, [ podSaveStatus ] );
 

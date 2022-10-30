@@ -190,4 +190,21 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 		 */
 		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $this );
 	}
+
+	/**
+	 * Determine whether the block is being rendered in editor mode.
+	 *
+	 * @param array $attributes The block attributes used.
+	 *
+	 * @return bool Whether the block is being rendered in editor mode.
+	 */
+	public function in_editor_mode( $attributes = [] ) {
+		return (
+			! empty( $attributes['_is_editor'] )
+			|| (
+				wp_is_json_request()
+				&& did_action( 'rest_api_init' )
+			)
+		);
+	}
 }

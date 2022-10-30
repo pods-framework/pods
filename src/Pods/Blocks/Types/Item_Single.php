@@ -224,7 +224,7 @@ class Item_Single extends Base {
 			empty( $attributes['template'] )
 			&& empty( $attributes['template_custom'] )
 		) {
-			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(
 					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Single Item', 'pods' ),
 					esc_html__( 'Please specify a "Template" or "Custom Template" under "More Settings" to configure this block.', 'pods' )
@@ -246,6 +246,8 @@ class Item_Single extends Base {
 			$attributes['use_current'] = false;
 		}
 
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, pods_v( 'post_id', 'get', 0, true ), true ) );
+
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
 			// Detect post type / ID from context.
 			$attributes['name'] = $block->context['postType'];
@@ -257,11 +259,10 @@ class Item_Single extends Base {
 			}
 		} elseif (
 			! empty( $attributes['use_current'] )
-			&& ! empty( $_GET['post_id'] )
-			&& wp_is_json_request()
-			&& did_action( 'rest_api_init' )
+			&& 0 !== $provided_post_id
+			&& $this->in_editor_mode( $attributes )
 		) {
-			$attributes['slug'] = absint( $_GET['post_id'] );
+			$attributes['slug'] = $provided_post_id;
 
 			if ( empty( $attributes['name'] ) ) {
 				$attributes['name'] = get_post_type( $attributes['slug'] );

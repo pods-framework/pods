@@ -9,14 +9,18 @@ use Pods\Whatsit\Pod;
 /**
  * Include and Init the Pods class
  *
+ * @since 2.0.0
+ *
  * @see   Pods
  *
- * @param string $type   The pod name
- * @param mixed  $id     (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
- * @param bool   $strict (optional) If set to true, return false instead of an object if the Pod doesn't exist
+ * @param string $type   The pod name, leave null to auto-detect from The Loop.
+ * @param mixed  $id     (optional) The ID or slug, to load a single record; Provide array of $params to run 'find';
+ *                       Or leave null to auto-detect from The Loop.
+ * @param bool   $strict (optional) If set to true, returns false instead of a Pods object, if the Pod itself doesn't
+ *                       exist. Note: If you want to check if the Pods Item itself doesn't exist, use exists().
  *
  * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
- * @since 2.0.0
+ *
  * @link  https://docs.pods.io/code/pods/
  */
 function pods( $type = null, $id = null, $strict = null ) {

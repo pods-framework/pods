@@ -2095,7 +2095,7 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 /**
  * Get a field value from a Pod.
  *
- * @param string|null  $pod    The pod name.
+ * @param string|null  $pod    The pod name, or if you are in The Loop then you can just provide the field name to auto-detect pod/id using loop information.
  * @param mixed|null   $id     The ID or slug of the item.
  * @param string|array $name   The field name, or an associative array of parameters.
  * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
@@ -2181,7 +2181,7 @@ function pods_data_field( $obj, $field_name ) {
 /**
  * Get a field display value from a Pod.
  *
- * @param string|null  $pod    The pod name.
+ * @param string|null  $pod    The pod name, or if you are in The Loop then you can just provide the field name to auto-detect pod/id using loop information.
  * @param mixed|null   $id     The ID or slug of the item.
  * @param string|array $name   The field name, or an associative array of parameters.
  * @param boolean      $single For tableless fields, to return the whole array or the just the first item.

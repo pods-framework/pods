@@ -121,12 +121,14 @@ class Pods implements Iterator {
 	/**
 	 * Constructor - Pods Framework core.
 	 *
-	 * @param string $pod The pod name.
-	 * @param mixed  $id  (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'.
-	 *
-	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since   1.0.0
+	 *
+	 * @param string $pod The pod name, leave null to auto-detect from The Loop.
+	 * @param mixed  $id  (optional) The ID or slug, to load a single record; Provide array of $params to run 'find';
+	 *                    Or leave null to auto-detect from The Loop.
+	 *
 	 * @link    https://docs.pods.io/code/pods/
+	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 */
 	public function __construct( $pod = null, $id = null ) {
 		if ( null === $pod ) {

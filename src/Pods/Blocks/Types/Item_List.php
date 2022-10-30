@@ -372,7 +372,7 @@ class Item_List extends Base {
 		$attributes = array_map( 'pods_trim', $attributes );
 
 		if ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
-			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(
 					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Item List', 'pods' ),
 					esc_html__( 'Please specify a "Template" or "Custom Template" under "More Settings" to configure this block.', 'pods' )
@@ -392,15 +392,16 @@ class Item_List extends Base {
 			$attributes['name'] = $block->context['postType'];
 		}
 
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, pods_v( 'post_id', 'get', 0, true ), true ) );
+
 		if ( empty( $attributes['name'] ) ) {
 			if (
-				! empty( $_GET['post_id'] )
-				&& wp_is_json_request()
-				&& did_action( 'rest_api_init' )
+				0 !== $provided_post_id
+				&& $this->in_editor_mode( $attributes )
 			) {
-				$post_id = absint( $_GET['post_id'] );
+				$attributes['slug'] = $provided_post_id;
 
-				$attributes['name'] = get_post_type( $post_id );
+				$attributes['name'] = get_post_type( $attributes['slug'] );
 			} else {
 				$attributes['name'] = get_post_type();
 			}

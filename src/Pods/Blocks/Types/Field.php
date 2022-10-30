@@ -101,11 +101,11 @@ class Field extends Base {
 
 		return [
 			[
-				'name'  => 'name',
-				'label' => __( 'Pod Name', 'pods' ),
-				'type'  => 'pick',
-				'data'  => $all_pods,
-				'default' => '',
+				'name'        => 'name',
+				'label'       => __( 'Pod Name', 'pods' ),
+				'type'        => 'pick',
+				'data'        => $all_pods,
+				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
 			[
@@ -115,9 +115,9 @@ class Field extends Base {
 				'description' => __( 'Defaults to using the current pod item.', 'pods' ),
 			],
 			[
-				'name'  => 'field',
-				'label' => __( 'Field Name', 'pods' ),
-				'type'  => 'text',
+				'name'        => 'field',
+				'label'       => __( 'Field Name', 'pods' ),
+				'type'        => 'text',
 				'description' => __( 'This is the field name you want to display.', 'pods' ),
 			],
 		];
@@ -139,7 +139,7 @@ class Field extends Base {
 		$attributes = array_map( 'pods_trim', $attributes );
 
 		if ( empty( $attributes['field'] ) ) {
-			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(
 					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Field Value', 'pods' ),
 					esc_html__( 'Please specify a "Field Name" under "More Settings" to configure this block.', 'pods' )
@@ -161,6 +161,8 @@ class Field extends Base {
 			$attributes['use_current'] = false;
 		}
 
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, pods_v( 'post_id', 'get', 0, true ), true ) );
+
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
 			// Detect post type / ID from context.
 			$attributes['name'] = $block->context['postType'];
@@ -172,11 +174,10 @@ class Field extends Base {
 			}
 		} elseif (
 			! empty( $attributes['use_current'] )
-			&& ! empty( $_GET['post_id'] )
-			&& wp_is_json_request()
-			&& did_action( 'rest_api_init' )
+			&& 0 !== $provided_post_id
+			&& $this->in_editor_mode( $attributes )
 		) {
-			$attributes['slug'] = absint( $_GET['post_id'] );
+			$attributes['slug'] = $provided_post_id;
 
 			if ( empty( $attributes['name'] ) ) {
 				$attributes['name'] = get_post_type( $attributes['slug'] );

@@ -1137,12 +1137,11 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function build_dfv_field_config( $args ) {
-
 		$config = parent::build_dfv_field_config( $args );
 
 		// Ensure data is passed in for relationship fields.
 		if ( ! isset( $config['data'] ) && ! empty( $args->options['data'] ) ) {
-			$config['data'] = $args->options['data'];
+			$config['data'] = $this->get_raw_data( $args->options );
 		}
 
 		// Default optgroup handling to off.
@@ -1306,14 +1305,13 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function build_dfv_field_item_data( $args ) {
-
 		$args->options['supports_thumbnails'] = null;
 
 		$item_data = [];
 		$data      = [];
 
 		if ( ! empty( $args->options['data'] ) ) {
-			$data = $args->options['data'];
+			$data = $this->get_raw_data( $args->options );
 		} elseif ( ! empty( $args->data ) ) {
 			$data = $args->data;
 		}
@@ -1975,10 +1973,34 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * Get the raw data from the field data provided.
+	 *
+	 * @since 2.9.9
+	 *
+	 * @param array|Field $field The field data.
+	 *
+	 * @return array|mixed
+	 */
+	public function get_raw_data( $field ) {
+		$data = pods_v( 'data', $field, null, true );
+
+		if ( null !== $data ) {
+			// Support late-initializing the data from a callback function passed in.
+			if ( ! is_array( $data ) && ! is_string( $data ) && is_callable( $data ) ) {
+				$data = $data();
+			}
+
+			$data = (array) $data;
+		}
+
+		return $data;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-		$data = pods_v( 'data', $options, null, true );
+		$data = $this->get_raw_data( $options );
 
 		$object_params = array(
 			// The name of the field.
@@ -1998,7 +2020,7 @@ class PodsField_Pick extends PodsField {
 		if ( null !== $data ) {
 			$data = (array) $data;
 		} else {
-			$data = $this->get_object_data( $object_params );
+			$data = (array) $this->get_object_data( $object_params );
 		}
 
 		/**
@@ -2069,7 +2091,7 @@ class PodsField_Pick extends PodsField {
 				}
 			}
 
-			$data = pods_v( 'data', $options, null, true );
+			$data = $this->get_raw_data( $options );
 
 			$object_params = array(
 				// The name of the field.
@@ -2086,11 +2108,11 @@ class PodsField_Pick extends PodsField {
 				'context' => 'simple_value',
 			);
 
-			if ( null === $data ) {
-				$data = $this->get_object_data( $object_params );
+			if ( null !== $data ) {
+				$data = (array) $data;
+			} else {
+				$data = (array) $this->get_object_data( $object_params );
 			}
-
-			$data = (array) $data;
 
 			$key = 0;
 
@@ -2157,7 +2179,7 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.2.0
 	 */
 	public function value_to_label( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		$data = pods_v( 'data', $options, null, true );
+		$data = $this->get_raw_data( $options );
 
 		$object_params = array(
 			// The name of the field.
@@ -2177,7 +2199,7 @@ class PodsField_Pick extends PodsField {
 		if ( null !== $data ) {
 			$data = (array) $data;
 		} else {
-			$data = $this->get_object_data( $object_params );
+			$data = (array) $this->get_object_data( $object_params );
 		}
 
 		$labels = array();
@@ -2233,7 +2255,7 @@ class PodsField_Pick extends PodsField {
 		);
 
 		// Get data override.
-		$data = pods_v( 'data', $options, null, true );
+		$data = $this->get_raw_data( $options );
 
 		if ( null !== $data ) {
 			// Return data override.
@@ -2332,7 +2354,7 @@ class PodsField_Pick extends PodsField {
 		$items = array();
 
 		if ( ! isset( $options[ static::$type . '_object' ] ) ) {
-			$data = pods_v( 'data', $options );
+			$data = $this->get_raw_data( $options );
 		}
 
 		$simple = false;

@@ -5184,12 +5184,7 @@ class PodsAPI {
 					}
 
 					if ( 'custom-simple' === pods_v( 'pick_object', $field_data ) ) {
-						$custom = pods_v( 'pick_custom', $options, '' );
-
-						$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data['name'], $value, $field_data, $pod, $params->id );
-
-						// Input values are unslashed. Unslash database values as well to ensure correct comparison.
-						$custom = pods_unslash( $custom );
+						$custom = PodsForm::field_method( $field_data['type'], 'data', $field_data['name'], $value, $field_data, $pod, $params->id, false );
 
 						if ( empty( $value ) || empty( $custom ) ) {
 							$value = '';

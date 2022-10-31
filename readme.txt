@@ -175,7 +175,15 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.9.9 - October 31st, 2022 =
 
-* 
+* Tweak: When a field has moved outside of a group, disallow deleting that group until the Pod has been saved to prevent those fields being removed/orphaned. #6940 #6937 (@zrothauser, @sc0ttkclark)
+* Tweak: When registering code-based fields, if you have a relationship field that you are supplying the `'data'` option for, you can now pass in a callable function (not a string or array due to back-compat) to return the options only when the data is needed instead of every page load. (@sc0ttkclark)
+* Fixed: Number and currency parsing issues resolved with HTML5 inputs. #6928 #6922 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Add support for `post_thumbnail._src` and `post_thumbnail._url` variations as fallbacks for the correct `post_thumbnail_src` and `post_thumbnail_url` field usage. #6935 (@sc0ttkclark)
+* Fixed: Resolve issues saving Pods Pages fields. #6942 (@sc0ttkclark)
+* Fixed: Number/currency simple repeatable fields now formats as expected. #6930 #6929 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Update cache group usage and flush to clear Pods post type storage cache options too. (@sc0ttkclark)
+* Fixed: Allow 0 as a valid option for relationship values.
+* Fixed: Updated compatibility with Custom Post Types UI migration component.
 
 = 2.9.8 - September 29th, 2022 =
 

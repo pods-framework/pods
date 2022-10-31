@@ -1,9 +1,18 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 {"dependencies":["lodash","moment","react","react-dom","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-polyfill","wp-primitives","wp-url"],"version":"764c682388c7e2f2f26a"}
 =======
+=======
+>>>>>>> 04e83b9b6 (Auto rebuild assets)
 <<<<<<< HEAD
 {"dependencies":["lodash","moment","react","react-dom","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-polyfill","wp-primitives","wp-url"],"version":"9442cf11787faf28722f"}
 =======
 {"dependencies":["lodash","moment","react","react-dom","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-polyfill","wp-primitives","wp-url"],"version":"56b07908e623c11475de"}
 >>>>>>> 2f117a137 (Auto rebuild assets)
+<<<<<<< HEAD
 >>>>>>> 827da0612 (Auto rebuild assets)
+=======
+=======
+{"dependencies":["lodash","moment","react","react-dom","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-polyfill","wp-primitives","wp-url"],"version":"a1eb4855632d781d4ea0"}
+>>>>>>> 9138951ad (Auto rebuild assets)
+>>>>>>> 04e83b9b6 (Auto rebuild assets)

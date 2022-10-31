@@ -524,6 +524,19 @@ class Map_Field_Values {
 
 		$item_id = $obj ? $obj->id() : 0;
 
+		// Handle the odd ._src and ._url variations with dot-notation too.
+		if ( 'post_thumbnail' === $field ) {
+			$first_traverse = ! empty( $traverse[0] ) ? $traverse[0] : null;
+
+			if ( '_src' === $first_traverse || '_url' === $first_traverse ) {
+				// Append the first traverse to the field name used.
+				$field .= $first_traverse;
+
+				// Remove the first traverse from the list.
+				array_shift( $traverse );
+			}
+		}
+
 		// Copy for further modification.
 		$image_field     = $field;
 		$traverse_params = $traverse;

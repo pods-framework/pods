@@ -76,6 +76,35 @@ class Pods_Templates extends PodsComponent {
 	 * {@inheritdoc}
 	 */
 	public function init() {
+		$this->register_config();
+
+		if ( is_admin() ) {
+			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
+
+			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
+
+			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
+			add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
+
+			add_action( 'pods_meta_save_pre_post__pods_template', array( $this, 'fix_filters' ), 10, 5 );
+			add_action( 'post_updated', array( $this, 'clear_cache' ), 10, 3 );
+			add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+			add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
+			add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
+
+			add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
+		}
+
+		add_filter( 'members_get_capabilities', array( $this, 'get_capabilities' ) );
+	}
+
+	/**
+	 * Register the configuration for this object.
+	 *
+	 * @since 2.9.9
+	 */
+	public function register_config() {
+		$is_admin_user = pods_is_admin();
 
 		$args = array(
 			'label'        => 'Pod Templates',
@@ -92,7 +121,7 @@ class Pods_Templates extends PodsComponent {
 			'menu_icon'    => pods_svg_icon( 'pods' ),
 		);
 
-		if ( ! pods_is_admin() ) {
+		if ( ! $is_admin_user ) {
 			$args['capability_type'] = $this->capability_type;
 		}
 
@@ -117,7 +146,7 @@ class Pods_Templates extends PodsComponent {
 			'supports_revisions' => 1,
 		];
 
-		if ( ! pods_is_admin() ) {
+		if ( ! $is_admin_user ) {
 			$args['capability_type']        = 'custom';
 			$args['capability_type_custom'] = $this->capability_type;
 		}
@@ -185,26 +214,6 @@ class Pods_Templates extends PodsComponent {
 		];
 
 		pods_register_group( $group, $this->object_type, $fields );
-
-		if ( is_admin() ) {
-			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
-
-			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
-
-			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
-			add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
-
-			add_action( 'pods_meta_save_pre_post__pods_template', array( $this, 'fix_filters' ), 10, 5 );
-			add_action( 'post_updated', array( $this, 'clear_cache' ), 10, 3 );
-			add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
-			add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
-			add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
-
-			add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
-
-		}
-
-		add_filter( 'members_get_capabilities', array( $this, 'get_capabilities' ) );
 	}
 
 	/**
@@ -413,7 +422,6 @@ class Pods_Templates extends PodsComponent {
 	 * @return string|void
 	 */
 	public function set_title_text( $text, $post ) {
-
 		return __( 'Enter template name here', 'pods' );
 	}
 

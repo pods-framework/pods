@@ -118,7 +118,7 @@ You can enable some of our included components to extend your WordPress site eve
 = Pods Pro by SKCDEV Premium Add-Ons =
 
 * [List Tables Add-On](https://pods-pro.skc.dev/downloads/list-tables/) - A new block and shortcode to list/filter content from Pods in a table format
-* [Page Builder Toolkit Add-On](https://pods-pro.skc.dev/downloads/page-builder-toolkit/) - Integrates Pods with [Beaver Builder](https://wordpress.org/plugins/beaver-builder-lite-version/), [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/), [Divi Theme](https://www.elegantthemes.com/gallery/divi/), [Elementor](https://wordpress.org/plugins/elementor/), [GenerateBlocks](https://wordpress.org/plugins/generateblocks/), and [Oxygen Builder](https://oxygenbuilder.com/)
+* [Page Builder Toolkit Add-On](https://pods-pro.skc.dev/downloads/page-builder-toolkit/) - Integrates Pods with [Beaver Builder](https://wordpress.org/plugins/beaver-builder-lite-version/), [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/), [Conditional Blocks Pro](https://conditionalblocks.com/), [Divi Theme](https://www.elegantthemes.com/gallery/divi/), [Elementor](https://wordpress.org/plugins/elementor/), [GenerateBlocks](https://wordpress.org/plugins/generateblocks/), [Oxygen Builder](https://oxygenbuilder.com/), and [Stackable Blocks (premium)](https://wpstackable.com/premium/)
 * [Advanced Relationships Storage Add-On](https://pods-pro.skc.dev/downloads/advanced-relationship-storage/) - Advanced options for relationship storage
 * [TablePress Integration Add-On](https://pods-pro.skc.dev/downloads/tablepress-integration/) - Integrates Pods with [TablePress](https://wordpress.org/plugins/tablepress/)
 * [Advanced Permalinks Add-On](https://pods-pro.skc.dev/downloads/advanced-permalinks/) - Advanced permalink structures and taxonomy landing pages
@@ -172,6 +172,10 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.9 - October 31st, 2022 =
+
+* 
 
 = 2.9.8 - September 29th, 2022 =
 

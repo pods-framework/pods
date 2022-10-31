@@ -120,7 +120,7 @@ const DateTime = ( {
 	const useHTML5Field = toBool( html5 ) && checkForHTML5BrowserSupport( 'datetime-local' );
 
 	const allowEmpty = toBool( fieldConfig.datetime_allow_empty ?? 0 );
-	const emptyValues = [ '0000-00-00', '0000-00-00 00:00:00', '00:00:00', '' ];
+	const emptyValues = [ '0000-00-00', '0000-00-00 00:00:00', '' ];
 
 	const yearRange = useMemo(
 		() => getArrayOfYearsFromJqueryUIYearRange(

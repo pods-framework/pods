@@ -2,6 +2,7 @@
 
 use Pods\Static_Cache;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
 
 /**
  * @package Pods\Fields
@@ -48,7 +49,6 @@ class PodsField_DateTime extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function setup() {
-
 		static::$group = __( 'Date / Time', 'pods' );
 		static::$label = __( 'Date / Time', 'pods' );
 	}
@@ -249,7 +249,6 @@ class PodsField_DateTime extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function is_empty( $value = null ) {
-
 		$is_empty = false;
 
 		$value = trim( $value );
@@ -369,7 +368,6 @@ class PodsField_DateTime extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
 		// Value should always be passed as storage format since 2.7.15.
 		$format = static::$storage_format;
 
@@ -378,13 +376,23 @@ class PodsField_DateTime extends PodsField {
 				// Allow input values compatible with the display format.
 				$format = $this->format_display( $options, false );
 			}
+
 			$value = $this->convert_date( $value, static::$storage_format, $format );
-		} elseif ( ! pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
-			// Empty is not allowed.
+		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
+			// Empty is not allowed, use current timestamp.
 			$value = date_i18n( static::$storage_format );
-		} elseif ( $value !== static::$empty_value ) {
-			// Empty is allowed. Set to empty string if the value is different than the default empty value.
-			$value = '';
+		} else {
+			// Empty is allowed, check what default we should use.
+
+			$is_meta_based_pod = $pod instanceof Pod && $pod->is_meta_based();
+
+			if ( $is_meta_based_pod && $value !== static::$empty_value ) {
+				// Meta-based Pods default to empty string.
+				$value = '';
+			} else {
+				// Table-based Pods need the normal date/datetime/time empty value to be set.
+				$value = self::$empty_value;
+			}
 		}
 
 		return $value;

@@ -329,8 +329,8 @@ class PodsField_Number extends PodsField {
 				$value
 			);
 
-			if ( 1 !== (int) pods_v( static::$type . '_html5', $options, false ) ) {
-				// HTML5 supports `1234.00` and `1234,00` formats.
+			// HTML5 supports both `1234.00` and `1234,00` formats so let's replace commas as decimals (thousands replaced above).
+			if ( 1 === (int) pods_v( static::$type . '_html5', $options, false ) ) {
 				$value = str_replace( ',', '.', $value );
 			}
 		}

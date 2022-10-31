@@ -154,8 +154,16 @@ class Block_Field extends Field {
 		$format_multi  = $this->get_arg( 'pick_format_multi', 'checkbox' );
 
 		// Support raw data for now.
-		$raw_data = (array) $this->get_arg( 'data', [] );
+		$raw_data = $this->get_arg( 'data', [] );
 		$data     = [];
+
+		if ( ! is_array( $raw_data ) ) {
+			if ( is_callable( $raw_data ) ) {
+				$raw_data = $raw_data();
+			} else {
+				$raw_data = [];
+			}
+		}
 
 		foreach ( $raw_data as $key => $item ) {
 			if ( ! is_array( $item ) ) {

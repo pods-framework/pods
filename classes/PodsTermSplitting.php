@@ -304,8 +304,8 @@ class Pods_Term_Splitting {
 				WHERE
 				    meta.meta_key = %s
 					AND t.post_type = %s
-					AND meta_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $meta_key, $pod_name, pods_sanitize_like( $target_serialized ) ) );
+					AND meta_value LIKE %s
+				", $target_serialized, $replace_serialized, $meta_key, $pod_name, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if
@@ -351,8 +351,8 @@ class Pods_Term_Splitting {
 					meta_value = REPLACE( meta_value, %s, %s )
 				WHERE
 				    meta_key = %s
-					AND meta_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $meta_key, pods_sanitize_like( $target_serialized ) ) );
+					AND meta_value LIKE %s
+				", $target_serialized, $replace_serialized, $meta_key, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if
@@ -398,8 +398,8 @@ class Pods_Term_Splitting {
 					meta_value = REPLACE( meta_value, %s, %s )
 				WHERE
 				    meta_key = %s
-					AND meta_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $meta_key, pods_sanitize_like( $target_serialized ) ) );
+					AND meta_value LIKE %s
+				", $target_serialized, $replace_serialized, $meta_key, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if
@@ -448,8 +448,8 @@ class Pods_Term_Splitting {
 					option_value = REPLACE( option_value, %s, %s )
 				WHERE
 					option_name = %s
-					AND option_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $option_name, pods_sanitize_like( $target_serialized ) ) );
+					AND option_value LIKE %s
+				", $target_serialized, $replace_serialized, $option_name, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if

@@ -239,17 +239,21 @@ class PodsField_Avatar extends PodsField_File {
 			} else {
 				$avatar_field = pods_transient_get( 'pods_avatar_field' );
 
+				/** @var \Pods\Whatsit\Pod $user */
 				$user = current( PodsMeta::$user );
 
 				if ( empty( $avatar_field ) ) {
-					foreach ( $user['fields'] as $field ) {
-						if ( 'avatar' === $field['type'] ) {
-							$avatar_field = $field['name'];
+					$avatar_fields = $user->get_fields(
+						[
+							'type' => 'avatar',
+							'limit' => 1,
+						]
+					);
 
-							pods_transient_set( 'pods_avatar_field', $avatar_field, WEEK_IN_SECONDS );
+					if ( ! empty( $avatar_fields ) ) {
+						$avatar_field = current( $avatar_fields );
 
-							break;
-						}
+						pods_transient_set( 'pods_avatar_field', $avatar_field, WEEK_IN_SECONDS );
 					}
 				} elseif ( ! isset( $user['fields'][ $avatar_field ] ) ) {
 					$avatar_field = false;

@@ -620,6 +620,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( ! isset( $this->args[ $arg ] ) && ! $strict ) {
+			if ( 'internal' === $arg ) {
+				return $default;
+			}
 
 			$table_info_fields = [
 				'object_name',

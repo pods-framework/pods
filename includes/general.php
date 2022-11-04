@@ -343,28 +343,6 @@ function pods_get_timing() {
 
 	$timer = $now;
 
-	echo '<pre>';
-	var_dump( '[debugger timing: ' . number_format( $last_diff, 4 ) . 's]' );
-	echo '</pre>';
-
-		echo '<pre>';
-		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 5 );
-		if ( ! empty( $backtrace[1]['function'] ) && 'pods_debug' !== $backtrace[1]['function'] ) {
-			var_dump( $backtrace[0]['file'] . ' : ' . $backtrace[0]['line'] . ' > LAST' );
-			var_dump( $backtrace[1]['file'] . ' : ' . $backtrace[1]['line'] . ' > BEFORE' );
-		} else {
-			var_dump( $backtrace[1]['file'] . ' : ' . $backtrace[1]['line'] . ' > LAST' );
-			var_dump( $backtrace[2]['file'] . ' : ' . $backtrace[2]['line'] . ' > BEFORE' );
-		}
-		echo '</pre>';
-
-	if ( 1 < $last_diff ) {
-		echo '<pre>';
-		var_dump( $backtrace );
-		echo '</pre>';
-		die();
-	}
-
 	return $last_diff;
 }
 

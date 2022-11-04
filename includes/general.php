@@ -324,6 +324,51 @@ function pods_error( $error, $obj = null ) {
 }
 
 /**
+ * Get the last known timing difference.
+ *
+ * @since 2.9.10
+ *
+ * @return float The last known timing difference.
+ */
+function pods_get_timing() {
+	static $timer;
+
+	$now = microtime( true );
+
+	if ( ! $timer ) {
+		$timer = $now;
+	}
+
+	$last_diff = $now - $timer;
+
+	$timer = $now;
+
+	echo '<pre>';
+	var_dump( '[debugger timing: ' . number_format( $last_diff, 4 ) . 's]' );
+	echo '</pre>';
+
+		echo '<pre>';
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 5 );
+		if ( ! empty( $backtrace[1]['function'] ) && 'pods_debug' !== $backtrace[1]['function'] ) {
+			var_dump( $backtrace[0]['file'] . ' : ' . $backtrace[0]['line'] . ' > LAST' );
+			var_dump( $backtrace[1]['file'] . ' : ' . $backtrace[1]['line'] . ' > BEFORE' );
+		} else {
+			var_dump( $backtrace[1]['file'] . ' : ' . $backtrace[1]['line'] . ' > LAST' );
+			var_dump( $backtrace[2]['file'] . ' : ' . $backtrace[2]['line'] . ' > BEFORE' );
+		}
+		echo '</pre>';
+
+	if ( 1 < $last_diff ) {
+		echo '<pre>';
+		var_dump( $backtrace );
+		echo '</pre>';
+		die();
+	}
+
+	return $last_diff;
+}
+
+/**
  * Debug variable used in pods_debug to count the instances debug is used
  */
 global $pods_debug;
@@ -345,23 +390,12 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
-		static $timer;
-
-		$now = microtime( true );
-
-		if ( ! $timer ) {
-			$timer = $now;
-		}
-
-		$timing = $now - $timer;
 
 		if ( ! is_string( $debug ) ) {
 			$debug = var_export( $debug, true );
 		}
 
-		codecept_debug( 'Pods Debug: ' . $debug . ' [debug timing: ' . number_format( $timing, 4 ) . 's]' );
-
-		$timer = $now;
+		codecept_debug( 'Pods Debug: ' . $debug . ' [debug timing: ' . number_format( pods_get_timing(), 4 ) . 's]' );
 
 		return;
 	}
@@ -389,7 +423,7 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 		$debug_line_number = __LINE__ - 2;
 	} else {
-		var_dump( 'Pods Debug #' . $pods_debug );
+		var_dump( 'Pods Debug #' . $pods_debug . ' [debug timing: ' . number_format( pods_get_timing(), 4 ) . 's]' );
 
 		$debug_line_number = __LINE__ - 2;
 	}

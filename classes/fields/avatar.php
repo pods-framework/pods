@@ -239,13 +239,15 @@ class PodsField_Avatar extends PodsField_File {
 			} else {
 				$avatar_field = pods_transient_get( 'pods_avatar_field' );
 
-				/** @var \Pods\Whatsit\Pod $user */
-				$user = current( PodsMeta::$user );
+				/** @var \Pods\Whatsit\Pod $user_pod */
+				$user_pod = current( PodsMeta::$user );
 
-				if ( empty( $avatar_field ) ) {
-					$avatar_fields = $user->get_fields(
+				if ( '__null__' === $avatar_field ) {
+					$avatar_field = false;
+				} elseif ( empty( $avatar_field ) ) {
+					$avatar_fields = $user_pod->get_fields(
 						[
-							'type' => 'avatar',
+							'type'  => 'avatar',
 							'limit' => 1,
 						]
 					);
@@ -255,7 +257,7 @@ class PodsField_Avatar extends PodsField_File {
 
 						pods_transient_set( 'pods_avatar_field', $avatar_field, WEEK_IN_SECONDS );
 					}
-				} elseif ( ! isset( $user['fields'][ $avatar_field ] ) ) {
+				} elseif ( $user_pod->get_field( $avatar_field, null, false ) ) {
 					$avatar_field = false;
 				}
 
@@ -263,7 +265,9 @@ class PodsField_Avatar extends PodsField_File {
 					$avatar_id = get_user_meta( $user_id, $avatar_field . '.ID', true );
 
 					pods_cache_set( $user_id, $avatar_id, 'pods_avatar_ids', WEEK_IN_SECONDS );
-				}//end if
+				} else {
+					pods_transient_set( 'pods_avatar_field', '__null__', WEEK_IN_SECONDS );
+				}
 			}//end if
 		}//end if
 

@@ -161,17 +161,25 @@ class Item_Single extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		$api = pods_api();
+		$all_pods = static function() {
+			$api = pods_api();
 
-		$all_pods = $api->load_pods( [ 'names' => true ] );
-		$all_pods = array_merge( [
-			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
-		], $all_pods );
+			$all_pods = $api->load_pods( [ 'names' => true ] );
 
-		$all_templates = $api->load_templates( [ 'names' => true ] );
-		$all_templates = array_merge( [
-			'' => '- ' . __( 'Use Custom Template', 'pods' ) . ' -',
-		], $all_templates );
+			return array_merge( [
+				'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
+			], $all_pods );
+		};
+
+		$all_templates = static function() {
+			$api = pods_api();
+
+			$all_templates = $api->load_templates( [ 'names' => true ] );
+
+			return array_merge( [
+				'' => '- ' . __( 'Use Custom Template', 'pods' ) . ' -',
+			], $all_templates );
+		};
 
 		return [
 			[

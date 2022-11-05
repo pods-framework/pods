@@ -61,12 +61,15 @@ class Item_Single_List_Fields extends Item_Single {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		$api = pods_api();
+		$all_pods = static function() {
+			$api = pods_api();
 
-		$all_pods = $api->load_pods( [ 'names' => true ] );
-		$all_pods = array_merge( [
-			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
-		], $all_pods );
+			$all_pods = $api->load_pods( [ 'names' => true ] );
+
+			return array_merge( [
+				'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
+			], $all_pods );
+		};
 
 		return [
 			[
@@ -88,11 +91,11 @@ class Item_Single_List_Fields extends Item_Single {
 				'label'       => __( 'Output Type', 'pods' ),
 				'type'        => 'pick',
 				'data'        => [
-					'ul'    => 'Unordered list (<ul>)',
-					'dl'    => 'Description list (<dl>)',
-					'p'     => 'Paragraph elements (<p>)',
-					'div'   => 'Div containers (<div>)',
-					'table' => 'Table rows (<table>)',
+					'ul'    => __( 'Unordered list', 'pods' ) . ' (<ul>)',
+					'dl'    => __( 'Description list', 'pods' ) . ' (<dl>)',
+					'p'     => __( 'Paragraph elements', 'pods' ) . ' (<p>)',
+					'div'   => __( 'Div containers', 'pods' ) . ' (<div>)',
+					'table' => __( 'Table rows', 'pods' ) . ' (<table>)',
 				],
 				'default'     => 'ul',
 				'description' => __( 'Choose how you want your output HTML to be set up. This allows you flexibility to build and style your output with any CSS customizations you would like. Some output types are naturally laid out better in certain themes.', 'pods' ),

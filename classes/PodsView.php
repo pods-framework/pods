@@ -175,8 +175,10 @@ class PodsView {
 			|| $external_object_cache
 		);
 
-		if ( 'transient' === $cache_mode && $object_cache_enabled ) {
+		if ( 'transient' === $cache_mode && $external_object_cache ) {
 			$cache_mode = 'cache';
+		} elseif ( 'cache' === $cache_mode && ! $external_object_cache ) {
+			$cache_mode = 'static-cache';
 		} elseif ( ! in_array( $cache_mode, self::$cache_modes, true ) ) {
 			$cache_mode = 'cache';
 		}
@@ -327,8 +329,10 @@ class PodsView {
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 
-		if ( 'transient' === $cache_mode && $object_cache_enabled ) {
+		if ( 'transient' === $cache_mode && $external_object_cache ) {
 			$cache_mode = 'cache';
+		} elseif ( 'cache' === $cache_mode && ! $external_object_cache ) {
+			$cache_mode = 'static-cache';
 		} elseif ( ! in_array( $cache_mode, self::$cache_modes, true ) ) {
 			$cache_mode = 'cache';
 		}
@@ -419,8 +423,10 @@ class PodsView {
 
 		global $wpdb;
 
-		if ( 'transient' === $cache_mode && $object_cache_enabled ) {
+		if ( 'transient' === $cache_mode && $external_object_cache ) {
 			$cache_mode = 'cache';
+		} elseif ( 'cache' === $cache_mode && ! $external_object_cache ) {
+			$cache_mode = 'static-cache';
 		} elseif ( ! in_array( $cache_mode, self::$cache_modes, true ) ) {
 			$cache_mode = 'cache';
 		}

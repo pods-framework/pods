@@ -15,6 +15,13 @@ class File extends Collection {
 	protected static $type = 'file';
 
 	/**
+	 * @var array
+	 */
+	protected static $compatible_types = [
+		'file' => 'file',
+	];
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function get_label() {

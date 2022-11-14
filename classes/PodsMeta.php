@@ -118,6 +118,9 @@ class PodsMeta {
 	 * @return \PodsMeta
 	 */
 	public function core() {
+		// @todo Abstract the static vars into a getter that gets/caches only when the call is needed.
+		// @todo Update all usages of self::${$pod_type} to use the new getter.
+		// @todo Update all usages of PodsMeta::${$pod_type} to use the new getter.
 		$this->cache_pods( false );
 
 		$core_loader_objects = pods_transient_get( 'pods_core_loader_objects' );

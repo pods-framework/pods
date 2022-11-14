@@ -1,7 +1,6 @@
 <?php
 
 use Pods\API\Whatsit\Value_Field;
-use Pods\Static_Cache;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -10875,19 +10874,28 @@ class PodsAPI {
 			pods_transient_clear( 'pods_wp_cpt_ct' );
 		}
 
-		pods_cache_clear( true, 'pods_post_type_storage_pod' );
-		pods_cache_clear( true, 'pods_post_type_storage_group' );
-		pods_cache_clear( true, 'pods_post_type_storage_field' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_pod' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_template' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_page' );
 
 		pods_static_cache_clear( true, __CLASS__ );
 		pods_static_cache_clear( true, __CLASS__ . '/table_info_cache' );
 		pods_static_cache_clear( true, __CLASS__ . '/related_item_cache' );
+		pods_static_cache_clear( true, __CLASS__ . '/_load_objects' );
 		pods_static_cache_clear( true, PodsInit::class . '/existing_content_types' );
 		pods_static_cache_clear( true, PodsView::class );
 		pods_static_cache_clear( true, PodsField_Pick::class . '/related_data' );
 		pods_static_cache_clear( true, PodsField_Pick::class . '/field_data' );
 		pods_static_cache_clear( true, 'pods_svg_icon/base64' );
 		pods_static_cache_clear( true, 'pods_svg_icon/svg' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_pod' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_group' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_field' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_template' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_page' );
 
 		pods_init()->refresh_existing_content_types_cache( true );
 
@@ -11229,6 +11237,8 @@ class PodsAPI {
 			}
 		}
 
+		$api_cache = empty( $params['bypass_cache'] );
+
 		if ( isset( $params['options'] ) ) {
 			$params['args'] = $params['options'];
 
@@ -11253,6 +11263,8 @@ class PodsAPI {
 			}
 		}
 
+		$cache_key = json_encode( $params );
+
 		if ( ! empty( $params['return_type'] ) ) {
 			$return_type = $params['return_type'];
 
@@ -11276,7 +11288,16 @@ class PodsAPI {
 		/** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
 		$post_type_storage = $object_collection->get_storage_object( $storage_type );
 
-		$objects = $post_type_storage->find( $params );
+		$objects = null;
+		$cache_key = json_encode( $params );
+
+		if ( $api_cache && did_action( 'init' ) ) {
+			$objects = pods_static_cache_get( $cache_key, __CLASS__ . '/_load_objects' ) ?: null;
+		}
+
+		if ( null === $objects ) {
+			$objects = $post_type_storage->find( $params );
+		}
 
 		if ( ! empty( $params['auto_setup'] ) && ! $objects ) {
 			$type = pods_v( 'type', $params, null );
@@ -11372,6 +11393,10 @@ class PodsAPI {
 
 				return $this->_load_objects( $params );
 			}
+		}
+
+		if ( $api_cache ) {
+			pods_static_cache_set( $cache_key, $objects, __CLASS__ . '/_load_objects' );
 		}
 
 		if ( ! empty( $params['count'] ) ) {

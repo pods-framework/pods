@@ -2,6 +2,7 @@
 
 namespace Pods\Whatsit\Storage;
 
+use Pods\Static_Cache;
 use Pods\Whatsit;
 use Pods\Whatsit\Store;
 use WP_Query;
@@ -328,12 +329,17 @@ class Post_Type extends Collection {
 		$post_objects = false;
 
 		$cache_key_post_type = 'any';
+		$cache_key_static_check = '';
 
 		if ( isset( $post_args['post_type'] ) ) {
 			$cache_key_post_type = $post_args['post_type'];
 		}
 
 		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
+			$post_args_encoded = wp_json_encode( $post_args );
+
+			$cache_key_static_check = 'pods_whatsit_storage_post_type_find' . $post_args_encoded;
+
 			$cache_key_parts = [
 				'pods_whatsit_storage_post_type_find',
 			];
@@ -355,8 +361,7 @@ class Post_Type extends Collection {
 			}
 
 			$cache_key_parts[] = $current_language;
-
-			$cache_key_parts[] = wp_json_encode( $post_args );
+			$cache_key_parts[] = $post_args_encoded;
 
 			/**
 			 * Filter cache key parts used for generating the cache key.
@@ -375,8 +380,18 @@ class Post_Type extends Collection {
 			$cache_key = implode( '_', $cache_key_parts );
 
 			if ( empty( $args['refresh'] ) ) {
-				$posts        = pods_transient_get( $cache_key );
-				$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage_' . $cache_key_post_type );
+				$posts = pods_static_cache_get( $cache_key_static_check, self::class . '/find_objects/' . $cache_key_post_type );
+				$post_objects = pods_static_cache_get( $cache_key_static_check . '_objects', self::class . '/find_objects/' . $cache_key_post_type );
+
+				// If we have no posts in static cache, we don't need to query again.
+				if ( [] !== $posts ) {
+					$posts = pods_transient_get($cache_key);
+				}
+
+				// If we have no posts in static cache, we don't need to query again.
+				if ( [] !== $post_objects ) {
+					$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage_' . $cache_key_post_type );
+				}
 			}
 		}//end if
 
@@ -417,6 +432,7 @@ class Post_Type extends Collection {
 				}
 
 				if ( empty( $args['bypass_cache'] ) ) {
+					pods_static_cache_set( $cache_key_static_check, $posts, self::class . '/find_objects/' . $cache_key_post_type );
 					pods_transient_set( $cache_key, $posts, WEEK_IN_SECONDS );
 				}
 			}
@@ -455,6 +471,7 @@ class Post_Type extends Collection {
 			}
 
 			if ( empty( $args['bypass_post_type_find'] ) && empty( $args['bypass_cache'] ) ) {
+				pods_static_cache_set( $cache_key_static_check . '_objects', $post_objects, self::class . '/find_objects/' . $cache_key_post_type );
 				pods_cache_set( $cache_key . '_objects', $post_objects, 'pods_post_type_storage_' . $cache_key_post_type, WEEK_IN_SECONDS );
 			}
 		}

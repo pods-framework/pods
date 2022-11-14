@@ -356,13 +356,19 @@ class Config_Handler {
 
 				if ( $found_config ) {
 					$found_configs[ $file_path ] = true;
-				} else {
+				} elseif ( $cached_found_configs ) {
 					$refresh_cache = true;
 				}
 			}
 		}
 
-		if ( ! $cached_found_configs || $refresh_cache ) {
+		if (
+			$refresh_cache
+			|| (
+				! empty( $found_configs )
+				&& $found_configs !== $cached_found_configs
+			)
+		) {
 			pods_transient_set( 'pods_config_handler_found_configs', $found_configs, WEEK_IN_SECONDS );
 		}
 

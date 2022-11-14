@@ -472,6 +472,10 @@ class Store {
 				continue;
 			}
 
+			if ( ! $object instanceof Whatsit ) {
+				$object = $this->get_object( $object );
+			}
+
 			// Delete from storage.
 			$storage_type = $object->get_object_storage_type();
 

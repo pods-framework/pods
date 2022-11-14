@@ -10862,6 +10862,8 @@ class PodsAPI {
 		pods_transient_clear( 'pods_blocks' );
 		pods_transient_clear( 'pods_blocks_js' );
 
+		pods_transient_clear( 'pods_config_handler_found_configs' );
+
 		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
 			pods_cache_clear( $pod['name'], 'pods-class' );

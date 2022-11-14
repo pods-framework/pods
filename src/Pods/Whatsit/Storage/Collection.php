@@ -87,40 +87,6 @@ class Collection extends Storage {
 			$args['limit'] = $limit;
 		}
 
-		$object_collection = Store::get_instance();
-
-		$objects = $object_collection->get_objects();
-
-		foreach ( $objects as $k => $object ) {
-			$current_object_storage_type = $object->get_object_storage_type();
-
-			if ( $current_object_storage_type && isset( static::$compatible_types[ $current_object_storage_type ] ) ) {
-				continue;
-			}
-
-			unset( $objects[ $k ] );
-		}
-
-		if ( empty( $objects ) ) {
-			return $objects;
-		}
-
-		if ( ! empty( $args['object_type'] ) ) {
-			$object_types = (array) $args['object_type'];
-
-			foreach ( $objects as $k => $object ) {
-				if ( in_array( $object->get_object_type(), $object_types, true ) ) {
-					continue;
-				}
-
-				unset( $objects[ $k ] );
-			}
-
-			if ( empty( $objects ) ) {
-				return $objects;
-			}
-		}
-
 		if ( ! isset( $args['args'] ) ) {
 			$args['args'] = [];
 		}
@@ -151,6 +117,49 @@ class Collection extends Storage {
 			$args['args'][ $arg ] = $args[ $arg ];
 		}
 
+		$cache_key = wp_json_encode( $args );
+
+		$found_objects = pods_static_cache_get( $cache_key, self::class . '/find_objects' );
+
+		// Cached objects found, don't process again.
+		if ( is_array( $found_objects ) ) {
+			return $found_objects;
+		}
+
+		$object_collection = Store::get_instance();
+
+		$objects = $object_collection->get_objects();
+
+		foreach ( $objects as $k => $object ) {
+			$current_object_storage_type = $object->get_object_storage_type();
+
+			if ( $current_object_storage_type && isset( static::$compatible_types[ $current_object_storage_type ] ) ) {
+				continue;
+			}
+
+			unset( $objects[ $k ] );
+		}
+
+		if ( empty( $objects ) ) {
+			return [];
+		}
+
+		if ( ! empty( $args['object_type'] ) ) {
+			$object_types = (array) $args['object_type'];
+
+			foreach ( $objects as $k => $object ) {
+				if ( in_array( $object->get_object_type(), $object_types, true ) ) {
+					continue;
+				}
+
+				unset( $objects[ $k ] );
+			}
+
+			if ( empty( $objects ) ) {
+				return [];
+			}
+		}
+
 		foreach ( $args['args'] as $arg => $value ) {
 			if ( null === $value ) {
 				foreach ( $objects as $k => $object ) {
@@ -162,7 +171,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 
 				continue;
@@ -180,7 +189,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 
 				continue;
@@ -207,7 +216,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 			}
 		}//end foreach
@@ -228,7 +237,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 			}
 		}
@@ -249,7 +258,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 			}
 		}
@@ -267,6 +276,8 @@ class Collection extends Storage {
 		if ( ! empty( $args['limit'] ) ) {
 			$objects = array_slice( $objects, 0, $args['limit'], true );
 		}
+
+		pods_static_cache_set( $cache_key, $objects, self::class . '/find_objects' );
 
 		$names = wp_list_pluck( $objects, 'name' );
 

@@ -492,7 +492,12 @@ class Post_Type extends Collection {
 				}, $post_objects );
 			} else {
 				// Handle normal Whatsit object setup.
-				update_postmeta_cache( $posts ); // Prevent separate queries for each iteration.
+
+				// Prevent separate queries for each iteration.
+				if ( wp_using_ext_object_cache() ) {
+					update_postmeta_cache( $posts );
+				}
+
 				$posts = array_map( [ $this, 'to_object' ], $post_objects );
 				$posts = array_filter( $posts );
 			}
@@ -552,7 +557,7 @@ class Post_Type extends Collection {
 	protected function save_object( Whatsit $object ) {
 		$id = $object->get_id();
 
-		if ( empty( $id ) ) {
+		if ( empty( $id ) || static::$type === $object->get_object_storage_type() ) {
 			return parent::save_object( $object );
 		}
 
@@ -589,7 +594,7 @@ class Post_Type extends Collection {
 	public function get_args( Whatsit $object ) {
 		$id = $object->get_id();
 
-		if ( empty( $id ) ) {
+		if ( empty( $id ) || static::$type === $object->get_object_storage_type() ) {
 			return parent::get_args( $object );
 		}
 
@@ -627,7 +632,7 @@ class Post_Type extends Collection {
 	public function save_args( Whatsit $object ) {
 		$id = $object->get_id();
 
-		if ( empty( $id ) ) {
+		if ( empty( $id ) || static::$type === $object->get_object_storage_type() ) {
 			return parent::save_args( $object );
 		}
 
@@ -668,7 +673,7 @@ class Post_Type extends Collection {
 	protected function delete_object( Whatsit $object ) {
 		$id = $object->get_id();
 
-		if ( empty( $id ) ) {
+		if ( empty( $id ) || static::$type === $object->get_object_storage_type() ) {
 			return parent::delete_object( $object );
 		}
 

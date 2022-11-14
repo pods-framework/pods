@@ -128,17 +128,7 @@ class Collection extends Storage {
 
 		$object_collection = Store::get_instance();
 
-		$objects = $object_collection->get_objects();
-
-		foreach ( $objects as $k => $object ) {
-			$current_object_storage_type = $object->get_object_storage_type();
-
-			if ( $current_object_storage_type && isset( static::$compatible_types[ $current_object_storage_type ] ) ) {
-				continue;
-			}
-
-			unset( $objects[ $k ] );
-		}
+		$objects = $object_collection->get_objects( static::$compatible_types );
 
 		if ( empty( $objects ) ) {
 			return [];

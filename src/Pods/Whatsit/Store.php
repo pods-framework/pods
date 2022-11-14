@@ -532,13 +532,40 @@ class Store {
 	/**
 	 * Get objects from collection.
 	 *
+	 * @param array|null $storage_types The storage types to retrieve.
+	 * @param bool $build Whether to build objects.
+	 *
 	 * @return Whatsit[] List of objects.
 	 */
-	public function get_objects() {
-		$objects = array_map( [ $this, 'get_object' ], $this->objects );
-		$objects = array_filter( $objects );
+	public function get_objects( $storage_types = null, $build = false ) {
+		$objects = $this->objects;
 
-		return $objects;
+		if ( $build ) {
+			$objects = array_map( [ $this, 'get_object' ], $this->objects );
+			$objects = array_filter( $objects );
+		}
+
+		if ( null === $storage_types ) {
+			return $objects;
+		}
+
+		// Maybe use isset() instead of in_array() for storage types comparisons.
+		if ( isset( $storage_types[0] ) ) {
+			$storage_types = array_flip( $storage_types );
+		}
+
+		return array_filter( $objects, static function( $object ) use ( $storage_types ) {
+			if ( ! $object instanceof Whatsit ) {
+				return false;
+			}
+
+			$current_object_storage_type = $object->get_object_storage_type();
+
+			return (
+				$current_object_storage_type
+				&& isset( $storage_types[ $current_object_storage_type ] )
+			);
+		} );
 	}
 
 	/**

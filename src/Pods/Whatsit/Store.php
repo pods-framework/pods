@@ -544,12 +544,14 @@ class Store {
 	public function get_objects( $storage_types = null, $build_all = false ) {
 		$objects = $this->objects;
 
-		if ( $build_all ) {
+		$has_storage_types = null !== $storage_types;
+
+		if ( $build_all || ! $has_storage_types ) {
 			$objects = array_map( [ $this, 'get_object' ], $this->objects );
 			$objects = array_filter( $objects );
 		}
 
-		if ( null === $storage_types ) {
+		if ( ! $has_storage_types ) {
 			return $objects;
 		}
 
@@ -559,11 +561,13 @@ class Store {
 		}
 
 		$objects = array_filter( $objects, static function( $object ) use ( $storage_types ) {
-			if ( ! $object instanceof Whatsit ) {
-				return false;
-			}
+			$current_object_storage_type = null;
 
-			$current_object_storage_type = $object->get_object_storage_type();
+			if ( $object instanceof Whatsit ) {
+				$current_object_storage_type = $object->get_object_storage_type();
+			} elseif ( is_array( $object ) && isset( $object['object_storage_type'] ) ) {
+				$current_object_storage_type = $object['object_storage_type'];
+			}
 
 			return (
 				$current_object_storage_type

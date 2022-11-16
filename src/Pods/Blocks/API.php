@@ -134,6 +134,7 @@ class API {
 		/** @var Block[] $blocks */
 		$blocks = $api->_load_objects( [
 			'object_type' => 'block',
+			'bypass_cache' => true,
 			// Disable DB queries for now.
 			'bypass_post_type_find' => false,
 		] );

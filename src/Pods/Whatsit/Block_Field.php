@@ -125,10 +125,13 @@ class Block_Field extends Field {
 			isset( $field_mapping['data'] )
 			&& (
 				is_string( $field_mapping['data'] )
+				|| is_object( $field_mapping['data'] )
 				|| (
 					is_array( $field_mapping['data'] )
-					&& isset( $field_mapping['data'][0] )
+					&& 2 === count( $field_mapping['data'] )
+					&& isset( $field_mapping['data'][0], $field_mapping['data'][1] )
 					&& is_object( $field_mapping['data'][0] )
+					&& is_string( $field_mapping['data'][1] )
 				)
 			)
 			&& is_callable( $field_mapping['data'] )

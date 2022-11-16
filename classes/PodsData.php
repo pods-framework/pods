@@ -2375,6 +2375,14 @@ class PodsData {
 			}
 		}
 
+		if ( pods_is_admin() && 1 === (int) pods_v( 'pods_debug_backtrace' ) ) {
+			ob_start();
+			echo '<pre>';
+			var_dump( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 11 ) );
+			echo '</pre>';
+			$error = ob_get_clean() . $error;
+		}
+
 		$params = (object) array(
 			'sql'              => $sql,
 			'error'            => $error,

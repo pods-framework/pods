@@ -202,6 +202,11 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 		return (
 			! empty( $attributes['_is_editor'] )
 			|| (
+				is_admin()
+				&& $screen = get_current_screen()
+				&& 'post' === $screen->base
+			)
+			|| (
 				wp_is_json_request()
 				&& did_action( 'rest_api_init' )
 			)

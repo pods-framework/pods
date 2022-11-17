@@ -8374,12 +8374,17 @@ class PodsAPI {
 			if ( 1 === count( $expand ) ) {
 				$field_name = current( $expand );
 
-				$field = $this->pod_data->get_field( $field_name );
+				// Get the pod data.
+				$pod_data = $this->pod_data ? $this->pod_data : $this->load_pod( $pod );
 
-				if ( $field ) {
-					return [
-						$field,
-					];
+				if ( $pod_data ) {
+					$field = $pod_data->get_field( $field_name );
+
+					if ( $field ) {
+						return [
+							$field,
+						];
+					}
 				}
 
 				return [];

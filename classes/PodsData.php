@@ -826,7 +826,7 @@ class PodsData {
 
 		$params = (object) array_merge( $defaults, (array) $params );
 
-		if ( 0 < strlen( $params->sql ) ) {
+		if ( $params->sql && 0 < strlen( $params->sql ) ) {
 			return $params->sql;
 		}
 
@@ -1515,11 +1515,25 @@ class PodsData {
 				$find    = array_values( $find );
 				$replace = array_values( $replace );
 
-				$params->select  = preg_replace( $find, $replace, $params->select );
-				$params->where   = preg_replace( $find, $replace, $params->where );
-				$params->groupby = preg_replace( $find, $replace, $params->groupby );
-				$params->having  = preg_replace( $find, $replace, $params->having );
-				$params->orderby = preg_replace( $find, $replace, $params->orderby );
+				if ( $params->select ) {
+					$params->select = preg_replace( $find, $replace, $params->select );
+				}
+
+				if ( $params->where ) {
+					$params->where = preg_replace( $find, $replace, $params->where );
+				}
+
+				if ( $params->groupby ) {
+					$params->groupby = preg_replace( $find, $replace, $params->groupby );
+				}
+
+				if ( $params->having ) {
+					$params->having = preg_replace( $find, $replace, $params->having );
+				}
+
+				if ( $params->orderby ) {
+					$params->orderby = preg_replace( $find, $replace, $params->orderby );
+				}
 
 				if ( ! empty( $traverse ) ) {
 					$joins = $this->traverse( $traverse, $params->fields, $params );

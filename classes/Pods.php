@@ -223,6 +223,7 @@ class Pods implements Iterator {
 	 *
 	 * @see Pods::is_valid()
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		return $this->is_valid();
 	}
@@ -262,6 +263,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 
 		if ( ! $this->iterator ) {
@@ -280,6 +282,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 
 		if ( $this->iterator && $this->fetch() ) {
@@ -298,6 +301,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 
 		return $this->data->row_number;
@@ -312,6 +316,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 
 		$this->data->row_number ++;

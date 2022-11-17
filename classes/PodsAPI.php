@@ -11265,7 +11265,7 @@ class PodsAPI {
 			}
 		}
 
-		$api_cache = empty( $params['bypass_cache'] );
+		$params['bypass_cache'] = empty( $params['bypass_cache'] ) && did_action( 'init' );
 
 		if ( isset( $params['options'] ) ) {
 			$params['args'] = $params['options'];
@@ -11319,7 +11319,7 @@ class PodsAPI {
 		$objects = null;
 		$cache_key = json_encode( $params );
 
-		if ( $api_cache && did_action( 'init' ) ) {
+		if ( ! $params['bypass_cache'] ) {
 			$objects = pods_static_cache_get( $cache_key, __CLASS__ . '/_load_objects' ) ?: null;
 		}
 
@@ -11423,7 +11423,7 @@ class PodsAPI {
 			}
 		}
 
-		if ( $api_cache ) {
+		if ( ! $params['bypass_cache'] ) {
 			pods_static_cache_set( $cache_key, $objects, __CLASS__ . '/_load_objects' );
 		}
 

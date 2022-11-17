@@ -119,7 +119,13 @@ class Collection extends Storage {
 
 		$cache_key = wp_json_encode( $args );
 
-		$found_objects = pods_static_cache_get( $cache_key, self::class . '/find_objects' );
+		$use_cache = did_action( 'init' );
+
+		$found_objects = null;
+
+		if ( $use_cache ) {
+			$found_objects = pods_static_cache_get( $cache_key, self::class . '/find_objects' );
+		}
 
 		// Cached objects found, don't process again.
 		if ( is_array( $found_objects ) ) {
@@ -267,7 +273,9 @@ class Collection extends Storage {
 			$objects = array_slice( $objects, 0, $args['limit'], true );
 		}
 
-		pods_static_cache_set( $cache_key, $objects, self::class . '/find_objects' );
+		if ( $use_cache ) {
+			pods_static_cache_set( $cache_key, $objects, self::class . '/find_objects' );
+		}
 
 		$names = wp_list_pluck( $objects, 'name' );
 
@@ -281,7 +289,7 @@ class Collection extends Storage {
 		$storage_type = $object->get_object_storage_type();
 
 		if ( empty( $storage_type ) ) {
-			$object->set_arg( 'object_storage_type', static::$type );
+			$object->set_arg( 'object_storage_type', $this->get_object_storage_type() );
 		}
 
 		$object_collection = Store::get_instance();

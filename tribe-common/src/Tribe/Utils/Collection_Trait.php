@@ -67,6 +67,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		$items = $this->all();
 
@@ -76,6 +77,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		$items = $this->all();
 
@@ -87,6 +89,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		$this->items = $this->all();
 
@@ -96,6 +99,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		$this->items = $this->all();
 
@@ -105,6 +109,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 		$this->items_index ++;
 	}
@@ -112,6 +117,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		$items = $this->all();
 
@@ -121,6 +127,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 		return $this->items_index;
 	}
@@ -128,6 +135,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 		$items = array_values( $this->all() );
 
@@ -137,6 +145,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 		$this->items_index = 0;
 	}
@@ -144,6 +153,7 @@ trait Collection_Trait {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function count() {
 		return count( $this->all() );
 	}

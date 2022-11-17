@@ -282,6 +282,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return array Object arguments.
 	 */
+	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
 		return $this->get_args();
 	}
@@ -296,6 +297,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 		$this->position = 0;
 	}
@@ -303,6 +305,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 		$args = $this->getArrayCopy();
 
@@ -312,6 +315,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 		return $this->position;
 	}
@@ -319,6 +323,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 		$this->position ++;
 	}
@@ -326,6 +331,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		$args = $this->getArrayCopy();
 
@@ -348,6 +354,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return $this->__isset( $offset );
 	}
@@ -359,6 +366,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
+	#[\ReturnTypeWillChange]
 	public function &offsetGet( $offset ) {
 		// We fake the pass by reference to avoid PHP errors for backcompat.
 		$value = $this->__get( $offset );
@@ -372,6 +380,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @param mixed $offset Offset name.
 	 * @param mixed $value  Offset value.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		if ( null === $offset ) {
 			// Do not allow $object[] additions.
@@ -386,6 +395,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @param mixed $offset Offset name.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		$this->__unset( $offset );
 	}

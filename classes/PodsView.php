@@ -10,7 +10,14 @@ class PodsView {
 	/**
 	 * @var array $cache_modes Array of available cache modes
 	 */
-	public static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'static-cache', 'option-cache' );
+	public static $cache_modes = [
+		'none'           => true,
+		'transient'      => true,
+		'site-transient' => true,
+		'cache'          => true,
+		'static-cache'   => true,
+		'option-cache'   => true,
+	];
 
 	/**
 	 * @return \PodsView
@@ -56,7 +63,7 @@ class PodsView {
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 
-		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 
@@ -165,14 +172,17 @@ class PodsView {
 	 * @since 2.0.0
 	 */
 	public static function get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
+		$external_object_cache = wp_using_ext_object_cache();
 
-		$object_cache = false;
+		$object_cache_enabled = (
+			(
+				isset( $GLOBALS['wp_object_cache'] )
+				&& is_object( $GLOBALS['wp_object_cache'] )
+			)
+			|| $external_object_cache
+		);
 
-		if ( isset( $GLOBALS['wp_object_cache'] ) && is_object( $GLOBALS['wp_object_cache'] ) ) {
-			$object_cache = true;
-		}
-
-		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 
@@ -197,12 +207,13 @@ class PodsView {
 		if ( null !== $pods_nocache && pods_is_admin() ) {
 			if ( 1 < strlen( $pods_nocache ) ) {
 				$nocache = explode( ',', $pods_nocache );
+				$nocache = array_flip( $nocache );
 			} else {
 				$nocache = self::$cache_modes;
 			}
 		}
 
-		$cache_enabled = ! in_array( $cache_mode, $nocache, true );
+		$cache_enabled = ! isset( $nocache[ $cache_mode ] );
 
 		if ( apply_filters( 'pods_view_cache_alt_get', false, $cache_mode, $group_key . $key, $original_key, $group ) ) {
 			$value = apply_filters( 'pods_view_cache_alt_get_value', $value, $cache_mode, $group_key . $key, $original_key, $group );
@@ -211,16 +222,14 @@ class PodsView {
 				$value = get_transient( $group_key . $key );
 			} elseif ( 'site-transient' === $cache_mode ) {
 				$value = get_site_transient( $group_key . $key );
-			} elseif ( 'cache' === $cache_mode && $object_cache ) {
+			} elseif ( 'cache' === $cache_mode && $object_cache_enabled ) {
 				$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
 			} elseif ( 'option-cache' === $cache_mode ) {
-				global $_wp_using_ext_object_cache;
-
 				$pre = apply_filters( "pre_transient_{$key}", false );
 
 				if ( false !== $pre ) {
 					$value = $pre;
-				} elseif ( $_wp_using_ext_object_cache ) {
+				} elseif ( $external_object_cache ) {
 					$cache_found = false;
 
 					$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_option_cache' : $group ), false, $cache_found );
@@ -311,17 +320,20 @@ class PodsView {
 	 * @since 2.0.0
 	 */
 	public static function set( $key, $value, $expires = 0, $cache_mode = null, $group = '' ) {
+		$external_object_cache = wp_using_ext_object_cache();
 
-		$object_cache = false;
-
-		if ( isset( $GLOBALS['wp_object_cache'] ) && is_object( $GLOBALS['wp_object_cache'] ) ) {
-			$object_cache = true;
-		}
+		$object_cache_enabled = (
+			(
+				isset( $GLOBALS['wp_object_cache'] )
+				&& is_object( $GLOBALS['wp_object_cache'] )
+			)
+			|| $external_object_cache
+		);
 
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 
-		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 
@@ -342,14 +354,12 @@ class PodsView {
 			set_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'site-transient' === $cache_mode ) {
 			set_site_transient( $group_key . $key, $value, $expires );
-		} elseif ( 'cache' === $cache_mode && $object_cache ) {
+		} elseif ( 'cache' === $cache_mode && $object_cache_enabled ) {
 			wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
 		} elseif ( 'option-cache' === $cache_mode ) {
-			global $_wp_using_ext_object_cache;
-
 			$value = apply_filters( "pre_set_transient_{$key}", $value );
 
-			if ( $_wp_using_ext_object_cache ) {
+			if ( $external_object_cache ) {
 				$result = wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_option_cache' : $group ), $expires );
 			} else {
 				$transient_timeout = '_pods_option_timeout_' . $key;
@@ -401,16 +411,19 @@ class PodsView {
 	 * @since 2.0.0
 	 */
 	public static function clear( $key = true, $cache_mode = null, $group = '' ) {
+		$external_object_cache = wp_using_ext_object_cache();
 
-		$object_cache = false;
-
-		if ( isset( $GLOBALS['wp_object_cache'] ) && is_object( $GLOBALS['wp_object_cache'] ) ) {
-			$object_cache = true;
-		}
+		$object_cache_enabled = (
+			(
+				isset( $GLOBALS['wp_object_cache'] )
+				&& is_object( $GLOBALS['wp_object_cache'] )
+			)
+			|| $external_object_cache
+		);
 
 		global $wpdb;
 
-		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 
@@ -438,7 +451,7 @@ class PodsView {
 
 				$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_{$group_key}%'" );
 
-				if ( $object_cache ) {
+				if ( $object_cache_enabled ) {
 					wp_cache_flush();
 				}
 			} else {
@@ -450,24 +463,22 @@ class PodsView {
 
 				$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_site_transient_{$group_key}%'" );
 
-				if ( $object_cache ) {
+				if ( $object_cache_enabled ) {
 					wp_cache_flush();
 				}
 			} else {
 				delete_site_transient( $group_key . $key );
 			}
-		} elseif ( 'cache' === $cache_mode && $object_cache ) {
+		} elseif ( 'cache' === $cache_mode && $object_cache_enabled ) {
 			if ( true === $key ) {
 				wp_cache_flush();
 			} else {
 				wp_cache_delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
 			}
 		} elseif ( 'option-cache' === $cache_mode ) {
-			global $_wp_using_ext_object_cache;
-
 			do_action( "delete_transient_{$key}", $key );
 
-			if ( $_wp_using_ext_object_cache ) {
+			if ( $external_object_cache ) {
 				$result = wp_cache_delete( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 
 				wp_cache_delete( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );

@@ -472,6 +472,10 @@ class Store {
 				continue;
 			}
 
+			if ( ! $object instanceof Whatsit ) {
+				$object = $this->get_object( $object );
+			}
+
 			// Delete from storage.
 			$storage_type = $object->get_object_storage_type();
 
@@ -532,11 +536,50 @@ class Store {
 	/**
 	 * Get objects from collection.
 	 *
+	 * @param array|null $storage_types The storage types to retrieve.
+	 * @param bool       $build_all     Whether to build all objects.
+	 *
 	 * @return Whatsit[] List of objects.
 	 */
-	public function get_objects() {
-		$objects = array_map( [ $this, 'get_object' ], $this->objects );
-		$objects = array_filter( $objects );
+	public function get_objects( $storage_types = null, $build_all = false ) {
+		$objects = $this->objects;
+
+		$has_storage_types = null !== $storage_types;
+
+		if ( $build_all || ! $has_storage_types ) {
+			$objects = array_map( [ $this, 'get_object' ], $this->objects );
+			$objects = array_filter( $objects );
+		}
+
+		if ( ! $has_storage_types ) {
+			return $objects;
+		}
+
+		// Maybe use isset() instead of in_array() for storage types comparisons.
+		if ( isset( $storage_types[0] ) ) {
+			$storage_types = array_flip( $storage_types );
+		}
+
+		$objects = array_filter( $objects, static function( $object ) use ( $storage_types ) {
+			$current_object_storage_type = null;
+
+			if ( $object instanceof Whatsit ) {
+				$current_object_storage_type = $object->get_object_storage_type();
+			} elseif ( is_array( $object ) && isset( $object['object_storage_type'] ) ) {
+				$current_object_storage_type = $object['object_storage_type'];
+			}
+
+			return (
+				$current_object_storage_type
+				&& isset( $storage_types[ $current_object_storage_type ] )
+			);
+		} );
+
+		// Build the remaining objects.
+		if ( ! $build_all ) {
+			$objects = array_map( [ $this, 'get_object' ], $this->objects );
+			$objects = array_filter( $objects );
+		}
 
 		return $objects;
 	}

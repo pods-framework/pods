@@ -826,7 +826,7 @@ class PodsData {
 
 		$params = (object) array_merge( $defaults, (array) $params );
 
-		if ( 0 < strlen( $params->sql ) ) {
+		if ( $params->sql && 0 < strlen( $params->sql ) ) {
 			return $params->sql;
 		}
 
@@ -1515,11 +1515,25 @@ class PodsData {
 				$find    = array_values( $find );
 				$replace = array_values( $replace );
 
-				$params->select  = preg_replace( $find, $replace, $params->select );
-				$params->where   = preg_replace( $find, $replace, $params->where );
-				$params->groupby = preg_replace( $find, $replace, $params->groupby );
-				$params->having  = preg_replace( $find, $replace, $params->having );
-				$params->orderby = preg_replace( $find, $replace, $params->orderby );
+				if ( $params->select ) {
+					$params->select = preg_replace( $find, $replace, $params->select );
+				}
+
+				if ( $params->where ) {
+					$params->where = preg_replace( $find, $replace, $params->where );
+				}
+
+				if ( $params->groupby ) {
+					$params->groupby = preg_replace( $find, $replace, $params->groupby );
+				}
+
+				if ( $params->having ) {
+					$params->having = preg_replace( $find, $replace, $params->having );
+				}
+
+				if ( $params->orderby ) {
+					$params->orderby = preg_replace( $find, $replace, $params->orderby );
+				}
 
 				if ( ! empty( $traverse ) ) {
 					$joins = $this->traverse( $traverse, $params->fields, $params );
@@ -2373,6 +2387,14 @@ class PodsData {
 			if ( false !== $error ) {
 				$error = 'Database Error';
 			}
+		}
+
+		if ( pods_is_admin() && 1 === (int) pods_v( 'pods_debug_backtrace' ) ) {
+			ob_start();
+			echo '<pre>';
+			var_dump( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 11 ) );
+			echo '</pre>';
+			$error = ob_get_clean() . $error;
 		}
 
 		$params = (object) array(
@@ -3791,20 +3813,28 @@ class PodsData {
 		$file_field_types         = PodsForm::file_field_types();
 
 		if ( 'pick' === $params->field['type'] && ! in_array( pods_v( 'pick_object', $params->field ), $simple_tableless_objects, true ) ) {
-			$table_info = pods_v( 'table_info', $params->field );
+			if ( $params->field instanceof Field ) {
+				$table_info_field_id    = $params->field->get_arg( 'field_id' );
+				$table_info_field_index = $params->field->get_arg( 'field_index' );
+			} else {
+				$table_info = pods_v( 'table_info', $params->field );
 
-			if ( ! $params->field instanceof Field && empty( $table_info ) ) {
-				$table_info = pods_api()->get_table_info( pods_v( 'pick_object', $params->field ), pods_v( 'pick_val', $params->field ) );
-			}
+				if ( empty( $table_info ) ) {
+					$table_info = pods_api()->get_table_info( pods_v( 'pick_object', $params->field ), pods_v( 'pick_val', $params->field ) );
+				}
 
-			if ( empty( $table_info['field_id'] ) || empty( $table_info['field_index'] ) ) {
-				return false;
+				if ( empty( $table_info['field_id'] ) || empty( $table_info['field_index'] ) ) {
+					return false;
+				}
+
+				$table_info_field_id    = $table_info['field_id'];
+				$table_info_field_index = $table_info['field_index'];
 			}
 
 			if ( $params->use_field_id ) {
-				$db_field = $db_field . '.`' . $table_info['field_id'] . '`';
+				$db_field = $db_field . '.`' . $table_info_field_id . '`';
 			} else {
-				$db_field = $db_field . '.`' . $table_info['field_index'] . '`';
+				$db_field = $db_field . '.`' . $table_info_field_index . '`';
 			}
 		} elseif ( 'taxonomy' === $params->field['type'] ) {
 			$db_field = $db_field . '.`term_id`';

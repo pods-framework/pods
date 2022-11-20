@@ -324,6 +324,40 @@ function pods_error( $error, $obj = null ) {
 }
 
 /**
+ * Get the last known timing difference.
+ *
+ * @since 2.9.10
+ *
+ * @return float The last known timing difference.
+ */
+function pods_get_timing() {
+	static $timer;
+
+	$now = microtime( true );
+
+	if ( ! $timer ) {
+		$timer = $now;
+	}
+
+	$last_diff = $now - $timer;
+
+	$timer = $now;
+
+	return $last_diff;
+}
+
+/**
+ * Get the last known timing difference as text.
+ *
+ * @since 2.9.10
+ *
+ * @return string The last known timing difference as text.
+ */
+function pods_get_debug_timing() {
+	return '[debug timing: ' . number_format( pods_get_timing(), 4 ) . 's]';
+}
+
+/**
  * Debug variable used in pods_debug to count the instances debug is used
  */
 global $pods_debug;
@@ -345,23 +379,12 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
-		static $timer;
-
-		$now = microtime( true );
-
-		if ( ! $timer ) {
-			$timer = $now;
-		}
-
-		$timing = $now - $timer;
 
 		if ( ! is_string( $debug ) ) {
 			$debug = var_export( $debug, true );
 		}
 
-		codecept_debug( 'Pods Debug: ' . $debug . ' [debug timing: ' . number_format( $timing, 4 ) . 's]' );
-
-		$timer = $now;
+		codecept_debug( 'Pods Debug: ' . $debug . ' ' . pods_get_debug_timing() );
 
 		return;
 	}
@@ -389,7 +412,7 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 		$debug_line_number = __LINE__ - 2;
 	} else {
-		var_dump( 'Pods Debug #' . $pods_debug );
+		var_dump( 'Pods Debug #' . $pods_debug . ' ' . pods_get_debug_timing() );
 
 		$debug_line_number = __LINE__ - 2;
 	}

@@ -16,8 +16,6 @@ class PodsArray implements ArrayAccess {
 	 *
 	 * @param mixed $container Object (or existing Array).
 	 *
-	 * @return \PodsArray
-	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since 2.0.0
 	 */
@@ -37,6 +35,7 @@ class PodsArray implements ArrayAccess {
 	 * @return mixed
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 
 		if ( is_array( $this->__container ) ) {
@@ -56,6 +55,7 @@ class PodsArray implements ArrayAccess {
 	 * @return mixed|null
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 
 		if ( is_array( $this->__container ) ) {
@@ -77,6 +77,7 @@ class PodsArray implements ArrayAccess {
 	 * @return bool
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 
 		if ( is_array( $this->__container ) ) {
@@ -93,6 +94,7 @@ class PodsArray implements ArrayAccess {
 	 *
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 
 		if ( is_array( $this->__container ) ) {

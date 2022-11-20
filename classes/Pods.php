@@ -223,6 +223,7 @@ class Pods implements Iterator {
 	 *
 	 * @see Pods::is_valid()
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		return $this->is_valid();
 	}
@@ -262,6 +263,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 
 		if ( ! $this->iterator ) {
@@ -280,6 +282,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 
 		if ( $this->iterator && $this->fetch() ) {
@@ -298,6 +301,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 
 		return $this->data->row_number;
@@ -312,6 +316,7 @@ class Pods implements Iterator {
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 
 		$this->data->row_number ++;
@@ -4251,7 +4256,8 @@ class Pods implements Iterator {
 	 */
 	public function ui( $options = null, $amend = false ) {
 
-		$num = '';
+		$num        = '';
+		$num_prefix = '';
 
 		if ( empty( $options ) ) {
 			$options = array();
@@ -4261,12 +4267,18 @@ class Pods implements Iterator {
 			if ( empty( $num ) ) {
 				$num = '';
 			}
+
+			$num_prefix = pods_v_sanitized( 'num_prefix', $options, '' );
+
+			if ( empty( $num_prefix ) ) {
+				$num_prefix = '';
+			}
 		}
 
-		$check_id = pods_v( 'id' . $num, 'get', null, true );
+		$check_id = pods_v( $num_prefix . 'id' . $num, 'get', null, true );
 
 		// @codingStandardsIgnoreLine
-		if ( $this->id() != $check_id ) {
+		if ( null !== $check_id && $this->id() != $check_id ) {
 			$this->fetch( $check_id );
 		}
 
@@ -4325,8 +4337,8 @@ class Pods implements Iterator {
 					if ( ! current_user_can( 'pods_add_' . $this->pod ) ) {
 						$actions_disabled['add'] = 'add';
 
-						if ( 'add' === pods_v( 'action' . $num ) ) {
-							$_GET[ 'action' . $num ] = 'manage';
+						if ( 'add' === pods_v( $num_prefix . 'action' . $num ) ) {
+							$_GET[ $num_prefix . 'action' . $num ] = 'manage';
 						}
 					}
 
@@ -4348,7 +4360,7 @@ class Pods implements Iterator {
 				}//end if
 			}//end if
 
-			$_GET[ 'action' . $num ] = pods_v_sanitized( 'action' . $num, 'get', pods_v( 'action', $options, 'manage' ), true );
+			$_GET[ $num_prefix . 'action' . $num ] = pods_v_sanitized( $num_prefix . 'action' . $num, 'get', pods_v( 'action', $options, 'manage' ), true );
 
 			$index = $this->pod_data['field_id'];
 			$label = __( 'ID', 'pods' );

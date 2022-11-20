@@ -3517,10 +3517,10 @@ class PodsUI {
 							</span>
 								<?php
 							} elseif ( 'pick' === $filter_field['type'] ) {
-								$value = pods_v( 'filter_' . $filter, 'get', '' );
+								$value = pods_v( 'filter_' . $filter, 'get', '', true );
 
 								if ( '' === $value ) {
-									$value = pods_v( 'filter_default', $filter_field );
+									$value = pods_v( 'filter_default', $filter_field, '', true );
 								}
 
 								// override default value
@@ -3560,10 +3560,10 @@ class PodsUI {
 							</span>
 								<?php
 							} elseif ( 'boolean' === $filter_field['type'] ) {
-								$value = pods_v( 'filter_' . $filter, 'get', '' );
+								$value = pods_v( 'filter_' . $filter, 'get', '', true );
 
 								if ( '' === $value ) {
-									$value = pods_v( 'filter_default', $filter_field );
+									$value = pods_v( 'filter_default', $filter_field, '', true );
 								}
 
 								// override default value
@@ -3609,10 +3609,10 @@ class PodsUI {
 							</span>
 								<?php
 							} else {
-								$value = pods_v( 'filter_' . $filter );
+								$value = pods_v( 'filter_' . $filter, 'get', '', true );
 
 								if ( '' === $value ) {
-									$value = pods_v( 'filter_default', $filter_field );
+									$value = pods_v( 'filter_default', $filter_field, '', true );
 								}
 
 								$options = array(

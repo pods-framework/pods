@@ -161,24 +161,12 @@ class Item_Single extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		$api = pods_api();
-
-		$all_pods = $api->load_pods( [ 'names' => true ] );
-		$all_pods = array_merge( [
-			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
-		], $all_pods );
-
-		$all_templates = $api->load_templates( [ 'names' => true ] );
-		$all_templates = array_merge( [
-			'' => '- ' . __( 'Use Custom Template', 'pods' ) . ' -',
-		], $all_templates );
-
 		return [
 			[
 				'name'    => 'name',
 				'label'   => __( 'Pod Name', 'pods' ),
 				'type'    => 'pick',
-				'data'    => $all_pods,
+				'data'    => [ $this, 'callback_get_all_pods' ],
 				'default' => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
@@ -192,7 +180,7 @@ class Item_Single extends Base {
 				'name'    => 'template',
 				'label'   => __( 'Template', 'pods' ),
 				'type'    => 'pick',
-				'data'    => $all_templates,
+				'data'    => [ $this, 'callback_get_all_pod_templates' ],
 				'default' => '',
 				'description' => __( 'You can choose a previously saved Pods Template here. We recommend saving your Pods Templates with our Templates component so you can enjoy the full editing experience.', 'pods' ),
 			],

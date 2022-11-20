@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.9
+Stable tag: 2.9.10-b-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -172,6 +172,16 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.10 - November 17th, 2022 =
+
+* Performance: Major performance improvements have been made to decrease queries in more areas of Pods and reduce overall load on any page. (@sc0ttkclark)
+* Tweak: Added debug backtrace to DB query errors as an admin, just add `?pods_debug_backtrace=1` to the URL to enable that to find out more details about where the query came from. (@sc0ttkclark)
+* Fixed: Advanced filters modal shows empty input fields as expected now for Advanced Content Types. #6949 (@sc0ttkclark)
+* Fixed: Implemented `num_prefix` in `Pods::ui()` for more customization capabilities. (@sc0ttkclark)
+* Fixed: Reduce load on block editor screen for Pods Blocks that have no preview. (@sc0ttkclark)
+* Fixed: PHP 8.0+ compatibility changes have been made to bypass PHP deprecation notices. #6579 (@sc0ttkclark)
+* Fixed: Removed `%%%s%%` usage in prepared `LIKE` queries for PodsTermSplitting class. (@sc0ttkclark)
 
 = 2.9.9 - October 31st, 2022 =
 

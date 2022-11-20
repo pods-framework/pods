@@ -147,19 +147,12 @@ class Form extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		$api = pods_api();
-
-		$all_pods = $api->load_pods( [ 'names' => true ] );
-		$all_pods = array_merge( [
-			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
-		], $all_pods );
-
 		return [
 			[
 				'name'        => 'name',
 				'label'       => __( 'Pod Name', 'pods' ),
 				'type'        => 'pick',
-				'data'        => $all_pods,
+				'data'        => [ $this, 'callback_get_all_pods' ],
 				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],

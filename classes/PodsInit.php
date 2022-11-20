@@ -2835,7 +2835,7 @@ class PodsInit {
 			return;
 		}
 
-		$all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
+		$all_pods = PodsMeta::$advanced_content_types;
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {

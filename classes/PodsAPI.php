@@ -1,7 +1,6 @@
 <?php
 
 use Pods\API\Whatsit\Value_Field;
-use Pods\Static_Cache;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -8368,28 +8367,59 @@ class PodsAPI {
 				return array();
 			}
 
-			// Check if we need to bypass cache automatically.
-			if ( ! isset( $params['bypass_cache'] ) ) {
-				$api_cache = pods_api_cache();
-
-				if ( ! $api_cache ) {
-					$params['bypass_cache'] = true;
-				}
-			}
-
 			$pod    = $params['pod'];
 			$expand = $params['expand'];
-			$types  = ! empty( $params['types'] ) ? (array) $params['types'] : PodsForm::tableless_field_types();
+
+			// Bypass other loading processes and use current pod.
+			if ( 1 === count( $expand ) ) {
+				$field_name = current( $expand );
+
+				// Get the pod data.
+				$pod_data = $this->pod_data ? $this->pod_data : $this->load_pod( $pod );
+
+				if ( $pod_data ) {
+					$field = $pod_data->get_field( $field_name );
+
+					if ( $field ) {
+						return [
+							$field,
+						];
+					}
+				}
+
+				return [];
+			}
+
+			$types = ! empty( $params['types'] ) ? (array) $params['types'] : PodsForm::tableless_field_types();
+
+			$known_object_fields = [
+				'ID'               => true,
+				'id'               => true,
+				'post_name'        => true,
+				'post_title'       => true,
+				'post_content'     => true,
+				'post_status'      => true,
+				'post_type'        => true,
+				'term_id'          => true,
+				'term_taxonomy_id' => true,
+				'name'             => true,
+				'user_login'       => true,
+				'display_name'     => true,
+			];
 
 			// For each in expand, load field, fall back to load pod if an object field.
 			foreach ( $expand as $field_name ) {
-				$args = array(
-					'pod'  => $pod,
-					'name' => $field_name,
-					'type' => $types,
-				);
+				$field = null;
 
-				$field = $this->load_field( $args );
+				if ( ! isset( $known_object_fields[ $field_name ] ) ) {
+					$args = array(
+						'pod'  => $pod,
+						'name' => $field_name,
+						'type' => $types,
+					);
+
+					$field = $this->load_field( $args );
+				}
 
 				if ( ! $field instanceof Field ) {
 					// Check if this is an object field.
@@ -10863,6 +10893,8 @@ class PodsAPI {
 		pods_transient_clear( 'pods_blocks' );
 		pods_transient_clear( 'pods_blocks_js' );
 
+		pods_transient_clear( 'pods_config_handler_found_configs' );
+
 		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
 			pods_cache_clear( $pod['name'], 'pods-class' );
@@ -10875,19 +10907,28 @@ class PodsAPI {
 			pods_transient_clear( 'pods_wp_cpt_ct' );
 		}
 
-		pods_cache_clear( true, 'pods_post_type_storage_pod' );
-		pods_cache_clear( true, 'pods_post_type_storage_group' );
-		pods_cache_clear( true, 'pods_post_type_storage_field' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_pod' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_template' );
+		pods_cache_clear( true, 'pods_post_type_storage__pods_page' );
 
 		pods_static_cache_clear( true, __CLASS__ );
 		pods_static_cache_clear( true, __CLASS__ . '/table_info_cache' );
 		pods_static_cache_clear( true, __CLASS__ . '/related_item_cache' );
+		pods_static_cache_clear( true, __CLASS__ . '/_load_objects' );
 		pods_static_cache_clear( true, PodsInit::class . '/existing_content_types' );
 		pods_static_cache_clear( true, PodsView::class );
 		pods_static_cache_clear( true, PodsField_Pick::class . '/related_data' );
 		pods_static_cache_clear( true, PodsField_Pick::class . '/field_data' );
 		pods_static_cache_clear( true, 'pods_svg_icon/base64' );
 		pods_static_cache_clear( true, 'pods_svg_icon/svg' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_pod' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_group' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_field' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_template' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_page' );
 
 		pods_init()->refresh_existing_content_types_cache( true );
 
@@ -11229,6 +11270,8 @@ class PodsAPI {
 			}
 		}
 
+		$params['bypass_cache'] = empty( $params['bypass_cache'] ) && did_action( 'init' );
+
 		if ( isset( $params['options'] ) ) {
 			$params['args'] = $params['options'];
 
@@ -11253,6 +11296,8 @@ class PodsAPI {
 			}
 		}
 
+		$cache_key = json_encode( $params );
+
 		if ( ! empty( $params['return_type'] ) ) {
 			$return_type = $params['return_type'];
 
@@ -11276,7 +11321,16 @@ class PodsAPI {
 		/** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
 		$post_type_storage = $object_collection->get_storage_object( $storage_type );
 
-		$objects = $post_type_storage->find( $params );
+		$objects = null;
+		$cache_key = json_encode( $params );
+
+		if ( ! $params['bypass_cache'] ) {
+			$objects = pods_static_cache_get( $cache_key, __CLASS__ . '/_load_objects' ) ?: null;
+		}
+
+		if ( null === $objects ) {
+			$objects = $post_type_storage->find( $params );
+		}
 
 		if ( ! empty( $params['auto_setup'] ) && ! $objects ) {
 			$type = pods_v( 'type', $params, null );
@@ -11372,6 +11426,10 @@ class PodsAPI {
 
 				return $this->_load_objects( $params );
 			}
+		}
+
+		if ( ! $params['bypass_cache'] ) {
+			pods_static_cache_set( $cache_key, $objects, __CLASS__ . '/_load_objects' );
 		}
 
 		if ( ! empty( $params['count'] ) ) {

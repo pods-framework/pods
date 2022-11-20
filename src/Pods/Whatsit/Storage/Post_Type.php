@@ -22,12 +22,14 @@ class Post_Type extends Collection {
 	 * @var array
 	 */
 	protected $primary_args = [
-		'ID'           => 'id',
-		'post_name'    => 'name',
-		'post_title'   => 'label',
-		'post_content' => 'description',
-		'post_parent'  => 'parent',
-		'menu_order'   => 'weight',
+		'object_type'         => 'object_type',
+		'object_storage_type' => 'object_storage_type',
+		'ID'                  => 'id',
+		'post_name'           => 'name',
+		'post_title'          => 'label',
+		'post_content'        => 'description',
+		'post_parent'         => 'parent',
+		'menu_order'          => 'weight',
 	];
 
 	/**
@@ -475,7 +477,12 @@ class Post_Type extends Collection {
 				}, $post_objects );
 			} else {
 				// Handle normal Whatsit object setup.
-				update_postmeta_cache( $posts ); // Prevent separate queries for each iteration.
+
+				// Prevent separate queries for each iteration.
+				if ( wp_using_ext_object_cache() ) {
+					update_postmeta_cache( $posts );
+				}
+
 				$posts = array_map( [ $this, 'to_object' ], $post_objects );
 				$posts = array_filter( $posts );
 			}
@@ -719,9 +726,9 @@ class Post_Type extends Collection {
 		/** @var Whatsit $object */
 		$object = new $class_name( $args );
 
-		$this->get_args( $object );
-
 		$object->set_arg( 'object_storage_type', $this->get_object_storage_type() );
+
+		$this->get_args( $object );
 
 		if ( $object->is_valid() ) {
 			$object_collection->register_object( $object );

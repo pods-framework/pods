@@ -162,7 +162,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 
 				continue;
@@ -180,7 +180,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 
 				continue;
@@ -207,7 +207,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 			}
 		}//end foreach
@@ -228,7 +228,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 			}
 		}
@@ -249,7 +249,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 			}
 		}
@@ -280,7 +280,7 @@ class Collection extends Storage {
 		$storage_type = $object->get_object_storage_type();
 
 		if ( empty( $storage_type ) ) {
-			$object->set_arg( 'object_storage_type', static::$type );
+			$object->set_arg( 'object_storage_type', $this->get_object_storage_type() );
 		}
 
 		$object_collection = Store::get_instance();

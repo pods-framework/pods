@@ -10912,11 +10912,11 @@ class PodsAPI {
 		pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
 		pods_cache_clear( true, 'pods_post_type_storage__pods_template' );
 		pods_cache_clear( true, 'pods_post_type_storage__pods_page' );
+		pods_cache_clear( true, 'pods_post_type_storage_any' );
 
 		pods_static_cache_clear( true, __CLASS__ );
 		pods_static_cache_clear( true, __CLASS__ . '/table_info_cache' );
 		pods_static_cache_clear( true, __CLASS__ . '/related_item_cache' );
-		pods_static_cache_clear( true, __CLASS__ . '/_load_objects' );
 		pods_static_cache_clear( true, PodsInit::class . '/existing_content_types' );
 		pods_static_cache_clear( true, PodsView::class );
 		pods_static_cache_clear( true, PodsField_Pick::class . '/related_data' );
@@ -10929,6 +10929,7 @@ class PodsAPI {
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_field' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_template' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_page' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
 
 		pods_init()->refresh_existing_content_types_cache( true );
 
@@ -11321,16 +11322,7 @@ class PodsAPI {
 		/** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
 		$post_type_storage = $object_collection->get_storage_object( $storage_type );
 
-		$objects = null;
-		$cache_key = json_encode( $params );
-
-		if ( ! $params['bypass_cache'] ) {
-			$objects = pods_static_cache_get( $cache_key, __CLASS__ . '/_load_objects' ) ?: null;
-		}
-
-		if ( null === $objects ) {
-			$objects = $post_type_storage->find( $params );
-		}
+		$objects = $post_type_storage->find( $params );
 
 		if ( ! empty( $params['auto_setup'] ) && ! $objects ) {
 			$type = pods_v( 'type', $params, null );
@@ -11426,10 +11418,6 @@ class PodsAPI {
 
 				return $this->_load_objects( $params );
 			}
-		}
-
-		if ( ! $params['bypass_cache'] ) {
-			pods_static_cache_set( $cache_key, $objects, __CLASS__ . '/_load_objects' );
 		}
 
 		if ( ! empty( $params['count'] ) ) {

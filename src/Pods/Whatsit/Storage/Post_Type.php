@@ -333,7 +333,7 @@ class Post_Type extends Collection {
 		$cache_key_post_type = 'any';
 		$cache_key_static_check = '';
 
-		if ( isset( $post_args['post_type'] ) ) {
+		if ( ! empty( $post_args['post_type'] ) ) {
 			$cache_key_post_type = $post_args['post_type'];
 		}
 

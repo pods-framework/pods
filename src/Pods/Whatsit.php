@@ -629,7 +629,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$arg = 'id';
 		}
 
-		if ( ! isset( $this->args[ $arg ] ) && ! $strict ) {
+		$is_set = isset( $this->args[ $arg ] );
+
+		if ( ! $is_set && ! $strict ) {
 			if ( 'internal' === $arg ) {
 				return $default;
 			}
@@ -670,7 +672,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		}//end if
 
-		$value = isset( $this->args[ $arg ] ) ? $this->args[ $arg ] : $default;
+		$value = $is_set ? $this->args[ $arg ] : $default;
 
 		/**
 		 * Allow filtering the object arguments / options.

@@ -338,6 +338,8 @@ class Post_Type extends Collection {
 		}
 
 		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
+			$use_cache = true;
+
 			$post_args_encoded = wp_json_encode( $post_args );
 
 			$cache_key_static_check = __METHOD__ . '/' . $post_args_encoded;
@@ -381,9 +383,7 @@ class Post_Type extends Collection {
 
 			$cache_key = implode( '_', $cache_key_parts );
 
-			$use_cache = did_action( 'init' );
-
-			if ( $use_cache && empty( $args['refresh'] ) ) {
+			if ( empty( $args['refresh'] ) ) {
 				$posts = pods_static_cache_get( $cache_key_static_check, self::class . '/find_objects/' . $cache_key_post_type );
 				$post_objects = pods_static_cache_get( $cache_key_static_check . '_objects', self::class . '/find_objects/' . $cache_key_post_type );
 

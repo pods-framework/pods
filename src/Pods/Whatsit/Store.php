@@ -61,6 +61,8 @@ class Store {
 		$this->object_types  = $this->get_default_object_types();
 		$this->storage_types = $this->get_default_storage_types();
 		$this->objects       = $this->get_default_objects();
+
+		$this->rebuild_index();
 	}
 
 	/**
@@ -317,14 +319,14 @@ class Store {
 	 * @param Whatsit|array $object Pods object.
 	 */
 	public function register_object( $object ) {
-		$id           = null;
-		$identifier   = null;
-		$storage_type = 'collection';
+		$id                  = null;
+		$identifier          = null;
+		$object_storage_type = 'collection';
 
 		if ( $object instanceof Whatsit ) {
-			$id           = $object->get_id();
-			$identifier   = $object->get_identifier();
-			$storage_type = $object->get_object_storage_type();
+			$id                  = $object->get_id();
+			$identifier          = $object->get_identifier();
+			$object_storage_type = $object->get_object_storage_type();
 		} elseif ( is_array( $object ) ) {
 			if ( ! empty( $object['id'] ) ) {
 				$id = $object['id'];
@@ -335,7 +337,7 @@ class Store {
 			}
 
 			if ( ! empty( $object['object_storage_type'] ) ) {
-				$storage_type = $object['object_storage_type'];
+				$object_storage_type = $object['object_storage_type'];
 			}
 
 			$identifier = Whatsit::get_identifier_from_args( $object );
@@ -344,16 +346,10 @@ class Store {
 			return;
 		}
 
-		// Store ids for reference.
-		if ( '' !== $id && null !== $id ) {
-			$this->object_ids[ $id ] = $identifier;
-
-			if ( ! isset( $this->objects_in_storage[ $storage_type ] ) ) {
-				$this->objects_in_storage[ $storage_type ] = [];
-			}
-
-			$this->objects_in_storage[ $storage_type ][] = $identifier;
-		}
+		$this->index( $identifier, [
+			'id' => $id,
+			'object_storage_type' => $object_storage_type,
+		] );
 
 		if ( $object instanceof Whatsit ) {
 			$object = clone $object;
@@ -397,17 +393,6 @@ class Store {
 			$id = $identifier;
 		}
 
-		if ( isset( $this->object_ids[ $id ] ) ) {
-			// If this was an ID lookup, set the identifier for removal.
-			if ( $identifier !== $this->object_ids[ $id ] ) {
-				$identifier = $this->object_ids[ $id ];
-			}
-
-			unset( $this->object_ids[ $id ] );
-
-			$this->refresh_salt();
-		}
-
 		if ( isset( $this->objects[ $identifier ] ) ) {
 			if ( isset( $defaults[ $identifier ] ) ) {
 				return false;
@@ -415,14 +400,14 @@ class Store {
 
 			$object = $this->objects[ $identifier ];
 
-			$storage_type = 'collection';
+			$object_storage_type = 'collection';
 
 			if ( is_array( $object ) ) {
 				if ( ! empty( $object['object_storage_type'] ) ) {
-					$storage_type = $object['object_storage_type'];
+					$object_storage_type = $object['object_storage_type'];
 				}
 			} elseif ( $object instanceof Whatsit ) {
-				$storage_type = $object->get_object_storage_type();
+				$object_storage_type = $object->get_object_storage_type();
 			} else {
 				return false;
 			}
@@ -433,13 +418,10 @@ class Store {
 
 			unset( $this->objects[ $identifier ] );
 
-			if ( ! empty( $this->objects_in_storage[ $storage_type ] ) ) {
-				$key = array_search( $identifier, $this->objects_in_storage[ $storage_type ], true );
-
-				if ( false !== $key ) {
-					unset( $this->objects_in_storage[ $storage_type ][ $key ] );
-				}
-			}
+			$this->deindex( $identifier, [
+				'id'                  => $id,
+				'object_storage_type' => $object_storage_type,
+			] );
 
 			$this->refresh_salt();
 
@@ -594,34 +576,55 @@ class Store {
 			}
 		}
 
-		// If no objects were filtered by ID, we'll have to reference the current known objects and filter them out.
-		if ( null === $objects ) {
-			$objects = $this->objects;
-		}
-
 		// Filter objects by object storage type.
 		if ( isset( $args['object_storage_types'] ) ) {
 			$args['object_storage_types'] = (array) $args['object_storage_types'];
 
-			// Maybe use isset() instead of in_array() for the comparisons.
-			if ( isset( $args['object_storage_types'][0] ) ) {
-				$args['object_storage_types'] = array_flip( $args['object_storage_types'] );
-			}
+			// If no objects were filtered by ID, build by the index we have.
+			if ( null === $objects ) {
+				$objects = [];
 
-			$objects = array_filter( $objects, static function( $object ) use ( $args ) {
-				$current_object_storage_type = 'collection';
+				foreach ( $args['object_storage_types'] as $object_storage_type ) {
+					if ( ! isset( $this->objects_in_storage[ $object_storage_type ] ) ) {
+						continue;
+					}
 
-				if ( $object instanceof Whatsit ) {
-					$current_object_storage_type = $object->get_object_storage_type();
-				} elseif ( is_array( $object ) && isset( $object['object_storage_type'] ) ) {
-					$current_object_storage_type = $object['object_storage_type'];
+					foreach ( $this->objects_in_storage[ $object_storage_type ] as $identifier ) {
+						if ( ! isset( $this->objects[ $identifier ] ) ) {
+							continue;
+						}
+
+						$objects[ $identifier ] = $this->objects[ $identifier ];
+					}
+				}
+			} else {
+				// Filter the $objects by object storage type if we have them.
+
+				// Maybe use isset() instead of in_array() for the comparisons.
+				if ( isset( $args['object_storage_types'][0] ) ) {
+					$args['object_storage_types'] = array_flip( $args['object_storage_types'] );
 				}
 
-				return (
-					$current_object_storage_type
-					&& isset( $args['object_storage_types'][ $current_object_storage_type ] )
-				);
-			} );
+				$objects = array_filter( $objects, static function( $object ) use ( $args ) {
+					$current_object_storage_type = null;
+
+					if ( $object instanceof Whatsit ) {
+						$current_object_storage_type = $object->get_object_storage_type();
+					} elseif ( is_array( $object ) && isset( $object['object_storage_type'] ) ) {
+						$current_object_storage_type = $object['object_storage_type'];
+					}
+
+					return (
+						$current_object_storage_type
+						&& isset( $args['object_storage_types'][ $current_object_storage_type ] )
+					);
+				} );
+			}
+		}
+
+		// If no objects were filtered by ID, we'll have to reference the current known objects and filter them out.
+		if ( null === $objects ) {
+			$objects = $this->objects;
 		}
 
 		// Filter objects by object type.
@@ -843,6 +846,112 @@ class Store {
 	 */
 	public function refresh_salt() {
 		$this->salt = md5( microtime() );
+	}
+
+	/**
+	 * Rebuild the index of objects.
+	 *
+	 * @since 2.9.10
+	 */
+	public function rebuild_index() {
+		foreach ( $this->objects as $identifier => $object ) {
+			$args = [];
+
+			if ( $object instanceof Whatsit ) {
+				$args['id']                  = $object->get_id();
+				$args['object_storage_type'] = $object->get_object_storage_type();
+			} elseif ( is_array( $object ) ) {
+				if ( isset( $object['id'] ) ) {
+					$args['id'] = $object['id'];
+				}
+
+				if ( isset( $object['object_storage_type'] ) ) {
+					$args['object_storage_type'] = $object['object_storage_type'];
+				}
+			} else {
+				continue;
+			}
+
+			$this->index( $identifier, $args );
+		}
+	}
+
+	/**
+	 * Index an object identifier based on args.
+	 *
+	 * @since 2.9.10
+	 *
+	 * @param string $identifier The object identifier to index.
+	 * @param array  $args       The list of indexable arguments.
+	 */
+	public function index( $identifier, array $args ) {
+		$id                  = ! empty( $args['id'] ) ? $args['id'] : null;
+		$object_storage_type = ! empty( $args['object_storage_type'] ) ? $args['object_storage_type'] : null;
+
+		if ( empty( $identifier ) ) {
+			return;
+		}
+
+		if ( $id === $identifier ) {
+			$id = null;
+		}
+
+		// Build the storage index.
+		if ( null !== $object_storage_type ) {
+			if ( ! isset( $this->objects_in_storage[ $object_storage_type ] ) ) {
+				$this->objects_in_storage[ $object_storage_type ] = [];
+			}
+
+			$this->objects_in_storage[ $object_storage_type ][] = $identifier;
+		}
+
+		// Build the ID index.
+		if ( null !== $id ) {
+			$this->object_ids[ $id ] = $identifier;
+		}
+	}
+
+	/**
+	 * Deindex an object identifier based on args.
+	 *
+	 * @since 2.9.10
+	 *
+	 * @param string $identifier The object identifier to index.
+	 * @param array  $args       The list of indexable arguments.
+	 */
+	public function deindex( $identifier, array $args ) {
+		$id                  = ! empty( $args['id'] ) ? $args['id'] : null;
+		$object_storage_type = ! empty( $args['object_storage_type'] ) ? $args['object_storage_type'] : null;
+
+		if ( empty( $identifier ) ) {
+			return;
+		}
+
+		if ( $id === $identifier ) {
+			$id = null;
+		}
+
+		// Remove from the storage index.
+		if ( null !== $object_storage_type && isset( $this->objects_in_storage[ $object_storage_type ] ) ) {
+			$key = array_search( $identifier, $this->objects_in_storage[ $object_storage_type ], true );
+
+			if ( false !== $key ) {
+				unset( $this->objects_in_storage[ $object_storage_type ][ $key ] );
+			}
+		}
+
+		// Remove from the ID index.
+		if ( null !== $id ) {
+			if ( isset( $this->object_ids[ $id ] ) ) {
+				unset( $this->object_ids[ $id ] );
+			}
+		} else {
+			$key = array_search( $identifier, $this->object_ids, true );
+
+			if ( false !== $key ) {
+				unset( $this->object_ids[ $key ] );
+			}
+		}
 	}
 
 }

@@ -475,7 +475,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 		elseif ( 'taxonomy' === $field['type'] || in_array( $field['pick_object'], $object_types, true ) ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
-				$subpod = pods( $field['pick_val'] );
+				$subpod = pods_get_instance( $field['pick_val'] );
 
 				if ( ! $subpod || ! $subpod->valid() ) {
 					continue;

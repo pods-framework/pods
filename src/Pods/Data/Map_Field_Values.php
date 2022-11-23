@@ -618,7 +618,7 @@ class Map_Field_Values {
 
 		if ( 'media' !== $object_type ) {
 			// Fallback to attachment Post object to look for other image properties.
-			$media = pods( 'media', $attachment_id, false );
+			$media = pods_get_instance( 'media', $attachment_id, false );
 
 			if ( $media && $media->valid() && $media->exists() ) {
 				return $media->field( [

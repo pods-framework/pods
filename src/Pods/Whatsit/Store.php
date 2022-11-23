@@ -708,6 +708,12 @@ class Store {
 	 * @return Whatsit|null Object or null if not found.
 	 */
 	public function get_object_from_storage( $object_storage_type, $identifier ) {
+		$object = $this->get_object( $identifier );
+
+		if ( $object ) {
+			return $object;
+		}
+
 		$storage = $this->get_storage_object( $object_storage_type );
 
 		$args = [

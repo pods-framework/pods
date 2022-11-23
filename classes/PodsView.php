@@ -10,7 +10,14 @@ class PodsView {
 	/**
 	 * @var array $cache_modes Array of available cache modes
 	 */
-	public static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'static-cache', 'option-cache' );
+	public static $cache_modes = [
+		'none'           => true,
+		'transient'      => true,
+		'site-transient' => true,
+		'cache'          => true,
+		'static-cache'   => true,
+		'option-cache'   => true,
+	];
 
 	/**
 	 * @return \PodsView
@@ -56,7 +63,7 @@ class PodsView {
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 
-		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 
@@ -175,11 +182,7 @@ class PodsView {
 			|| $external_object_cache
 		);
 
-		if ( 'transient' === $cache_mode && $external_object_cache ) {
-			$cache_mode = 'cache';
-		} elseif ( 'cache' === $cache_mode && ! $external_object_cache ) {
-			$cache_mode = 'static-cache';
-		} elseif ( ! in_array( $cache_mode, self::$cache_modes, true ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 
@@ -204,12 +207,13 @@ class PodsView {
 		if ( null !== $pods_nocache && pods_is_admin() ) {
 			if ( 1 < strlen( $pods_nocache ) ) {
 				$nocache = explode( ',', $pods_nocache );
+				$nocache = array_flip( $nocache );
 			} else {
 				$nocache = self::$cache_modes;
 			}
 		}
 
-		$cache_enabled = ! in_array( $cache_mode, $nocache, true );
+		$cache_enabled = ! isset( $nocache[ $cache_mode ] );
 
 		if ( apply_filters( 'pods_view_cache_alt_get', false, $cache_mode, $group_key . $key, $original_key, $group ) ) {
 			$value = apply_filters( 'pods_view_cache_alt_get_value', $value, $cache_mode, $group_key . $key, $original_key, $group );
@@ -329,11 +333,7 @@ class PodsView {
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 
-		if ( 'transient' === $cache_mode && $external_object_cache ) {
-			$cache_mode = 'cache';
-		} elseif ( 'cache' === $cache_mode && ! $external_object_cache ) {
-			$cache_mode = 'static-cache';
-		} elseif ( ! in_array( $cache_mode, self::$cache_modes, true ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 
@@ -423,11 +423,7 @@ class PodsView {
 
 		global $wpdb;
 
-		if ( 'transient' === $cache_mode && $external_object_cache ) {
-			$cache_mode = 'cache';
-		} elseif ( 'cache' === $cache_mode && ! $external_object_cache ) {
-			$cache_mode = 'static-cache';
-		} elseif ( ! in_array( $cache_mode, self::$cache_modes, true ) ) {
+		if ( ! isset( self::$cache_modes[ $cache_mode ] ) ) {
 			$cache_mode = 'cache';
 		}
 

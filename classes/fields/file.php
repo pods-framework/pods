@@ -683,8 +683,18 @@ class PodsField_File extends PodsField {
 			$attachment      = null;
 			$attachment_data = array();
 
+			$attachment = get_post( $id );
+
+			if ( ! $attachment ) {
+				continue;
+			}
+
 			// Update the title if set.
-			if ( false !== $title && 1 === (int) pods_v( static::$type . '_edit_title', $options, 0 ) ) {
+			if (
+				false !== $title
+				&& 1 === (int) pods_v( static::$type . '_edit_title', $options, 0 )
+				&& $attachment->post_title !== $title
+			) {
 				$attachment_data['post_title'] = $title;
 			}
 

@@ -2898,7 +2898,7 @@ class PodsInit {
 	 * @return array
 	 */
 	public function filter_wp_privacy_additional_user_profile_data( $additional_user_profile_data, $user, $reserved_names ) {
-		$pod = pods( 'user', $user->ID );
+		$pod = pods_get_instance( 'user', $user->ID );
 
 		if ( ! $pod->valid() ) {
 			return $additional_user_profile_data;

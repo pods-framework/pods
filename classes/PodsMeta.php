@@ -600,14 +600,14 @@ class PodsMeta {
 				}
 
 				if ( 'term' === $metadata_type && ! function_exists( 'get_term_meta' ) ) {
-					$podterms = pods( $pod['name'], $id );
+					$podterms = pods_get_instance( $pod['name'], $id );
 
 					$meta = $podterms->field( $field );
 				} else {
 					$meta = get_metadata( $metadata_type, $id, $field, ( 'array' !== $field_type ) );
 				}
 			} elseif ( 'taxonomy' === $pod['type'] ) {
-				$podterms = pods( $pod['name'], $id );
+				$podterms = pods_get_instance( $pod['name'], $id );
 
 				$meta = $podterms->field( $field );
 			}
@@ -1152,7 +1152,7 @@ class PodsMeta {
 	public function maybe_set_up_pod( $pod_name, $id = null, $pod_type = null ) {
 		// Check if we have a pod object set up for this pod name yet.
 		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $pod_name ) {
-			self::$current_pod = pods( $pod_name, null, true );
+			self::$current_pod = pods_get_instance( $pod_name, null, true );
 		}
 
 		// Check if we need to strictly check the pod type.
@@ -3803,7 +3803,7 @@ class PodsMeta {
 		}
 
 		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
-			self::$current_field_pod = pods( $object['name'], $object_id );
+			self::$current_field_pod = pods_get_instance( $object['name'], $object_id );
 		} elseif ( self::$current_field_pod->id() != $object_id ) {
 			self::$current_field_pod->fetch( $object_id );
 		}
@@ -3986,7 +3986,7 @@ class PodsMeta {
 
 		if ( in_array( $object['fields'][ $meta_key ]['type'], PodsForm::tableless_field_types() ) ) {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
-				self::$current_field_pod = pods( $object['name'], $object_id );
+				self::$current_field_pod = pods_get_instance( $object['name'], $object_id );
 			} elseif ( self::$current_field_pod->id() != $object_id ) {
 				self::$current_field_pod->fetch( $object_id );
 			}
@@ -4003,7 +4003,7 @@ class PodsMeta {
 			$pod->add_to( $meta_key, $meta_value );
 		} else {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
-				self::$current_field_pod = pods( $object['name'] );
+				self::$current_field_pod = pods_get_instance( $object['name'] );
 			}
 
 			$pod = self::$current_field_pod;
@@ -4106,7 +4106,7 @@ class PodsMeta {
 		}
 
 		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod !== $object['name'] ) {
-			self::$current_field_pod = pods( $object['name'] );
+			self::$current_field_pod = pods_get_instance( $object['name'] );
 		}
 
 		$pod = self::$current_field_pod;
@@ -4268,7 +4268,7 @@ class PodsMeta {
 		// @todo handle $delete_all (delete the field values from all pod items)
 		if ( ! empty( $meta_value ) && in_array( $object['fields'][ $meta_key ]['type'], PodsForm::tableless_field_types() ) ) {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
-				self::$current_field_pod = pods( $object['name'], $object_id );
+				self::$current_field_pod = pods_get_instance( $object['name'], $object_id );
 			} elseif ( self::$current_field_pod->id() != $object_id ) {
 				self::$current_field_pod->fetch( $object_id );
 			}
@@ -4285,7 +4285,7 @@ class PodsMeta {
 			$pod->remove_from( $meta_key, $meta_value );
 		} else {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
-				self::$current_field_pod = pods( $object['name'] );
+				self::$current_field_pod = pods_get_instance( $object['name'] );
 			}
 
 			$pod = self::$current_field_pod;

@@ -1183,7 +1183,7 @@ class PodsField_File extends PodsField {
 					$context_pod = null;
 
 					if ( $params->item_id ) {
-						$context_pod = pods( pods_v( 'name', $pod, false ), $params->item_id );
+						$context_pod = pods_get_instance( pods_v( 'name', $pod, false ), $params->item_id );
 
 						if ( ! $context_pod->exists() ) {
 							$context_pod = null;

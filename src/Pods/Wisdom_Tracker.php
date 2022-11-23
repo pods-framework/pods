@@ -418,7 +418,7 @@ class Wisdom_Tracker {
 		if ( isset( $track_time[ $this->plugin_name ] ) ) {
 			unset( $track_time[ $this->plugin_name ] );
 		}
-		update_option( 'wisdom_last_track_time', $track_time );
+		update_option( 'wisdom_last_track_time', $track_time, 'yes' );
 	}
 
 	/**
@@ -504,7 +504,7 @@ class Wisdom_Tracker {
 			}
 		}
 
-		update_option( 'wisdom_allow_tracking', $allow_tracking );
+		update_option( 'wisdom_allow_tracking', $allow_tracking, 'yes' );
 	}
 
 	/**
@@ -579,7 +579,7 @@ class Wisdom_Tracker {
 		$track_times = get_option( 'wisdom_last_track_time', [] );
 		// Set different times according to plugin, in case we are tracking multiple plugins
 		$track_times[ $this->plugin_name ] = time();
-		update_option( 'wisdom_last_track_time', $track_times );
+		update_option( 'wisdom_last_track_time', $track_times, 'yes' );
 	}
 
 	/**
@@ -596,7 +596,7 @@ class Wisdom_Tracker {
 			// We can delay the notification time
 			$notification_time                        = time() + absint( $delay_notification );
 			$notification_times[ $this->plugin_name ] = $notification_time;
-			update_option( 'wisdom_notification_times', $notification_times );
+			update_option( 'wisdom_notification_times', $notification_times, 'yes' );
 		}
 	}
 
@@ -638,7 +638,7 @@ class Wisdom_Tracker {
 			// Else add the plugin name to the array
 			$block_notice[ $plugin ] = $plugin;
 		}
-		update_option( 'wisdom_block_notice', $block_notice );
+		update_option( 'wisdom_block_notice', $block_notice, 'yes' );
 	}
 
 	/**
@@ -686,7 +686,7 @@ class Wisdom_Tracker {
 				unset( $collect_email[ $plugin ] );
 			}
 		}
-		update_option( 'wisdom_collect_email', $collect_email );
+		update_option( 'wisdom_collect_email', $collect_email, 'yes' );
 	}
 
 	/**

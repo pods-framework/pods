@@ -228,7 +228,7 @@ abstract class Base {
 	 * @return false|Pods
 	 */
 	public function get_pod_item_by_id_or_slug( $id_or_slug ) {
-		$pod = pods( $this->object, $id_or_slug );
+		$pod = pods_get_instance( $this->object, $id_or_slug );
 
 		if ( ! $pod || is_wp_error( $pod ) || ! $pod->valid() || ! $pod->exists() ) {
 			return false;

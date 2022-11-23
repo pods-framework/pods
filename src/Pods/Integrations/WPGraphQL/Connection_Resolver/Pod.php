@@ -52,7 +52,7 @@ class Pod extends AbstractConnectionResolver {
 
 		// The pod name is not set.
 		if ( ! empty( $this->pod_name ) ) {
-			$this->pod = pods( $this->pod_name, null, true );
+			$this->pod = pods_get_instance( $this->pod_name, null, true );
 		}
 
 		/**
@@ -263,7 +263,7 @@ class Pod extends AbstractConnectionResolver {
 		}
 
 		// Set up a new Pods instance instead of reusing $this->pod to prevent conflicts.
-		$pod = pods( $this->pod_name, $offset, false );
+		$pod = pods_get_instance( $this->pod_name, $offset, false );
 
 		// The pod does not exist.
 		if ( ! $pod->valid() ) {

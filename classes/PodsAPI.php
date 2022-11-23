@@ -5570,7 +5570,7 @@ class PodsAPI {
 		pods_cache_clear( $params->id, 'pods_items_' . $pod['name'] );
 
 		if ( $params->clear_slug_cache && ! empty( $pod['field_slug'] ) ) {
-			$slug = pods( $pod['name'], $params->id )->field( $pod['field_slug'] );
+			$slug = pods_get_instance( $pod['name'], $params->id )->field( $pod['field_slug'] );
 
 			if ( 0 < strlen( $slug ) ) {
 				pods_cache_clear( $slug, 'pods_items_' . $pod['name'] );
@@ -5696,7 +5696,7 @@ class PodsAPI {
 			$field_table_info = $field['table_info'];
 
 			if ( ! empty( $field_table_info['pod'] ) && ! empty( $field_table_info['pod']['name'] ) ) {
-				$search_data = pods( $field_table_info['pod']['name'] );
+				$search_data = pods_get_instance( $field_table_info['pod']['name'] );
 
 				$data_mode = 'pods';
 			} else {
@@ -5928,7 +5928,7 @@ class PodsAPI {
 
 				if ( ! empty( $id ) ) {
 					if ( ! isset( $changed_pods_cache[ $pod ] ) ) {
-						$pod_object = pods( $pod );
+						$pod_object = pods_get_instance( $pod );
 
 						if ( ! $pod_object || ! $pod_object->is_defined() ) {
 							return [];
@@ -6523,7 +6523,7 @@ class PodsAPI {
 			return pods_error( __( 'Pod not found', 'pods' ), $this );
 		}
 
-		$pod = pods( $params->pod, $params->id );
+		$pod = pods_get_instance( $params->pod, $params->id );
 
 		$params->pod    = $pod->pod;
 		$params->pod_id = $pod->pod_id;
@@ -6645,7 +6645,7 @@ class PodsAPI {
 
 			$params = pods_sanitize( $params );
 
-			$pod = pods( $params['pod'], $params['id'], false );
+			$pod = pods_get_instance( $params['pod'], $params['id'], false );
 
 			if ( empty( $pod ) ) {
 				return false;
@@ -6825,7 +6825,7 @@ class PodsAPI {
 					$pick_object = pods_v( 'pick_object', $field );
 					$pick_val    = pods_v( 'pick_val', $field );
 
-					$related_pod = pods( $pick_val, null, false );
+					$related_pod = pods_get_instance( $pick_val, null, false );
 
 					// If this isn't a Pod, return data exactly as Pods does normally
 					if ( empty( $related_pod ) || empty( $related_pod->pod_data ) || ( 'pod' !== $pick_object && $pick_object !== $related_pod->pod_data['type'] ) || $related_pod->pod === $pod->pod ) {
@@ -9041,7 +9041,7 @@ class PodsAPI {
 			return $pod;
 		}
 
-		$pod = pods( $params->pod, $params->id );
+		$pod = pods_get_instance( $params->pod, $params->id );
 
 		if ( pods_api_cache() ) {
 			pods_cache_set( $params->id, $pod, 'pods_item_object_' . $params->pod );
@@ -10448,7 +10448,7 @@ class PodsAPI {
 
 				if ( ! is_array( $field ) && ! $is_field_object ) {
 					if ( is_string( $pod ) ) {
-						$pod = pods( $pod );
+						$pod = pods_get_instance( $pod );
 					}
 
 					if ( is_object( $pod ) && ! empty( $pod->fields[ $field ] ) ) {
@@ -10830,9 +10830,9 @@ class PodsAPI {
 
 			unset( $params['params'] );
 
-			$pod = pods( $pod, $find );
+			$pod = pods_get_instance( $pod, $find );
 		} elseif ( ! is_object( $pod ) ) {
-			$pod = pods( $pod, $find );
+			$pod = pods_get_instance( $pod, $find );
 		}
 
 		$data = array();
@@ -10912,11 +10912,13 @@ class PodsAPI {
 		pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
 		pods_cache_clear( true, 'pods_post_type_storage__pods_template' );
 		pods_cache_clear( true, 'pods_post_type_storage__pods_page' );
+		pods_cache_clear( true, 'pods_post_type_storage_any' );
+
+		pods_cache_clear( true, __CLASS__ . '/_load_objects' );
 
 		pods_static_cache_clear( true, __CLASS__ );
 		pods_static_cache_clear( true, __CLASS__ . '/table_info_cache' );
 		pods_static_cache_clear( true, __CLASS__ . '/related_item_cache' );
-		pods_static_cache_clear( true, __CLASS__ . '/_load_objects' );
 		pods_static_cache_clear( true, PodsInit::class . '/existing_content_types' );
 		pods_static_cache_clear( true, PodsView::class );
 		pods_static_cache_clear( true, PodsField_Pick::class . '/related_data' );
@@ -10929,6 +10931,7 @@ class PodsAPI {
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_field' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_template' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_page' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
 
 		pods_init()->refresh_existing_content_types_cache( true );
 
@@ -11270,7 +11273,7 @@ class PodsAPI {
 			}
 		}
 
-		$params['bypass_cache'] = empty( $params['bypass_cache'] ) && did_action( 'init' );
+		$use_cache = empty( $params['bypass_cache'] ) && did_action( 'init' );
 
 		if ( isset( $params['options'] ) ) {
 			$params['args'] = $params['options'];
@@ -11296,8 +11299,6 @@ class PodsAPI {
 			}
 		}
 
-		$cache_key = json_encode( $params );
-
 		if ( ! empty( $params['return_type'] ) ) {
 			$return_type = $params['return_type'];
 
@@ -11316,20 +11317,25 @@ class PodsAPI {
 
 		$storage_type = ! empty( $params['object_storage_type'] ) ? $params['object_storage_type'] : $this->get_default_object_storage_type();
 
-		$object_collection = Pods\Whatsit\Store::get_instance();
-
-		/** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
-		$post_type_storage = $object_collection->get_storage_object( $storage_type );
+		$cache_key = $storage_type . '/' . json_encode( $params );
 
 		$objects = null;
-		$cache_key = json_encode( $params );
 
-		if ( ! $params['bypass_cache'] ) {
-			$objects = pods_static_cache_get( $cache_key, __CLASS__ . '/_load_objects' ) ?: null;
+		if ( $use_cache ) {
+			$objects = pods_cache_get( $cache_key, __CLASS__ . '/_load_objects' );
 		}
 
-		if ( null === $objects ) {
+		$object_collection = Pods\Whatsit\Store::get_instance();
+
+		if ( ! is_array( $objects ) ) {
+			/** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
+			$post_type_storage = $object_collection->get_storage_object( $storage_type );
+
 			$objects = $post_type_storage->find( $params );
+
+			if ( $use_cache ) {
+				pods_cache_set( $cache_key, $objects, __CLASS__ . '/_load_objects', 12 * HOUR_IN_SECONDS );
+			}
 		}
 
 		if ( ! empty( $params['auto_setup'] ) && ! $objects ) {
@@ -11426,10 +11432,6 @@ class PodsAPI {
 
 				return $this->_load_objects( $params );
 			}
-		}
-
-		if ( ! $params['bypass_cache'] ) {
-			pods_static_cache_set( $cache_key, $objects, __CLASS__ . '/_load_objects' );
 		}
 
 		if ( ! empty( $params['count'] ) ) {

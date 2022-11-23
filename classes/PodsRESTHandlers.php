@@ -32,7 +32,7 @@ class PodsRESTHandlers {
 	protected static function get_pod( $pod_name, $id ) {
 
 		if ( ! self::$pod || self::$pod->pod !== $pod_name ) {
-			self::$pod = pods( $pod_name, $id, true );
+			self::$pod = pods_get_instance( $pod_name, $id, true );
 		}
 
 		if ( self::$pod && (int) self::$pod->id !== (int) $id ) {

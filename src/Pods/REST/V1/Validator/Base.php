@@ -35,7 +35,7 @@ class Base extends Validator_Base implements Validator_Interface {
 	 * @return bool Whether the Pod / Item ID is valid.
 	 */
 	public function is_pod_item_id_or_slug_valid( $pod, $id_or_slug ) {
-		$pod = pods( $pod, $id_or_slug );
+		$pod = pods_get_instance( $pod, $id_or_slug );
 
 		return $pod && ! is_wp_error( $pod ) && $pod->valid() && $pod->exists();
 	}

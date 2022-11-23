@@ -29,7 +29,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		unset( $assoc_args['pod'] );
 
-		$pod = pods( $pod_name, null, false );
+		$pod = pods_get_instance( $pod_name, null, false );
 
 		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
@@ -89,7 +89,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 			unset( $assoc_args['item'] );
 		}
 
-		$pod = pods( $pod_name, $item, false );
+		$pod = pods_get_instance( $pod_name, $item, false );
 
 		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
@@ -140,7 +140,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 */
 	public function duplicate( $args, $assoc_args ) {
 
-		$pod = pods( $assoc_args['pod'], $assoc_args['item'], false );
+		$pod = pods_get_instance( $assoc_args['pod'], $assoc_args['item'], false );
 
 		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
@@ -187,7 +187,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 */
 	public function delete( $args, $assoc_args ) {
 
-		$pod = pods( $assoc_args['pod'], $assoc_args['item'], false );
+		$pod = pods_get_instance( $assoc_args['pod'], $assoc_args['item'], false );
 
 		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
@@ -253,7 +253,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 			unset( $assoc_args['item'] );
 		}
 
-		$pod = pods( $pod_name, $item, false );
+		$pod = pods_get_instance( $pod_name, $item, false );
 
 		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
@@ -330,7 +330,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		unset( $assoc_args['pod'] );
 
-		$pod = pods( $pod_name, array( 'limit' => -1 ), false );
+		$pod = pods_get_instance( $pod_name, array( 'limit' => -1 ), false );
 
 		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );

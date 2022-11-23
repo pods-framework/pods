@@ -521,9 +521,9 @@ class PodsUI {
 			if ( is_object( $options['pod'] ) ) {
 				$this->pod = $options['pod'];
 			} elseif ( isset( $options['id'] ) ) {
-				$this->pod = pods( $options['pod'], $options['id'] );
+				$this->pod = pods_get_instance( $options['pod'], $options['id'] );
 			} else {
-				$this->pod = pods( $options['pod'] );
+				$this->pod = pods_get_instance( $options['pod'] );
 			}
 
 			unset( $options['pod'] );

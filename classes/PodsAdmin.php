@@ -724,7 +724,7 @@ class PodsAdmin {
 		// @codingStandardsIgnoreLine
 		$pod_name = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET['page'] );
 
-		$pod = pods( $pod_name, pods_v( 'id', 'get', null, true ) );
+		$pod = pods_get_instance( $pod_name, pods_v( 'id', 'get', null, true ) );
 
 		if ( ! $pod->pod_data->has_fields() ) {
 			pods_message( __( 'This Pod does not have any fields defined.', 'pods' ), 'error' );
@@ -748,7 +748,7 @@ class PodsAdmin {
 		// @codingStandardsIgnoreLine
 		$pod_name = str_replace( 'pods-settings-', '', $_GET['page'] );
 
-		$pod = pods( $pod_name );
+		$pod = pods_get_instance( $pod_name );
 
 		if ( 'custom' !== pods_v( 'ui_style', $pod->pod_data['options'], 'settings', true ) ) {
 			$actions_disabled = array(

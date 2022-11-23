@@ -1085,7 +1085,7 @@ class Pods_Pages extends PodsComponent {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
-					$pods = pods( pods_var( 'pod', self::$exists['options'] ), $slug );
+					$pods = pods_get_instance( pods_var( 'pod', self::$exists['options'] ), $slug );
 
 					// Auto 404 handling if item doesn't exist
 					if ( $has_slug && ( empty( $slug ) || ! $pods->exists() ) && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {

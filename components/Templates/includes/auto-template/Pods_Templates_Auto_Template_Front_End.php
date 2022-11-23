@@ -635,7 +635,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			if ( isset( $template ) ) {
 				global $frontier_styles, $frontier_scripts;
 
-				$template_post = pods()->api->load_template( array( 'name' => $template ) );
+				$template_post = pods_api()->load_template( array( 'name' => $template ) );
 
 				if ( ! empty( $template_post['id'] ) ) {
 					// Got a template - check for styles & scripts.

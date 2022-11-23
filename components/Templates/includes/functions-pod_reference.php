@@ -46,7 +46,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		return $fields;
 	}
 
-	$pod = pods( $pod_name );
+	$pod = pods_get_instance( $pod_name );
 
 	if ( empty( $pod ) || ! $pod->valid() ) {
 		return $fields;

@@ -609,7 +609,7 @@ class Store {
 			}
 
 			$objects = array_filter( $objects, static function( $object ) use ( $args ) {
-				$current_object_storage_type = null;
+				$current_object_storage_type = 'collection';
 
 				if ( $object instanceof Whatsit ) {
 					$current_object_storage_type = $object->get_object_storage_type();
@@ -638,13 +638,40 @@ class Store {
 
 				if ( $object instanceof Whatsit ) {
 					$current_object_type = $object->get_object_type();
-				} elseif ( is_array( $object ) && isset( $object['object_types'] ) ) {
-					$current_object_type = $object['object_types'];
+				} elseif ( is_array( $object ) && isset( $object['object_type'] ) ) {
+					$current_object_type = $object['object_type'];
 				}
 
 				return (
 					$current_object_type
 					&& isset( $args['object_types'][ $current_object_type ] )
+				);
+			} );
+		}
+
+		// Filter objects by name.
+		if ( isset( $args['names'] ) ) {
+			$args['names'] = (array) $args['names'];
+			$args['names'] = array_map( 'trim', $args['names'] );
+			$args['names'] = array_filter( $args['names'] );
+
+			// Maybe use isset() instead of in_array() for the comparisons.
+			if ( isset( $args['names'][0] ) ) {
+				$args['names'] = array_flip( $args['names'] );
+			}
+
+			$objects = array_filter( $objects, static function( $object ) use ( $args ) {
+				$current_name = null;
+
+				if ( $object instanceof Whatsit ) {
+					$current_name = $object->get_name();
+				} elseif ( is_array( $object ) && isset( $object['name'] ) ) {
+					$current_name = $object['name'];
+				}
+
+				return (
+					$current_name
+					&& isset( $args['names'][ $current_name ] )
 				);
 			} );
 		}
@@ -670,6 +697,40 @@ class Store {
 		$objects = array_map( [ $this, 'get_object' ], $objects );
 
 		return array_filter( $objects );
+	}
+
+	/**
+	 * Get object from a specific object storage type.
+	 *
+	 * @param string                    $object_storage_type The object storage type.
+	 * @param string|null|Whatsit|array $identifier          Object identifier, ID, or the object/array itself.
+	 *
+	 * @return Whatsit|null Object or null if not found.
+	 */
+	public function get_object_from_storage( $object_storage_type, $identifier ) {
+		$storage = $this->get_storage_object( $object_storage_type );
+
+		$args = [
+			'limit' => 1,
+		];
+
+		if ( is_int( $identifier ) || is_numeric( $identifier ) ) {
+			$args['id'] = $identifier;
+		} elseif ( is_string( $identifier ) ) {
+			$args['identifier'] = $identifier;
+		} elseif ( $identifier instanceof Whatsit ) {
+			$args['identifier'] = $identifier->get_identifier();
+		} else {
+			return null;
+		}
+
+		$objects = $storage->find( $args );
+
+		if ( empty( $objects ) ) {
+			return null;
+		}
+
+		return current( $objects );
 	}
 
 	/**

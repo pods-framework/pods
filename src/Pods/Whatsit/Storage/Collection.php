@@ -69,7 +69,7 @@ class Collection extends Storage {
 	 */
 	public function find( array $args = [] ) {
 		// Object type OR parent is required.
-		if ( empty( $args['object_type'] ) && empty( $args['parent'] ) ) {
+		if ( empty( $args['object_type'] ) && empty( $args['object_types'] ) && empty( $args['parent'] ) ) {
 			return [];
 		}
 
@@ -117,7 +117,9 @@ class Collection extends Storage {
 			$args['args'][ $arg ] = $args[ $arg ];
 		}
 
-		$cache_key = wp_json_encode( $args );
+		$object_collection = Store::get_instance();
+
+		$cache_key = wp_json_encode( $args ) . $object_collection->get_salt();
 
 		$use_cache = did_action( 'init' );
 
@@ -132,28 +134,46 @@ class Collection extends Storage {
 			return $found_objects;
 		}
 
-		$object_collection = Store::get_instance();
+		$collection_args = [
+			'object_storage_types' => static::$compatible_types,
+		];
 
-		$objects = $object_collection->get_objects( static::$compatible_types );
-
-		if ( empty( $objects ) ) {
-			return [];
+		if ( ! empty( $args['object_storage_type'] ) ) {
+			$collection_args['object_storage_types'] = $args['object_storage_type'];
+		} elseif ( ! empty( $args['object_storage_types'] ) ) {
+			$collection_args['object_storage_types'] = $args['object_storage_types'];
 		}
 
 		if ( ! empty( $args['object_type'] ) ) {
-			$object_types = (array) $args['object_type'];
+			$collection_args['object_types'] = $args['object_type'];
+		} elseif ( ! empty( $args['object_types'] ) ) {
+			$collection_args['object_types'] = $args['object_types'];
+		}
 
-			foreach ( $objects as $k => $object ) {
-				if ( in_array( $object->get_object_type(), $object_types, true ) ) {
-					continue;
-				}
+		if ( ! empty( $args['id'] ) ) {
+			$collection_args['ids'] = $args['id'];
+		} elseif ( ! empty( $args['ids'] ) ) {
+			$collection_args['ids'] = $args['ids'];
+		} elseif ( ! empty( $args['identifier'] ) ) {
+			$collection_args['identifiers'] = $args['identifier'];
+		} elseif ( ! empty( $args['identifiers'] ) ) {
+			$collection_args['identifiers'] = $args['identifiers'];
+		}
 
-				unset( $objects[ $k ] );
-			}
+		if ( ! empty( $args['name'] ) ) {
+			$collection_args['names'] = $args['name'];
+		} elseif ( ! empty( $args['names'] ) ) {
+			$collection_args['names'] = $args['names'];
+		}
 
-			if ( empty( $objects ) ) {
-				return [];
-			}
+		if ( isset( $args['internal'] ) ) {
+			$collection_args['internal'] = $args['internal'];
+		}
+
+		$objects = $object_collection->get_objects( $collection_args );
+
+		if ( empty( $objects ) ) {
+			return [];
 		}
 
 		foreach ( $args['args'] as $arg => $value ) {
@@ -216,58 +236,6 @@ class Collection extends Storage {
 				}
 			}
 		}//end foreach
-
-		if ( ! empty( $args['id'] ) ) {
-			$args['id'] = (array) $args['id'];
-			$args['id'] = array_map( 'absint', $args['id'] );
-			$args['id'] = array_unique( $args['id'] );
-			$args['id'] = array_filter( $args['id'] );
-
-			if ( $args['id'] ) {
-				foreach ( $objects as $k => $object ) {
-					if ( in_array( $object->get_id(), $args['id'], true ) ) {
-						continue;
-					}
-
-					unset( $objects[ $k ] );
-				}
-
-				if ( empty( $objects ) ) {
-					return [];
-				}
-			}
-		}
-
-		if ( ! empty( $args['name'] ) ) {
-			$args['name'] = (array) $args['name'];
-			$args['name'] = array_map( 'trim', $args['name'] );
-			$args['name'] = array_unique( $args['name'] );
-			$args['name'] = array_filter( $args['name'] );
-
-			if ( $args['name'] ) {
-				foreach ( $objects as $k => $object ) {
-					if ( in_array( $object->get_name(), $args['name'], true ) ) {
-						continue;
-					}
-
-					unset( $objects[ $k ] );
-				}
-
-				if ( empty( $objects ) ) {
-					return [];
-				}
-			}
-		}
-
-		if ( isset( $args['internal'] ) ) {
-			foreach ( $objects as $k => $object ) {
-				if ( $args['internal'] === (boolean) $object->get_arg( 'internal' ) ) {
-					continue;
-				}
-
-				unset( $objects[ $k ] );
-			}
-		}
 
 		if ( ! empty( $args['limit'] ) ) {
 			$objects = array_slice( $objects, 0, $args['limit'], true );

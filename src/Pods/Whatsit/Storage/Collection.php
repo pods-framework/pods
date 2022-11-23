@@ -122,7 +122,6 @@ class Collection extends Storage {
 		$cache_key = wp_json_encode( $args ) . $object_collection->get_salt();
 
 		$use_cache = did_action( 'init' );
-		$use_cache = false;
 
 		$found_objects = null;
 

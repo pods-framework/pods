@@ -161,7 +161,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		if ( is_array( $args ) ) {
 			if ( ! empty( $args['id'] ) ) {
 				// Check if we already have an object registered and available.
-				$object = Store::get_instance()->get_object( $args['id'] );
+				$store = Store::get_instance();
+
+				// Attempt to get from storage directly.
+				$object = $store->get_object_from_storage( isset( $args['object_storage_type'] ) ? $args['object_storage_type'] : null, $args['id'] );
 
 				if ( $object ) {
 					if ( $to_args ) {
@@ -198,7 +201,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	public static function from_array( array $array, $to_args = false ) {
 		if ( ! empty( $array['id'] ) ) {
 			// Check if we already have an object registered and available.
-			$object = Store::get_instance()->get_object( $array['id'] );
+			$store = Store::get_instance();
+
+			// Attempt to get from storage directly.
+			$object = $store->get_object_from_storage( isset( $args['object_storage_type'] ) ? $args['object_storage_type'] : null, $array['id'] );
 
 			if ( $object ) {
 				if ( $to_args ) {
@@ -629,7 +635,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$arg = 'id';
 		}
 
-		if ( ! isset( $this->args[ $arg ] ) && ! $strict ) {
+		$is_set = isset( $this->args[ $arg ] );
+
+		if ( ! $is_set && ! $strict ) {
 			if ( 'internal' === $arg ) {
 				return $default;
 			}
@@ -670,7 +678,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		}//end if
 
-		$value = isset( $this->args[ $arg ] ) ? $this->args[ $arg ] : $default;
+		$value = $is_set ? $this->args[ $arg ] : $default;
 
 		/**
 		 * Allow filtering the object arguments / options.
@@ -903,7 +911,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$parent = $this->get_parent();
 
 		if ( $parent ) {
-			$parent = Store::get_instance()->get_object( $parent );
+			$store = Store::get_instance();
+
+			// Attempt to get from storage directly.
+			$parent = $store->get_object_from_storage( $this->get_object_storage_type(), $parent );
 		}
 
 		return $parent;
@@ -918,7 +929,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$group = $this->get_group();
 
 		if ( $group ) {
-			$group = Store::get_instance()->get_object( $group );
+			$store = Store::get_instance();
+
+			// Attempt to get from storage directly.
+			$group = $store->get_object_from_storage( $this->get_object_storage_type(), $group );
 
 			if ( $group ) {
 				$this->set_arg( 'group', $group->get_identifier() );

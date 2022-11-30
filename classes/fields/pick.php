@@ -405,7 +405,7 @@ class PodsField_Pick extends PodsField {
 			'label'            => __( 'Limit list by Post Status', 'pods' ),
 			'help'             => __( 'You can choose to limit Posts available for selection by one or more specific post status.', 'pods' ),
 			'type'             => 'pick',
-			'pick_object'      => 'post-status',
+			'pick_object'      => 'post-status-with-any',
 			'pick_format_type' => 'multi',
 			'default'          => 'publish',
 			'depends-on'       => [
@@ -684,6 +684,13 @@ class PodsField_Pick extends PodsField {
 				'group'         => __( 'Other WP Objects', 'pods' ),
 				'simple'        => true,
 				'data_callback' => array( $this, 'data_post_stati' ),
+			);
+
+			self::$related_objects['post-status-with-any'] = array(
+				'label'         => __( 'Post Status (with any)', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_post_stati_with_any' ),
 			);
 
 			self::$related_objects['post-types'] = [
@@ -3103,17 +3110,50 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.0
 	 */
 	public function data_post_stati( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+		$data = [];
 
-		$data = array();
-
-		$post_stati = get_post_stati( array(), 'objects' );
+		$post_stati = get_post_stati( [], 'objects' );
 
 		foreach ( $post_stati as $post_status ) {
 			$data[ $post_status->name ] = $post_status->label;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_data_post_stati', $data, $name, $value, $options, $pod, $id );
+		return (array) apply_filters( 'pods_form_ui_field_pick_data_post_stati', $data, $name, $value, $options, $pod, $id );
+	}
 
+	/**
+	 * Data callback for Post Stati (with any).
+	 *
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
+	 *
+	 * @return array
+	 *
+	 * @since 2.9.10
+	 */
+	public function data_post_stati_with_any( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+		$data = [
+			'_pods_any' => esc_html__( 'Any Status (excluding Auto-Draft and Trashed)', 'pods' ),
+		];
+
+		$data = array_merge( $data, $this->data_post_stati( $name, $value, $options, $pod, $id ) );
+
+		/**
+		 * Allow filtering the list of post stati with any.
+		 *
+		 * @since 2.9.10
+		 *
+		 * @param array             $data    The list of post stati with any.
+		 * @param string|null       $name    The name of the field.
+		 * @param string|array|null $value   The value of the field.
+		 * @param array|null        $options Field options.
+		 * @param array|null        $pod     Pod data.
+		 * @param int|null          $id      Item ID.
+		 */
+		return (array) apply_filters( 'pods_form_ui_field_pick_data_post_stati_with_any', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**

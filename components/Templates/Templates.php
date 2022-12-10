@@ -107,18 +107,19 @@ class Pods_Templates extends PodsComponent {
 		$is_admin_user = pods_is_admin();
 
 		$args = array(
-			'label'        => 'Pod Templates',
-			'labels'       => array( 'singular_name' => 'Pod Template' ),
-			'public'       => false,
-			'can_export'   => false,
-			'show_ui'      => true,
-			'show_in_menu' => false,
-			'query_var'    => false,
-			'rewrite'      => false,
-			'has_archive'  => false,
-			'hierarchical' => false,
-			'supports'     => array( 'title', 'author', 'revisions' ),
-			'menu_icon'    => pods_svg_icon( 'pods' ),
+			'label'            => 'Pod Templates',
+			'labels'           => array( 'singular_name' => 'Pod Template' ),
+			'public'           => false,
+			'can_export'       => false,
+			'show_ui'          => true,
+			'show_in_menu'     => false,
+			'query_var'        => false,
+			'rewrite'          => false,
+			'has_archive'      => false,
+			'hierarchical'     => false,
+			'supports'         => array( 'title', 'author', 'revisions' ),
+			'menu_icon'        => pods_svg_icon( 'pods' ),
+			'delete_with_user' => false,
 		);
 
 		if ( ! $is_admin_user ) {

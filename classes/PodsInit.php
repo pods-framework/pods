@@ -1166,17 +1166,18 @@ class PodsInit {
 	 */
 	public function register_pods() {
 		$args = array(
-			'label'           => __( 'Pods', 'pods' ),
-			'labels'          => array( 'singular_name' => __( 'Pod', 'pods' ) ),
-			'public'          => false,
-			'can_export'      => false,
-			'query_var'       => false,
-			'rewrite'         => false,
-			'capability_type' => 'pods_pod',
-			'has_archive'     => false,
-			'hierarchical'    => false,
-			'supports'        => array( 'title', 'author' ),
-			'menu_icon'       => pods_svg_icon( 'pods' ),
+			'label'            => __( 'Pods', 'pods' ),
+			'labels'           => array( 'singular_name' => __( 'Pod', 'pods' ) ),
+			'public'           => false,
+			'can_export'       => false,
+			'query_var'        => false,
+			'rewrite'          => false,
+			'capability_type'  => 'pods_pod',
+			'has_archive'      => false,
+			'hierarchical'     => false,
+			'supports'         => array( 'title', 'author' ),
+			'menu_icon'        => pods_svg_icon( 'pods' ),
+			'delete_with_user' => false,
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1184,17 +1185,18 @@ class PodsInit {
 		register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
 		$args = array(
-			'label'           => __( 'Pod Groups', 'pods' ),
-			'labels'          => array( 'singular_name' => __( 'Pod Group', 'pods' ) ),
-			'public'          => false,
-			'can_export'      => false,
-			'query_var'       => false,
-			'rewrite'         => false,
-			'capability_type' => 'pods_pod',
-			'has_archive'     => false,
-			'hierarchical'    => true,
-			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => pods_svg_icon( 'pods' ),
+			'label'            => __( 'Pod Groups', 'pods' ),
+			'labels'           => array( 'singular_name' => __( 'Pod Group', 'pods' ) ),
+			'public'           => false,
+			'can_export'       => false,
+			'query_var'        => false,
+			'rewrite'          => false,
+			'capability_type'  => 'pods_pod',
+			'has_archive'      => false,
+			'hierarchical'     => true,
+			'supports'         => array( 'title', 'editor', 'author' ),
+			'menu_icon'        => pods_svg_icon( 'pods' ),
+			'delete_with_user' => false,
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1202,17 +1204,18 @@ class PodsInit {
 		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
 
 		$args = array(
-			'label'           => __( 'Pod Fields', 'pods' ),
-			'labels'          => array( 'singular_name' => __( 'Pod Field', 'pods' ) ),
-			'public'          => false,
-			'can_export'      => false,
-			'query_var'       => false,
-			'rewrite'         => false,
-			'capability_type' => 'pods_pod',
-			'has_archive'     => false,
-			'hierarchical'    => true,
-			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => pods_svg_icon( 'pods' ),
+			'label'            => __( 'Pod Fields', 'pods' ),
+			'labels'           => array( 'singular_name' => __( 'Pod Field', 'pods' ) ),
+			'public'           => false,
+			'can_export'       => false,
+			'query_var'        => false,
+			'rewrite'          => false,
+			'capability_type'  => 'pods_pod',
+			'has_archive'      => false,
+			'hierarchical'     => true,
+			'supports'         => array( 'title', 'editor', 'author' ),
+			'menu_icon'        => pods_svg_icon( 'pods' ),
+			'delete_with_user' => false,
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );

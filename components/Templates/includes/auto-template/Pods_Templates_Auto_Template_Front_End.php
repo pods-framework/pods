@@ -365,6 +365,13 @@ class Pods_Templates_Auto_Template_Front_End {
 			$obj = get_post();
 		}
 
+		// Check if the post is password protected.
+		if ( $obj instanceof WP_Post && post_password_required( $obj ) ) {
+			$running = false;
+
+			return $content;
+		}
+
 		if ( null !== $obj ) {
 			$pod_info = $this->get_pod_info( $obj );
 

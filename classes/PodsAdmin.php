@@ -769,7 +769,7 @@ class PodsAdmin {
 			$ui = array(
 				'pod'              => $pod,
 				'fields'           => array(
-					'edit' => $pod->pod_data['fields'],
+					'edit' => $pod->pod_data->get_fields(),
 				),
 				'header'           => array(
 					'edit' => $page_title,

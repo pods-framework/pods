@@ -10219,7 +10219,7 @@ class PodsAPI {
 			];
 
 			if ( 'post_type' === $object_type && ! empty( $post_status ) ) {
-				if ( in_array( $post_status, '_pods_any', true ) ) {
+				if ( in_array( '_pods_any', $post_status, true ) ) {
 					$info['where_default'] = "`t`.`post_status` NOT IN ( 'auto-draft', 'trash' )";
 				} else {
 					$info['where_default'] = "`t`.`post_status` IN ( '" . implode( "', '", pods_sanitize( $post_status ) ) . "' )";

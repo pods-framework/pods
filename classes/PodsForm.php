@@ -226,6 +226,8 @@ class PodsForm {
 
 		$helper = false;
 
+		$input_helper = pods_v( 'input_helper', $options );
+
 		/**
 		 * Input helpers are deprecated and not guaranteed to work properly.
 		 *
@@ -233,8 +235,8 @@ class PodsForm {
 		 *
 		 * @deprecated 2.7.0
 		 */
-		if ( 0 < strlen( pods_v( 'input_helper', $options ) ) ) {
-			$helper = pods_api()->load_helper( array( 'name' => $options['input_helper'] ) );
+		if ( $input_helper && 0 < strlen( $input_helper ) ) {
+			$helper = pods_api()->load_helper( array( 'name' => $input_helper ) );
 		}
 
 		if ( empty( $type ) ) {

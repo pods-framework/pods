@@ -883,12 +883,12 @@ class PodsUI {
 		// wp-admin page
 		if ( is_object( $this->pod ) && isset( $this->pod->pod ) ) {
 			$unique_identifier = '_' . $this->pod->pod;
-		} elseif ( 0 < strlen( $this->sql['table'] ) ) {
+		} elseif ( $this->sql['table'] && 0 < strlen( $this->sql['table'] ) ) {
 			$unique_identifier = '_' . $this->sql['table'];
 		}
 
 		$unique_identifier .= '_' . $this->page;
-		if ( 0 < strlen( $this->num ) ) {
+		if ( $this->num && 0 < strlen( $this->num ) ) {
 			$unique_identifier .= '_' . $this->num_prefix . $this->num;
 		}
 

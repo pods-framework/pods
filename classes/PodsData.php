@@ -2641,7 +2641,7 @@ class PodsData {
 		$relation = 'AND';
 
 		if ( isset( $fields['relation'] ) ) {
-			$relation = strtoupper( trim( pods_v( 'relation', $fields, 'AND', true ) ) );
+			$relation = strtoupper( trim( (string) pods_v( 'relation', $fields, 'AND', true ) ) );
 
 			if ( 'AND' !== $relation ) {
 				$relation = 'OR';
@@ -2773,8 +2773,8 @@ class PodsData {
 			$q = $new_q;
 		}//end if
 
-		$field_name  = trim( pods_v( 'field', $q, pods_v( 'key', $q, $field, true ), true ) );
-		$field_type  = strtoupper( trim( pods_v( 'type', $q, 'CHAR', true ) ) );
+		$field_name  = trim( (string) pods_v( 'field', $q, pods_v( 'key', $q, $field, true ), true ) );
+		$field_type  = strtoupper( trim( (string) pods_v( 'type', $q, 'CHAR', true ) ) );
 		$field_value = pods_v( 'value', $q );
 
 		$field_compare = '=';
@@ -2783,7 +2783,7 @@ class PodsData {
 			$field_compare = 'IN';
 		}
 
-		$field_compare         = strtoupper( trim( pods_v( 'compare', $q, $field_compare, true ) ) );
+		$field_compare         = strtoupper( trim( (string) pods_v( 'compare', $q, $field_compare, true ) ) );
 		$field_sanitize        = (boolean) pods_v( 'sanitize', $q, true );
 		$field_sanitize_format = pods_v( 'sanitize_format', $q, null, true );
 		$field_cast            = pods_v( 'cast', $q, null, true );

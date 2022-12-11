@@ -2558,7 +2558,7 @@ class PodsField_Pick extends PodsField {
 					$params['where'][] = '`t`.`post_author` = ' . (int) $post_author_id;
 				}
 
-				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
+				$display = trim( (string) pods_v( static::$type . '_display', $options ), ' {@}' );
 
 				$display_field       = "`t`.`{$search_data->field_index}`";
 				$display_field_name  = $search_data->field_index;

@@ -316,7 +316,7 @@ class PodsAdmin {
 								)
 							);
 						}//end if
-					} else {
+					} elseif ( 1 === (int) pods_v( 'use_submenu_fallback', $pod['options'], 1 ) ) {
 						$submenu[] = $pod;
 					}//end if
 				}//end foreach

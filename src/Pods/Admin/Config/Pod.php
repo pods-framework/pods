@@ -1430,6 +1430,16 @@ class Pod extends Base {
 					'boolean_yes_label' => '',
 					'dependency'        => true,
 				],
+				'use_submenu_fallback' => [
+					'label'             => __( 'Fallback Edit in Dashboard', 'pods' ),
+					'help'              => __( 'help', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => false,
+					'boolean_yes_label' => __( 'Use the fallback generic "Pods" content menu so content can be managed', 'pods' ),
+					'depends-on'        => [
+						'show_in_menu'    => false,
+					],
+				],
 				'menu_location_custom' => [
 					'label'      => __( 'Parent Menu ID (optional)', 'pods' ),
 					'help'       => __( 'help', 'pods' ),

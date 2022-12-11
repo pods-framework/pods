@@ -529,7 +529,7 @@ class PodsMeta {
 	 * @param int        $id
 	 * @param \AC_Column $obj
 	 *
-	 * @return mixed
+	 * @return string
 	 */
 	public function cpac_meta_value( $meta, $id, $obj ) {
 
@@ -613,6 +613,11 @@ class PodsMeta {
 			}
 
 			$meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, $pod['fields'][ $field ], $pod['fields'], $pod );
+		}
+
+		// always return a string
+		if ( ! is_string( $meta ) ) {
+			$meta = '';
 		}
 
 		return $meta;

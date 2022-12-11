@@ -1344,7 +1344,7 @@ class Pod extends Base {
 					'default'    => 'settings',
 					'data'       => [
 						'settings'  => __( 'Normal Settings Form', 'pods' ),
-						'post_type' => __( 'Post Type UI', 'pods' ),
+						'post_type' => __( 'Classic Editor (Looks like the Classic Editor for Posts UI)', 'pods' ),
 						'custom'    => __( 'Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)', 'pods' ),
 					],
 					'dependency' => true,
@@ -1415,9 +1415,9 @@ class Pod extends Base {
 					'label'      => __( 'Admin UI Style', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'pick',
-					'default'    => 'settings',
+					'default'    => 'post_type',
 					'data'       => [
-						'post_type' => __( 'Normal (Looks like the Post Type UI)', 'pods' ),
+						'post_type' => __( 'Classic Editor (Looks like the Classic Editor for Posts UI)', 'pods' ),
 						'custom'    => __( 'Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)', 'pods' ),
 					],
 					'dependency' => true,

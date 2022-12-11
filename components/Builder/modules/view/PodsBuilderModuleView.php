@@ -115,9 +115,9 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 		public function _render( $fields ) {
 
 			$args = array(
-				'view'       => trim( pods_var_raw( 'view', $fields['data'], '' ) ),
-				'expires'    => (int) trim( pods_var_raw( 'expires', $fields['data'], ( 60 * 5 ) ) ),
-				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields['data'], 'transient', null, true ) ),
+				'view'       => trim( (string) pods_var_raw( 'view', $fields['data'], '' ) ),
+				'expires'    => (int) trim( (string) pods_var_raw( 'expires', $fields['data'], ( 60 * 5 ) ) ),
+				'cache_mode' => trim( (string) pods_var_raw( 'cache_mode', $fields['data'], 'transient', null, true ) ),
 			);
 
 			if ( 0 < strlen( $args['view'] ) && 'none' !== $args['cache_mode'] ) {

@@ -1215,10 +1215,14 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 
 	if ( ! empty( $array ) ) {
 		foreach ( $array as $key => $val ) {
-			if ( null !== $val || false === strpos( $key, '*' ) ) {
-				if ( is_array( $val ) && ! empty( $val ) ) {
+			$is_value_null = null === $val;
+
+			if ( ! $is_value_null || false === strpos( $key, '*' ) ) {
+				$is_value_array = is_array( $val );
+
+				if ( $is_value_array && ! empty( $val ) ) {
 					$query_args[ $key ] = $val;
-				} elseif ( ! is_array( $val ) && 0 < strlen( $val ) ) {
+				} elseif ( ! $is_value_null && ! $is_value_array && 0 < strlen( $val ) ) {
 					$query_args[ $key ] = $val;
 				} else {
 					$query_args[ $key ] = false;
@@ -1464,6 +1468,12 @@ function pods_js_camelcase_name( $orig ) {
  * @since 2.0.0
  */
 function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
+	if ( is_null( $maybeint ) ) {
+		$maybeint = 0;
+	} elseif ( is_bool( $maybeint ) ) {
+		$maybeint = (int) $maybeint;
+	}
+
 	if ( true === $strict && ! is_numeric( trim( $maybeint ) ) ) {
 		return 0;
 	}

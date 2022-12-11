@@ -613,9 +613,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}
 
 		$new_field = [
-			'name'         => trim( pods_v( 'name', $data, '' ) ),
-			'label'        => trim( pods_v( 'label', $data, '' ) ),
-			'description'  => trim( pods_v( 'description', $data, pods_v( 'comment', $data, '' ) ) ),
+			'name'         => trim( (string) pods_v( 'name', $data, '' ) ),
+			'label'        => trim( (string) pods_v( 'label', $data, '' ) ),
+			'description'  => trim( (string) pods_v( 'description', $data, pods_v( 'comment', $data, '' ) ) ),
 			'type'         => $field_type,
 			'weight'       => (int) $data['weight'],
 			'required'     => 1 === (int) $data['required'] ? 1 : 0,

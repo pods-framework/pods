@@ -1542,7 +1542,7 @@ class PodsUI {
 			}
 
 			$label = $this->do_template( $this->label['edit'] );
-			$id    = $this->row[ $this->sql['field_id'] ];
+			$id    = pods_v( $this->sql['field_id'], $this->row );
 			$vars  = array(
 				$this->num_prefix . 'action' . $this->num => $this->action_after['edit'],
 				$this->num_prefix . 'do' . $this->num     => 'save',
@@ -2549,7 +2549,7 @@ class PodsUI {
 	 * @param int  $counter
 	 * @param null $method
 	 *
-	 * @return array
+	 * @return array|false
 	 */
 	public function get_row( &$counter = 0, $method = null ) {
 
@@ -3321,7 +3321,7 @@ class PodsUI {
 
 								$data_filter = 'filter_' . $filter . '_start';
 							} elseif ( 'pick' === $filter_field['type'] ) {
-								$value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $filter, $value, $filter_field, $this->pod->pod_data, null ) );
+								$value_label = trim( (string) PodsForm::field_method( 'pick', 'value_to_label', $filter, $value, $filter_field, $this->pod->pod_data, null ) );
 							} elseif ( 'boolean' === $filter_field['type'] ) {
 								$yesno_options = array(
 									'1' => pods_v( 'boolean_yes_label', $filter_field, __( 'Yes', 'pods' ), true ),
@@ -5106,7 +5106,7 @@ class PodsUI {
 		}//end if
 
 		if ( $restricted && ! empty( $restrict ) ) {
-			$relation = strtoupper( trim( pods_v( 'relation', $restrict, 'AND', null, true ) ) );
+			$relation = strtoupper( trim( (string) pods_v( 'relation', $restrict, 'AND', null, true ) ) );
 
 			if ( 'AND' !== $relation ) {
 				$relation = 'OR';
@@ -5122,7 +5122,7 @@ class PodsUI {
 				if ( is_array( $match ) ) {
 					$match_okay = true;
 
-					$match_relation = strtoupper( trim( pods_v( 'relation', $match, 'OR', null, true ) ) );
+					$match_relation = strtoupper( trim( (string) pods_v( 'relation', $match, 'OR', null, true ) ) );
 
 					if ( 'AND' !== $match_relation ) {
 						$match_relation = 'OR';

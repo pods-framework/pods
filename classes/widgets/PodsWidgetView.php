@@ -32,9 +32,9 @@ class PodsWidgetView extends WP_Widget {
 		$after_content  = pods_v( 'after_content', $instance );
 
 		$args = array(
-			'view'       => trim( pods_v( 'view', $instance, '' ) ),
+			'view'       => trim( (string) pods_v( 'view', $instance, '' ) ),
 			'expires'    => (int) pods_v( 'expires', $instance, ( 60 * 5 ) ),
-			'cache_mode' => trim( pods_v( 'cache_mode', $instance, 'none', true ) ),
+			'cache_mode' => trim( (string) pods_v( 'cache_mode', $instance, 'none', true ) ),
 		);
 
 		if ( 0 < strlen( $args['view'] ) ) {

@@ -48,7 +48,6 @@ class Pods_Advanced_Content_Types extends PodsComponent {
 	 * @return array
 	 */
 	public function add_pod_type( $data ) {
-
 		$data['pod'] = __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' );
 
 		return $data;

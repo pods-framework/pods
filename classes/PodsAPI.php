@@ -11303,6 +11303,8 @@ class PodsAPI {
 			}
 		}
 
+		$cache_params = $params;
+
 		if ( ! empty( $params['return_type'] ) ) {
 			$return_type = $params['return_type'];
 
@@ -11314,14 +11316,18 @@ class PodsAPI {
 				$params['names_ids'] = true;
 			} elseif ( 'ids' === $return_type ) {
 				$params['ids'] = true;
+
+				$cache_params['ids'] = true;
 			} elseif ( 'count' === $return_type ) {
 				$params['count'] = true;
+
+				$cache_params['count'] = true;
 			}
 		}
 
 		$storage_type = ! empty( $params['object_storage_type'] ) ? $params['object_storage_type'] : $this->get_default_object_storage_type();
 
-		$cache_key = $storage_type . '/' . json_encode( $params );
+		$cache_key = $storage_type . '/' . json_encode( $cache_params );
 
 		$objects = null;
 

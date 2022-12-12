@@ -2010,6 +2010,8 @@ class PodsData {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
+		$is_settings_pod = null;
+
 		if ( null === $row ) {
 			$this->row_number ++;
 
@@ -2026,7 +2028,11 @@ class PodsData {
 
 				if ( $this->pod_data && 'settings' === $this->pod_data['type'] ) {
 					$current_row_id = $this->pod_data['id'];
+
+					$is_settings_pod = true;
 				} else {
+					$is_settings_pod = false;
+
 					$current_row_id = pods_v( $this->field_id, $this->row );
 				}
 
@@ -2046,7 +2052,11 @@ class PodsData {
 		 */
 		$fetch_full = (bool) apply_filters( 'pods_data_fetch_full', $this->fetch_full, $this );
 
-		if ( $fetch_full && ( null !== $row || ( $this->pod_data && 'settings' === $this->pod_data['type'] ) ) ) {
+		if ( $fetch_full && null === $is_settings_pod ) {
+			$is_settings_pod = $this->pod_data && 'settings' === $this->pod_data['type'];
+		}
+
+		if ( $fetch_full && ( null !== $row || $is_settings_pod ) ) {
 			if ( $explicit_set ) {
 				$this->row_number = - 1;
 			}
@@ -2054,13 +2064,21 @@ class PodsData {
 			$mode = 'id';
 			$id   = pods_absint( $row );
 
-			if ( null !== $row && ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || (string) $row !== (string) preg_replace( '/[^0-9]/', '', $row ) ) ) {
-				if ( 'settings' === $this->pod_data['type'] || ( $this->id && is_numeric( $this->id ) ) ) {
-					$id = $this->id;
-				} else {
-					$mode = 'slug';
-					$id   = $row;
-				}
+			if ( $is_settings_pod ) {
+				$id = $this->pod_data->get_id();
+			}
+
+			if (
+				! $is_settings_pod
+				&& null !== $row
+				&& (
+					! is_numeric( $row )
+					|| 0 === strpos( $row, '0' )
+					|| (string) $row !== (string) preg_replace( '/[^0-9]/', '', $row )
+				)
+			) {
+				$mode = 'slug';
+				$id   = $row;
 			}
 
 			$row = false;

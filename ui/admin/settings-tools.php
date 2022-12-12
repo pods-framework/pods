@@ -9,7 +9,7 @@ $pods_api = pods_api();
 $all_pods = $pods_api->load_pods();
 
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
-	if ( isset( $_POST['pods_repair_pod'] ) ) {
+	if ( isset( $_POST['pods_repair_pod'] ) || isset( $_POST['pods_repair_pod_preview'] ) ) {
 		$pod_name = pods_v( 'pods_field_repair_pod', 'post' );
 
 		if ( is_array( $pod_name ) ) {
@@ -41,9 +41,15 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 				if ( empty( $pod ) ) {
 					pods_message( __( 'Pod not found.', 'pods' ) . ' (' . $pod_to_repair . ')', 'error' );
 				} else {
-					$repair = pods_container( Repair::class );
+					$tool = pods_container( Repair::class );
 
-					$results = $repair->repair_groups_and_fields_for_pod( $pod, 'full' );
+					$mode = 'full';
+
+					if ( ! empty( $_POST['pods_repair_pod_preview'] ) ) {
+						$mode = 'preview';
+					}
+
+					$results = $tool->repair_groups_and_fields_for_pod( $pod, $mode );
 
 					pods_message( $results['message_html'] );
 				}
@@ -127,6 +133,8 @@ $repair_pods['__all_pods'] = '-- ' . __( 'Run Repair for All Pods', 'pods' ) . '
 		?>
 		<input type="submit" class="button button-primary" name="pods_repair_pod"
 			value=" <?php esc_attr_e( 'Repair Pod, Groups, and Fields', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+		<input type="submit" class="button button-secondary" name="pods_repair_pod_preview"
+			value=" <?php esc_attr_e( 'Preview (no changes will be made)', 'pods' ); ?> " />
 	</p>
 <?php else : ?>
 	<p><em><?php esc_html_e( 'No Pods available to repair.', 'pods' ); ?></em></p>

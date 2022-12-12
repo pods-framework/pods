@@ -29,7 +29,7 @@ class Playbook extends WP_CLI_Command {
 	 * : Whether to run the playbook in test mode and not add/change/remove any data in the database.
 	 *
 	 * [--continue-on-error]
-	 * : Whether to continue on errors when the playbook is rim.
+	 * : Whether to continue on errors when the playbook is run.
 	 *
 	 * ## EXAMPLES
 	 *

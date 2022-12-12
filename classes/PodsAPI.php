@@ -5425,7 +5425,7 @@ class PodsAPI {
 				$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, $strict_meta_save, true, $fields_to_send );
 			}
 
-			if ( ! empty( $params->id ) && 'settings' === $pod['type'] ) {
+			if ( 'settings' === $pod['type'] ) {
 				$params->id = $pod['id'];
 			}
 		}

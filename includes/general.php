@@ -135,6 +135,17 @@ function pods_message( $message, $type = null, $return = false ) {
 		$class = 'error';
 	}
 
+	// Maybe handle WP-CLI messages.
+	if ( defined( 'WP_CLI' ) ) {
+		if ( 'error' === $type ) {
+			WP_CLI::warning( $message );
+		} else {
+			WP_CLI::line( $message );
+		}
+
+		return null;
+	}
+
 	$html = '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
 
 	if ( $return ) {
@@ -142,6 +153,8 @@ function pods_message( $message, $type = null, $return = false ) {
 	}
 
 	echo $html;
+
+	return null;
 }
 
 $GLOBALS['pods_errors'] = array();

@@ -1402,7 +1402,11 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
  * @since 1.2.0
  */
 function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
-	$str = trim( $orig );
+	if ( null === $orig ) {
+		return '';
+	}
+
+	$str = trim( (string) $orig );
 	$str = remove_accents( $str );
 	$str = preg_replace( '/([^0-9a-zA-Z\-_\s])/', '', $str );
 	$str = preg_replace( '/(\s_)/', '_', $str );

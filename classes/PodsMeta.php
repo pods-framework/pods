@@ -864,16 +864,21 @@ class PodsMeta {
 	/**
 	 * Get groups of fields for the content type.
 	 *
-	 * @param $type           Content type.
-	 * @param $name           Content name.
-	 * @param $default_fields List of default fields to include.
+	 * @param string     $type           Content type.
+	 * @param string     $name           Content name.
+	 * @param null|array $default_fields List of default fields to include.
+	 * @param bool       $full_objects   Whether to return full objects.
 	 *
 	 * @return array List of groups and their fields.
 	 */
-	public function groups_get( $type, $name, $default_fields = null ) {
+	public function groups_get( $type, $name, $default_fields = null, $full_objects = false ) {
 		static $groups_cache = [];
 
 		$cache_key = $type . '/' . $name;
+
+		if ( $full_objects ) {
+			$cache_key .= '/full';
+		}
 
 		if ( isset( $groups_cache[ $cache_key ] ) ) {
 			return $groups_cache[ $cache_key ];
@@ -966,8 +971,17 @@ class PodsMeta {
 		$has_custom_groups = ! empty( self::$groups[ $type ][ $name ] );
 
 		if ( ! empty( $pod['groups'] ) ) {
-			foreach ( $pod['groups'] as $group ) {
+			$pod_groups = $pod['groups'];
+
+			foreach ( $pod_groups as $group ) {
 				if ( empty( $group['fields'] ) ) {
+					continue;
+				}
+
+				// Maybe provide the full group objects.
+				if ( $full_objects ) {
+					$groups[ $group['name'] ] = $group;
+
 					continue;
 				}
 

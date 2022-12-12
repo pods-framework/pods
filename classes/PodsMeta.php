@@ -615,8 +615,10 @@ class PodsMeta {
 			$meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, $pod['fields'][ $field ], $pod['fields'], $pod );
 		}
 
-		// always return a string
-		if ( ! is_string( $meta ) ) {
+		// Always return a string version.
+		if ( is_array( $meta ) && isset( $meta[0] ) ) {
+			$meta = pods_serial_comma( $meta, $pod->get_field( $field ) );
+		} elseif ( ! is_string( $meta ) ) {
 			$meta = '';
 		}
 

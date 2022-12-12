@@ -67,6 +67,75 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_by_identifier( $identifier, $parent = null ) {
+		if ( $identifier instanceof Whatsit ) {
+			return $identifier;
+		}
+
+		if ( ! is_string( $identifier ) || false === strpos( $identifier, '/' ) ) {
+			return null;
+		}
+
+		$object_collection = Store::get_instance();
+
+		// Check if we already have an object registered and available.
+		$object = $object_collection->get_object( $identifier );
+
+		if ( $object ) {
+			return $object;
+		}
+
+		$identifier_parts = explode( '/', $identifier );
+
+		$total_parts = count( $identifier_parts );
+
+		$parent_object_id = 0;
+
+		if ( 3 === $total_parts ) {
+			$object_type = $identifier_parts[0];
+
+			if ( is_numeric( $identifier_parts[1] ) ) {
+				$parent_object_id = (int) $identifier_parts[1];
+			}
+
+			$object_name = $identifier_parts[2];
+		} elseif ( 2 === $total_parts ) {
+			$object_type = $identifier_parts[0];
+			$object_name = $identifier_parts[1];
+		} else {
+			return null;
+		}
+
+		$get_args = [
+			'object_type' => $object_type,
+			'name'        => $object_name,
+		];
+
+		if ( $parent instanceof Whatsit ) {
+			$get_args['parent']            = $parent->get_id();
+			$get_args['parent_id']         = $parent->get_id();
+			$get_args['parent_name']       = $parent->get_name();
+			$get_args['parent_identifier'] = $parent->get_identifier();
+		} elseif ( is_numeric( $parent ) ) {
+			$get_args['parent']    = $parent;
+			$get_args['parent_id'] = $parent;
+		} elseif ( is_string( $parent ) ) {
+			if ( false === strpos( $parent, '/' ) ) {
+				$get_args['parent_name'] = $parent;
+			} else {
+				$get_args['parent_identifier'] = $parent;
+			}
+		} elseif ( 0 < $parent_object_id ) {
+			$get_args['parent']    = $parent_object_id;
+			$get_args['parent_id'] = $parent_object_id;
+		}
+
+		return $this->get( $get_args );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function find( array $args = [] ) {
 		// Object type OR parent is required.
 		if ( empty( $args['object_type'] ) && empty( $args['object_types'] ) && empty( $args['parent'] ) ) {
@@ -289,6 +358,29 @@ class Collection extends Storage {
 	 */
 	public function save_args( Whatsit $object ) {
 		return true;
+	}
+
+	/**
+	 * Setup object from an identifier.
+	 *
+	 * @param string $value         The identifier.
+	 * @param bool   $force_refresh Whether to force the refresh of the object.
+	 *
+	 * @return Whatsit|null
+	 */
+	public function to_object( $value, $force_refresh = false ) {
+		if ( empty( $value ) ) {
+			return null;
+		}
+
+		if ( is_wp_error( $value ) ) {
+			return null;
+		}
+
+		$object_collection = Store::get_instance();
+
+		// Check if we already have an object registered and available.
+		return $object_collection->get_object( $value );
 	}
 
 }

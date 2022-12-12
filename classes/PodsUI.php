@@ -1579,18 +1579,6 @@ class PodsUI {
 		if ( is_object( $this->pod ) ) {
 			$object_fields = $this->pod->pod_data->get_object_fields();
 
-			$object_field_objects = array(
-				'post_type',
-				'taxonomy',
-				'media',
-				'user',
-				'comment',
-			);
-
-			if ( empty( $object_fields ) && in_array( $this->pod->pod_data['type'], $object_field_objects, true ) ) {
-				$object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data['type'], $this->pod->pod_data );
-			}
-
 			if ( empty( $fields ) ) {
 				// Add core object fields if $fields is empty
 				$fields = $this->pod->pod_data->get_all_fields();
@@ -1598,45 +1586,42 @@ class PodsUI {
 		}
 
 		$form_fields = $fields;
+
 		// Temporary
 		$fields = array();
 
 		foreach ( $form_fields as $k => $field ) {
 			$name = $k;
 
-			$defaults = array(
-				'name' => $name,
-			);
-
 			$is_field_object = $field instanceof Field;
 
 			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
-				$field = array(
+				$field = [
 					'name' => $name,
-				);
+				];
 			}
-
-			$field = pods_config_merge_data( $defaults, $field );
-
-			$field['name'] = trim( $field['name'] );
-
-			$default_value = pods_v( 'default', $field );
-			$value         = pods_v( 'value', $field );
 
 			if ( empty( $field['name'] ) ) {
 				$field['name'] = trim( $name );
 			}
 
-			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				$field_attributes = $object_fields[ $field['name'] ];
+			$default_value = pods_v( 'default', $field );
+			$value         = pods_v( 'value', $field );
 
-				$field = pods_config_merge_data( $field, $field_attributes );
-			} elseif ( isset( $this->pod->fields[ $field['name'] ] ) ) {
-				$field_attributes = $this->pod->fields[ $field['name'] ];
+			if ( ! $field instanceof Field ) {
+				if ( isset( $object_fields[ $field['name'] ] ) ) {
+					$field_attributes = $object_fields[ $field['name'] ];
 
-				$field = pods_config_merge_data( $field_attributes, $field );
+					$field = pods_config_merge_data( $field, $field_attributes );
+				} else {
+					$field_attributes = $this->pod->pod_data->get_field( $field['name'] );
+
+					if ( $field_attributes ) {
+						$field = pods_config_merge_data( $field_attributes, $field );
+					}
+				}
 			}
 
 			if ( pods_v( 'hidden', $field, false ) ) {

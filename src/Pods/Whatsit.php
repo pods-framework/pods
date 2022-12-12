@@ -943,6 +943,65 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Maybe get the list of objects or determine if they need to be loaded.
+	 *
+	 * @since 2.9.10
+	 *
+	 * @param array $objects The list of objects or their identifiers.
+	 * @param array $args    The list of arguments to filter by.
+	 *
+	 * @return Whatsit[]|null The list of objects or null if they need to be loaded separately.
+	 */
+	protected function maybe_get_objects_by_identifier( array $objects, $args ) {
+		$api = pods_api();
+
+		$object_collection = Store::get_instance();
+
+		$storage_type = ! empty( $args['object_storage_type'] ) ? $args['object_storage_type'] : $api->get_default_object_storage_type();
+
+		/** @var \Pods\Whatsit\Storage\Post_Type $storage_object */
+		$storage_object = $object_collection->get_storage_object( $storage_type );
+
+		$parent = $this;
+
+		// Check if we have at least the object field.
+		if ( ! empty( $objects ) ) {
+			$first_object = reset( $objects );
+
+			// Check if this is an identifier.
+			if ( is_string( $first_object ) ) {
+				// We likely don't have any of these objects so just fetch them together normally as that's quicker.
+				return null;
+			}
+		}
+
+		$found_identifier = false;
+
+		// Build any objects from identifiers that are needed.
+		$objects = array_map(
+			static function( $identifier ) use ( $storage_object, $parent, &$found_identifier ) {
+				if ( $identifier instanceof Whatsit ) {
+					return $identifier;
+				}
+
+				$found_identifier = true;
+
+				return $storage_object->get_by_identifier( $identifier, $parent );
+			},
+			$objects
+		);
+
+		if ( ! $found_identifier ) {
+			return $objects;
+		}
+
+		$objects = array_filter( $objects );
+		$names   = wp_list_pluck( $objects, 'name' );
+
+		return array_combine( $names, $objects );
+	}
+
+	/**
 	 * Fetch field from object with no traversal support.
 	 *
 	 * @param string $field_name    Field name.
@@ -1071,17 +1130,19 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return [];
 		}
 
-		$object_collection = Store::get_instance();
+		$api = pods_api();
 
 		$has_custom_args = ! empty( $args );
 
 		if ( null !== $this->_fields && ! $has_custom_args ) {
-			$objects = array_map( [ $object_collection, 'get_object' ], $this->_fields );
-			$objects = array_filter( $objects );
+			$objects = $this->maybe_get_objects_by_identifier( $this->_fields, $args );
 
-			$names = wp_list_pluck( $objects, 'name' );
+			if ( is_array( $objects ) ) {
+				$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
 
-			return array_combine( $names, $objects );
+				/** @var Field[] $objects */
+				return $objects;
+			}
 		}
 
 		$filtered_args = [
@@ -1103,8 +1164,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		], $filtered_args, $args );
 
 		try {
-			$api = pods_api();
-
 			if ( ! empty( $args['object_type'] ) ) {
 				$objects = $api->_load_objects( $args );
 			} else {
@@ -1115,7 +1174,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( ! $has_custom_args ) {
-			$this->_fields = wp_list_pluck( $objects, 'identifier' );
+			$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
 		}
 
 		return $objects;
@@ -1235,17 +1294,19 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return [];
 		}
 
-		$object_collection = Store::get_instance();
+		$api = pods_api();
 
 		$has_custom_args = ! empty( $args );
 
 		if ( null !== $this->_groups && ! $has_custom_args ) {
-			$objects = array_map( [ $object_collection, 'get_object' ], $this->_groups );
-			$objects = array_filter( $objects );
+			$objects = $this->maybe_get_objects_by_identifier( $this->_groups, $args );
 
-			$names = wp_list_pluck( $objects, 'name' );
+			if ( is_array( $objects ) ) {
+				$this->_groups = $objects;
 
-			return array_combine( $names, $objects );
+				/** @var Group[] $objects */
+				return $objects;
+			}
 		}
 
 		$filtered_args = [
@@ -1267,8 +1328,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		], $filtered_args, $args );
 
 		try {
-			$api = pods_api();
-
 			if ( ! empty( $args['object_type'] ) ) {
 				$objects = $api->_load_objects( $args );
 			} else {

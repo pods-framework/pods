@@ -84,6 +84,21 @@ class Post_Type extends Collection {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_by_identifier( $identifier, $parent = null ) {
+		if ( $identifier instanceof Whatsit ) {
+			return $identifier;
+		}
+
+		if ( is_int( $identifier ) ) {
+			return $this->to_object( $identifier );
+		}
+
+		return parent::get_by_identifier( $identifier, $parent );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function find( array $args = [] ) {
 		// Object type OR parent is required.
 		if ( empty( $args['object_type'] ) && empty( $args['parent'] ) ) {
@@ -362,6 +377,8 @@ class Post_Type extends Collection {
 
 			if ( ! empty( $args['ids'] ) ) {
 				$cache_key_parts[] = '_ids';
+
+				$cache_key_static_check .= '/ids';
 			}
 
 			$cache_key_parts[] = $current_language;
@@ -691,6 +708,13 @@ class Post_Type extends Collection {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function to_object( $value, $force_refresh = false ) {
+		return $this->to_object_from_post( $value, $force_refresh );
+	}
+
+	/**
 	 * Setup object from a Post ID or Post object.
 	 *
 	 * @param \WP_Post|array|int $post          Post object or ID of the object.
@@ -698,7 +722,7 @@ class Post_Type extends Collection {
 	 *
 	 * @return Whatsit|null
 	 */
-	public function to_object( $post, $force_refresh = false ) {
+	public function to_object_from_post( $post, $force_refresh = false ) {
 		if ( null !== $post && ! $post instanceof \WP_Post ) {
 			$post = get_post( $post );
 		}
@@ -707,7 +731,7 @@ class Post_Type extends Collection {
 			return null;
 		}
 
-		if ( ! $post || is_wp_error( $post ) ) {
+		if ( is_wp_error( $post ) ) {
 			return null;
 		}
 

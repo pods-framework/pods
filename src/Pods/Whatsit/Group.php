@@ -2,6 +2,7 @@
 
 namespace Pods\Whatsit;
 
+use Exception;
 use Pods\Whatsit;
 
 /**

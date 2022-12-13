@@ -173,7 +173,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.9.10 - November 17th, 2022 =
+= 2.9.10 - December 13th, 2022 =
 
 * Performance: Major performance improvements have been made to decrease queries in more areas of Pods and reduce overall load on any page. (@sc0ttkclark)
 * Tweak: Added debug backtrace to DB query errors as an admin, just add `?pods_debug_backtrace=1` to the URL to enable that to find out more details about where the query came from. (@sc0ttkclark)
@@ -182,6 +182,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Reduce load on block editor screen for Pods Blocks that have no preview. (@sc0ttkclark)
 * Fixed: PHP 8.0+ compatibility changes have been made to bypass PHP deprecation notices. #6579 (@sc0ttkclark)
 * Fixed: Removed `%%%s%%` usage in prepared `LIKE` queries for PodsTermSplitting class. (@sc0ttkclark)
+* Fixed: Pods Auto Templates now checks whether a post is password protected (and needs auth) before outputting the template. #6962 (@sc0ttkclark)
+* Fixed: Excluded Pods config post types from deletion when post author is deleted. #6938 (@sc0ttkclark)
+* Fixed: Settings values now get cached and cleared correctly between saves. #6964 (@sc0ttkclark)
+* Fixed: Admin Columns integration no longer throws unaught type errors for field values that contain an array. #6965 #6966 (@therealgilles, @sc0ttkclark)
 
 = 2.9.9 - October 31st, 2022 =
 

@@ -173,6 +173,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.9.10.1 - December 13th, 2022 =
+
+* Fixed: WP_Error class usage within namespace needed to be identified correctly for `\Pods\Pod_Manager`. (@lkraav, @sc0ttkclark)
+
 = 2.9.10 - December 13th, 2022 =
 
 * Performance: Major performance improvements have been made to decrease queries in more areas of Pods and reduce overall load on any page. (@sc0ttkclark)

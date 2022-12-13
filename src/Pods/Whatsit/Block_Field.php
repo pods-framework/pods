@@ -176,11 +176,15 @@ class Block_Field extends Field {
 		$data     = [];
 
 		if ( ! is_array( $raw_data ) ) {
+			// Support string callables.
 			if ( is_callable( $raw_data ) ) {
 				$raw_data = $raw_data();
 			} else {
 				$raw_data = [];
 			}
+		} elseif ( isset( $raw_data[0] ) && is_object( $raw_data[0] ) && is_callable( $raw_data ) ) {
+			// Support array callables if first item is an object.
+			$raw_data = $raw_data();
 		}
 
 		foreach ( $raw_data as $key => $item ) {

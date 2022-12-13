@@ -147,19 +147,12 @@ class Form extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		$api = pods_api();
-
-		$all_pods = $api->load_pods( [ 'names' => true ] );
-		$all_pods = array_merge( [
-			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
-		], $all_pods );
-
 		return [
 			[
 				'name'        => 'name',
 				'label'       => __( 'Pod Name', 'pods' ),
 				'type'        => 'pick',
-				'data'        => $all_pods,
+				'data'        => [ $this, 'callback_get_all_pods' ],
 				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
@@ -219,7 +212,7 @@ class Form extends Base {
 		$attributes = array_map( 'pods_trim', $attributes );
 
 		// Prevent any previews of this block.
-		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+		if ( $this->in_editor_mode( $attributes ) ) {
 			return $this->render_placeholder(
 				esc_html__( 'Form', 'pods' ),
 				esc_html__( 'No preview is available for this Pods Form, you will see it when you view or preview this on the front of your site.', 'pods' ),

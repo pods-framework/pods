@@ -1,4 +1,7 @@
 <?php
+
+use Pods\Tools\Reset;
+
 /** @var $pods_init PodsInit */
 global $pods_init, $wpdb;
 
@@ -16,7 +19,7 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 		pods_upgrade( '2.0.0' )->cleanup();
 
 		pods_redirect( pods_query_arg( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
-	} elseif ( isset( $_POST['pods_reset_pod'] ) ) {
+	} elseif ( isset( $_POST['pods_reset_pod'] ) || isset( $_POST['pods_reset_pod_preview'] ) ) {
 		$pod_name = pods_v( 'pods_field_reset_pod', 'post' );
 
 		if ( is_array( $pod_name ) ) {
@@ -26,16 +29,24 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 		$pod_name = sanitize_text_field( $pod_name );
 
 		if ( empty( $pod_name ) ) {
-			pods_message( __( 'No Pod selected.', 'pods' ), 'error' );
+			pods_message( __( 'No Pod specified.', 'pods' ), 'error' );
 		} else {
 			$pod = $pods_api->load_pod( [ 'name' => $pod_name ], false );
 
 			if ( empty( $pod ) ) {
 				pods_message( __( 'Pod not found.', 'pods' ), 'error' );
 			} else {
-				$pods_api->reset_pod( [], $pod );
+				$tool = pods_container( Reset::class );
 
-				pods_redirect( pods_query_arg( [ 'pods_reset_pod_success' => 1 ], [ 'page', 'tab' ] ) );
+				$mode = 'full';
+
+				if ( ! empty( $_POST['pods_reset_pod_preview'] ) ) {
+					$mode = 'preview';
+				}
+
+				$results = $tool->delete_all_content_for_pod( $pod, $mode );
+
+				pods_message( $results['message_html'] );
 			}
 		}
 	} elseif ( isset( $_POST['pods_reset'] ) ) {
@@ -50,8 +61,6 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 
 		pods_redirect( 'index.php' );
 	}
-} elseif ( 1 === (int) pods_v( 'pods_reset_pod_success' ) ) {
-	pods_message( 'Pod content has been deleted.' );
 } elseif ( 1 === (int) pods_v( 'pods_reset_success' ) ) {
 	pods_message( 'Pods settings and data have been reset.' );
 } elseif ( 1 === (int) pods_v( 'pods_cleanup_1x_success' ) ) {
@@ -100,22 +109,12 @@ foreach ( $all_pods as $pod ) {
 		continue;
 	}
 
-	$redirect_url = pods_query_arg(
-		[
-			'page'                          => 'pods',
-			'action'                        => 'edit',
-			'name'                          => $pod->get_name(),
-			'pods_debug_find_orphan_fields' => 1,
-		],
-		null,
-		null,
-		admin_url( 'admin.php' )
-	);
+	$pod_name = $pod->get_name();
 
-	$reset_pods[ $redirect_url ] = sprintf(
+	$reset_pods[ $pod_name ] = sprintf(
 		'%1$s (%2$s)',
 		$pod->get_label(),
-		$pod->get_name()
+		$pod_name
 	);
 }
 
@@ -148,8 +147,15 @@ asort( $reset_pods );
 	</table>
 
 	<p class="submit">
-		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe will delete ALL of the content for the Pod you selected.", 'pods' ); ?>
-		<input type="submit" class="button button-primary" name="pods_reset_pod" value=" <?php esc_attr_e( 'Reset Pod', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+		<?php
+		$confirm = esc_html__( 'Are you sure you want to do this?', 'pods' )
+				   . "\n\n" . esc_html__( 'This is a good time to make sure you have a backup.', 'pods' )
+				   . "\n\n" . esc_html__( 'We will delete ALL of the content for the Pod you selected.', 'pods' );
+		?>
+		<input type="submit" class="button button-primary" name="pods_reset_pod"
+			value=" <?php esc_attr_e( 'Delete Pod Content', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+		<input type="submit" class="button button-secondary" name="pods_reset_pod_preview"
+			value=" <?php esc_attr_e( 'Preview (no changes will be made)', 'pods' ); ?> " />
 	</p>
 <?php else : ?>
 	<p><em><?php esc_html_e( 'No Pods available to reset.', 'pods' ); ?></em></p>

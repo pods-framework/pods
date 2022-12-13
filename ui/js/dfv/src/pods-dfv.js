@@ -413,7 +413,7 @@ window.PodsDFV = {
 				formCounter: tag.dataset.formCounter || null,
 				fieldConfig: directRender ? undefined : cleanedFieldConfig,
 				fieldItemData: data.fieldItemData || null,
-				fieldValue: data.fieldValue || null,
+				fieldValue: data.fieldValue ?? null,
 			};
 		} );
 

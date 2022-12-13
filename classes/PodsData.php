@@ -826,7 +826,7 @@ class PodsData {
 
 		$params = (object) array_merge( $defaults, (array) $params );
 
-		if ( 0 < strlen( $params->sql ) ) {
+		if ( $params->sql && 0 < strlen( $params->sql ) ) {
 			return $params->sql;
 		}
 
@@ -1515,11 +1515,25 @@ class PodsData {
 				$find    = array_values( $find );
 				$replace = array_values( $replace );
 
-				$params->select  = preg_replace( $find, $replace, $params->select );
-				$params->where   = preg_replace( $find, $replace, $params->where );
-				$params->groupby = preg_replace( $find, $replace, $params->groupby );
-				$params->having  = preg_replace( $find, $replace, $params->having );
-				$params->orderby = preg_replace( $find, $replace, $params->orderby );
+				if ( $params->select ) {
+					$params->select = preg_replace( $find, $replace, $params->select );
+				}
+
+				if ( $params->where ) {
+					$params->where = preg_replace( $find, $replace, $params->where );
+				}
+
+				if ( $params->groupby ) {
+					$params->groupby = preg_replace( $find, $replace, $params->groupby );
+				}
+
+				if ( $params->having ) {
+					$params->having = preg_replace( $find, $replace, $params->having );
+				}
+
+				if ( $params->orderby ) {
+					$params->orderby = preg_replace( $find, $replace, $params->orderby );
+				}
 
 				if ( ! empty( $traverse ) ) {
 					$joins = $this->traverse( $traverse, $params->fields, $params );
@@ -1996,6 +2010,8 @@ class PodsData {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
+		$is_settings_pod = null;
+
 		if ( null === $row ) {
 			$this->row_number ++;
 
@@ -2012,7 +2028,11 @@ class PodsData {
 
 				if ( $this->pod_data && 'settings' === $this->pod_data['type'] ) {
 					$current_row_id = $this->pod_data['id'];
+
+					$is_settings_pod = true;
 				} else {
+					$is_settings_pod = false;
+
 					$current_row_id = pods_v( $this->field_id, $this->row );
 				}
 
@@ -2032,7 +2052,11 @@ class PodsData {
 		 */
 		$fetch_full = (bool) apply_filters( 'pods_data_fetch_full', $this->fetch_full, $this );
 
-		if ( $fetch_full && ( null !== $row || ( $this->pod_data && 'settings' === $this->pod_data['type'] ) ) ) {
+		if ( $fetch_full && null === $is_settings_pod ) {
+			$is_settings_pod = $this->pod_data && 'settings' === $this->pod_data['type'];
+		}
+
+		if ( $fetch_full && ( null !== $row || $is_settings_pod ) ) {
 			if ( $explicit_set ) {
 				$this->row_number = - 1;
 			}
@@ -2040,13 +2064,21 @@ class PodsData {
 			$mode = 'id';
 			$id   = pods_absint( $row );
 
-			if ( null !== $row && ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || (string) $row !== (string) preg_replace( '/[^0-9]/', '', $row ) ) ) {
-				if ( 'settings' === $this->pod_data['type'] || ( $this->id && is_numeric( $this->id ) ) ) {
-					$id = $this->id;
-				} else {
-					$mode = 'slug';
-					$id   = $row;
-				}
+			if ( $is_settings_pod ) {
+				$id = $this->pod_data->get_id();
+			}
+
+			if (
+				! $is_settings_pod
+				&& null !== $row
+				&& (
+					! is_numeric( $row )
+					|| 0 === strpos( $row, '0' )
+					|| (string) $row !== (string) preg_replace( '/[^0-9]/', '', $row )
+				)
+			) {
+				$mode = 'slug';
+				$id   = $row;
 			}
 
 			$row = false;
@@ -2375,6 +2407,14 @@ class PodsData {
 			}
 		}
 
+		if ( pods_is_admin() && 1 === (int) pods_v( 'pods_debug_backtrace' ) ) {
+			ob_start();
+			echo '<pre>';
+			var_dump( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 11 ) );
+			echo '</pre>';
+			$error = ob_get_clean() . $error;
+		}
+
 		$params = (object) array(
 			'sql'              => $sql,
 			'error'            => $error,
@@ -2619,7 +2659,7 @@ class PodsData {
 		$relation = 'AND';
 
 		if ( isset( $fields['relation'] ) ) {
-			$relation = strtoupper( trim( pods_v( 'relation', $fields, 'AND', true ) ) );
+			$relation = strtoupper( trim( (string) pods_v( 'relation', $fields, 'AND', true ) ) );
 
 			if ( 'AND' !== $relation ) {
 				$relation = 'OR';
@@ -2751,8 +2791,8 @@ class PodsData {
 			$q = $new_q;
 		}//end if
 
-		$field_name  = trim( pods_v( 'field', $q, pods_v( 'key', $q, $field, true ), true ) );
-		$field_type  = strtoupper( trim( pods_v( 'type', $q, 'CHAR', true ) ) );
+		$field_name  = trim( (string) pods_v( 'field', $q, pods_v( 'key', $q, $field, true ), true ) );
+		$field_type  = strtoupper( trim( (string) pods_v( 'type', $q, 'CHAR', true ) ) );
 		$field_value = pods_v( 'value', $q );
 
 		$field_compare = '=';
@@ -2761,7 +2801,7 @@ class PodsData {
 			$field_compare = 'IN';
 		}
 
-		$field_compare         = strtoupper( trim( pods_v( 'compare', $q, $field_compare, true ) ) );
+		$field_compare         = strtoupper( trim( (string) pods_v( 'compare', $q, $field_compare, true ) ) );
 		$field_sanitize        = (boolean) pods_v( 'sanitize', $q, true );
 		$field_sanitize_format = pods_v( 'sanitize_format', $q, null, true );
 		$field_cast            = pods_v( 'cast', $q, null, true );
@@ -3791,20 +3831,28 @@ class PodsData {
 		$file_field_types         = PodsForm::file_field_types();
 
 		if ( 'pick' === $params->field['type'] && ! in_array( pods_v( 'pick_object', $params->field ), $simple_tableless_objects, true ) ) {
-			$table_info = pods_v( 'table_info', $params->field );
+			if ( $params->field instanceof Field ) {
+				$table_info_field_id    = $params->field->get_arg( 'field_id' );
+				$table_info_field_index = $params->field->get_arg( 'field_index' );
+			} else {
+				$table_info = pods_v( 'table_info', $params->field );
 
-			if ( ! $params->field instanceof Field && empty( $table_info ) ) {
-				$table_info = pods_api()->get_table_info( pods_v( 'pick_object', $params->field ), pods_v( 'pick_val', $params->field ) );
-			}
+				if ( empty( $table_info ) ) {
+					$table_info = pods_api()->get_table_info( pods_v( 'pick_object', $params->field ), pods_v( 'pick_val', $params->field ) );
+				}
 
-			if ( empty( $table_info['field_id'] ) || empty( $table_info['field_index'] ) ) {
-				return false;
+				if ( empty( $table_info['field_id'] ) || empty( $table_info['field_index'] ) ) {
+					return false;
+				}
+
+				$table_info_field_id    = $table_info['field_id'];
+				$table_info_field_index = $table_info['field_index'];
 			}
 
 			if ( $params->use_field_id ) {
-				$db_field = $db_field . '.`' . $table_info['field_id'] . '`';
+				$db_field = $db_field . '.`' . $table_info_field_id . '`';
 			} else {
-				$db_field = $db_field . '.`' . $table_info['field_index'] . '`';
+				$db_field = $db_field . '.`' . $table_info_field_index . '`';
 			}
 		} elseif ( 'taxonomy' === $params->field['type'] ) {
 			$db_field = $db_field . '.`term_id`';

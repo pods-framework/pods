@@ -316,7 +316,7 @@ class PodsAdmin {
 								)
 							);
 						}//end if
-					} else {
+					} elseif ( 1 === (int) pods_v( 'use_submenu_fallback', $pod['options'], 1 ) ) {
 						$submenu[] = $pod;
 					}//end if
 				}//end foreach
@@ -724,7 +724,7 @@ class PodsAdmin {
 		// @codingStandardsIgnoreLine
 		$pod_name = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET['page'] );
 
-		$pod = pods( $pod_name, pods_v( 'id', 'get', null, true ) );
+		$pod = pods_get_instance( $pod_name, pods_v( 'id', 'get', null, true ) );
 
 		if ( ! $pod->pod_data->has_fields() ) {
 			pods_message( __( 'This Pod does not have any fields defined.', 'pods' ), 'error' );
@@ -748,7 +748,7 @@ class PodsAdmin {
 		// @codingStandardsIgnoreLine
 		$pod_name = str_replace( 'pods-settings-', '', $_GET['page'] );
 
-		$pod = pods( $pod_name );
+		$pod = pods_get_instance( $pod_name );
 
 		if ( 'custom' !== pods_v( 'ui_style', $pod->pod_data['options'], 'settings', true ) ) {
 			$actions_disabled = array(
@@ -769,7 +769,7 @@ class PodsAdmin {
 			$ui = array(
 				'pod'              => $pod,
 				'fields'           => array(
-					'edit' => $pod->pod_data['fields'],
+					'edit' => $pod->pod_data->get_fields(),
 				),
 				'header'           => array(
 					'edit' => $page_title,
@@ -1063,15 +1063,12 @@ class PodsAdmin {
 				continue;
 			}//end if
 
-			$group_count    = 0;
-			$field_count    = 0;
-			$row_count      = 0;
-			$row_meta_count = 0;
-			$podsrel_count  = 0;
+			$group_count = 0;
+			$field_count = 0;
 
 			if ( ! pods_is_types_only() ) {
-				$group_count    = $pod->count_groups();
-				$field_count    = $pod->count_fields();
+				$group_count = $pod->count_groups();
+				$field_count = $pod->count_fields();
 			}
 
 			if ( $include_row_counts ) {
@@ -3030,6 +3027,14 @@ class PodsAdmin {
 				'type'       => 'text',
 				'default'    => '',
 				'depends-on' => [ 'rest_enable' => true ],
+			],
+			'rest_namespace'   => [
+				'label'       => __( 'REST API namespace', 'pods' ),
+				'help'        => __( 'This will change the namespace URL of the REST API route to a different one from the default one that all normal route endpoints use.', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'wp/v2',
+				'depends-on'  => [ 'rest_enable' => true ],
 			],
 			'read_all'    => [
 				'label'      => __( 'Show All Fields (read-only)', 'pods' ),

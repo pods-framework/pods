@@ -5,22 +5,72 @@
  */
 
 use Pods\Whatsit\Pod;
+use Pods\Pod_Manager;
 
 /**
  * Include and Init the Pods class
  *
+ * @since 2.0.0
+ *
  * @see   Pods
  *
- * @param string $type   The pod name
- * @param mixed  $id     (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
- * @param bool   $strict (optional) If set to true, return false instead of an object if the Pod doesn't exist
+ * @param string $type   The pod name, leave null to auto-detect from The Loop.
+ * @param mixed  $id     (optional) The ID or slug, to load a single record; Provide array of $params to run 'find';
+ *                       Or leave null to auto-detect from The Loop.
+ * @param bool   $strict (optional) If set to true, returns false instead of a Pods object, if the Pod itself doesn't
+ *                       exist. Note: If you want to check if the Pods Item itself doesn't exist, use exists().
  *
  * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
- * @since 2.0.0
+ *
  * @link  https://docs.pods.io/code/pods/
  */
 function pods( $type = null, $id = null, $strict = null ) {
 	$pod = new Pods( $type, $id );
+
+	if ( null === $strict ) {
+		$strict = pods_strict();
+	}
+
+	if ( true === $strict && null !== $type && ! $pod->valid() ) {
+		return false;
+	}
+
+	return $pod;
+}
+
+/**
+ * Include and Init the Pods class with support for reuse.
+ *
+ * @since 2.9.10
+ *
+ * @see   Pods
+ *
+ * @param string $type   The pod name, leave null to auto-detect from The Loop.
+ * @param mixed  $id     (optional) The ID or slug, to load a single record; Provide array of $params to run 'find';
+ *                       Or leave null to auto-detect from The Loop.
+ * @param bool   $strict (optional) If set to true, returns false instead of a Pods object, if the Pod itself doesn't
+ *                       exist. Note: If you want to check if the Pods Item itself doesn't exist, use exists().
+ *
+ * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
+ *
+ * @link  https://docs.pods.io/code/pods/
+ */
+function pods_get_instance( $type = null, $id = null, $strict = null ) {
+	$manager = pods_container( Pod_Manager::class );
+
+	$args = [
+		'name' => $type,
+	];
+
+	if ( null !== $id ) {
+		if ( is_array( $id ) ) {
+			$args['find'] = $id;
+		} else {
+			$args['id'] = $id;
+		}
+	}
+
+	$pod = $manager->get_pod( $args );
 
 	if ( null === $strict ) {
 		$strict = pods_strict();

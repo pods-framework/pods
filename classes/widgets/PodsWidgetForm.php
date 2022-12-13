@@ -32,11 +32,11 @@ class PodsWidgetForm extends WP_Widget {
 		$after_content  = pods_v( 'after_content', $instance );
 
 		$args = array(
-			'name'      => trim( pods_v( 'pod_type', $instance, '' ) ),
-			'slug'      => trim( pods_v( 'slug', $instance, '' ) ),
-			'fields'    => trim( pods_v( 'fields', $instance, '' ) ),
-			'label'     => trim( pods_v( 'label', $instance, __( 'Submit', 'pods' ), true ) ),
-			'thank_you' => trim( pods_v( 'thank_you', $instance, '' ) ),
+			'name'      => trim( (string) pods_v( 'pod_type', $instance, '' ) ),
+			'slug'      => trim( (string) pods_v( 'slug', $instance, '' ) ),
+			'fields'    => trim( (string) pods_v( 'fields', $instance, '' ) ),
+			'label'     => trim( (string) pods_v( 'label', $instance, __( 'Submit', 'pods' ), true ) ),
+			'thank_you' => trim( (string) pods_v( 'thank_you', $instance, '' ) ),
 			'form'      => 1,
 		);
 

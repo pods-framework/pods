@@ -24,6 +24,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		$this->container->singleton( Data\Map_Field_Values::class, Data\Map_Field_Values::class );
 		$this->container->singleton( Theme\WP_Query_Integration::class, Theme\WP_Query_Integration::class );
 		$this->container->singleton( Tools\Repair::class, Tools\Repair::class );
+		$this->container->singleton( Tools\Reset::class, Tools\Reset::class );
 
 		$this->hooks();
 	}

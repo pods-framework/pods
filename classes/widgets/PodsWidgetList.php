@@ -32,16 +32,16 @@ class PodsWidgetList extends WP_Widget {
 		$after_content  = pods_v( 'after_content', $instance );
 
 		$args = array(
-			'name'       => trim( pods_v( 'pod_type', $instance, '' ) ),
-			'template'   => trim( pods_v( 'template', $instance, '' ) ),
+			'name'       => trim( (string) pods_v( 'pod_type', $instance, '' ) ),
+			'template'   => trim( (string) pods_v( 'template', $instance, '' ) ),
 			'limit'      => (int) pods_v( 'limit', $instance, 15, true ),
-			'orderby'    => trim( pods_v( 'orderby', $instance, '' ) ),
-			'where'      => trim( pods_v( 'where', $instance, '' ) ),
-			'expires'    => (int) trim( pods_v( 'expires', $instance, ( 60 * 5 ) ) ),
-			'cache_mode' => trim( pods_v( 'cache_mode', $instance, 'none', true ) ),
+			'orderby'    => trim( (string) pods_v( 'orderby', $instance, '' ) ),
+			'where'      => trim( (string) pods_v( 'where', $instance, '' ) ),
+			'expires'    => (int) trim( (string) pods_v( 'expires', $instance, ( 60 * 5 ) ) ),
+			'cache_mode' => trim( (string) pods_v( 'cache_mode', $instance, 'none', true ) ),
 		);
 
-		$content = trim( pods_v( 'template_custom', $instance, '' ) );
+		$content = trim( (string) pods_v( 'template_custom', $instance, '' ) );
 
 		if ( 0 < strlen( $args['name'] ) && ( 0 < strlen( $args['template'] ) || 0 < strlen( $content ) ) ) {
 			require PODS_DIR . 'ui/front/widgets.php';

@@ -18,9 +18,11 @@ jobs:
           node-version: '16.13.2'
       - name: Install dependencies
         run: npm install
-      - name: Run build-production
+      - name: Maybe build Pods Blocks JS API, Pods DFV, and styles assets
         run: npm run build-production
+      - name: Maybe update version number
+        run: npm run version_number
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css
+          file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css readme.txt init.php
           commit_message: Auto rebuild assets

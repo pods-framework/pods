@@ -193,8 +193,7 @@ class Block extends Pod {
 
 		// Handle custom context overrides from editor.
 		if (
-			! empty( $_GET['post_id'] )
-			&& ! empty( $_GET['podsContext'] )
+			! empty( $_GET['podsContext'] )
 			&& wp_is_json_request()
 			&& did_action( 'rest_api_init' )
 		) {

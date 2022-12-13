@@ -177,18 +177,6 @@ class Item_List extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		$api = pods_api();
-
-		$all_pods = $api->load_pods( [ 'names' => true ] );
-		$all_pods = array_merge( [
-			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
-		], $all_pods );
-
-		$all_templates = $api->load_templates( [ 'names' => true ] );
-		$all_templates = array_merge( [
-			'' => '- ' . __( 'Use Custom Template', 'pods' ) . ' -',
-		], $all_templates );
-
 		$cache_modes = [
 			[
 				'label' => 'Disable Caching',
@@ -222,7 +210,7 @@ class Item_List extends Base {
 				'name'        => 'name',
 				'label'       => __( 'Pod Name', 'pods' ),
 				'type'        => 'pick',
-				'data'        => $all_pods,
+				'data'        => [ $this, 'callback_get_all_pods' ],
 				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
@@ -230,7 +218,7 @@ class Item_List extends Base {
 				'name'        => 'template',
 				'label'       => __( 'Template', 'pods' ),
 				'type'        => 'pick',
-				'data'        => $all_templates,
+				'data'        => [ $this, 'callback_get_all_pod_templates' ],
 				'default'     => '',
 				'description' => __( 'You can choose a previously saved Pods Template here. We recommend saving your Pods Templates with our Templates component so you can enjoy the full editing experience.', 'pods' ),
 			],
@@ -372,7 +360,7 @@ class Item_List extends Base {
 		$attributes = array_map( 'pods_trim', $attributes );
 
 		if ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
-			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(
 					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Item List', 'pods' ),
 					esc_html__( 'Please specify a "Template" or "Custom Template" under "More Settings" to configure this block.', 'pods' )
@@ -392,15 +380,16 @@ class Item_List extends Base {
 			$attributes['name'] = $block->context['postType'];
 		}
 
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, pods_v( 'post_id', 'get', 0, true ), true ) );
+
 		if ( empty( $attributes['name'] ) ) {
 			if (
-				! empty( $_GET['post_id'] )
-				&& wp_is_json_request()
-				&& did_action( 'rest_api_init' )
+				0 !== $provided_post_id
+				&& $this->in_editor_mode( $attributes )
 			) {
-				$post_id = absint( $_GET['post_id'] );
+				$attributes['slug'] = $provided_post_id;
 
-				$attributes['name'] = get_post_type( $post_id );
+				$attributes['name'] = get_post_type( $attributes['slug'] );
 			} else {
 				$attributes['name'] = get_post_type();
 			}

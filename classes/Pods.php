@@ -121,12 +121,14 @@ class Pods implements Iterator {
 	/**
 	 * Constructor - Pods Framework core.
 	 *
-	 * @param string $pod The pod name.
-	 * @param mixed  $id  (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'.
-	 *
-	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since   1.0.0
+	 *
+	 * @param string $pod The pod name, leave null to auto-detect from The Loop.
+	 * @param mixed  $id  (optional) The ID or slug, to load a single record; Provide array of $params to run 'find';
+	 *                    Or leave null to auto-detect from The Loop.
+	 *
 	 * @link    https://docs.pods.io/code/pods/
+	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 */
 	public function __construct( $pod = null, $id = null ) {
 		if ( null === $pod ) {
@@ -292,7 +294,6 @@ class Pods implements Iterator {
 	 * @since 2.3.4
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
-	 *
 	 */
 	#[\ReturnTypeWillChange]
 	public function key() {
@@ -1577,6 +1578,11 @@ class Pods implements Iterator {
 									pods_no_conflict_off( $object_type );
 								}
 
+								if ( isset( $related_obj->fields[ $field ] ) ) {
+									// Set the last field options for formatting.
+									$last_options = $related_obj->fields[ $field ];
+								}
+
 								// Handle Simple Relationships.
 								if ( $simple ) {
 									if ( null === $params->single ) {
@@ -1596,7 +1602,7 @@ class Pods implements Iterator {
 
 							if ( $last_options ) {
 								$last_field_data = $last_options;
-							} elseif ( isset( $related_obj, $related_obj->fields, $related_obj->fields[ $field ] ) ) {
+							} elseif ( isset( $related_obj->fields[ $field ] ) ) {
 								// Save related field data for later to be used for display formatting
 								$last_field_data = $related_obj->fields[ $field ];
 							}
@@ -1624,6 +1630,19 @@ class Pods implements Iterator {
 
 		if ( ! empty( $last_field_data ) ) {
 			$field_data = $last_field_data;
+
+			if ( isset( $last_is_repeatable_field ) ) {
+				$is_repeatable_field = $last_is_repeatable_field;
+			}
+		}
+
+		if (
+			$is_repeatable_field
+			&& is_array( $value )
+			&& ! empty( $value )
+			&& is_array( current( $value ) )
+		) {
+			$value = array_merge( ...$value );
 		}
 
 		if ( ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {
@@ -4231,7 +4250,8 @@ class Pods implements Iterator {
 	 */
 	public function ui( $options = null, $amend = false ) {
 
-		$num = '';
+		$num        = '';
+		$num_prefix = '';
 
 		if ( empty( $options ) ) {
 			$options = array();
@@ -4241,12 +4261,18 @@ class Pods implements Iterator {
 			if ( empty( $num ) ) {
 				$num = '';
 			}
+
+			$num_prefix = pods_v_sanitized( 'num_prefix', $options, '' );
+
+			if ( empty( $num_prefix ) ) {
+				$num_prefix = '';
+			}
 		}
 
-		$check_id = pods_v( 'id' . $num, 'get', null, true );
+		$check_id = pods_v( $num_prefix . 'id' . $num, 'get', null, true );
 
 		// @codingStandardsIgnoreLine
-		if ( $this->id() != $check_id ) {
+		if ( null !== $check_id && $this->id() != $check_id ) {
 			$this->fetch( $check_id );
 		}
 
@@ -4305,8 +4331,8 @@ class Pods implements Iterator {
 					if ( ! current_user_can( 'pods_add_' . $this->pod ) ) {
 						$actions_disabled['add'] = 'add';
 
-						if ( 'add' === pods_v( 'action' . $num ) ) {
-							$_GET[ 'action' . $num ] = 'manage';
+						if ( 'add' === pods_v( $num_prefix . 'action' . $num ) ) {
+							$_GET[ $num_prefix . 'action' . $num ] = 'manage';
 						}
 					}
 
@@ -4328,7 +4354,7 @@ class Pods implements Iterator {
 				}//end if
 			}//end if
 
-			$_GET[ 'action' . $num ] = pods_v_sanitized( 'action' . $num, 'get', pods_v( 'action', $options, 'manage' ), true );
+			$_GET[ $num_prefix . 'action' . $num ] = pods_v_sanitized( $num_prefix . 'action' . $num, 'get', pods_v( 'action', $options, 'manage' ), true );
 
 			$index = $this->pod_data['field_id'];
 			$label = __( 'ID', 'pods' );

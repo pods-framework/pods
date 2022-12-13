@@ -405,7 +405,7 @@ class PodsField_Pick extends PodsField {
 			'label'            => __( 'Limit list by Post Status', 'pods' ),
 			'help'             => __( 'You can choose to limit Posts available for selection by one or more specific post status.', 'pods' ),
 			'type'             => 'pick',
-			'pick_object'      => 'post-status',
+			'pick_object'      => 'post-status-with-any',
 			'pick_format_type' => 'multi',
 			'default'          => 'publish',
 			'depends-on'       => [
@@ -684,6 +684,13 @@ class PodsField_Pick extends PodsField {
 				'group'         => __( 'Other WP Objects', 'pods' ),
 				'simple'        => true,
 				'data_callback' => array( $this, 'data_post_stati' ),
+			);
+
+			self::$related_objects['post-status-with-any'] = array(
+				'label'         => __( 'Post Status (with any)', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_post_stati_with_any' ),
 			);
 
 			self::$related_objects['post-types'] = [
@@ -1133,12 +1140,11 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function build_dfv_field_config( $args ) {
-
 		$config = parent::build_dfv_field_config( $args );
 
 		// Ensure data is passed in for relationship fields.
 		if ( ! isset( $config['data'] ) && ! empty( $args->options['data'] ) ) {
-			$config['data'] = $args->options['data'];
+			$config['data'] = $this->get_raw_data( $args->options );
 		}
 
 		// Default optgroup handling to off.
@@ -1302,14 +1308,13 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function build_dfv_field_item_data( $args ) {
-
 		$args->options['supports_thumbnails'] = null;
 
 		$item_data = [];
 		$data      = [];
 
 		if ( ! empty( $args->options['data'] ) ) {
-			$data = $args->options['data'];
+			$data = $this->get_raw_data( $args->options );
 		} elseif ( ! empty( $args->data ) ) {
 			$data = $args->data;
 		}
@@ -1556,7 +1561,7 @@ class PodsField_Pick extends PodsField {
 		$values = array();
 
 		// If we have values, let's cast them.
-		if ( ! empty( $args->value ) ) {
+		if ( isset( $args->value ) ) {
 			// The value may be a single non-array value.
 			$values = (array) $args->value;
 		}
@@ -1582,7 +1587,7 @@ class PodsField_Pick extends PodsField {
 				}
 
 				return (string) $value;
-			}, $values );
+			}, $key_values );
 
 			// Let's check to see if the current $item_id matches any key values.
 			if ( in_array( (string) $item_id, $key_values, true ) ) {
@@ -1981,10 +1986,34 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * Get the raw data from the field data provided.
+	 *
+	 * @since 2.9.9
+	 *
+	 * @param array|Field $field The field data.
+	 *
+	 * @return array|mixed
+	 */
+	public function get_raw_data( $field ) {
+		$data = pods_v( 'data', $field, null, true );
+
+		if ( null !== $data ) {
+			// Support late-initializing the data from a callback function passed in.
+			if ( ! is_array( $data ) && ! is_string( $data ) && is_callable( $data ) ) {
+				$data = $data();
+			}
+
+			$data = (array) $data;
+		}
+
+		return $data;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-		$data = pods_v( 'data', $options, null, true );
+		$data = $this->get_raw_data( $options );
 
 		$object_params = array(
 			// The name of the field.
@@ -2004,7 +2033,7 @@ class PodsField_Pick extends PodsField {
 		if ( null !== $data ) {
 			$data = (array) $data;
 		} else {
-			$data = $this->get_object_data( $object_params );
+			$data = (array) $this->get_object_data( $object_params );
 		}
 
 		/**
@@ -2075,7 +2104,7 @@ class PodsField_Pick extends PodsField {
 				}
 			}
 
-			$data = pods_v( 'data', $options, null, true );
+			$data = $this->get_raw_data( $options );
 
 			$object_params = array(
 				// The name of the field.
@@ -2092,11 +2121,11 @@ class PodsField_Pick extends PodsField {
 				'context' => 'simple_value',
 			);
 
-			if ( null === $data ) {
-				$data = $this->get_object_data( $object_params );
+			if ( null !== $data ) {
+				$data = (array) $data;
+			} else {
+				$data = (array) $this->get_object_data( $object_params );
 			}
-
-			$data = (array) $data;
 
 			$key = 0;
 
@@ -2163,7 +2192,7 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.2.0
 	 */
 	public function value_to_label( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		$data = pods_v( 'data', $options, null, true );
+		$data = $this->get_raw_data( $options );
 
 		$object_params = array(
 			// The name of the field.
@@ -2183,7 +2212,7 @@ class PodsField_Pick extends PodsField {
 		if ( null !== $data ) {
 			$data = (array) $data;
 		} else {
-			$data = $this->get_object_data( $object_params );
+			$data = (array) $this->get_object_data( $object_params );
 		}
 
 		$labels = array();
@@ -2239,7 +2268,7 @@ class PodsField_Pick extends PodsField {
 		);
 
 		// Get data override.
-		$data = pods_v( 'data', $options, null, true );
+		$data = $this->get_raw_data( $options );
 
 		if ( null !== $data ) {
 			// Return data override.
@@ -2338,7 +2367,7 @@ class PodsField_Pick extends PodsField {
 		$items = array();
 
 		if ( ! isset( $options[ static::$type . '_object' ] ) ) {
-			$data = pods_v( 'data', $options );
+			$data = $this->get_raw_data( $options );
 		}
 
 		$simple = false;
@@ -2535,7 +2564,7 @@ class PodsField_Pick extends PodsField {
 					$params['where'][] = '`t`.`post_author` = ' . (int) $post_author_id;
 				}
 
-				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
+				$display = trim( (string) pods_v( static::$type . '_display', $options ), ' {@}' );
 
 				$display_field       = "`t`.`{$search_data->field_index}`";
 				$display_field_name  = $search_data->field_index;
@@ -3087,17 +3116,50 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.0
 	 */
 	public function data_post_stati( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+		$data = [];
 
-		$data = array();
-
-		$post_stati = get_post_stati( array(), 'objects' );
+		$post_stati = get_post_stati( [], 'objects' );
 
 		foreach ( $post_stati as $post_status ) {
 			$data[ $post_status->name ] = $post_status->label;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_data_post_stati', $data, $name, $value, $options, $pod, $id );
+		return (array) apply_filters( 'pods_form_ui_field_pick_data_post_stati', $data, $name, $value, $options, $pod, $id );
+	}
 
+	/**
+	 * Data callback for Post Stati (with any).
+	 *
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
+	 *
+	 * @return array
+	 *
+	 * @since 2.9.10
+	 */
+	public function data_post_stati_with_any( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+		$data = [
+			'_pods_any' => esc_html__( 'Any Status (excluding Auto-Draft and Trashed)', 'pods' ),
+		];
+
+		$data = array_merge( $data, $this->data_post_stati( $name, $value, $options, $pod, $id ) );
+
+		/**
+		 * Allow filtering the list of post stati with any.
+		 *
+		 * @since 2.9.10
+		 *
+		 * @param array             $data    The list of post stati with any.
+		 * @param string|null       $name    The name of the field.
+		 * @param string|array|null $value   The value of the field.
+		 * @param array|null        $options Field options.
+		 * @param array|null        $pod     Pod data.
+		 * @param int|null          $id      Item ID.
+		 */
+		return (array) apply_filters( 'pods_form_ui_field_pick_data_post_stati_with_any', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -4022,7 +4084,7 @@ class PodsField_Pick extends PodsField {
 		}
 
 		if ( ! $obj ) {
-			$obj = pods( $params['pod'] );
+			$obj = pods_get_instance( $params['pod'] );
 		}
 
 		if ( ! $obj || ! $obj->fetch( $id ) ) {

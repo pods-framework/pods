@@ -157,6 +157,52 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	}
 
 	/**
+	 * Get the list of all Pods for a block field.
+	 *
+	 * @since 2.9.10
+	 *
+	 * @return array List of all Pod names and labels.
+	 */
+	public function callback_get_all_pods() {
+		$api = pods_api();
+
+		$all_pods = [];
+
+		try {
+			$all_pods = $api->load_pods( [ 'names' => true ] );
+		} catch ( \Exception $exception ) {
+			// Do nothing.
+		}
+
+		return array_merge( [
+				'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
+		], $all_pods );
+	}
+
+	/**
+	 * Get the list of all Pod Templates for a block field.
+	 *
+	 * @since 2.9.10
+	 *
+	 * @return array List of all Pod Template names and labels.
+	 */
+	public function callback_get_all_pod_templates() {
+		$api = pods_api();
+
+		$all_templates = [];
+
+		try {
+			$all_templates = $api->load_templates( [ 'names' => true ] );
+		} catch ( \Exception $exception ) {
+			// Do nothing.
+		}
+
+		return array_merge( [
+				'' => '- ' . __( 'Use Custom Template', 'pods' ) . ' -',
+		], $all_templates );
+	}
+
+	/**
 	 * Determine whether we are preloading a block.
 	 *
 	 * @since 2.8.8
@@ -189,5 +235,27 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 		 * @param Base          $block_type           The block type object (not WP_Block).
 		 */
 		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $this );
+	}
+
+	/**
+	 * Determine whether the block is being rendered in editor mode.
+	 *
+	 * @param array $attributes The block attributes used.
+	 *
+	 * @return bool Whether the block is being rendered in editor mode.
+	 */
+	public function in_editor_mode( $attributes = [] ) {
+		return (
+			! empty( $attributes['_is_editor'] )
+			|| (
+				is_admin()
+				&& $screen = get_current_screen()
+				&& 'post' === $screen->base
+			)
+			|| (
+				wp_is_json_request()
+				&& did_action( 'rest_api_init' )
+			)
+		);
 	}
 }

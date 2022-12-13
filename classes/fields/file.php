@@ -683,8 +683,18 @@ class PodsField_File extends PodsField {
 			$attachment      = null;
 			$attachment_data = array();
 
+			$attachment = get_post( $id );
+
+			if ( ! $attachment ) {
+				continue;
+			}
+
 			// Update the title if set.
-			if ( false !== $title && 1 === (int) pods_v( static::$type . '_edit_title', $options, 0 ) ) {
+			if (
+				false !== $title
+				&& 1 === (int) pods_v( static::$type . '_edit_title', $options, 0 )
+				&& $attachment->post_title !== $title
+			) {
 				$attachment_data['post_title'] = $title;
 			}
 
@@ -1183,7 +1193,7 @@ class PodsField_File extends PodsField {
 					$context_pod = null;
 
 					if ( $params->item_id ) {
-						$context_pod = pods( pods_v( 'name', $pod, false ), $params->item_id );
+						$context_pod = pods_get_instance( pods_v( 'name', $pod, false ), $params->item_id );
 
 						if ( ! $context_pod->exists() ) {
 							$context_pod = null;

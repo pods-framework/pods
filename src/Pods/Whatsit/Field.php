@@ -178,12 +178,8 @@ class Field extends Whatsit {
 	public function is_repeatable() {
 		$parent_object = $this->get_parent_object();
 
-		if ( ! $parent_object instanceof Pod ) {
-			return false;
-		}
-
 		// Only non table-based Pods can have repeatable fields.
-		if ( $parent_object->is_table_based() ) {
+		if ( $parent_object instanceof Whatsit && $parent_object->is_table_based() ) {
 			return false;
 		}
 

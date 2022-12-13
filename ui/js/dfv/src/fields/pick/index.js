@@ -276,7 +276,7 @@ const Pick = ( props ) => {
 			] );
 
 			setValueWithLimit( [
-				...( fieldValue || [] ),
+				...( fieldValue ?? [] ),
 				newData?.id.toString(),
 			] );
 		};
@@ -300,7 +300,7 @@ const Pick = ( props ) => {
 				<RadioSelect
 					htmlAttributes={ htmlAttributes }
 					name={ name }
-					value={ fieldValue || '' }
+					value={ fieldValue ?? '' }
 					setValue={ setValueWithLimit }
 					options={ modifiedFieldItemData }
 					readOnly={ toBool( readOnly ) }
@@ -318,7 +318,7 @@ const Pick = ( props ) => {
 				if ( Array.isArray( fieldValue ) ) {
 					formattedValue = fieldValue;
 				} else if ( 'string' === typeof fieldValue ) {
-					formattedValue = ( fieldValue || '' ).split( ',' );
+					formattedValue = ( fieldValue ?? '' ).split( ',' );
 				} else {
 					formattedValue = [];
 				}

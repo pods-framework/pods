@@ -118,7 +118,7 @@ You can enable some of our included components to extend your WordPress site eve
 = Pods Pro by SKCDEV Premium Add-Ons =
 
 * [List Tables Add-On](https://pods-pro.skc.dev/downloads/list-tables/) - A new block and shortcode to list/filter content from Pods in a table format
-* [Page Builder Toolkit Add-On](https://pods-pro.skc.dev/downloads/page-builder-toolkit/) - Integrates Pods with [Beaver Builder](https://wordpress.org/plugins/beaver-builder-lite-version/), [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/), [Divi Theme](https://www.elegantthemes.com/gallery/divi/), [Elementor](https://wordpress.org/plugins/elementor/), [GenerateBlocks](https://wordpress.org/plugins/generateblocks/), and [Oxygen Builder](https://oxygenbuilder.com/)
+* [Page Builder Toolkit Add-On](https://pods-pro.skc.dev/downloads/page-builder-toolkit/) - Integrates Pods with [Beaver Builder](https://wordpress.org/plugins/beaver-builder-lite-version/), [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/), [Conditional Blocks Pro](https://conditionalblocks.com/), [Divi Theme](https://www.elegantthemes.com/gallery/divi/), [Elementor](https://wordpress.org/plugins/elementor/), [GenerateBlocks](https://wordpress.org/plugins/generateblocks/), [Oxygen Builder](https://oxygenbuilder.com/), and [Stackable Blocks (premium)](https://wpstackable.com/premium/)
 * [Advanced Relationships Storage Add-On](https://pods-pro.skc.dev/downloads/advanced-relationship-storage/) - Advanced options for relationship storage
 * [TablePress Integration Add-On](https://pods-pro.skc.dev/downloads/tablepress-integration/) - Integrates Pods with [TablePress](https://wordpress.org/plugins/tablepress/)
 * [Advanced Permalinks Add-On](https://pods-pro.skc.dev/downloads/advanced-permalinks/) - Advanced permalink structures and taxonomy landing pages
@@ -172,6 +172,40 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.10 - December 13th, 2022 =
+
+* Performance: Major performance improvements have been made to decrease queries in more areas of Pods and reduce overall load on any page. (@sc0ttkclark)
+* Added: New WP-CLI tool command: `wp pods tools delete-all-content <pod> [--test]` (@sc0ttkclark)
+* Added: New WP-CLI tool command: `wp pods tools delete-all-groups-and-fields <pod> [--test]` (@sc0ttkclark)
+* Added: New WP-CLI tool command: `wp pods tools delete-all-relationship-data <pod> [--fields] [--test]` (@sc0ttkclark)
+* Added: New WP-CLI tool command: `wp pods tools repair-groups-and-fields <pod> [--test]` (@sc0ttkclark)
+* Added: Pods Admin > Tools and Pod Resets can now be previewed before you run them. (@sc0ttkclark) 
+* Tweak: Added debug backtrace to DB query errors as an admin, just add `?pods_debug_backtrace=1` to the URL to enable that to find out more details about where the query came from. (@sc0ttkclark)
+* Tweak: Relationships related to a Post Type now have an option to specify "Any Status" as an option for which posts to show. (@sc0ttkclark) 
+* Fixed: Advanced filters modal shows empty input fields as expected now for Advanced Content Types. #6949 (@sc0ttkclark)
+* Fixed: Implemented `num_prefix` in `Pods::ui()` for more customization capabilities. (@sc0ttkclark)
+* Fixed: Reduce load on block editor screen for Pods Blocks that have no preview. (@sc0ttkclark)
+* Fixed: PHP 8.0+ compatibility changes have been made to bypass PHP deprecation notices. #6579 (@sc0ttkclark)
+* Fixed: All currently known PHP 8.0+ deprecation notices have been resolved. (@sc0ttkclark)
+* Fixed: Removed `%%%s%%` usage in prepared `LIKE` queries for PodsTermSplitting class. (@sc0ttkclark)
+* Fixed: Pods Auto Templates now checks whether a post is password protected (and needs auth) before outputting the template. #6962 (@sc0ttkclark)
+* Fixed: Excluded Pods config post types from deletion when post author is deleted. #6938 (@sc0ttkclark)
+* Fixed: Settings values now get cached and cleared correctly between saves. #6964 (@sc0ttkclark)
+* Fixed: Admin Columns integration no longer throws unaught type errors for field values that contain an array. #6965 #6966 (@therealgilles, @sc0ttkclark)
+* Fixed: Block editor inspector controls for Pods Blocks that have dropdowns now show as full width as expected. (@sc0ttkclark)
+
+= 2.9.9 - October 31st, 2022 =
+
+* Tweak: When a field has moved outside of a group, disallow deleting that group until the Pod has been saved to prevent those fields being removed/orphaned. #6940 #6937 (@zrothauser, @sc0ttkclark)
+* Tweak: When registering code-based fields, if you have a relationship field that you are supplying the `'data'` option for, you can now pass in a callable function (not a string or array due to back-compat) to return the options only when the data is needed instead of every page load. (@sc0ttkclark)
+* Fixed: Number and currency parsing issues resolved with HTML5 inputs. #6928 #6922 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Add support for `post_thumbnail._src` and `post_thumbnail._url` variations as fallbacks for the correct `post_thumbnail_src` and `post_thumbnail_url` field usage. #6935 (@sc0ttkclark)
+* Fixed: Resolve issues saving Pods Pages fields. #6942 (@sc0ttkclark)
+* Fixed: Number/currency simple repeatable fields now formats as expected. #6930 #6929 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Update cache group usage and flush to clear Pods post type storage cache options too. (@sc0ttkclark)
+* Fixed: Allow 0 as a valid option for relationship values.
+* Fixed: Updated compatibility with Custom Post Types UI migration component.
 
 = 2.9.8 - September 29th, 2022 =
 

@@ -280,6 +280,34 @@ class TraversalTest extends Pods_TraversalTestCase {
 			$metadata_type = $pod_type;
 		}
 
+		$display_handler = static function( $value ) {
+			return $value;
+		};
+
+		if ( 'number' === $field['type'] ) {
+			$display_handler = static function ( $value ) use ( $field ) {
+				if ( '9,999.99' === pods_v( 'number_format', $field ) ) {
+					return number_format( (float) $value, (int) pods_v( $field['type'] . '_decimals', $field, 0 ) );
+				}
+
+				return $value;
+			};
+		}
+
+		$related_display_handler = static function( $value ) {
+			return $value;
+		};
+
+		if ( $related_pod_field && 'number' === $related_pod_field['type'] ) {
+			$related_display_handler = static function ( $value ) use ( $related_pod_field ) {
+				if ( '9,999.99' === pods_v( 'number_format', $related_pod_field ) ) {
+					return number_format( (float) $value, (int) pods_v( $related_pod_field['type'] . '_decimals', $related_pod_field, 0 ) );
+				}
+
+				return $value;
+			};
+		}
+
 		// @todo other field type coverage for relational
 		if ( in_array( $field_type, array( 'pick', 'taxonomy' ) ) ) {
 			if ( ! isset( self::$related_data[ $field['name'] ] ) ) {
@@ -419,11 +447,23 @@ class TraversalTest extends Pods_TraversalTestCase {
 					$check_display_index = $check_index;
 
 					if ( ! empty( $related_pod['fields'][ $related_pod_field['name'] ][ $related_pod_field['type'] . '_format_type' ] ) && 'multi' === $related_pod['fields'][ $related_pod_field['name'] ][ $related_pod_field['type'] . '_format_type' ] ) {
-						$check_value = (array) $check_value;
-						$check_index = (array) $check_index;
+						$check_display_value = (array) $check_value;
+						$check_display_index = (array) $check_index;
 
-						$check_display_value = pods_serial_comma( $check_value );
-						$check_display_index = pods_serial_comma( $check_index );
+						if (
+							! empty( $check_display_value )
+							&& is_array( current( $check_display_value ) )
+							&& 1 === (int) pods_v( 'repeatable', $related_pod_field )
+						) {
+							$check_display_value = array_merge( ...$check_display_value );
+							$check_display_index = array_merge( ...$check_display_index );
+						}
+
+						$check_display_value = array_map( $related_display_handler, $check_display_value );
+						$check_display_index = array_map( $related_display_handler, $check_display_index );
+
+						$check_display_value = pods_serial_comma( $check_display_value );
+						$check_display_index = pods_serial_comma( $check_display_index );
 					}
 
 					// Reset value/index array keys.
@@ -433,6 +473,16 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 					if ( is_array( $check_index ) ) {
 						$check_index = array_values( $check_index );
+					}
+
+					if ( 1 === (int) pods_v( 'repeatable', $related_pod_field ) ) {
+						if ( ! empty( $check_value ) && is_array( current( $check_value ) ) ) {
+							$check_value = array_merge( ...$check_value );
+						}
+
+						if ( ! empty( $check_index ) && is_array( current( $check_index ) ) ) {
+							$check_index = array_merge( ...$check_index );
+						}
 					}
 
 					if ( 'field' === $method ) {
@@ -510,8 +560,23 @@ class TraversalTest extends Pods_TraversalTestCase {
 							}
 						}
 
-						$check_related_display_value = pods_serial_comma( (array) $check_related_value );
-						$check_related_display_index = pods_serial_comma( (array) $check_related_index );
+						$check_related_display_value = (array) $check_related_value;
+						$check_related_display_index = (array) $check_related_index;
+
+						if (
+							! empty( $check_related_display_value )
+							&& is_array( current( $check_related_display_value ) )
+							&& 1 === (int) pods_v( 'repeatable', $related_pod_field )
+						) {
+							$check_related_display_value = array_merge( ...$check_related_display_value );
+							$check_related_display_index = array_merge( ...$check_related_display_index );
+						}
+
+						$check_related_display_value = array_map( $related_display_handler, $check_related_display_value );
+						$check_related_display_index = array_map( $related_display_handler, $check_related_display_index );
+
+						$check_related_display_value = pods_serial_comma( $check_related_display_value );
+						$check_related_display_index = pods_serial_comma( $check_related_display_index );
 					}
 
 					$related_traverse_index = $prefix . $related_pod_field['name'];
@@ -523,6 +588,15 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 					if ( is_array( $check_related_display_index ) ) {
 						$check_related_display_index = array_values( $check_related_display_index );
+					}
+
+					if (
+						! empty( $check_related_value )
+						&& is_array( $check_related_value )
+						&& is_array( current( $check_related_value ) )
+						&& 1 === (int) pods_v( 'repeatable', $related_pod_field )
+					) {
+						$check_related_value = array_merge( ...$check_related_value );
 					}
 
 					if ( 'field' === $method ) {
@@ -566,7 +640,20 @@ class TraversalTest extends Pods_TraversalTestCase {
 					$this->assertEquals( current( $check_value ), get_metadata( $metadata_type, $data['id'], $field['name'], true ), sprintf( 'Item field single meta value not as expected [%s]', $variant_id ) );
 				}
 			} elseif ( 'display' === $method ) {
-				$this->assertEquals( $check_value, $p->display( $field['name'] ), sprintf( 'Item field display value not as expected [%s]', $variant_id ) );
+				$check_display_value = $check_value;
+
+				if (
+					! empty( $check_display_value )
+					&& is_array( $check_display_value )
+					&& is_array( current( $check_display_value ) )
+					&& 1 === (int) pods_v( 'repeatable', $field )
+				) {
+					$check_display_value = array_merge( ...$check_display_value );
+				}
+
+				$check_display_value = $display_handler( $check_display_value );
+
+				$this->assertEquals( $check_display_value, $p->display( $field['name'] ), sprintf( 'Item field display value not as expected [%s]', $variant_id ) );
 			}
 		}//end if
 

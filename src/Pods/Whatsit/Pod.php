@@ -25,7 +25,7 @@ class Pod extends Whatsit {
 	 * @return string The storage used for the Pod data (meta, table, etc).
 	 */
 	public function get_storage() {
-		$storage = $this->get_arg( 'storage' );
+		$storage = parent::get_arg( 'storage' );
 
 		if ( empty( $storage ) ) {
 			$type    = $this->get_type();
@@ -34,7 +34,7 @@ class Pod extends Whatsit {
 			if ( in_array( $type, [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
 				$storage = 'meta';
 			} elseif ( in_array( $type, [ 'pod', 'table' ], true ) ) {
-				$storage = 'meta';
+				$storage = 'table';
 			} elseif ( 'settings' === $type )  {
 				$storage = 'option';
 			}
@@ -48,6 +48,8 @@ class Pod extends Whatsit {
 	 */
 	public function get_args() {
 		$args = parent::get_args();
+
+		$args['storage'] = $this->get_arg( 'storage' );
 
 		// Pods generally have no parent, group, or order.
 		unset( $args['parent'], $args['group'], $args['weight'] );
@@ -71,6 +73,14 @@ class Pod extends Whatsit {
 	 * {@inheritdoc}
 	 */
 	public function get_arg( $arg, $default = null, $strict = false ) {
+		if ( 'storage' === $arg ) {
+			return $this->get_storage();
+		}
+
+		if ( 'type' === $arg && null === $default ) {
+			$default = 'post_type';
+		}
+
 		$value = parent::get_arg( $arg, $default, $strict );
 
 		// Better handle object for extended objects.

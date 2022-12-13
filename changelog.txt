@@ -2,6 +2,41 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.10 - November 17th, 2022 =
+
+* Performance: Major performance improvements have been made to decrease queries in more areas of Pods and reduce overall load on any page. (@sc0ttkclark)
+* Tweak: Added debug backtrace to DB query errors as an admin, just add `?pods_debug_backtrace=1` to the URL to enable that to find out more details about where the query came from. (@sc0ttkclark)
+* Fixed: Advanced filters modal shows empty input fields as expected now for Advanced Content Types. #6949 (@sc0ttkclark)
+* Fixed: Implemented `num_prefix` in `Pods::ui()` for more customization capabilities. (@sc0ttkclark)
+* Fixed: Reduce load on block editor screen for Pods Blocks that have no preview. (@sc0ttkclark)
+* Fixed: PHP 8.0+ compatibility changes have been made to bypass PHP deprecation notices. #6579 (@sc0ttkclark)
+* Fixed: Removed `%%%s%%` usage in prepared `LIKE` queries for PodsTermSplitting class. (@sc0ttkclark)
+
+= 2.9.9 - October 31st, 2022 =
+
+* Tweak: When a field has moved outside of a group, disallow deleting that group until the Pod has been saved to prevent those fields being removed/orphaned. #6940 #6937 (@zrothauser, @sc0ttkclark)
+* Tweak: When registering code-based fields, if you have a relationship field that you are supplying the `'data'` option for, you can now pass in a callable function (not a string or array due to back-compat) to return the options only when the data is needed instead of every page load. (@sc0ttkclark)
+* Fixed: Number and currency parsing issues resolved with HTML5 inputs. #6928 #6922 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Add support for `post_thumbnail._src` and `post_thumbnail._url` variations as fallbacks for the correct `post_thumbnail_src` and `post_thumbnail_url` field usage. #6935 (@sc0ttkclark)
+* Fixed: Resolve issues saving Pods Pages fields. #6942 (@sc0ttkclark)
+* Fixed: Number/currency simple repeatable fields now formats as expected. #6930 #6929 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Update cache group usage and flush to clear Pods post type storage cache options too. (@sc0ttkclark)
+* Fixed: Allow 0 as a valid option for relationship values.
+* Fixed: Updated compatibility with Custom Post Types UI migration component.
+
+= 2.9.8 - September 29th, 2022 =
+
+* Enhancement: New `pods_config_for_field` function helps to set up consistent field objects when custom arrays are used. (@sc0ttkclark)
+* Enhancement: The `pods_config_for_pod` function now handles basic Pod arrays as well. (@sc0ttkclark)
+* Enhancement: New `Whatsit` object now runs the `pods_whatsit_setup` and `pods_whatsit_setup_(pod|field)` actions during setup so the objects can easily be overridden. (@sc0ttkclark)
+* Enhancement: New `Field::is_separator_excluded()` method to help determine if current field is excluded from separators using `pods_serial_comma()`. (@sc0ttkclark)
+* Tweak: Minor code and performance optimizations. (@sc0ttkclark)
+* Fixed: Resolved PHP error registering code-based taxonomies. (@naveen17797) 
+* Fixed: Resolved cache that wasn't getting cleared when a Template was saved. (@sc0ttkclark)
+* Fixed: oEmbed fields are editable again after fixing an issue with the readonly option. (@sc0ttkclark)
+* Fixed: Help to prevent magic tag helpers from causing fatal errors when they are used improperly. (@sc0ttkclark)
+* Fixed: Resolved issue with getting field values from Pods::field() for code-based relationships that have no ID. (@sc0ttkclark)
+
 = 2.9.7 - September 23rd, 2022 =
 
 * Enhancement: You can now toggle every checkbox at once on the Packages > Export screen instead of just by section. (@sc0ttkclark)

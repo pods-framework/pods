@@ -121,12 +121,6 @@ class API {
 			return $blocks;
 		}
 
-		$cached = pods_transient_get( 'pods_blocks' );
-
-		if ( is_array( $cached ) ) {
-			return $cached;
-		}
-
 		$this->setup_core_blocks();
 
 		$api = pods_api();
@@ -134,6 +128,7 @@ class API {
 		/** @var Block[] $blocks */
 		$blocks = $api->_load_objects( [
 			'object_type' => 'block',
+			'bypass_cache' => true,
 			// Disable DB queries for now.
 			'bypass_post_type_find' => false,
 		] );
@@ -144,8 +139,6 @@ class API {
 		$blocks = array_map( static function ( $block ) {
 			return $block->get_block_args();
 		}, $blocks );
-
-		pods_transient_set( 'pods_blocks', $blocks, DAY_IN_SECONDS * 7 );
 
 		return $blocks;
 	}

@@ -338,6 +338,8 @@ class Config_Handler {
 
 		$found_configs = [];
 
+		$refresh_cache = false;
+
 		foreach ( $this->registered_paths as $config_path ) {
 			foreach ( $file_configs as $file_config ) {
 				if ( empty( $file_config['theme_support'] ) && isset( $theme_dirs[ $config_path ] ) ) {
@@ -354,11 +356,21 @@ class Config_Handler {
 
 				if ( $found_config ) {
 					$found_configs[ $file_path ] = true;
+				} elseif ( $cached_found_configs ) {
+					$refresh_cache = true;
 				}
 			}
 		}
 
-		pods_transient_set( 'pods_config_handler_found_configs', $found_configs, DAY_IN_SECONDS );
+		if (
+			$refresh_cache
+			|| (
+				! empty( $found_configs )
+				&& $found_configs !== $cached_found_configs
+			)
+		) {
+			pods_transient_set( 'pods_config_handler_found_configs', $found_configs, WEEK_IN_SECONDS );
+		}
 
 		foreach ( $this->registered_files as $config_type => $files ) {
 			foreach ( $files as $file ) {

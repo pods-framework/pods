@@ -67,9 +67,78 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_by_identifier( $identifier, $parent = null ) {
+		if ( $identifier instanceof Whatsit ) {
+			return $identifier;
+		}
+
+		if ( ! is_string( $identifier ) || false === strpos( $identifier, '/' ) ) {
+			return null;
+		}
+
+		$object_collection = Store::get_instance();
+
+		// Check if we already have an object registered and available.
+		$object = $object_collection->get_object( $identifier );
+
+		if ( $object ) {
+			return $object;
+		}
+
+		$identifier_parts = explode( '/', $identifier );
+
+		$total_parts = count( $identifier_parts );
+
+		$parent_object_id = 0;
+
+		if ( 3 === $total_parts ) {
+			$object_type = $identifier_parts[0];
+
+			if ( is_numeric( $identifier_parts[1] ) ) {
+				$parent_object_id = (int) $identifier_parts[1];
+			}
+
+			$object_name = $identifier_parts[2];
+		} elseif ( 2 === $total_parts ) {
+			$object_type = $identifier_parts[0];
+			$object_name = $identifier_parts[1];
+		} else {
+			return null;
+		}
+
+		$get_args = [
+			'object_type' => $object_type,
+			'name'        => $object_name,
+		];
+
+		if ( $parent instanceof Whatsit ) {
+			$get_args['parent']            = $parent->get_id();
+			$get_args['parent_id']         = $parent->get_id();
+			$get_args['parent_name']       = $parent->get_name();
+			$get_args['parent_identifier'] = $parent->get_identifier();
+		} elseif ( is_numeric( $parent ) ) {
+			$get_args['parent']    = $parent;
+			$get_args['parent_id'] = $parent;
+		} elseif ( is_string( $parent ) ) {
+			if ( false === strpos( $parent, '/' ) ) {
+				$get_args['parent_name'] = $parent;
+			} else {
+				$get_args['parent_identifier'] = $parent;
+			}
+		} elseif ( 0 < $parent_object_id ) {
+			$get_args['parent']    = $parent_object_id;
+			$get_args['parent_id'] = $parent_object_id;
+		}
+
+		return $this->get( $get_args );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function find( array $args = [] ) {
 		// Object type OR parent is required.
-		if ( empty( $args['object_type'] ) && empty( $args['parent'] ) ) {
+		if ( empty( $args['object_type'] ) && empty( $args['object_types'] ) && empty( $args['parent'] ) ) {
 			return [];
 		}
 
@@ -85,40 +154,6 @@ class Collection extends Storage {
 
 		if ( empty( $args['limit'] ) ) {
 			$args['limit'] = $limit;
-		}
-
-		$object_collection = Store::get_instance();
-
-		$objects = $object_collection->get_objects();
-
-		foreach ( $objects as $k => $object ) {
-			$current_object_storage_type = $object->get_object_storage_type();
-
-			if ( $current_object_storage_type && isset( static::$compatible_types[ $current_object_storage_type ] ) ) {
-				continue;
-			}
-
-			unset( $objects[ $k ] );
-		}
-
-		if ( empty( $objects ) ) {
-			return $objects;
-		}
-
-		if ( ! empty( $args['object_type'] ) ) {
-			$object_types = (array) $args['object_type'];
-
-			foreach ( $objects as $k => $object ) {
-				if ( in_array( $object->get_object_type(), $object_types, true ) ) {
-					continue;
-				}
-
-				unset( $objects[ $k ] );
-			}
-
-			if ( empty( $objects ) ) {
-				return $objects;
-			}
 		}
 
 		if ( ! isset( $args['args'] ) ) {
@@ -151,6 +186,65 @@ class Collection extends Storage {
 			$args['args'][ $arg ] = $args[ $arg ];
 		}
 
+		$object_collection = Store::get_instance();
+
+		$cache_key = wp_json_encode( $args ) . $object_collection->get_salt();
+
+		$use_cache = did_action( 'init' );
+
+		$found_objects = null;
+
+		if ( $use_cache ) {
+			$found_objects = pods_static_cache_get( $cache_key, self::class . '/find_objects' );
+		}
+
+		// Cached objects found, don't process again.
+		if ( is_array( $found_objects ) ) {
+			return $found_objects;
+		}
+
+		$collection_args = [
+			'object_storage_types' => static::$compatible_types,
+		];
+
+		if ( ! empty( $args['object_storage_type'] ) ) {
+			$collection_args['object_storage_types'] = $args['object_storage_type'];
+		} elseif ( ! empty( $args['object_storage_types'] ) ) {
+			$collection_args['object_storage_types'] = $args['object_storage_types'];
+		}
+
+		if ( ! empty( $args['object_type'] ) ) {
+			$collection_args['object_types'] = $args['object_type'];
+		} elseif ( ! empty( $args['object_types'] ) ) {
+			$collection_args['object_types'] = $args['object_types'];
+		}
+
+		if ( ! empty( $args['id'] ) ) {
+			$collection_args['ids'] = $args['id'];
+		} elseif ( ! empty( $args['ids'] ) ) {
+			$collection_args['ids'] = $args['ids'];
+		} elseif ( ! empty( $args['identifier'] ) ) {
+			$collection_args['identifiers'] = $args['identifier'];
+		} elseif ( ! empty( $args['identifiers'] ) ) {
+			$collection_args['identifiers'] = $args['identifiers'];
+		}
+
+		if ( ! empty( $args['name'] ) ) {
+			$collection_args['names'] = $args['name'];
+		} elseif ( ! empty( $args['names'] ) ) {
+			$collection_args['names'] = $args['names'];
+		}
+
+		if ( isset( $args['internal'] ) ) {
+			$collection_args['internal'] = $args['internal'];
+		}
+
+		$objects = $object_collection->get_objects( $collection_args );
+
+		if ( empty( $objects ) ) {
+			return [];
+		}
+
 		foreach ( $args['args'] as $arg => $value ) {
 			if ( null === $value ) {
 				foreach ( $objects as $k => $object ) {
@@ -162,7 +256,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 
 				continue;
@@ -180,7 +274,7 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 
 				continue;
@@ -207,65 +301,17 @@ class Collection extends Storage {
 				}
 
 				if ( empty( $objects ) ) {
-					return $objects;
+					return [];
 				}
 			}
 		}//end foreach
 
-		if ( ! empty( $args['id'] ) ) {
-			$args['id'] = (array) $args['id'];
-			$args['id'] = array_map( 'absint', $args['id'] );
-			$args['id'] = array_unique( $args['id'] );
-			$args['id'] = array_filter( $args['id'] );
-
-			if ( $args['id'] ) {
-				foreach ( $objects as $k => $object ) {
-					if ( in_array( $object->get_id(), $args['id'], true ) ) {
-						continue;
-					}
-
-					unset( $objects[ $k ] );
-				}
-
-				if ( empty( $objects ) ) {
-					return $objects;
-				}
-			}
-		}
-
-		if ( ! empty( $args['name'] ) ) {
-			$args['name'] = (array) $args['name'];
-			$args['name'] = array_map( 'trim', $args['name'] );
-			$args['name'] = array_unique( $args['name'] );
-			$args['name'] = array_filter( $args['name'] );
-
-			if ( $args['name'] ) {
-				foreach ( $objects as $k => $object ) {
-					if ( in_array( $object->get_name(), $args['name'], true ) ) {
-						continue;
-					}
-
-					unset( $objects[ $k ] );
-				}
-
-				if ( empty( $objects ) ) {
-					return $objects;
-				}
-			}
-		}
-
-		if ( isset( $args['internal'] ) ) {
-			foreach ( $objects as $k => $object ) {
-				if ( $args['internal'] === (boolean) $object->get_arg( 'internal' ) ) {
-					continue;
-				}
-
-				unset( $objects[ $k ] );
-			}
-		}
-
 		if ( ! empty( $args['limit'] ) ) {
 			$objects = array_slice( $objects, 0, $args['limit'], true );
+		}
+
+		if ( $use_cache ) {
+			pods_static_cache_set( $cache_key, $objects, self::class . '/find_objects' );
 		}
 
 		$names = wp_list_pluck( $objects, 'name' );
@@ -280,7 +326,7 @@ class Collection extends Storage {
 		$storage_type = $object->get_object_storage_type();
 
 		if ( empty( $storage_type ) ) {
-			$object->set_arg( 'object_storage_type', static::$type );
+			$object->set_arg( 'object_storage_type', $this->get_object_storage_type() );
 		}
 
 		$object_collection = Store::get_instance();
@@ -312,6 +358,29 @@ class Collection extends Storage {
 	 */
 	public function save_args( Whatsit $object ) {
 		return true;
+	}
+
+	/**
+	 * Setup object from an identifier.
+	 *
+	 * @param string $value         The identifier.
+	 * @param bool   $force_refresh Whether to force the refresh of the object.
+	 *
+	 * @return Whatsit|null
+	 */
+	public function to_object( $value, $force_refresh = false ) {
+		if ( empty( $value ) ) {
+			return null;
+		}
+
+		if ( is_wp_error( $value ) ) {
+			return null;
+		}
+
+		$object_collection = Store::get_instance();
+
+		// Check if we already have an object registered and available.
+		return $object_collection->get_object( $value );
 	}
 
 }

@@ -31,13 +31,13 @@ class PodsWidgetSingle extends WP_Widget {
 		$after_content  = pods_v( 'after_content', $instance );
 
 		$args = array(
-			'name'        => trim( pods_v( 'pod_type', $instance, '' ) ),
-			'slug'        => trim( pods_v( 'slug', $instance, '' ) ),
-			'use_current' => trim( pods_v( 'use_current', $instance, '' ) ),
-			'template'    => trim( pods_v( 'template', $instance, '' ) ),
+			'name'        => trim( (string) pods_v( 'pod_type', $instance, '' ) ),
+			'slug'        => trim( (string) pods_v( 'slug', $instance, '' ) ),
+			'use_current' => trim( (string) pods_v( 'use_current', $instance, '' ) ),
+			'template'    => trim( (string) pods_v( 'template', $instance, '' ) ),
 		);
 
-		$content = trim( pods_v( 'template_custom', $instance, '' ) );
+		$content = trim( (string) pods_v( 'template_custom', $instance, '' ) );
 
 		if (
 			(

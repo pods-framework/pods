@@ -166,7 +166,7 @@ class Field extends Base {
 				unset( $attributes['use_current'] );
 			}
 		} elseif (
-			! empty( $attributes['use_current'] )
+			$attributes['use_current']
 			&& 0 !== $provided_post_id
 			&& $this->in_editor_mode( $attributes )
 		) {

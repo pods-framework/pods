@@ -176,6 +176,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 = 2.9.10.2 - December 14th, 2022 =
 
 * Fixed: The new `pods_get_instance()` function now correctly checks if the `$pod` object is set up before calling methods on it. (@lkraav, @sc0ttkclark)
+* Fixed: Properly support REST API namespace customizations for Post Types and Taxonomies. (@sc0ttkclark)
 
 = 2.9.10.1 - December 13th, 2022 =
 

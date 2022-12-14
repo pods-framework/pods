@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.10.2 - December 14th, 2022 =
+
+* Fixed: The new `pods_get_instance()` function now correctly checks if the `$pod` object is set up before calling methods on it. (@lkraav, @sc0ttkclark)
+
 = 2.9.10.1 - December 13th, 2022 =
 
 * Fixed: WP_Error class usage within namespace needed to be identified correctly for `\Pods\Pod_Manager`. (@lkraav, @sc0ttkclark)

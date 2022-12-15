@@ -1564,7 +1564,7 @@ class PodsInit {
 					$rest_namespace = pods_v( 'rest_namespace', $post_type );
 
 					// Get the namespace and sanitize/clean up the path.
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
 						$rest_namespace = explode( '/', $rest_namespace );
 						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
@@ -1578,7 +1578,7 @@ class PodsInit {
 					$pods_post_types[ $post_type_name ]['rest_base']             = $rest_base;
 					$pods_post_types[ $post_type_name ]['rest_controller_class'] = 'WP_REST_Posts_Controller';
 
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$pods_post_types[ $post_type_name ]['rest_namespace'] = $rest_namespace;
 					}
 				}
@@ -1771,7 +1771,7 @@ class PodsInit {
 					$rest_namespace = pods_v( 'rest_namespace', $taxonomy );
 
 					// Get the namespace and sanitize/clean up the path.
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
 						$rest_namespace = explode( '/', $rest_namespace );
 						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
@@ -1785,7 +1785,7 @@ class PodsInit {
 					$pods_taxonomies[ $taxonomy_name ]['rest_base']             = $rest_base;
 					$pods_taxonomies[ $taxonomy_name ]['rest_controller_class'] = 'WP_REST_Terms_Controller';
 
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$pods_taxonomies[ $taxonomy_name ]['rest_namespace'] = $rest_namespace;
 					}
 				}

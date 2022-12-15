@@ -171,7 +171,7 @@ class View extends \Tribe__Template {
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$this->render_dialog( $content, $args, $id, $echo );
+		return $this->render_dialog( $content, $args, $id, $echo );
 	}
 
 	/**
@@ -240,7 +240,82 @@ class View extends \Tribe__Template {
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$this->render_dialog( $content, $args, $id, $echo );
+		return $this->render_dialog( $content, $args, $id, $echo );
+	}
+
+	/**
+	 * Syntactic sugar for `render_dialog()` to make creating custom confirmation dialogs easier.
+	 * Adds sensible defaults for warning dialogs.
+	 *
+	 * @since 4.12.13
+	 *
+	 * @param string  $content Content as an HTML string.
+	 * @param array   $args    {
+	 *     List of arguments to override dialog template.
+	 *
+	 *     @type string  $button_id               The ID for the trigger button (optional).
+	 *     @type array   $button_classes          Any desired classes for the trigger button (optional).
+	 *     @type array   $button_attributes       Any desired attributes for the trigger button (optional).
+	 *     @type boolean $button_disabled         Should the button be disabled (optional).
+	 *     @type string  $button_text             The text for the dialog trigger button ("Open the dialog window").
+	 *     @type string  $button_type             The type for the trigger button (optional).
+	 *     @type string  $button_value            The value for the trigger button (optional).
+	 *     @type boolean $button_display          If the dialog button should be displayed or not (optional).
+	 *     @type string  $cancel_button_text      Text for the "Cancel" button ("Cancel").
+	 *     @type string  $cancel_button_classes   Any desired classes for the cancel button (optional).
+	 *     @type string  $content_classes         The dialog content classes ("tribe-dialog__content tribe-confirm__content").
+	 *     @type string  $continue_button_text    Text for the "Continue" button ("Confirm").
+	 *     @type string  $continue_button_classes Any desired classes for the continue button (optional).
+	 *     @type array   $context                 Any additional context data you need to expose to this file (optional).
+	 *     @type string  $id                      The unique ID for this dialog (`uniqid()`).
+	 *     @type string  $template                The dialog template name (confirm).
+	 *     @type string  $title                   The dialog title (optional).
+	 *     @type string  $trigger_classes         Classes for the dialog trigger ("tribe_dialog_trigger").
+	 *
+	 *     Dialog script option overrides.
+	 *
+	 *     @type string  $append_target           The dialog will be inserted after the button, you could supply a selector string here to override (optional).
+	 *     @type boolean $body_lock               Whether to lock the body while dialog open (true).
+	 *     @type string  $close_button_aria_label Aria label for the close button (optional).
+	 *     @type string  $close_button_classes    Classes for the close button ("tribe-dialog__close-button--hidden").
+	 *     @type string  $close_event             The dialog close event hook name (`tribe_dialog_close_confirm`).
+	 *     @type string  $content_wrapper_classes Dialog content wrapper classes. This wrapper includes the close button ("tribe-dialog__wrapper tribe-confirm__wrapper").
+	 *     @type string  $effect                  CSS effect on open. none or fade (optional).
+	 *     @type string  $effect_easing           A css easing string to apply ("ease-in-out").
+	 *     @type int     $effect_speed            CSS effect speed in milliseconds (optional).
+	 *     @type string  $overlay_classes         The dialog overlay classes ("tribe-dialog__overlay tribe-confirm__overlay").
+	 *     @type boolean $overlay_click_closes    If clicking the overlay closes the dialog (false).
+	 *     @type string  $show_event              The dialog event hook name (`tribe_dialog_show_confirm`).
+	 *     @type string  $wrapper_classes         The wrapper class for the dialog ("tribe-dialog").
+	 * }
+	 * @param string  $id      The unique ID for this dialog. Gets prepended to the data attributes. Generated if not passed (`uniqid()`).
+	 * @param boolean $echo    Whether to echo the script or to return it (default: true).
+	 *
+	 * @return string An HTML string of the dialog.
+	 */
+	public function render_warning( $content, $args = [], $id = null, $echo = true ) {
+		$default_args = [
+			'body_lock'               => true,
+			'button_display'          => false,
+			'cancel_button_text'      => __( 'Cancel', 'tribe-common' ),
+			'cancel_button_classes'   => 'tribe-dialog__button tribe-dialog__button-cancel tribe-common-c-btn tribe-common-c-btn-border',
+			'continue_button_text'    => __( 'OK', 'tribe-common' ),
+			'continue_button_classes'  => 'tribe-dialog__button tribe-dialog__button-continue tribe-common-c-btn-border tribe-common-c-btn-border--alt',
+			'close_button_aria_label' => '',
+			'close_button_classes'    => 'tribe-dialog__close-button--hidden',
+			'close_event'             => 'tribe_dialog_close_confirm',
+			'content_classes'         => 'tribe-dialog__content tribe-confirm__content',
+			'content_wrapper_classes' => 'tribe-dialog__wrapper tribe-confirm__wrapper',
+			'overlay_classes'         => 'tribe-dialog__overlay tribe-modal__overlay tribe-warning__overlay',
+			'overlay_click_closes'    => false,
+			'show_event'              => 'tribe_dialog_show_confirm',
+			'template'                => 'warning',
+			'title_classes'           => [ 'tribe-dialog__title', 'tribe-confirm__title' ],
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
+		return $this->render_dialog( $content, $args, $id, $echo );
 	}
 
 	/**
@@ -308,7 +383,7 @@ class View extends \Tribe__Template {
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$this->render_dialog( $content, $args, $id, $echo );
+		return $this->render_dialog( $content, $args, $id, $echo );
 	}
 
 	/**
@@ -329,8 +404,10 @@ class View extends \Tribe__Template {
 	 *     @type string  $button_type             The type for the trigger button (optional).
 	 *     @type string  $button_value            The value for the trigger button (optional).
 	 *     @type boolean $button_display          If the dialog button should be displayed or not (optional).
+	 *     @type string  $cancel_button_classes   Any desired classes for the cancel button (optional).
 	 *     @type string  $close_event             The dialog event hook name (`tribe_dialog_close_dialog`).
 	 *     @type string  $content_classes         The dialog content classes ("tribe-dialog__content").
+	 *     @type string  $continue_button_classes Any desired classes for the continue button (optional).
 	 *     @type string  $title_classes           The dialog title classes ("tribe-dialog__title").
 	 *     @type array   $context                 Any additional context data you need to expose to this file (optional).
 	 *     @type string  $id                      The unique ID for this dialog (`uniqid()`).
@@ -367,6 +444,8 @@ class View extends \Tribe__Template {
 			'button_type'             => '',
 			'button_value'            => '',
 			'button_display'          => true,
+			'cancel_button_classes'   => 'tribe-dialog__button tribe-dialog__button-cancel tribe-common-c-btn-border tribe-common-c-btn-border--alt',
+			'continue_button_classes' => 'tribe-dialog__button tribe-dialog__button-continue tribe-common-c-btn tribe-common-c-btn-border',
 			'close_event'             => 'tribe_dialog_close_dialog',
 			'content_classes'         => 'tribe-dialog__content',
 			'context'                 => '',

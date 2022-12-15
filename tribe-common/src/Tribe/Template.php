@@ -292,7 +292,7 @@ class Tribe__Template {
 	 * @since  4.6.2
 	 *
 	 * @param array|string $index    Specify each nested index in order.
-	 *                               Example: array( 'lvl1', 'lvl2' );
+	 *                               Example: [ 'lvl1', 'lvl2' ];
 	 * @param mixed        $default  Default value if the search finds nothing.
 	 * @param boolean      $is_local Use the Local or Global context.
 	 *
@@ -313,7 +313,7 @@ class Tribe__Template {
 		 *
 		 * @param mixed        $value    The value that will be filtered.
 		 * @param array|string $index    Specify each nested index in order.
-		 *                               Example: array( 'lvl1', 'lvl2' );
+		 *                               Example: [ 'lvl1', 'lvl2' ];
 		 * @param mixed        $default  Default value if the search finds nothing.
 		 * @param boolean      $is_local Use the Local or Global context.
 		 * @param self         $template Current instance of the Tribe__Template.
@@ -356,13 +356,13 @@ class Tribe__Template {
 	}
 
 	/**
-	 * Merges local and global context, and saves it locally
+	 * Merges local and global context, and saves it locally.
 	 *
 	 * @since  4.6.2
 	 *
-	 * @param  array  $context  Local Context array of data
-	 * @param  string $file     Complete path to include the PHP File
-	 * @param  array  $name     Template name
+	 * @param  array  $context   Local Context array of data.
+	 * @param  string $file      Complete path to include the PHP File.
+	 * @param  array  $name      Template name.
 	 *
 	 * @return array
 	 */
@@ -376,16 +376,30 @@ class Tribe__Template {
 		$context = wp_parse_args( (array) $context, $this->get_values() );
 
 		/**
-		 * Allows filtering the Local context
+		 * Allows filtering the Local context.
 		 *
 		 * @since  4.6.2
 		 *
-		 * @param array  $context   Local Context array of data
-		 * @param string $file      Complete path to include the PHP File
-		 * @param array  $name      Template name
-		 * @param self   $template  Current instance of the Tribe__Template
+		 * @param array  $context   Local Context array of data.
+		 * @param string $file      Complete path to include the PHP File.
+		 * @param array  $name      Template name.
+		 * @param self   $template  Current instance of the Tribe__Template.
 		 */
 		$this->context = apply_filters( 'tribe_template_context', $context, $file, $name, $this );
+
+		$hook_name = $this->get_template_current_hook_name();
+
+		/**
+		 * Allows filtering the Local context specifically to the template with the hook name passed to the method.
+		 *
+		 * @since  4.12.13
+		 *
+		 * @param array  $context   Local Context array of data.
+		 * @param string $file      Complete path to include the PHP File.
+		 * @param array  $name      Template name.
+		 * @param self   $template  Current instance of the Tribe__Template.
+		 */
+		$this->context = apply_filters( "tribe_template_context:{$hook_name}", $this->context, $file, $name, $this );
 
 		return $this->context;
 	}
@@ -483,7 +497,7 @@ class Tribe__Template {
 		// Craft the plugin Path
 		$path = array_merge( (array) $base, (array) $this->get_template_public_namespace( $namespace ) );
 
-		// Pick up if the folder needs to be aded to the public template path.
+		// Pick up if the folder needs to be added to the public template path.
 		$folder = array_diff( $this->folder, $this->get_template_origin_base_folder() );
 
 		if ( ! empty( $folder ) ) {
@@ -507,7 +521,7 @@ class Tribe__Template {
 	/**
 	 * Fetches the folders in which we will look for a given file
 	 *
-	 * @since  4.7.20
+	 * @since 4.7.20
 	 * @since 4.12.10 Add support for common lookup.
 	 *
 	 * @return array<string,array> A list of possible locations for the template file.
@@ -593,7 +607,7 @@ class Tribe__Template {
 	 *
 	 * @since  4.7.20
 	 *
-	 * @param  mixed  $name  File name we are looking for
+	 * @param  mixed  $name  File name we are looking for.
 	 *
 	 * @return string
 	 */
@@ -1463,6 +1477,7 @@ class Tribe__Template {
 		 * @param self   $template  Current instance of the Tribe__Template.
 		 */
 		do_action( "tribe_template_after_include:{$hook_name}", $file, $name, $this );
+
 		return ob_get_clean();
 	}
 }

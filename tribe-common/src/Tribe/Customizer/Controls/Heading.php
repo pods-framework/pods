@@ -19,6 +19,16 @@ use Tribe\Customizer\Control;
  * @package Tribe\Customizer\Controls
  */
 class Heading extends Control {
+
+	/**
+	 * Control's Type.
+	 *
+	 * @since 4.13.3
+	 *
+	 * @var string
+	 */
+	public $type = 'heading';
+
 	/**
 	 * Anyone able to set theme options will be able to see the header.
 	 *
@@ -42,11 +52,18 @@ class Heading extends Control {
 	 *
 	 * @since 4.12.14
 	 */
-	public function render_content() {
-		?>
-		<h4 style="font-size: 20px; font-weight: normal; line-height: 1.75; margin-top: 0; margin-bottom: 0px;">
+	public function render_content() { ?>
+
+		<h4 class="customize-control-heading">
 			<?php echo esc_html( $this->label ); ?>
 		</h4>
-		<?php
+
+		<?php if ( ! empty( $this->description ) ) : ?>
+
+			<p class="customize-control-heading-description">
+				<?php echo wp_kses_post( $this->description ); ?>
+			</p>
+
+		<?php endif;
 	}
 }

@@ -871,6 +871,16 @@ abstract class Tribe__Repository
 		}
 
 		$query->set( 'fields', 'ids' );
+
+		/**
+		 * Filters the query object by reference before getting the first post from the query.
+		 *
+		 * @since 4.14.8
+		 *
+		 * @param WP_Query $query The WP_Query object before get_posts() is called.
+		 */
+		do_action( "tribe_repository_{$this->filter_name}_pre_first_post", $query );
+
 		$ids = $query->get_posts();
 
 		$query->set( 'fields', $original_fields_value );
@@ -935,6 +945,16 @@ abstract class Tribe__Repository
 		}
 
 		$query->set( 'fields', 'ids' );
+
+		/**
+		 * Filters the query object by reference before getting the last post from the query.
+		 *
+		 * @since 4.14.8
+		 *
+		 * @param WP_Query $query The WP_Query object before get_posts() is called.
+		 */
+		do_action( "tribe_repository_{$this->filter_name}_pre_last_post", $query );
+
 		$ids = $query->get_posts();
 
 		$query->set( 'fields', $original_fields_value );
@@ -1378,6 +1398,15 @@ abstract class Tribe__Repository
 			if ( empty( $query->request ) ) {
 				$query->set( 'fields', 'ids' );
 
+				/**
+				 * Filters the query object by reference before getting the post IDs from the query.
+				 *
+				 * @since 4.14.8
+				 *
+				 * @param WP_Query $query The WP_Query object before get_posts() is called.
+				 */
+				do_action( "tribe_repository_{$this->filter_name}_pre_get_ids_for_posts", $query );
+
 				return $query->get_posts();
 			}
 
@@ -1794,7 +1823,9 @@ abstract class Tribe__Repository
 				$args = [ 'p' => $value ];
 				break;
 			case 'search':
-				$args = [ 's' => $value ];
+				if ( '' !== $value ) {
+					$args = [ 's' => $value ];
+				}
 				break;
 			case 'post_status':
 				$this->query_args['post_status'] = (array) $value;
@@ -2401,6 +2432,40 @@ abstract class Tribe__Repository
 	/**
 	 * {@inheritdoc}
 	 */
+	public function by_not_related_to( $by_meta_keys, $keys = null, $values = null ) {
+
+		/** @var wpdb $wpdb */
+		global $wpdb;
+
+		$by_meta_keys = $this->prepare_interval( $by_meta_keys );
+
+		$join      = '';
+		$and_where = '';
+		if ( ! empty( $keys ) || ! empty( $values ) ) {
+			$join = "\nJOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id\n";
+		}
+		if ( ! empty( $keys ) ) {
+			$keys       = $this->prepare_interval( $keys );
+			$and_where .= "\nAND pm2.meta_key IN {$keys}\n";
+		}
+		if ( ! empty( $values ) ) {
+			$values     = $this->prepare_interval( $values );
+			$and_where .= "\nAND pm2.meta_value IN {$values}\n";
+		}
+
+		$this->where_clause( "{$wpdb->posts}.ID NOT IN (
+			SELECT pm1.meta_value
+			FROM {$wpdb->postmeta} pm1 {$join}
+			WHERE pm1.meta_key IN {$by_meta_keys} {$and_where}
+			GROUP BY( pm1.meta_value )
+		)" );
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function has_filter( $key, $value = null ) {
 		$args   = func_get_args();
 		$values = array_slice( $args, 1 );
@@ -2891,7 +2956,10 @@ abstract class Tribe__Repository
 		}
 
 		foreach ( $this->updates as $key => $value ) {
-			if ( is_callable( $value ) ) {
+			if (
+				$value instanceof Closure ||
+				( is_array( $value ) && is_callable( $value ) )
+			) {
 				$value = $value( $id, $key, $this );
 			}
 
@@ -3693,5 +3761,14 @@ abstract class Tribe__Repository
 		$this->void_query = (bool) $void_query;
 
 		return $this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_last_sql(): ?string {
+		return $this->last_built_query instanceof WP_Query ?
+			$this->last_built_query->request
+			: null;
 	}
 }

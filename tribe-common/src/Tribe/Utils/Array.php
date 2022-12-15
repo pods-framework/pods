@@ -35,7 +35,7 @@ if ( ! class_exists( 'Tribe__Utils__Array' ) ) {
 					// would likely lead to unexpected problems for whatever first set it.
 					$error = sprintf(
 						'Attempted to set $array[%1$s] but %2$s is already set and is not an array.',
-						implode( $key, '][' ),
+						implode( '][', $key ),
 						$i
 					);
 
@@ -666,6 +666,67 @@ if ( ! class_exists( 'Tribe__Utils__Array' ) ) {
 
 			// Finally destringify the keys to return something that will resemble, in shape, the original arrays.
 			return static::destringify_keys( $merged );
+		}
+
+		/**
+		 * Shapes, filtering it, an array to the specified expected set of required keys.
+		 *
+		 * @since 5.0.0
+		 *
+		 * @param array $array The input array to shape.
+		 * @param array $shape The shape to update the array with. It should only define keys
+		 *                     or arrays of keys. Keys that have no values will be set to `null`.
+		 *                     To add the key only if set, prefix the key with `?`, e.g. `?foo`.
+		 *
+		 * @return array The input array shaped and ordered per the shape.
+		 */
+		public static function shape_filter( array $array, array $shape ): array {
+			$shaped = [];
+			foreach ( $shape as $shape_index => $shape_key ) {
+				$optional = is_array( $shape_key ) ?
+					strpos( $shape_index, '?' ) === 0
+					: strpos( $shape_key, '?' ) === 0;
+
+				if ( is_array( $shape_key ) ) {
+					$shape_index = $optional ? substr( $shape_index, 1 ) : $shape_index;
+					if ( $optional && ! isset( $array[ $shape_index ] ) ) {
+						continue;
+					}
+					$shaped[ $shape_index ] = self::shape_filter( $array[$shape_index] ?? [], $shape_key );
+				} else {
+					$shape_key = $optional ? substr( $shape_key, 1 ) : $shape_key;
+					if ( ! isset( $array[ $shape_key ] ) && $optional ) {
+						continue;
+					}
+					$shaped[ $shape_key ] = $array[ $shape_key ] ?? null;
+				}
+			}
+
+			return $shaped;
+		}
+
+		/**
+		 * Searches an array using a callback and returns the index of the first match.
+		 *
+		 * This method fills the gap left by the non-existence of an `array_usearch` function.
+		 *
+		 * @since 5.0.0
+		 *
+		 * @param mixed    $needle   The element to search in the array.
+		 * @param array    $haystack The array to search.
+		 * @param callable $callback A callback function with signature `fn($needle, $value, $key) :bool`
+		 *                           that will be used to find the first match of needle in haystack.
+		 *
+		 * @return string|int|false Either the index of the first match or `false` if no match was found.
+		 */
+		public static function usearch( $needle, array $haystack, callable $callback ) {
+			foreach ( $haystack as $key => $value ) {
+				if ( $callback( $needle, $value, $key ) ) {
+					return $key;
+				}
+			}
+
+			return false;
 		}
 	}
 }

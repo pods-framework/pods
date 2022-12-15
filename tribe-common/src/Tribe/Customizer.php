@@ -113,6 +113,7 @@ final class Tribe__Customizer {
 		add_action( 'customize_register', [ $this, 'register' ], 15 );
 
 		add_action( 'wp_print_footer_scripts', [ $this, 'print_css_template' ], 15 );
+		add_action( 'customize_controls_print_footer_scripts', [ $this, 'customize_controls_print_footer_scripts' ], 15 );
 
 		// front end styles from customizer
 		add_action( 'tribe_events_pro_widget_render', [ $this, 'inline_style' ], 101 );
@@ -191,7 +192,7 @@ final class Tribe__Customizer {
 		 * @deprecated
 		 * @since 4.0
 		 *
-		 * @param array $selection_class
+		 * @param array $sections_class
 		 * @param self  $customizer
 		 */
 		$this->sections_class = apply_filters( 'tribe_events_pro_customizer_sections_class', $this->sections_class, $this );
@@ -201,12 +202,31 @@ final class Tribe__Customizer {
 		 *
 		 * @since 4.4
 		 *
-		 * @param array $selection_class
+		 * @param array $sections_class
 		 * @param self  $customizer
 		 */
 		$this->sections_class = apply_filters( 'tribe_customizer_sections_class', $this->sections_class, $this );
 
 		return $this->sections_class;
+	}
+
+	/**
+	 * Returns the section requested by ID.
+	 *
+	 * @since 4.13.3
+	 *
+	 * @param string $id The ID of the desired section.
+	 *
+	 * @return boolean|Tribe__Customizer__Section The requested section or boolean false if not found.
+	 */
+	public function get_section( $id ) {
+		$sections = $this->get_loaded_sections();
+
+		if ( empty( $sections[ $id ] ) ) {
+			return false;
+		}
+
+		return $sections[ $id ];
 	}
 
 	/**
@@ -267,11 +287,14 @@ final class Tribe__Customizer {
 	}
 
 	/**
-	 * Get an option from the database, using index search you can retrieve the full panel, a section or even a setting
+	 * Get an option from the database, using index search you can retrieve the full panel, a section or even a setting.
 	 *
-	 * @param  array $search   Index search, array( 'section_name', 'setting_name' )
-	 * @param  mixed $default  The default, if the requested variable doesn't exits
-	 * @return mixed           The requested option or the default
+	 * @since 4.4
+	 *
+	 * @param  array $search   Index search, array( 'section_name', 'setting_name' ).
+	 * @param  mixed $default  The default, if the requested variable doesn't exits.
+	 *
+	 * @return mixed           The requested option or the default.
 	 */
 	public function get_option( $search = null, $default = null ) {
 		$sections = get_option( $this->ID, $default );
@@ -367,6 +390,22 @@ final class Tribe__Customizer {
 		}
 
 		return ! empty( $option );
+	}
+
+	/**
+	 * Add an action for some backwards compatibility.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return void
+	 */
+	public function customize_controls_print_footer_scripts() {
+		/**
+		 * Allows plugins to hook in and add any scripts they need at the right time.
+		 *
+		 * @param Tribe__Customizer $customizer The current instance of Tribe__Customizer.
+		 */
+		do_action( 'tribe_enqueue_customizer_scripts', $this );
 	}
 
 	/**
@@ -497,7 +536,7 @@ final class Tribe__Customizer {
 
 				if ( $just_print ) {
 					printf(
-						"<style id='%s-inline-css' type='text/css'>\n%s\n</style>\n",
+						"<style id='%s-inline-css' class='tec-customizer-inline-style' type='text/css'>\n%s\n</style>\n",
 						esc_attr( $sheet ),
 						$inline_style
 					);
@@ -553,7 +592,7 @@ final class Tribe__Customizer {
 	 * @return void
 	 */
 	public function register( WP_Customize_Manager $customizer ) {
-		// Set the Cutomizer on a class variable
+		// Set the Customizer on a class variable
 		$this->manager = $customizer;
 
 		/**
@@ -648,6 +687,42 @@ final class Tribe__Customizer {
 	}
 
 	/**
+	 * Returns a URL to the TEC Customizer panel.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @return string The URL to the TEC Customizer panel.
+	 */
+	public function get_panel_url() {
+		$query['autofocus[panel]'] = 'tribe_customizer';
+		return add_query_arg( $query, admin_url( 'customize.php' ) );
+	}
+
+	/**
+	 * Returns an HTML link directly to the (opened) TEC Customizer panel
+	 *
+	 * @since 4.14.0
+	 *
+	 * @param string $link_text The (pre)translated text for the link.
+	 *
+	 * @return string The HTML anchor element, linking to the TEC Customizer panel.
+	 *                An empty string is returned if missing a parameter.
+	 */
+	public function get_panel_link( $link_text ) {
+		if ( empty( $link_text ) || ! is_string( $link_text ) ) {
+			return '';
+		}
+
+		$panel_url = $this->get_panel_url();
+
+		return sprintf(
+			'<a href="%1$s">%2$s</a>',
+			esc_url( $panel_url ),
+			esc_html( $link_text )
+		);
+	}
+
+	/**
 	 * Use a "alias" method to register sections to allow users to filter args and the ID
 	 *
 	 * @since 4.0
@@ -700,17 +775,64 @@ final class Tribe__Customizer {
 	}
 
 	/**
+	 * Returns a URL to the a specific TEC Customizer section.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @param string $section The slug for the desired section.
+	 *
+	 * @return string The URL to the TEC Customizer section.
+	 */
+	public function get_section_url( $section ) {
+		if ( empty( $section ) ) {
+			return '';
+		}
+
+		$query['autofocus[section]'] = $section;
+		return add_query_arg( $query, admin_url( 'customize.php' ) );
+	}
+
+	/**
+	 * Gets the HTML link to a section in the TEC Customizer.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @param string $section   The section "slug" to link to.
+	 * @param string $link_text The text for the link.
+	 *
+	 * @return string The HTML anchor element, linking to the TEC Customizer section.
+	 *                An empty string is returned if missing a parameter.
+	 */
+	public function get_section_link( $section, $link_text = '' ) {
+		if ( empty( $section ) || empty( $link_text ) || ! is_string($link_text ) ) {
+			return '';
+		}
+
+
+		$panel_url = $this->get_section_url( $section );
+		if ( empty( $panel_url ) ) {
+			return '';
+		}
+
+		return sprintf(
+			'<a href="%1$s">%2$s</a>',
+			esc_url( $panel_url ),
+			esc_html( $link_text )
+		);
+	}
+
+	/**
 	 * Build the Setting name using the HTML format for Arrays
 	 *
 	 * @since  4.0
 	 *
-	 * @param  string $slug    The actual Setting name
-	 * @param  string|WP_Customize_Section $section [description]
+	 * @param  string $slug                         The actual Setting name
+	 * @param  string|WP_Customize_Section $section The section the setting lives in.
 	 *
-	 * @return string          HTML name Attribute name o the setting
+	 * @return string          HTML name Attribute name of the setting.
 	 */
 	public function get_setting_name( $slug, $section = null ) {
-		$name = $this->panel->id;
+		$name = ! empty( $this->panel->id ) ? $this->panel->id : '';
 
 		// If there is a section set append it
 		if ( $section instanceof WP_Customize_Section ) {
@@ -725,21 +847,78 @@ final class Tribe__Customizer {
 		return $name;
 	}
 
-
 	/**
 	 * Adds a setting field name to the Array of Possible Selective refresh fields
 	 *
 	 * @since  4.2
 	 *
-	 * @param  string $name    The actual Setting name
+	 * @param  string $name The actual Setting name
 	 *
-	 * @return array           The list of existing Settings, the new one included
+	 * @return array The list of existing Settings, the new one included
 	 */
 	public function add_setting_name( $name ) {
 		$this->settings[] = $name;
 		return $this->settings;
 	}
 
+	/**
+	 * Gets the URL to a specific control/setting in the TEC Customizer.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @param string $section The section "slug" to link into.
+	 * @param string $setting The setting "slug" to link to.
+	 *
+	 * @return string The URL to the setting.
+	 *                An empty string is returned if a parameter is missing or the setting control cannot be found.
+	 */
+	public function get_setting_url( $section, $setting ) {
+		// Bail if something is missing.
+		if ( empty( $setting ) || empty( $section ) ) {
+			return '';
+		}
+
+		$control = $this->get_setting_name( $setting, $section );
+
+		if ( empty( $control ) ) {
+			return '';
+		}
+
+		$query['autofocus[control]'] = $control;
+
+		return add_query_arg( $query, admin_url( 'customize.php' ) );
+	}
+
+	/**
+	 * Gets the link to the a specific control/setting in the TEC Customizer.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @param string $section   The section "slug" to link into.
+	 * @param string $setting   The setting "slug" to link to.
+	 * @param string $link_text The translated text for the link.
+	 *
+	 * @return string The HTML anchor element, linking to the TEC Customizer setting.
+	 *                An empty string is returned if missing a parameter or the setting control cannot be found.
+	 */
+	public function get_setting_link( $section, $setting, $link_text ) {
+		// Bail if something is missing.
+		if ( empty( $setting ) || empty( $section ) || empty( $link_text ) ) {
+			return '';
+		}
+
+		$control_url = $this->get_setting_url( $section, $setting );
+
+		if ( empty( $control_url ) ) {
+			return '';
+		}
+
+		return sprintf(
+			'<a href="%1$s">%2$s</a>',
+			esc_url( $control_url ),
+			esc_html( $link_text )
+		);
+	}
 
 	/**
 	 * Using the Previously created CSS element, we not just re-create it every setting change
@@ -827,5 +1006,68 @@ final class Tribe__Customizer {
 		$result .= '</style>';
 
 		return $result;
+	}
+
+	/**
+	 * Inserts link to TEC Customizer section for FSE themes in admin (left) menu.
+	 *
+	 * @since 4.14.8
+	 */
+	public function add_fse_customizer_link() {
+		_deprecated_function( __METHOD__, '4.14.18', 'No replacement. Customizer menu item is preserved as long as we activate it.');
+		// Exit early if the current theme is not a FSE theme.
+		if (  ! tec_is_full_site_editor() ) {
+			return;
+		}
+
+		// Add a link to the TEC panel in the Customizer.
+		add_submenu_page(
+			'themes.php',
+			_x( 'Customize The Events Calendar', 'Page title for the TEC Customizer section.', 'tribe-common' ),
+			_x( 'Customize The Events Calendar', 'Menu item text for the TEC Customizer section link.', 'tribe-common' ),
+			'edit_theme_options',
+			esc_url( add_query_arg( 'autofocus[panel]', 'tribe_customizer' , admin_url( 'customize.php' ) ) )
+		);
+	}
+
+	/**
+	 * Inserts link to TEC Customizer section for FSE themes in Events > Settings > Display.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @param array<string|mixed> $settings The existing settings array.
+	 *
+	 * @return array<string|mixed> $settings The modified settings array.
+	 */
+	public function add_fse_customizer_link_to_display_tab( $settings ) {
+		_deprecated_function( __METHOD__, '4.14.18', 'No replacement. Customizer link is preserved as long as we activate it.');
+		// Exit early if the current theme is not a FSE theme.
+		if (  ! tec_is_full_site_editor() ) {
+			return $settings;
+		}
+
+		$new_settings = [
+			'tribe-customizer-section-title' => [
+				'type' => 'html',
+				'html' => '<h3>' . __( 'Customizer', 'tribe-common' ) . '</h3>',
+			],
+			'tribe-customizer-link-description' => [
+				'type' => 'html',
+				'html' => '<p class="contained">' . __( 'Adjust colors, fonts, and more with the WordPress Customizer.', 'tribe-common' ) . '</p>',
+			],
+			'tribe-customizer-link' => [
+				'type' => 'html',
+				'html' => sprintf(
+					/* translators: %1$s: opening anchor tag; %2$s: closing anchor tag */
+					esc_html_x( '%1$sCustomize The Events Calendar%2$s', 'Link text added to the TEC->Settings->Display tab.', 'tribe-common' ),
+					'<p class="contained"><a href="' . esc_url( admin_url( 'customize.php?autofocus[panel]=tribe_customizer' ) ) . '">',
+					'</a></p>'
+				),
+			],
+		];
+
+		$settings = Tribe__Main::array_insert_after_key( 'tribe-form-content-start', $settings, $new_settings );
+
+		return $settings;
 	}
 }

@@ -230,7 +230,6 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		$this->data = $this->fetch_data();
 
@@ -240,7 +239,6 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		$this->data = $this->fetch_data();
 
@@ -252,7 +250,6 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		$this->data = $this->fetch_data();
 
@@ -262,7 +259,6 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		$this->data = $this->fetch_data();
 

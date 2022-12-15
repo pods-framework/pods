@@ -18,11 +18,11 @@ pods_form_enqueue_style( 'pods-form' );
 					<div class="inside">
 						<div class="submitbox" id="submitpost">
 							<?php
-							if ( isset( $pod->pod_data['fields']['created'] ) || isset( $pod->pod_data['fields']['modified'] ) || 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data['options'] ) ) ) {
+							if ( isset( $pod->pod_data['fields']['created'] ) || isset( $pod->pod_data['fields']['modified'] ) || 0 < strlen( (string) pods_v_sanitized( 'detail_url', $pod->pod_data['options'] ) ) ) {
 								?>
 								<div id="minor-publishing">
 									<?php
-									if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data['options'] ) ) ) {
+									if ( 0 < strlen( (string) pods_v_sanitized( 'detail_url', $pod->pod_data['options'] ) ) ) {
 										?>
 										<div id="minor-publishing-actions">
 											<div id="preview-action">

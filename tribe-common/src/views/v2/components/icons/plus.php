@@ -3,7 +3,7 @@
  * View: Plus Icon
  *
  * Override this template in your own theme by creating a file at:
- * [your-theme]/tribe/v2/components/icons/plus.php
+ * [your-theme]/tribe/events/v2/components/icons/plus.php
  *
  * See more documentation about our views templating system.
  *

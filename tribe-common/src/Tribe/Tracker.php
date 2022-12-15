@@ -282,8 +282,12 @@ class Tribe__Tracker {
 		// If we got here we will update the Modified Meta
 		$modified[ $meta_key ] = $now;
 
+		// Avoid loops!
+		remove_filter( 'update_post_metadata', [ $this, 'filter_watch_updated_meta' ], PHP_INT_MAX - 1 );
 		// Actually do the Update
 		update_post_meta( $post->ID, self::$field_key, $modified );
+		// Safe to filter again.
+		add_filter( 'update_post_metadata', [ $this, 'filter_watch_updated_meta' ], PHP_INT_MAX - 1, 5 );
 
 		// We need to return this, because we are still on a filter
 		return $check;

@@ -1012,7 +1012,7 @@ class Tribe__Repository__Query_Filters {
 			$frags[] = implode( ', ', array_map( $build_entry, $this->query_vars[ static::AFTER . 'orderby' ] ) );
 		}
 
-		return implode( ', ', $frags );
+		return implode( ', ', array_filter( $frags ) );
 	}
 
 	/**

@@ -8,7 +8,16 @@
 class Tribe__Editor {
 
 	/**
-	 * Meta key for flaging if a post is from classic editor
+	 * Key we store the toggle under in the tribe_events_calendar_options array.
+	 *
+	 * @since 4.14.13
+	 *
+	 * @var string
+	 */
+	public static $blocks_editor_key = 'toggle_blocks_editor';
+
+	/**
+	 * Meta key for flagging if a post is from Classic Editor
 	 *
 	 * @since 4.8
 	 *
@@ -17,32 +26,51 @@ class Tribe__Editor {
 	public $key_flag_classic_editor = '_tribe_is_classic_editor';
 
 	/**
-	 * Utility function to check if we should load the blocks or not based on two assumptions
-	 *
-	 * a) Is gutenberg active?
-	 * b) Is the blocks editor active?
+	 * Utility function to check if we should load the blocks or not.
 	 *
 	 * @since 4.8
 	 *
 	 * @return bool
 	 */
 	public function should_load_blocks() {
-		$gutenberg = $this->is_gutenberg_active() || $this->is_wp_version();
-		$blocks    = $this->is_blocks_editor_active();
-		$classic   = $this->is_classic_plugin_active() || $this->is_classic_option_active();
-
-		$should_load_blocks = $gutenberg && $blocks && ! $classic;
+		$should_load_blocks = (boolean) $this->are_blocks_enabled();
 
 		/**
-		 * Filters whether the Blocks Editor should be activated or not.
+		 * Filters whether the Blocks Editor should be activated or not for events.
 		 *
 		 * @since 4.12.0
 		 *
-		 * @param bool $should_load_blocks Whether the blocks editor should be activated or not.
+		 * @param bool $should_load_blocks Whether the blocks editor should be activated or not for events.
 		 */
-		$should_load_blocks = (bool) apply_filters( 'tribe_editor_should_load_blocks', $should_load_blocks );
+		$should_load_blocks= (bool) apply_filters( 'tribe_editor_should_load_blocks', $should_load_blocks );
 
 		return $should_load_blocks;
+	}
+
+	/**
+	 * Utility function to check if blocks are enabled based on two assumptions
+	 *
+	 * a) Is gutenberg active?
+	 *     1) Via plugin or WP version
+	 * b) Is the blocks editor active?
+	 *      1) Based on the enqueue_block_assets action.
+	 *
+	 * @since 4.14.13
+	 *
+	 * @return bool
+	 */
+	public function are_blocks_enabled() {
+		$gutenberg      = $this->is_gutenberg_active() || $this->is_wp_version();
+		$blocks_enabled = $gutenberg && $this->is_blocks_editor_active();
+
+		/**
+		 * Filters whether the Blocks Editor is enabled or not.
+		 *
+		 * @since 4.14.13
+		 *
+		 * @param bool $should_load_blocks Whether the Blocks Editor is enabled or not.
+		 */
+		return (bool) apply_filters( 'tribe_editor_are_blocks_enabled', $blocks_enabled );
 	}
 
 	/**
@@ -60,49 +88,26 @@ class Tribe__Editor {
 	}
 
 	/**
-	 * Checks if we have Gutenberg Project online, only useful while
-	 * its a external plugin
+	 * Checks if we have the Gutenberg Project plugin active.
 	 *
 	 * @since 4.8
 	 *
 	 * @return boolean
 	 */
-	public function is_gutenberg_active() {
-		return function_exists( 'the_gutenberg_project' );
+	private function is_gutenberg_active() {
+		return function_exists( 'gutenberg_register_scripts_and_styles' );
 	}
 
 	/**
-	 * Checks if we have Editor Block active
+	 * Checks if we have Editor Block active.
 	 *
 	 * @since 4.8
+	 * @since 4.14.13 Switch to using the `enqueue_block_assets` check that the Classic Editor plugin uses
 	 *
 	 * @return boolean
 	 */
 	public function is_blocks_editor_active() {
-		return function_exists( 'register_block_type' ) && function_exists( 'unregister_block_type' );
-	}
-
-	/**
-	 * Adds the required fields into the Events Post Type so that we can use Block Editor
-	 *
-	 * @since 4.8
-	 *
-	 * @param  array $args Arguments used to setup the Post Type
-	 *
-	 * @return array
-	 */
-	public function add_support( $args = [] ) {
-		// Make sure we have the Support argument and it's an array
-		if ( ! isset( $args['supports'] ) || ! is_array( $args['supports'] ) ) {
-			$args['supports'] = [];
-		}
-
-		// Add Editor Support
-		if ( ! in_array( 'editor', $args['supports'] ) ) {
-			$args['supports'][] = 'editor';
-		}
-
-		return $args;
+		return has_action( 'enqueue_block_assets' );
 	}
 
 	/**
@@ -161,91 +166,125 @@ class Tribe__Editor {
 	}
 
 	/**
-	 * classic_editor_replace is function that is created by the plugin:
-	 *
-	 * @see https://wordpress.org/plugins/classic-editor/
-	 *
-	 * prior 1.3 version the classic editor plugin was bundle inside of a unique function:
-	 * `classic_editor_replace` now all is bundled inside of a class `Classic_Editor`
+	 * Detect if the Classic Editor is force-activated via plugin or if it comes from a request.
 	 *
 	 * @since 4.8
-	 *
-	 * @return bool
-	 */
-	public function is_classic_plugin_active() {
-		$is_plugin_active = function_exists( 'classic_editor_replace' ) || class_exists( 'Classic_Editor' );
-		/**
-		 * Filter to change the output of calling: `is_classic_plugin_active`
-		 *
-		 * @since 4.9.12
-		 *
-		 * @param $is_plugin_active bool Value that indicates if the plugin is active or not.
-		 */
-		return apply_filters( 'tribe_is_classic_editor_plugin_active', $is_plugin_active );
-	}
-
-	/**
-	 * Check if the setting `'classic-editor-replace'` is set to `replace` that option means to
-	 * replace the gutenberg editor with the classic editor.
-	 *
-	 * Prior to 1.3 on classic editor plugin the value to identify if is on classic the value
-	 * was `replace`, now the value is `classic`
-	 *
-	 * @since 4.8
-	 *
-	 * @return bool
-	 */
-	public function is_classic_option_active() {
-		$valid_values = [ 'replace', 'classic' ];
-
-		return in_array( (string) get_option( 'classic-editor-replace' ), $valid_values, true );
-	}
-
-	/**
-	 * Detect if the classic editor is force-activated via plugin or if it comes from a request.
-	 *
-	 * @since 4.8
+	 * @todo Deprecate before 6.0.
 	 *
 	 * @return bool
 	 */
 	public function is_classic_editor() {
-		$disabled_by_plugin = $this->is_classic_plugin_active() && $this->is_classic_option_active();
+		return ! $this->should_load_blocks();
 
+		_deprecated_function( __FUNCTION__, '4.14.13', 'should_load_blocks' );
 		/**
-		 * Allow other addons to disable classic editor based on options.
+		 * Allow other addons to disable Classic Editor based on options.
 		 *
 		 * @since  4.8.5
+		 * @deprecated 4.14.13
 		 *
-		 * @param bool $classic_is_active Whether the classic editor should be used.
+		 * @param bool $classic_is_active Whether the Classic Editor should be used.
 		 */
-		$disabled_by_filter = apply_filters( 'tribe_editor_classic_is_active', false );
+		return apply_filters_deprecated(
+			'tribe_editor_classic_is_active',
+			[false],
+			'4.14.13',
+			'tribe_editor_should_load_blocks',
+			'This has been deprecated in favor of the filter in should_load_blocks(). Note however that the logic is inverted!'
+		);
+	}
 
-		$is_classic_editor_request = tribe_get_request_var( 'classic-editor', null );
+	/* DEPRECATED FUNCTIONS */
 
-		return $is_classic_editor_request || $disabled_by_plugin || $disabled_by_filter;
+	/**
+	 * Adds the required fields into the Events Post Type so that we can use Block Editor
+	 *
+	 * @since 4.8
+	 * @deprecated 4.14.13 This is not used anywhere.
+	 *
+	 * @param  array $args Arguments used to setup the Post Type
+	 *
+	 * @return array
+	 */
+	public function add_support( $args = [] ) {
+		_deprecated_function( __FUNCTION__, '4.14.13' );
+		// Make sure we have the Support argument and it's an array
+		if ( ! isset( $args['supports'] ) || ! is_array( $args['supports'] ) ) {
+			$args['supports'] = [];
+		}
+
+		// Add Editor Support
+		if ( ! in_array( 'editor', $args['supports'] ) ) {
+			$args['supports'][] = 'editor';
+		}
+
+		return $args;
 	}
 
 	/**
-	 * Whether the events are being served using Blocks or the Classical Editor.
+	 * classic_editor_replace is function that is created by the plugin:
+	 * used in ECP recurrence and TEC Meta
+	 *
+	 * @see https://wordpress.org/plugins/classic-editor/
+	 *
+	 * prior 1.3 version the Classic Editor plugin was bundled inside of a unique function:
+	 * `classic_editor_replace` now all is bundled inside of a class `Classic_Editor`
+	 *
+	 * @since 4.8
+	 * @deprecated 4.14.13
+	 *
+	 * @return bool
+	 */
+	public function is_classic_plugin_active() {
+		_deprecated_function( __FUNCTION__, '4.14.13', 'Tribe\Editor\Compatibility\Classic_Editor::is_classic_plugin_active' );
+
+		return Tribe\Editor\Compatibility\Classic_Editor::is_classic_plugin_active();
+	}
+
+	/**
+	 * Check if the setting `classic-editor-replace` is set to `replace` that option means to
+	 * replace the gutenberg editor with the Classic Editor.
+	 *
+	 * Prior to 1.3 on Classic Editor plugin the value to identify if is on classic the value
+	 * was `replace`, now the value is `classic`
+	 *
+	 * @since 4.8
+	 * @deprecated 4.14.13
+	 *
+	 * @return bool
+	 */
+	public function is_classic_option_active() {
+		// _deprecated_function( __FUNCTION__, '4.14.13', 'Tribe\Editor\Compatibility\Classic_Editor::is_classic_option_active' );
+
+		return Tribe\Editor\Compatibility\Classic_Editor::is_classic_option_active();
+	}
+
+	/**
+	 * Whether the TEC setting dictates Blocks or the Classic Editor.
+	 * used in ET, ET+ and TEC
 	 *
 	 * @since 4.12.0
+	 * @todo Deprecate before 6.0.
 	 *
-	 * @return bool True if using Blocks. False if using the Classical Editor.
+	 * @return bool True if using Blocks. False if using the Classic Editor.
 	 */
 	public function is_events_using_blocks() {
+		return $this->should_load_blocks();
+
+		_deprecated_function( __FUNCTION__, '4.14.13', 'should_load_blocks');
 		/**
 		 * Whether the event is being served through blocks
-		 * or the classical editor.
+		 * or the Classic Editor.
 		 *
 		 * @since 4.12.0
 		 *
-		 * @param bool $is_using_blocks True if using blocks. False if using the classical editor.
+		 * @param bool $is_using_blocks True if using blocks. False if using the Classic Editor.
 		 */
-		$is_using_blocks = apply_filters( 'tribe_is_using_blocks', null );
+		$is_using_blocks = apply_filters_deprecated( 'tribe_is_using_blocks', null, '4.14.13', 'tribe_editor_should_load_blocks', 'Function is slated for deprecation. Please use should_load_blocks, above.' );
 
 		// Early bail: The filter was overridden to return either true or false.
 		if ( null !== $is_using_blocks ) {
-			return $is_using_blocks;
+			return (bool) $is_using_blocks;
 		}
 
 		// Early bail: The site itself is not using blocks.
@@ -253,6 +292,6 @@ class Tribe__Editor {
 			return false;
 		}
 
-		return tribe_is_truthy( tribe_get_option( 'toggle_blocks_editor' ) );
+		return tribe_is_truthy( tribe_get_option( 'toggle_blocks_editor', false ) );
 	}
 }

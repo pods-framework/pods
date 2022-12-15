@@ -23,6 +23,7 @@ class Date_I18n extends DateTime {
 	 *
 	 * @return Date_I18n Localizable variation of DateTime.
 	 */
+	#[\ReturnTypeWillChange]
 	public static function createFromImmutable( $datetime ) {
 		$date_object = new self;
 		$date_object->setTimestamp( $datetime->getTimestamp() );

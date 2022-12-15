@@ -83,7 +83,6 @@ class Base {
 			}
 
 			if ( empty( $result_set ) ) {
-				pods_debug( $heading );
 				$result_set[] = __( 'No actions were needed.', 'pods' );
 			}
 

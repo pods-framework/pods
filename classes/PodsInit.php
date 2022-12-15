@@ -1561,9 +1561,26 @@ class PodsInit {
 				if ( $rest_enabled ) {
 					$rest_base = sanitize_title( pods_v( 'rest_base', $post_type, $post_type_name ) );
 
+					$rest_namespace = pods_v( 'rest_namespace', $post_type );
+
+					// Get the namespace and sanitize/clean up the path.
+					if ( ! empty( $rest_namespace ) ) {
+						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
+						$rest_namespace = explode( '/', $rest_namespace );
+						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
+						$rest_namespace = array_filter( $rest_namespace );
+						$rest_namespace = pods_trim( $rest_namespace );
+						$rest_namespace = implode( '/', $rest_namespace );
+						$rest_namespace = trim( $rest_namespace, '/' );
+					}
+
 					$pods_post_types[ $post_type_name ]['show_in_rest']          = true;
 					$pods_post_types[ $post_type_name ]['rest_base']             = $rest_base;
 					$pods_post_types[ $post_type_name ]['rest_controller_class'] = 'WP_REST_Posts_Controller';
+
+					if ( ! empty( $rest_namespace ) ) {
+						$pods_post_types[ $post_type_name ]['rest_namespace'] = $rest_namespace;
+					}
 				}
 
 				// YARPP doesn't use 'supports' array option (yet)
@@ -1751,9 +1768,26 @@ class PodsInit {
 				if ( $rest_enabled ) {
 					$rest_base = sanitize_title( pods_v( 'rest_base', $taxonomy, $taxonomy_name ) );
 
+					$rest_namespace = pods_v( 'rest_namespace', $taxonomy );
+
+					// Get the namespace and sanitize/clean up the path.
+					if ( ! empty( $rest_namespace ) ) {
+						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
+						$rest_namespace = explode( '/', $rest_namespace );
+						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
+						$rest_namespace = array_filter( $rest_namespace );
+						$rest_namespace = pods_trim( $rest_namespace );
+						$rest_namespace = implode( '/', $rest_namespace );
+						$rest_namespace = trim( $rest_namespace, '/' );
+					}
+
 					$pods_taxonomies[ $taxonomy_name ]['show_in_rest']          = true;
 					$pods_taxonomies[ $taxonomy_name ]['rest_base']             = $rest_base;
 					$pods_taxonomies[ $taxonomy_name ]['rest_controller_class'] = 'WP_REST_Terms_Controller';
+
+					if ( ! empty( $rest_namespace ) ) {
+						$pods_taxonomies[ $taxonomy_name ]['rest_namespace'] = $rest_namespace;
+					}
 				}
 
 				// Integration for Single Value Taxonomy UI

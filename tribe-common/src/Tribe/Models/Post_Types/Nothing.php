@@ -38,7 +38,7 @@ class Nothing extends Base {
 	/**
 	 * {@inheritDoc}
 	 */
-	public function to_post( $output = OBJECT, $filter = 'raw' ) {
+	public function to_post( $output = OBJECT, $filter = 'raw', bool $force = false ) {
 		return null;
 	}
 }

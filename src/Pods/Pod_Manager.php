@@ -3,6 +3,7 @@
 namespace Pods;
 
 use Pods;
+use WP_Error;
 
 /**
  * Manage Pods instances for reuse.

@@ -1013,9 +1013,6 @@ class PodsInit {
 			array_merge(
 				(array) $pods_dfv_options['dependencies'],
 				[
-					'jquery',
-					'jquery-ui-core',
-					'jquery-ui-sortable',
 					'pods-marionette',
 					'media-views',
 					'media-models',

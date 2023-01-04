@@ -56,14 +56,14 @@ const ConditionalLogic = ( {
 		conditional_logic_affected_field_name: affectedFieldName,
 	} = fieldConfig;
 
-	const [conditions, setConditions] = useState( {
+	const [ conditions, setConditions ] = useState( {
 		action: 'show',
 		logic: 'any',
 		rules: [
 			{
-				field: "",
-				compare: "=",
-				value: "",
+				field: '',
+				compare: '=',
+				value: '',
 			},
 		],
 	} );
@@ -87,7 +87,8 @@ const ConditionalLogic = ( {
 			const parsedValue = JSON.parse( value );
 
 			setConditions( parsedValue );
-		} catch( e ) {
+		} catch ( e ) {
+			// eslint-disable-next-line no-console
 			console.warn( 'Error parsing Conditional Logic JSON: ', e );
 		}
 	}, [] );
@@ -127,23 +128,23 @@ const ConditionalLogic = ( {
 			rules: [
 				...( oldConditions.rules || [] ).slice( 0, index + 1 ),
 				{
-					field: "",
-					compare: "=",
-					value: "",
+					field: '',
+					compare: '=',
+					value: '',
 				},
 				...( oldConditions.rules || [] ).slice( index + 1 ),
 			],
 		} )
 	);
 
-	const setRuleOption = ( index, option, value ) => setConditions(
+	const setRuleOption = ( index, option, ruleValue ) => setConditions(
 		( oldConditions ) => ( {
 			...oldConditions,
 			rules: [
 				...( oldConditions.rules || [] ).slice( 0, index ),
 				{
 					...oldConditions.rules[ index ],
-					[option]: value,
+					[ option ]: ruleValue,
 				},
 				...( oldConditions.rules || [] ).slice( index + 1 ),
 			],
@@ -162,7 +163,7 @@ const ConditionalLogic = ( {
 					<option value="hide">{ __( 'Hide', 'pods' ) }</option>
 				</select>
 
-				{__( ' this field if ' )}
+				{ __( ' this field if ' ) }
 
 				<select
 					className="pods-conditional-logic-rule__logic"
@@ -173,7 +174,7 @@ const ConditionalLogic = ( {
 					<option value="all">{ __( 'all', 'pods' ) }</option>
 				</select>
 
-				{__( ' of the following match:' )}
+				{ __( ' of the following match:' ) }
 			</div>
 
 			{ conditions.rules.map( ( rule, index ) => {
@@ -200,7 +201,7 @@ const ConditionalLogic = ( {
 									label={ group.label }
 									key={ group.name }
 								>
-									{ ( group.fields || []).map( ( field ) => {
+									{ ( group.fields || [] ).map( ( field ) => {
 										// Don't render an option for the field that we're editing,
 										// to avoid any circular weirdness.
 										if ( field.name === affectedFieldName ) {

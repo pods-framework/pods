@@ -5795,11 +5795,11 @@ S2.define('jquery.select2',[
   './select2/core',
   './select2/defaults'
 ], function ($, _, Select2, Defaults) {
-  if ($.fn.selectWoo == null) {
+  if ($.fn.select2TEC == null) {
     // All methods that should return the element
     var thisMethods = ['open', 'close', 'destroy'];
 
-    $.fn.selectWoo = function (options) {
+    $.fn.select2TEC = function (options) {
       options = options || {};
 
       if (typeof options === 'object') {
@@ -5840,15 +5840,15 @@ S2.define('jquery.select2',[
   }
 
   if ($.fn.select2 != null && $.fn.select2.defaults != null) {
-    $.fn.selectWoo.defaults = $.fn.select2.defaults;
+    $.fn.select2TEC.defaults = $.fn.select2.defaults;
   }
 
-  if ($.fn.selectWoo.defaults == null) {
-    $.fn.selectWoo.defaults = Defaults;
+  if ($.fn.select2TEC.defaults == null) {
+    $.fn.select2TEC.defaults = Defaults;
   }
 
-  // Also register selectWoo under select2 if select2 is not already present.
-  $.fn.select2 = $.fn.select2 || $.fn.selectWoo;
+  // Also register select2TEC under select2 if select2 is not already present.
+  $.fn.select2 = $.fn.select2 || $.fn.select2TEC;
 
   return Select2;
 });
@@ -5868,7 +5868,7 @@ S2.define('jquery.select2',[
   // This allows Select2 to use the internal loader outside of this file, such
   // as in the language files.
   jQuery.fn.select2.amd = S2;
-  jQuery.fn.selectWoo.amd = S2;
+  jQuery.fn.select2TEC.amd = S2;
 
   // Return the Select2 instance for anyone who is importing it.
   return select2;

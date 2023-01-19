@@ -7,6 +7,8 @@ defined( 'WPINC' ) or die;
  *
  * @package Common
  * @since 4.3
+ *
+ * @since 4.14.2 Added get_hex_with_hash function.
  */
 
 /**
@@ -167,7 +169,6 @@ class Tribe__Utils__Color {
 		return $r.$g.$b;
 	}
 
-
 	/**
 	 * Given a HEX string returns a RGB array equivalent.
 	 * @param string $color
@@ -190,7 +191,6 @@ class Tribe__Utils__Color {
 		return $RGB;
 	}
 
-
 	/**
 	 *  Given an RGB associative array returns the equivalent HEX string
 	 * @param array $rgb
@@ -209,9 +209,7 @@ class Tribe__Utils__Color {
 		$hex[2] = dechex( $rgb['B'] );
 
 		return implode( '', $hex );
-
-  }
-
+	}
 
 	/**
 	 * Given a HEX value, returns a darker color. If no desired amount provided, then the color halfway between
@@ -272,7 +270,6 @@ class Tribe__Utils__Color {
 		return [ 'light' => $lightColor, 'dark' => $darkColor ];
 	}
 
-
 	/**
 	 * Returns whether or not given color is considered "light"
 	 * @param string|Boolean $color
@@ -329,12 +326,25 @@ class Tribe__Utils__Color {
 	public function getHsl() {
 		return $this->_hsl;
 	}
+
 	/**
-	 * Returns your original color
+	 * Returns your original color minus any hash mark.
 	 */
 	public function getHex() {
 		return $this->_hex;
 	}
+
+	/**
+	 * Returns your original color with the hash mark.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return string Hex color code with hash prefix.
+	 */
+	public function get_hex_with_hash() {
+		return '#' . $this->_hex;
+	}
+
 	/**
 	 * Returns your color's RGB array
 	 */
@@ -503,5 +513,4 @@ class Tribe__Utils__Color {
 
 		return $color;
 	}
-
 }

@@ -45,33 +45,47 @@ class Tribe__Credits {
 
 		add_filter( 'tribe_tickets_post_types', [ $this, 'tmp_return_tribe_events' ], 99 );
 
-		// only display custom text on Tribe Admin Pages
+		$review_text_tec = esc_html__( 'Rate %1$sThe Events Calendar%2$s %3$s', 'tribe-common' );
+		$review_url_tec  = 'https://wordpress.org/support/plugin/the-events-calendar/reviews/?filter=5';
+
+		$review_text_et = esc_html__( 'If you like %1$sEvent Tickets%2$s please leave us a %3$s. It takes a minute and it helps a lot.', 'tribe-common' );
+		$review_url_et  = 'https://wordpress.org/support/plugin/event-tickets/reviews/?filter=5';
+
+		// Only display custom text on Tribe Admin Pages.
 		if ( $admin_helpers->is_screen() || $admin_helpers->is_post_type_screen() ) {
 
 			if ( class_exists( 'Tribe__Events__Main' ) ) {
-				$review_url = 'https://wordpress.org/support/plugin/the-events-calendar/reviews/?filter=5';
-
-				$footer_text = sprintf(
-					esc_html__( 'Rate %1$sThe Events Calendar%2$s %3$s', 'tribe-common' ),
-					'<strong>',
-					'</strong>',
-					'<a href="' . $review_url . '" target="_blank" class="tribe-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
-				);
+				// If we have TEC and ET, split the impressions 50/50.
+				if ( class_exists( 'Tribe__Tickets__Main' ) && wp_rand( 0,1 ) ) {
+					$review_text = $review_text_et;
+					$review_url  = $review_url_et;
+				} else {
+					$review_text = $review_text_tec;
+					$review_url  = $review_url_tec;
+				}
 			} else {
-				$review_url = 'https://wordpress.org/support/plugin/event-tickets/reviews/?filter=5';
-
-				$footer_text = sprintf(
-					esc_html__( 'Rate %1$sEvent Tickets%2$s %3$s', 'tribe-common' ),
-					'<strong>',
-					'</strong>',
-					'<a href="' . $review_url . '" target="_blank" class="tribe-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
-				);
+				$review_text = $review_text_et;
+				$review_url  = $review_url_et;
 			}
+
+			$footer_text = sprintf(
+				$review_text,
+				'<strong>',
+				'</strong>',
+				'<a href="' . $review_url . '" target="_blank" rel="noopener noreferrer" class="tribe-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+			);
 		}
 
 		remove_filter( 'tribe_tickets_post_types', [ $this, 'tmp_return_tribe_events' ], 99 );
 
-		return $footer_text;
+		/**
+		 * Filters the admin footer text.
+		 *
+		 * @since 4.15.0
+		 *
+		 * @param $footer_text The admin footer text.
+		 */
+		return apply_filters( 'tec_admin_footer_text', $footer_text );
 	}
 
 	/**

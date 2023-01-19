@@ -22,6 +22,33 @@ class Tribe__Admin__Help_Page {
 	}
 
 	/**
+	 * Set up hooks.
+	 *
+	 * @since 4.15.0
+	 */
+	public function hook() {
+		add_filter( 'admin_body_class', [ $this, 'admin_body_class' ] );
+	}
+
+	/**
+	 * Hooked to admin_body_class to add a class for help page.
+	 *
+	 * @since 4.15.0
+	 *
+	 * @param string $classes A space separated string of classes to be added to body.
+	 *
+	 * @return string $classes A space separated string of classes to be added to body.
+	 */
+	public function admin_body_class( $classes ) {
+		if ( ! $this->is_current_page() ) {
+			return $classes;
+		}
+
+		$classes .= ' tribe-help tec-help';
+		return $classes;
+	}
+
+	/**
 	 * Checks if the current page is the Help one
 	 *
 	 * @since 4.5.7
@@ -29,7 +56,14 @@ class Tribe__Admin__Help_Page {
 	 * @return bool
 	 */
 	public function is_current_page() {
-		return Tribe__Admin__Helpers::instance()->is_screen( 'tribe_events_page_tribe-help' ) || Tribe__Admin__Helpers::instance()->is_screen( 'settings_page_tribe-common-help-network' );
+		global $current_screen;
+
+		$help_pages = [
+			'tribe_events_page_tec-events-help',
+			'tickets_page_tec-tickets-help',
+		];
+
+		return in_array( $current_screen->id, $help_pages );
 	}
 
 	/**
@@ -52,10 +86,13 @@ class Tribe__Admin__Help_Page {
 				'localize' => [
 					'name' => 'tribe_system_info',
 					'data' => [
-						'sysinfo_optin_nonce'   => wp_create_nonce( 'sysinfo_optin_nonce' ),
-						'clipboard_btn_text'    => __( 'Copy to clipboard', 'tribe-common' ),
-						'clipboard_copied_text' => __( 'System info copied', 'tribe-common' ),
-						'clipboard_fail_text'   => __( 'Press "Cmd + C" to copy', 'tribe-common' ),
+						'sysinfo_optin_nonce'        => wp_create_nonce( 'sysinfo_optin_nonce' ),
+						'clipboard_btn_text'         => _x( 'Copy to clipboard', 'Copy to clipboard button text.', 'tribe-common' ),
+						'clipboard_copied_text'      => _x( 'System info copied', 'Copy to clipboard success message', 'tribe-common' ),
+						'clipboard_fail_text'        => _x( 'Press "Cmd + C" to copy', 'Copy to clipboard instructions', 'tribe-common' ),
+						'sysinfo_error_message_text' => _x( 'Something has gone wrong!', 'Default error message for system info optin', 'tribe-common' ),
+						'sysinfo_error_code_text'    => _x( 'Code:', 'Error code label for system info optin', 'tribe-common'),
+						'sysinfo_error_status_text'  => _x( 'Status:', 'Error status label for system info optin', 'tribe-common'),
 					],
 				],
 			]
@@ -912,5 +949,239 @@ class Tribe__Admin__Help_Page {
 			<?php } ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Defines TEC frequently asked questions and displays them in the UI.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of FAQs which are displayed on the calendar tab of the in-app help page.
+	 */
+	public function get_calendar_faqs() {
+		$faqs = apply_filters( 'tec_help_calendar_faqs', [
+			[
+				'question' => __( 'Can I have more than one calendar?', 'tribe-common' ),
+				'answer'   => __( 'No, but you can use event categories or tags to display certain events like having...', 'tribe-common' ),
+				'link'     => 'https://evnt.is/1arh',
+			],
+			[
+				'question' => __( 'What do I get with Events Calendar Pro?', 'tribe-common' ),
+				'answer'   => __( 'Events Calendar Pro runs alongside The Events Calendar and enhances...' ),
+				'link'     => 'https://evnt.is/1arj',
+			],
+			[
+				'question' => __( 'How do I sell tickets to events?', 'tribe-common' ),
+				'answer'   => __( 'Use our free Event Tickets plugin to get started with tickets and RSVPs.', 'tribe-common' ),
+				'link'     => 'https://evnt.is/1ark',
+			],
+			[
+				'question' => __( 'Where can I find a list of available shortcodes?', 'tribe-common' ),
+				'answer'   => __( 'Our plugins include many shortcodes that do everything from embedding the calendar...', 'tribe-common' ),
+				'link'     => 'https://evnt.is/1arl',
+			],
+		] );
+
+		return $faqs;
+	}
+
+	/**
+	 * Defines calendar extensions and displays them in the UI.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of extensions which are displayed on the calendar and community tab of the in-app help page.
+	 */
+	public function get_calendar_extensions() {
+		$extensions = apply_filters( 'tec_help_calendar_extensions', [
+			[
+				'title'        => __( 'Calendar widget areas', 'tribe-common' ),
+				'description'  => __( 'This extension creates a useful variety of WordPress widget areas (a.k.a. sidebars).', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arc',
+				'product-slug' => 'the-events-calendar',
+			],
+			[
+				'title'        => __( 'Event block patterns', 'tribe-common' ),
+				'description'  => __( 'This extension adds a set of block patterns for events to the WordPress block editor.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1ard',
+				'product-slug' => 'the-events-calendar',
+			],
+			[
+				'title'        => __( 'Alternative photo view', 'tribe-common' ),
+				'description'  => __( 'This extension replaces photo view with a tiled grid of cards featuring event images.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1are',
+				'product-slug' => 'events-calendar-pro',
+			],
+			[
+				'title'        => __( 'The Events Calendar Tweaks', 'tribe-common' ),
+				'description'  => __( 'This extension is a collection of tweaks and snippets for The Events Calendar.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arg',
+				'product-slug' => 'the-events-calendar',
+			],
+		] );
+
+		return $extensions;
+	}
+
+	/**
+	 * Defines calendar products.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of products which are displayed on the calendar tab of the in-app help page.
+	 */
+	public function get_calendar_products() {
+		$calendar_products = apply_filters( 'tec_help_calendar_products', [
+			'events-calendar-pro',
+			'tribe-filterbar',
+			'event-aggregator',
+			'events-virtual',
+		] );
+
+		return $calendar_products;
+	}
+
+	/**
+	 * Defines ticketing frequently asked questions and displays them in the UI.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of FAQs which are displayed on the ticketing tab of the in-app help page.
+	 */
+	public function get_ticketing_faqs() {
+		$faqs = apply_filters( 'tec_help_ticketing_faqs', [
+			[
+				'question' => __( 'How Do I create events with Tickets or RSVP’s?', 'tribe-common' ),
+				'answer'   => __( 'We’ve put together a video tutorial showing how to create events with Tickets using our plugins. Click on the link in the link in the title to learn more.', 'tribe-common' ),
+				'link'     => 'https://evnt.is/1art',
+			],
+			[
+				'question' => __( 'How Do I Set Up E-Commerce Plugins for Selling Tickets?', 'tribe-common' ),
+				'answer'   => __( 'You can sell tickets using our built-in e-commerce option, or upgrade to Event Tickets Plus to use ecommerce plugins such as WooCommerce.', 'tribe-common' ),
+				'link'     => 'https://evnt.is/1arq',
+			],
+			[
+				'question' => __( 'Can I have a seating chart associated with my tickets?', 'tribe-common' ),
+				'answer'   => __( 'Yes! You can easily accomplish this task using the stock options and multiple ticket types available with Event Tickets.', 'tribe-common' ),
+				'link'     => 'https://evnt.is/1arr',
+			],
+			[
+				'question' => __( 'How do I process refunds for tickets?', 'tribe-common' ),
+				'answer'   => __( 'When it comes to paid tickets, these orders can be refunded through the e-commerce platform in use.', 'tribe-common' ),
+				'link'     => 'https://evnt.is/1ars',
+			],
+		] );
+
+		return $faqs;
+	}
+
+	/**
+	 * Defines ticketing extensions and displays them in the UI.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of extensions which are displayed on the ticketing tab of the in-app help page.
+	 */
+	public function get_ticketing_extensions() {
+		$extensions = apply_filters( 'tec_help_ticketing_extensions', [
+			[
+				'title'        => __( 'Ticket Email Settings', 'tribe-common' ),
+				'description'  => __( 'Adds a new settings panel in Events > Settings that gives more control over the ticket and rsvp emails that are sent to attendees after registration.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arx',
+				'product-slug' => 'event-tickets',
+			],
+			[
+				'title'        => __( 'Per Event Check In API', 'tribe-common' ),
+				'description'  => __( 'This extension shows a meta box with an API key on each Event with Ticket/RSVP.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arw',
+				'product-slug' => 'event-tickets',
+			],
+			[
+				'title'        => __( 'Add Event & Attendee Info to WooCommerce Order Details', 'tribe-common' ),
+				'description'  => __( 'Displays the information collected by “attendee meta fields” in the WooCommerce order screens as well.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arv',
+				'product-slug' => 'event-tickets',
+			],
+			[
+				'title'        => __( 'Organizer Notification Email', 'tribe-common' ),
+				'description'  => __( 'This extension will send an email to event organizers whenever a user registers for their event.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1aru',
+				'product-slug' => 'event-tickets',
+			],
+		] );
+
+		return $extensions;
+	}
+
+	/**
+	 * Defines ticketing products.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of products which are displayed on the ticketing tab of the in-app help page.
+	 */
+	public function get_ticketing_products() {
+		$ticketing_products = apply_filters( 'tec_help_ticketing_products', [
+			'event-tickets',
+			'event-tickets-plus',
+			'tribe-eventbrite',
+			'promoter',
+		] );
+
+		return $ticketing_products;
+	}
+
+	/**
+	 * Defines community extensions and displays them in the UI.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of extensions which are displayed on the community tab of the in-app help page.
+	 */
+	public function get_community_extensions() {
+		$extensions = apply_filters( 'tec_help_ticketing_extensions', [
+			[
+				'title'        => __( 'Add Cost Currency Symbol', 'tribe-common' ),
+				'description'  => __( 'This extension allows you to set default currency symbols for your users to choose from instead of having a plain text field.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arn',
+				'product-slug' => 'community-events',
+			],
+			[
+				'title'        => __( 'Add Google Maps Display and Link Options', 'tribe-common' ),
+				'description'  => __( 'This extension adds the “Show Google Maps” and “Show Google Maps Link” checkboxes when creating a new Venue.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arm',
+				'product-slug' => 'community-events',
+			],
+			[
+				'title'        => __( 'Hide Others’ Organizers and Venues', 'tribe-common' ),
+				'description'  => __( 'This extension allows you to hide the Organizers and Venues that a visitor has not created from the Community Events submission form.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1aro',
+				'product-slug' => 'community-events',
+			],
+			[
+				'title'        => __( 'Display Custom HTML', 'tribe-common' ),
+				'description'  => __( 'This extension allows you to add custom HTML content to the top of the Community Events submission form.', 'tribe-common' ),
+				'link'         => 'https://evnt.is/1arp',
+				'product-slug' => 'community-events',
+			],
+		] );
+
+		return $extensions;
+	}
+
+	/**
+	 * Defines community products.
+	 *
+	 * @since 4.14.2
+	 *
+	 * @return array of products which are displayed on the community tab of the in-app help page.
+	 */
+	public function get_community_products() {
+		$community_products = apply_filters( 'tec_help_ticketing_products', [
+			'events-community',
+			'events-community-tickets',
+		] );
+
+		return $community_products;
 	}
 }

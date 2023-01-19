@@ -124,8 +124,8 @@ implements Tribe__Editor__Blocks__Interface {
 	}
 
 	/**
-	 * Does the registration for PHP rendering for the Block, important due to been
-	 * an dynamic Block
+	 * Does the registration for PHP rendering for the Block,
+	 * important due to being a dynamic Block
 	 *
 	 * @since 4.8
 	 *
@@ -136,8 +136,20 @@ implements Tribe__Editor__Blocks__Interface {
 			'render_callback' => [ $this, 'render' ],
 		];
 
-		register_block_type( $this->name(), $block_args );
+		// Prevents a block from being registered twice.
+		if ( ! class_exists( 'WP_Block_Type_Registry' ) || WP_Block_Type_Registry::get_instance()->is_registered( $this->name() ) ) {
+			return;
+		}
 
+		register_block_type( $this->name(), $block_args );
+	}
+
+	/**
+	 * Registering the block and loading the assets and hooks should be handled separately.
+	 *
+	 * @since 4.14.13
+	 */
+	public function load() {
 		add_action( 'wp_ajax_' . $this->get_ajax_action(), [ $this, 'ajax' ] );
 
 		$this->assets();

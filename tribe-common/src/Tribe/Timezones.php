@@ -66,8 +66,16 @@ class Tribe__Timezones {
 	 * @return string
 	 */
 	public static function wp_timezone_string() {
-		$current_offset = get_option( 'gmt_offset' );
-		$tzstring       = get_option( 'timezone_string' );
+		$cache = tribe( 'cache' );
+		if ( empty( $cache['option_timezone_string'] ) ) {
+			$cache['option_timezone_string'] = get_option( 'timezone_string' );
+		}
+		if ( ! isset( $cache['option_gmt_offset'] ) ) {
+			$cache['option_gmt_offset'] = get_option( 'gmt_offset' );
+		}
+
+		$current_offset = $cache['option_gmt_offset'];
+		$tzstring       = $cache['option_timezone_string'];
 
 		// Return the timezone string if already set
 		if ( ! empty( $tzstring ) ) {

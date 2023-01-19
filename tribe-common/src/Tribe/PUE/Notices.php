@@ -276,6 +276,15 @@ class Tribe__PUE__Notices {
 
 		$plugin_names = $this->get_formatted_plugin_names( self::INVALID_KEY );
 
+		/**
+		 * Filters the list of plugins that should trigger an invalid key notice in PUE.
+		 *
+		 * @since 5.0.0
+		 *
+		 * @param array $plugin_names Array of plugin names that should trigger the invalid key notice.
+		 */
+		$plugin_names = apply_filters( 'tec_pue_invalid_key_notice_plugins', $plugin_names );
+
 		if ( empty( $plugin_names ) ) {
 			return;
 		}
@@ -322,6 +331,15 @@ class Tribe__PUE__Notices {
 
 		$plugin_names = $this->get_formatted_plugin_names( self::EXPIRED_KEY );
 
+		/**
+		 * Filters the list of plugins that should trigger an expired key notice in PUE.
+		 *
+		 * @since 5.0.0
+		 *
+		 * @param array $plugin_names Array of plugin names that should trigger the expired key notice.
+		 */
+		$plugin_names = apply_filters( 'tec_pue_expired_key_notice_plugins', $plugin_names );
+
 		if ( empty( $plugin_names ) ) {
 			return;
 		}
@@ -353,6 +371,15 @@ class Tribe__PUE__Notices {
 	 */
 	public function render_upgrade_key() {
 		$plugin_names = $this->get_formatted_plugin_names( self::UPGRADE_KEY );
+
+		/**
+		 * Filters the list of plugins that should trigger an upgrade key notice in PUE.
+		 *
+		 * @since 5.0.0
+		 *
+		 * @param array $plugin_names Array of plugin names that should trigger the upgrade key notice.
+		 */
+		$plugin_names = apply_filters( 'tec_pue_upgrade_key_notice_plugins', $plugin_names );
 
 		if ( empty( $plugin_names ) ) {
 			return;

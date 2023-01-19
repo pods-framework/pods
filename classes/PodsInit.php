@@ -1013,9 +1013,7 @@ class PodsInit {
 			array_merge(
 				(array) $pods_dfv_options['dependencies'],
 				[
-					'jquery',
-					'jquery-ui-core',
-					'jquery-ui-sortable',
+					// @todo Refactor File field and any other DFV field types that need to go full React and replace Marionette usage.
 					'pods-marionette',
 					'media-views',
 					'media-models',
@@ -1508,7 +1506,7 @@ class PodsInit {
 
 				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );
 
-				if ( $show_in_menu && 0 < strlen( pods_v( 'menu_location_custom', $post_type ) ) ) {
+				if ( $show_in_menu && 0 < strlen( (string) pods_v( 'menu_location_custom', $post_type ) ) ) {
 					$show_in_menu = pods_v( 'menu_location_custom', $post_type );
 				}
 
@@ -1564,7 +1562,7 @@ class PodsInit {
 					$rest_namespace = pods_v( 'rest_namespace', $post_type );
 
 					// Get the namespace and sanitize/clean up the path.
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
 						$rest_namespace = explode( '/', $rest_namespace );
 						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
@@ -1578,7 +1576,7 @@ class PodsInit {
 					$pods_post_types[ $post_type_name ]['rest_base']             = $rest_base;
 					$pods_post_types[ $post_type_name ]['rest_controller_class'] = 'WP_REST_Posts_Controller';
 
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$pods_post_types[ $post_type_name ]['rest_namespace'] = $rest_namespace;
 					}
 				}
@@ -1771,7 +1769,7 @@ class PodsInit {
 					$rest_namespace = pods_v( 'rest_namespace', $taxonomy );
 
 					// Get the namespace and sanitize/clean up the path.
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
 						$rest_namespace = explode( '/', $rest_namespace );
 						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
@@ -1785,7 +1783,7 @@ class PodsInit {
 					$pods_taxonomies[ $taxonomy_name ]['rest_base']             = $rest_base;
 					$pods_taxonomies[ $taxonomy_name ]['rest_controller_class'] = 'WP_REST_Terms_Controller';
 
-					if ( $rest_namespace ) {
+					if ( ! empty( $rest_namespace ) ) {
 						$pods_taxonomies[ $taxonomy_name ]['rest_namespace'] = $rest_namespace;
 					}
 				}

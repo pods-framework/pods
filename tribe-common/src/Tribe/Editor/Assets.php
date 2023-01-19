@@ -36,17 +36,7 @@ class Tribe__Editor__Assets {
 			/**
 			 * @todo revise this dependencies
 			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -71,20 +61,7 @@ class Tribe__Editor__Assets {
 			$plugin,
 			'tribe-common-gutenberg-utils',
 			'app/utils.js',
-			/**
-			 * @todo revise this dependencies
-			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -92,24 +69,12 @@ class Tribe__Editor__Assets {
 				'priority'  => 12,
 			]
 		);
+
 		tribe_asset(
 			$plugin,
 			'tribe-common-gutenberg-store',
 			'app/store.js',
-			/**
-			 * @todo revise this dependencies
-			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -117,24 +82,12 @@ class Tribe__Editor__Assets {
 				'priority'  => 13,
 			]
 		);
+
 		tribe_asset(
 			$plugin,
 			'tribe-common-gutenberg-icons',
 			'app/icons.js',
-			/**
-			 * @todo revise this dependencies
-			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -142,24 +95,12 @@ class Tribe__Editor__Assets {
 				'priority'  => 14,
 			]
 		);
+
 		tribe_asset(
 			$plugin,
 			'tribe-common-gutenberg-hoc',
 			'app/hoc.js',
-			/**
-			 * @todo revise this dependencies
-			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -167,24 +108,12 @@ class Tribe__Editor__Assets {
 				'priority'  => 15,
 			]
 		);
+
 		tribe_asset(
 			$plugin,
 			'tribe-common-gutenberg-components',
 			'app/components.js',
-			/**
-			 * @todo revise this dependencies
-			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -192,24 +121,12 @@ class Tribe__Editor__Assets {
 				'priority'  => 16,
 			]
 		);
+
 		tribe_asset(
 			$plugin,
 			'tribe-common-gutenberg-elements',
 			'app/elements.js',
-			/**
-			 * @todo revise this dependencies
-			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -217,6 +134,7 @@ class Tribe__Editor__Assets {
 				'priority'  => 17,
 			]
 		);
+
 		/**
 		 * @todo: figure out why element styles are loading for tickets but not events.
 		 */
@@ -224,20 +142,7 @@ class Tribe__Editor__Assets {
 			$plugin,
 			'tribe-common-gutenberg-components',
 			'app/components.js',
-			/**
-			 * @todo revise this dependencies
-			 */
-			[
-				'react',
-				'react-dom',
-				'wp-components',
-				'wp-api',
-				'wp-api-request',
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-			],
+			[ $this, 'filter_event_blocks_editor_deps' ],
 			'enqueue_block_editor_assets',
 			[
 				'in_footer' => false,
@@ -255,5 +160,38 @@ class Tribe__Editor__Assets {
 				'in_footer' => false,
 			]
 		);
+	}
+
+	/**
+	 * Filter the dependencies for event blocks
+	 *
+	 * @since 4.14.2
+	 *
+	 * @param array|object|null $assets Array of asset objects, single asset object, or null.
+	 *
+	 * @return array An array of dependency slugs.
+	 */
+	public function filter_event_blocks_editor_deps( $asset ) {
+		global $pagenow;
+
+		$deps = [
+			'react',
+			'react-dom',
+			'wp-components',
+			'wp-api',
+			'wp-api-request',
+			'wp-blocks',
+			'wp-i18n',
+			'wp-element',
+			'wp-editor',
+		];
+
+		if ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) {
+			if ( ( $key = array_search( 'wp-editor', $deps ) ) !== false ) {
+				unset( $deps[ $key ] );
+			}
+		}
+
+		return $deps;
 	}
 }

@@ -3442,7 +3442,7 @@ class PodsData {
 		$rel_alias = 'rel_' . $field_joined;
 
 		if ( pods_v( 'search', $traverse_recurse['params'], false ) && empty( $traverse_recurse['params']->filters ) ) {
-			if ( 0 < strlen( pods_v( 'filter_' . $field_joined ) ) ) {
+			if ( 0 < strlen( (string) pods_v( 'filter_' . $field_joined ) ) ) {
 				$val = absint( pods_v( 'filter_' . $field_joined ) );
 
 				$search = "`{$field_joined}`.`{$table_info[ 'field_id' ]}` = {$val}";

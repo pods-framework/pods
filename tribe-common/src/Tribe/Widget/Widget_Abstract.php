@@ -285,11 +285,11 @@ abstract class Widget_Abstract extends \WP_Widget implements Widget_Interface {
 		// Specifically on the admin we force the admin fields into the arguments.
 		$this->arguments['admin_fields'] = $this->get_admin_fields();
 
-		$this->toggle_hooks( true );
+		$this->toggle_hooks( true, 'form' );
 
 		$html = $this->get_admin_html( $this->get_arguments() );
 
-		$this->toggle_hooks( false );
+		$this->toggle_hooks( false, 'form' );
 		return $html;
 	}
 
@@ -302,11 +302,11 @@ abstract class Widget_Abstract extends \WP_Widget implements Widget_Interface {
 
 		$this->setup( $args, $instance );
 
-		$this->toggle_hooks( true );
+		$this->toggle_hooks( true, 'display' );
 
 		$html = $this->get_html();
 
-		$this->toggle_hooks( false );
+		$this->toggle_hooks( false, 'display' );
 
 		echo $html;
 
@@ -792,15 +792,20 @@ abstract class Widget_Abstract extends \WP_Widget implements Widget_Interface {
 	 *
 	 * @since 4.13.0
 	 *
-	 * @param bool $toggle Whether to turn the hooks on or off.
+	 * @param bool   $toggle Whether to turn the hooks on or off.
+	 * @param string $location If we are doing the form (admin) or the display (front end)
 	 *
 	 * @return void
 	 */
-	public function toggle_hooks( $toggle ) {
+	public function toggle_hooks( $toggle, $location = 'display' ) {
+		$slug = static::get_widget_slug();
+
 		if ( $toggle ) {
+			do_action( 'tec_start_widget_' . $location, $slug );
 			$this->add_hooks();
 		} else {
 			$this->remove_hooks();
+			do_action( 'tec_end_widget_' . $location, $slug );
 		}
 
 		/**

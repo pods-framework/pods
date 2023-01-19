@@ -340,9 +340,9 @@ class Body_Classes {
 		 * @since 4.12.6
 		 *
 		 * @param boolean $add              Whether to add classes or not.
+		 * @param string  $queue            The queue we want to get 'admin', 'display', 'all'.
 		 * @param array   $add_classes      The array of body class names to add.
 		 * @param array   $existing_classes An array of existing body class names from WP.
-		 * @param string  $queue            The queue we want to get 'admin', 'display', 'all'.
 		 *
 		 */
 		return (bool)apply_filters( 'tribe_body_classes_should_add', false, $queue, $add_classes, $existing_classes );

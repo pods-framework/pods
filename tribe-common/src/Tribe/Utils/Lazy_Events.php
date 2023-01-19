@@ -160,7 +160,7 @@ trait Lazy_Events {
 
 		$hooked = has_action( $action, $this->lazy_resolve_callback );
 
-		// Let's play it safe and move the resoloution as late as possible.
+		// Let's play it safe and move the resolution as late as possible.
 		$new_priority = false !== $hooked ? max( $hooked, $priority ) : $priority;
 
 		if ( is_numeric( $hooked ) && $hooked !== $new_priority ) {

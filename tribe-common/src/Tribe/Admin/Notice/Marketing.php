@@ -1,4 +1,5 @@
 <?php
+_deprecated_file(__FILE__, '4.14.2', 'Deprecated to a more granular approach.' );
 /**
  * Various Marketing notices, e.g. Black Friday sales or special coupon initiatives.
  *
@@ -120,7 +121,7 @@ class Tribe__Admin__Notice__Marketing {
 	 */
 	public function black_friday_should_display() {
 		// If upsells have been manually hidden, respect that.
-		if ( defined( 'TRIBE_HIDE_UPSELL' ) && TRIBE_HIDE_UPSELL ) {
+		if ( tec_should_hide_upsell() ) {
 			return false;
 		}
 
@@ -134,6 +135,7 @@ class Tribe__Admin__Notice__Marketing {
 			'tribe_events_page_tribe-app-shop', // App shop.
 			'events_page_tribe-app-shop', // App shop.
 			'tribe_events_page_tribe-common', // Settings & Welcome.
+			'tribe_events_page_tec-events-settings', // New Settings & Welcome.
 			'events_page_tribe-common', // Settings & Welcome.
 			'toplevel_page_tribe-common', // Settings & Welcome.
 		];
@@ -160,15 +162,17 @@ class Tribe__Admin__Notice__Marketing {
 
 		$icon_url = Tribe__Main::instance()->plugin_url . 'src/resources/images/icons/sale-burst.svg';
 		$cta_url  = 'https://evnt.is/bf' . date( 'Y' );
+		$screens = [
+			'tribe_events_page_tribe-common',
+			'tribe_events_page_tec-events-settings',
+			'events_page_tribe-common',
+			'toplevel_page_tribe-common',
+		];
 
 		// If we are on the settings page or a welcome page, change the Black Friday URL.
 		if (
 			! empty( $current_screen->id )
-			&& (
-				'tribe_events_page_tribe-common' === $current_screen->id
-				|| 'events_page_tribe-common' === $current_screen->id
-				|| 'toplevel_page_tribe-common' === $current_screen->id
-			)
+			&& in_array( $current_screen->id, $screens )
 		) {
 			if ( isset( $_GET['welcome-message-the-events-calendar'] ) || isset( $_GET['welcome-message-event-tickets' ] ) ) {
 				$cta_url .= 'welcome';

@@ -1318,9 +1318,10 @@ class PodsUI {
 		} else {
 			if ( isset( $this->actions_custom[ $this->action ] ) ) {
 				$use_nonce = false;
-				$more_args = false;
 
 				if ( is_array( $this->actions_custom[ $this->action ] ) ) {
+					$more_args = [];
+
 					if ( ! empty( $this->actions_custom[ $this->action ]['more_args'] ) ) {
 						$more_args = $this->actions_custom[ $this->action ]['more_args'];
 					}

@@ -407,6 +407,11 @@ class PodsField_File extends PodsField {
 
 		wp_enqueue_script( 'pods-i18n' );
 
+		// To be further refactored later when we remove jQuery dependency and this field is fully React.
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-core' );
+		wp_enqueue_script( 'jquery-ui-sortable' );
+
 		// Ensure the media library is initialized
 		$this->render_input_script( $args );
 	}

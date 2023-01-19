@@ -1013,6 +1013,7 @@ class PodsInit {
 			array_merge(
 				(array) $pods_dfv_options['dependencies'],
 				[
+					// @todo Refactor File field and any other DFV field types that need to go full React and replace Marionette usage.
 					'pods-marionette',
 					'media-views',
 					'media-models',

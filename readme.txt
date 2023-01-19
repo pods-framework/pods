@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.11-a-1
+Stable tag: 2.9.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -172,6 +172,14 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.11 - January 19th, 2023 =
+
+* Security: Fix nonce verification check when deleting a pod. Thanks to Rafshanzani Suhada for responsibly disclosing this through Patchstack (@0xshdax, @sc0ttkclark)
+* Compatibility: Improved compatibility with PHP 8.1+ (@sc0ttkclark)
+* Tweak: Removed some of the jQuery dependency for Pods DFV, the only part that remains is `jquery-ui-sortable` for File fields (to be further refactored into React at a later point). (@sc0ttkclark)
+* Fixed: Updated the tribe-common library which had an older version of JWT included. (@sc0ttkclark)
+* Fixed: Remove debug output on the Tools page when no actions needed to run. (@sc0ttkclark)
 
 = 2.9.10.2 - December 14th, 2022 =
 

@@ -1,9 +1,6 @@
 <?php
 
 // Don't load directly
-
-use Tribe\Admin\Settings;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
@@ -113,8 +110,6 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 				'number',
 				'wrapped_html',
 				'email',
-				'color',
-				'image',
 			];
 
 			$this->valid_field_types = apply_filters( 'tribe_valid_field_types', $this->valid_field_types );
@@ -148,21 +143,20 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 			$label_attributes = $args['label_attributes'];
 			$tooltip    = wp_kses(
 				$args['tooltip'], [
-					'a'      => [  'class' => [], 'href' => [], 'title' => [], 'target' => [], 'rel' => [] ],
+					'a'      => [ 'href' => [], 'title' => [], 'target' => [] ],
 					'br'     => [],
-					'em'     => [ 'class' => [] ],
-					'strong' => [ 'class' => [] ],
-					'b'      => [ 'class' => [] ],
-					'i'      => [ 'class' => [] ],
-					'u'      => [ 'class' => [] ],
+					'em'     => [],
+					'strong' => [],
+					'b'      => [],
+					'i'      => [],
+					'u'      => [],
 					'img'    => [
-						'class' => [],
 						'title' => [],
 						'src'   => [],
 						'alt'   => [],
 					],
 					'code'   => [ 'span' => [] ],
-					'span'   => [ 'class' => [] ],
+					'span'   => [],
 				]
 			);
 			$fieldset_attributes = [];
@@ -237,7 +231,7 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 				} else {
 
 					// fail, log the error
-					Tribe__Debug::debug( esc_html__( 'Invalid field type specified', 'tribe-common' ), $this->type, 'notice' );
+					Tribe__Main::debug( esc_html__( 'Invalid field type specified', 'tribe-common' ), $this->type, 'notice' );
 
 				}
 			}
@@ -700,80 +694,6 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 			$field .= '/>';
 			$field .= '<p class="license-test-results"><img src="' . esc_url( admin_url( 'images/wpspin_light.gif' ) ) . '" class="ajax-loading-license" alt="Loading" style="display: none"/>';
 			$field .= '<span class="key-validity"></span>';
-			$field .= $this->do_screen_reader_label();
-			$field .= $this->do_field_div_end();
-			$field .= $this->do_field_end();
-
-			return $field;
-		}
-
-		/**
-		 * Generate a color field.
-		 *
-		 * @since 5.0.0
-		 *
-		 * @return string The field.
-		 */
-		public function color() {
-
-			tribe( Settings::class )->maybe_load_color_field_assets();
-
-			$field = $this->do_field_start();
-			$field .= $this->do_field_label();
-			$field .= $this->do_field_div_start();
-			$field .= '<input';
-			$field .= ' type="text"';
-			$field .= ' class="tec-admin__settings-color-field-input"';
-			$field .= $this->do_field_name();
-			$field .= $this->do_field_value();
-			$field .= $this->do_field_attributes();
-			$field .= '/>';
-			$field .= $this->do_screen_reader_label();
-			$field .= $this->do_field_div_end();
-			$field .= $this->do_field_end();
-
-			return $field;
-		}
-
-		/**
-		 * Generate an image field.
-		 *
-		 * @since 5.0.0
-		 *
-		 * @return string The field.
-		 */
-		public function image() {
-
-			tribe( Settings::class )->maybe_load_image_field_assets();
-
-			$image_exists = ! empty( $this->value );
-			$upload_image_text = esc_html__( 'Select Image', 'tribe-common' );
-			$remove_image_text = esc_html__( 'Remove Image', 'tribe-common' );
-
-			// Add default fieldset attributes if none exist.
-			$image_fieldset_attributes = [
-				'data-select-image-text' => esc_html__( 'Select an image', 'tribe-common' ),
-				'data-use-image-text'    => esc_html__( 'Use this image', 'tribe-common' ),
-			];
-			$this->fieldset_attributes = array_merge( $image_fieldset_attributes, $this->fieldset_attributes );
-
-			$field = $this->do_field_start();
-			$field .= $this->do_field_label();
-			$field .= $this->do_field_div_start();
-			$field .= '<input';
-			$field .= ' type="hidden"';
-			$field .= ' class="tec-admin__settings-image-field-input"';
-			$field .= $this->do_field_name();
-			$field .= $this->do_field_value();
-			$field .= $this->do_field_attributes();
-			$field .= '/>';
-			$field .= '<button type="button" class="button tec-admin__settings-image-field-btn-add">' . $upload_image_text . '</button>';
-			$field .= '<div class="tec-admin__settings-image-field-image-container hidden">';
-			if ( $image_exists ) {
-				$field .= '<img src="' . esc_url( $this->value ) . '" />';
-			}
-			$field .= '</div>';
-			$field .= '<button class="tec-admin__settings-image-field-btn-remove hidden">' . $remove_image_text . '</button>';
 			$field .= $this->do_screen_reader_label();
 			$field .= $this->do_field_div_end();
 			$field .= $this->do_field_end();

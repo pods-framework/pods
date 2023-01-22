@@ -10,7 +10,7 @@ trait LoggerAwareTrait
     /**
      * The logger instance.
      *
-     * @var LoggerInterface|null
+     * @var LoggerInterface
      */
     protected $logger;
 

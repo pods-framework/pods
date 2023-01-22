@@ -105,10 +105,7 @@ class Tribe__Admin__Notices {
 			'tribe-notice-dismiss',
 			'notice-dismiss.js',
 			[ 'jquery' ],
-			null,
-			[
-				'groups' => 'tec-admin-notices',
-			]
+			'admin_enqueue_scripts'
 		);
 	}
 
@@ -140,10 +137,10 @@ class Tribe__Admin__Notices {
 	}
 
 	/**
-	 * This will allow the user to Dismiss the Notice using JS.
+	 * This will allow the user to Dimiss the Notice using JS.
 	 *
 	 * We will dismiss the notice without checking to see if the slug was already
-	 * registered (via a call to exists()) for the reason that, during dismissal
+	 * registered (via a call to exists()) for the reason that, during a dismiss
 	 * ajax request, some valid notices may not have been registered yet.
 	 *
 	 * @since 4.3
@@ -155,9 +152,9 @@ class Tribe__Admin__Notices {
 			wp_send_json( false );
 		}
 
-		$slug = sanitize_key( $_GET[ self::$meta_key ] );
+		$slug = sanitize_title_with_dashes( $_GET[ self::$meta_key ] );
 
-		// Send a JSON answer with the status of dismissal
+		// Send a JSON answer with the status of dimissal
 		wp_send_json( $this->dismiss( $slug ) );
 	}
 
@@ -191,33 +188,12 @@ class Tribe__Admin__Notices {
 			$content = $notice->content;
 			$wrap    = isset( $notice->wrap ) ? $notice->wrap : false;
 
-			if ( is_array( $content ) && isset( $content[0] ) && $content[0] instanceof __PHP_Incomplete_Class ) {
-				// From a class that no longer exists (e.g. the plugin is not active), clean and bail.
-				$this->remove( $slug );
-				$this->remove_transient( $slug );
-
-				return false;
-			}
-
 			if ( is_callable( $content ) ) {
 				$content = call_user_func_array( $content, [ $notice ] );
 			}
 
-			if ( empty( $content ) ) {
-				// There is nothing to render, let's avoid the empty notice frame.
-				return false;
-			}
-
-			tribe_asset_enqueue_group( 'tec-admin-notices' );
-
-			// Return the rendered HTML.
-			$html = $this->render( $slug, $content, false, $wrap );
-
-			// Remove the notice and the transient (if any) since it's been rendered.
-			$this->remove( $slug );
-			$this->remove_transient( $slug );
-
-			return $html;
+			// Return the rendered HTML
+			return $this->render( $slug, $content, false, $wrap );
 		}
 
 		return false;
@@ -260,10 +236,6 @@ class Tribe__Admin__Notices {
 			$classes[] = 'is-dismissible';
 		}
 
-		if ( $notice->inline ) {
-			$classes[] = 'inline';
-		}
-
 		// Prevents Empty Notices
 		if ( empty( $content ) ) {
 			return false;
@@ -274,7 +246,6 @@ class Tribe__Admin__Notices {
 		}
 
 		$html = sprintf( '<div class="%s" data-ref="%s">%s</div>', implode( ' ', $classes ), $notice->slug, $content );
-		tribe_asset_enqueue_group( 'tec-admin-notices' );
 
 		if ( ! $return ) {
 			echo $html;
@@ -543,7 +514,7 @@ class Tribe__Admin__Notices {
 	 */
 	public function register( $slug, $callback, $arguments = [], $active_callback = null ) {
 		// Prevent weird stuff here
-		$slug = sanitize_key( $slug );
+		$slug = sanitize_title_with_dashes( $slug );
 
 		$defaults = [
 			'callback'           => null,
@@ -552,7 +523,6 @@ class Tribe__Admin__Notices {
 			'priority'           => 10,
 			'expire'             => false,
 			'dismiss'            => false,
-			'inline'             => false,
 			'recurring'          => false,
 			'recurring_interval' => null,
 			'type'               => 'error',
@@ -576,14 +546,8 @@ class Tribe__Admin__Notices {
 		// Clean these
 		$notice->priority  = absint( $notice->priority );
 		$notice->expire    = (bool) $notice->expire;
+		$notice->dismiss   = (bool) $notice->dismiss;
 		$notice->recurring = (bool) $notice->recurring;
-
-		if ( ! is_callable( $notice->dismiss ) ) {
-			$notice->dismiss   = (bool) $notice->dismiss;
-		}
-		if ( ! is_callable( $notice->inline ) ) {
-			$notice->inline   = (bool) $notice->inline;
-		}
 
 		// Set the Notice on the array of notices
 		$this->notices[ $slug ] = $notice;
@@ -652,29 +616,18 @@ class Tribe__Admin__Notices {
 	 *
 	 * @param string $slug
 	 *
-	 * @return object|array|null
+	 * @return array|null
 	 */
 	public function get( $slug = null ) {
+		// Prevent weird stuff here
+		$slug = sanitize_title_with_dashes( $slug );
+
 		if ( is_null( $slug ) ) {
 			return $this->notices;
 		}
 
-		// Prevent weird stuff here
-		$slug = sanitize_key( $slug );
-
 		if ( ! empty( $this->notices[ $slug ] ) ) {
-			// I want to avoid modifying the registered value.
-			$notice = $this->notices[ $slug ];
-
-			if ( is_callable( $notice->inline ) ) {
-				$notice->inline = call_user_func( $notice->inline, $notice );
-			}
-
-			if ( is_callable( $notice->dismiss ) ) {
-				$notice->dismiss = call_user_func( $notice->dismiss, $notice );
-			}
-
-			return $notice;
+			return $this->notices[ $slug ];
 		}
 
 		return null;

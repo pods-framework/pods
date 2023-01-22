@@ -124,7 +124,7 @@ class Tribe__Plugin_Meta_Links {
 	 *
 	 * @return void
 	 */
-	final public function __clone() {
+	final private function __clone() {
 		_doing_it_wrong(
 			__FUNCTION__,
 			'Can not use this method on singletons.',
@@ -137,7 +137,7 @@ class Tribe__Plugin_Meta_Links {
 	 *
 	 * @return void
 	 */
-	final public function __wakeup() {
+	final private function __wakeup() {
 		_doing_it_wrong(
 			__FUNCTION__,
 			'Can not use this method on singletons.',

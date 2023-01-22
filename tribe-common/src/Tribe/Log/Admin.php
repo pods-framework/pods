@@ -1,6 +1,4 @@
 <?php
-use \Tribe\Admin\Troubleshooting;
-
 class Tribe__Log__Admin {
 	public function __construct() {
 		add_action( 'wp_ajax_tribe_logging_controls', [ $this, 'listen' ] );
@@ -108,7 +106,7 @@ class Tribe__Log__Admin {
 			[ 'jquery' ],
 			'admin_enqueue_scripts',
 			[
-				'conditionals' => [ $this, 'should_enqueue_assets' ],
+				'conditionals' => [ Tribe__Admin__Help_Page::instance(), 'is_current_page' ],
 				'localize'     => (object) [
 					'name' => 'tribe_logger_data',
 					'data' => [
@@ -117,17 +115,6 @@ class Tribe__Log__Admin {
 				],
 			]
 		);
-	}
-
-	/**
-	 * Checks wether the assets should be enqueued.
-	 *
-	 * @since 4.15.0
-	 *
-	 * @return boolean True if the assets should be enqueued.
-	 */
-	public function should_enqueue_assets() {
-		return Tribe__Admin__Help_Page::instance()->is_current_page() || tribe( Troubleshooting::class )->is_current_page();
 	}
 
 	/**
@@ -178,7 +165,7 @@ class Tribe__Log__Admin {
 	 *
 	 * @return array
 	 */
-	public function get_log_entries( $log = null ) {
+	protected function get_log_entries( $log = null ) {
 		if ( $logger = $this->current_logger() ) {
 			$logger->use_log( $log );
 			return (array) $logger->retrieve();

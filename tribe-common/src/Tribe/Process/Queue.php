@@ -445,7 +445,7 @@ abstract class Tribe__Process__Queue extends Tribe__Process__Handler {
 
 		foreach ( $split_data as $i => $iValue ) {
 			$postfix = 0 === $i ? '' : "_{$i}";
-			update_option( $key . $postfix, $split_data[ $i ], false );
+			update_option( $key . $postfix, $split_data[ $i ] );
 		}
 
 		return count( $split_data );

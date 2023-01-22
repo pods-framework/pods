@@ -1,6 +1,7 @@
 <?php
 namespace Tribe\Admin\Notice;
 
+use \Tribe__Date_Utils as Dates;
 use Tribe__Main as Common;
 
 
@@ -37,13 +38,12 @@ class WP_Version {
 	 * @return boolean
 	 */
 	public function wp_version_57_should_display() {
-		global $wp_version, $current_screen;
+		global $wp_version;
 
 		$screens = [
 			'tribe_events_page_tribe-app-shop', // App shop.
 			'events_page_tribe-app-shop', // App shop.
 			'tribe_events_page_tribe-common', // Settings & Welcome.
-			'tribe_events_page_tec-events-settings', // New Settings & Welcome.
 			'events_page_tribe-common', // Settings & Welcome.
 			'toplevel_page_tribe-common', // Settings & Welcome.
 		];

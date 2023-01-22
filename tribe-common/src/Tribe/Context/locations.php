@@ -47,14 +47,6 @@ return [
 			Tribe__Context::FUNC => static function () {
 				global $wp_query;
 
-				if ( empty( $wp_query ) ) {
-					return false;
-				}
-
-				if ( ! $wp_query instanceof WP_Query ) {
-					return false;
-				}
-
 				return $wp_query->is_main_query();
 			},
 		],
@@ -107,7 +99,7 @@ return [
 					'objects'
 				);
 
-				foreach ( $post_type_objs as $post_type ) {
+				foreach( $post_type_objs as $post_type ) {
 					if ( empty( $post_type->query_var ) ) {
 						continue;
 					}

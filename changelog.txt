@@ -2,6 +2,20 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.11.1 - January 23rd, 2023 =
+
+* Fixed: PHP 5.6 compatibility has been restored after some PHP 7.0+ code came through from tribe-common library update in Pods 2.9.11. (@sc0ttkclark)
+* Fixed: Identified and resolved additional PHP 5.6 / PHP 7.0+ compatibility warnings in the Pods codebase. (@sc0ttkclark)
+* Fixed: Disabled the unnecessary Promoter authentication checks from tribe-common library. (@sc0ttkclark, @fabrisancho)
+
+= 2.9.11 - January 19th, 2023 =
+
+* Security: Fix nonce verification check when deleting a pod. Thanks to Rafshanzani Suhada for responsibly disclosing this through Patchstack (@0xshdax, @sc0ttkclark)
+* Compatibility: Improved compatibility with PHP 8.1+ (@sc0ttkclark)
+* Tweak: Removed some of the jQuery dependency for Pods DFV, the only part that remains is `jquery-ui-sortable` for File fields (to be further refactored into React at a later point). (@sc0ttkclark)
+* Fixed: Updated the tribe-common library which had an older version of JWT included. (@sc0ttkclark)
+* Fixed: Remove debug output on the Tools page when no actions needed to run. (@sc0ttkclark)
+
 = 2.9.10.2 - December 14th, 2022 =
 
 * Fixed: The new `pods_get_instance()` function now correctly checks if the `$pod` object is set up before calling methods on it. (@lkraav, @sc0ttkclark)

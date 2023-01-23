@@ -177,6 +177,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 * Fixed: PHP 5.6 compatibility has been restored after some PHP 7.0+ code came through from tribe-common library update in Pods 2.9.11. (@sc0ttkclark)
 * Fixed: Identified and resolved additional PHP 5.6 / PHP 7.0+ compatibility warnings in the Pods codebase. (@sc0ttkclark)
+* Fixed: Disabled the unnecessary Promoter authentication checks from tribe-common library. (@sc0ttkclark, @fabrisancho)
 
 = 2.9.11 - January 19th, 2023 =
 

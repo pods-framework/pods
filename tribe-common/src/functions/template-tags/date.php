@@ -67,10 +67,8 @@ if ( ! function_exists( 'tribe_beginning_of_day' ) ) {
 	 *
 	 * @category Events
 	 *
-	 * @param string|null $date   The date to find the beginning of the day, defaults to today
-	 * @param string      $format Allows date and time formatting using standard php syntax.
-	 *                            ( see: http://php.net/manual/en/function.date.php )
-	 *                            Defaults to 'Y-m-d H:i:s'.
+	 * @param string $date   The date to find the beginning of the day, defaults to today
+	 * @param string $format Allows date and time formatting using standard php syntax (http://php.net/manual/en/function.date.php)
 	 *
 	 * @return string
 	 */

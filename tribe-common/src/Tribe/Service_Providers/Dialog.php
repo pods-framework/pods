@@ -75,7 +75,7 @@ class Dialog extends \tad_DI52_ServiceProvider {
 			$main,
 			'tribe-dialog',
 			'dialog.css',
-			[ 'tec-variables-full' ],
+			[],
 			[],
 			[ 'groups' => 'tribe-dialog' ]
 		);

@@ -88,10 +88,6 @@ class Tribe__Ajax__Dropdown {
 			}
 		}
 
-		foreach ( $results as $result ) {
-			$result->text = wp_specialchars_decode( wp_kses( $result->text, [] ) );
-		}
-
 		$data['results']    = $results;
 		$data['taxonomies'] = get_taxonomies();
 
@@ -275,7 +271,7 @@ class Tribe__Ajax__Dropdown {
 		if ( has_filter( $filter ) ) {
 			$data = apply_filters( $filter, [], $args->search, $args->page, $args->args, $args->source );
 		} else {
-			$data = call_user_func_array( [ $this, $args->source ], array_values( (array) $args ) );
+			$data = call_user_func_array( [ $this, $args->source ], (array) $args );
 		}
 
 		// If we've got a empty dataset we return an error.

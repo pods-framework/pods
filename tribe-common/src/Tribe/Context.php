@@ -282,23 +282,7 @@ class Tribe__Context {
 		}
 
 		if ( ! empty( $post_or_type ) ) {
-			$lookup = [];
-			// Prevent a slew of warnings every time we call this.
-			if ( isset( $_REQUEST ) ) {
-				$lookup[] = (array) $_REQUEST;
-			}
-
-			if ( isset( $_GET ) ) {
-				$lookup[] = (array) $_GET;
-			}
-
-			if ( isset( $_POST ) ) {
-				$lookup[] = (array) $_POST;
-			}
-
-			if ( empty( $lookup ) ) {
-				return false;
-			}
+			$lookup = [ $_GET, $_POST, $_REQUEST ];
 
 			$current_post = Tribe__Utils__Array::get_in_any( $lookup, 'post', get_post() );
 

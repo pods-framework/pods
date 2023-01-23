@@ -39,7 +39,7 @@ class Tribe__Editor__Configuration implements Tribe__Editor__Configuration_Inter
 				],
 				'dateSettings' => $this->get_date_settings(),
 				'constants'    => [
-					'hideUpsell' => tec_should_hide_upsell(),
+					'hideUpsell' => ( defined( 'TRIBE_HIDE_UPSELL' ) && TRIBE_HIDE_UPSELL ),
 				],
 				'countries'    => $languages_locations->get_countries( true ),
 				'usStates'     => Tribe__View_Helpers::loadStates(),

@@ -119,18 +119,13 @@ class Tribe__Admin__Helpers {
 			return false;
 		}
 
-		// Avoid Notices by checking the object type of WP_Screen.
+		// Avoid Notices by checking the object type of WP_Screen
 		if ( ! $this->is_wp_screen() ) {
 			return false;
 		}
 
-		// Match any screen from Tribe.
+		// Match any screen from Tribe
 		if ( is_null( $id ) && false !== strpos( $current_screen->id, 'tribe' ) ) {
-			return true;
-		}
-
-		// Match any screen from TEC.
-		if ( is_null( $id ) && false !== strpos( $current_screen->id, 'tec' ) ) {
 			return true;
 		}
 
@@ -139,12 +134,12 @@ class Tribe__Admin__Helpers {
 			return true;
 		}
 
-		// Match a specific page.
+		// Match a specific page
 		if ( $current_screen->id === $id ) {
 			return true;
 		}
 
-		// Match any post type page in the supported post types.
+		// Match any post type page in the supported post types
 		$defaults = apply_filters( 'tribe_is_post_type_screen_post_types', Tribe__Main::get_post_types() );
 		if ( in_array( $current_screen->post_type, $defaults ) ) {
 			return true;

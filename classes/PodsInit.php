@@ -249,6 +249,20 @@ class PodsInit {
 				add_filter( 'tribe_shortcodes_is_active', '__return_false' );
 				add_filter( 'tribe_customizer_is_active', '__return_false' );
 				add_filter( 'tribe_widgets_is_active', '__return_false' );
+
+				// Disable the Promoter auth.
+				add_filter(
+					'determine_current_user',
+					static function( $value ) {
+						remove_filter(
+							'determine_current_user',
+							tribe_callback( 'promoter.connector', 'authenticate_user_with_connector' )
+						);
+
+						return $value;
+					},
+					9
+				);
 			}
 
 			$GLOBALS['tribe-common-info'] = [

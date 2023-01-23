@@ -67,6 +67,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *                      The return value will be casted to boolean if non-boolean was returned.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return isset( $this->data[ $offset ] );
 	}
@@ -81,6 +82,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return mixed Can return all value types.
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		return isset( $this->data[ $offset ] )
 			? $this->data[ $offset ]
@@ -100,6 +102,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return void
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		$this->data[ $offset ] = $value;
 	}
@@ -114,6 +117,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @return void
 	 * @since 4.11.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		unset( $this->data[ $offset ] );
 	}

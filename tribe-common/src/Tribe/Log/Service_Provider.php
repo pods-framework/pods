@@ -1,11 +1,12 @@
 <?php
 /**
- * Registers and hooks the default log handler.
+ * ${CARET}
  *
  * @since   4.9.16
  *
  * @package Tribe\Log
  */
+
 
 namespace Tribe\Log;
 
@@ -58,9 +59,6 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 * @return Logger
 	 */
 	public function build_logger() {
-		// Provide more information in debug mode.
-		$level_threshold = defined( 'WP_DEBUG' ) && WP_DEBUG ? Logger::DEBUG : Logger::WARNING;
-
 		/**
 		 * Filters the level of the messages that will be logged.
 		 *
@@ -72,7 +70,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		 *
 		 * @see   \Monolog\Logger for possible levels.
 		 */
-		$level_threshold = apply_filters( 'tribe_log_level', $level_threshold );
+		$level_threshold = apply_filters( 'tribe_log_level', Logger::WARNING );
 
 		$error_log_handler = new ErrorLogHandler( ErrorLogHandler::OPERATING_SYSTEM, $level_threshold );
 

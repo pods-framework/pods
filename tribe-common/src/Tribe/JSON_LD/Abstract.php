@@ -188,6 +188,15 @@ abstract class Tribe__JSON_LD__Abstract {
 		/**
 		 * Allows users to filter the end markup of JSON-LD
 		 *
+		 * @deprecated
+		 * @todo Remove on 4.4
+		 *
+		 * @param string The HTML for the JSON LD markup
+		 */
+		$html = apply_filters( 'tribe_google_data_markup_json', $html );
+		/**
+		 * Allows users to filter the end markup of JSON-LD
+		 *
 		 * @param string The HTML for the JSON LD markup
 		 */
 		$html = apply_filters( 'tribe_json_ld_markup', $html );

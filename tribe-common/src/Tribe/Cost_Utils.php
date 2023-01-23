@@ -111,7 +111,7 @@ class Tribe__Cost_Utils {
 			is_numeric( $cost_with_period )
 			&& '0.00' === number_format( $cost_with_period, 2, '.', ',' )
 		) {
-			return esc_html__( 'Free', 'tribe-common' );
+			return esc_html__( 'Free', 'the-events-calendar' );
 		}
 
 		return $cost;
@@ -346,7 +346,7 @@ class Tribe__Cost_Utils {
 		}
 
 		$output_costs = [];
-		$costs        = call_user_func_array( 'array_merge', array_values( $costs ) );
+		$costs        = call_user_func_array( 'array_merge', $costs );
 
 		foreach ( $costs as $cost ) {
 			$numeric_cost = str_replace( $this->get_separators(), '.', $cost );

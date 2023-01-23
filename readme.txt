@@ -173,7 +173,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.9.11.1 - January 20th, 2023 =
+= 2.9.11.1 - January 23rd, 2023 =
 
 * Fixed: PHP 5.6 compatibility has been restored after some PHP 7.0+ code came through from tribe-common library update in Pods 2.9.11. (@sc0ttkclark)
 * Fixed: Identified and resolved additional PHP 5.6 / PHP 7.0+ compatibility warnings in the Pods codebase. (@sc0ttkclark)

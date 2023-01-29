@@ -216,6 +216,18 @@ class Field extends Base {
 				'boolean_yes_label' => '',
 				'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 			],
+			'required_help_boolean'    => [
+				'name'              => 'required_help_boolean',
+				'label'             => '',
+				'type'              => 'html',
+				'default'           => 0,
+				'html_content'      => '<p><em>' . esc_html__( 'Please note: When Yes/No fields are required, the field must be set to Yes (checked) to be able to submit the form.', 'pods' ) . '</em></p>',
+				'dependency'        => true,
+				'depends-on'        => [
+					'required' => true,
+					'type' => 'boolean',
+				],
+			],
 		];
 
 		$options['repeatable'] = [

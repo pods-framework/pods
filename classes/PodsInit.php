@@ -539,7 +539,11 @@ class PodsInit {
 				return $is_local;
 			}
 
-			if ( 'localhost' === $host ) {
+			// If local or a WASM run, treat it as localhost.
+			if (
+				'localhost' === $host
+				|| 'wasm.wordpress.net' === $host
+			) {
 				return true;
 			}
 
@@ -598,6 +602,18 @@ class PodsInit {
 		// Maybe store the object.
 		if ( $is_main_plugin ) {
 			$this->stats_tracking = $stats_tracking;
+		}
+
+		// Demo mode will auto-set tracking to off on future loads.
+		if ( pods_is_demo() ) {
+			add_action( 'init', static function() use ( $stats_tracking, $plugin_slug ) {
+				pods_update_setting( 'wisdom_opt_out', 0 );
+
+				// We are doing opt-out.
+				$stats_tracking->set_is_tracking_allowed( false, $plugin_slug );
+				$stats_tracking->set_can_collect_email( false, $plugin_slug );
+				$stats_tracking->update_block_notice( $plugin_slug );
+			}, 20 );
 		}
 
 		return $stats_tracking;

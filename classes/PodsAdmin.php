@@ -1393,6 +1393,11 @@ class PodsAdmin {
 	 * @return array List of callouts.
 	 */
 	public function get_callouts() {
+		// Demo mode always bypasses callouts.
+		if ( pods_is_demo() ) {
+			return [];
+		}
+
 		$force_callouts = false;
 
 		$page = pods_v( 'page' );
@@ -1436,14 +1441,17 @@ class PodsAdmin {
 			$callouts = array();
 		}
 
-		$disable_pods = pods_v( 'pods_callout_dismiss' );
+		$callout_dismiss = pods_v( 'pods_callout_dismiss' );
+
+		// Demo mode will auto-update the option for future loads.
+		$is_demo = pods_is_demo();
 
 		// Disable Friends of Pods callout.
-		if ( 'friends_2022_30' === $disable_pods ) {
+		if ( $is_demo || 'friends_2022_30' === $callout_dismiss ) {
 			$callouts['friends_2022_30'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
-		} elseif ( 'reset' === $disable_pods ) {
+		} elseif ( 'reset' === $callout_dismiss ) {
 			$callouts = array();
 
 			update_option( 'pods_callouts', $callouts );

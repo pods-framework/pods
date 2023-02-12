@@ -693,6 +693,20 @@ function pods_light() {
 }
 
 /**
+ * Determine whether Pods is in a demo from pods.io or not.
+ *
+ * @return bool Whether Pods is in a demo.
+ *
+ * @since TBD
+ */
+function pods_is_demo() {
+	return (
+		1 === (int) pods_v( 'pods_wasm_demo' )
+		|| 1 === (int) pods_v( 'pods_demo' )
+	);
+}
+
+/**
  * Determine if Strict Mode is enabled
  *
  * @param bool $include_debug Whether to include WP_DEBUG in strictness level

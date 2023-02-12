@@ -2567,7 +2567,6 @@ class PodsAdmin {
 	 * Get the admin help page
 	 */
 	public function admin_help() {
-
 		// Add our custom callouts.
 		$this->handle_callouts_updates();
 
@@ -3418,7 +3417,13 @@ class PodsAdmin {
 		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
 
 		// We only show on the plugins.php page or on Pods Admin pages.
-		if ( ( 'plugins.php' !== $pagenow && 0 !== strpos( $page, 'pods' ) ) || 0 === strpos( $page, 'pods-content' ) ) {
+		if (
+			(
+				'plugins.php' !== $pagenow
+				&& 0 !== strpos( $page, 'pods' )
+			)
+			|| 0 === strpos( $page, 'pods-manage-' )
+		) {
 			return false;
 		}
 

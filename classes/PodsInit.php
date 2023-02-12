@@ -459,17 +459,26 @@ class PodsInit {
 	 * @return Wisdom_Tracker The Stats Tracking object.
 	 */
 	public function stats_tracking( $plugin_file, $plugin_slug ) {
-		// Admin only.
+		$doing_cron = wp_doing_cron();
+
+		// Admin or on cron only.
 		if (
 			! is_admin()
-			&& ! wp_doing_cron()
+			&& ! $doing_cron
 		) {
 			return;
 		}
 
 		global $pagenow;
 
-		$is_pods_page = isset( $_GET['page'] ) && 0 === strpos( $_GET['page'], 'pods' );
+		$page_query_var = isset( $_GET['page'] ) ? $_GET['page'] : '';
+
+		// Only load tracker on Pods manage pages except for add new pod and manage content screens.
+		$is_pods_page = (
+			'pods-add-new' !== $page_query_var
+			&& 0 === strpos( $page_query_var, 'pods' )
+			&& 0 !== strpos( $page_query_var, 'pods-manage-' )
+		);
 
 		// Pods admin pages or plugins/update page only.
 		if (
@@ -478,7 +487,7 @@ class PodsInit {
 			&& 'update.php' !== $pagenow
 			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
 			&& ! $is_pods_page
-			&& ! wp_doing_cron()
+			&& ! $doing_cron
 		) {
 			return;
 		}
@@ -519,7 +528,7 @@ class PodsInit {
 				return;
 			}
 
-			// We are doing opt-in>
+			// We are doing an opt-in.
 			$stats_tracking->set_is_tracking_allowed( true, $plugin_slug );
 			$stats_tracking->set_can_collect_email( true, $plugin_slug );
 		}, 10, 2 );
@@ -568,7 +577,10 @@ class PodsInit {
 		} );
 
 		add_filter( 'wisdom_notice_text_' . $plugin_slug, static function() {
-			return __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment, your site admin email address, and plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' );
+			return
+				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings.', 'pods' )
+				. "\n\n"
+				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists. Tracking is completely optional.', 'pods' );
 		} );
 
 		// Handle non-Pods pages, we don't want certain things happening.

@@ -22,10 +22,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of all fields in the path.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching image field value or null if there was no match.
 	 */
-	public function map_value( $field, $traverse, $field_data, $obj = null ) {
+	public function map_value( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		// Remove the first field from $traverse.
 		if ( $field === reset( $traverse ) ) {
 			array_shift( $traverse );
@@ -41,8 +42,9 @@ class Map_Field_Values {
 		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 		 * @param Pods|null               $obj        The Pods object or null if not set.
+		 * @param object|null             $params     The full Pods::field() parameters.
 		 */
-		$value = apply_filters( 'pods_data_map_field_values_map_value_pre_check', null, $field, $traverse, $field_data, $obj );
+		$value = apply_filters( 'pods_data_map_field_values_map_value_pre_check', null, $field, $traverse, $field_data, $obj, $params );
 
 		if ( null !== $value ) {
 			return $value;
@@ -63,7 +65,7 @@ class Map_Field_Values {
 
 		// Go through all of the support mappings and check for a field value.
 		while ( null === $value && $method = array_shift( $methods ) ) {
-			$value = $this->$method( $field, $traverse, $field_data, $obj );
+			$value = $this->$method( $field, $traverse, $field_data, $obj, $params );
 		}
 
 		// If no value was found, set $method to false.
@@ -82,8 +84,9 @@ class Map_Field_Values {
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 		 * @param Pods|null               $obj        The Pods object or null if not set.
 		 * @param string|false            $method     The matching mapping method or false if there was no match.
+		 * @param object|null             $params     The full Pods::field() parameters.
 		 */
-		return apply_filters( 'pods_data_map_field_values_map_value', $value, $field, $traverse, $field_data, $obj, $method );
+		return apply_filters( 'pods_data_map_field_values_map_value', $value, $field, $traverse, $field_data, $obj, $method, $params );
 	}
 
 	/**
@@ -95,10 +98,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching field value or null if there was no match.
 	 */
-	public function custom( $field, $traverse, $field_data, $obj ) {
+	public function custom( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		/**
 		 * Allow filtering for a custom field mapping.
 		 *
@@ -109,8 +113,9 @@ class Map_Field_Values {
 		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 		 * @param Pods|null               $obj        The Pods object or null if not set.
+		 * @param object|null             $params     The full Pods::field() parameters.
 		 */
-		return apply_filters( 'pods_data_map_field_values_custom', null, $field, $traverse, $field_data, $obj );
+		return apply_filters( 'pods_data_map_field_values_custom', null, $field, $traverse, $field_data, $obj, $params );
 	}
 
 	/**
@@ -125,7 +130,7 @@ class Map_Field_Values {
 	 *
 	 * @return null|mixed The matching pod info value or null if there was no match.
 	 */
-	public function pod_info( $field, $traverse, $field_data, $obj ) {
+	public function pod_info( $field, $traverse, $field_data, $obj = null ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
 			return null;
@@ -158,7 +163,7 @@ class Map_Field_Values {
 	 *
 	 * @return null|mixed The matching field info value or null if there was no match.
 	 */
-	public function field_info( $field, $traverse, $field_data, $obj ) {
+	public function field_info( $field, $traverse, $field_data, $obj = null ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
 			return null;
@@ -194,10 +199,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching _display_fields value or null if there was no match.
 	 */
-	public function display_fields( $field, $traverse, $field_data, $obj ) {
+	public function display_fields( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
 			return null;
@@ -661,10 +667,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching avatar field value or null if there was no match.
 	 */
-	public function avatar( $field, $traverse, $field_data, $obj ) {
+	public function avatar( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		// Skip if not the field we are looking for.
 		if ( 'avatar' !== $field ) {
 			return null;

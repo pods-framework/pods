@@ -712,6 +712,17 @@ class Map_Field_Values {
 			$size = absint( $traverse_params[0] );
 		}
 
+		// If we have an actual field named "avatar" here, we have to assume it was meant to be the URL unless display was set.
+		if (
+			$field_data
+			&& (
+				$params
+				&& empty( $params->display )
+			)
+		) {
+			$url = true;
+		}
+
 		if ( $url ) {
 			if ( 0 < $size ) {
 				$avatar_url = get_avatar_url( $item_id, $size );

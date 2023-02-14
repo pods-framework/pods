@@ -481,7 +481,7 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		// Load the pod.
-		$pod = array_merge( $pod, (array) pods_v( 'options', $pod, [] ) );
+		$pod = array_merge( $pod, (array) pods_v( 'options', $pod, [], true ) );
 
 		$labels = array(
 			// Default

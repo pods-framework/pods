@@ -897,11 +897,14 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
-			} elseif ( ! $params->bypass_map_field_values ) {
+			} elseif (
+				! $params->bypass_map_field_values
+				&& ! $params->in_form
+			) {
 				// Handle custom/supported value mappings.
 				$map_field_values = pods_container( Map_Field_Values::class );
 
-				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this );
+				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this, $params );
 
 				$object_field_found = null !== $value;
 			}

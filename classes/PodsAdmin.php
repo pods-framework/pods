@@ -805,6 +805,9 @@ class PodsAdmin {
 	 * @return string
 	 */
 	public function media_button( $context = null ) {
+		if ( ! empty( $_GET['action'] ) && 'elementor' === $_GET['action'] ) {
+			return '';
+		}
 
 		// If shortcodes are disabled don't show the button
 		if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {

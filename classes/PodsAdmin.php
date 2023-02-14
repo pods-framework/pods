@@ -4,6 +4,7 @@ use Pods\Admin\Config\Pod as Config_Pod;
 use Pods\Admin\Config\Group as Config_Group;
 use Pods\Admin\Config\Field as Config_Field;
 use Pods\Admin\Settings;
+use Pods\Tools\Repair;
 use Pods\Whatsit\Pod;
 
 /**
@@ -1550,8 +1551,8 @@ class PodsAdmin {
 		$original_field_count = 0;
 
 		foreach ( $obj->data as $row ) {
-			if ( $row['id'] === $obj->id ) {
-				$original_field_count = $row['field_count'];
+			if ( (int) $row['id'] === (int) $obj->id ) {
+				$original_field_count = (int) $row['field_count'];
 
 				break;
 			}
@@ -1594,18 +1595,19 @@ class PodsAdmin {
 			'include_fields'       => false,
 		] );
 
-		if ( ! $migrated ) {
-			$group_field_count = wp_list_pluck( $current_pod['groups'], 'fields' );
-			$group_field_count = array_map( 'count', $group_field_count );
-			$group_field_count = array_sum( $group_field_count );
+		$group_field_count = wp_list_pluck( $current_pod['groups'], 'fields' );
+		$group_field_count = array_map( 'count', $group_field_count );
+		$group_field_count = array_sum( $group_field_count );
 
-			if ( $original_field_count !== $group_field_count ) {
+		// Detect if there may be a migration/repair needed.
+		if ( $original_field_count !== $group_field_count ) {
+			if ( ! $migrated ) {
 				$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
 
 				// Check again in case the pod migrated wrong.
 				if ( ! $pod instanceof Pod ) {
-					$obj->id = null;
-					$obj->row = [];
+					$obj->id     = null;
+					$obj->row    = [];
 					$obj->action = 'manage';
 
 					$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
@@ -1613,6 +1615,14 @@ class PodsAdmin {
 
 					return null;
 				}
+
+				$current_pod = $pod->export( [
+					'include_groups'       => true,
+					'include_group_fields' => true,
+					'include_fields'       => false,
+				] );
+			} else {
+				pods_message( __( 'You may need to repair this Pod, we detected some fields not assigned to the groups shown in this configuration. You can find the tool at Pods Admin > Settings > Tools.', 'pods' ) );
 			}
 		}
 
@@ -1738,103 +1748,15 @@ class PodsAdmin {
 	 * @return Pod The pod object.
 	 */
 	public function maybe_migrate_pod_fields_into_group( $pod ) {
-		$groups = $pod->get_groups( [
-			'fallback_mode' => false,
-		] );
+		$tool = pods_container( Repair::class );
 
-		$check_orphan_fields = ! $groups;
+		$results = $tool->repair_groups_and_fields_for_pod( $pod, 'upgrade' );
 
-		$api = pods_api();
-
-		$group_id = null;
-
-		// Only migrate if there are no groups or orphan fields.
-		if ( ! $check_orphan_fields ) {
-			$has_orphan_fields = $pod->has_fields( [
-				'fallback_mode' => false,
-				'group'         => null,
-			] );
-
-			if ( ! $has_orphan_fields ) {
-				$pod->set_arg( '_migrated_28', 1 );
-
-				try {
-					$api->save_pod( $pod );
-				} catch ( Exception $exception ) {
-					// Nothing to do for now.
-				}
-
-				$pod->flush();
-
-				return $pod;
-			}
-
-			$groups = wp_list_pluck( $groups, 'id' );
-			$groups = array_filter( $groups );
-
-			// Get the first group ID.
-			if ( ! empty( $groups ) ) {
-				$group_id = reset( $groups );
-			}
+		if ( '' !== $results['message_html'] ) {
+			pods_message( $results['message_html'] );
 		}
 
-		$fields = $pod->get_fields( [
-			'fallback_mode' => false,
-			'group'         => null,
-		] );
-
-		if ( empty( $group_id ) ) {
-			$label = __( 'Details', 'pods' );
-
-			if ( in_array( $pod->get_type(), [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
-				$label = __( 'More Fields', 'pods' );
-			}
-
-			/**
-			 * Filter the title of the Pods Metabox used in the post editor.
-			 *
-			 * @since unknown
-			 *
-			 * @param string  $title  The title to use, default is 'More Fields'.
-			 * @param obj|Pod $pod    Current Pods Object.
-			 * @param array   $fields Array of fields that will go in the metabox.
-			 * @param string  $type   The type of Pod.
-			 * @param string  $name   Name of the Pod.
-			 */
-			$label = apply_filters( 'pods_meta_default_box_title', $label, $pod, $fields, $pod->get_type(), $pod->get_name() );
-			$name  = sanitize_key( pods_js_name( sanitize_title( $label ) ) );
-
-			// Setup first group.
-			$group_id = $api->save_group( [
-				'pod'    => $pod,
-				'name'   => $name,
-				'label'  => $label,
-			] );
-		}
-
-		foreach ( $fields as $field ) {
-			$api->save_field( [
-				'id'           => $field->get_id(),
-				'pod_data'     => $pod,
-				'field'        => $field,
-				'new_group_id' => $group_id,
-			], false );
-
-			$field->set_arg( 'group_id', $group_id );
-		}
-
-		$pod->set_arg( '_migrated_28', 1 );
-
-		$api->save_pod( $pod );
-
-		$pod->flush();
-
-		$api->cache_flush_pods( $pod );
-
-		// Refresh pod object.
-		$pod->flush();
-
-		return $pod;
+		return $results['upgraded_pod'];
 	}
 
 	/**

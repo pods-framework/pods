@@ -83,6 +83,11 @@ class Base {
 			}
 
 			if ( empty( $result_set ) ) {
+				// Don't output anything if in upgrade mode.
+				if ( 'upgrade' === $mode ) {
+					continue;
+				}
+
 				$result_set[] = __( 'No actions were needed.', 'pods' );
 			}
 
@@ -117,6 +122,11 @@ class Base {
 			if ( $using_cli ) {
 				WP_CLI::warning( __( 'No actions were needed.', 'pods' ) );
 			} else {
+				// Don't output anything if in upgrade mode.
+				if ( 'upgrade' === $mode ) {
+					return '';
+				}
+
 				$messages[] = esc_html__( 'No actions were needed.', 'pods' );
 			}
 		}

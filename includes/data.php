@@ -673,13 +673,13 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				}
 				break;
 			case 'user':
+				// Prevent deprecation notice from WP.
+				if ( 'id' === $var ) {
+					$var = 'ID';
+				}
+
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
-
-					// Prevent deprecation notice from WP.
-					if ( 'id' === $var ) {
-						$var = 'ID';
-					}
 
 					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
 						$value = '';
@@ -700,7 +700,10 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					} elseif ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 						$output = $value;
 					}
-				}//end if
+				} elseif ( 'id' === $var ) {
+					// Return 0 when logged out and calling the ID.
+					$output = 0;
+				}
 				break;
 			case 'option':
 				$output = get_option( $var, $default );

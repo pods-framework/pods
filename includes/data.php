@@ -700,7 +700,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					} elseif ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 						$output = $value;
 					}
-				} elseif ( 'id' === $var ) {
+				} elseif ( 'ID' === $var ) {
 					// Return 0 when logged out and calling the ID.
 					$output = 0;
 				}

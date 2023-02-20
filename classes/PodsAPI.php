@@ -9916,6 +9916,8 @@ class PodsAPI {
 				}
 			}
 		} elseif ( ! empty( $pod ) ) {
+			$object_type = pods_v( 'type', $pod, $object_type, true );
+
 			$info['pod'] = $pod;
 		}
 
@@ -10002,6 +10004,16 @@ class PodsAPI {
 
 		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
 
+		if ( empty( $object_type ) ) {
+			$object_type = 'post_type';
+			$object      = 'post';
+		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ), true ) ) {
+			$object = $object_type;
+		} elseif ( 'post_type' === $object_type && 'attachment' === $object ) {
+			$object_type = 'media';
+			$object      = $object_type;
+		}
+
 		$info = array(
 			//'select' => '`t`.*',
 			'object_type'         => $object_type,
@@ -10040,16 +10052,6 @@ class PodsAPI {
 			'pod'     => null,
 			'recurse' => false
 		);
-
-		if ( empty( $object_type ) ) {
-			$object_type = 'post_type';
-			$object      = 'post';
-		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ), true ) ) {
-			$object = $object_type;
-		} elseif ( 'post_type' === $object_type && 'attachment' === $object ) {
-			$object_type = 'media';
-			$object      = $object_type;
-		}
 
 		$pod_name = $pod;
 
@@ -10111,6 +10113,13 @@ class PodsAPI {
 				$object_type = $_info['type'];
 			}
 			$info = array_merge( $info, $_info );
+
+			// Attempt to normalize the object type.
+			if ( ! empty( $info['pod']['type'] ) ) {
+				$object_type = $info['pod']['type'];
+
+				$info['object_type'] = $object_type;
+			}
 		}
 
 		if (

@@ -403,6 +403,10 @@ window.PodsDFV = {
 				cleanedFieldConfig.fieldItemData = data.fieldItemData;
 			}
 
+			if ( false === data.fieldValue ) {
+				data.fieldValue = null;
+			}
+
 			return {
 				directRender,
 				fieldComponent: FIELD_MAP[ data.fieldType ]?.fieldComponent || null,

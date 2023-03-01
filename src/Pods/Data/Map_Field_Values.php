@@ -398,7 +398,7 @@ class Map_Field_Values {
 		$raw = isset( $traverse[2] ) && 'raw' === $traverse[2];
 
 		if ( 'user' === $context_type && 'user_pass' === $context_var ) {
-			return null;
+			return '';
 		}
 
 		$value = pods_v( $context_var, $context_type );

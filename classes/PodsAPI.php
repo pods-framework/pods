@@ -10967,6 +10967,10 @@ class PodsAPI {
 
 	/**
 	 * Clear Pod-related cache for Groups.
+	 *
+	 * @since 2.9.12
+	 *
+	 * @param bool $flush_fields Whether to flush field caches.
 	 */
 	public function cache_flush_groups( $flush_fields = true ) {
 		pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
@@ -10988,6 +10992,8 @@ class PodsAPI {
 
 	/**
 	 * Clear Pod-related cache for Fields.
+	 *
+	 * @since 2.9.12
 	 */
 	public function cache_flush_fields() {
 		// Field objects.

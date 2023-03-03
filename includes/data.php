@@ -2700,6 +2700,8 @@ function pods_host_from_url( $url ) {
 /**
  * Clone a list of objects.
  *
+ * @since 2.9.12
+ *
  * @param object[] $objects The list of objects to clone.
  *
  * @return object[] The cloned list of objects.
@@ -2710,6 +2712,8 @@ function pods_clone_objects( $objects ) {
 
 /**
  * Clone an object.
+ *
+ * @since 2.9.12
  *
  * @param object $object The object to clone.
  *

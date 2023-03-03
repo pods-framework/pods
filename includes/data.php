@@ -2696,3 +2696,25 @@ function pods_host_from_url( $url ) {
 
 	return esc_html( $url_parsed['host'] );
 }
+
+/**
+ * Clone a list of objects.
+ *
+ * @param object[] $objects The list of objects to clone.
+ *
+ * @return object[] The cloned list of objects.
+ */
+function pods_clone_objects( $objects ) {
+	return array_map( 'pods_clone_object', $objects );
+}
+
+/**
+ * Clone an object.
+ *
+ * @param object $object The object to clone.
+ *
+ * @return object The cloned object.
+ */
+function pods_clone_object( $object ) {
+	return clone $object;
+}

@@ -10976,6 +10976,7 @@ class PodsAPI {
 		pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
 
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_group' );
+		pods_static_cache_clear( true, PodsMeta::class . '/groups_get' );
 
 		if ( $flush_fields ) {
 			$this->cache_flush_fields();

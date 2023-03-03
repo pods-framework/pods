@@ -2870,8 +2870,10 @@ function pods_register_group( array $group, $pod, array $fields = [] ) {
 	pods_register_object( $group, 'group' );
 
 	foreach ( $fields as $field ) {
-		pods_register_group_field( $field, $group['name'], $pod_name );
+		pods_register_group_field( $field, $group['name'], $pod );
 	}
+
+	pods_api()->cache_flush_groups();
 
 	return true;
 }
@@ -2888,10 +2890,11 @@ function pods_register_group( array $group, $pod, array $fields = [] ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_group_field( array $field, $group, $pod ) {
-	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+	$pod_name   = is_string( $pod ) ? $pod : $pod['name'];
+	$group_name = is_string( $group ) ? $group : $group['name'];
 
 	$field['parent'] = 'pod/' . $pod_name;
-	$field['group']  = $group;
+	$field['group']  = $group_name;
 
 	pods_register_object( $field, 'field' );
 

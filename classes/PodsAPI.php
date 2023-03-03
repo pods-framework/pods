@@ -10881,14 +10881,15 @@ class PodsAPI {
 	/**
 	 * Clear Pod-related cache
 	 *
-	 * @param array|Pod|null $pod            The pod object or null of flushing general cache.
-	 * @param bool           $flush_rewrites Whether to flush rewrites.
+	 * @param array|Pod|null $pod                     The pod object or null of flushing general cache.
+	 * @param bool           $flush_rewrites          Whether to flush rewrites.
+	 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
 	 *
 	 * @return void
 	 *
 	 * @since 2.0.0
 	 */
-	public function cache_flush_pods( $pod = null, $flush_rewrites = true ) {
+	public function cache_flush_pods( $pod = null, $flush_rewrites = true, $flush_groups_and_fields = true ) {
 
 		/**
 		 * @var $wpdb wpdb
@@ -10906,8 +10907,6 @@ class PodsAPI {
 		pods_transient_clear( 'pods_blocks' );
 		pods_transient_clear( 'pods_blocks_js' );
 
-		pods_transient_clear( 'pods_config_handler_found_configs' );
-
 		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
 			pods_cache_clear( $pod['name'], 'pods-class' );
@@ -10921,13 +10920,8 @@ class PodsAPI {
 		}
 
 		pods_cache_clear( true, 'pods_post_type_storage__pods_pod' );
-		pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
-		pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
 		pods_cache_clear( true, 'pods_post_type_storage__pods_template' );
 		pods_cache_clear( true, 'pods_post_type_storage__pods_page' );
-		pods_cache_clear( true, 'pods_post_type_storage_any' );
-
-		pods_cache_clear( true, __CLASS__ . '/_load_objects' );
 
 		pods_static_cache_clear( true, __CLASS__ );
 		pods_static_cache_clear( true, __CLASS__ . '/table_info_cache' );
@@ -10935,16 +10929,23 @@ class PodsAPI {
 		pods_static_cache_clear( true, PodsInit::class . '/existing_content_types' );
 		pods_static_cache_clear( true, PodsView::class );
 		pods_static_cache_clear( true, PodsField_Pick::class . '/related_data' );
-		pods_static_cache_clear( true, PodsField_Pick::class . '/field_data' );
 		pods_static_cache_clear( true, 'pods_svg_icon/base64' );
 		pods_static_cache_clear( true, 'pods_svg_icon/svg' );
-		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_pod' );
-		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_group' );
-		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_field' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_template' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_page' );
-		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
+
+		if ( $flush_groups_and_fields ) {
+			$this->cache_flush_fields();
+		} else {
+			pods_transient_clear( 'pods_config_handler_found_configs' );
+
+			pods_cache_clear( true, __CLASS__ . '/_load_objects' );
+			pods_cache_clear( true, 'pods_post_type_storage_any' );
+
+			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
+			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
+		}
 
 		pods_init()->refresh_existing_content_types_cache( true );
 
@@ -10962,6 +10963,47 @@ class PodsAPI {
 		}
 
 		do_action( 'pods_cache_flushed' );
+	}
+
+	/**
+	 * Clear Pod-related cache for Groups.
+	 */
+	public function cache_flush_groups( $flush_fields = true ) {
+		pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
+
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_group' );
+
+		if ( $flush_fields ) {
+			$this->cache_flush_fields();
+		} else {
+			pods_transient_clear( 'pods_config_handler_found_configs' );
+
+			pods_cache_clear( true, __CLASS__ . '/_load_objects' );
+			pods_cache_clear( true, 'pods_post_type_storage_any' );
+
+			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
+			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
+		}
+	}
+
+	/**
+	 * Clear Pod-related cache for Fields.
+	 */
+	public function cache_flush_fields() {
+		// Field objects.
+		pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
+
+		pods_static_cache_clear( true, PodsField_Pick::class . '/field_data' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_field' );
+
+		// General caches.
+		pods_transient_clear( 'pods_config_handler_found_configs' );
+
+		pods_cache_clear( true, __CLASS__ . '/_load_objects' );
+		pods_cache_clear( true, 'pods_post_type_storage_any' );
+
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
+		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
 	}
 
 	/**

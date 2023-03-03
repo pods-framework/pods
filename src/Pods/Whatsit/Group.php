@@ -45,7 +45,7 @@ class Group extends Whatsit {
 			$objects = $this->maybe_get_objects_by_identifier( $this->_fields, $args );
 
 			if ( is_array( $objects ) ) {
-				$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+				$this->_fields = pods_clone_objects( $objects );
 
 				/** @var Field[] $objects */
 				return $objects;
@@ -85,7 +85,7 @@ class Group extends Whatsit {
 		}
 
 		if ( ! $has_custom_args ) {
-			$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+			$this->_fields = pods_clone_objects( $objects );
 		}
 
 		return $objects;

@@ -1138,7 +1138,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$objects = $this->maybe_get_objects_by_identifier( $this->_fields, $args );
 
 			if ( is_array( $objects ) ) {
-				$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+				$this->_fields = pods_clone_objects( $objects );
 
 				/** @var Field[] $objects */
 				return $objects;
@@ -1174,7 +1174,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( ! $has_custom_args ) {
-			$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+			$this->_fields = pods_clone_objects( $objects );
 		}
 
 		return $objects;

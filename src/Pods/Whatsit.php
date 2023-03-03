@@ -2,6 +2,7 @@
 
 namespace Pods;
 
+use Closure;
 use Exception;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
@@ -270,6 +271,12 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'group'       => $this->args['group'],
 		);
 		*/
+
+		// Handle closures that cannot be serialized.
+		if ( isset( $this->args['data'] ) && $this->args['data'] instanceof Closure ) {
+			$this->args['data'] = $this->args['data']();
+		}
+
 		return [
 			'args',
 		];
@@ -290,7 +297,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 */
 	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
-		return $this->get_args();
+		$args = $this->get_args();
+
+		// Handle closures that cannot be serialized.
+		if ( isset( $args['data'] ) && $args['data'] instanceof Closure ) {
+			$args['data'] = $args['data']();
+		}
+
+		return $args;
 	}
 
 	/**

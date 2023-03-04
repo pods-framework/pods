@@ -887,7 +887,7 @@ class PodsMeta {
 
 		$cached = pods_static_cache_get( $cache_key, __CLASS__ . '/groups_get' );
 
-		if ( null !== $cached ) {
+		if ( is_array( $cached ) ) {
 			return $cached;
 		}
 

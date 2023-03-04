@@ -375,16 +375,15 @@ function pods_get_debug_timing() {
  */
 global $pods_debug;
 $pods_debug = 0;
+
 /**
- * Debugging common issues using this function saves a few lines and is compatible with
- *
- * @param mixed   $debug The error message to be thrown / displayed
- * @param boolean $die   If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
- * @param string  $prefix
- *
- * @return void
+ * Output information about a variable using var_dump() to save a few lines and is compatible with Xdebug and WP-CLI.
  *
  * @since 2.0.0
+ *
+ * @param mixed   $debug  The error message to be thrown / displayed.
+ * @param bool    $die    If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur.
+ * @param string  $prefix Extra information to output above the debug information.
  */
 function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	global $pods_debug;
@@ -468,6 +467,68 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	}
 
 	echo $debug;
+}
+
+/**
+ * Log debug information if WP_DEBUG_LOG is used.
+ *
+ * @since 2.9.12
+ *
+ * @param mixed $debug The error message to be thrown / displayed.
+ */
+function pods_debug_log( $debug ) {
+	// Maybe support additional arguments.
+	if ( 1 < func_get_args() ) {
+		$debug = func_get_args();
+	}
+
+	if ( function_exists( 'codecept_debug' ) || defined( 'WP_CLI' ) ) {
+		pods_debug( $debug, false, 'Output from pods_debug_log()' );
+	}
+
+	if ( in_array( strtolower( (string) WP_DEBUG_LOG ), array( 'true', '1' ), true ) ) {
+		$log_path = WP_CONTENT_DIR . '/debug.log';
+	} elseif ( is_string( WP_DEBUG_LOG ) ) {
+		$log_path = WP_DEBUG_LOG;
+	} else {
+		return;
+	}
+
+	ob_start();
+
+	var_dump( $debug );
+
+	$debug_line_number = __LINE__ - 2;
+
+	$debug_line_check = sprintf(
+		'<small>%s:%s:</small>',
+		__FILE__,
+		$debug_line_number
+	);
+
+	$debug = ob_get_clean();
+
+	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) ) {
+		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+			$debug = esc_html( $debug );
+		}
+	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		if ( ! empty( $backtrace[0] ) ) {
+			$debug_line_replace = sprintf(
+				'<small>%s:%s:</small>',
+				$backtrace[0]['file'],
+				$backtrace[0]['line']
+			);
+
+			$debug = str_replace( $debug_line_check, $debug_line_replace, $debug );
+		}
+	}
+
+	// Log the debug line.
+	error_log( $debug );
 }
 
 /**

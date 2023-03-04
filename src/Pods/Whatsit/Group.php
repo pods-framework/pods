@@ -81,6 +81,8 @@ class Group extends Whatsit {
 				$objects = $api->load_fields( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$objects = [];
 		}
 

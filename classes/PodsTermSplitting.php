@@ -85,7 +85,7 @@ class Pods_Term_Splitting {
 				$pod_info = $api->load_pod( $params, false );
 			}
 		} catch ( Exception $exception ) {
-			// Do nothing.
+			pods_debug_log( $exception );
 		}
 
 		return $pod_info;
@@ -172,6 +172,8 @@ class Pods_Term_Splitting {
 		try {
 			$all_pods = pods_api()->load_pods();
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			return;
 		}
 

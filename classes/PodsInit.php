@@ -2557,6 +2557,8 @@ class PodsInit {
 			try {
 				$api->delete_pod( array( 'id' => $pod_id ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod label.
 					__( 'Cannot delete pod "%s"', 'pods' ),
@@ -2571,6 +2573,8 @@ class PodsInit {
 			try {
 				$api->delete_template( array( 'name' => $template['name'] ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod template label.
 					__( 'Cannot delete pod template "%s"', 'pods' ),
@@ -2585,6 +2589,8 @@ class PodsInit {
 			try {
 				$api->delete_page( array( 'name' => $page['name'] ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod page label.
 					__( 'Cannot delete pod page "%s"', 'pods' ),
@@ -2599,6 +2605,8 @@ class PodsInit {
 			try {
 				$api->delete_helper( array( 'name' => $helper['name'] ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod helper label.
 					__( 'Cannot delete pod helper "%s"', 'pods' ),

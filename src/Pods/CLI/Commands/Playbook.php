@@ -156,9 +156,9 @@ class Playbook extends WP_CLI_Command {
 				// translators: %s: The action name.
 				WP_CLI::warning( sprintf( __( 'Action not supported: %s', 'pods' ), $action_name ) );
 			}
-		} catch ( Exception $e ) {
+		} catch ( Exception $exception ) {
 			// translators: %s: The exception error message.
-			$playbook_error_message = sprintf( __( 'Playbook error: %s', 'pods' ), $e->getMessage() );
+			$playbook_error_message = sprintf( __( 'Playbook error: %s', 'pods' ), $exception->getMessage() );
 
 			if ( $continue_on_error ) {
 				WP_CLI::warning( $playbook_error_message );

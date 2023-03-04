@@ -3649,13 +3649,17 @@ class Pods implements Iterator {
 			}
 
 			return call_user_func( $params['helper'], $value );
-		} catch ( Throwable $error ) {
+		} catch ( Throwable $exception ) {
+			pods_debug_log( $exception );
+
 			if ( pods_is_debug_display() ) {
-				throw $error;
+				throw $exception;
 			}
-		} catch ( Exception $error ) {
+		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			if ( pods_is_debug_display() ) {
-				throw $error;
+				throw $exception;
 			}
 		}
 

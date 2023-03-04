@@ -40,8 +40,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 			try {
 				$id = $pod->add( $assoc_args );
-			} catch ( Exception $e ) {
-				WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $e->getMessage() ) );
+			} catch ( Exception $exception ) {
+				WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $exception->getMessage() ) );
 			}
 
 			if ( 0 < $id ) {
@@ -104,8 +104,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 			try {
 				$id = $pod->save( $assoc_args );
-			} catch ( Exception $e ) {
-				WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $e->getMessage() ) );
+			} catch ( Exception $exception ) {
+				WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $exception->getMessage() ) );
 			}
 
 			if ( 0 < $id ) {
@@ -154,8 +154,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		try {
 			$id = $pod->duplicate( $assoc_args );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( 0 < $id ) {
@@ -201,8 +201,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		try {
 			$deleted = $pod->delete();
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error saving pod item: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( $deleted ) {
@@ -272,8 +272,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		try {
 			$data = $pod->export( $params );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error exporting pod item: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error exporting pod item: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( ! empty( $data ) ) {
@@ -360,8 +360,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		try {
 			$data = $pod->export_data( $params );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error exporting pod items: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error exporting pod items: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( ! empty( $data ) ) {

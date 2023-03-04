@@ -5706,6 +5706,8 @@ class PodsAPI {
 
 					$data_mode = 'data';
 				} catch ( Exception $exception ) {
+					pods_debug_log( $exception );
+
 					$search_data = false;
 				}
 			}
@@ -5753,6 +5755,8 @@ class PodsAPI {
 						try {
 							$v = pods_attachment_import( $v );
 						} catch ( Exception $exception ) {
+							pods_debug_log( $exception );
+
 							continue;
 						}
 					}
@@ -6260,6 +6264,8 @@ class PodsAPI {
 		try {
 			$pod_id = $this->save_pod( $pod );
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			// Pod not saved.
 			return false;
 		}
@@ -6281,6 +6287,8 @@ class PodsAPI {
 			try {
 				$group_id = $this->save_group( $group_data );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				// Group not saved.
 				continue;
 			}
@@ -6302,6 +6310,7 @@ class PodsAPI {
 					$this->save_field( $field_data );
 				} catch ( Exception $exception ) {
 					// Field not saved.
+					pods_debug_log( $exception );
 				}
 			}
 		}
@@ -6389,6 +6398,8 @@ class PodsAPI {
 		try {
 			$group_id = $this->save_group( $group );
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			return false;
 		}
 
@@ -6405,6 +6416,7 @@ class PodsAPI {
 				$this->save_field( $field_data );
 			} catch ( Exception $exception ) {
 				// Field not saved.
+				pods_debug_log( $exception );
 			}
 		}
 
@@ -6981,10 +6993,12 @@ class PodsAPI {
 			if ( 'table' === $pod['storage'] ) {
 				try {
 					pods_query( "TRUNCATE `@wp_pods_{$params->name}`", false );
-				} catch ( Exception $e ) {
+				} catch ( Exception $exception ) {
+					pods_debug_log( $exception );
+
 					// Allow pod to be reset if the table doesn't exist
-					if ( false === strpos( $e->getMessage(), 'Unknown table' ) ) {
-						return pods_error( $e->getMessage(), $this );
+					if ( false === strpos( $exception->getMessage(), 'Unknown table' ) ) {
+						return pods_error( $exception->getMessage(), $this );
 					}
 				}
 			}
@@ -7169,10 +7183,12 @@ class PodsAPI {
 			if ( 'table' === $pod['storage'] ) {
 				try {
 					pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
-				} catch ( Exception $e ) {
+				} catch ( Exception $exception ) {
+					pods_debug_log( $exception );
+
 					// Allow pod to be deleted if the table doesn't exist
-					if ( false === strpos( $e->getMessage(), 'Unknown table' ) ) {
-						return pods_error( $e->getMessage(), $this );
+					if ( false === strpos( $exception->getMessage(), 'Unknown table' ) ) {
+						return pods_error( $exception->getMessage(), $this );
 					}
 				}
 			}
@@ -7770,7 +7786,7 @@ class PodsAPI {
 				}
 			}
 		} catch ( Exception $exception ) {
-			// Nothing left to do here.
+			pods_debug_log( $exception );
 		}
 
 		if ( ! empty( $pod ) ) {
@@ -8111,7 +8127,7 @@ class PodsAPI {
 				return $object;
 			}
 		} catch ( Exception $exception ) {
-			// Return error below.
+			pods_debug_log( $exception );
 		}
 
 		if ( $strict ) {
@@ -8224,6 +8240,8 @@ class PodsAPI {
 		try {
 			return (boolean) $this->load_field( $load_params );
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			return false;
 		}
 	}
@@ -8448,8 +8466,8 @@ class PodsAPI {
 					break;
 				}
 			}
-		} catch ( \Exception $e ) {
-			// Do nothing.
+		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
 		}
 
 		return $fields;
@@ -8577,6 +8595,8 @@ class PodsAPI {
 		try {
 			return (boolean) $this->load_group( $load_params );
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			return false;
 		}
 	}

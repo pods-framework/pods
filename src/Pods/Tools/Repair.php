@@ -96,7 +96,7 @@ class Repair extends Base {
 			try {
 				$this->api->save_pod( $pod );
 			} catch ( Throwable $exception ) {
-				// Do nothing.
+				pods_debug_log( $exception );
 			}
 
 			// Refresh pod object.

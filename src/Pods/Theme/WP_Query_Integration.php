@@ -75,6 +75,8 @@ class WP_Query_Integration {
 				'names' => true,
 			] );
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			return;
 		}
 

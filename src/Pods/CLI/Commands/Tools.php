@@ -324,7 +324,7 @@ class Tools extends WP_CLI_Command {
 		if ( ! empty( $pod_name ) ) {
 			try {
 				$pod = $api->load_pod( [ 'name' => $pod_name ] );
-			} catch ( \Exception $exception ) {
+			} catch ( Exception $exception ) {
 				WP_CLI::error( $exception->getMessage() );
 			}
 		}

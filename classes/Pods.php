@@ -634,6 +634,8 @@ class Pods implements Iterator {
 			$params = (object) $defaults;
 		}//end if
 
+		$params->original_output = $params->output;
+
 		if ( $params->in_form ) {
 			$params->output = 'ids';
 		} elseif ( null === $params->output ) {
@@ -830,7 +832,7 @@ class Pods implements Iterator {
 			// Handle relationships with ID output (only if not traversing).
 			$pick_output = pods_v( 'pick_output', $field_data, null, true );
 
-			if ( null !== $pick_output && ! $is_traversal ) {
+			if ( null !== $pick_output && ! $is_traversal && null === $params->original_output ) {
 				$params->output = $pick_output;
 			}
 		}
@@ -1227,7 +1229,7 @@ class Pods implements Iterator {
 									// Handle relationships with ID output when traversing.
 									$last_pick_output = pods_v( 'pick_output', $last_options, null, true );
 
-									if ( null !== $last_pick_output ) {
+									if ( null !== $last_pick_output && null === $params->original_output ) {
 										$params->output = $last_pick_output;
 									}
 								}

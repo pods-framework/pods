@@ -828,8 +828,10 @@ class Pods implements Iterator {
 			}
 
 			// Handle relationships with ID output (only if not traversing).
-			if ( 'ids' === pods_v( $field_data['pick_output'] ) && ! $is_traversal ) {
-				$params->output = 'ids';
+			$pick_output = pods_v( 'pick_output', $field_data, null, true );
+
+			if ( null !== $pick_output && ! $is_traversal ) {
+				$params->output = $pick_output;
 			}
 		}
 
@@ -1219,6 +1221,15 @@ class Pods implements Iterator {
 									$table = $last_object_options->get_table_info();
 								} else {
 									$table = $last_options->get_table_info();
+								}
+
+								if ( 'object' === $last_options->get_arg( 'pick_data_storage' ) ) {
+									// Handle relationships with ID output when traversing.
+									$last_pick_output = pods_v( 'pick_output', $last_options, null, true );
+
+									if ( null !== $last_pick_output ) {
+										$params->output = $last_pick_output;
+									}
 								}
 
 								$last_is_repeatable_field = $current_field instanceof Field && $current_field->is_repeatable();

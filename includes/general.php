@@ -527,8 +527,10 @@ function pods_debug_log( $debug ) {
 		}
 	}
 
+	$debug = 'pods_debug_log: ' . $debug;
+
 	// Log the debug line.
-	error_log( $debug );
+	error_log( $debug, 0, $log_path );
 }
 
 /**

@@ -818,10 +818,19 @@ class Pods implements Iterator {
 		$field_options       = $field_data;
 		$is_tableless_field  = in_array( $field_type, $tableless_field_types, true );
 		$is_repeatable_field = $field_data instanceof Field && $field_data->is_repeatable();
+		$is_pick_field       = 'pick' === $field_type;
 
-		// Simple fields have no other output options.
-		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
-			$params->output = 'arrays';
+		// Handle output specific handling.
+		if ( $is_pick_field ) {
+			// Simple fields have no other output options.
+			if ( in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
+				$params->output = 'arrays';
+			}
+
+			// Handle relationships with ID output (only if not traversing).
+			if ( 'ids' === pods_v( $field_data['pick_output'] ) && ! $is_traversal ) {
+				$params->output = 'ids';
+			}
 		}
 
 		$is_tableless_field_and_not_simple = (
@@ -854,7 +863,7 @@ class Pods implements Iterator {
 			if (
 				false !== $value &&
 				! is_array( $value ) &&
-				'pick' === $field_type &&
+				$is_pick_field &&
 				in_array( $field_data['pick_object'], $simple_tableless_objects, true )
 			) {
 				$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
@@ -948,7 +957,7 @@ class Pods implements Iterator {
 					if ( $is_tableless_field ) {
 						$params->raw = true;
 
-						if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
+						if ( $is_pick_field && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
 							$simple         = true;
 							$params->single = true;
 						}

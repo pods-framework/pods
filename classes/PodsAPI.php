@@ -1007,14 +1007,16 @@ class PodsAPI {
 					'hide_in_default_form' => true,
 				],
 				'post_parent'           => [
-					'name'        => 'post_parent',
-					'label'       => 'Parent',
-					'type'        => 'pick',
-					'pick_object' => 'post_type',
-					'pick_val'    => '__current__',
-					'alias'       => [ 'parent' ],
-					'data'        => [],
-					'hidden'      => true,
+					'name'              => 'post_parent',
+					'label'             => 'Parent',
+					'type'              => 'pick',
+					'pick_object'       => 'post_type',
+					'pick_val'          => '__current__',
+					'pick_data_storage' => 'object',
+					'pick_output'       => 'ids',
+					'alias'             => [ 'parent' ],
+					'data'              => [],
+					'hidden'            => true,
 				],
 				'guid'                  => [
 					'name'                 => 'guid',
@@ -1168,6 +1170,107 @@ class PodsAPI {
 					'hide_in_default_form' => true,
 				],
 			];
+		} elseif ( 'taxonomy' === $object ) {
+			$fields = [
+				'term_id'          => [
+					'name'                 => 'term_id',
+					'label'                => 'ID',
+					'type'                 => 'number',
+					'alias'                => [ 'id', 'ID' ],
+					'options'              => [
+						'number_format' => '9999.99',
+					],
+					'hide_in_default_form' => true,
+				],
+				'name'             => [
+					'name'  => 'name',
+					'label' => 'Title',
+					'type'  => 'text',
+					'alias' => [ 'title' ],
+				],
+				'slug'             => [
+					'name'  => 'slug',
+					'label' => 'Permalink',
+					'type'  => 'slug',
+					'alias' => [ 'permalink' ],
+				],
+				'description'      => [
+					'name'  => 'description',
+					'label' => 'Description',
+					'type'  => 'wysiwyg',
+					'alias' => [ 'content' ],
+				],
+				'taxonomy'         => [
+					'name'  => 'taxonomy',
+					'label' => 'Taxonomy',
+					'type'  => 'text',
+					'alias' => [],
+				],
+				'parent'           => [
+					'name'              => 'parent',
+					'label'             => 'Parent',
+					'type'              => 'pick',
+					'pick_object'       => 'taxonomy',
+					'pick_val'          => '__current__',
+					'pick_data_storage' => 'object',
+					'pick_output'       => 'ids',
+					'alias'             => [ 'parent' ],
+					'data'              => [],
+					'hidden'            => true,
+				],
+				'term_taxonomy_id' => [
+					'name'                 => 'term_taxonomy_id',
+					'label'                => 'Term Taxonomy ID',
+					'type'                 => 'number',
+					'alias'                => [],
+					'hidden'               => true,
+					'options'              => [
+						'number_format' => '9999.99',
+					],
+					'hide_in_default_form' => true,
+				],
+				'term_group'       => [
+					'name'                 => 'term_group',
+					'label'                => 'Term Group',
+					'type'                 => 'number',
+					'alias'                => [ 'group' ],
+					'hidden'               => true,
+					'options'              => [
+						'number_format' => '9999.99',
+					],
+					'hide_in_default_form' => true,
+				],
+				'count'            => [
+					'name'                 => 'count',
+					'label'                => 'Count',
+					'type'                 => 'number',
+					'hidden'               => true,
+					'options'              => [
+						'number_format' => '9999.99',
+					],
+					'hide_in_default_form' => true,
+				],
+				'object_id'       => [
+					'name'                 => 'object_id',
+					'label'                => 'Object ID',
+					'type'                 => 'number',
+					'hidden'               => true,
+					'options'              => [
+						'number_format' => '9999.99',
+					],
+					'hide_in_default_form' => true,
+				],
+				'term_order'       => [
+					'name'                 => 'term_order',
+					'label'                => 'Term Order',
+					'type'                 => 'number',
+					'hidden'               => true,
+					'options'              => [
+						'number_format' => '9999.99',
+					],
+					'hide_in_default_form' => true,
+				],
+			];
 		} elseif ( 'comment' === $object ) {
 			$fields = [
 				'comment_ID'           => [
@@ -1196,19 +1299,23 @@ class PodsAPI {
 					],
 				],
 				'comment_post_ID'      => [
-					'name'  => 'comment_post_ID',
-					'label' => 'Post',
-					'type'  => 'pick',
-					'alias' => [ 'post', 'post_id' ],
-					'data'  => [],
+					'name'              => 'comment_post_ID',
+					'label'             => 'Post',
+					'type'              => 'pick',
+					'pick_data_storage' => 'object',
+					'pick_output'       => 'ids',
+					'alias'             => [ 'post', 'post_id' ],
+					'data'              => [],
 				],
 				'user_id'              => [
-					'name'        => 'user_id',
-					'label'       => 'Author',
-					'type'        => 'pick',
-					'alias'       => [ 'author' ],
-					'pick_object' => 'user',
-					'data'        => [],
+					'name'              => 'user_id',
+					'label'             => 'Author',
+					'type'              => 'pick',
+					'pick_object'       => 'user',
+					'pick_data_storage' => 'object',
+					'pick_output'       => 'ids',
+					'alias'             => [ 'author' ],
+					'data'              => [],
 				],
 				'comment_date'         => [
 					'name'    => 'comment_date',
@@ -1258,89 +1365,11 @@ class PodsAPI {
 					'type'                 => 'pick',
 					'pick_object'          => 'comment',
 					'pick_val'             => '__current__',
+					'pick_data_storage'    => 'object',
+					'pick_output'          => 'ids',
 					'alias'                => [ 'parent' ],
 					'data'                 => [],
 					'hidden'               => true,
-					'hide_in_default_form' => true,
-				],
-			];
-		} elseif ( 'taxonomy' === $object ) {
-			$fields = [
-				'term_id'          => [
-					'name'                 => 'term_id',
-					'label'                => 'ID',
-					'type'                 => 'number',
-					'alias'                => [ 'id', 'ID' ],
-					'options'              => [
-						'number_format' => '9999.99',
-					],
-					'hide_in_default_form' => true,
-				],
-				'name'             => [
-					'name'  => 'name',
-					'label' => 'Title',
-					'type'  => 'text',
-					'alias' => [ 'title' ],
-				],
-				'slug'             => [
-					'name'  => 'slug',
-					'label' => 'Permalink',
-					'type'  => 'slug',
-					'alias' => [ 'permalink' ],
-				],
-				'description'      => [
-					'name'  => 'description',
-					'label' => 'Description',
-					'type'  => 'wysiwyg',
-					'alias' => [ 'content' ],
-				],
-				'taxonomy'         => [
-					'name'  => 'taxonomy',
-					'label' => 'Taxonomy',
-					'type'  => 'text',
-					'alias' => [],
-				],
-				'parent'           => [
-					'name'        => 'parent',
-					'label'       => 'Parent',
-					'type'        => 'pick',
-					'pick_object' => '__current__',
-					'pick_val'    => '__current__',
-					'alias'       => [ 'parent' ],
-					'data'        => [],
-					'hidden'      => true,
-				],
-				'term_taxonomy_id' => [
-					'name'                 => 'term_taxonomy_id',
-					'label'                => 'Term Taxonomy ID',
-					'type'                 => 'number',
-					'alias'                => [],
-					'hidden'               => true,
-					'options'              => [
-						'number_format' => '9999.99',
-					],
-					'hide_in_default_form' => true,
-				],
-				'term_group'       => [
-					'name'                 => 'term_group',
-					'label'                => 'Term Group',
-					'type'                 => 'number',
-					'alias'                => [ 'group' ],
-					'hidden'               => true,
-					'options'              => [
-						'number_format' => '9999.99',
-					],
-					'hide_in_default_form' => true,
-				],
-				'count'            => [
-					'name'                 => 'count',
-					'label'                => 'Count',
-					'type'                 => 'number',
-					'alias'                => [],
-					'hidden'               => true,
-					'options'              => [
-						'number_format' => '9999.99',
-					],
 					'hide_in_default_form' => true,
 				],
 			];
@@ -9459,6 +9488,12 @@ class PodsAPI {
 			}
 		}
 
+		$meta_types_with_object_pick_data_storage = [
+			'post'     => true,
+			'term'     => true,
+			'comment'  => true,
+		];
+
 		if ( 'taxonomy' === $field_type ) {
 			$related = wp_get_object_terms( $params->ids, pods_v( 'name', $params->field ), array( 'fields' => 'ids' ) );
 
@@ -9587,6 +9622,26 @@ class PodsAPI {
 			$related_ids = array_merge( ...$gathered_ids );
 			$related_ids = array_map( 'absint', $related_ids );
 			$related_ids = array_unique( $related_ids );
+		} elseif (
+			! $params->force_meta
+			&& 'object' === $params->field->get_arg( 'pick_data_storage' )
+			&& isset( $meta_types_with_object_pick_data_storage[ $meta_type ] )
+		) {
+			$related_ids = [];
+
+			foreach ( $params->ids as $id ) {
+				$item_object = pods_get_item_object( $id, $meta_type );
+
+				if ( ! $item_object ) {
+					continue;
+				}
+
+				if ( ! isset( $item_object->{$params->field_name} ) ) {
+					continue;
+				}
+
+				$related_ids[] = $item_object->{$params->field_name};
+			}
 		} else {
 			if ( ! ( is_array( $params->pod ) || $params->pod instanceof Pods\Whatsit ) ) {
 				$params->pod = $this->load_pod( array( 'id' => $params->pod_id ), false );

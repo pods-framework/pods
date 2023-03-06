@@ -598,8 +598,6 @@ class Map_Field_Values {
 		if ( isset( $traverse_params[0] ) ) {
 			$size = $traverse_params[0];
 
-			array_shift( $traverse_params );
-
 			if ( pods_is_image_size( $size ) ) {
 				// Force image request since a valid size parameter is passed.
 				$is_image = true;

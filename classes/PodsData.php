@@ -3617,7 +3617,7 @@ class PodsData {
 					$the_join = $handle_join['the_join'];
 				}
 			}//end if
-		} elseif ( 'meta' === $pod_data['storage'] ) {
+		} elseif ( 'meta' === $pod_data['storage'] || 'meta_value' === end( $traverse_recurse['fields'] ) ) {
 			if ( ( $traverse_recurse['depth'] + 2 ) === count( $traverse_recurse['fields'] ) && ( ! $is_pickable || ! in_array( $pick_object, $simple_tableless_objects, true ) ) && $table_info['meta_field_value'] === $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
 				$the_join = "
 					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
@@ -3636,7 +3636,7 @@ class PodsData {
 				$joined_id    = $table_info['meta_field_id'];
 				$joined_index = $table_info['meta_field_index'];
 			}
-		}//end if
+		}
 
 		$traverse_recursive = array(
 			'pod'             => pods_v( 'name', pods_v( 'pod', $table_info ) ),

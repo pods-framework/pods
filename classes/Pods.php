@@ -323,19 +323,25 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Whether a Pod item exists or not when using fetch() or construct with an ID or slug
+	 * Whether a Pod item exists or not when using fetch() or construct with an ID or slug.
 	 *
 	 * @return bool
 	 *
 	 * @since 2.0.0
 	 */
 	public function exists() {
+		return ! empty( $this->data->row );
+	}
 
-		if ( empty( $this->data->row ) ) {
-			return false;
-		}
-
-		return true;
+	/**
+	 * Whether the find() resulted in any rows returned.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.9.12
+	 */
+	public function has_rows() {
+		return ! empty( $this->data->rows );
 	}
 
 	/**

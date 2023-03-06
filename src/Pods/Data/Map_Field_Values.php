@@ -620,13 +620,59 @@ class Map_Field_Values {
 			return pods_image( $attachment_id, $size, 0, null, true );
 		}
 
+		$media_field_name = implode( '.', $traverse_params );
+
+		$shorthand = [
+			'title'       => 'post_title',
+			'caption'     => 'post_excerpt',
+			'description' => 'post_content',
+			'mime_type'   => 'post_mime_type',
+			'alt_text'    => '_wp_attachment_image_alt',
+		];
+
+		$metadata_shorthand = [
+			'width'      => true,
+			'height'     => true,
+			'filesize'   => true,
+		];
+
+		$is_filename        = 'filename' === $media_field_name;
+		$is_file_extension  = 'extension' === $media_field_name;
+		$is_file_dimensions = 'dimensions' === $media_field_name;
+
+		if ( isset( $shorthand[ $media_field_name ] ) ) {
+			$media_field_name = $shorthand[ $media_field_name ];
+		} elseif (
+			isset( $metadata_shorthand[ $media_field_name ] )
+			|| 'image_meta' === $traverse_params[0]
+			|| $is_filename
+			|| $is_file_extension
+			|| $is_file_dimensions
+		) {
+			$metadata = wp_get_attachment_metadata( $attachment_id );
+
+			if ( $is_filename ) {
+				if ( ! isset( $metadata['file'] ) ) {
+					return '';
+				}
+
+				return basename( $metadata['file'] );
+			} elseif ( $is_file_extension ) {
+				return pathinfo( $metadata['file'], PATHINFO_EXTENSION );
+			} elseif ( $is_file_dimensions && isset( $metadata['width'], $metadata['height'] ) ) {
+				return $metadata['width'] . 'x' . $metadata['height'];
+			}
+
+			return pods_traverse( $traverse_params, $metadata );
+		}
+
 		if ( 'media' !== $object_type ) {
 			// Fallback to attachment Post object to look for other image properties.
 			$media = pods( 'media', $attachment_id, false );
 
 			if ( $media && $media->valid() && $media->exists() ) {
 				return $media->field( [
-					'name'                    => implode( '.', $traverse_params ),
+					'name'                    => $media_field_name,
 					'bypass_map_field_values' => true,
 				] );
 			}
@@ -637,7 +683,7 @@ class Map_Field_Values {
 			$attachment = $obj->row();
 		}
 
-		$value = pods_v( implode( '.', $traverse_params ), $attachment );
+		$value = pods_v( $media_field_name, $attachment );
 
 		if ( null !== $value ) {
 			return $value;

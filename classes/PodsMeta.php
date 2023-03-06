@@ -572,7 +572,12 @@ class PodsMeta {
 			}
 		}
 
-		$field      = ( 'cpachidden' === substr( $obj->get_option( 'field' ), 0, 10 ) ) ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
+		$field = $obj->get_option( 'field' );
+
+		if ( $field && 'cpachidden' === substr( $field, 0, 10 ) ) {
+			$field = str_replace( 'cpachidden', '', $field );
+		}
+
 		$field_type = $obj->get_option( 'field_type' );
 
 		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] !== $object ) {

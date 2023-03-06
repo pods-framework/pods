@@ -2095,15 +2095,17 @@ function pods_function_or_file( $function_or_file, $function_name = null, $file_
 /**
  * Redirects to another page.
  *
- * @param string  $location The path to redirect to
- * @param int     $status   Status code to use
- * @param boolean $die      If true, PHP code exection will stop
- *
- * @return void
- *
  * @since 2.0.0
+ *
+ * @param string|null $location The path to redirect to.
+ * @param int         $status   Status code to use.
+ * @param boolean     $die      If true, PHP code exection will stop.
  */
-function pods_redirect( $location, $status = 302, $die = true ) {
+function pods_redirect( $location = null, $status = 302, $die = true ) {
+	if ( empty( $location ) ) {
+		$location = $_SERVER['REQUEST_URI'];
+	}
+
 	if ( ! headers_sent() ) {
 		wp_redirect( $location, $status );
 		if ( $die ) {

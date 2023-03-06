@@ -1753,7 +1753,12 @@ class PodsAdmin {
 		$results = $tool->repair_groups_and_fields_for_pod( $pod, 'upgrade' );
 
 		if ( '' !== $results['message_html'] ) {
-			pods_message( $results['message_html'] );
+			if ( 'pods' === pods_v( 'page' ) && 'edit' === pods_v( 'action' ) && 'create' === pods_v( 'do' ) ) {
+				// Refresh the page if we just added the Pod.
+				pods_redirect();
+			} else {
+				pods_message( $results['message_html'] );
+			}
 		}
 
 		return $results['upgraded_pod'];

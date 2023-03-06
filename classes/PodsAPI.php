@@ -3915,7 +3915,7 @@ class PodsAPI {
 						$params->id,
 					) );
 
-				if ( pods_podsrel_enabled() ) {
+				if ( pods_podsrel_enabled( $field, 'save' ) ) {
 					pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
 
 					pods_query( '
@@ -3930,7 +3930,7 @@ class PodsAPI {
 		} elseif ( 0 < $sister_id ) {
 			update_post_meta( $sister_id, 'sister_id', $params->id );
 
-			if ( true === $db && pods_podsrel_enabled() ) {
+			if ( true === $db && pods_podsrel_enabled( $field, 'save' ) ) {
 				pods_query( '
 					UPDATE `@wp_podsrel`
 					SET `related_field_id` = %d
@@ -3943,7 +3943,7 @@ class PodsAPI {
 		} elseif ( 0 < $old_sister_id ) {
 			delete_post_meta( $old_sister_id, 'sister_id' );
 
-			if ( true === $db && pods_podsrel_enabled() ) {
+			if ( true === $db && pods_podsrel_enabled( $field, 'save' ) ) {
 				pods_query( '
 					UPDATE `@wp_podsrel`
 					SET `related_field_id` = 0
@@ -7032,7 +7032,7 @@ class PodsAPI {
 
 		}
 
-		if ( pods_podsrel_enabled() ) {
+		if ( pods_podsrel_enabled( null, __METHOD__ ) ) {
 			pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
 		}
 
@@ -7220,7 +7220,7 @@ class PodsAPI {
 				}
 			}
 
-			if ( pods_podsrel_enabled() ) {
+			if ( pods_podsrel_enabled( null, __METHOD__ ) ) {
 				pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
 			}
 		}
@@ -7417,7 +7417,7 @@ class PodsAPI {
 				ON p.post_type = '_pods_field' AND p.ID = pm.post_id
 			WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
-		if ( $table_operation && pods_podsrel_enabled() ) {
+		if ( $table_operation && pods_podsrel_enabled( $field, __METHOD__ ) ) {
 			pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );
 		}
 
@@ -7817,7 +7817,7 @@ class PodsAPI {
 		}
 
 		if ( ! empty( $pod ) ) {
-			if ( pods_podsrel_enabled() ) {
+			if ( pods_podsrel_enabled( null, __METHOD__ ) ) {
 				pods_query( '
 					DELETE FROM `@wp_podsrel`
 					WHERE
@@ -7952,7 +7952,7 @@ class PodsAPI {
 		}
 
 		// Relationships table
-		if ( pods_podsrel_enabled() ) {
+		if ( pods_podsrel_enabled( $related_field, __METHOD__ ) ) {
 			pods_query( '
 				DELETE FROM `@wp_podsrel`
 				WHERE
@@ -9801,7 +9801,7 @@ class PodsAPI {
 
 			$relationships = array();
 
-			if ( pods_podsrel_enabled() ) {
+			if ( pods_podsrel_enabled( $field, 'lookup-from') ) {
 				$sql = "
 					SELECT *
 					FROM `@wp_podsrel`

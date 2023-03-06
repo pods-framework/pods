@@ -2786,7 +2786,7 @@ class PodsInit {
 
 		$file_types = "'" . implode( "', '", PodsForm::file_field_types() ) . "'";
 
-		if ( pods_podsrel_enabled() ) {
+		if ( pods_podsrel_enabled( null, __METHOD__ ) ) {
 			$sql = "
                 DELETE `rel`
                 FROM `@wp_podsrel` AS `rel`

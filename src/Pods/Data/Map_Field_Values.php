@@ -624,7 +624,6 @@ class Map_Field_Values {
 
 		$shorthand = [
 			'title'       => 'post_title',
-			'caption'     => 'post_excerpt',
 			'description' => 'post_content',
 			'mime_type'   => 'post_mime_type',
 			'alt_text'    => '_wp_attachment_image_alt',
@@ -640,7 +639,9 @@ class Map_Field_Values {
 		$is_file_extension  = 'extension' === $media_field_name;
 		$is_file_dimensions = 'dimensions' === $media_field_name;
 
-		if ( isset( $shorthand[ $media_field_name ] ) ) {
+		if ( 'caption' === $media_field_name ) {
+			return wp_get_attachment_caption( $attachment_id );
+		} elseif ( isset( $shorthand[ $media_field_name ] ) ) {
 			$media_field_name = $shorthand[ $media_field_name ];
 		} elseif (
 			isset( $metadata_shorthand[ $media_field_name ] )

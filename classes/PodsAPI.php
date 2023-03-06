@@ -6129,7 +6129,7 @@ class PodsAPI {
 		}
 
 		// Relationships table
-		if ( pods_podsrel_enabled() ) {
+		if ( pods_podsrel_enabled( $field, 'save' ) ) {
 			$related_weight = 0;
 
 			foreach ( $related_ids as $related_id ) {

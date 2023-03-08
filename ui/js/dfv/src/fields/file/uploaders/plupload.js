@@ -1,4 +1,4 @@
-/*global jQuery, Backbone, plupload */
+/*global Backbone, plupload */
 
 import { __ } from '@wordpress/i18n';
 
@@ -29,7 +29,7 @@ export const Plupload = PodsFileUploader.extend( {
 		// Assemble the collection data for the file queue
 		const collection = new Backbone.Collection();
 
-		jQuery.each( files, function( index, file ) {
+		files.forEach( function( file, index ) {
 			model = new FileUploadQueueModel( {
 				id: file.id,
 				filename: file.name,
@@ -80,7 +80,8 @@ export const Plupload = PodsFileUploader.extend( {
 
 			// Error condition 2
 		} else if ( '<e>' === resp.response.substr( 0, 3 ) ) {
-			response = jQuery( response ).text(); // Strip tags, text only
+			// Strip tags, text only.
+			response = response.replace( /(<([^>]+)>)/ig, '' );
 			if ( window.console ) {
 				// eslint-disable-next-line no-console
 				console.debug( response );
@@ -94,17 +95,15 @@ export const Plupload = PodsFileUploader.extend( {
 			json = response.match( /{.*}$/ );
 
 			if ( null !== json && 0 < json.length ) {
-				json = jQuery.parseJSON( json[ 0 ] );
+				json = JSON.parse( json[ 0 ] );
 			} else {
 				json = {};
 			}
 
-			if ( 'object' !== typeof json || jQuery.isEmptyObject( json ) ) {
+			if ( 'object' !== typeof json || 0 === Object.keys( json ).length ) {
 				if ( window.console ) {
 					// eslint-disable-next-line no-console
-					console.debug( response );
-					// eslint-disable-next-line no-console
-					console.debug( json );
+					console.debug( { response, json } );
 				}
 
 				model.set( {

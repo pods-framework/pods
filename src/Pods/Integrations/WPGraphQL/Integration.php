@@ -429,6 +429,8 @@ class Integration {
 			$pod = $api->load_pod( $params );
 		} catch ( Exception $exception ) {
 			// Something else happened and we should bail.
+			pods_debug_log( $exception );
+
 			return $args;
 		}
 

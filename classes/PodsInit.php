@@ -249,6 +249,20 @@ class PodsInit {
 				add_filter( 'tribe_shortcodes_is_active', '__return_false' );
 				add_filter( 'tribe_customizer_is_active', '__return_false' );
 				add_filter( 'tribe_widgets_is_active', '__return_false' );
+
+				// Disable the Promoter auth.
+				add_filter(
+					'determine_current_user',
+					static function( $value ) {
+						remove_filter(
+							'determine_current_user',
+							tribe_callback( 'promoter.connector', 'authenticate_user_with_connector' )
+						);
+
+						return $value;
+					},
+					9
+				);
 			}
 
 			$GLOBALS['tribe-common-info'] = [
@@ -445,17 +459,26 @@ class PodsInit {
 	 * @return Wisdom_Tracker The Stats Tracking object.
 	 */
 	public function stats_tracking( $plugin_file, $plugin_slug ) {
-		// Admin only.
+		$doing_cron = wp_doing_cron();
+
+		// Admin or on cron only.
 		if (
 			! is_admin()
-			&& ! wp_doing_cron()
+			&& ! $doing_cron
 		) {
 			return;
 		}
 
 		global $pagenow;
 
-		$is_pods_page = isset( $_GET['page'] ) && 0 === strpos( $_GET['page'], 'pods' );
+		$page_query_var = isset( $_GET['page'] ) ? $_GET['page'] : '';
+
+		// Only load tracker on Pods manage pages except for add new pod and manage content screens.
+		$is_pods_page = (
+			'pods-add-new' !== $page_query_var
+			&& 0 === strpos( $page_query_var, 'pods' )
+			&& 0 !== strpos( $page_query_var, 'pods-manage-' )
+		);
 
 		// Pods admin pages or plugins/update page only.
 		if (
@@ -464,7 +487,7 @@ class PodsInit {
 			&& 'update.php' !== $pagenow
 			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
 			&& ! $is_pods_page
-			&& ! wp_doing_cron()
+			&& ! $doing_cron
 		) {
 			return;
 		}
@@ -505,7 +528,7 @@ class PodsInit {
 				return;
 			}
 
-			// We are doing opt-in>
+			// We are doing an opt-in.
 			$stats_tracking->set_is_tracking_allowed( true, $plugin_slug );
 			$stats_tracking->set_can_collect_email( true, $plugin_slug );
 		}, 10, 2 );
@@ -525,7 +548,11 @@ class PodsInit {
 				return $is_local;
 			}
 
-			if ( 'localhost' === $host ) {
+			// If local or a WASM run, treat it as localhost.
+			if (
+				'localhost' === $host
+				|| 'wasm.wordpress.net' === $host
+			) {
 				return true;
 			}
 
@@ -550,7 +577,10 @@ class PodsInit {
 		} );
 
 		add_filter( 'wisdom_notice_text_' . $plugin_slug, static function() {
-			return __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment, your site admin email address, and plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' );
+			return
+				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings.', 'pods' )
+				. "\n\n"
+				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists. Tracking is completely optional.', 'pods' );
 		} );
 
 		// Handle non-Pods pages, we don't want certain things happening.
@@ -584,6 +614,18 @@ class PodsInit {
 		// Maybe store the object.
 		if ( $is_main_plugin ) {
 			$this->stats_tracking = $stats_tracking;
+		}
+
+		// Demo mode will auto-set tracking to off on future loads.
+		if ( pods_is_demo() ) {
+			add_action( 'init', static function() use ( $stats_tracking, $plugin_slug ) {
+				pods_update_setting( 'wisdom_opt_out', 0 );
+
+				// We are doing opt-out.
+				$stats_tracking->set_is_tracking_allowed( false, $plugin_slug );
+				$stats_tracking->set_can_collect_email( false, $plugin_slug );
+				$stats_tracking->update_block_notice( $plugin_slug );
+			}, 20 );
 		}
 
 		return $stats_tracking;
@@ -1013,9 +1055,7 @@ class PodsInit {
 			array_merge(
 				(array) $pods_dfv_options['dependencies'],
 				[
-					'jquery',
-					'jquery-ui-core',
-					'jquery-ui-sortable',
+					// @todo Refactor File field and any other DFV field types that need to go full React and replace Marionette usage.
 					'pods-marionette',
 					'media-views',
 					'media-models',
@@ -1508,7 +1548,7 @@ class PodsInit {
 
 				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );
 
-				if ( $show_in_menu && 0 < strlen( pods_v( 'menu_location_custom', $post_type ) ) ) {
+				if ( $show_in_menu && 0 < strlen( (string) pods_v( 'menu_location_custom', $post_type ) ) ) {
 					$show_in_menu = pods_v( 'menu_location_custom', $post_type );
 				}
 
@@ -1561,9 +1601,26 @@ class PodsInit {
 				if ( $rest_enabled ) {
 					$rest_base = sanitize_title( pods_v( 'rest_base', $post_type, $post_type_name ) );
 
+					$rest_namespace = pods_v( 'rest_namespace', $post_type );
+
+					// Get the namespace and sanitize/clean up the path.
+					if ( ! empty( $rest_namespace ) ) {
+						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
+						$rest_namespace = explode( '/', $rest_namespace );
+						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
+						$rest_namespace = array_filter( $rest_namespace );
+						$rest_namespace = pods_trim( $rest_namespace );
+						$rest_namespace = implode( '/', $rest_namespace );
+						$rest_namespace = trim( $rest_namespace, '/' );
+					}
+
 					$pods_post_types[ $post_type_name ]['show_in_rest']          = true;
 					$pods_post_types[ $post_type_name ]['rest_base']             = $rest_base;
 					$pods_post_types[ $post_type_name ]['rest_controller_class'] = 'WP_REST_Posts_Controller';
+
+					if ( ! empty( $rest_namespace ) ) {
+						$pods_post_types[ $post_type_name ]['rest_namespace'] = $rest_namespace;
+					}
 				}
 
 				// YARPP doesn't use 'supports' array option (yet)
@@ -1751,9 +1808,26 @@ class PodsInit {
 				if ( $rest_enabled ) {
 					$rest_base = sanitize_title( pods_v( 'rest_base', $taxonomy, $taxonomy_name ) );
 
+					$rest_namespace = pods_v( 'rest_namespace', $taxonomy );
+
+					// Get the namespace and sanitize/clean up the path.
+					if ( ! empty( $rest_namespace ) ) {
+						$rest_namespace = str_replace( '\\', '/', $rest_namespace );
+						$rest_namespace = explode( '/', $rest_namespace );
+						$rest_namespace = array_map( 'sanitize_title', $rest_namespace );
+						$rest_namespace = array_filter( $rest_namespace );
+						$rest_namespace = pods_trim( $rest_namespace );
+						$rest_namespace = implode( '/', $rest_namespace );
+						$rest_namespace = trim( $rest_namespace, '/' );
+					}
+
 					$pods_taxonomies[ $taxonomy_name ]['show_in_rest']          = true;
 					$pods_taxonomies[ $taxonomy_name ]['rest_base']             = $rest_base;
 					$pods_taxonomies[ $taxonomy_name ]['rest_controller_class'] = 'WP_REST_Terms_Controller';
+
+					if ( ! empty( $rest_namespace ) ) {
+						$pods_taxonomies[ $taxonomy_name ]['rest_namespace'] = $rest_namespace;
+					}
 				}
 
 				// Integration for Single Value Taxonomy UI
@@ -2207,7 +2281,7 @@ class PodsInit {
 			$labels['item_reverted_to_draft']   = pods_v( 'item_reverted_to_draft', $labels, sprintf( __( '%s reverted to draft', 'pods'), $singular_label ), true );
 			$labels['item_scheduled']           = pods_v( 'item_scheduled', $labels, sprintf( __( '%s scheduled', 'pods' ), $singular_label ), true );
 			$labels['item_updated']             = pods_v( 'item_updated', $labels, sprintf( __( '%s updated', 'pods' ), $singular_label ), true );
-			$labels['filter_by_date']           = pods_v( 'filter_by_date', $labels, sprintf( __( 'Filter by date', 'pods' ), $label ), true );
+			$labels['filter_by_date']           = pods_v( 'filter_by_date', $labels, __( 'Filter by date', 'pods' ), true );
 		} elseif ( 'taxonomy' === $type ) {
 			$labels['menu_name']                  = strip_tags( pods_v( 'menu_name', $labels, $label, true ) );
 			$labels['search_items']               = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
@@ -2483,6 +2557,8 @@ class PodsInit {
 			try {
 				$api->delete_pod( array( 'id' => $pod_id ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod label.
 					__( 'Cannot delete pod "%s"', 'pods' ),
@@ -2497,6 +2573,8 @@ class PodsInit {
 			try {
 				$api->delete_template( array( 'name' => $template['name'] ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod template label.
 					__( 'Cannot delete pod template "%s"', 'pods' ),
@@ -2511,6 +2589,8 @@ class PodsInit {
 			try {
 				$api->delete_page( array( 'name' => $page['name'] ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod page label.
 					__( 'Cannot delete pod page "%s"', 'pods' ),
@@ -2525,6 +2605,8 @@ class PodsInit {
 			try {
 				$api->delete_helper( array( 'name' => $helper['name'] ) );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				pods_message( sprintf(
 					// translators: %s: Pod helper label.
 					__( 'Cannot delete pod helper "%s"', 'pods' ),
@@ -2704,7 +2786,7 @@ class PodsInit {
 
 		$file_types = "'" . implode( "', '", PodsForm::file_field_types() ) . "'";
 
-		if ( pods_podsrel_enabled() ) {
+		if ( pods_podsrel_enabled( null, __METHOD__ ) ) {
 			$sql = "
                 DELETE `rel`
                 FROM `@wp_podsrel` AS `rel`

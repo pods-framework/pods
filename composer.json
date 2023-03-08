@@ -70,6 +70,7 @@
     "lucatume/function-mocker-le": "^1.0.1",
     "lucatume/wp-browser": "^3.1",
     "lucatume/wp-snaphot-assertions": "^1.0",
+    "phpcompatibility/phpcompatibility-wp": "*",
     "phpunit/phpunit": "^6.5",
     "spatie/phpunit-snapshot-assertions": "^1.4.2",
     "the-events-calendar/coding-standards": "dev-master",

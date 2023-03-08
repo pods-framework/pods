@@ -1,4 +1,4 @@
-name: 'PHP CodeSniffer'
+name: 'PHP Compatibility'
 on:
   pull_request:
     paths:
@@ -9,8 +9,10 @@ on:
       - 'sql/**.php'
       - 'ui/**.php'
       - '*.php'
+      - 'composer.json'
+      - '.github/workflows/php-compatibility.yml'
 jobs:
-  phpcs:
+  phpcompatibility:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,4 +32,4 @@ jobs:
         uses: rtCamp/action-phpcs-code-review@v2
         env:
           GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
-          SKIP_FOLDERS: ".github,.wordpress-org,tests,tribe-common,vendor"
+          PHPCS_STANDARD_FILE_NAME: .phpcs.compat.xml

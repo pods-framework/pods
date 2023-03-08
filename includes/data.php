@@ -673,13 +673,13 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				}
 				break;
 			case 'user':
+				// Prevent deprecation notice from WP.
+				if ( 'id' === $var ) {
+					$var = 'ID';
+				}
+
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
-
-					// Prevent deprecation notice from WP.
-					if ( 'id' === $var ) {
-						$var = 'ID';
-					}
 
 					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
 						$value = '';
@@ -700,7 +700,10 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					} elseif ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 						$output = $value;
 					}
-				}//end if
+				} elseif ( 'ID' === $var ) {
+					// Return 0 when logged out and calling the ID.
+					$output = 0;
+				}
 				break;
 			case 'option':
 				$output = get_option( $var, $default );
@@ -2692,4 +2695,70 @@ function pods_host_from_url( $url ) {
 	}
 
 	return esc_html( $url_parsed['host'] );
+}
+
+/**
+ * Clone a list of objects.
+ *
+ * @since 2.9.12
+ *
+ * @param object[] $objects The list of objects to clone.
+ *
+ * @return object[] The cloned list of objects.
+ */
+function pods_clone_objects( $objects ) {
+	return array_map( 'pods_clone_object', $objects );
+}
+
+/**
+ * Clone an object.
+ *
+ * @since 2.9.12
+ *
+ * @param object $object The object to clone.
+ *
+ * @return object The cloned object.
+ */
+function pods_clone_object( $object ) {
+	return clone $object;
+}
+
+/**
+ * Get the item object based on object type.
+ *
+ * @param int    $item_id     The item ID.
+ * @param string $object_type The object type.
+ *
+ * @return WP_Post|WP_Term|WP_User|WP_Comment|null The item object or null if not found.
+ */
+function pods_get_item_object( $item_id, $object_type ) {
+	$object = null;
+
+	switch ( $object_type ) {
+		case 'post':
+		case 'post_type':
+		case 'media':
+			$object = get_post( $item_id );
+
+			break;
+		case 'term':
+		case 'taxonomy':
+			$object = get_term( $item_id );
+
+			break;
+		case 'user':
+			$object = get_userdata( $item_id );
+
+			break;
+		case 'comment':
+			$object = get_comment( $item_id );
+
+			break;
+	}
+
+	if ( is_object( $object ) && ! is_wp_error( $object ) ) {
+		return $object;
+	}
+
+	return null;
 }

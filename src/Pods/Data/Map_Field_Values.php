@@ -22,10 +22,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of all fields in the path.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching image field value or null if there was no match.
 	 */
-	public function map_value( $field, $traverse, $field_data, $obj = null ) {
+	public function map_value( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		// Remove the first field from $traverse.
 		if ( $field === reset( $traverse ) ) {
 			array_shift( $traverse );
@@ -41,8 +42,9 @@ class Map_Field_Values {
 		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 		 * @param Pods|null               $obj        The Pods object or null if not set.
+		 * @param object|null             $params     The full Pods::field() parameters.
 		 */
-		$value = apply_filters( 'pods_data_map_field_values_map_value_pre_check', null, $field, $traverse, $field_data, $obj );
+		$value = apply_filters( 'pods_data_map_field_values_map_value_pre_check', null, $field, $traverse, $field_data, $obj, $params );
 
 		if ( null !== $value ) {
 			return $value;
@@ -63,7 +65,7 @@ class Map_Field_Values {
 
 		// Go through all of the support mappings and check for a field value.
 		while ( null === $value && $method = array_shift( $methods ) ) {
-			$value = $this->$method( $field, $traverse, $field_data, $obj );
+			$value = $this->$method( $field, $traverse, $field_data, $obj, $params );
 		}
 
 		// If no value was found, set $method to false.
@@ -82,8 +84,9 @@ class Map_Field_Values {
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 		 * @param Pods|null               $obj        The Pods object or null if not set.
 		 * @param string|false            $method     The matching mapping method or false if there was no match.
+		 * @param object|null             $params     The full Pods::field() parameters.
 		 */
-		return apply_filters( 'pods_data_map_field_values_map_value', $value, $field, $traverse, $field_data, $obj, $method );
+		return apply_filters( 'pods_data_map_field_values_map_value', $value, $field, $traverse, $field_data, $obj, $method, $params );
 	}
 
 	/**
@@ -95,10 +98,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching field value or null if there was no match.
 	 */
-	public function custom( $field, $traverse, $field_data, $obj ) {
+	public function custom( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		/**
 		 * Allow filtering for a custom field mapping.
 		 *
@@ -109,8 +113,9 @@ class Map_Field_Values {
 		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 		 * @param Pods|null               $obj        The Pods object or null if not set.
+		 * @param object|null             $params     The full Pods::field() parameters.
 		 */
-		return apply_filters( 'pods_data_map_field_values_custom', null, $field, $traverse, $field_data, $obj );
+		return apply_filters( 'pods_data_map_field_values_custom', null, $field, $traverse, $field_data, $obj, $params );
 	}
 
 	/**
@@ -125,7 +130,7 @@ class Map_Field_Values {
 	 *
 	 * @return null|mixed The matching pod info value or null if there was no match.
 	 */
-	public function pod_info( $field, $traverse, $field_data, $obj ) {
+	public function pod_info( $field, $traverse, $field_data, $obj = null ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
 			return null;
@@ -158,7 +163,7 @@ class Map_Field_Values {
 	 *
 	 * @return null|mixed The matching field info value or null if there was no match.
 	 */
-	public function field_info( $field, $traverse, $field_data, $obj ) {
+	public function field_info( $field, $traverse, $field_data, $obj = null ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
 			return null;
@@ -194,10 +199,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching _display_fields value or null if there was no match.
 	 */
-	public function display_fields( $field, $traverse, $field_data, $obj ) {
+	public function display_fields( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		// Skip if the field exists.
 		if ( $field_data ) {
 			return null;
@@ -392,7 +398,7 @@ class Map_Field_Values {
 		$raw = isset( $traverse[2] ) && 'raw' === $traverse[2];
 
 		if ( 'user' === $context_type && 'user_pass' === $context_var ) {
-			return null;
+			return '';
 		}
 
 		$value = pods_v( $context_var, $context_type );
@@ -592,8 +598,6 @@ class Map_Field_Values {
 		if ( isset( $traverse_params[0] ) ) {
 			$size = $traverse_params[0];
 
-			array_shift( $traverse_params );
-
 			if ( pods_is_image_size( $size ) ) {
 				// Force image request since a valid size parameter is passed.
 				$is_image = true;
@@ -616,13 +620,60 @@ class Map_Field_Values {
 			return pods_image( $attachment_id, $size, 0, null, true );
 		}
 
+		$media_field_name = implode( '.', $traverse_params );
+
+		$shorthand = [
+			'title'       => 'post_title',
+			'description' => 'post_content',
+			'mime_type'   => 'post_mime_type',
+			'alt_text'    => '_wp_attachment_image_alt',
+		];
+
+		$metadata_shorthand = [
+			'width'      => true,
+			'height'     => true,
+			'filesize'   => true,
+		];
+
+		$is_filename        = 'filename' === $media_field_name;
+		$is_file_extension  = 'extension' === $media_field_name;
+		$is_file_dimensions = 'dimensions' === $media_field_name;
+
+		if ( 'caption' === $media_field_name ) {
+			return wp_get_attachment_caption( $attachment_id );
+		} elseif ( isset( $shorthand[ $media_field_name ] ) ) {
+			$media_field_name = $shorthand[ $media_field_name ];
+		} elseif (
+			isset( $metadata_shorthand[ $media_field_name ] )
+			|| 'image_meta' === $traverse_params[0]
+			|| $is_filename
+			|| $is_file_extension
+			|| $is_file_dimensions
+		) {
+			$metadata = wp_get_attachment_metadata( $attachment_id );
+
+			if ( $is_filename ) {
+				if ( ! isset( $metadata['file'] ) ) {
+					return '';
+				}
+
+				return basename( $metadata['file'] );
+			} elseif ( $is_file_extension ) {
+				return pathinfo( $metadata['file'], PATHINFO_EXTENSION );
+			} elseif ( $is_file_dimensions && isset( $metadata['width'], $metadata['height'] ) ) {
+				return $metadata['width'] . 'x' . $metadata['height'];
+			}
+
+			return pods_traverse( $traverse_params, $metadata );
+		}
+
 		if ( 'media' !== $object_type ) {
 			// Fallback to attachment Post object to look for other image properties.
 			$media = pods( 'media', $attachment_id, false );
 
 			if ( $media && $media->valid() && $media->exists() ) {
 				return $media->field( [
-					'name'                    => implode( '.', $traverse_params ),
+					'name'                    => $media_field_name,
 					'bypass_map_field_values' => true,
 				] );
 			}
@@ -633,7 +684,7 @@ class Map_Field_Values {
 			$attachment = $obj->row();
 		}
 
-		$value = pods_v( implode( '.', $traverse_params ), $attachment );
+		$value = pods_v( $media_field_name, $attachment );
 
 		if ( null !== $value ) {
 			return $value;
@@ -661,10 +712,11 @@ class Map_Field_Values {
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
 	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
 	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 * @param object|null             $params     The full Pods::field() parameters.
 	 *
 	 * @return null|mixed The matching avatar field value or null if there was no match.
 	 */
-	public function avatar( $field, $traverse, $field_data, $obj ) {
+	public function avatar( $field, $traverse, $field_data, $obj = null, $params = null ) {
 		// Skip if not the field we are looking for.
 		if ( 'avatar' !== $field ) {
 			return null;
@@ -703,6 +755,17 @@ class Map_Field_Values {
 			}
 
 			$size = absint( $traverse_params[0] );
+		}
+
+		// If we have an actual field named "avatar" here, we have to assume it was meant to be the URL unless display was set.
+		if (
+			$field_data
+			&& (
+				$params
+				&& empty( $params->display )
+			)
+		) {
+			$url = true;
 		}
 
 		if ( $url ) {

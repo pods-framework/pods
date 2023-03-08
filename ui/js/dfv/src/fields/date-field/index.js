@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import DateTime from '../datetime';
+import moment from 'moment';
+import 'moment/min/locales';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const DateField = ( props ) => {
@@ -27,10 +29,13 @@ const DateField = ( props ) => {
 		datetime_year_range_custom: fieldConfig.date_year_range_custom,
 	};
 
+	const userLocale = window?.podsDFVConfig?.userLocale ?? 'en';
+
 	return (
 		<DateTime
 			{ ...props }
 			fieldConfig={ newConfig }
+			locale={ userLocale }
 		/>
 	);
 };

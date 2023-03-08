@@ -54,13 +54,31 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 
 	$recurse_queue = array();
 
+	$image_sizes  = get_intermediate_image_sizes();
+	$media_fields = [
+		'title',
+		'caption',
+		'description',
+		'alt_text',
+		'width',
+		'height',
+		'filesize',
+		'filename',
+		'extension',
+		'mime_type',
+	];
+
 	if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
 		$fields[] = "{$prefix}post_thumbnail";
 		$fields[] = "{$prefix}post_thumbnail_url";
-		$sizes    = get_intermediate_image_sizes();
-		foreach ( $sizes as $size ) {
-			$fields[] = "{$prefix}post_thumbnail.{$size}";
-			$fields[] = "{$prefix}post_thumbnail_url.{$size}";
+
+		foreach ( $media_fields as $media_field ) {
+			$fields[] = "{$prefix}post_thumbnail.{$media_field}";
+		}
+
+		foreach ( $image_sizes as $image_size ) {
+			$fields[] = "{$prefix}post_thumbnail.{$image_size}";
+			$fields[] = "{$prefix}post_thumbnail_url.{$image_size}";
 		}
 	}
 
@@ -75,14 +93,19 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 			$fields[] = $prefix . $name . '._src';
 			$fields[] = $prefix . $name . '._img';
 
-			$sizes = get_intermediate_image_sizes();
-			foreach ( $sizes as $size ) {
-				$fields[] = "{$prefix}{$name}._src.{$size}";
+			foreach ( $media_fields as $media_field ) {
+				$fields[] = "{$prefix}{$name}._img.{$media_field}";
+			}
+
+			foreach ( $image_sizes as $image_size ) {
+				$fields[] = "{$prefix}{$name}._src.{$image_size}";
+
 				if ( 'multi' !== $field['options']['file_format_type'] ) {
-					$fields[] = "{$prefix}{$name}._src_relative.{$size}";
-					$fields[] = "{$prefix}{$name}._src_schemeless.{$size}";
+					$fields[] = "{$prefix}{$name}._src_relative.{$image_size}";
+					$fields[] = "{$prefix}{$name}._src_schemeless.{$image_size}";
 				}
-				$fields[] = "{$prefix}{$name}._img.{$size}";
+
+				$fields[] = "{$prefix}{$name}._img.{$image_size}";
 			}
 		} elseif ( ! empty( $field['table_info'] ) && ! empty( $field['table_info']['pod'] ) ) {
 			$linked_pod = $field['table_info']['pod']['name'];

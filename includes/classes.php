@@ -76,7 +76,14 @@ function pods_get_instance( $type = null, $id = null, $strict = null ) {
 		$strict = pods_strict();
 	}
 
-	if ( true === $strict && null !== $type && ! $pod->valid() ) {
+	if (
+		true === $strict
+		&& null !== $type
+		&& (
+			! $pod
+			|| ! $pod->valid()
+		)
+	) {
 		return false;
 	}
 

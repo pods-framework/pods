@@ -4,7 +4,7 @@
  *
  * @package   Pods
  * @author    Pods Framework Team
- * @copyright 2022 Pods Foundation, Inc
+ * @copyright 2023 Pods Foundation, Inc
  * @license   GPL v2 or later
  *
  * Plugin Name:       Pods - Custom Content Types and Fields

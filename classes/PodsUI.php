@@ -1317,10 +1317,16 @@ class PodsUI {
 			$this->view();
 		} else {
 			if ( isset( $this->actions_custom[ $this->action ] ) ) {
-				$more_args = false;
+				$use_nonce = false;
 
-				if ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ]['more_args'] ) ) {
-					$more_args = $this->actions_custom[ $this->action ]['more_args'];
+				if ( is_array( $this->actions_custom[ $this->action ] ) ) {
+					$more_args = [];
+
+					if ( ! empty( $this->actions_custom[ $this->action ]['more_args'] ) ) {
+						$more_args = $this->actions_custom[ $this->action ]['more_args'];
+					}
+
+					$use_nonce = ! empty( $this->actions_custom[ $this->action ]['nonce'] ) || ! empty( $more_args['nonce'] );
 				}
 
 				$row = $this->row;
@@ -1329,7 +1335,13 @@ class PodsUI {
 					$row = $this->get_row();
 				}
 
-				if ( $this->restricted( $this->action, $row ) || ( $more_args && ! empty( $more_args['nonce'] ) && false === wp_verify_nonce( $this->_nonce, 'pods-ui-action-' . $this->action ) ) ) {
+				if (
+					$this->restricted( $this->action, $row )
+					|| (
+						$use_nonce
+						&& false === wp_verify_nonce( $this->_nonce, 'pods-ui-action-' . $this->action )
+					)
+				) {
 					return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 				} elseif ( $more_args && false !== $this->callback_action( true, $this->action, $this->id, $row ) ) {
 					return null;

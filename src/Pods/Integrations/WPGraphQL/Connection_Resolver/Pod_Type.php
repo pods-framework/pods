@@ -129,6 +129,8 @@ class Pod_Type extends AbstractConnectionResolver {
 			return $this->pods_api->load_pods( $this->query_args );
 		} catch ( Exception $exception ) {
 			// Something went wrong.
+			pods_debug_log( $exception );
+
 			return false;
 		}
 	}
@@ -242,6 +244,8 @@ class Pod_Type extends AbstractConnectionResolver {
 			$pod = $this->pods_api->load_pod( $offset );
 		} catch ( Exception $exception ) {
 			// Something went wrong.
+			pods_debug_log( $exception );
+
 			return false;
 		}
 

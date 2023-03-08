@@ -2737,6 +2737,7 @@ function pods_get_item_object( $item_id, $object_type ) {
 	switch ( $object_type ) {
 		case 'post':
 		case 'post_type':
+		case 'media':
 			$object = get_post( $item_id );
 
 			break;

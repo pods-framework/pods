@@ -889,12 +889,15 @@ class PodsAPI {
 					],
 				],
 				'post_author'           => [
-					'name'        => 'post_author',
-					'label'       => 'Author',
-					'type'        => 'pick',
-					'alias'       => [ 'author' ],
-					'pick_object' => 'user',
-					'options'     => [
+					'name'              => 'post_author',
+					'label'             => 'Author',
+					'type'              => 'pick',
+					'alias'             => [ 'author' ],
+					'pick_object'       => 'user',
+					'pick_val'          => 'user',
+					'pick_data_storage' => 'object',
+					'pick_output'       => 'ids',
+					'options'           => [
 						'pick_format_type'   => 'single',
 						'pick_format_single' => 'autocomplete',
 						'default_value'      => '{@user.ID}',
@@ -9635,6 +9638,10 @@ class PodsAPI {
 				}
 
 				if ( ! isset( $item_object->{$params->field_name} ) ) {
+					continue;
+				}
+
+				if ( 0 === $item_object->{$params->field_name} ) {
 					continue;
 				}
 

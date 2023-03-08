@@ -1235,7 +1235,11 @@ class Pods implements Iterator {
 									// Handle relationships with ID output when traversing.
 									$last_pick_output = pods_v( 'pick_output', $last_options, null, true );
 
-									if ( null !== $last_pick_output && null === $params->original_output ) {
+									if (
+										null !== $last_pick_output
+										&& null === $params->original_output
+										&& $current_field === $last_options
+									) {
 										$params->output = $last_pick_output;
 									}
 								}

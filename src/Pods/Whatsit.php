@@ -506,14 +506,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$this->_table_info    = null;
 
 		$defaults = [
-			'object_type'  => $this->get_arg( 'object_type' ),
+			'object_type'         => $this->get_arg( 'object_type' ),
 			'object_storage_type' => $this->get_arg( 'object_storage_type', 'collection' ),
-			'name'         => '',
-			'id'           => '',
-			'parent'       => '',
-			'group'        => '',
-			'label'        => '',
-			'description'  => '',
+			'name'                => '',
+			'id'                  => '',
+			'parent'              => '',
+			'group'               => '',
+			'label'               => '',
+			'description'         => '',
 		];
 
 		$args = array_merge( $defaults, $args );
@@ -551,7 +551,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		 *
 		 * @since 2.9.8
 		 *
-		 * @param Whatsit $object     Whatsit object.
+		 * @param Whatsit $object      Whatsit object.
 		 * @param string  $object_type The Whatsit object type.
 		 */
 		do_action( "pods_whatsit_setup_{$class_hook}", $this, static::$type );
@@ -684,7 +684,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 					return $table_info[ $arg ];
 				}
 			}
-
 		}//end if
 
 		$value = $is_set ? $this->args[ $arg ] : $default;
@@ -1168,8 +1167,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
-			'orderby'           => 'menu_order title',
-			'order'             => 'ASC',
+			'orderby' => 'menu_order title',
+			'order'   => 'ASC',
 		], $filtered_args, $args );
 
 		try {
@@ -1336,8 +1335,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
-			'orderby'           => 'menu_order title',
-			'order'             => 'ASC',
+			'orderby' => 'menu_order title',
+			'order'   => 'ASC',
 		], $filtered_args, $args );
 
 		try {
@@ -1603,7 +1602,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				 */
 				$group_title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $this, $fields, $this->get_type(), $this->get_name() );
 
-				$group_name  = sanitize_key( pods_js_name( sanitize_title( $group_title ) ) );
+				$group_name = sanitize_key( pods_js_name( sanitize_title( $group_title ) ) );
 
 				$data['groups'][ $group_name ] = [
 					'name'   => $group_name,

@@ -191,7 +191,25 @@ const recursiveCheckConditionalLogicForField = (
 			return true;
 		}
 
-		const valueToTest = allPodValues[ fieldNameToTest ];
+		const variations = [
+			fieldNameToTest,
+			'pods_meta_' + fieldNameToTest,
+			'pods_field_' + fieldNameToTest,
+		];
+
+		let valueToTest = undefined;
+
+		variations.every( variation => {
+			// Stop the loop if we found the value we were looking for.
+			if ( 'undefined' !== typeof allPodValues[ variation ] ) {
+				valueToTest = allPodValues[ variation ];
+
+				return false;
+			}
+
+			// Continue to the next variation.
+			return true;
+		} );
 
 		// If the value to test is not set, then it can't pass.
 		if ( 'undefined' === typeof valueToTest ) {
@@ -207,7 +225,7 @@ const recursiveCheckConditionalLogicForField = (
 		);
 
 		console.log( 'Conditional logic: validateConditionalValue' );
-		console.log( { compare, ruleValue, valueToTest } );
+		console.log( { doesValueMatch, compare, ruleValue, valueToTest } );
 
 		// No need to go up the tree of dependencies if it already failed.
 		if ( false === doesValueMatch ) {

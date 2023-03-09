@@ -175,7 +175,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.9.12 - March 8th, 2023 =
+= 2.9.12 - March 9th, 2023 =
 
 * Added: WP-CLI > Added a new `wp pods tools flush-cache` WP-CLI command to flush the Pods caches. To flushes caches for a specific Pod, use `wp pods tools flush-cache --pod=your_pod` (@sc0ttkclark)
 * Added: DFV > Introduce `window.PodsDFV.detectForm()` and `window.PodsDFV.detectField()` helper methods to normalize everything going into the DFV API. (@sc0ttkclark)

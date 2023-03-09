@@ -70,7 +70,15 @@ export const FIELD_PROP_TYPE = {
 	attributes: OBJECT_OR_ARRAY,
 	class: PropTypes.string,
 	data: PropTypes.any,
-	conditional_logic: PropTypes.string,
+	conditional_logic: PropTypes.shape( {
+		action: PropTypes.string,
+		logic: PropTypes.string,
+		rules: PropTypes.arrayOf( PropTypes.shape( {
+			field: PropTypes.string,
+			compare: PropTypes.string,
+			value: PropTypes.any,
+		} ) ),
+	} ),
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,

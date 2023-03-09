@@ -1,0 +1,56 @@
+# Export ignore handling
+
+# Directories
+/.github
+/.wordpress-org
+/bin
+/dev
+/docs
+/github
+/tests
+/workspace
+/ui/js/blocks/src
+/ui/js/dfv/pods-dfv.min.js.map
+/ui/js/dfv/src
+/ui/styles/src
+
+# Dot-files
+.babelrc
+.editorconfig
+.env
+.env.example
+.env.testing.slic
+.eslintignore
+.eslintrc.json
+.gitattributes
+.gitignore
+.jshintrc
+.nvmrc
+.phpstorm.meta.php
+.scrutinizer.yml
+.travis.yml
+
+# Other files
+babel.config.js
+CODE_OF_CONDUCT.md
+codeception.dist.yml
+codeception.example.yml
+codeception.slic.yml
+CODEOWNERS
+composer.json
+CONTRIBUTING.md
+Gruntfile.js
+jest-setup-wordpress-globals.js
+jest.config.json
+jest.config.js
+package-lock.json
+package.json
+phpcs.xml
+phpcs.xml.dist
+phpunit.xml.dist
+README.md
+rollup.config.js
+TESTS.md
+webpack.common.js
+webpack.dev.js
+webpack.prod.js

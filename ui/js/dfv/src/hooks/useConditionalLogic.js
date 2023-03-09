@@ -20,6 +20,14 @@ const looseStringEqualityCheck = ( item1, item2 ) => {
 		return JSON.stringify( item1 ) === JSON.stringify( item2 );
 	}
 
+	if ( 'boolean' === typeof item1 ) {
+		item1 = item1 ? 1 : 0;
+	}
+
+	if ( 'boolean' === typeof item2 ) {
+		item2 = item2 ? 1 : 0;
+	}
+
 	return item1.toString() === item2.toString();
 };
 

@@ -583,7 +583,6 @@ class PodsField {
 			$config['repeatable_limit']            = $args->options->get_limit();
 			$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
 			$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
-			$config['conditional_logic']           = $args->options->get_conditional_logic();
 		} else {
 			$config = (array) $args->options;
 		}
@@ -627,30 +626,8 @@ class PodsField {
 			$config['placeholder'] = '';
 		}
 
-		// Handle conditional logic with backcompat handling.
-		$config['conditional_logic'] = $this->get_dfv_conditional_logic( $config );
-
 		return $config;
 
-	}
-
-	/**
-	 * Get the list of conditional logic rules for the field.
-	 *
-	 * @since TBD
-	 *
-	 * @param Field|array $field The field object.
-	 *
-	 * @return array The list of conditional logic rules for the field.
-	 */
-	public function get_dfv_conditional_logic( $field ) {
-		$conditional_logic = Conditional_Logic::maybe_setup_from_object( $field );
-
-		if ( $conditional_logic ) {
-			return $conditional_logic->to_array();
-		}
-
-		return '';
 	}
 
 	/**

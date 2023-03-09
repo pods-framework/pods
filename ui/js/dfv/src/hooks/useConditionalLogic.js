@@ -195,6 +195,8 @@ const recursiveCheckConditionalLogicForField = (
 
 		// If the value to test is not set, then it can't pass.
 		if ( 'undefined' === typeof valueToTest ) {
+			console.log( 'Conditional logic: no value to test' );
+			console.log( { fieldNameToTest, valueToTest, allPodValues } );
 			return false;
 		}
 
@@ -203,6 +205,9 @@ const recursiveCheckConditionalLogicForField = (
 			ruleValue,
 			valueToTest,
 		);
+
+		console.log( 'Conditional logic: validateConditionalValue' );
+		console.log( { compare, ruleValue, valueToTest } );
 
 		// No need to go up the tree of dependencies if it already failed.
 		if ( false === doesValueMatch ) {

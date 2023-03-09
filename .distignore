@@ -16,6 +16,7 @@
 
 # Dot-files
 .babelrc
+.distignore
 .editorconfig
 .env
 .env.example

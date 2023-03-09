@@ -51,21 +51,196 @@ window.PodsDFV = {
 	hooks: createHooks(),
 
 	/**
+	 * Attempt to detect the form information (based on pod, item ID, and form counter).
+	 *
+	 * If any argument is not provided, the first instance will be returned.
+	 *
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
+	 *
+	 * @returns {object|undefined} Object of form information, or undefined if not found.
+	 */
+	detectForm( pod = null, itemId = null, formCounter = null ) {
+		if ( isEditPodScreen() ) {
+			return undefined;
+		}
+
+		const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
+		const fieldData = this._fieldDataByStoreKeyPrefix;
+		const hasSearchCriteria = (
+			null !== pod
+			|| null !== itemId
+			|| null !== formCounter
+		);
+		const returnExact = (
+			null !== pod
+			&& null !== itemId
+			&& null !== formCounter
+		);
+
+		// Check if we have an exact match.
+		if ( returnExact ) {
+			const storeKey = createStoreKey(
+				pod,
+				itemId,
+				formCounter,
+				STORE_KEY_DFV
+			);
+
+			const stored = select( storeKey );
+
+			// Store not found.
+			if ( ! stored ) {
+				return undefined;
+			}
+
+			// We found our match.
+			return {
+				pod,
+				itemId,
+				formCounter,
+				storeKey,
+				stored,
+			};
+		}
+
+		// Check if we have a match for what we are looking for.
+		let form = undefined;
+
+		storeKeys.every( function( storeKey ) {
+			let stored = select( storeKey );
+
+			// Skip if store not found.
+			if ( ! stored ) {
+				return true;
+			}
+
+			let storePodName;
+			let storeItemId;
+			let storeFormCounter;
+
+			// Skip if first field not found.
+			if ( 'undefined' === typeof fieldData[ storeKey ][0] ) {
+				return true;
+			}
+
+			let firstField = fieldData[ storeKey ][0];
+
+			// Check if the form matches what we are looking for.
+			if ( hasSearchCriteria ) {
+				// Skip if pod does not match.
+				if ( null !== pod && firstField.pod !== pod ) {
+					return true;
+				}
+
+				// Skip if itemId does not match.
+				if ( null !== itemId && firstField.itemId != itemId ) {
+					return true;
+				}
+
+				// Skip if formCounter does not match.
+				if ( null !== formCounter && firstField.formCounter != formCounter ) {
+					return true;
+				}
+			}
+
+			// We found our match.
+			form = {
+				pod: firstField.pod,
+				itemId: firstField.itemId,
+				formCounter: firstField.formCounter,
+				storeKey,
+				stored,
+			};
+
+			// Stop the loop.
+			return false;
+		} );
+
+		return form;
+	},
+
+	/**
+	 * Attempt to detect the field information (based on pod, item ID, field name, and form counter).
+	 *
+	 * If any argument is not provided, the first instance will be returned.
+	 *
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {string}      fieldName   Field name.
+	 * @param {int|null}    formCounter Form index. (Optional.)
+	 *
+	 * @returns {object|undefined} Object of field information, or undefined if not found.
+	 */
+	detectField( pod = null, itemId = null, fieldName, formCounter = null ) {
+		if ( isEditPodScreen() ) {
+			return undefined;
+		}
+
+		const form = this.detectForm( pod, itemId, formCounter );
+
+		if ( 'undefined' === typeof form ) {
+			return undefined;
+		}
+
+		const storeKey = form.storeKey;
+
+		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ] ) {
+			return undefined;
+		}
+
+		const allFields = this._fieldDataByStoreKeyPrefix[ storeKey ];
+
+		let field = undefined;
+
+		allFields.every( function( fieldObject, index ) {
+			// Skip if field name not set.
+			if ( undefined === typeof fieldObject.fieldConfig.name ) {
+				return true;
+			}
+
+			// Skip if field does not match.
+			if (
+				fieldName !== fieldObject.fieldConfig.name
+				&& 'pods_field_' + fieldName !== fieldObject.fieldConfig.name
+				&& 'pods_meta_' + fieldName !== fieldObject.fieldConfig.name
+			) {
+				return true;
+			}
+
+			// We found our match.
+			field = {
+				// Normalize the field name while we have it.
+				fieldName: fieldObject.fieldConfig.name,
+				fieldObject,
+				index,
+				form,
+			};
+
+			// Stop the loop.
+			return false;
+		} );
+
+		return field;
+	},
+
+	/**
 	 * Get list of field configs (based on pod, item ID, and form counter).
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {int}    formCounter Form index. (Optional.)
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
 	 * @returns {object|undefined} Object of field data keyed by field name, or undefined if not found.
 	 */
-	getFields( pod = '', itemId = 0, formCounter = 1 ) {
+	getFields( pod = null, itemId = null, formCounter = null ) {
 		if ( isEditPodScreen() ) {
 			return undefined;
 		}
 
 		// Maybe return all fields on the screen.
-		if ( '' === pod && 0 === itemId && 1 === formCounter ) {
+		if ( null === pod && null === itemId && null === formCounter ) {
 			let storeFields = [];
 
 			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
@@ -108,14 +283,13 @@ window.PodsDFV = {
 			return storeFields;
 		}
 
-		const storeKey = createStoreKey(
-			pod,
-			itemId,
-			formCounter,
-			STORE_KEY_DFV,
-		);
+		const form = this.detectForm( pod, itemId, formCounter );
 
-		let allFields = this._fieldDataByStoreKeyPrefix[ storeKey ] || [];
+		if ( 'undefined' === typeof form ) {
+			return undefined;
+		}
+
+		const allFields = this._fieldDataByStoreKeyPrefix[ form.storeKey ] || [];
 		let fieldConfigs = {};
 
 		allFields.forEach( function( field ) {
@@ -126,49 +300,128 @@ window.PodsDFV = {
 	},
 
 	/**
-	 * Get specific field config (based on pod, item ID, form counter, and field name).
+	 * Get specific field config (based on pod, item ID, field name, and form counter).
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {string} fieldName   Field name.
-	 * @param {int}    formCounter Form index. (Optional.)
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {string}      fieldName   Field name.
+	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
 	 * @returns {object|undefined} Field data, or undefined if not found.
 	 */
-	getField( pod, itemId, fieldName, formCounter = 1 ) {
+	getField( pod = null, itemId = null, fieldName, formCounter = null ) {
 		if ( isEditPodScreen() ) {
 			return undefined;
 		}
 
-		if ( '' === pod || '' === fieldName ) {
+		if ( '' === fieldName ) {
 			return undefined;
 		}
 
-		const fields = this.getFields( pod, itemId, formCounter );
+		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
 
-		if ( 'undefined' === typeof fields ) {
+		if ( 'undefined' === typeof fieldInfo ) {
 			return undefined;
 		}
 
-		return fields[ fieldName ] ?? undefined;
+		return fieldInfo.fieldObject;
 	},
 
 	/**
-	 * Get current field values (based on pod, item ID, form counter).
+	 * (IN DEVELOPMENT, NOT FUNCTIONAL) Set field config (based on pod, item ID, field name, and form counter).
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {int}    formCounter Form index. (Optional.)
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {string}      fieldName   Field name.
+	 * @param {object}      fieldConfig Field config.
+	 * @param {int|null}    formCounter Form index. (Optional.)
+	 *
+	 * @returns {true|undefined} True if set, or undefined if not found.
+	 */
+	__setFieldConfig( pod = null, itemId = null, fieldName, fieldConfig, formCounter = null ) {
+		if ( isEditPodScreen() ) {
+			return undefined;
+		}
+
+		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
+
+		if ( 'undefined' === typeof fieldInfo ) {
+			return undefined;
+		}
+
+		const storeKey = fieldInfo.form.storeKey;
+		const index = fieldInfo.index;
+
+		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ] ) {
+			return undefined;
+		}
+
+		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ][ index ] ) {
+			return undefined;
+		}
+
+		this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldConfig = {
+			...this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldConfig,
+			...fieldConfig
+		};
+
+		return true;
+	},
+
+	/**
+	 * (IN DEVELOPMENT, NOT FUNCTIONAL) Set field config (based on pod, item ID, field name, and form counter).
+	 *
+	 * @param {string|null} pod           Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId        Object ID. (Optional.)
+	 * @param {string}      fieldName     Field name.
+	 * @param {object}      fieldItemData Field item data.
+	 * @param {int|null}    formCounter   Form index. (Optional.)
+	 *
+	 * @returns {true|undefined} True if set, or undefined if not found.
+	 */
+	__setFieldItemData( pod = null, itemId = null, fieldName, fieldItemData, formCounter = null ) {
+		if ( isEditPodScreen() ) {
+			return undefined;
+		}
+
+		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
+
+		if ( 'undefined' === typeof fieldInfo ) {
+			return undefined;
+		}
+
+		const storeKey = fieldInfo.form.storeKey;
+		const index = fieldInfo.index;
+
+		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ] ) {
+			return undefined;
+		}
+
+		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ][ index ] ) {
+			return undefined;
+		}
+
+		this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldItemData = fieldItemData;
+
+		return true;
+	},
+
+	/**
+	 * Get current field values (based on pod, item ID, and form counter).
+	 *
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
 	 * @returns {array|undefined} Field values array or undefined.
 	 */
-	getFieldValues( pod = '', itemId = 0, formCounter = 1 ) {
+	getFieldValues( pod = null, itemId = null, formCounter = null ) {
 		if ( isEditPodScreen() ) {
 			return undefined;
 		}
 
 		// Maybe return all field values on the screen.
-		if ( '' === pod && 0 === itemId && 1 === formCounter ) {
+		if ( null === pod && null === itemId && null === formCounter ) {
 			let storeValues = [];
 
 			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
@@ -204,38 +457,31 @@ window.PodsDFV = {
 			return storeValues;
 		}
 
-		const storeKey = createStoreKey(
-			pod,
-			itemId,
-			formCounter,
-			STORE_KEY_DFV
-		);
+		const form = this.detectForm( pod, itemId, formCounter );
 
-		const stored = select( storeKey );
-
-		if ( ! stored ) {
+		if ( 'undefined' === typeof form ) {
 			return undefined;
 		}
 
-		return stored.getPodOptions();
+		return form.stored.getPodOptions();
 	},
 
 	/**
-	 * Get current field values with configs (based on pod, item ID, form counter).
+	 * Get current field values with configs (based on pod, item ID, and form counter).
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {int}    formCounter Form index. (Optional.)
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
 	 * @returns {array|undefined} Field values array or undefined.
 	 */
-	getFieldValuesWithConfigs( pod = '', itemId = 0, formCounter = 1 ) {
+	getFieldValuesWithConfigs( pod = null, itemId = null, formCounter = null ) {
 		if ( isEditPodScreen() ) {
 			return undefined;
 		}
 
 		// Maybe return all field values on the screen.
-		if ( '' === pod && 0 === itemId && 1 === formCounter ) {
+		if ( null === pod && null === itemId && null === formCounter ) {
 			let storeValues = [];
 
 			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
@@ -282,21 +528,14 @@ window.PodsDFV = {
 			return storeValues;
 		}
 
-		const storeKey = createStoreKey(
-			pod,
-			itemId,
-			formCounter,
-			STORE_KEY_DFV
-		);
+		const form = this.detectForm( pod, itemId, formCounter );
 
-		const stored = select( storeKey );
-
-		if ( ! stored ) {
+		if ( 'undefined' === typeof form ) {
 			return undefined;
 		}
 
-		let rawFieldValues = stored.getPodOptions();
-		let allFields = this._fieldDataByStoreKeyPrefix[ storeKey ] || [];
+		const rawFieldValues = form.stored.getPodOptions();
+		const allFields = this._fieldDataByStoreKeyPrefix[ form.storeKey ] || [];
 		let fieldValues = {};
 
 		allFields.forEach( function( field ) {
@@ -310,52 +549,54 @@ window.PodsDFV = {
 	},
 
 	/**
-	 * Get current field value (based on pod, item ID, form counter, and field name).
+	 * Get current field value (based on pod, item ID, field name, and form counter).
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {string} fieldName   Field name.
-	 * @param {int}    formCounter Form index. (Optional.)
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {string}      fieldName   Field name.
+	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
 	 * @returns {any} Field value or undefined.
 	 */
-	getFieldValue( pod, itemId, fieldName, formCounter = 1 ) {
+	getFieldValue( pod = null, itemId = null, fieldName, formCounter = null ) {
 		if ( isEditPodScreen() ) {
 			return undefined;
 		}
 
-		const storeKey = createStoreKey(
-			pod,
-			itemId,
-			formCounter,
-			STORE_KEY_DFV
-		);
+		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
 
-		return select( storeKey )?.getPodOptions()?.[ fieldName ];
+		if ( 'undefined' === typeof fieldInfo ) {
+			return undefined;
+		}
+
+		return fieldInfo.form.stored?.getPodOptions()?.[ fieldInfo.fieldName ];
 	},
 
 	/**
-	 * Set current field value (based on pod, item ID, form counter, and field name).
+	 * Set current field value (based on pod, item ID, field name, and form counter).
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {string} fieldName   Field name.
-	 * @param {any}    value       New value.
-	 * @param {int}    formCounter Form index. (Optional.)
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {string}      fieldName   Field name.
+	 * @param {any}         value       New value.
+	 * @param {int|null}    formCounter Form index. (Optional.)
+	 *
+	 * @returns {true|undefined} True if set, or undefined if not found.
 	 */
-	setFieldValue( pod, itemId, fieldName, value, formCounter = 1 ) {
+	setFieldValue( pod = null, itemId = null, fieldName, value, formCounter = null ) {
 		if ( isEditPodScreen() ) {
-			return;
+			return undefined;
 		}
 
-		const storeKey = createStoreKey(
-			pod,
-			itemId,
-			formCounter,
-			STORE_KEY_DFV
-		);
+		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
 
-		dispatch( storeKey ).setOptionValue( fieldName, value );
+		if ( 'undefined' === typeof fieldInfo ) {
+			return undefined;
+		}
+
+		dispatch( fieldInfo.form.storeKey ).setOptionValue( fieldInfo.fieldName, value );
+
+		return true;
 	},
 
 	/**
@@ -401,6 +642,10 @@ window.PodsDFV = {
 
 			if ( data.fieldItemData ) {
 				cleanedFieldConfig.fieldItemData = data.fieldItemData;
+			}
+
+			if ( false === data.fieldValue ) {
+				data.fieldValue = null;
 			}
 
 			return {
@@ -504,7 +749,7 @@ window.PodsDFV = {
 		} );
 
 		// eslint-disable-next-line no-console
-		console.log( 'Pods init with initial values:', initialStoresWithValues );
+		// console.log( 'Pods init with initial values:', initialStoresWithValues );
 
 		// Create stores for each of the individual keys we found (the keys of
 		// the initialStoresWithValues object).

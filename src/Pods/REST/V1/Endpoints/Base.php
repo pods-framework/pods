@@ -795,7 +795,7 @@ abstract class Base {
 
 				$doc_endpoint_obj->register_documentation_provider( $rest_doc_route, $this );
 			} catch ( Exception $exception ) {
-				// Do nothing.
+				pods_debug_log( $exception );
 			}
 		}
 

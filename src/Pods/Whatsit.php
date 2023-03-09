@@ -2,6 +2,7 @@
 
 namespace Pods;
 
+use Closure;
 use Exception;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
@@ -270,6 +271,12 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'group'       => $this->args['group'],
 		);
 		*/
+
+		// Handle closures that cannot be serialized.
+		if ( isset( $this->args['data'] ) && $this->args['data'] instanceof Closure ) {
+			$this->args['data'] = $this->args['data']();
+		}
+
 		return [
 			'args',
 		];
@@ -290,7 +297,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 */
 	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
-		return $this->get_args();
+		$args = $this->get_args();
+
+		// Handle closures that cannot be serialized.
+		if ( isset( $args['data'] ) && $args['data'] instanceof Closure ) {
+			$args['data'] = $args['data']();
+		}
+
+		return $args;
 	}
 
 	/**
@@ -1138,7 +1152,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$objects = $this->maybe_get_objects_by_identifier( $this->_fields, $args );
 
 			if ( is_array( $objects ) ) {
-				$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+				$this->_fields = pods_clone_objects( $objects );
 
 				/** @var Field[] $objects */
 				return $objects;
@@ -1170,11 +1184,13 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$objects = $api->load_fields( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$objects = [];
 		}
 
 		if ( ! $has_custom_args ) {
-			$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+			$this->_fields = pods_clone_objects( $objects );
 		}
 
 		return $objects;
@@ -1256,6 +1272,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$total_objects = $api->load_fields( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$total_objects = 0;
 		}
 
@@ -1334,6 +1352,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$objects = $api->load_groups( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$objects = [];
 		}
 
@@ -1402,6 +1422,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$total_objects = $api->load_groups( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$total_objects = 0;
 		}
 

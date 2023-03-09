@@ -572,7 +572,12 @@ class PodsMeta {
 			}
 		}
 
-		$field      = ( 'cpachidden' === substr( $obj->get_option( 'field' ), 0, 10 ) ) ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
+		$field = $obj->get_option( 'field' );
+
+		if ( $field && 'cpachidden' === substr( $field, 0, 10 ) ) {
+			$field = str_replace( 'cpachidden', '', $field );
+		}
+
 		$field_type = $obj->get_option( 'field_type' );
 
 		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] !== $object ) {
@@ -879,16 +884,16 @@ class PodsMeta {
 	 * @return array List of groups and their fields.
 	 */
 	public function groups_get( $type, $name, $default_fields = null, $full_objects = false ) {
-		static $groups_cache = [];
-
 		$cache_key = $type . '/' . $name;
 
 		if ( $full_objects ) {
 			$cache_key .= '/full';
 		}
 
-		if ( isset( $groups_cache[ $cache_key ] ) ) {
-			return $groups_cache[ $cache_key ];
+		$cached = pods_static_cache_get( $cache_key, __CLASS__ . '/groups_get' );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
 		}
 
 		if ( 'post_type' === $type && 'attachment' === $name ) {
@@ -955,9 +960,9 @@ class PodsMeta {
 		}
 
 		if ( $pod && $pod['type'] !== $type ) {
-			$groups_cache[ $cache_key ] = [];
+			pods_static_cache_set( $cache_key, [], __CLASS__ . '/groups_get' );
 
-			return $groups_cache[ $cache_key ];
+			return [];
 		}
 
 		/**
@@ -1042,9 +1047,9 @@ class PodsMeta {
 		 */
 		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
 
-		$groups_cache[ $cache_key ] = $groups;
+		pods_static_cache_set( $cache_key, $groups, __CLASS__ . '/groups_get' );
 
-		return $groups_cache[ $cache_key ];
+		return $groups;
 	}
 
 	/**

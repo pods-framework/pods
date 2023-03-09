@@ -32,10 +32,10 @@ class Tools extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods delete-all-content your_pod
+	 * wp pods tools delete-all-content your_pod
 	 * - Delete all content for the pod "your_pod".
 	 *
-	 * wp pods delete-all-content your_pod --test
+	 * wp pods tools delete-all-content your_pod --test
 	 * - Preview the deleting of all content for the pod "your_pod", without changing the database.
 	 *
 	 * @subcommand delete-all-content
@@ -83,7 +83,7 @@ class Tools extends WP_CLI_Command {
 		}
 
 		WP_CLI::debug( __( 'Command timing', 'pods' ) );
-		WP_CLI::success( __( 'Tool complete', 'pods' ) );
+		WP_CLI::success( __( 'Content deleted', 'pods' ) );
 	}
 
 	/**
@@ -102,10 +102,10 @@ class Tools extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods delete-all-relationship-data your_pod
+	 * wp pods tools delete-all-relationship-data your_pod
 	 * - Delete all relationship data for the pod "your_pod".
 	 *
-	 * wp pods delete-all-relationship-data your_pod --test
+	 * wp pods tools delete-all-relationship-data your_pod --test
 	 * - Preview the deleting of all relationship data for the pod "your_pod", without changing the database.
 	 *
 	 * @subcommand delete-all-relationship-data
@@ -154,7 +154,7 @@ class Tools extends WP_CLI_Command {
 		}
 
 		WP_CLI::debug( __( 'Command timing', 'pods' ) );
-		WP_CLI::success( __( 'Tool complete', 'pods' ) );
+		WP_CLI::success( __( 'Relationship data deleted', 'pods' ) );
 	}
 
 	/**
@@ -170,10 +170,10 @@ class Tools extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods delete-all-groups-and-fields your_pod
+	 * wp pods tools delete-all-groups-and-fields your_pod
 	 * - Delete all groups and fields for the pod "your_pod".
 	 *
-	 * wp pods delete-all-groups-and-fields your_pod --test
+	 * wp pods tools delete-all-groups-and-fields your_pod --test
 	 * - Preview the deleting of all groups and fields for the pod "your_pod", without changing the database.
 	 *
 	 * @subcommand delete-all-groups-and-fields
@@ -221,11 +221,11 @@ class Tools extends WP_CLI_Command {
 		}
 
 		WP_CLI::debug( __( 'Command timing', 'pods' ) );
-		WP_CLI::success( __( 'Tool complete', 'pods' ) );
+		WP_CLI::success( __( 'Groups and Fields for Pod deleted', 'pods' ) );
 	}
 
 	/**
-	 * Delete all groups and fields for Pod.
+	 * Repair all groups and fields for Pod.
 	 *
 	 * ## OPTIONS
 	 *
@@ -237,10 +237,10 @@ class Tools extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp pods repair-groups-and-fields your_pod
+	 * wp pods tools repair-groups-and-fields your_pod
 	 * - Repair groups and fields for the pod "your_pod".
 	 *
-	 * wp pods repair-groups-and-fields your_pod --test
+	 * wp pods tools repair-groups-and-fields your_pod --test
 	 * - Preview the repair of all groups and fields for the pod "your_pod", without changing the database.
 	 *
 	 * @subcommand repair-groups-and-fields
@@ -288,7 +288,51 @@ class Tools extends WP_CLI_Command {
 		}
 
 		WP_CLI::debug( __( 'Command timing', 'pods' ) );
-		WP_CLI::success( __( 'Tool complete', 'pods' ) );
+		WP_CLI::success( __( 'Groups and Fields for Pod repaired', 'pods' ) );
+	}
+
+	/**
+	 * Flush the Pods cache.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--pod=<pod>]
+	 * : The pod name.
+	 *
+	 * ## EXAMPLES
+	 *
+	 * wp pods tools flush-cache
+	 * - Flush the Pods cache.
+	 *
+	 * wp pods tools flush-cache --pod="your_pod"
+	 * - Flush the Pods cache for the pod "your_pod".
+	 *
+	 * @subcommand flush-cache
+	 *
+	 * @since 2.9.10
+	 *
+	 * @param array $args       The list of positional arguments.
+	 * @param array $assoc_args The list of associative arguments.
+	 */
+	public function flush_cache( $args, $assoc_args ) {
+		$api = pods_api();
+
+		$pod_name = pods_v( 'pod', $assoc_args );
+
+		$pod = null;
+
+		if ( ! empty( $pod_name ) ) {
+			try {
+				$pod = $api->load_pod( [ 'name' => $pod_name ] );
+			} catch ( Exception $exception ) {
+				WP_CLI::error( $exception->getMessage() );
+			}
+		}
+
+		$api->cache_flush_pods( $pod );
+
+		WP_CLI::debug( __( 'Command timing', 'pods' ) );
+		WP_CLI::success( __( 'Pods cache flushed', 'pods' ) );
 	}
 
 }

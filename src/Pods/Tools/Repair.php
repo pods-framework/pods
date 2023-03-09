@@ -80,20 +80,31 @@ class Repair extends Base {
 		// Maybe fix fields with invalid field type.
 		$results[ __( 'Fixed fields with invalid field type', 'pods' ) ] = $this->maybe_fix_fields_with_invalid_field_type( $pod, $mode );
 
-		// Mark the pod as migrated if upgrading.
-		if ( $is_upgrade_mode ) {
+		// Check if changes were made to the Pod.
+		$changes_made = [] !== array_filter( $results );
+
+		// Mark the pod as migrated if upgrading and only save the Pod if changes were made or the migrated tag is not set.
+		if (
+			$is_upgrade_mode
+			&& (
+				$changes_made
+				|| 0 === (int) $pod->get_arg( '_migrated_28', 0 )
+			)
+		) {
 			$pod->set_arg( '_migrated_28', 1 );
 
 			try {
 				$this->api->save_pod( $pod );
 			} catch ( Throwable $exception ) {
-				// Do nothing.
+				pods_debug_log( $exception );
 			}
-		}
 
-		if ( ! $is_preview_mode ) {
+			// Refresh pod object.
+			$pod->flush();
+		} elseif ( ! $is_preview_mode && $changes_made ) {
 			$this->api->cache_flush_pods( $pod );
 
+			// Refresh pod object.
 			$pod->flush();
 		}
 
@@ -104,6 +115,10 @@ class Repair extends Base {
 		);
 
 		$results['message_html'] = $this->get_message_html( $tool_heading, $results, $mode );
+
+		if ( $is_upgrade_mode ) {
+			$results['upgraded_pod'] = $pod;
+		}
 
 		return $results;
 	}

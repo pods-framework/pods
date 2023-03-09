@@ -67,3 +67,14 @@
 .pods-checkbox-pick__option--single .pods-checkbox-pick__option__label {
 	margin-left: 0;
 }
+
+//
+// Relationship Modals
+//
+
+@media (min-width: 600px) {
+	.components-modal__frame.pods-iframe-modal {
+		width: 92%;
+		max-height: 92%;
+	}
+}

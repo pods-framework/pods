@@ -1809,7 +1809,7 @@ class PodsField_Pick extends PodsField {
 			}
 
 			$related_pod        = $related_field->get_parent_object();
-			$related_pick_limit = $related_field->get_arg( 'related_pick_limit', 0 );
+			$related_pick_limit = $related_field->get_limit();
 			$current_ids        = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
 
 			// Get ids to remove.

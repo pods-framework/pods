@@ -41,8 +41,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 
 		try {
 			$id = $api->save_pod( $assoc_args );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error saving pod: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error saving pod: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( 0 < $id ) {
@@ -95,8 +95,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 			}
 
 			$id = $api->save_pod( $assoc_args );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error saving pod: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error saving pod: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( 0 < $id ) {
@@ -152,8 +152,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 			}
 
 			$id = $api->duplicate_pod( $assoc_args );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error duplicating pod: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error duplicating pod: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( 0 < $id ) {
@@ -196,8 +196,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 			}
 
 			$reset = $api->reset_pod( $assoc_args );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error resetting pod: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error resetting pod: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( $reset ) {
@@ -250,8 +250,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 			}
 
 			$deleted = $api->delete_pod( $assoc_args );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error deleting pod: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error deleting pod: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( $deleted ) {
@@ -413,8 +413,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 
 		try {
 			$data = Pods_Migrate_Packages::export( $params );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error exporting Pods Package: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error exporting Pods Package: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( ! empty( $data ) ) {
@@ -490,8 +490,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 			}
 
 			$imported = Pods_Migrate_Packages::import( $data, $replace );
-		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error exporting Pods Package: %s', 'pods' ), $e->getMessage() ) );
+		} catch ( Exception $exception ) {
+			WP_CLI::error( sprintf( __( 'Error exporting Pods Package: %s', 'pods' ), $exception->getMessage() ) );
 		}
 
 		if ( ! empty( $imported ) ) {

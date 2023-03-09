@@ -4,6 +4,7 @@ namespace Pods;
 
 use Closure;
 use Exception;
+use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -875,6 +876,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array List of object arguments.
 	 */
 	public function get_args() {
+		$this->maybe_migrate_dependency();
+
+		if ( isset( $this->args['conditional_logic'] ) && is_string( $this->args['conditional_logic'] ) ) {
+			$this->args['conditional_logic'] = json_decode( $this->args['conditional_logic'], true );
+
+			if ( empty( $this->args['conditional_logic'] ) || ! is_array( $this->args['conditional_logic'] ) ) {
+				unset( $this->args['conditional_logic'] );
+			}
+		}
+
 		/**
 		 * Allow filtering the object arguments.
 		 *
@@ -1502,7 +1513,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return bool Whether conditional logic is enabled.
 	 */
 	public function is_conditional_logic_enabled(): bool {
-		return filter_var( $this->get_arg( 'enable_conditional_logic', false ), FILTER_VALIDATE_BOOLEAN );
+		return (
+			filter_var( $this->get_arg( 'enable_conditional_logic', false ), FILTER_VALIDATE_BOOLEAN )
+			|| $this->maybe_migrate_dependency()
+		);
 	}
 
 	/**
@@ -1515,16 +1529,18 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return null;
 		}
 
-		if ( empty( $this->args['conditional_logic'] ) ) {
+		if ( empty( $this->args['conditional_logic'] ) && ! $this->maybe_migrate_dependency() ) {
 			return null;
 		}
 
 		$conditional_logic = $this->args['conditional_logic'];
 
-		if ( ! is_array( $conditional_logic ) ) {
+		if ( is_string( $conditional_logic ) ) {
 			$conditional_logic = json_decode( $conditional_logic, true );
 
 			if ( empty( $conditional_logic ) || ! is_array( $conditional_logic ) ) {
+				unset( $this->args['conditional_logic'] );
+
 				return null;
 			}
 		}
@@ -1542,6 +1558,40 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		return $conditional_logic;
+	}
+
+	/**
+	 * Maybe migrate dependency logic into the newer conditional logic.
+	 *
+	 * @return bool Whether the migration was done.
+	 */
+	protected function maybe_migrate_dependency(): bool {
+		if (
+			! isset( $this->args['depends-on'] )
+			&& ! isset( $this->args['depends-on-any'] )
+			&& ! isset( $this->args['excludes-on'] )
+			&& ! isset( $this->args['wildcard-on'] )
+		) {
+			return false;
+		}
+
+		$conditional_logic_object = Conditional_Logic::maybe_setup_from_old_syntax( $this );
+
+		if ( ! $conditional_logic_object ) {
+			return false;
+		}
+
+		$this->args['enable_conditional_logic'] = true;
+		$this->args['conditional_logic']        = $conditional_logic_object->to_array();
+
+		/*unset(
+			$this->args['depends-on'],
+			$this->args['depends-on-any'],
+			$this->args['excludes-on'],
+			$this->args['wildcard-on']
+		);*/
+
+		return true;
 	}
 
 	/**

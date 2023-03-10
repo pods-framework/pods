@@ -21,6 +21,7 @@
     "build-production": "npm run webpack-production && npm run scss",
     "format-js": "./node_modules/.bin/eslint --fix ./ui/js",
     "jest": "wp-scripts test-unit-js --config jest.config.js --maxWorkers=50%",
+    "jest:debug": "wp-scripts test-unit-js --config jest.config.js --maxWorkers=50% --debug",
     "jest:watch": "wp-scripts test-unit-js --config jest.config.js --watch --maxWorkers=25%",
     "lint-js": "./node_modules/.bin/eslint ./ui/js",
     "rebuild": "rm -rf node_modules && composer update && npm install && npm run build",

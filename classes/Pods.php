@@ -1079,7 +1079,7 @@ class Pods implements Iterator {
 					$last_is_simple_relationship_field = false;
 					$last_is_repeatable_field          = false;
 
-					$limit = $field_data->get_limit();
+					$limit = $field_data ? $field_data->get_limit() : 0;
 
 					// Loop through each traversal level.
 					foreach ( $params->traverse as $key => $field ) {

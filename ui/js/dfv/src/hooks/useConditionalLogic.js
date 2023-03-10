@@ -48,24 +48,26 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 		return false;
 	}
 
+	rule = rule.toUpperCase();
+
 	switch ( rule ) {
-		case 'like':
+		case 'LIKE':
 			return ( valueToTest.toLowerCase() ).includes( ruleValue.toLowerCase() );
-		case 'not like':
+		case 'NOT LIKE':
 			return ! ( valueToTest.toLowerCase() ).includes( ruleValue.toLowerCase() );
-		case 'begins':
+		case 'BEGINS':
 			return ( valueToTest.toLowerCase() ).startsWith( ruleValue.toLowerCase() );
-		case 'not begins':
+		case 'NOT BEGINS':
 			return ! ( valueToTest.toLowerCase() ).startsWith( ruleValue.toLowerCase() );
-		case 'ends':
+		case 'ENDS':
 			return valueToTest.toLowerCase().endsWith( ruleValue.toLowerCase() );
-		case 'not ends':
+		case 'NOT ENDS':
 			return ! valueToTest.toLowerCase().endsWith( ruleValue.toLowerCase() );
-		case 'matches':
+		case 'MATCHES':
 			return Boolean( valueToTest.match( ruleValue ) );
-		case 'not matches':
+		case 'NOT MATCHES':
 			return ! Boolean( valueToTest.match( ruleValue ) );
-		case 'in': {
+		case 'IN': {
 			// We can't compare 'in' if the rule's value is not an array.
 			if ( ! Array.isArray( ruleValue ) ) {
 				return false;
@@ -75,7 +77,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 				( ruleValueItem ) => looseStringEqualityCheck( ruleValueItem, valueToTest )
 			);
 		}
-		case 'not in': {
+		case 'NOT IN': {
 			// We can't compare 'not in' if the rule's value is not an array.
 			if ( ! Array.isArray( ruleValue ) ) {
 				return false;
@@ -85,7 +87,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 				( ruleValueItem ) => looseStringEqualityCheck( ruleValueItem, valueToTest )
 			);
 		}
-		case 'empty': {
+		case 'EMPTY': {
 			if ( Array.isArray( valueToTest ) ) {
 				return valueToTest.length === 0;
 			} else if ( [ '0', 0 ].includes( valueToTest ) ) {
@@ -95,7 +97,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 
 			return ! Boolean( valueToTest );
 		}
-		case 'not empty': {
+		case 'NOT EMPTY': {
 			if ( Array.isArray( valueToTest ) ) {
 				return valueToTest.length > 0;
 			} else if ( 0 === valueToTest ) {

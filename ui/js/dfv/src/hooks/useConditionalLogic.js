@@ -14,9 +14,7 @@ import { toBool } from 'dfv/src/helpers/booleans';
  * @return {boolean} True if matches.
  */
 const looseStringEqualityCheck = ( item1, item2 ) => {
-	if (
-		'object' === typeof ( item1 ) || 'object' === typeof ( item2 )
-	) {
+	if ( 'object' === typeof item1 || 'object' === typeof item2 ) {
 		return JSON.stringify( item1 ) === JSON.stringify( item2 );
 	}
 

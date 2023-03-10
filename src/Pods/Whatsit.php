@@ -1584,13 +1584,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$this->args['enable_conditional_logic'] = true;
 		$this->args['conditional_logic']        = $conditional_logic_object->to_array();
 
-		/*unset(
-			$this->args['depends-on'],
-			$this->args['depends-on-any'],
-			$this->args['excludes-on'],
-			$this->args['wildcard-on']
-		);*/
-
 		return true;
 	}
 

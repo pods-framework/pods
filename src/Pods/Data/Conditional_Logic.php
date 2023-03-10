@@ -129,11 +129,15 @@ class Conditional_Logic {
 
 		if ( $old_syntax['wildcard-on'] ) {
 			foreach ( $old_syntax['wildcard-on'] as $field_name => $value ) {
-				$rules[] = [
-					'field'   => $field_name,
-					'compare' => 'like',
-					'value'   => $value,
-				];
+				$value = (array) $value;
+
+				foreach ( $value as $wildcard_value ) {
+					$rules[] = [
+						'field'   => $field_name,
+						'compare' => 'matches',
+						'value'   => $wildcard_value,
+					];
+				}
 			}
 		}
 

@@ -175,6 +175,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.9.12.1 - March 10th, 2023 =
+
+* Fixed: Components > Fix potential PHP fatal in PHP 8+ with the Translate Pods component (@sc0ttkclark)
+
 = 2.9.12 - March 9th, 2023 =
 
 * Added: WP-CLI > Added a new `wp pods tools flush-cache` WP-CLI command to flush the Pods caches. To flushes caches for a specific Pod, use `wp pods tools flush-cache --pod=your_pod` (@sc0ttkclark)

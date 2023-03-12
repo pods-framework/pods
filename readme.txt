@@ -175,6 +175,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.9.12.2 - March 12th, 2023 =
+
+* Fixed: PHP > Fix potential PHP fatal in PHP 8+ with certain cached data when cache returns string instead of an expected array. (@sc0ttkclark)
+
 = 2.9.12.1 - March 10th, 2023 =
 
 * Fixed: Components > Fix potential PHP fatal in PHP 8+ with the Translate Pods component. #7023 (@sc0ttkclark)

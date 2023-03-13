@@ -2481,37 +2481,103 @@ function pods_bool_to_int( $value ) {
 }
 
 /**
- * Check whether the value is truthy.
+ * Check whether the value is truthy. Handles null, boolean, integer, float, and string validation.
+ *
+ * Strings will check for "1", "true", "on", "yes", and "y".
  *
  * @since 2.9.13
  *
- * @param bool|int|string $value The value to check.
+ * @param null|bool|int|float|string $value The value to check.
  *
  * @return bool Whether the value is truthy.
  */
 function pods_is_truthy( $value ) {
-	if ( ! is_scalar( $value ) ) {
-		// Not truthy if we have an array, object, resource, or null.
+	// Check for null.
+	if ( is_null( $value ) ) {
 		return false;
-	} elseif ( is_bool( $value ) ) {
-		// Use bool check.
+	}
+
+	// Check boolean for true.
+	if ( is_bool( $value ) ) {
 		return true === $value;
-	} elseif ( is_int( $value ) || is_float( $value ) ) {
-		// Check for 1.
+	}
+
+	// Check integer / float for 1.
+	if ( is_int( $value ) || is_float( $value ) ) {
 		return 1 === $value;
 	}
 
-	// Normalize the string to lowercase.
-	$value = strtolower( $value );
+	// We only support strings from this point forward.
+	if ( ! is_string( $value ) ) {
+		return false;
+	}
 
-	$truthy_strings = [
-		'true',
-		'1',
-		'yes',
-		'y',
+	// Normalize the string to lowercase.
+	$value = trim( strtolower( $value ) );
+
+	// This is the list of strings we will support as truthy.
+	$supported_strings = [
+		'1'    => true,
+		'true' => true,
+		'on'   => true,
+		'yes'  => true,
+		'y'    => true,
 	];
 
-	return in_array( $value, $truthy_strings, true );
+	return isset( $supported_strings[ $value ] );
+}
+
+/**
+ * Check whether the value is falsey. Handles null, boolean, integer, float, and string validation.
+ *
+ * Strings will check for "0", "false", "off", "no", and "n".
+ *
+ * Note: If the variable type is not supported, this will always return false as it cannot be validated as falsey.
+ *
+ * @since 2.9.13
+ *
+ * @param null|bool|int|float|string $value The value to check.
+ *
+ * @return bool Whether the value is falsey.
+ */
+function pods_is_falsey( $value ) {
+	// Check for null.
+	if ( is_null( $value ) ) {
+		return true;
+	}
+
+	// Check boolean for false.
+	if ( is_bool( $value ) ) {
+		return false === $value;
+	}
+
+	// Check integer / float for 0.
+	if ( is_int( $value ) || is_float( $value ) ) {
+		return 0 === $value;
+	}
+
+	// We only support strings from this point forward.
+	if ( ! is_string( $value ) ) {
+		/*
+		 * This is a falsey check but it seems that if we are checking specifically for a falsey,
+		 * then this cannot be validated so it's not falsey.
+		 */
+		return false;
+	}
+
+	// Normalize the string to lowercase.
+	$value = trim( strtolower( $value ) );
+
+	// This is the list of strings we will support as falsey.
+	$supported_strings = [
+		'0'     => true,
+		'false' => true,
+		'off'   => true,
+		'no'    => true,
+		'n'     => true,
+	];
+
+	return isset( $supported_strings[ $value ] );
 }
 
 /**

@@ -2481,6 +2481,40 @@ function pods_bool_to_int( $value ) {
 }
 
 /**
+ * Check whether the value is truthy.
+ *
+ * @since 2.9.13
+ *
+ * @param bool|int|string $value The value to check.
+ *
+ * @return bool Whether the value is truthy.
+ */
+function pods_is_truthy( $value ) {
+	if ( ! is_scalar( $value ) ) {
+		// Not truthy if we have an array, object, resource, or null.
+		return false;
+	} elseif ( is_bool( $value ) ) {
+		// Use bool check.
+		return true === $value;
+	} elseif ( is_int( $value ) || is_float( $value ) ) {
+		// Check for 1.
+		return 1 === $value;
+	}
+
+	// Normalize the string to lowercase.
+	$value = strtolower( $value );
+
+	$truthy_strings = [
+		'true',
+		'1',
+		'yes',
+		'y',
+	];
+
+	return in_array( $value, $truthy_strings, true );
+}
+
+/**
  * Make replacements to a string using key=>value pairs.
  *
  * @since 2.8.11

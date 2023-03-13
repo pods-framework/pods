@@ -2237,6 +2237,34 @@ class PodsAdmin {
 				$meta[] = '<a href="' . $component_data['URI'] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
 			}
 
+			if ( pods_is_truthy( pods_v( 'Deprecated', $component_data, false ) ) ) {
+				$deprecated = __( 'Deprecated', 'pods' );
+
+				$component_data['Name'] .= sprintf(
+					' <em style="font-weight: normal; color:#333;">(%s)</em>',
+					$deprecated
+				);
+
+				$deprecated_in_version      = pods_v( 'DeprecatedInVersion', $component_data );
+				$deprecated_removal_version = pods_v( 'DeprecatedRemovalVersion', $component_data );
+
+				if ( empty( $deprecated_removal_version ) ) {
+					// translators: TBD means To Be Determined.
+					$deprecated_removal_version = __( 'TBD', 'pods' );
+				}
+
+				if ( $deprecated_in_version ) {
+					$deprecated = sprintf(
+					// translators: %1$s is the version the deprecation starts and %2$s is the version the code will be removed.
+						__( 'Deprecated in %1$s, will be removed in %2$s', 'pods' ),
+						$deprecated_in_version,
+						$deprecated_removal_version
+					);
+				}
+
+				$meta[] = $deprecated;
+			}
+
 			$component_data['Description'] = wpautop( trim( make_clickable( strip_tags( $component_data['Description'], 'em,strong' ) ) ) );
 
 			if ( ! empty( $meta ) ) {

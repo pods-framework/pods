@@ -2938,7 +2938,7 @@ function pods_register_group( array $group, $pod, array $fields = [] ) {
 		pods_register_group_field( $field, $group['name'], $pod );
 	}
 
-	pods_api()->cache_flush_groups();
+	pods_api()->cache_flush_groups( true, true );
 
 	return true;
 }

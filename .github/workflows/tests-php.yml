@@ -31,8 +31,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
         with:
-          fetch-depth: 1
-          token: ${{ secrets.GH_BOT_TOKEN }}
+          fetch-depth: 1000
           submodules: recursive
       # ------------------------------------------------------------------------------
       # Set up PHP to run slic
@@ -41,6 +40,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 7.4
+      # ------------------------------------------------------------------------------
+      # Checkout slic
+      # ------------------------------------------------------------------------------
       - name: Checkout slic
         uses: actions/checkout@v2
         with:

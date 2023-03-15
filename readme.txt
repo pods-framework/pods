@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.12.2
+Stable tag: 2.9.13-rc-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,14 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.13 - March 15th, 2023 =
+
+* Added: API > New `pods_is_truthy()` helper function helps validate truthy strings and handles null/bool/int/float variables too. (@sc0ttkclark)
+* Added: API > New `pods_is_falsey()` helper function helps validate falsey strings and handles null/bool/int/float variables too. (@sc0ttkclark)
+* Fixed: Cache > Avoid clearing all caches when registering group configs via code. (@sc0ttkclark)
+* Fixed: Avatars > Resolve issues with avatars not showing up in certain circumstances and flush appropriate avatar field caches when changing avatar field value. #7025 (@sc0ttkclark)
+* Deprecated: Components > The Builder Integration component is now officially deprecated and will be totally removed in Pods 3.1. (@sc0ttkclark)
 
 = 2.9.12.2 - March 12th, 2023 =
 

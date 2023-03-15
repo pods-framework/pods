@@ -666,29 +666,29 @@ class PodsField_File extends PodsField {
 		$value = array_unique( array_filter( $value ), SORT_REGULAR );
 
 		// Handle File title saving.
-		foreach ( $value as $id ) {
+		foreach ( $value as $attachment_id ) {
 			$title = false;
 
-			if ( is_array( $id ) ) {
-				if ( isset( $id['title'] ) && 0 < strlen( trim( $id['title'] ) ) ) {
-					$title = trim( $id['title'] );
+			if ( is_array( $attachment_id ) ) {
+				if ( isset( $attachment_id['title'] ) && 0 < strlen( trim( $attachment_id['title'] ) ) ) {
+					$title = trim( $attachment_id['title'] );
 				}
 
-				if ( isset( $id['id'] ) ) {
-					$id = (int) $id['id'];
+				if ( isset( $attachment_id['id'] ) ) {
+					$attachment_id = (int) $attachment_id['id'];
 				} else {
-					$id = 0;
+					$attachment_id = 0;
 				}
 			}
 
-			if ( empty( $id ) ) {
+			if ( empty( $attachment_id ) ) {
 				continue;
 			}
 
 			$attachment      = null;
 			$attachment_data = array();
 
-			$attachment = get_post( $id );
+			$attachment = get_post( $attachment_id );
 
 			if ( ! $attachment ) {
 				continue;
@@ -705,7 +705,7 @@ class PodsField_File extends PodsField {
 
 			// Update attachment parent if it's not set yet and we're updating a post.
 			if ( ! empty( $params->id ) && ! empty( $pod['type'] ) && 'post_type' === $pod['type'] ) {
-				$attachment = get_post( $id );
+				$attachment = get_post( $attachment_id );
 
 				if ( isset( $attachment->post_parent ) && 0 === (int) $attachment->post_parent ) {
 					$attachment_data['post_parent'] = (int) $params->id;
@@ -714,7 +714,7 @@ class PodsField_File extends PodsField {
 
 			// Update the attachment if it the data array is not still empty.
 			if ( ! empty( $attachment_data ) ) {
-				$attachment_data['ID'] = $id;
+				$attachment_data['ID'] = $attachment_id;
 
 				if ( $attachment ) {
 					// Add post type to trigger attachment update filters from other plugins.

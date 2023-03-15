@@ -65,7 +65,23 @@ class PodsField_Avatar extends PodsField_File {
 		$options[ static::$type . '_wp_gallery_output' ] = 0;
 
 		parent::input( $name, $value, $options, $pod, $id );
+	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+		// Clear the avatar cache for the user.
+		pods_cache_clear( true, 'pods_avatars' );
+		pods_cache_clear( true, 'pods_avatar_urls' );
+
+		if ( $id ) {
+			pods_cache_clear( $id, 'pods_avatar_ids' );
+		} else {
+			pods_cache_clear( true, 'pods_avatar_ids' );
+		}
+
+		return parent::save( $value, $id, $name, $options, $fields, $pod, $params );
 	}
 
 	/**

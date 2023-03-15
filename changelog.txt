@@ -2,7 +2,7 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
-= 2.9.13 - March 13th, 2023 =
+= 2.9.13 - March 15th, 2023 =
 
 * Added: API > New `pods_is_truthy()` helper function helps validate truthy strings and handles null/bool/int/float variables too. (@sc0ttkclark)
 * Added: API > New `pods_is_falsey()` helper function helps validate falsey strings and handles null/bool/int/float variables too. (@sc0ttkclark)

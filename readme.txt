@@ -175,7 +175,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.9.13 - March 13th, 2023 =
+= 2.9.13 - March 15th, 2023 =
 
 * Added: API > New `pods_is_truthy()` helper function helps validate truthy strings and handles null/bool/int/float variables too. (@sc0ttkclark)
 * Added: API > New `pods_is_falsey()` helper function helps validate falsey strings and handles null/bool/int/float variables too. (@sc0ttkclark)

@@ -208,7 +208,6 @@ class PodsField_Avatar extends PodsField_File {
 			if ( ! empty( $avatar_cached ) ) {
 				$user_avatar_url = $avatar_cached;
 			} else {
-
 				$user_avatar_id = $this->get_avatar_id( $user_id );
 
 				if ( ! empty( $user_avatar_id ) ) {
@@ -253,14 +252,14 @@ class PodsField_Avatar extends PodsField_File {
 			if ( ! empty( $avatar_cached ) ) {
 				$avatar_id = $avatar_cached;
 			} else {
-				$avatar_field = pods_transient_get( 'pods_avatar_field' );
+				$avatar_field_name = pods_transient_get( 'pods_avatar_field_name' );
 
 				/** @var \Pods\Whatsit\Pod $user_pod */
 				$user_pod = current( PodsMeta::$user );
 
-				if ( '__null__' === $avatar_field ) {
+				if ( '__null__' === $avatar_field_name ) {
 					$avatar_field = false;
-				} elseif ( empty( $avatar_field ) ) {
+				} elseif ( empty( $avatar_field_name ) ) {
 					$avatar_fields = $user_pod->get_fields(
 						[
 							'type'  => 'avatar',
@@ -271,18 +270,22 @@ class PodsField_Avatar extends PodsField_File {
 					if ( ! empty( $avatar_fields ) ) {
 						$avatar_field = current( $avatar_fields );
 
-						pods_transient_set( 'pods_avatar_field', $avatar_field, WEEK_IN_SECONDS );
+						$avatar_field_name = $avatar_field->get_name();
+
+						pods_transient_set( 'pods_avatar_field_name', $avatar_field_name, WEEK_IN_SECONDS );
 					}
-				} elseif ( $user_pod->get_field( $avatar_field, null, false ) ) {
-					$avatar_field = false;
+				} else {
+					$avatar_field = $user_pod->get_field( $avatar_field_name, null, false );
 				}
 
 				if ( ! empty( $avatar_field ) ) {
-					$avatar_id = get_user_meta( $user_id, $avatar_field . '.ID', true );
+					$pod = pods_get_instance( 'user', $user_id );
+
+					$avatar_id = $pod->field( $avatar_field_name . '.ID', true );
 
 					pods_cache_set( $user_id, $avatar_id, 'pods_avatar_ids', WEEK_IN_SECONDS );
 				} else {
-					pods_transient_set( 'pods_avatar_field', '__null__', WEEK_IN_SECONDS );
+					pods_transient_set( 'pods_avatar_field_name', '__null__', WEEK_IN_SECONDS );
 				}
 			}//end if
 		}//end if

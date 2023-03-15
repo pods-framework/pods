@@ -179,7 +179,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 * Added: API > New `pods_is_truthy()` helper function helps validate truthy strings and handles null/bool/int/float variables too. (@sc0ttkclark)
 * Added: API > New `pods_is_falsey()` helper function helps validate falsey strings and handles null/bool/int/float variables too. (@sc0ttkclark)
-* Fixed: Cache > Only clear static caches when registering group configs via code. (@sc0ttkclark)
+* Fixed: Cache > Avoid clearing all caches when registering group configs via code. (@sc0ttkclark)
 * Fixed: Avatars > Resolve issues with avatars not showing up in certain circumstances and flush appropriate avatar field caches when changing avatar field value. #7025 (@sc0ttkclark)
 * Deprecated: Components > The Builder Integration component is now officially deprecated and will be totally removed in Pods 3.1. (@sc0ttkclark)
 

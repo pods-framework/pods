@@ -11114,6 +11114,8 @@ class PodsAPI {
 
 			pods_cache_clear( true, __CLASS__ . '/_load_objects' );
 			pods_cache_clear( true, 'pods_post_type_storage_any' );
+
+			pods_transient_clear( 'pods_avatar_field_name' );
 		}
 
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );

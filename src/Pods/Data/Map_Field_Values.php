@@ -754,7 +754,6 @@ class Map_Field_Values {
 		switch ( $traverse[0] ) {
 			case '_format':
 				$format    = $traverse[1];
-				$wp_format = in_array( strtolower( $format ), array( 'wp', 'wordpress' ), true );
 
 				switch ( $format ) {
 					case 'date':

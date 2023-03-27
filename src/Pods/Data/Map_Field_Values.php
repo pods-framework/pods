@@ -746,13 +746,30 @@ class Map_Field_Values {
 
 		$value = $obj->field( $field, array( 'raw' => true ) );
 
+		// No fields modifiers found.
 		if ( empty( $traverse[0] ) || empty( $traverse[1] ) ) {
 			return null;
 		}
 
 		switch ( $traverse[0] ) {
 			case '_format':
-				$format = $traverse[1];
+				$format    = $traverse[1];
+				$wp_format = in_array( strtolower( $format ), array( 'wp', 'wordpress' ), true );
+
+				if ( $wp_format ) {
+					switch ( $field ) {
+						case 'date':
+							$format = get_option( 'date_format' );
+							break;
+						case 'time':
+							$format = get_option( 'time_format' );
+							break;
+						default:
+							$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+							break;
+					}
+				}
+
 				$value = date_i18n( $format, strtotime( $value ) );
 				break;
 			default:

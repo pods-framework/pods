@@ -58,6 +58,7 @@ class Map_Field_Values {
 			'context_info',
 			'calculation',
 			'image_fields',
+			'date_fields',
 			'avatar',
 		];
 
@@ -701,6 +702,63 @@ class Map_Field_Values {
 		$value = get_post_meta( $attachment_id, $name_key, true );
 
 		return pods_traverse( $traverse_params, $value );
+	}
+
+	/**
+	 * Map the date field value.
+	 *
+	 * @since 2.9.14
+	 *
+	 * @param string                  $field      The first field name in the path.
+	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
+	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 *
+	 * @return null|mixed The date field value or null if there was no match.
+	 */
+	public function date_fields( $field, $traverse, $field_data, $obj = null ) {
+
+		// Default date field handlers.
+		$date_fields = array(
+			'date',
+			'time',
+			'datetime',
+		);
+
+		// Skip if the field exists.
+		if ( $field_data && ! in_array( $field_data->get_type(), $date_fields, true ) ) {
+			return null;
+		}
+
+		$object_type = $obj ? $obj->pod_data->get_type() : null;
+
+		if ( 'post_type' === $object_type ) {
+			$date_fields[] = 'post_date';
+			$date_fields[] = 'post_date_gmt';
+		}
+
+		// Handle special field tags.
+		if ( ! in_array( $field, $date_fields, true ) ) {
+			return null;
+		}
+
+		$value = $obj->field( $field, array( 'raw' => true ) );
+
+		if ( empty( $traverse[0] ) || empty( $traverse[1] ) ) {
+			return null;
+		}
+
+		switch ( $traverse[0] ) {
+			case '_format':
+				$format = $traverse[1];
+				$value = date_i18n( $format, strtotime( $value ) );
+				break;
+			default:
+				return null;
+				break;
+		}
+
+		return $value;
 	}
 
 	/**

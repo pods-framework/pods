@@ -735,6 +735,8 @@ class Map_Field_Values {
 		if ( 'post_type' === $object_type ) {
 			$date_fields[] = 'post_date';
 			$date_fields[] = 'post_date_gmt';
+			$date_fields[] = 'post_modified';
+			$date_fields[] = 'post_modified_gmt';
 		}
 
 		// Handle special field tags.

@@ -756,18 +756,22 @@ class Map_Field_Values {
 				$format    = $traverse[1];
 				$wp_format = in_array( strtolower( $format ), array( 'wp', 'wordpress' ), true );
 
-				if ( $wp_format ) {
-					switch ( $field ) {
-						case 'date':
-							$format = get_option( 'date_format' );
-							break;
-						case 'time':
-							$format = get_option( 'time_format' );
-							break;
-						default:
-							$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
-							break;
-					}
+				switch ( $format ) {
+					case 'date':
+					case 'wp_date':
+					case 'wordpress_date':
+						$format = get_option( 'date_format' );
+						break;
+					case 'time':
+					case 'wp_time':
+					case 'wordpress_time':
+						$format = get_option( 'time_format' );
+						break;
+					case 'datetime':
+					case 'wp':
+					case 'wordpress':
+						$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+						break;
 				}
 
 				$value = date_i18n( $format, strtotime( $value ) );

@@ -26,6 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # ------------------------------------------------------------------------------
+      # Set up PHP to run slic
+      # ------------------------------------------------------------------------------
+      - name: Configure PHP environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+      # ------------------------------------------------------------------------------
       # Checkout the repo
       # ------------------------------------------------------------------------------
       - name: Checkout the repository
@@ -33,13 +40,6 @@ jobs:
         with:
           fetch-depth: 1000
           submodules: recursive
-      # ------------------------------------------------------------------------------
-      # Set up PHP to run slic
-      # ------------------------------------------------------------------------------
-      - name: Configure PHP environment
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
       # ------------------------------------------------------------------------------
       # Checkout slic
       # ------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ jobs:
           docker network prune -f
           ${SLIC_BIN} use pods
           ${SLIC_BIN} composer set-version 2
-          ${SLIC_BIN} composer install
+          ${SLIC_BIN} composer install --no-dev
       # ------------------------------------------------------------------------------
       # Init WordPress container
       # ------------------------------------------------------------------------------

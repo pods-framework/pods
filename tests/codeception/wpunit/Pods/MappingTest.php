@@ -625,20 +625,20 @@ class MappingTest extends Pods_UnitTestCase {
 
 		$timestamp = time();
 
-		$pod->save( array( $datetime_field => date_i18n( \PodsField_Date::$storage_format, $timestamp ) ) );
+		$pod->save( array( $date_field => date_i18n( \PodsField_Date::$storage_format, $timestamp ) ) );
 
 		$format = 'y-m-d';
 
-		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $date_field . '._format.' . $format ) );
 
 		$format = 'Y.m.d';
 
-		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $date_field . '._format.' . $format ) );
 
 		$format = 'wp';
 		$wp_format = get_option( 'date_format' );
 
-		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $date_field . '._format.' . $format ) );
 
 		/**
 		 * TIME FIELD
@@ -658,20 +658,20 @@ class MappingTest extends Pods_UnitTestCase {
 
 		$timestamp = time();
 
-		$pod->save( array( $datetime_field => date_i18n( \PodsField_Time::$storage_format, $timestamp ) ) );
+		$pod->save( array( $time_field => date_i18n( \PodsField_Time::$storage_format, $timestamp ) ) );
 
 		$format = 'H:i:s';
 
-		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $time_field . '._format.' . $format ) );
 
 		$format = 'H|i';
 
-		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $time_field . '._format.' . $format ) );
 
 		$format = 'wp';
 		$wp_format = get_option( 'time_format' );
 
-		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $time_field . '._format.' . $format ) );
 	}
 
 }

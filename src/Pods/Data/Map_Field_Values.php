@@ -740,7 +740,7 @@ class Map_Field_Values {
 				'bypass_map_field_values' => true,
 			] );
 		} else {
-			$value = current_time( 'mysql' );
+			return null;
 		}
 
 		// No fields modifiers found.

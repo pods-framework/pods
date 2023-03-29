@@ -733,8 +733,10 @@ class Map_Field_Values {
 			'datetime',
 		);
 
+		$field_type = $field_data->get_type();
+
 		// Skip if the field is NOT a date/time/datetime field type.
-		if ( ! in_array( $field_data->get_type(), $date_fields, true ) ) {
+		if ( ! in_array( $field_type, $date_fields, true ) ) {
 			return null;
 		}
 
@@ -751,7 +753,7 @@ class Map_Field_Values {
 
 		switch ( $traverse[0] ) {
 			case '_format':
-				$format    = $traverse[1];
+				$format = $traverse[1];
 
 				switch ( $format ) {
 					case 'date':
@@ -767,7 +769,13 @@ class Map_Field_Values {
 					case 'datetime':
 					case 'wp':
 					case 'wordpress':
-						$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+						if ( 'time' === $field_type ) {
+							$format = get_option( 'time_format' );
+						} elseif ( 'date' === $field_type ) {
+							$format = get_option( 'date_format' );
+						} else {
+							$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+						}
 						break;
 				}
 

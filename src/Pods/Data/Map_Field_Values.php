@@ -725,26 +725,20 @@ class Map_Field_Values {
 			'datetime',
 		);
 
-		// Skip if the field exists.
+		// Skip if the field exists and is NOT a date/time/datetime field type.
 		if ( $field_data && ! in_array( $field_data->get_type(), $date_fields, true ) ) {
 			return null;
 		}
 
-		$object_type = $obj ? $obj->pod_data->get_type() : null;
-
-		if ( 'post_type' === $object_type ) {
-			$date_fields[] = 'post_date';
-			$date_fields[] = 'post_date_gmt';
-			$date_fields[] = 'post_modified';
-			$date_fields[] = 'post_modified_gmt';
+		// Handle getting current field value.
+		if ( $field_data ) {
+			$value = $obj->field( $field, [
+				'raw' => true,
+				'bypass_map_field_values' => true,
+			] );
+		} else {
+			$value = current_time( 'mysql' );
 		}
-
-		// Handle special field tags.
-		if ( ! in_array( $field, $date_fields, true ) ) {
-			return null;
-		}
-
-		$value = $obj->field( $field, array( 'raw' => true ) );
 
 		// No fields modifiers found.
 		if ( empty( $traverse[0] ) || empty( $traverse[1] ) ) {

@@ -584,6 +584,25 @@ class MappingTest extends Pods_UnitTestCase {
 		$format = 'y-m-d';
 
 		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'Y.m.d';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'wp';
+		$wp_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'wp_date';
+		$wp_format = get_option( 'date_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'wp_time';
+		$wp_format = get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
 	}
 
 }

@@ -827,6 +827,7 @@ class Pods implements Iterator {
 		$is_tableless_field  = in_array( $field_type, $tableless_field_types, true );
 		$is_repeatable_field = $field_data instanceof Field && $field_data->is_repeatable();
 		$is_pick_field       = 'pick' === $field_type;
+		$is_mapped           = false;
 
 		// Handle output specific handling.
 		if ( $is_pick_field ) {
@@ -925,11 +926,11 @@ class Pods implements Iterator {
 
 				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this, $params );
 
-				$object_field_found = null !== $value;
+				$is_mapped = null !== $value;
 			}
 
 			// Continue regular field parsing.
-			if ( false === $object_field_found ) {
+			if ( false === $object_field_found && false === $is_mapped ) {
 				$params->traverse = array( $params->name );
 
 				if ( false !== strpos( $params->name, '.' ) ) {
@@ -1696,7 +1697,7 @@ class Pods implements Iterator {
 			$value = array_merge( ...$value );
 		}
 
-		if ( ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {
+		if ( ! $is_mapped && ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {
 			if ( $params->display || ( ( $params->get_meta || $params->deprecated ) && ! in_array( $field_data['type'], $tableless_field_types, true ) ) ) {
 				$post_temp   = false;
 				$old_post    = null;

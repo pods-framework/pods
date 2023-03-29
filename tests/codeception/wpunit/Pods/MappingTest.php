@@ -557,4 +557,33 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertContains( '-123x123.jpg', pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}
 
+	/**
+	 * @covers \Pods\Data\Map_Field_Values::date_fields
+	 */
+	public function test_date_fields() {
+
+		$api = pods_api();
+
+		$datetime_field = 'test_datetime';
+
+		$field_params = [
+			'pod_id' => $this->pod_id,
+			'name'   => $datetime_field,
+			'label'  => 'Test Date Time',
+			'type'   => 'datetime',
+		];
+
+		$api->save_field( $field_params );
+
+		$pod = pods( $this->pod_name, $this->item_id );
+
+		$timestamp = time();
+
+		$pod->save( array( $datetime_field => date_i18n( \PodsField_DateTime::$storage_format, $timestamp ) ) );
+
+		$format = 'y-m-d';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+	}
+
 }

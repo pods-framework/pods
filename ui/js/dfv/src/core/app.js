@@ -10,12 +10,17 @@ import PropTypes from 'prop-types';
  */
 import ConnectedFieldWrapper from 'dfv/src/components/connected-field-wrapper';
 
+/**
+ * Pods config
+ */
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-const PodsDFVApp = ( {
-	fieldsData,
+const App = ( {
 	storeKey,
 } ) => {
+	const fieldsData = PodsDFVAPI._fieldDataByStoreKeyPrefix[ storeKey ];
+	const allPodFieldsMap = new Map( fieldsData.map( ( field ) => [ field.name, field ] ) );
+
 	const fieldComponents = fieldsData.map( ( fieldData = {} ) => {
 		const {
 			directRender = false,
@@ -32,7 +37,7 @@ const PodsDFVApp = ( {
 				<ConnectedFieldWrapper
 					storeKey={ storeKey }
 					field={ fieldConfig }
-					allPodFieldsMap={ new Map( fieldsData.map( ( field ) => [ field.name, field ] ) ) }
+					allPodFieldsMap={ allPodFieldsMap }
 				/>
 			);
 
@@ -62,18 +67,8 @@ const PodsDFVApp = ( {
 	);
 };
 
-PodsDFVApp.propTypes = {
-	fieldsData: PropTypes.arrayOf(
-		PropTypes.shape( {
-			directRender: PropTypes.bool.isRequired,
-			fieldComponent: PropTypes.function,
-			parentNode: PropTypes.any,
-			fieldConfig: FIELD_PROP_TYPE_SHAPE,
-			fieldItemData: PropTypes.any,
-			fieldValue: PropTypes.any,
-		} ),
-	),
+App.propTypes = {
 	storeKey: PropTypes.string.isRequired,
 };
 
-export default PodsDFVApp;
+export default App;

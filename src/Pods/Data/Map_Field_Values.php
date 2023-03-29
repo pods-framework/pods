@@ -718,6 +718,11 @@ class Map_Field_Values {
 	 */
 	public function date_fields( $field, $traverse, $field_data, $obj = null ) {
 
+		// Skip if there is no information about this field.
+		if ( ! $field_data ) {
+			return null;
+		}
+
 		/**
 		 * Default date field handlers.
 		 * @see \PodsForm::date_field_types
@@ -728,20 +733,16 @@ class Map_Field_Values {
 			'datetime',
 		);
 
-		// Skip if the field exists and is NOT a date/time/datetime field type.
-		if ( $field_data && ! in_array( $field_data->get_type(), $date_fields, true ) ) {
+		// Skip if the field is NOT a date/time/datetime field type.
+		if ( ! in_array( $field_data->get_type(), $date_fields, true ) ) {
 			return null;
 		}
 
 		// Handle getting current field value.
-		if ( $field_data ) {
-			$value = $obj->field( $field, [
-				'raw' => true,
-				'bypass_map_field_values' => true,
-			] );
-		} else {
-			return null;
-		}
+		$value = $obj->field( $field, [
+			'raw' => true,
+			'bypass_map_field_values' => true,
+		] );
 
 		// No fields modifiers found.
 		if ( empty( $traverse[0] ) || empty( $traverse[1] ) ) {

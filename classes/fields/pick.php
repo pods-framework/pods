@@ -214,6 +214,9 @@ class PodsField_Pick extends PodsField {
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'br'         => __( 'Line breaks', 'pods' ),
+					'ul'         => __( 'Unordered list', 'pods' ),
+					'ol'         => __( 'Ordered list', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				],
 				'pick_show_select_text' => 0,
@@ -903,23 +906,36 @@ class PodsField_Pick extends PodsField {
 
 		$display_format = pods_v( static::$type . '_display_format_multi', $options, 'default' );
 
-		if ( 'non_serial' === $display_format ) {
-			$args['serial'] = false;
+		switch ( $display_format ) {
+			case 'ul':
+			case 'ol':
+				$value = '<' . $display_format . '><li>' . implode( '</li><li>', $value ) . '</li></' . $display_format . '>';
+				break;
+			case 'br':
+				$value = implode( '<br />', $value );
+				break;
+			case 'non_serial':
+				$args['serial'] = false;
+				$value = pods_serial_comma( $value, $args );
+				break;
+			case 'custom':
+				$args['serial'] = false;
+
+				$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
+				if ( ! empty( $separator ) ) {
+					$args['separator'] = $separator;
+
+					// Replicate separator behavior.
+					$args['and'] = $args['separator'];
+				}
+				$value = pods_serial_comma( $value, $args );
+				break;
+			default:
+				$value = pods_serial_comma( $value, $args );
+				break;
 		}
 
-		if ( 'custom' === $display_format ) {
-			$args['serial'] = false;
-
-			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
-			if ( ! empty( $separator ) ) {
-				$args['separator'] = $separator;
-
-				// Replicate separator behavior.
-				$args['and'] = $args['separator'];
-			}
-		}
-
-		return pods_serial_comma( $value, $args );
+		return $value;
 	}
 
 	/**

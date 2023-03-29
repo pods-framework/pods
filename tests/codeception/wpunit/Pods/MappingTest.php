@@ -562,11 +562,12 @@ class MappingTest extends Pods_UnitTestCase {
 	 */
 	public function test_date_fields() {
 
+		/**
+		 * Setup.
+		 */
+
 		$api = pods_api();
 
-		/**
-		 * DATETIME FIELD
-		 */
 		$datetime_field = 'test_datetime';
 
 		$field_params = [
@@ -578,11 +579,41 @@ class MappingTest extends Pods_UnitTestCase {
 
 		$api->save_field( $field_params );
 
+		$date_field = 'test_date';
+
+		$field_params = [
+			'pod_id' => $this->pod_id,
+			'name'   => $date_field,
+			'label'  => 'Test Date',
+			'type'   => 'date',
+		];
+
+		$api->save_field( $field_params );
+
+		$time_field = 'test_time';
+
+		$field_params = [
+			'pod_id' => $this->pod_id,
+			'name'   => $time_field,
+			'label'  => 'Test Time',
+			'type'   => 'time',
+		];
+
+		$api->save_field( $field_params );
+
 		$pod = pods( $this->pod_name, $this->item_id );
 
 		$timestamp = time();
 
 		$pod->save( array( $datetime_field => date_i18n( \PodsField_DateTime::$storage_format, $timestamp ) ) );
+
+		$pod->save( array( $date_field => date_i18n( \PodsField_Date::$storage_format, $timestamp ) ) );
+
+		$pod->save( array( $time_field => date_i18n( \PodsField_Time::$storage_format, $timestamp ) ) );
+
+		/**
+		 * DATETIME FIELD
+		 */
 
 		$format = 'y-m-d H:s';
 
@@ -610,22 +641,6 @@ class MappingTest extends Pods_UnitTestCase {
 		/**
 		 * DATE FIELD
 		 */
-		$date_field = 'test_date';
-
-		$field_params = [
-			'pod_id' => $this->pod_id,
-			'name'   => $date_field,
-			'label'  => 'Test Date',
-			'type'   => 'date',
-		];
-
-		$api->save_field( $field_params );
-
-		$pod = pods( $this->pod_name, $this->item_id );
-
-		$timestamp = time();
-
-		$pod->save( array( $date_field => date_i18n( \PodsField_Date::$storage_format, $timestamp ) ) );
 
 		$format = 'y-m-d';
 
@@ -643,22 +658,6 @@ class MappingTest extends Pods_UnitTestCase {
 		/**
 		 * TIME FIELD
 		 */
-		$time_field = 'test_time';
-
-		$field_params = [
-			'pod_id' => $this->pod_id,
-			'name'   => $time_field,
-			'label'  => 'Test Time',
-			'type'   => 'time',
-		];
-
-		$api->save_field( $field_params );
-
-		$pod = pods( $this->pod_name, $this->item_id );
-
-		$timestamp = time();
-
-		$pod->save( array( $time_field => date_i18n( \PodsField_Time::$storage_format, $timestamp ) ) );
 
 		$format = 'H:i:s';
 

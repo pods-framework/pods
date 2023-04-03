@@ -603,6 +603,46 @@ class MappingTest extends Pods_UnitTestCase {
 
 		$pod = pods( $this->pod_name, $this->item_id );
 
+		/**
+		 * POST DATE FIELD
+		 */
+
+		$timestamp = get_post_timestamp( $this->item_id );
+		$field     = 'post_date';
+		$alias     = 'date';
+
+		$format = 'y-m-d H:s';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $alias . '._format.' . $format ) );
+
+		$format = 'Y.m.d H|s';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $alias . '._format.' . $format ) );
+
+		$format = 'wp';
+		$wp_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $alias . '._format.' . $format ) );
+
+		$format = 'wp_date';
+		$wp_format = get_option( 'date_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $alias . '._format.' . $format ) );
+
+		$format = 'wp_time';
+		$wp_format = get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $field . '._format.' . $format ) );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $alias . '._format.' . $format ) );
+
+		/**
+		 * Custom field tests.
+		 */
+
 		$timestamp = time();
 
 		$pod->save( array( $datetime_field => date_i18n( \PodsField_DateTime::$storage_format, $timestamp ) ) );

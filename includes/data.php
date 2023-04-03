@@ -1954,9 +1954,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 				switch ( $format ) {
 					case 'ul':
 					case 'ol':
-						if ( is_array( $value ) ) {
-							$value = '<' . $format . '><li>' . implode( '</li><li>', $value ) . '</li></' . $format . '>';
-						}
+						$value = '<' . $format . '><li>' . implode( '</li><li>', (array) $value ) . '</li></' . $format . '>';
 					break;
 					case 'br':
 						if ( is_array( $value ) ) {

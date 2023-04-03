@@ -909,7 +909,7 @@ class PodsField_Pick extends PodsField {
 		switch ( $display_format ) {
 			case 'ul':
 			case 'ol':
-				$value = '<' . $display_format . '><li>' . implode( '</li><li>', $value ) . '</li></' . $display_format . '>';
+				$value = '<' . $display_format . '><li>' . implode( '</li><li>', (array) $value ) . '</li></' . $display_format . '>';
 				break;
 			case 'br':
 				$value = implode( '<br />', $value );

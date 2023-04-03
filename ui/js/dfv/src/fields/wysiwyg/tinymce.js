@@ -116,6 +116,7 @@ const TinyMCE = ( {
 					content_css: false,
 					setup: onSetup,
 					height: editorHeight,
+					wpautop: true,
 				},
 				mediaButtons,
 				quicktags: true,

@@ -214,9 +214,9 @@ class PodsField_Pick extends PodsField {
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
-					'br'         => __( 'Line breaks', 'pods' ),
-					'ul'         => __( 'Unordered list', 'pods' ),
-					'ol'         => __( 'Ordered list', 'pods' ),
+					'br'         => __( 'One per line (br HTML tags)', 'pods' ),
+					'ul'         => __( 'Unordered HTML list', 'pods' ),
+					'ol'         => __( 'Ordered HTML list', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				],
 				'pick_show_select_text' => 0,

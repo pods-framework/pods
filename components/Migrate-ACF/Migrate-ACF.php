@@ -49,14 +49,25 @@ class Pods_Migrate_ACF extends PodsComponent {
 
 	private $taxonomy_option_name = null;
 
-	private $post_types = [];
+	private $post_types = null;
 
-	private $taxonomies = [];
+	private $taxonomies = null;
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function init() {
+		// Nothing to do here.
+	}
+
+	/**
+	 * Init the data from ACF only when needed.
+	 */
+	public function init_data() {
+		if ( null !== $this->post_types ) {
+			return;
+		}
+
 		$this->post_types = function_exists( 'acf_get_acf_post_types' ) ? acf_get_acf_post_types() : [];
 		$this->taxonomies = function_exists( 'acf_get_acf_taxonomies' ) ? acf_get_acf_taxonomies() : [];
 	}
@@ -77,6 +88,8 @@ class Pods_Migrate_ACF extends PodsComponent {
 	 * @param $component
 	 */
 	public function admin( $options, $component ) {
+		$this->init_data();
+
 		$post_types = $this->post_types;
 		$taxonomies = $this->taxonomies;
 
@@ -92,6 +105,8 @@ class Pods_Migrate_ACF extends PodsComponent {
 	 * @param $params
 	 */
 	public function ajax_migrate( $params ) {
+		$this->init_data();
+
 		$post_types = (array) $this->post_types;
 		$taxonomies = (array) $this->taxonomies;
 
@@ -458,37 +473,6 @@ class Pods_Migrate_ACF extends PodsComponent {
 		}
 
 		return $id;
-	}
-
-	/**
-	 *
-	 * @since 2.0.0
-	 */
-	public function clean() {
-		if ( ! is_null( $this->post_option_name ) ) {
-			delete_option( $this->post_option_name );
-		}
-
-		if ( ! is_null( $this->taxonomy_option_name ) ) {
-			delete_option( $this->taxonomy_option_name );
-		}
-	}
-
-	/**
-	 * @param array $option_name_list List of possible option names.
-	 *
-	 * @return null|string The first found option name, or NULL if none were found
-	 */
-	private function get_option_name( $option_name_list ) {
-		$option_name_list = (array) $option_name_list;
-
-		foreach ( $option_name_list as $this_option_name ) {
-			if ( null !== get_option( $this_option_name, null ) ) {
-				return $this_option_name;
-			}
-		}
-
-		return null;
 	}
 
 }

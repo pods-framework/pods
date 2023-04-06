@@ -41,6 +41,7 @@ const Wysiwyg = ( props ) => {
 		wysiwyg_editor: editor = 'tinymce',
 		wysiwyg_editor_height: editorHeight = 400,
 		wysiwyg_media_buttons: mediaButtons,
+		wysiwyg_wpautop: wpautop = true,
 		wysiwyg_default_editor: defaultEditor = 'tinymce',
 		read_only: readOnly,
 	} = fieldConfig;
@@ -89,6 +90,7 @@ const Wysiwyg = ( props ) => {
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }
 			mediaButtons={ toBool( mediaButtons ) }
+			wpautop={ toBool( wpautop ) }
 			defaultEditor={ defaultEditor }
 			onBlur={ () => setHasBlurred() }
 		/>

@@ -4,7 +4,7 @@
  *
  * Menu Name: Migrate CPT UI
  *
- * Description: Import Custom Post Types and Taxonomies from Custom Post Type UI (<a href="http://webdevstudios.com/plugin/custom-post-type-ui/">http://webdevstudios.com/plugin/custom-post-type-ui/</a>)
+ * Description: Import Custom Post Types and Taxonomies from Custom Post Type UI (<a href="https://wordpress.org/plugins/custom-post-type-ui/">https://wordpress.org/plugins/custom-post-type-ui/</a>)
  *
  * Category: Migration
  *
@@ -324,7 +324,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 		}
 
 		if ( $pod['name'] != $params['name'] ) {
-			$this->api->rename_wp_object_type( $params['type '], $params['name'], $pod['name'] );
+			$this->api->rename_wp_object_type( $params['type'], $params['name'], $pod['name'] );
 		}
 
 		return $id;
@@ -452,7 +452,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 		}
 
 		if ( $pod['name'] != $params['name'] ) {
-			$this->api->rename_wp_object_type( $params['type '], $params['name'], $pod['name'] );
+			$this->api->rename_wp_object_type( $params['type'], $params['name'], $pod['name'] );
 		}
 
 		return $id;

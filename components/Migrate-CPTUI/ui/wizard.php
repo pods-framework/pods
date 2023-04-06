@@ -29,7 +29,7 @@
 				<div id="pods-wizard-main">
 					<div id="pods-wizard-panel-1" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
-							<p><?php _e( 'Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0', 'pods' ); ?></p>
+							<p><?php _e( 'Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods', 'pods' ); ?></p>
 						</div>
 						<div id="pods-wizard-options">
 							<div class="pods-wizard-option">
@@ -54,7 +54,7 @@
 					</div>
 					<div id="pods-wizard-panel-2" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
-							<p><?php _e( 'Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0', 'pods' ); ?></p>
+							<p><?php _e( 'Choose below which Custom Post Types and Taxonomies you want to import into Pods', 'pods' ); ?></p>
 						</div>
 
 						<div class="stuffbox">

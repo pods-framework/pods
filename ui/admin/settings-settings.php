@@ -1,4 +1,7 @@
 <?php
+
+use Pods\Whatsit\Field;
+
 wp_enqueue_script( 'pods' );
 pods_form_enqueue_style( 'pods-form' );
 
@@ -10,6 +13,18 @@ pods_form_enqueue_style( 'pods-form' );
  * @param array $fields List of fields for the settings page.
  */
 $fields = apply_filters( 'pods_admin_settings_fields', array() );
+
+// Convert into Field objects.
+$fields = array_map( static function( $field ) {
+	if ( ! $field instanceof Field ) {
+		$field = new Field( $field );
+
+		// Replace dependency logic with conditional logic.
+		$field->maybe_migrate_dependency();
+	}
+
+	return $field;
+}, $fields );
 
 if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
 	if ( isset( $_POST['pods_cache_flush'] ) ) {
@@ -106,8 +121,10 @@ $do = 'save';
 			continue;
 		}
 
+		$field['name_prefix'] = 'pods_field_';
+
 		// Output hidden field at top.
-		echo PodsForm::field( 'pods_field_' . $field['name'], pods_get_setting( $field['name'], pods_v( 'default', $field ) ), 'hidden' );
+		echo PodsForm::field( $field['name'], pods_get_setting( $field['name'], pods_v( 'default', $field ) ), 'hidden' );
 
 		// Remove from list of fields to render below.
 		unset( $fields[ $key ] );

@@ -248,7 +248,7 @@ class Settings {
 				'1' => __( 'Enable overriding WP Metadata values (may conflict with certain plugins and decrease performance with large processes)', 'pods' ),
 				'0' => __( 'Disable overriding WP Metadata values', 'pods' ),
 			],
-			'depends-on' => [ 'pods_field_metadata_integration' => '1' ],
+			'depends-on' => [ 'metadata_integration' => '1' ],
 		];
 
 		$session_auto_start            = pods_session_auto_start( true );

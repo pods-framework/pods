@@ -543,6 +543,10 @@ class PodsForm {
 	 */
 	public static function merge_attributes( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
 
+		if ( $options instanceof Field ) {
+			$options = $options->get_args();
+		}
+
 		$options = (array) $options;
 
 		if ( ! in_array( $type, array( 'label', 'comment' ) ) ) {

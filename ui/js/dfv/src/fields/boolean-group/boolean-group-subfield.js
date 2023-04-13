@@ -60,7 +60,7 @@ const BooleanGroupSubfield = ( {
 					className="pods-form-ui-label pods-checkbox-pick__option__label"
 				>
 					<input
-						name={ name }
+						name={ htmlAttributes.name || name }
 						id={ idAttribute }
 						className="pods-form-ui-field-type-pick"
 						type="checkbox"

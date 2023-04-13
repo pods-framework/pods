@@ -2312,6 +2312,8 @@ class PodsMeta {
 			};
 
 			foreach ( $fields as $field ) {
+				$field['name_prefix'] = $field_prefix;
+
 				$hidden_field = 1 === (int) pods_v( 'hidden', $field, 0 );
 
 				if (

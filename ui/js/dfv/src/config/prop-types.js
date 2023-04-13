@@ -130,6 +130,7 @@ export const FIELD_PROP_TYPE = {
 	label_param: PropTypes.string,
 	label_param_default: PropTypes.string,
 	name: PropTypes.string.isRequired,
+	name_prefix: PropTypes.string,
 	object_type: PropTypes.string,
 	old_name: PropTypes.string,
 	options: PropTypes.oneOfType( [

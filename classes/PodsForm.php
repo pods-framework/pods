@@ -99,6 +99,7 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function label( $name, $label, $help = '', $options = null ) {
+		$prefix = pods_v( 'name_prefix', $options );
 
 		if ( is_array( $label ) || is_object( $label ) ) {
 			$options = $label;
@@ -118,8 +119,8 @@ class PodsForm {
 
 		ob_start();
 
-		$name_clean      = self::clean( $name );
-		$name_more_clean = self::clean( $name, true );
+		$name_clean      = self::clean( $prefix . $name );
+		$name_more_clean = self::clean( $prefix . $name, true );
 
 		$type                = 'label';
 		$attributes          = array();
@@ -146,10 +147,11 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function comment( $name, $message = null, $options = null ) {
+		$prefix = pods_v( 'name_prefix', $options );
 
 		$options = self::options( null, $options );
 
-		$name_more_clean = self::clean( $name, true );
+		$name_more_clean = self::clean( $prefix . $name, true );
 
 		if ( ! empty( $options['description'] ) ) {
 			$message = $options['description'];
@@ -549,11 +551,13 @@ class PodsForm {
 
 		$options = (array) $options;
 
+		$prefix = pods_v( 'name_prefix', $options );
+
 		if ( ! in_array( $type, array( 'label', 'comment' ) ) ) {
-			$name_clean                     = self::clean( $name );
-			$name_more_clean                = self::clean( $name, true );
+			$name_clean                     = self::clean( $prefix . $name );
+			$name_more_clean                = self::clean( $prefix . $name, true );
 			$_attributes                    = array();
-			$_attributes['name']            = $name;
+			$_attributes['name']            = $prefix . $name;
 			$_attributes['data-name-clean'] = $name_more_clean;
 
 			if ( 0 < strlen( (string) pods_v( 'label', $options, '' ) ) ) {

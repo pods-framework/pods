@@ -24,6 +24,7 @@ const Code = ( {
 	const {
 		name,
 		read_only: readOnly,
+		htmlAttr: htmlAttributes = {},
 	} = fieldConfig;
 
 	const editorViewRef = useRef();
@@ -122,7 +123,7 @@ const Code = ( {
 	return (
 		<div className="pods-code-field">
 			<input
-				name={ name }
+				name={ htmlAttributes.name || name }
 				type="hidden"
 				value={ value || '' }
 			/>

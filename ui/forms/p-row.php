@@ -8,13 +8,6 @@
  * @var mixed               $value
  * @var string|null         $heading_tag
  */
-
-if ( '' !== $field_prefix ) {
-	$attributes = $field['attributes'] ?: [];
-	$attributes['name'] = $field_prefix . $field['name'];
-
-	$field['attributes'] = $attributes;
-}
 ?>
 <div class="pods-field__container pods-field-option" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
 	<?php if ( 'heading' === $field['type'] ) : ?>

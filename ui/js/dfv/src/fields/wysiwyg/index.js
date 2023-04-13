@@ -84,7 +84,8 @@ const Wysiwyg = ( props ) => {
 
 	return (
 		<TinyMCE
-			name={ htmlAttributes.name || name }
+			htmlAttributes={ htmlAttributes }
+			name={ name }
 			value={ value || '' }
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }

@@ -337,6 +337,8 @@ const Pick = ( props ) => {
 			);
 		}
 
+		const htmlName = htmlAttributes.name || name;
+
 		if (
 			( isSingle && 'list' === formatSingle ) ||
 			( isMulti && 'list' === formatMulti ) ||
@@ -430,7 +432,7 @@ const Pick = ( props ) => {
 
 					{ formattedValue.map( ( selectedValue, index ) => (
 						<input
-							name={ `${ name }[${ index }]` }
+							name={ `${ htmlName }[${ index }]` }
 							key={ `${ name }-${ selectedValue.value }` }
 							type="hidden"
 							value={ selectedValue.value }

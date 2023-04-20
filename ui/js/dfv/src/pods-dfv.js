@@ -61,12 +61,12 @@ window.PodsDFV = {
 	 *
 	 * @returns {object|undefined} Object of form information, or undefined if not found.
 	 */
-	detectForm( pod = null, itemId = null, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	detectForm(pod = null, itemId = null, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
-		const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
+		const storeKeys = Object.keys(this._fieldDataByStoreKeyPrefix);
 		const fieldData = this._fieldDataByStoreKeyPrefix;
 		const hasSearchCriteria = (
 			null !== pod
@@ -80,7 +80,7 @@ window.PodsDFV = {
 		);
 
 		// Check if we have an exact match.
-		if ( returnExact ) {
+		if (returnExact) {
 			const storeKey = createStoreKey(
 				pod,
 				itemId,
@@ -88,10 +88,10 @@ window.PodsDFV = {
 				STORE_KEY_DFV
 			);
 
-			const stored = select( storeKey );
+			const stored = select(storeKey);
 
 			// Store not found.
-			if ( ! stored ) {
+			if (!stored) {
 				return undefined;
 			}
 
@@ -108,11 +108,11 @@ window.PodsDFV = {
 		// Check if we have a match for what we are looking for.
 		let form = undefined;
 
-		storeKeys.every( function( storeKey ) {
-			let stored = select( storeKey );
+		storeKeys.every(function (storeKey) {
+			let stored = select(storeKey);
 
 			// Skip if store not found.
-			if ( ! stored ) {
+			if (!stored) {
 				return true;
 			}
 
@@ -121,26 +121,26 @@ window.PodsDFV = {
 			let storeFormCounter;
 
 			// Skip if first field not found.
-			if ( 'undefined' === typeof fieldData[ storeKey ][0] ) {
+			if ('undefined' === typeof fieldData[storeKey][0]) {
 				return true;
 			}
 
-			let firstField = fieldData[ storeKey ][0];
+			let firstField = fieldData[storeKey][0];
 
 			// Check if the form matches what we are looking for.
-			if ( hasSearchCriteria ) {
+			if (hasSearchCriteria) {
 				// Skip if pod does not match.
-				if ( null !== pod && firstField.pod !== pod ) {
+				if (null !== pod && firstField.pod !== pod) {
 					return true;
 				}
 
 				// Skip if itemId does not match.
-				if ( null !== itemId && firstField.itemId != itemId ) {
+				if (null !== itemId && firstField.itemId != itemId) {
 					return true;
 				}
 
 				// Skip if formCounter does not match.
-				if ( null !== formCounter && firstField.formCounter != formCounter ) {
+				if (null !== formCounter && firstField.formCounter != formCounter) {
 					return true;
 				}
 			}
@@ -156,7 +156,7 @@ window.PodsDFV = {
 
 			// Stop the loop.
 			return false;
-		} );
+		});
 
 		return form;
 	},
@@ -173,30 +173,30 @@ window.PodsDFV = {
 	 *
 	 * @returns {object|undefined} Object of field information, or undefined if not found.
 	 */
-	detectField( pod = null, itemId = null, fieldName, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	detectField(pod = null, itemId = null, fieldName, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
-		const form = this.detectForm( pod, itemId, formCounter );
+		const form = this.detectForm(pod, itemId, formCounter);
 
-		if ( 'undefined' === typeof form ) {
+		if ('undefined' === typeof form) {
 			return undefined;
 		}
 
 		const storeKey = form.storeKey;
 
-		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ] ) {
+		if ('undefined' === typeof this._fieldDataByStoreKeyPrefix[storeKey]) {
 			return undefined;
 		}
 
-		const allFields = this._fieldDataByStoreKeyPrefix[ storeKey ];
+		const allFields = this._fieldDataByStoreKeyPrefix[storeKey];
 
 		let field = undefined;
 
-		allFields.every( function( fieldObject, index ) {
+		allFields.every(function (fieldObject, index) {
 			// Skip if field name not set.
-			if ( undefined === typeof fieldObject.fieldConfig.name ) {
+			if (undefined === typeof fieldObject.fieldConfig.name) {
 				return true;
 			}
 
@@ -220,7 +220,7 @@ window.PodsDFV = {
 
 			// Stop the loop.
 			return false;
-		} );
+		});
 
 		return field;
 	},
@@ -234,22 +234,22 @@ window.PodsDFV = {
 	 *
 	 * @returns {object|undefined} Object of field data keyed by field name, or undefined if not found.
 	 */
-	getFields( pod = null, itemId = null, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	getFields(pod = null, itemId = null, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
 		// Maybe return all fields on the screen.
-		if ( null === pod && null === itemId && null === formCounter ) {
+		if (null === pod && null === itemId && null === formCounter) {
 			let storeFields = [];
 
-			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
+			const storeKeys = Object.keys(this._fieldDataByStoreKeyPrefix);
 			const fieldData = this._fieldDataByStoreKeyPrefix;
 
-			storeKeys.forEach( function( storeKey ) {
-				let stored = select( storeKey );
+			storeKeys.forEach(function (storeKey) {
+				let stored = select(storeKey);
 
-				if ( ! stored ) {
+				if (!stored) {
 					return;
 				}
 
@@ -257,44 +257,44 @@ window.PodsDFV = {
 				let storeItemId;
 				let storeFormCounter;
 
-				if ( 'undefined' !== typeof fieldData[ storeKey ][0] ) {
-					let firstField = fieldData[ storeKey ][0];
+				if ('undefined' !== typeof fieldData[storeKey][0]) {
+					let firstField = fieldData[storeKey][0];
 
 					storePodName = firstField.pod;
 					storeItemId = firstField.itemId;
 					storeFormCounter = firstField.formCounter;
 				}
 
-				let allFields = fieldData[ storeKey ] || [];
+				let allFields = fieldData[storeKey] || [];
 				let fieldConfigs = {};
 
-				allFields.forEach( function( field ) {
-					fieldConfigs[ field.fieldConfig.name ] = field;
-				} );
+				allFields.forEach(function (field) {
+					fieldConfigs[field.fieldConfig.name] = field;
+				});
 
-				storeFields.push( {
+				storeFields.push({
 					pod: storePodName,
 					itemId: storeItemId,
 					formCounter: storeFormCounter,
 					fields: fieldConfigs,
-				} );
-			} );
+				});
+			});
 
 			return storeFields;
 		}
 
-		const form = this.detectForm( pod, itemId, formCounter );
+		const form = this.detectForm(pod, itemId, formCounter);
 
-		if ( 'undefined' === typeof form ) {
+		if ('undefined' === typeof form) {
 			return undefined;
 		}
 
-		const allFields = this._fieldDataByStoreKeyPrefix[ form.storeKey ] || [];
+		const allFields = this._fieldDataByStoreKeyPrefix[form.storeKey] || [];
 		let fieldConfigs = {};
 
-		allFields.forEach( function( field ) {
-			fieldConfigs[ field.fieldConfig.name ] = field;
-		} );
+		allFields.forEach(function (field) {
+			fieldConfigs[field.fieldConfig.name] = field;
+		});
 
 		return fieldConfigs;
 	},
@@ -309,18 +309,18 @@ window.PodsDFV = {
 	 *
 	 * @returns {object|undefined} Field data, or undefined if not found.
 	 */
-	getField( pod = null, itemId = null, fieldName, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	getField(pod = null, itemId = null, fieldName, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
-		if ( '' === fieldName ) {
+		if ('' === fieldName) {
 			return undefined;
 		}
 
-		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
+		const fieldInfo = this.detectField(pod, itemId, fieldName, formCounter);
 
-		if ( 'undefined' === typeof fieldInfo ) {
+		if ('undefined' === typeof fieldInfo) {
 			return undefined;
 		}
 
@@ -338,30 +338,30 @@ window.PodsDFV = {
 	 *
 	 * @returns {true|undefined} True if set, or undefined if not found.
 	 */
-	__setFieldConfig( pod = null, itemId = null, fieldName, fieldConfig, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	__setFieldConfig(pod = null, itemId = null, fieldName, fieldConfig, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
-		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
+		const fieldInfo = this.detectField(pod, itemId, fieldName, formCounter);
 
-		if ( 'undefined' === typeof fieldInfo ) {
+		if ('undefined' === typeof fieldInfo) {
 			return undefined;
 		}
 
 		const storeKey = fieldInfo.form.storeKey;
 		const index = fieldInfo.index;
 
-		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ] ) {
+		if ('undefined' === typeof this._fieldDataByStoreKeyPrefix[storeKey]) {
 			return undefined;
 		}
 
-		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ][ index ] ) {
+		if ('undefined' === typeof this._fieldDataByStoreKeyPrefix[storeKey][index]) {
 			return undefined;
 		}
 
-		this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldConfig = {
-			...this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldConfig,
+		this._fieldDataByStoreKeyPrefix[storeKey][index].fieldConfig = {
+			...this._fieldDataByStoreKeyPrefix[storeKey][index].fieldConfig,
 			...fieldConfig
 		};
 
@@ -379,29 +379,29 @@ window.PodsDFV = {
 	 *
 	 * @returns {true|undefined} True if set, or undefined if not found.
 	 */
-	__setFieldItemData( pod = null, itemId = null, fieldName, fieldItemData, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	__setFieldItemData(pod = null, itemId = null, fieldName, fieldItemData, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
-		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
+		const fieldInfo = this.detectField(pod, itemId, fieldName, formCounter);
 
-		if ( 'undefined' === typeof fieldInfo ) {
+		if ('undefined' === typeof fieldInfo) {
 			return undefined;
 		}
 
 		const storeKey = fieldInfo.form.storeKey;
 		const index = fieldInfo.index;
 
-		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ] ) {
+		if ('undefined' === typeof this._fieldDataByStoreKeyPrefix[storeKey]) {
 			return undefined;
 		}
 
-		if ( 'undefined' === typeof this._fieldDataByStoreKeyPrefix[ storeKey ][ index ] ) {
+		if ('undefined' === typeof this._fieldDataByStoreKeyPrefix[storeKey][index]) {
 			return undefined;
 		}
 
-		this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldItemData = fieldItemData;
+		this._fieldDataByStoreKeyPrefix[storeKey][index].fieldItemData = fieldItemData;
 
 		return true;
 	},
@@ -415,22 +415,22 @@ window.PodsDFV = {
 	 *
 	 * @returns {array|undefined} Field values array or undefined.
 	 */
-	getFieldValues( pod = null, itemId = null, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	getFieldValues(pod = null, itemId = null, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
 		// Maybe return all field values on the screen.
-		if ( null === pod && null === itemId && null === formCounter ) {
+		if (null === pod && null === itemId && null === formCounter) {
 			let storeValues = [];
 
-			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
+			const storeKeys = Object.keys(this._fieldDataByStoreKeyPrefix);
 			const fieldData = this._fieldDataByStoreKeyPrefix;
 
-			storeKeys.forEach( function( storeKey ) {
-				let stored = select( storeKey );
+			storeKeys.forEach(function (storeKey) {
+				let stored = select(storeKey);
 
-				if ( ! stored ) {
+				if (!stored) {
 					return;
 				}
 
@@ -438,28 +438,28 @@ window.PodsDFV = {
 				let storeItemId;
 				let storeFormCounter;
 
-				if ( 'undefined' !== typeof fieldData[ storeKey ][0] ) {
-					let firstField = fieldData[ storeKey ][0];
+				if ('undefined' !== typeof fieldData[storeKey][0]) {
+					let firstField = fieldData[storeKey][0];
 
 					storePodName = firstField.pod;
 					storeItemId = firstField.itemId;
 					storeFormCounter = firstField.formCounter;
 				}
 
-				storeValues.push( {
+				storeValues.push({
 					pod: storePodName,
 					itemId: storeItemId,
 					formCounter: storeFormCounter,
-					fieldValues : stored.getPodOptions(),
-				} );
-			} );
+					fieldValues: stored.getPodOptions(),
+				});
+			});
 
 			return storeValues;
 		}
 
-		const form = this.detectForm( pod, itemId, formCounter );
+		const form = this.detectForm(pod, itemId, formCounter);
 
-		if ( 'undefined' === typeof form ) {
+		if ('undefined' === typeof form) {
 			return undefined;
 		}
 
@@ -475,22 +475,22 @@ window.PodsDFV = {
 	 *
 	 * @returns {array|undefined} Field values array or undefined.
 	 */
-	getFieldValuesWithConfigs( pod = null, itemId = null, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	getFieldValuesWithConfigs(pod = null, itemId = null, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
 		// Maybe return all field values on the screen.
-		if ( null === pod && null === itemId && null === formCounter ) {
+		if (null === pod && null === itemId && null === formCounter) {
 			let storeValues = [];
 
-			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
+			const storeKeys = Object.keys(this._fieldDataByStoreKeyPrefix);
 			const fieldData = this._fieldDataByStoreKeyPrefix;
 
-			storeKeys.forEach( function( storeKey ) {
-				let stored = select( storeKey );
+			storeKeys.forEach(function (storeKey) {
+				let stored = select(storeKey);
 
-				if ( ! stored ) {
+				if (!stored) {
 					return;
 				}
 
@@ -498,8 +498,8 @@ window.PodsDFV = {
 				let storeItemId;
 				let storeFormCounter;
 
-				if ( 'undefined' !== typeof fieldData[ storeKey ][0] ) {
-					let firstField = fieldData[ storeKey ][0];
+				if ('undefined' !== typeof fieldData[storeKey][0]) {
+					let firstField = fieldData[storeKey][0];
 
 					storePodName = firstField.pod;
 					storeItemId = firstField.itemId;
@@ -507,43 +507,43 @@ window.PodsDFV = {
 				}
 
 				let rawFieldValues = stored.getPodOptions();
-				let allFields = fieldData[ storeKey ] || [];
+				let allFields = fieldData[storeKey] || [];
 				let fieldValues = {};
 
-				allFields.forEach( function( field ) {
-					fieldValues[ field.fieldConfig.name ] = {
+				allFields.forEach(function (field) {
+					fieldValues[field.fieldConfig.name] = {
 						fieldConfig: field.fieldConfig,
-						value: rawFieldValues[ field.fieldConfig.name ] ?? '',
+						value: rawFieldValues[field.fieldConfig.name] ?? '',
 					};
-				} );
+				});
 
-				storeValues.push( {
+				storeValues.push({
 					pod: storePodName,
 					itemId: storeItemId,
 					formCounter: storeFormCounter,
 					fieldValues,
-				} );
-			} );
+				});
+			});
 
 			return storeValues;
 		}
 
-		const form = this.detectForm( pod, itemId, formCounter );
+		const form = this.detectForm(pod, itemId, formCounter);
 
-		if ( 'undefined' === typeof form ) {
+		if ('undefined' === typeof form) {
 			return undefined;
 		}
 
 		const rawFieldValues = form.stored.getPodOptions();
-		const allFields = this._fieldDataByStoreKeyPrefix[ form.storeKey ] || [];
+		const allFields = this._fieldDataByStoreKeyPrefix[form.storeKey] || [];
 		let fieldValues = {};
 
-		allFields.forEach( function( field ) {
-			fieldValues[ field.fieldConfig.name ] = {
+		allFields.forEach(function (field) {
+			fieldValues[field.fieldConfig.name] = {
 				fieldConfig: field.fieldConfig,
-				value: rawFieldValues[ field.fieldConfig.name ] ?? '',
+				value: rawFieldValues[field.fieldConfig.name] ?? '',
 			};
-		} );
+		});
 
 		return fieldValues;
 	},
@@ -558,18 +558,18 @@ window.PodsDFV = {
 	 *
 	 * @returns {any} Field value or undefined.
 	 */
-	getFieldValue( pod = null, itemId = null, fieldName, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	getFieldValue(pod = null, itemId = null, fieldName, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
-		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
+		const fieldInfo = this.detectField(pod, itemId, fieldName, formCounter);
 
-		if ( 'undefined' === typeof fieldInfo ) {
+		if ('undefined' === typeof fieldInfo) {
 			return undefined;
 		}
 
-		return fieldInfo.form.stored?.getPodOptions()?.[ fieldInfo.fieldName ];
+		return fieldInfo.form.stored?.getPodOptions()?.[fieldInfo.fieldName];
 	},
 
 	/**
@@ -583,53 +583,83 @@ window.PodsDFV = {
 	 *
 	 * @returns {true|undefined} True if set, or undefined if not found.
 	 */
-	setFieldValue( pod = null, itemId = null, fieldName, value, formCounter = null ) {
-		if ( isEditPodScreen() ) {
+	setFieldValue(pod = null, itemId = null, fieldName, value, formCounter = null) {
+		if (isEditPodScreen()) {
 			return undefined;
 		}
 
-		const fieldInfo = this.detectField( pod, itemId, fieldName, formCounter );
+		const fieldInfo = this.detectField(pod, itemId, fieldName, formCounter);
 
-		if ( 'undefined' === typeof fieldInfo ) {
+		if ('undefined' === typeof fieldInfo) {
 			return undefined;
 		}
 
-		dispatch( fieldInfo.form.storeKey ).setOptionValue( fieldInfo.fieldName, value );
+		dispatch(fieldInfo.form.storeKey).setOptionValue(fieldInfo.fieldName, value);
 
 		return true;
 	},
 
 	/**
+	 * Check if Pod being edited is valid.
+	 *
+	 * Returns array of validation Messages
+	 *
+	 * @param {string} pod         Pod slug/name.
+	 * @param {int}    itemId      Object ID.
+	 * @param {int}    formCounter Form index.
+	 *
+	 * @returns {string[]} Array of validation messages
+	 */
+	checkValidation(pod, itemId, formCounter) {
+		let messages = [];
+
+		return messages;
+	},
+
+	/**
+	 * Check if Pod being edited is valid.
+	 *
+	 * @param {string} pod         Pod slug/name.
+	 * @param {int}    itemId      Object ID.
+	 * @param {int}    formCounter Form index.
+	 *
+	 * @returns {boolean} True if valid, false if not.
+	*/
+	isValid(pod, itemId, formCounter) {
+		const errors = this.checkValidation(pod, itemId, formCounter);
+		return !errors.length;
+	},
+	/**
 	 * Initialize Pod data.
 	 *
 	 * @param {string} selector Selector to target script tags. If empty, selects all DFV script tags from the document.
 	 */
-	init( selector = '' ) {
+	init(selector = '') {
 		// Find all in-line data scripts
 		const scriptTagSelector = selector || SCRIPT_TARGET;
-		const dataTags = [ ...document.querySelectorAll( scriptTagSelector ) ];
+		const dataTags = [...document.querySelectorAll(scriptTagSelector)];
 
-		const fieldsData = dataTags.map( ( tag ) => {
-			const data = JSON.parse( tag.innerHTML );
+		const fieldsData = dataTags.map((tag) => {
+			const data = JSON.parse(tag.innerHTML);
 
 			// Ignore anything malformed or that doesn't have the field type set
-			if ( ! data?.fieldType ) {
+			if (!data?.fieldType) {
 				return undefined;
 			}
 
 			// Some fields are rendered directly, most are not.
-			const directRender = FIELD_MAP[ data.fieldType ]?.directRender || false;
+			const directRender = FIELD_MAP[data.fieldType]?.directRender || false;
 
 			// Clean up the field config.
 			// Includes a kludge to disable the "Add New" button if we're inside a media modal.  This should
 			// eventually be ironed out so we can use Add New from this context (see #4864)
 			const cleanedFieldConfig = omit(
-				( data.fieldConfig || {} ),
-				[ '_field_object', 'output_options', 'item_id' ]
+				(data.fieldConfig || {}),
+				['_field_object', 'output_options', 'item_id']
 			);
 
-			if ( tag.closest( '.media-modal-content' ) ) {
-				if ( cleanedFieldConfig.fieldConfig ) {
+			if (tag.closest('.media-modal-content')) {
+				if (cleanedFieldConfig.fieldConfig) {
 					cleanedFieldConfig.fieldConfig.pick_allow_add_new = '0';
 				} else {
 					cleanedFieldConfig.pick_allow_add_new = '0';
@@ -640,17 +670,17 @@ window.PodsDFV = {
 			cleanedFieldConfig.htmlAttr = data.htmlAttr || {};
 			cleanedFieldConfig.fieldEmbed = data.fieldEmbed || false;
 
-			if ( data.fieldItemData ) {
+			if (data.fieldItemData) {
 				cleanedFieldConfig.fieldItemData = data.fieldItemData;
 			}
 
-			if ( false === data.fieldValue ) {
+			if (false === data.fieldValue) {
 				data.fieldValue = null;
 			}
 
 			return {
 				directRender,
-				fieldComponent: FIELD_MAP[ data.fieldType ]?.fieldComponent || null,
+				fieldComponent: FIELD_MAP[data.fieldType]?.fieldComponent || null,
 				parentNode: tag.parentNode,
 				pod: tag.dataset.pod || null,
 				group: tag.dataset.group || null,
@@ -660,10 +690,10 @@ window.PodsDFV = {
 				fieldItemData: data.fieldItemData || null,
 				fieldValue: data.fieldValue ?? null,
 			};
-		} );
+		});
 
 		// Filter out any that we skipped.
-		const validFieldsData = fieldsData.filter( ( fieldData ) => !! fieldData );
+		const validFieldsData = fieldsData.filter((fieldData) => !!fieldData);
 
 		// We may need to create multiple DFV instances and multiple stores, if either
 		// the pod, item ID, or group are different between the tags.
@@ -678,7 +708,7 @@ window.PodsDFV = {
 		// The initial values for the data store require some massaging:
 		// Some are arrays when we need single values (this may change once
 		// repeatable fields are implemented), others have special requirements.
-		validFieldsData.forEach( ( currentField ) => {
+		validFieldsData.forEach((currentField) => {
 			const {
 				fieldConfig = {},
 				pod,
@@ -693,35 +723,35 @@ window.PodsDFV = {
 				isEditPodScreen() ? STORE_KEY_EDIT_POD : STORE_KEY_DFV
 			);
 
-			this._fieldDataByStoreKeyPrefix[ storeKey ] = [
-				...( this._fieldDataByStoreKeyPrefix[ storeKey ] || [] ),
+			this._fieldDataByStoreKeyPrefix[storeKey] = [
+				...(this._fieldDataByStoreKeyPrefix[storeKey] || []),
 				currentField,
 			];
 
 			// "Boolean Group" fields are actually comprised of other fields with their own
 			// named values, so instead of just one key/value, they'll have multiple ones.
 			// These are handled very differently, so process them and return early.
-			if ( 'boolean_group' === fieldConfig.type ) {
+			if ('boolean_group' === fieldConfig.type) {
 				const booleanGroupValues = {};
 
-				fieldConfig.boolean_group.forEach( ( groupItem ) => {
-					if ( ! groupItem.name ) {
+				fieldConfig.boolean_group.forEach((groupItem) => {
+					if (!groupItem.name) {
 						return;
 					}
 
 					// Apply defaults if we're on the Edit Pod screen.
 					if (
 						isEditPodScreen() &&
-						'undefined' === typeof currentField.fieldItemData?.[ groupItem.name ]
+						'undefined' === typeof currentField.fieldItemData?.[groupItem.name]
 					) {
-						booleanGroupValues[ groupItem.name ] = groupItem.default || '';
+						booleanGroupValues[groupItem.name] = groupItem.default || '';
 					} else {
-						booleanGroupValues[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ];
+						booleanGroupValues[groupItem.name] = currentField.fieldItemData?.[groupItem.name];
 					}
-				} );
+				});
 
-				initialStoresWithValues[ storeKey ] = {
-					...( initialStoresWithValues[ storeKey ] || {} ),
+				initialStoresWithValues[storeKey] = {
+					...(initialStoresWithValues[storeKey] || {}),
 					...booleanGroupValues,
 				};
 
@@ -732,67 +762,67 @@ window.PodsDFV = {
 			// if a value isn't set. On other screens, this is handled on the back-end.
 			let valueOrDefault;
 
-			if ( isEditPodScreen() ) {
-				valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
+			if (isEditPodScreen()) {
+				valueOrDefault = ('undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue)
 					? currentField.fieldValue
 					: currentField.default;
 			} else {
-				valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
+				valueOrDefault = ('undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue)
 					? currentField.fieldValue
 					: '';
 			}
 
-			initialStoresWithValues[ storeKey ] = {
-				...( initialStoresWithValues[ storeKey ] || {} ),
-				[ fieldConfig.name ]: valueOrDefault,
+			initialStoresWithValues[storeKey] = {
+				...(initialStoresWithValues[storeKey] || {}),
+				[fieldConfig.name]: valueOrDefault,
 			};
-		} );
+		});
 
 		// eslint-disable-next-line no-console
 		// console.log( 'Pods init with initial values:', initialStoresWithValues );
 
 		// Create stores for each of the individual keys we found (the keys of
 		// the initialStoresWithValues object).
-		const initialStoreKeys = Object.keys( initialStoresWithValues );
+		const initialStoreKeys = Object.keys(initialStoresWithValues);
 
-		const storeKeys = initialStoreKeys.map( ( storeKey ) => {
+		const storeKeys = initialStoreKeys.map((storeKey) => {
 			// The Edit Pod screen gets a different store set up than
 			// other contexts.
-			if ( isEditPodScreen() ) {
+			if (isEditPodScreen()) {
 				return initEditPodStore(
 					window.podsAdminConfig,
 					storeKey
 				);
-			} else if ( window.podsDFVConfig ) {
+			} else if (window.podsDFVConfig) {
 				return initPodStore(
 					window.podsDFVConfig,
-					initialStoresWithValues[ storeKey ],
+					initialStoresWithValues[storeKey],
 					storeKey,
 				);
 			}
 
 			// Something is wrong if neither set of globals is set.
-			throw new Error( 'Missing window.podsDFVConfig, cannot set up Pods DFV' );
-		} );
+			throw new Error('Missing window.podsDFVConfig, cannot set up Pods DFV');
+		});
 
 		// Creates a container for the React app to "render",
 		// although it doesn't actually render anything in the container,
 		// but places the fields in the correct places with Portals.
-		const dfvRootContainer = document.createElement( 'div' );
+		const dfvRootContainer = document.createElement('div');
 		dfvRootContainer.class = 'pods-dfv-container';
 
-		document.body.appendChild( dfvRootContainer );
+		document.body.appendChild(dfvRootContainer);
 
 		// Set up the DFV app.
 		ReactDOM.render(
 			<>
-				{ storeKeys.map( ( storeKey ) => (
+				{storeKeys.map((storeKey) => (
 					<PodsDFVApp
-						fieldsData={ this._fieldDataByStoreKeyPrefix[ storeKey ] }
-						storeKey={ storeKey }
-						key={ storeKey }
+						fieldsData={this._fieldDataByStoreKeyPrefix[storeKey]}
+						storeKey={storeKey}
+						key={storeKey}
 					/>
-				) ) }
+				))}
 			</>,
 			dfvRootContainer
 		);
@@ -800,33 +830,33 @@ window.PodsDFV = {
 		/**
 		 * Run an action after Pods DFV init has completed.
 		 */
-		this.hooks.doAction( 'pods_init_complete' );
+		this.hooks.doAction('pods_init_complete');
 	},
 };
 
 /**
  * Kick everything off on DOMContentLoaded
  */
-document.addEventListener( 'DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 	// For the Media context, init gets called later.
-	if ( isMediaModal() ) {
+	if (isMediaModal()) {
 		return;
 	}
 
 	window.PodsDFV.init();
-} );
+});
 
 // Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
 const LoadModalListeners = () => {
-	useEffect( () => {
-		if ( isModalWindow() && isGutenbergEditorLoaded() ) {
+	useEffect(() => {
+		if (isModalWindow() && isGutenbergEditorLoaded()) {
 			initPodsGbModalListener();
 		}
-	}, [] );
+	}, []);
 
 	return null;
 };
 
-registerPlugin( 'pods-load-modal-listeners', {
+registerPlugin('pods-load-modal-listeners', {
 	render: LoadModalListeners,
-} );
+});

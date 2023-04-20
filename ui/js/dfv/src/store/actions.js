@@ -333,3 +333,19 @@ export const deleteField = ( fieldID, name ) => {
 		},
 	};
 };
+
+//Set the validation messages
+export const setValidationMessages = (messages) => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_VALIDATION_MESSAGES,
+		messages,
+	};
+}
+
+//Triggers validation of the pod
+export const setNeedsValidating = () => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_NEEDS_VALIDATING,
+		needsValidating: true,
+	};
+}

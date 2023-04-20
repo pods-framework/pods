@@ -29,6 +29,10 @@ import {
 	saveGroup,
 	deleteGroup,
 
+	//Validation related
+	setValidationMessages,
+	setNeedsValidating,
+
 	// setGroupFields,
 	// addGroupField,
 	// saveField,
@@ -322,15 +326,37 @@ describe( 'actions', () => {
 			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 		} );
 
-		test( 'deleteGroup() returns an action to delete a group by its ID', () => {
+		test('deleteGroup() returns an action to delete a group by its ID', () => {
 			const action = CURRENT_POD_ACTIONS.API_REQUEST;
 
-			const result = deleteGroup( 123 );
+			const result = deleteGroup(123);
 
-			expect( result.type ).toEqual( action );
-			expect( result.payload.onSuccess().type ).toEqual( UI_ACTIONS.SET_GROUP_DELETE_STATUS );
-			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_DELETE_STATUS );
-			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_DELETE_STATUS );
-		} );
-	} );
-} );
+			expect(result.type).toEqual(action);
+			expect(result.payload.onSuccess().type).toEqual(UI_ACTIONS.SET_GROUP_DELETE_STATUS);
+			expect(result.payload.onFailure().type).toEqual(UI_ACTIONS.SET_GROUP_DELETE_STATUS);
+			expect(result.payload.onStart().type).toEqual(UI_ACTIONS.SET_GROUP_DELETE_STATUS);
+		});
+
+		test('setValidationMessages sets messages', () => {
+			const action = CURRENT_POD_ACTIONS.SET_VALIDATION_MESSAGES;
+
+			const result = setValidationMessages([
+				'hi',
+				'roy'
+			]);
+
+			expect(result.type).toEqual(action);
+			expect(result.messages).toEqual([
+				'hi',
+				'roy'
+			]);
+		})
+
+		test('setNeedsValidating sets validation needed', () => {
+			const action = CURRENT_POD_ACTIONS.SET_VALIDATION_MESSAGES;
+			const result = setNeedsValidating();
+			expect(result.type).toEqual(action);
+			expect(result.needsValidating).toEqual(true);
+		})
+	});
+});

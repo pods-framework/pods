@@ -33,12 +33,16 @@ import apiMiddleware from './api-middleware';
 		: `${ pod }-${ itemId }-${ formCounter }`;
 };
 
-const initStore = ( initialState, storeKey ) => {
-	const reduxStore = configureStore( {
+const initStore = (initialState, storeKey) => {
+	const reduxStore = configureStore({
 		reducer,
-		middleware: [ apiMiddleware ],
-		preloadedState: initialState,
-	} );
+		middleware: [apiMiddleware],
+		preloadedState: {
+			validationMessages: [],
+			needsValidating: false,
+			...initialState
+		},
+	});
 
 	const mappedSelectors = Object.keys( selectors ).reduce( ( acc, selectorKey ) => {
 		acc[ selectorKey ] = ( ...args ) =>

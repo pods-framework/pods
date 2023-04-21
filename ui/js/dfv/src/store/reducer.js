@@ -354,7 +354,10 @@ export const currentPod = ( state = {}, action = {} ) => {
 		case CURRENT_POD_ACTIONS.SET_VALIDATION_MESSAGES: {
 			return {
 				...state,
-				validationMessages: action.validationMessages,
+				validationMessages: {
+					...state.validationMessages,
+					[ action.fieldName ]: action.validationMessages,
+				},
 			};
 		}
 		case CURRENT_POD_ACTIONS.TOGGLE_NEEDS_VALIDATING: {

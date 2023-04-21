@@ -48,6 +48,7 @@ export const FieldWrapper = ( props ) => {
 		values,
 		setOptionValue,
 		allPodValues,
+		storeKey,
 	} = props;
 
 	const {
@@ -139,7 +140,9 @@ export const FieldWrapper = ( props ) => {
 				condition: () => true === toBool( required ),
 			},
 		],
-		value
+		value,
+		name,
+		storeKey
 	);
 
 	// Don't render a field that hasn't had its dependencies met.

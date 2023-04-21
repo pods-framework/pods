@@ -335,10 +335,11 @@ export const deleteField = ( fieldID, name ) => {
 };
 
 //Set the validation messages
-export const setValidationMessages = ( validationMessages ) => {
+export const setValidationMessages = ( fieldName, validationMessages ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_VALIDATION_MESSAGES,
 		validationMessages,
+		fieldName,
 	};
 };
 

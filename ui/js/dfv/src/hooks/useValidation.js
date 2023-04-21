@@ -1,8 +1,22 @@
 import { useState, useEffect } from 'react';
+import {
+	useSelect,
+	useDispatch,
+} from '@wordpress/data';
 
-const useValidation = ( defaultRules = [], value ) => {
+const useValidation = ( defaultRules = [], value, fieldName, strokeKey ) => {
 	const [ validationRules, setValidationRules ] = useState( defaultRules );
-	const [ validationMessages, setValidationMessages ] = useState( [] );
+
+	const validationMessages = useSelect( ( select ) => {
+		const currentMessages = select( strokeKey ).getValidationMessages();
+		//has fieldName ?
+		if ( currentMessages.hasOwnProperty( fieldName ) ) {
+			return currentMessages[ fieldName ];
+		}
+		return [];
+	}, [ fieldName ] );
+
+	const { setValidationMessages } = useDispatch( strokeKey );
 
 	useEffect( () => {
 		const newMessages = [];
@@ -20,8 +34,7 @@ const useValidation = ( defaultRules = [], value ) => {
 				}
 			}
 		} );
-
-		setValidationMessages( newMessages );
+		setValidationMessages( fieldName, newMessages );
 	}, [ value ] );
 
 	const addValidationRules = ( rules = [] ) => {
@@ -34,7 +47,6 @@ const useValidation = ( defaultRules = [], value ) => {
 			} );
 		} );
 	};
-
 	return [
 		validationMessages,
 		addValidationRules,

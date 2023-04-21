@@ -796,7 +796,11 @@ window.PodsDFV = {
 			} else if (window.podsDFVConfig) {
 				return initPodStore(
 					window.podsDFVConfig,
-					initialStoresWithValues[storeKey],
+					{
+						...initialStoresWithValues[ storeKey ],
+						validationMessages: [],
+						needsValidation: false,
+					},
 					storeKey,
 				);
 			}

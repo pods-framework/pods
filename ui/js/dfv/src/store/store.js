@@ -27,22 +27,18 @@ import apiMiddleware from './api-middleware';
  * @param {int}    formCounter Form index. (Optional.)
  * @param {string} prefix      Prefix. (Optional.)
  */
- export const createStoreKey = ( pod, itemId, formCounter = 0, prefix = '' ) => {
-	return prefix.length ?
-		`${ prefix }-${ pod }-${ itemId }-${ formCounter }`
+export const createStoreKey = ( pod, itemId, formCounter = 0, prefix = '' ) => {
+	return prefix.length
+		? `${ prefix }-${ pod }-${ itemId }-${ formCounter }`
 		: `${ pod }-${ itemId }-${ formCounter }`;
 };
 
-const initStore = (initialState, storeKey) => {
-	const reduxStore = configureStore({
+const initStore = ( initialState, storeKey ) => {
+	const reduxStore = configureStore( {
 		reducer,
-		middleware: [apiMiddleware],
-		preloadedState: {
-			validationMessages: [],
-			needsValidating: false,
-			...initialState
-		},
-	});
+		middleware: [ apiMiddleware ],
+		preloadedState: initialState,
+	} );
 
 	const mappedSelectors = Object.keys( selectors ).reduce( ( acc, selectorKey ) => {
 		acc[ selectorKey ] = ( ...args ) =>

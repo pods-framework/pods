@@ -611,8 +611,25 @@ window.PodsDFV = {
 	 * @return {string[]} Array of validation messages
 	 */
 	checkValidation( pod, itemId, formCounter ) {
-		const messages = [];
-		return messages;
+		const storeKey = createStoreKey(
+			pod,
+			itemId,
+			formCounter,
+			STORE_KEY_DFV
+		);
+
+		const stored = select( storeKey );
+
+		// Store not found.
+		if ( ! stored ) {
+			return undefined;
+		}
+		//dispatch toggleNeedsValidating
+		dispatch( storeKey ).toggleNeedsValidating();
+		//select getValidationMessages
+		const validationMessages = select( storeKey ).getValidationMessages();
+		console.log( { validationMessages } );
+		return validationMessages;
 	},
 
 	/**

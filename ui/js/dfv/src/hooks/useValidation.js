@@ -7,16 +7,23 @@ import {
 const useValidation = ( defaultRules = [], value, fieldName, strokeKey ) => {
 	const [ validationRules, setValidationRules ] = useState( defaultRules );
 
+	//Validation messages for this field
 	const validationMessages = useSelect( ( select ) => {
 		const currentMessages = select( strokeKey ).getValidationMessages();
-		//has fieldName ?
+		//Return for this field
 		if ( currentMessages.hasOwnProperty( fieldName ) ) {
 			return currentMessages[ fieldName ];
 		}
 		return [];
 	}, [ fieldName ] );
 
+	//Set validation messages for this field
 	const { setValidationMessages } = useDispatch( strokeKey );
+	const needsValidation = useSelect( ( select ) => {
+		return select( strokeKey ).getNeedsValidating();
+	}, [] );
+
+	const toggleNeedsValidating = useDispatch( strokeKey ).toggleNeedsValidating();
 
 	useEffect( () => {
 		const newMessages = [];
@@ -35,7 +42,10 @@ const useValidation = ( defaultRules = [], value, fieldName, strokeKey ) => {
 			}
 		} );
 		setValidationMessages( fieldName, newMessages );
-	}, [ value ] );
+		if ( needsValidation ) {
+			toggleNeedsValidating();
+		}
+	}, [ value, validationRules, needsValidation, toggleNeedsValidating, setValidationMessages ] );
 
 	const addValidationRules = ( rules = [] ) => {
 		rules.forEach( ( rule ) => {

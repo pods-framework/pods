@@ -610,9 +610,8 @@ window.PodsDFV = {
 	 *
 	 * @returns {string[]} Array of validation messages
 	 */
-	checkValidation(pod, itemId, formCounter) {
+	checkValidation( pod, itemId, formCounter ) {
 		let messages = [];
-
 		return messages;
 	},
 
@@ -625,8 +624,8 @@ window.PodsDFV = {
 	 *
 	 * @returns {boolean} True if valid, false if not.
 	*/
-	isValid(pod, itemId, formCounter) {
-		const errors = this.checkValidation(pod, itemId, formCounter);
+	isValid( pod, itemId, formCounter ) {
+		const errors = this.checkValidation( pod, itemId, formCounter );
 		return !errors.length;
 	},
 	/**
@@ -784,7 +783,6 @@ window.PodsDFV = {
 		// Create stores for each of the individual keys we found (the keys of
 		// the initialStoresWithValues object).
 		const initialStoreKeys = Object.keys(initialStoresWithValues);
-
 		const storeKeys = initialStoreKeys.map((storeKey) => {
 			// The Edit Pod screen gets a different store set up than
 			// other contexts.
@@ -793,12 +791,16 @@ window.PodsDFV = {
 					window.podsAdminConfig,
 					storeKey
 				);
-			} else if (window.podsDFVConfig) {
+			} else if ( window.podsDFVConfig ) {
+				const validationMessages = Object.keys(initialStoresWithValues[storeKey]).reduce((acc, key) => {
+					acc[ key ] = [];
+					return acc;
+				}, {} );
 				return initPodStore(
 					window.podsDFVConfig,
 					{
-						...initialStoresWithValues[ storeKey ],
-						validationMessages: [],
+						...initialStoresWithValues[storeKey],
+						validationMessages,
 						needsValidation: false,
 					},
 					storeKey,

@@ -557,4 +557,160 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertContains( '-123x123.jpg', pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}
 
+	/**
+	 * @covers \Pods\Data\Map_Field_Values::date_fields
+	 */
+	public function test_date_fields() {
+
+		/**
+		 * Setup.
+		 */
+
+		$api = pods_api();
+
+		$datetime_field = 'test_datetime';
+
+		$field_params = [
+			'pod_id' => $this->pod_id,
+			'name'   => $datetime_field,
+			'label'  => 'Test Date Time',
+			'type'   => 'datetime',
+		];
+
+		$api->save_field( $field_params );
+
+		$date_field = 'test_date';
+
+		$field_params = [
+			'pod_id' => $this->pod_id,
+			'name'   => $date_field,
+			'label'  => 'Test Date',
+			'type'   => 'date',
+		];
+
+		$api->save_field( $field_params );
+
+		$time_field = 'test_time';
+
+		$field_params = [
+			'pod_id' => $this->pod_id,
+			'name'   => $time_field,
+			'label'  => 'Test Time',
+			'type'   => 'time',
+		];
+
+		$api->save_field( $field_params );
+
+		$pod = pods( $this->pod_name, $this->item_id );
+
+		/**
+		 * POST DATE FIELD
+		 */
+
+		$timestamp = get_post_timestamp( $this->item_id );
+		$field     = 'post_date';
+		$alias     = 'date';
+
+		$format = 'y-m-d!!H:s';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $field . '._format.' . $format ), 'Value of ' . $field . '._format.' . $format . ' is not what was expected' );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $alias . '._format.' . $format ), 'Value of ' . $alias . '._format.' . $format . ' is not what was expected' );
+
+		$format = 'Y.m.d!!H|s';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $field . '._format.' . $format ), 'Value of ' . $field . '._format.' . $format . ' is not what was expected' );
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $alias . '._format.' . $format ), 'Value of ' . $alias . '._format.' . $format . ' is not what was expected' );
+
+		$format = 'wp';
+		$wp_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $field . '._format.' . $format ), 'Value of ' . $field . '._format.' . $format . ' is not what was expected' );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $alias . '._format.' . $format ), 'Value of ' . $alias . '._format.' . $format . ' is not what was expected' );
+
+		$format = 'wp_date';
+		$wp_format = get_option( 'date_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $field . '._format.' . $format ), 'Value of ' . $field . '._format.' . $format . ' is not what was expected' );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $alias . '._format.' . $format ), 'Value of ' . $alias . '._format.' . $format . ' is not what was expected' );
+
+		$format = 'wp_time';
+		$wp_format = get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $field . '._format.' . $format ), 'Value of ' . $field . '._format.' . $format . ' is not what was expected' );
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $alias . '._format.' . $format ), 'Value of ' . $alias . '._format.' . $format . ' is not what was expected' );
+
+		/**
+		 * Custom field tests.
+		 */
+
+		$timestamp = time();
+
+		$pod->save( array( $datetime_field => date_i18n( \PodsField_DateTime::$storage_format, $timestamp ) ) );
+
+		$pod->save( array( $date_field => date_i18n( \PodsField_Date::$storage_format, $timestamp ) ) );
+
+		$pod->save( array( $time_field => date_i18n( \PodsField_Time::$storage_format, $timestamp ) ) );
+
+		/**
+		 * DATETIME FIELD
+		 */
+
+		$format = 'y-m-d!!H:s';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'Y.m.d!!H|s';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'wp';
+		$wp_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'wp_date';
+		$wp_format = get_option( 'date_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		$format = 'wp_time';
+		$wp_format = get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $datetime_field . '._format.' . $format ) );
+
+		/**
+		 * DATE FIELD
+		 */
+
+		$format = 'y-m-d';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $date_field . '._format.' . $format ) );
+
+		$format = 'Y.m.d';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $date_field . '._format.' . $format ) );
+
+		$format = 'wp';
+		$wp_format = get_option( 'date_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $date_field . '._format.' . $format ) );
+
+		/**
+		 * TIME FIELD
+		 */
+
+		$format = 'H:i:s';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $time_field . '._format.' . $format ) );
+
+		$format = 'H|i';
+
+		$this->assertEquals( date_i18n( $format, $timestamp ), $pod->field( $time_field . '._format.' . $format ) );
+
+		$format = 'wp';
+		$wp_format = get_option( 'time_format' );
+
+		$this->assertEquals( date_i18n( $wp_format, $timestamp ), $pod->field( $time_field . '._format.' . $format ) );
+	}
+
 }

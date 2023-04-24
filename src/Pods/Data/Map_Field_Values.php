@@ -58,6 +58,7 @@ class Map_Field_Values {
 			'context_info',
 			'calculation',
 			'image_fields',
+			'date_fields',
 			'avatar',
 		];
 
@@ -701,6 +702,91 @@ class Map_Field_Values {
 		$value = get_post_meta( $attachment_id, $name_key, true );
 
 		return pods_traverse( $traverse_params, $value );
+	}
+
+	/**
+	 * Map the date field value.
+	 *
+	 * @since 2.9.14
+	 *
+	 * @param string                  $field      The first field name in the path.
+	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
+	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
+	 * @param Pods|null               $obj        The Pods object or null if not set.
+	 *
+	 * @return null|mixed The date field value or null if there was no match.
+	 */
+	public function date_fields( $field, $traverse, $field_data, $obj = null ) {
+
+		// Skip if there is no information about this field.
+		if ( ! $field_data ) {
+			return null;
+		}
+
+		/**
+		 * Default date field handlers.
+		 * @see \PodsForm::date_field_types
+		 */
+		$date_fields = array(
+			'date',
+			'time',
+			'datetime',
+		);
+
+		$field_type = $field_data->get_type();
+
+		// Skip if the field is NOT a date/time/datetime field type.
+		if ( ! in_array( $field_type, $date_fields, true ) ) {
+			return null;
+		}
+
+		// Handle getting current field value.
+		$value = $obj->field( $field, [
+			'raw' => true,
+			'bypass_map_field_values' => true,
+		] );
+
+		// No fields modifiers found.
+		if ( empty( $traverse[0] ) || empty( $traverse[1] ) ) {
+			return null;
+		}
+
+		switch ( $traverse[0] ) {
+			case '_format':
+				$format = $traverse[1];
+
+				switch ( $format ) {
+					case 'date':
+					case 'wp_date':
+					case 'wordpress_date':
+						$format = get_option( 'date_format' );
+						break;
+					case 'time':
+					case 'wp_time':
+					case 'wordpress_time':
+						$format = get_option( 'time_format' );
+						break;
+					case 'datetime':
+					case 'wp':
+					case 'wordpress':
+						if ( 'time' === $field_type ) {
+							$format = get_option( 'time_format' );
+						} elseif ( 'date' === $field_type ) {
+							$format = get_option( 'date_format' );
+						} else {
+							$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+						}
+						break;
+				}
+
+				$value = date_i18n( $format, strtotime( $value ) );
+				break;
+			default:
+				return null;
+				break;
+		}
+
+		return $value;
 	}
 
 	/**

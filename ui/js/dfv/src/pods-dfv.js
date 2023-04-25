@@ -9,7 +9,7 @@ import { omit } from 'lodash';
  * WordPress dependencies
  */
 import { createHooks, doAction, addAction } from '@wordpress/hooks';
-import { select, dispatch } from '@wordpress/data'
+import { select, dispatch } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 
 /**
@@ -59,7 +59,7 @@ window.PodsDFV = {
 	 * @param {int|null}    itemId      Object ID. (Optional.)
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {object|undefined} Object of form information, or undefined if not found.
+	 * @return {object|undefined} Object of form information, or undefined if not found.
 	 */
 	detectForm( pod = null, itemId = null, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -69,14 +69,14 @@ window.PodsDFV = {
 		const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
 		const fieldData = this._fieldDataByStoreKeyPrefix;
 		const hasSearchCriteria = (
-			null !== pod
-			|| null !== itemId
-			|| null !== formCounter
+			null !== pod ||
+			null !== itemId ||
+			null !== formCounter
 		);
 		const returnExact = (
-			null !== pod
-			&& null !== itemId
-			&& null !== formCounter
+			null !== pod &&
+			null !== itemId &&
+			null !== formCounter
 		);
 
 		// Check if we have an exact match.
@@ -106,10 +106,10 @@ window.PodsDFV = {
 		}
 
 		// Check if we have a match for what we are looking for.
-		let form = undefined;
+		let form;
 
 		storeKeys.every( function( storeKey ) {
-			let stored = select( storeKey );
+			const stored = select( storeKey );
 
 			// Skip if store not found.
 			if ( ! stored ) {
@@ -121,11 +121,11 @@ window.PodsDFV = {
 			let storeFormCounter;
 
 			// Skip if first field not found.
-			if ( 'undefined' === typeof fieldData[ storeKey ][0] ) {
+			if ( 'undefined' === typeof fieldData[ storeKey ][ 0 ] ) {
 				return true;
 			}
 
-			let firstField = fieldData[ storeKey ][0];
+			const firstField = fieldData[ storeKey ][ 0 ];
 
 			// Check if the form matches what we are looking for.
 			if ( hasSearchCriteria ) {
@@ -171,7 +171,7 @@ window.PodsDFV = {
 	 * @param {string}      fieldName   Field name.
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {object|undefined} Object of field information, or undefined if not found.
+	 * @return {object|undefined} Object of field information, or undefined if not found.
 	 */
 	detectField( pod = null, itemId = null, fieldName, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -192,7 +192,7 @@ window.PodsDFV = {
 
 		const allFields = this._fieldDataByStoreKeyPrefix[ storeKey ];
 
-		let field = undefined;
+		let field;
 
 		allFields.every( function( fieldObject, index ) {
 			// Skip if field name not set.
@@ -202,9 +202,9 @@ window.PodsDFV = {
 
 			// Skip if field does not match.
 			if (
-				fieldName !== fieldObject.fieldConfig.name
-				&& 'pods_field_' + fieldName !== fieldObject.fieldConfig.name
-				&& 'pods_meta_' + fieldName !== fieldObject.fieldConfig.name
+				fieldName !== fieldObject.fieldConfig.name &&
+				'pods_field_' + fieldName !== fieldObject.fieldConfig.name &&
+				'pods_meta_' + fieldName !== fieldObject.fieldConfig.name
 			) {
 				return true;
 			}
@@ -232,7 +232,7 @@ window.PodsDFV = {
 	 * @param {int|null}    itemId      Object ID. (Optional.)
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {object|undefined} Object of field data keyed by field name, or undefined if not found.
+	 * @return {object|undefined} Object of field data keyed by field name, or undefined if not found.
 	 */
 	getFields( pod = null, itemId = null, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -241,13 +241,13 @@ window.PodsDFV = {
 
 		// Maybe return all fields on the screen.
 		if ( null === pod && null === itemId && null === formCounter ) {
-			let storeFields = [];
+			const storeFields = [];
 
 			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
 			const fieldData = this._fieldDataByStoreKeyPrefix;
 
 			storeKeys.forEach( function( storeKey ) {
-				let stored = select( storeKey );
+				const stored = select( storeKey );
 
 				if ( ! stored ) {
 					return;
@@ -257,16 +257,16 @@ window.PodsDFV = {
 				let storeItemId;
 				let storeFormCounter;
 
-				if ( 'undefined' !== typeof fieldData[ storeKey ][0] ) {
-					let firstField = fieldData[ storeKey ][0];
+				if ( 'undefined' !== typeof fieldData[ storeKey ][ 0 ] ) {
+					const firstField = fieldData[ storeKey ][ 0 ];
 
 					storePodName = firstField.pod;
 					storeItemId = firstField.itemId;
 					storeFormCounter = firstField.formCounter;
 				}
 
-				let allFields = fieldData[ storeKey ] || [];
-				let fieldConfigs = {};
+				const allFields = fieldData[ storeKey ] || [];
+				const fieldConfigs = {};
 
 				allFields.forEach( function( field ) {
 					fieldConfigs[ field.fieldConfig.name ] = field;
@@ -290,7 +290,7 @@ window.PodsDFV = {
 		}
 
 		const allFields = this._fieldDataByStoreKeyPrefix[ form.storeKey ] || [];
-		let fieldConfigs = {};
+		const fieldConfigs = {};
 
 		allFields.forEach( function( field ) {
 			fieldConfigs[ field.fieldConfig.name ] = field;
@@ -307,7 +307,7 @@ window.PodsDFV = {
 	 * @param {string}      fieldName   Field name.
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {object|undefined} Field data, or undefined if not found.
+	 * @return {object|undefined} Field data, or undefined if not found.
 	 */
 	getField( pod = null, itemId = null, fieldName, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -333,10 +333,10 @@ window.PodsDFV = {
 	 * @param {string|null} pod         Pod slug/name. (Optional.)
 	 * @param {int|null}    itemId      Object ID. (Optional.)
 	 * @param {string}      fieldName   Field name.
-	 * @param {object}      fieldConfig Field config.
+	 * @param {Object}      fieldConfig Field config.
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {true|undefined} True if set, or undefined if not found.
+	 * @return {true|undefined} True if set, or undefined if not found.
 	 */
 	__setFieldConfig( pod = null, itemId = null, fieldName, fieldConfig, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -362,7 +362,7 @@ window.PodsDFV = {
 
 		this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldConfig = {
 			...this._fieldDataByStoreKeyPrefix[ storeKey ][ index ].fieldConfig,
-			...fieldConfig
+			...fieldConfig,
 		};
 
 		return true;
@@ -374,10 +374,10 @@ window.PodsDFV = {
 	 * @param {string|null} pod           Pod slug/name. (Optional.)
 	 * @param {int|null}    itemId        Object ID. (Optional.)
 	 * @param {string}      fieldName     Field name.
-	 * @param {object}      fieldItemData Field item data.
+	 * @param {Object}      fieldItemData Field item data.
 	 * @param {int|null}    formCounter   Form index. (Optional.)
 	 *
-	 * @returns {true|undefined} True if set, or undefined if not found.
+	 * @return {true|undefined} True if set, or undefined if not found.
 	 */
 	__setFieldItemData( pod = null, itemId = null, fieldName, fieldItemData, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -413,7 +413,7 @@ window.PodsDFV = {
 	 * @param {int|null}    itemId      Object ID. (Optional.)
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {array|undefined} Field values array or undefined.
+	 * @return {Array | undefined} Field values array or undefined.
 	 */
 	getFieldValues( pod = null, itemId = null, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -422,13 +422,13 @@ window.PodsDFV = {
 
 		// Maybe return all field values on the screen.
 		if ( null === pod && null === itemId && null === formCounter ) {
-			let storeValues = [];
+			const storeValues = [];
 
 			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
 			const fieldData = this._fieldDataByStoreKeyPrefix;
 
 			storeKeys.forEach( function( storeKey ) {
-				let stored = select( storeKey );
+				const stored = select( storeKey );
 
 				if ( ! stored ) {
 					return;
@@ -438,8 +438,8 @@ window.PodsDFV = {
 				let storeItemId;
 				let storeFormCounter;
 
-				if ( 'undefined' !== typeof fieldData[ storeKey ][0] ) {
-					let firstField = fieldData[ storeKey ][0];
+				if ( 'undefined' !== typeof fieldData[ storeKey ][ 0 ] ) {
+					const firstField = fieldData[ storeKey ][ 0 ];
 
 					storePodName = firstField.pod;
 					storeItemId = firstField.itemId;
@@ -450,7 +450,7 @@ window.PodsDFV = {
 					pod: storePodName,
 					itemId: storeItemId,
 					formCounter: storeFormCounter,
-					fieldValues : stored.getPodOptions(),
+					fieldValues: stored.getPodOptions(),
 				} );
 			} );
 
@@ -473,7 +473,7 @@ window.PodsDFV = {
 	 * @param {int|null}    itemId      Object ID. (Optional.)
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {array|undefined} Field values array or undefined.
+	 * @return {Array | undefined} Field values array or undefined.
 	 */
 	getFieldValuesWithConfigs( pod = null, itemId = null, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -482,13 +482,13 @@ window.PodsDFV = {
 
 		// Maybe return all field values on the screen.
 		if ( null === pod && null === itemId && null === formCounter ) {
-			let storeValues = [];
+			const storeValues = [];
 
 			const storeKeys = Object.keys( this._fieldDataByStoreKeyPrefix );
 			const fieldData = this._fieldDataByStoreKeyPrefix;
 
 			storeKeys.forEach( function( storeKey ) {
-				let stored = select( storeKey );
+				const stored = select( storeKey );
 
 				if ( ! stored ) {
 					return;
@@ -498,17 +498,17 @@ window.PodsDFV = {
 				let storeItemId;
 				let storeFormCounter;
 
-				if ( 'undefined' !== typeof fieldData[ storeKey ][0] ) {
-					let firstField = fieldData[ storeKey ][0];
+				if ( 'undefined' !== typeof fieldData[ storeKey ][ 0 ] ) {
+					const firstField = fieldData[ storeKey ][ 0 ];
 
 					storePodName = firstField.pod;
 					storeItemId = firstField.itemId;
 					storeFormCounter = firstField.formCounter;
 				}
 
-				let rawFieldValues = stored.getPodOptions();
-				let allFields = fieldData[ storeKey ] || [];
-				let fieldValues = {};
+				const rawFieldValues = stored.getPodOptions();
+				const allFields = fieldData[ storeKey ] || [];
+				const fieldValues = {};
 
 				allFields.forEach( function( field ) {
 					fieldValues[ field.fieldConfig.name ] = {
@@ -536,7 +536,7 @@ window.PodsDFV = {
 
 		const rawFieldValues = form.stored.getPodOptions();
 		const allFields = this._fieldDataByStoreKeyPrefix[ form.storeKey ] || [];
-		let fieldValues = {};
+		const fieldValues = {};
 
 		allFields.forEach( function( field ) {
 			fieldValues[ field.fieldConfig.name ] = {
@@ -556,7 +556,7 @@ window.PodsDFV = {
 	 * @param {string}      fieldName   Field name.
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {any} Field value or undefined.
+	 * @return {any} Field value or undefined.
 	 */
 	getFieldValue( pod = null, itemId = null, fieldName, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -581,7 +581,7 @@ window.PodsDFV = {
 	 * @param {any}         value       New value.
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @returns {true|undefined} True if set, or undefined if not found.
+	 * @return {true|undefined} True if set, or undefined if not found.
 	 */
 	setFieldValue( pod = null, itemId = null, fieldName, value, formCounter = null ) {
 		if ( isEditPodScreen() ) {
@@ -597,6 +597,63 @@ window.PodsDFV = {
 		dispatch( fieldInfo.form.storeKey ).setOptionValue( fieldInfo.fieldName, value );
 
 		return true;
+	},
+
+	/**
+	 * Get list of validation messages for a form (based on pod, item ID, and form counter).
+	 *
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
+	 *
+	 * @return {Object.<string, string[]>|undefined} Returns field names as keys and arrays of validation messages as values, or undefined if not found.
+	 */
+	getValidationMessages( pod = null, itemId = null, formCounter = null ) {
+		const form = this.detectForm(
+			pod,
+			itemId,
+			formCounter
+		);
+
+		if ( 'undefined' === typeof form ) {
+			return undefined;
+		}
+
+		// Check validations.
+		dispatch( form.storeKey ).toggleNeedsValidating();
+
+		// Get validation messages.
+		const validationMessages = form.stored.getValidationMessages();
+
+		return validationMessages;
+	},
+
+	/**
+	 * Check if the form is valid (based on pod, item ID, and form counter).
+	 *
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
+	 *
+	 * @return {boolean|undefined} True if valid, false if not, or undefined if not found.
+	 */
+	formIsValid( pod = null, itemId = null, formCounter = null ) {
+		const validationMessages = this.getValidationMessages( pod, itemId, formCounter );
+
+		if ( 'undefined' === typeof validationMessages ) {
+			return undefined;
+		}
+
+		if ( 0 === Object.keys( validationMessages ).length ) {
+			return false;
+		}
+
+		return Object.values( validationMessages ).every( ( messages ) => {
+			if ( 0 !== messages.length ) {
+				return false;
+			}
+			return true;
+		} );
 	},
 
 	/**
@@ -756,17 +813,31 @@ window.PodsDFV = {
 		const initialStoreKeys = Object.keys( initialStoresWithValues );
 
 		const storeKeys = initialStoreKeys.map( ( storeKey ) => {
+			//Validation state
+			const validation = {
+				validationMessages: Object.keys( initialStoresWithValues[ storeKey ] ).reduce( ( acc, key ) => {
+					acc[ key ] = [];
+					return acc;
+				}, {} ),
+				needsValidation: false,
+			};
 			// The Edit Pod screen gets a different store set up than
 			// other contexts.
 			if ( isEditPodScreen() ) {
 				return initEditPodStore(
-					window.podsAdminConfig,
+					{
+						...window.podsAdminConfig,
+						...validation,
+					},
 					storeKey
 				);
 			} else if ( window.podsDFVConfig ) {
 				return initPodStore(
 					window.podsDFVConfig,
-					initialStoresWithValues[ storeKey ],
+					{
+						...initialStoresWithValues[ storeKey ],
+						...validation,
+					},
 					storeKey,
 				);
 			}

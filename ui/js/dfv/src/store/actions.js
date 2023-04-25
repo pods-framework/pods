@@ -333,3 +333,19 @@ export const deleteField = ( fieldID, name ) => {
 		},
 	};
 };
+
+//Set the validation messages
+export const setValidationMessages = ( fieldName, validationMessages ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_VALIDATION_MESSAGES,
+		validationMessages,
+		fieldName,
+	};
+};
+
+//Toggle if needs validation of the pod
+export const toggleNeedsValidating = () => {
+	return {
+		type: CURRENT_POD_ACTIONS.TOGGLE_NEEDS_VALIDATING,
+	};
+};

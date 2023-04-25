@@ -69,7 +69,8 @@ const SubfieldWrapper = ( {
 	// Subfields get their own set of validation rules
 	const [ validationMessages, addValidationRules ] = useValidation(
 		[],
-		value
+		value,
+		subfieldConfig.name
 	);
 
 	// Set up useSortable hook

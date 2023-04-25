@@ -43,6 +43,7 @@ const ConnectedFieldWrapper = compose( [
 		return {
 			...valueData,
 			allPodValues,
+			storeKey,
 		};
 	} ),
 	withDispatch( ( storeDispatch, ownProps ) => {

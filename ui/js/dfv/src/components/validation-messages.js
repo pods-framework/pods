@@ -12,7 +12,7 @@ const ValidationMessages = ( { messages } ) => {
 		<div className="pods-validation-messages">
 			{ messages.map( ( message ) => (
 				<Notice
-					key="message"
+					key={ message }
 					status="error"
 					isDismissible={ false }
 					politeness="polite"

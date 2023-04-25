@@ -42,6 +42,9 @@ export const getPodOptions = ( state ) => CURRENT_POD.getFrom( state );
 
 export const getPodOption = ( state, key ) => CURRENT_POD.getFrom( state )[ key ];
 
+//Get all validation messages
+export const getValidationMessages = ( state ) => CURRENT_POD.getFrom( state ).validationMessages;
+export const getNeedsValidating = ( state ) => CURRENT_POD.getFrom( state ).needsValidation;
 //-- Pod Groups
 export const getGroups = ( state ) => GROUPS.getFrom( state );
 

@@ -4,12 +4,12 @@ import {
 	useDispatch,
 } from '@wordpress/data';
 
-const useValidation = ( defaultRules = [], value, fieldName, strokeKey ) => {
+const useValidation = ( defaultRules = [], value, fieldName, storeKey ) => {
 	const [ validationRules, setValidationRules ] = useState( defaultRules );
 
 	//Validation messages for this field
 	const validationMessages = useSelect( ( select ) => {
-		const currentMessages = select( strokeKey ).getValidationMessages();
+		const currentMessages = select( storeKey ).getValidationMessages();
 		//Return for this field
 		if ( currentMessages.hasOwnProperty( fieldName ) ) {
 			return currentMessages[ fieldName ];
@@ -18,12 +18,12 @@ const useValidation = ( defaultRules = [], value, fieldName, strokeKey ) => {
 	}, [ fieldName ] );
 
 	//Set validation messages for this field
-	const { setValidationMessages } = useDispatch( strokeKey );
+	const { setValidationMessages } = useDispatch( storeKey );
 	const needsValidation = useSelect( ( select ) => {
-		return select( strokeKey ).getNeedsValidating();
+		return select( storeKey ).getNeedsValidating();
 	}, [] );
 
-	const toggleNeedsValidating = useDispatch( strokeKey ).toggleNeedsValidating();
+	const toggleNeedsValidating = useDispatch( storeKey ).toggleNeedsValidating();
 
 	useEffect( () => {
 		const newMessages = [];

@@ -600,51 +600,56 @@ window.PodsDFV = {
 	},
 
 	/**
-	 * Check if Pod being edited is valid.
+	 * Get list of validation messages for a form (based on pod, item ID, and form counter).
 	 *
-	 * Returns array of validation Messages
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {int}    formCounter Form index.
-	 *
-	 * @return {string[]} Array of validation messages
+	 * @return {string[]|undefined} List of validation messages, or undefined if not found.
 	 */
-	checkValidation( pod, itemId, formCounter ) {
-		const storeKey = createStoreKey(
+	getValidationMessages( pod = null, itemId = null, formCounter = null ) {
+		const form = this.detectForm(
 			pod,
 			itemId,
-			formCounter,
-			STORE_KEY_DFV
+			formCounter
 		);
 
-		const stored = select( storeKey );
-
-		// Store not found.
-		if ( ! stored ) {
+		if ( 'undefined' === typeof form ) {
 			return undefined;
 		}
-		//dispatch toggleNeedsValidating
-		dispatch( storeKey ).toggleNeedsValidating();
-		//select getValidationMessages
-		const validationMessages = select( storeKey ).getValidationMessages();
+
+		// Check validations.
+		dispatch( form.storeKey ).toggleNeedsValidating();
+
+		// Get validation messages.
+		const validationMessages = form.stored.getValidationMessages();
+
+		// Debug output for validation messages for now. @todo Remove this.
 		console.log( { validationMessages } );
+
 		return validationMessages;
 	},
 
 	/**
-	 * Check if Pod being edited is valid.
+	 * Check if the form is valid (based on pod, item ID, and form counter).
 	 *
-	 * @param {string} pod         Pod slug/name.
-	 * @param {int}    itemId      Object ID.
-	 * @param {int}    formCounter Form index.
+	 * @param {string|null} pod         Pod slug/name. (Optional.)
+	 * @param {int|null}    itemId      Object ID. (Optional.)
+	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @return {boolean} True if valid, false if not.
+	 * @return {boolean|undefined} True if valid, false if not, or undefined if not found.
 	 */
-	isValid( pod, itemId, formCounter ) {
-		const errors = this.checkValidation( pod, itemId, formCounter );
-		return ! errors.length;
+	formIsValid( pod = null, itemId = null, formCounter = null ) {
+		const validationMessages = this.getValidationMessages( pod, itemId, formCounter );
+
+		if ( 'undefined' === typeof validationMessages ) {
+			return undefined;
+		}
+
+		return 0 === validationMessages.length;
 	},
+
 	/**
 	 * Initialize Pod data.
 	 *

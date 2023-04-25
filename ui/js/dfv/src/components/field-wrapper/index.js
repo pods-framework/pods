@@ -48,7 +48,6 @@ export const FieldWrapper = ( props ) => {
 		values,
 		setOptionValue,
 		allPodValues,
-		storeKey,
 	} = props;
 
 	const {

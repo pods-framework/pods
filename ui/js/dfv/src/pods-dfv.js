@@ -811,25 +811,32 @@ window.PodsDFV = {
 		// Create stores for each of the individual keys we found (the keys of
 		// the initialStoresWithValues object).
 		const initialStoreKeys = Object.keys( initialStoresWithValues );
+
 		const storeKeys = initialStoreKeys.map( ( storeKey ) => {
+			//Validation state
+			const validation = {
+				validationMessages: Object.keys( initialStoresWithValues[ storeKey ] ).reduce( ( acc, key ) => {
+					acc[ key ] = [];
+					return acc;
+				}, {} ),
+				needsValidation: false,
+			};
 			// The Edit Pod screen gets a different store set up than
 			// other contexts.
 			if ( isEditPodScreen() ) {
 				return initEditPodStore(
-					window.podsAdminConfig,
+					{
+						...window.podsAdminConfig,
+						...validation,
+					},
 					storeKey
 				);
 			} else if ( window.podsDFVConfig ) {
-				const validationMessages = Object.keys( initialStoresWithValues[ storeKey ] ).reduce( ( acc, key ) => {
-					acc[ key ] = [];
-					return acc;
-				}, {} );
 				return initPodStore(
 					window.podsDFVConfig,
 					{
 						...initialStoresWithValues[ storeKey ],
-						validationMessages,
-						needsValidation: false,
+						...validation,
 					},
 					storeKey,
 				);

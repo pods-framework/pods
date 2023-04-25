@@ -3,6 +3,7 @@
 namespace Pods;
 
 use Pods;
+use WP_Error;
 
 /**
  * Manage Pods instances for reuse.
@@ -31,11 +32,11 @@ class Pod_Manager {
 	 */
 	public function get_pod( $args = [] ) {
 		if ( is_string( $args ) ) {
+			$func_args = func_get_args();
+
 			$args = [
 				'name' => $args,
 			];
-
-			$func_args = func_get_args();
 
 			if ( isset( $func_args[1] ) ) {
 				if ( is_array( $func_args[1] ) ) {

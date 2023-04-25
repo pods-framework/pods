@@ -47,11 +47,11 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 				<div class="inside">
 					<div class="submitbox" id="submitpost">
 						<?php
-						if ( 0 < $pod->id() && ( isset( $pod->pod_data['fields']['created'] ) || isset( $pod->pod_data['fields']['modified'] ) || 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) ) {
+						if ( 0 < $pod->id() && ( isset( $pod->pod_data['fields']['created'] ) || isset( $pod->pod_data['fields']['modified'] ) || 0 < strlen( (string) pods_v_sanitized( 'detail_url', $pod_options ) ) ) ) {
 							?>
 							<div id="minor-publishing">
 								<?php
-								if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
+								if ( 0 < strlen( (string) pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
 									?>
 									<div id="minor-publishing-actions">
 										<div id="preview-action">

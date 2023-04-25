@@ -115,7 +115,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 					$endpoint_obj->register_routes( $this->namespace, true );
 				}
 			} catch ( Exception $exception ) {
-				// Do nothing.
+				pods_debug_log( $exception );
 			}
 		}
 

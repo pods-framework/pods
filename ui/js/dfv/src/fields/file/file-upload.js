@@ -1,4 +1,4 @@
-/* global jQuery, _ */
+/* global _ */
 import template from 'dfv/src/fields/file/file-upload-layout.html';
 
 import { PodsDFVFieldLayout } from 'dfv/src/core/pods-field-views';
@@ -113,7 +113,7 @@ export const File = PodsDFVFieldLayout.extend( {
 		const targetUploader = fieldConfig.file_uploader || 'attachment';
 		let Uploader;
 
-		jQuery.each( Uploaders, function( index, thisUploader ) {
+		Uploaders.forEach( function( thisUploader, index ) {
 			if ( targetUploader === thisUploader.prototype.fileUploader ) {
 				Uploader = thisUploader;
 				return false;

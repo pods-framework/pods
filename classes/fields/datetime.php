@@ -751,8 +751,9 @@ class PodsField_DateTime extends PodsField {
 					$datetime = new DateTime( date_i18n( static::$storage_format, $timestamp ) );
 				}
 			}
-		} catch ( Exception $e ) {
+		} catch ( Exception $exception ) {
 			// There is no saving this time value, it's an exception to the rule.
+			pods_debug_log( $exception );
 		}
 
 		return apply_filters( 'pods_form_ui_field_datetime_formatter', $datetime, $format, $date );

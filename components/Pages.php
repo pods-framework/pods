@@ -1076,7 +1076,7 @@ class Pods_Pages extends PodsComponent {
 			if ( $permission ) {
 				$content = false;
 
-				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists['options'] ) ) ) {
+				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( (string) pods_var( 'pod', self::$exists['options'] ) ) ) {
 					$slug = pods_var_raw( 'pod_slug', self::$exists['options'], null, null, true );
 
 					$has_slug = 0 < strlen( $slug );

@@ -99,6 +99,7 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function label( $name, $label, $help = '', $options = null ) {
+		$prefix = pods_v( 'name_prefix', $options );
 
 		if ( is_array( $label ) || is_object( $label ) ) {
 			$options = $label;
@@ -118,8 +119,8 @@ class PodsForm {
 
 		ob_start();
 
-		$name_clean      = self::clean( $name );
-		$name_more_clean = self::clean( $name, true );
+		$name_clean      = self::clean( $prefix . $name );
+		$name_more_clean = self::clean( $prefix . $name, true );
 
 		$type                = 'label';
 		$attributes          = array();
@@ -146,10 +147,11 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function comment( $name, $message = null, $options = null ) {
+		$prefix = pods_v( 'name_prefix', $options );
 
 		$options = self::options( null, $options );
 
-		$name_more_clean = self::clean( $name, true );
+		$name_more_clean = self::clean( $prefix . $name, true );
 
 		if ( ! empty( $options['description'] ) ) {
 			$message = $options['description'];
@@ -270,7 +272,7 @@ class PodsForm {
 			 * @deprecated 2.7.0
 			 */
 			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
-		} elseif ( ! empty( $helper ) && 0 < strlen( pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
+		} elseif ( ! empty( $helper ) && 0 < strlen( (string) pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
 			/**
 			 * Input helpers are deprecated and not guaranteed to work properly.
 			 *
@@ -543,16 +545,22 @@ class PodsForm {
 	 */
 	public static function merge_attributes( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
 
+		if ( $options instanceof Field ) {
+			$options = $options->get_args();
+		}
+
 		$options = (array) $options;
 
+		$prefix = pods_v( 'name_prefix', $options );
+
 		if ( ! in_array( $type, array( 'label', 'comment' ) ) ) {
-			$name_clean                     = self::clean( $name );
-			$name_more_clean                = self::clean( $name, true );
+			$name_clean                     = self::clean( $prefix . $name );
+			$name_more_clean                = self::clean( $prefix . $name, true );
 			$_attributes                    = array();
-			$_attributes['name']            = $name;
+			$_attributes['name']            = $prefix . $name;
 			$_attributes['data-name-clean'] = $name_more_clean;
 
-			if ( 0 < strlen( pods_v( 'label', $options, '' ) ) ) {
+			if ( 0 < strlen( (string) pods_v( 'label', $options, '' ) ) ) {
 				$_attributes['data-label'] = strip_tags( pods_v( 'label', $options ) );
 			}
 

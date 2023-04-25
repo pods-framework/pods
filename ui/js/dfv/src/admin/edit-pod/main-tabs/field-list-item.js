@@ -18,7 +18,10 @@ import SettingsModal from './settings-modal';
 
 import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import {
+	GROUP_PROP_TYPE_SHAPE,
+	FIELD_PROP_TYPE_SHAPE,
+} from 'dfv/src/config/prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 
@@ -347,15 +350,43 @@ const ConnectedFieldListItem = compose( [
 		let relatedObject;
 
 		if ( 'pick' === field.type && field.pick_object ) {
-			const key = field.pick_val
+			const relatedObjects = storeSelect.getFieldRelatedObjects();
+			const relatedObjectFallbacks = [
+				'post_type',
+				'taxonomy',
+			];
+
+			let key = field.pick_val
 				? `${ field.pick_object }-${ field.pick_val }`
 				: field.pick_object;
 
-			relatedObject = storeSelect.getFieldRelatedObjects()[ key ];
+			if ( relatedObjects.hasOwnProperty( key ) ) {
+				relatedObject = relatedObjects[key];
+			}
+
+			if ( 'undefined' === typeof relatedObject && 'pod' === field.pick_object && field.pick_val ) {
+				relatedObjectFallbacks.every( ( objectFallback ) => {
+					let key = `${ objectFallback }-${ field.pick_val }`;
+
+					if ( ! relatedObjects.hasOwnProperty( key ) ) {
+						// Keep looking for a match.
+						return true;
+					}
+
+					// Attempt to overwrite the pick_object?
+					field.pick_object = objectFallback;
+
+					relatedObject = relatedObjects[key];
+
+					// Found a match, stop looking.
+					return false;
+				} );
+			}
 		}
 
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
+			currentFieldName: field.name,
 			relatedObject,
 			typeObject: storeSelect.getFieldTypeObject( field.type ),
 			saveStatus: storeSelect.getFieldSaveStatus( field.name ),

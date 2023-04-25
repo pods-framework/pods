@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Dropdown } from '@wordpress/components';
 import Datetime from 'react-datetime';
 import moment from 'moment';
+import 'moment/min/locales';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -119,6 +120,8 @@ const DateTime = ( {
 
 	const useHTML5Field = toBool( html5 ) && checkForHTML5BrowserSupport( 'datetime-local' );
 
+	const userLocale = window?.podsDFVConfig?.userLocale ?? 'en';
+
 	const yearRange = useMemo(
 		() => getArrayOfYearsFromJqueryUIYearRange(
 			yearRangeCustom,
@@ -202,8 +205,6 @@ const DateTime = ( {
 		if ( ! momentObject.isValid() ) {
 			return defaultValue;
 		}
-
-		const userLocale = window?.podsDFVConfig?.userLocale ?? 'en';
 
 		momentObject.locale( userLocale );
 
@@ -365,6 +366,7 @@ const DateTime = ( {
 						initialViewDate={ initialViewDate }
 						input={ false }
 						renderInput={ null }
+						locale={ userLocale }
 					/>
 				) }
 			/>

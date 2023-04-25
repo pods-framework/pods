@@ -212,6 +212,8 @@ class Block extends Pod {
 			try {
 				$rendered_block = $render_callback( $attributes, $content, $block_obj );
 			} catch ( Exception $exception ) {
+				pods_debug_log( $exception );
+
 				$rendered_block = '';
 
 				if ( pods_is_debug_display() ) {

@@ -2,7 +2,9 @@
 
 namespace Pods;
 
+use Closure;
 use Exception;
+use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -270,6 +272,12 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'group'       => $this->args['group'],
 		);
 		*/
+
+		// Handle closures that cannot be serialized.
+		if ( isset( $this->args['data'] ) && $this->args['data'] instanceof Closure ) {
+			$this->args['data'] = $this->args['data']();
+		}
+
 		return [
 			'args',
 		];
@@ -290,7 +298,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 */
 	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
-		return $this->get_args();
+		$args = $this->get_args();
+
+		// Handle closures that cannot be serialized.
+		if ( isset( $args['data'] ) && $args['data'] instanceof Closure ) {
+			$args['data'] = $args['data']();
+		}
+
+		return $args;
 	}
 
 	/**
@@ -492,14 +507,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$this->_table_info    = null;
 
 		$defaults = [
-			'object_type'  => $this->get_arg( 'object_type' ),
+			'object_type'         => $this->get_arg( 'object_type' ),
 			'object_storage_type' => $this->get_arg( 'object_storage_type', 'collection' ),
-			'name'         => '',
-			'id'           => '',
-			'parent'       => '',
-			'group'        => '',
-			'label'        => '',
-			'description'  => '',
+			'name'                => '',
+			'id'                  => '',
+			'parent'              => '',
+			'group'               => '',
+			'label'               => '',
+			'description'         => '',
 		];
 
 		$args = array_merge( $defaults, $args );
@@ -537,7 +552,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		 *
 		 * @since 2.9.8
 		 *
-		 * @param Whatsit $object     Whatsit object.
+		 * @param Whatsit $object      Whatsit object.
 		 * @param string  $object_type The Whatsit object type.
 		 */
 		do_action( "pods_whatsit_setup_{$class_hook}", $this, static::$type );
@@ -609,15 +624,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$arg = (string) $arg;
 
 		$special_args = [
-			'identifier'    => 'get_identifier',
-			'label'         => 'get_label',
-			'description'   => 'get_description',
-			'fields'        => 'get_fields',
-			'object_fields' => 'get_object_fields',
-			'all_fields'    => 'get_all_fields',
-			'groups'        => 'get_groups',
-			'table_info'    => 'get_table_info',
-			'options'       => 'get_args',
+			'identifier'        => 'get_identifier',
+			'label'             => 'get_label',
+			'description'       => 'get_description',
+			'fields'            => 'get_fields',
+			'object_fields'     => 'get_object_fields',
+			'all_fields'        => 'get_all_fields',
+			'groups'            => 'get_groups',
+			'table_info'        => 'get_table_info',
+			'options'           => 'get_args',
+			'conditional_logic' => 'get_conditional_logic',
 		];
 
 		if ( isset( $special_args[ $arg ] ) ) {
@@ -669,7 +685,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 					return $table_info[ $arg ];
 				}
 			}
-
 		}//end if
 
 		$value = $is_set ? $this->args[ $arg ] : $default;
@@ -861,6 +876,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array List of object arguments.
 	 */
 	public function get_args() {
+		$this->maybe_migrate_dependency();
+
+		if ( isset( $this->args['conditional_logic'] ) && is_string( $this->args['conditional_logic'] ) ) {
+			$this->args['conditional_logic'] = json_decode( $this->args['conditional_logic'], true );
+
+			if ( empty( $this->args['conditional_logic'] ) || ! is_array( $this->args['conditional_logic'] ) ) {
+				unset( $this->args['conditional_logic'] );
+			}
+		}
+
 		/**
 		 * Allow filtering the object arguments.
 		 *
@@ -1132,7 +1157,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$objects = $this->maybe_get_objects_by_identifier( $this->_fields, $args );
 
 			if ( is_array( $objects ) ) {
-				$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+				$this->_fields = pods_clone_objects( $objects );
 
 				/** @var Field[] $objects */
 				return $objects;
@@ -1153,8 +1178,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
-			'orderby'           => 'menu_order title',
-			'order'             => 'ASC',
+			'orderby' => 'menu_order title',
+			'order'   => 'ASC',
 		], $filtered_args, $args );
 
 		try {
@@ -1164,11 +1189,13 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$objects = $api->load_fields( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$objects = [];
 		}
 
 		if ( ! $has_custom_args ) {
-			$this->_fields = array_map( static function( $object ) { return clone $object; }, $objects );
+			$this->_fields = pods_clone_objects( $objects );
 		}
 
 		return $objects;
@@ -1250,6 +1277,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$total_objects = $api->load_fields( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$total_objects = 0;
 		}
 
@@ -1317,8 +1346,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
-			'orderby'           => 'menu_order title',
-			'order'             => 'ASC',
+			'orderby' => 'menu_order title',
+			'order'   => 'ASC',
 		], $filtered_args, $args );
 
 		try {
@@ -1328,6 +1357,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$objects = $api->load_groups( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$objects = [];
 		}
 
@@ -1396,6 +1427,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				$total_objects = $api->load_groups( $args );
 			}
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			$total_objects = 0;
 		}
 
@@ -1473,6 +1506,88 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Determine whether conditional logic is enabled.
+	 *
+	 * @since TBD
+	 *
+	 * @return bool Whether conditional logic is enabled.
+	 */
+	public function is_conditional_logic_enabled(): bool {
+		return (
+			filter_var( $this->get_arg( 'enable_conditional_logic', false ), FILTER_VALIDATE_BOOLEAN )
+			|| $this->maybe_migrate_dependency()
+		);
+	}
+
+	/**
+	 * Get the conditional logic.
+	 *
+	 * @return array|null The conditional logic or null if not set.
+	 */
+	public function get_conditional_logic(): ?array {
+		if ( ! $this->is_conditional_logic_enabled() ) {
+			return null;
+		}
+
+		if ( empty( $this->args['conditional_logic'] ) && ! $this->maybe_migrate_dependency() ) {
+			return null;
+		}
+
+		$conditional_logic = $this->args['conditional_logic'];
+
+		if ( is_string( $conditional_logic ) ) {
+			$conditional_logic = json_decode( $conditional_logic, true );
+
+			if ( empty( $conditional_logic ) || ! is_array( $conditional_logic ) ) {
+				unset( $this->args['conditional_logic'] );
+
+				return null;
+			}
+		}
+
+		if ( empty( $conditional_logic['rules'] ) ) {
+			return null;
+		}
+
+		if ( empty( $conditional_logic['action'] ) ) {
+			$conditional_logic['action'] = 'show';
+		}
+
+		if ( empty( $conditional_logic['logic'] ) ) {
+			$conditional_logic['logic'] = 'any';
+		}
+
+		return $conditional_logic;
+	}
+
+	/**
+	 * Maybe migrate dependency logic into the newer conditional logic.
+	 *
+	 * @return bool Whether the migration was done.
+	 */
+	public function maybe_migrate_dependency(): bool {
+		if (
+			! isset( $this->args['depends-on'] )
+			&& ! isset( $this->args['depends-on-any'] )
+			&& ! isset( $this->args['excludes-on'] )
+			&& ! isset( $this->args['wildcard-on'] )
+		) {
+			return false;
+		}
+
+		$conditional_logic_object = Conditional_Logic::maybe_setup_from_old_syntax( $this );
+
+		if ( ! $conditional_logic_object ) {
+			return false;
+		}
+
+		$this->args['enable_conditional_logic'] = true;
+		$this->args['conditional_logic']        = $conditional_logic_object->to_array();
+
+		return true;
+	}
+
+	/**
 	 * Get the full data from the object.
 	 *
 	 * @param array $args List of arguments.
@@ -1530,7 +1645,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				 */
 				$group_title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $this, $fields, $this->get_type(), $this->get_name() );
 
-				$group_name  = sanitize_key( pods_js_name( sanitize_title( $group_title ) ) );
+				$group_name = sanitize_key( pods_js_name( sanitize_title( $group_title ) ) );
 
 				$data['groups'][ $group_name ] = [
 					'name'   => $group_name,

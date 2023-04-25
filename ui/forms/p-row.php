@@ -16,17 +16,17 @@
 			class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>">
 			<?php echo esc_html( $field['label'] ); ?>
 		</<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>>
-		<?php echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field ); ?>
+		<?php echo PodsForm::comment( $field['name'], pods_v( 'description', $field ), $field ); ?>
 	<?php elseif ( 'html' === $field['type'] && 1 === (int) $field['html_no_label'] ) : ?>
-		<?php echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
+		<?php echo PodsForm::field( $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
 	<?php else : ?>
 		<p<?php if ( ! empty( $row_classes ) ) : ?>
 			class="<?php echo esc_attr( $row_classes ); ?>
 					<?php endif; ?>>
 					<?php
-			echo PodsForm::label( $field_prefix . $field['name'], $field['label'], pods_v( 'help', $field ), $field );
-			echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id );
-			echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field );
+			echo PodsForm::label( $field['name'], $field['label'], pods_v( 'help', $field ), $field );
+			echo PodsForm::field( $field['name'], $value, $field['type'], $field, $pod, $id );
+			echo PodsForm::comment( $field['name'], pods_v( 'description', $field ), $field );
 			?>
 		</p>
 	<?php endif; ?>

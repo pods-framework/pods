@@ -314,18 +314,25 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Whether a Pod item exists or not when using fetch() or construct with an ID or slug
+	 * Whether a Pod item exists or not when using fetch() or construct with an ID or slug.
 	 *
 	 * @return bool
 	 *
 	 * @since 2.0.0
 	 */
 	public function exists() {
-		if ( empty( $this->data->row ) ) {
-			return false;
-		}
+		return ! empty( $this->data->row );
+	}
 
-		return true;
+	/**
+	 * Whether the find() resulted in any rows returned.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.9.12
+	 */
+	public function has_rows() {
+		return ! empty( $this->data->rows );
 	}
 
 	/**
@@ -619,6 +626,8 @@ class Pods implements Iterator {
 			$params = (object) $defaults;
 		}//end if
 
+		$params->original_output = $params->output;
+
 		if ( $params->in_form ) {
 			$params->output = 'ids';
 		} elseif ( null === $params->output ) {
@@ -805,9 +814,19 @@ class Pods implements Iterator {
 		$is_simple_relationship_field = $is_valid_field && $field_data->is_simple_relationship();
 		$is_repeatable_field          = $is_valid_field && $field_data->is_repeatable();
 
-		// Simple fields have no other output options.
-		if ( $is_simple_relationship_field ) {
-			$params->output = 'arrays';
+		// Handle output specific handling.
+		if ( $is_relationship_field ) {
+			// Simple fields have no other output options.
+			if ( $is_simple_relationship_field ) {
+				$params->output = 'arrays';
+			}
+
+			// Handle relationships with ID output (only if not traversing).
+			$pick_output = pods_v( 'pick_output', $field_data, null, true );
+
+			if ( null !== $pick_output && ! $is_traversal && null === $params->original_output ) {
+				$params->output = $pick_output;
+			}
 		}
 
 		$is_relationship_field_and_not_simple = (
@@ -882,11 +901,14 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
-			} elseif ( ! $params->bypass_map_field_values ) {
+			} elseif (
+				! $params->bypass_map_field_values
+				&& ! $params->in_form
+			) {
 				// Handle custom/supported value mappings.
 				$map_field_values = pods_container( Map_Field_Values::class );
 
-				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this );
+				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this, $params );
 
 				$object_field_found = null !== $value;
 			}
@@ -1057,7 +1079,7 @@ class Pods implements Iterator {
 					$last_is_simple_relationship_field = false;
 					$last_is_repeatable_field          = false;
 
-					$limit = $field_data->get_limit();
+					$limit = $field_data ? $field_data->get_limit() : 0;
 
 					// Loop through each traversal level.
 					foreach ( $params->traverse as $key => $field ) {
@@ -1182,6 +1204,19 @@ class Pods implements Iterator {
 									$table = $last_object_options->get_table_info();
 								} else {
 									$table = $last_options->get_table_info();
+								}
+
+								if ( 'object' === $last_options->get_arg( 'pick_data_storage' ) ) {
+									// Handle relationships with ID output when traversing.
+									$last_pick_output = pods_v( 'pick_output', $last_options, null, true );
+
+									if (
+										null !== $last_pick_output
+										&& null === $params->original_output
+										&& $current_field === $last_options
+									) {
+										$params->output = $last_pick_output;
+									}
 								}
 
 								$last_is_valid_field               = $current_field instanceof Field;
@@ -3640,13 +3675,17 @@ class Pods implements Iterator {
 			}
 
 			return call_user_func( $params['helper'], $value );
-		} catch ( Throwable $error ) {
+		} catch ( Throwable $exception ) {
+			pods_debug_log( $exception );
+
 			if ( pods_is_debug_display() ) {
-				throw $error;
+				throw $exception;
 			}
-		} catch ( Exception $error ) {
+		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			if ( pods_is_debug_display() ) {
-				throw $error;
+				throw $exception;
 			}
 		}
 

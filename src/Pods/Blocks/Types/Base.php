@@ -2,7 +2,7 @@
 
 namespace Pods\Blocks\Types;
 
-use Pods\Whatsit\Store;
+use Exception;
 use Tribe__Editor__Blocks__Abstract;
 use WP_Block;
 
@@ -170,8 +170,8 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 
 		try {
 			$all_pods = $api->load_pods( [ 'names' => true ] );
-		} catch ( \Exception $exception ) {
-			// Do nothing.
+		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
 		}
 
 		return array_merge( [
@@ -193,8 +193,8 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 
 		try {
 			$all_templates = $api->load_templates( [ 'names' => true ] );
-		} catch ( \Exception $exception ) {
-			// Do nothing.
+		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
 		}
 
 		return array_merge( [

@@ -2,7 +2,6 @@
 
 namespace Pods_Unit_Tests\Pods;
 
-use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use PodsAdmin;
@@ -140,6 +139,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'additional-field-html',
 			'repeatable',
 			'advanced',
+			'conditional-logic',
 		];
 
 		$groups_for_field_with_rest = array_merge( $groups_for_field, [ 'rest' ] );
@@ -169,6 +169,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'additional-field-html',
 			'repeatable',
 			'advanced',
+			'conditional-logic',
 			'rest',
 		];
 
@@ -197,6 +198,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'additional-field-html',
 			'repeatable',
 			'advanced',
+			'conditional-logic',
 		];
 
 		yield 'new post type with meta storage' => [

@@ -102,6 +102,8 @@ class Connection {
 			register_graphql_connection( $config );
 		} catch ( Exception $exception ) {
 			// Connection was not registered.
+			pods_debug_log( $exception );
+
 			return;
 		}
 	}

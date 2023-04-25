@@ -606,7 +606,7 @@ window.PodsDFV = {
 	 * @param {int|null}    itemId      Object ID. (Optional.)
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @return {Object.<string, string[]>} Returns field names as keys and arrays of validation messages as values.
+	 * @return {Object.<string, string[]>|undefined} Returns field names as keys and arrays of validation messages as values, or undefined if not found.
 	 */
 	getValidationMessages( pod = null, itemId = null, formCounter = null ) {
 		const form = this.detectForm(

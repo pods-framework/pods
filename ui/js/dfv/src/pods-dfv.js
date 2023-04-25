@@ -606,7 +606,7 @@ window.PodsDFV = {
 	 * @param {int|null}    itemId      Object ID. (Optional.)
 	 * @param {int|null}    formCounter Form index. (Optional.)
 	 *
-	 * @return {string[]|undefined} List of validation messages, or undefined if not found.
+	 * @return {Object.<string, string[]>} Returns field names as keys and arrays of validation messages as values.
 	 */
 	getValidationMessages( pod = null, itemId = null, formCounter = null ) {
 		const form = this.detectForm(
@@ -624,9 +624,6 @@ window.PodsDFV = {
 
 		// Get validation messages.
 		const validationMessages = form.stored.getValidationMessages();
-
-		// Debug output for validation messages for now. @todo Remove this.
-		console.log( { validationMessages } );
 
 		return validationMessages;
 	},
@@ -647,7 +644,16 @@ window.PodsDFV = {
 			return undefined;
 		}
 
-		return 0 === validationMessages.length;
+		if ( 0 === Object.keys( validationMessages ).length ) {
+			return false;
+		}
+
+		return Object.values( validationMessages ).every( ( messages ) => {
+			if ( 0 !== messages.length ) {
+				return false;
+			}
+			return true;
+		} );
 	},
 
 	/**

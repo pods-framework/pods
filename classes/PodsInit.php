@@ -1367,11 +1367,17 @@ class PodsInit {
 
 		$cpt_positions = array();
 
-		if ( empty( $pods_cpt_ct ) && ( ! empty( $post_types ) || ! empty( $taxonomies ) ) ) {
+		if ( ! is_array( $pods_cpt_ct ) ) {
+			$pods_cpt_ct = false;
+		}
+
+		if ( empty( $pods_cpt_ct ) ) {
+			if ( ! empty( $post_types ) || ! empty( $taxonomies ) ) {
+				$force = true;
+			}
+		} elseif ( isset( $pods_cpt_ct['post_types'] ) && count( $pods_cpt_ct['post_types'] ) !== count( $post_types ) ) {
 			$force = true;
-		} elseif ( ! empty( $pods_cpt_ct ) && count( $pods_cpt_ct['post_types'] ) !== count( $post_types ) ) {
-			$force = true;
-		} elseif ( ! empty( $pods_cpt_ct ) && count( $pods_cpt_ct['taxonomies'] ) !== count( $taxonomies ) ) {
+		} elseif ( isset( $pods_cpt_ct['taxonomies'] ) && count( $pods_cpt_ct['taxonomies'] ) !== count( $taxonomies ) ) {
 			$force = true;
 		}
 

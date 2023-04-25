@@ -2,6 +2,22 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.13 - March 15th, 2023 =
+
+* Added: API > New `pods_is_truthy()` helper function helps validate truthy strings and handles null/bool/int/float variables too. (@sc0ttkclark)
+* Added: API > New `pods_is_falsey()` helper function helps validate falsey strings and handles null/bool/int/float variables too. (@sc0ttkclark)
+* Fixed: Cache > Avoid clearing all caches when registering group configs via code. (@sc0ttkclark)
+* Fixed: Avatars > Resolve issues with avatars not showing up in certain circumstances and flush appropriate avatar field caches when changing avatar field value. #7025 (@sc0ttkclark)
+* Deprecated: Components > The Builder Integration component is now officially deprecated and will be totally removed in Pods 3.1. (@sc0ttkclark)
+
+= 2.9.12.2 - March 12th, 2023 =
+
+* Fixed: PHP > Fix potential PHP fatal in PHP 8+ with certain cached data when cache returns string instead of an expected array. (@sc0ttkclark)
+
+= 2.9.12.1 - March 10th, 2023 =
+
+* Fixed: Components > Fix potential PHP fatal in PHP 8+ with the Translate Pods component. #7023 (@sc0ttkclark)
+
 = 2.9.12 - March 9th, 2023 =
 
 * Added: WP-CLI > Added a new `wp pods tools flush-cache` WP-CLI command to flush the Pods caches. To flushes caches for a specific Pod, use `wp pods tools flush-cache --pod=your_pod` (@sc0ttkclark)

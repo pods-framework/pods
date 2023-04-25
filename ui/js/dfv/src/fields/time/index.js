@@ -19,7 +19,7 @@ const Time = ( props ) => {
 
 	const newConfig = {
 		...Object.fromEntries( fieldConfigEntries ),
-		datetime_allow_empty: fieldConfig.time_allow_empty,
+		datetime_allow_empty: fieldConfig.time_allow_empty = true,
 		datetime_html5: fieldConfig.time_html5,
 		datetime_time_format: fieldConfig.time_format,
 		datetime_time_format_24: fieldConfig.time_format_24,

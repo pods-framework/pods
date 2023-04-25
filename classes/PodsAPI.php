@@ -10968,44 +10968,52 @@ class PodsAPI {
 	 * @param array|Pod|null $pod                     The pod object or null of flushing general cache.
 	 * @param bool           $flush_rewrites          Whether to flush rewrites.
 	 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
+	 * @param bool           $static_only             Whether to flush only static caches.
 	 *
 	 * @return void
 	 *
 	 * @since 2.0.0
 	 */
-	public function cache_flush_pods( $pod = null, $flush_rewrites = true, $flush_groups_and_fields = true ) {
+	public function cache_flush_pods(
+		$pod = null,
+		$flush_rewrites = true,
+		$flush_groups_and_fields = true,
+		$static_only = false
+	) {
 
 		/**
 		 * @var $wpdb wpdb
 		 */
 		global $wpdb;
 
-		pods_transient_clear( 'pods' );
-		pods_transient_clear( 'pods_components' );
-		pods_transient_clear( 'pods_core_loader_objects' );
+		if ( ! $static_only ) {
+			pods_transient_clear( 'pods' );
+			pods_transient_clear( 'pods_components' );
+			pods_transient_clear( 'pods_core_loader_objects' );
 
-		pods_transient_clear( 'pods_pfat_the_pods' );
-		pods_transient_clear( 'pods_pfat_auto_pods' );
-		pods_transient_clear( 'pods_pfat_archive_test' );
+			pods_transient_clear( 'pods_pfat_the_pods' );
+			pods_transient_clear( 'pods_pfat_auto_pods' );
+			pods_transient_clear( 'pods_pfat_archive_test' );
 
-		pods_transient_clear( 'pods_blocks' );
-		pods_transient_clear( 'pods_blocks_js' );
+			pods_transient_clear( 'pods_blocks' );
+			pods_transient_clear( 'pods_blocks_js' );
 
-		if ( is_array( $pod ) || $pod instanceof Pod ) {
-			pods_transient_clear( 'pods_pod_' . $pod['name'] );
-			pods_cache_clear( $pod['name'], 'pods-class' );
-			pods_cache_clear( $pod['type'] . '/' . $pod['name'], PodsMeta::class . '/is_key_covered' );
+			if ( is_array( $pod ) || $pod instanceof Pod ) {
+				pods_transient_clear( 'pods_pod_' . $pod['name'] );
+				pods_cache_clear( $pod['name'], 'pods-class' );
+				pods_cache_clear( $pod['type'] . '/' . $pod['name'], PodsMeta::class . '/is_key_covered' );
 
-			if ( in_array( $pod['type'], array( 'post_type', 'taxonomy' ) ) ) {
+				if ( in_array( $pod['type'], [ 'post_type', 'taxonomy' ] ) ) {
+					pods_transient_clear( 'pods_wp_cpt_ct' );
+				}
+			} else {
 				pods_transient_clear( 'pods_wp_cpt_ct' );
 			}
-		} else {
-			pods_transient_clear( 'pods_wp_cpt_ct' );
-		}
 
-		pods_cache_clear( true, 'pods_post_type_storage__pods_pod' );
-		pods_cache_clear( true, 'pods_post_type_storage__pods_template' );
-		pods_cache_clear( true, 'pods_post_type_storage__pods_page' );
+			pods_cache_clear( true, 'pods_post_type_storage__pods_pod' );
+			pods_cache_clear( true, 'pods_post_type_storage__pods_template' );
+			pods_cache_clear( true, 'pods_post_type_storage__pods_page' );
+		}
 
 		pods_static_cache_clear( true, __CLASS__ );
 		pods_static_cache_clear( true, __CLASS__ . '/table_info_cache' );
@@ -11020,12 +11028,14 @@ class PodsAPI {
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_page' );
 
 		if ( $flush_groups_and_fields ) {
-			$this->cache_flush_fields();
+			$this->cache_flush_groups( true, $static_only );
 		} else {
-			pods_transient_clear( 'pods_config_handler_found_configs' );
+			if ( ! $static_only ) {
+				pods_transient_clear( 'pods_config_handler_found_configs' );
 
-			pods_cache_clear( true, __CLASS__ . '/_load_objects' );
-			pods_cache_clear( true, 'pods_post_type_storage_any' );
+				pods_cache_clear( true, __CLASS__ . '/_load_objects' );
+				pods_cache_clear( true, 'pods_post_type_storage_any' );
+			}
 
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
@@ -11033,17 +11043,19 @@ class PodsAPI {
 
 		pods_init()->refresh_existing_content_types_cache( true );
 
-		// Delete transients in the database
-		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
-		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
+		if ( ! $static_only ) {
+			// Delete transients in the database
+			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
+			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
 
-		// Delete Pods Options Cache in the database
-		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
+			// Delete Pods Options Cache in the database
+			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
-		pods_cache_clear( true );
+			pods_cache_clear( true );
 
-		if ( $flush_rewrites ) {
-			pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
+			if ( $flush_rewrites ) {
+				pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
+			}
 		}
 
 		do_action( 'pods_cache_flushed' );
@@ -11055,20 +11067,25 @@ class PodsAPI {
 	 * @since 2.9.12
 	 *
 	 * @param bool $flush_fields Whether to flush field caches.
+	 * @param bool $static_only  Whether to flush only static caches.
 	 */
-	public function cache_flush_groups( $flush_fields = true ) {
-		pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
+	public function cache_flush_groups( $flush_fields = true, $static_only = false ) {
+		if ( ! $static_only ) {
+			pods_cache_clear( true, 'pods_post_type_storage__pods_group' );
+		}
 
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_group' );
 		pods_static_cache_clear( true, PodsMeta::class . '/groups_get' );
 
 		if ( $flush_fields ) {
-			$this->cache_flush_fields();
+			$this->cache_flush_fields( $static_only );
 		} else {
-			pods_transient_clear( 'pods_config_handler_found_configs' );
+			if ( ! $static_only ) {
+				pods_transient_clear( 'pods_config_handler_found_configs' );
 
-			pods_cache_clear( true, __CLASS__ . '/_load_objects' );
-			pods_cache_clear( true, 'pods_post_type_storage_any' );
+				pods_cache_clear( true, __CLASS__ . '/_load_objects' );
+				pods_cache_clear( true, 'pods_post_type_storage_any' );
+			}
 
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
@@ -11079,19 +11096,27 @@ class PodsAPI {
 	 * Clear Pod-related cache for Fields.
 	 *
 	 * @since 2.9.12
+	 *
+	 * @param bool $static_only Whether to flush only static caches.
 	 */
-	public function cache_flush_fields() {
+	public function cache_flush_fields( $static_only = false ) {
 		// Field objects.
-		pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
+		if ( ! $static_only ) {
+			pods_cache_clear( true, 'pods_post_type_storage__pods_field' );
+		}
 
 		pods_static_cache_clear( true, PodsField_Pick::class . '/field_data' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/_pods_field' );
 
 		// General caches.
-		pods_transient_clear( 'pods_config_handler_found_configs' );
+		if ( ! $static_only ) {
+			pods_transient_clear( 'pods_config_handler_found_configs' );
 
-		pods_cache_clear( true, __CLASS__ . '/_load_objects' );
-		pods_cache_clear( true, 'pods_post_type_storage_any' );
+			pods_cache_clear( true, __CLASS__ . '/_load_objects' );
+			pods_cache_clear( true, 'pods_post_type_storage_any' );
+
+			pods_transient_clear( 'pods_avatar_field_name' );
+		}
 
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );

@@ -271,7 +271,10 @@ class PodsField_WYSIWYG extends PodsField {
 				$options[ static::$type . '_default_editor' ] = 'tinymce';
 			}
 
-			wp_tinymce_inline_scripts();
+			if ( ! did_filter( 'tiny_mce_before_init' ) || ! did_action( 'enqueue_block_editor_assets' ) ) {
+				wp_tinymce_inline_scripts();
+			}
+
 			wp_enqueue_editor();
 
 			$settings = [];

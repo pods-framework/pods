@@ -13,6 +13,7 @@ const TinyMCE = ( {
 	setValue,
 	editorHeight,
 	mediaButtons,
+	wpautop,
 	defaultEditor,
 	onBlur,
 } ) => {
@@ -117,6 +118,7 @@ const TinyMCE = ( {
 					content_css: false,
 					setup: onSetup,
 					height: editorHeight,
+					wpautop,
 				},
 				mediaButtons,
 				quicktags: true,
@@ -142,7 +144,7 @@ const TinyMCE = ( {
 			);
 			wp.oldEditor.remove( fieldId );
 		};
-	}, [ mediaButtons, editorHeight, defaultEditor ] );
+	}, [ mediaButtons, wpautop, editorHeight, defaultEditor ] );
 
 	return (
 		<div
@@ -171,6 +173,7 @@ TinyMCE.propTypes = {
 	setValue: PropTypes.func.isRequired,
 	editorHeight: PropTypes.number,
 	mediaButtons: PropTypes.bool,
+	wpautop: PropTypes.bool,
 	onBlur: PropTypes.func.isRequired,
 };
 

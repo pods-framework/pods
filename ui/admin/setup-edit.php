@@ -1,7 +1,11 @@
 <?php
 wp_enqueue_media();
 wp_enqueue_editor();
-wp_tinymce_inline_scripts();
+
+if ( ! did_filter( 'tiny_mce_before_init' ) || ! did_action( 'enqueue_block_editor_assets' ) ) {
+	wp_tinymce_inline_scripts();
+}
+
 wp_enqueue_style( 'wp-edit-post' );
 
 // Formatted data

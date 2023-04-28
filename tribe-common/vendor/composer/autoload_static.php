@@ -7,54 +7,54 @@ namespace Composer\Autoload;
 class ComposerStaticInit22033a11c3a08d2d0eb7e1f1368f6f14
 {
     public static $prefixLengthsPsr4 = array (
-        'T' => 
+        'T' =>
         array (
             'Tribe\\' => 6,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psr\\Log\\' => 8,
         ),
-        'M' => 
+        'M' =>
         array (
             'Monolog\\' => 8,
         ),
-        'F' => 
+        'F' =>
         array (
             'Firebase\\JWT\\' => 13,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Tribe\\' => 
+        'Tribe\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src/Tribe',
         ),
-        'Psr\\Log\\' => 
+        'Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
-        'Monolog\\' => 
+        'Monolog\\' =>
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
-        'Firebase\\JWT\\' => 
+        'Firebase\\JWT\\' =>
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'x' => 
+        'x' =>
         array (
-            'xrstf\\Composer52' => 
+            'xrstf\\Composer52' =>
             array (
                 0 => __DIR__ . '/..' . '/xrstf/composer-php52/lib',
             ),
         ),
-        't' => 
+        't' =>
         array (
-            'tad_DI52_' => 
+            'tad_DI52_' =>
             array (
                 0 => __DIR__ . '/..' . '/lucatume/di52/src',
             ),
@@ -234,6 +234,18 @@ class ComposerStaticInit22033a11c3a08d2d0eb7e1f1368f6f14
             $loader->prefixDirsPsr4 = ComposerStaticInit22033a11c3a08d2d0eb7e1f1368f6f14::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit22033a11c3a08d2d0eb7e1f1368f6f14::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit22033a11c3a08d2d0eb7e1f1368f6f14::$classMap;
+
+	        /**
+	         * Allow filtering which vendor files are autoloaded for each class.
+	         *
+	         * If you want to resolve a conflict so it does not interfere with your own code,
+	         * you can remove a key from this array.
+	         *
+	         * @since 3.0
+	         *
+	         * @param array $class_map List of classes mapped to their vendor file.
+	         */
+	        $loader->classMap = apply_filters( 'pods_tribe_common_vendor_autoload', $loader->classMap );
 
         }, null, ClassLoader::class);
     }

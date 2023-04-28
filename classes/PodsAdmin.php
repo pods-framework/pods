@@ -1414,12 +1414,12 @@ class PodsAdmin {
 
 		if ( ! $callouts ) {
 			$callouts = array(
-				'friends_2022_30' => 1,
+				'friends_2023_docs' => 1,
 			);
 		}
 
 		// Handle Friends of Pods callout logic.
-		$callouts['friends_2022_30'] = ! isset( $callouts['friends_2022_30'] ) || $callouts['friends_2022_30'] || $force_callouts ? 1 : 0;
+		$callouts['friends_2023_docs'] = ! isset( $callouts['friends_2023_docs'] ) || $callouts['friends_2023_docs'] || $force_callouts ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.
@@ -1451,8 +1451,8 @@ class PodsAdmin {
 		$is_demo = pods_is_demo();
 
 		// Disable Friends of Pods callout.
-		if ( $is_demo || 'friends_2022_30' === $callout_dismiss ) {
-			$callouts['friends_2022_30'] = 0;
+		if ( $is_demo || 'friends_2023_docs' === $callout_dismiss ) {
+			$callouts['friends_2023_docs'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
 		} elseif ( 'reset' === $callout_dismiss ) {
@@ -1500,8 +1500,8 @@ class PodsAdmin {
 
 		$callouts = $this->get_callouts();
 
-		if ( ! empty( $callouts['friends_2022_30'] ) ) {
-			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2022_30.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $callouts['friends_2023_docs'] ) ) {
+			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2023_docs.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 	}
 

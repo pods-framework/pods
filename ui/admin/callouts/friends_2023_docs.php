@@ -3,13 +3,13 @@
  * @var bool $force_callouts Whether to force the callouts.
  */
 
-$callout = 'friends_2022_30';
+$callout = 'friends_2023_docs';
 
-$donor_count    = 5452;
-$donor_goal     = 6500;
+$donor_count    = 658;
+$donor_goal     = 5000;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 
-$feature_callout_link = 'https://docs.pods.io/fields/simple-repeatable-fields/';
+$feature_callout_link = '';
 $pods_pro_link        = 'https://pods.io/2020/12/31/introducing-pods-pro-by-skcdev/';
 $learn_more_link      = 'https://friends.pods.io/';
 $donate_now_link      = 'https://friends.pods.io/donations/become-a-friend/';
@@ -49,11 +49,13 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 		<p class="pods-admin_friends-callout_text">
 			🎉&nbsp;
 			<?php
-				printf(
+				esc_html_e( 'Pods 3.0 is out and we are spending the next release cycle entirely focused on Documentation, Tutorials, and Video content', 'pods' );
+
+				/*printf(
 					'%1$s: %2$s',
 					esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
 					esc_html__( 'Conditional Logic for Fields', 'pods' )
-				);
+				);*/
 				/*printf(
 					'%1$s: <a href="%2$s" target="_blank" rel="noreferrer">%3$s</a>',
 					esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
@@ -69,7 +71,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 				echo ' ';
 				esc_html_e( 'Pods is fully funded by donations and powered by our community contributors.', 'pods' );
 				echo ' ';
-				esc_html_e( 'Help us continue our work and get Pods 3.0 completed.', 'pods' );
+				esc_html_e( 'Help us continue our work and get our development goals met.', 'pods' );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
@@ -82,7 +84,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 			<?php
 				printf(
 					'<strong>%s</strong>',
-					esc_html__( 'Pods 3.0 Funding Progress', 'pods' )
+					esc_html__( 'Pods Docs Refresh Funding Progress', 'pods' )
 				);
 			?>
 		</p>

@@ -175,7 +175,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0 - April 28th, 2023 =
+= 3.0 Beta 1 - April 28th, 2023 =
 
 **Breaking compatibility warning:**
 New minimum required versions have been updated as follows which includes notices to let you know if you need to update something:
@@ -183,7 +183,7 @@ New minimum required versions have been updated as follows which includes notice
 * New minimum PHP version required: PHP 7.2+ (previously: PHP 5.6+) — Hey! You should take the time to update to PHP 8.1+ because that is the lowest version actively supported by The PHP Group.
 
 * Feature: Conditional Logic for Fields - You can now choose to show or hide a field based on the value of another field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9) 
-* Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurrs. (@sc0ttkclark)
+* Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
 
 = 2.9.13 - March 15th, 2023 =

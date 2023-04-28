@@ -177,10 +177,14 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 3.0 Beta 1 - April 28th, 2023 =
 
-**Breaking compatibility warning:**
+**Breaking compatibility warning**
+
 New minimum required versions have been updated as follows which includes notices to let you know if you need to update something:
+
 * New minimum WP version required: WordPress 5.8+ (previously: WP 5.7+)
 * New minimum PHP version required: PHP 7.2+ (previously: PHP 5.6+) — Hey! You should take the time to update to PHP 8.1+ because that is the lowest version actively supported by The PHP Group.
+
+**3.0 Changelog**
 
 * Feature: Conditional Logic for Fields - You can now choose to show or hide a field based on the value of another field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9) 
 * Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)

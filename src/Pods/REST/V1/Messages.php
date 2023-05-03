@@ -17,6 +17,11 @@ class Messages implements REST__Messages_Interface {
 	protected $message_prefix = 'rest-v1:';
 
 	/**
+	 * @var array
+	 */
+	protected $messages = [];
+
+	/**
 	 * Messages constructor.
 	 *
 	 * @since 2.8.0

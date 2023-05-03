@@ -41,10 +41,18 @@ class Conditional_Logic {
 	 * @param string $logic  The logic to use (any/all).
 	 * @param array  $rules  The conditional rules.
 	 */
-	public function __construct( string $action, string $logic, array $rules ) {
-		$this->set_action( $action );
-		$this->set_logic( $logic );
-		$this->set_rules( $rules );
+	public function __construct( $action = 'show', $logic = 'any', $rules = [] ) {
+		if ( $action ) {
+			$this->set_action( $action );
+		}
+
+		if ( $logic ) {
+			$this->set_logic( $logic );
+		}
+
+		if ( $rules ) {
+			$this->set_rules( $rules );
+		}
 	}
 
 	/**
@@ -227,8 +235,8 @@ class Conditional_Logic {
 	 */
 	public function to_array(): array {
 		return [
-			'action' => $this->action,
-			'logic'  => $this->logic,
+			'action' => $this->action ?: 'show',
+			'logic'  => $this->logic ?: 'any',
 			'rules'  => $this->rules,
 		];
 	}
@@ -304,7 +312,7 @@ class Conditional_Logic {
 	 */
 	public function validate_rule( array $rule, array $values ): bool {
 		$field   = $rule['field'];
-		$compare = $rule['compare'];
+		$compare = ! empty( $rule['compare'] ) ? $rule['compare'] : '=';
 		$value   = $rule['value'];
 
 		if ( empty( $field ) || empty( $compare ) ) {

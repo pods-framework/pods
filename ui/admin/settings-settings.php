@@ -15,16 +15,18 @@ pods_form_enqueue_style( 'pods-form' );
 $fields = apply_filters( 'pods_admin_settings_fields', array() );
 
 // Convert into Field objects.
-$fields = array_map( static function( $field ) {
+foreach ( $fields as $key => $field ) {
 	if ( ! $field instanceof Field ) {
+		$field['name'] = ! empty( $field['name'] ) ? $field['name'] : $key;
+
 		$field = new Field( $field );
 
 		// Replace dependency logic with conditional logic.
 		$field->maybe_migrate_dependency();
-	}
 
-	return $field;
-}, $fields );
+		$fields[ $key ] = $field;
+	}
+}
 
 if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
 	if ( isset( $_POST['pods_cache_flush'] ) ) {

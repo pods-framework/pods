@@ -83,7 +83,30 @@ class Conditional_Logic {
 	}
 
 	/**
-	 * Set up the conditional logic object from old syntax.
+	 * Maybe migrate the field anme from old prefix naming convention.
+	 *
+	 * @since TBD
+	 *
+	 * @param string|int $field_name The field name.
+	 *
+	 * @return string The migrated field name.
+	 */
+	public static function maybe_migrate_field_name( $field_name ): string {
+		if ( ! is_string( $field_name ) ) {
+			return (string) $field_name;
+		}
+
+		if ( 0 === strpos( $field_name, 'pods_field_' ) ) {
+			$field_name = substr( $field_name, strlen( 'pods_field_' ) );
+		} elseif ( 0 === strpos( $field_name, 'pods_meta_' ) ) {
+			$field_name = substr( $field_name, strlen( 'pods_meta_' ) );
+		}
+
+		return $field_name;
+	}
+
+	/**
+	 * Maybe set up the conditional logic object from old syntax.
 	 *
 	 * @since TBD
 	 *
@@ -107,6 +130,8 @@ class Conditional_Logic {
 			$logic = 'all';
 
 			foreach ( $old_syntax['depends-on'] as $field_name => $value ) {
+				$field_name = self::maybe_migrate_field_name( $field_name );
+
 				$rules[] = [
 					'field'   => $field_name,
 					'compare' => ( is_array( $value ) ? 'in' : '=' ),
@@ -117,6 +142,8 @@ class Conditional_Logic {
 
 		if ( $old_syntax['depends-on-any'] ) {
 			foreach ( $old_syntax['depends-on-any'] as $field_name => $value ) {
+				$field_name = self::maybe_migrate_field_name( $field_name );
+
 				$rules[] = [
 					'field'   => $field_name,
 					'compare' => ( is_array( $value ) ? 'in' : '=' ),
@@ -127,6 +154,8 @@ class Conditional_Logic {
 
 		if ( $old_syntax['excludes-on'] ) {
 			foreach ( $old_syntax['excludes-on'] as $field_name => $value ) {
+				$field_name = self::maybe_migrate_field_name( $field_name );
+
 				$rules[] = [
 					'field'   => $field_name,
 					'compare' => ( is_array( $value ) ? 'not-in' : '!=' ),
@@ -137,6 +166,8 @@ class Conditional_Logic {
 
 		if ( $old_syntax['wildcard-on'] ) {
 			foreach ( $old_syntax['wildcard-on'] as $field_name => $value ) {
+				$field_name = self::maybe_migrate_field_name( $field_name );
+
 				$value = (array) $value;
 
 				foreach ( $value as $wildcard_value ) {

@@ -1566,6 +1566,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return bool Whether the migration was done.
 	 */
 	public function maybe_migrate_dependency(): bool {
+		if ( ! empty( $this->args['conditional_logic'] ) ) {
+			return false;
+		}
+
 		if (
 			! isset( $this->args['depends-on'] )
 			&& ! isset( $this->args['depends-on-any'] )

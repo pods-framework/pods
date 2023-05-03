@@ -19,7 +19,7 @@ class Settings {
 	 * @since 2.8.0
 	 */
 	public function hook() {
-		add_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
+		add_filter( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
 	}
 
 	/**
@@ -28,7 +28,7 @@ class Settings {
 	 * @since 2.8.0
 	 */
 	public function unhook() {
-		remove_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
+		remove_filter( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
 	}
 
 	/**

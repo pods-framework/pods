@@ -256,7 +256,9 @@ class PodsMeta {
 			}
 
 			foreach ( $objects as $name => $object ) {
-				self::${$type}[ $name ] = $object;
+				if ( isset( self::${$type} ) ) {
+					self::${$type}[ $name ] = $object;
+				}
 			}
 
 			unset( self::$queue[ $type ] );
@@ -380,15 +382,15 @@ class PodsMeta {
 		if ( ! empty( $pod ) ) {
 			$type = $pod['type'];
 
-			if ( 'post_type' === $pod['type'] ) {
+			if ( 'post_type' === $type ) {
 				$type = 'post_types';
-			} elseif ( 'taxonomy' === $pod['type'] ) {
+			} elseif ( 'taxonomy' === $type ) {
 				$type = 'taxonomies';
-			} elseif ( 'pod' === $pod['type'] ) {
+			} elseif ( 'pod' === $type ) {
 				$type = 'advanced_content_types';
 			}
 
-			if ( ! isset( self::$queue[ $pod['type'] ] ) ) {
+			if ( ! isset( self::$queue[ $type ] ) ) {
 				self::$queue[ $type ] = array();
 			}
 

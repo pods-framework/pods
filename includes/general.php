@@ -2823,6 +2823,8 @@ function pods_register_type( $type, $name, $object = null ) {
 		pods_register_field( $object['name'], $field['name'], $field );
 	}
 
+	pods_meta()->setup_hooks( $object );
+
 	return $registered;
 }
 

@@ -780,26 +780,40 @@ class PodsMeta {
 
 		self::$groups[ $pod['type'] ][ $object_name ][] = $group;
 
+		$this->setup_hooks( $pod );
+	}
+
+	/**
+	 * Handle setting up hooks for a Pod.
+	 *
+	 * @since 2.9.14
+	 *
+	 * @param array|Pod $pod The Pod object.
+	 */
+	public function setup_hooks( $pod ) {
+		$type = pods_v( 'type', $pod );
+		$object = pods_v( 'object', $pod, pods_v( 'name', $pod ) );
+
 		// Hook it up!
-		if ( 'post_type' === $pod['type'] ) {
-			if ( ! has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) ) {
-				pods_no_conflict_off( $pod['type'], $pod['object'], true );
+		if ( 'post_type' === $type ) {
+			if ( ! has_action( 'add_meta_boxes', [ $this, 'meta_post_add' ] ) ) {
+				pods_no_conflict_off( $type, $object, true );
 			}
-		} elseif ( 'taxonomy' === $pod['type'] ) {
-			if ( ! has_action( $pod['object'] . '_edit_form_fields', array( $this, 'meta_taxonomy' ) ) ) {
-				pods_no_conflict_off( $pod['type'], $pod['object'], true );
+		} elseif ( 'taxonomy' === $type ) {
+			if ( ! has_action( $object . '_edit_form_fields', [ $this, 'meta_taxonomy' ] ) ) {
+				pods_no_conflict_off( $type, $object, true );
 			}
-		} elseif ( 'media' === $pod['type'] ) {
-			if ( ! has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ) ) ) {
-				pods_no_conflict_off( $pod['type'], null, true );
+		} elseif ( 'media' === $type ) {
+			if ( ! has_filter( 'wp_update_attachment_metadata', [ $this, 'save_media' ] ) ) {
+				pods_no_conflict_off( $type, null, true );
 			}
-		} elseif ( 'user' === $pod['type'] ) {
-			if ( ! has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
-				pods_no_conflict_off( $pod['type'], null, true );
+		} elseif ( 'user' === $type ) {
+			if ( ! has_action( 'show_user_profile', [ $this, 'meta_user' ] ) ) {
+				pods_no_conflict_off( $type, null, true );
 			}
-		} elseif ( 'comment' === $pod['type'] ) {
-			if ( ! has_filter( 'comment_form_submit_field', array( $this, 'meta_comment_new' ) ) ) {
-				pods_no_conflict_off( $pod['type'], null, true );
+		} elseif ( 'comment' === $type ) {
+			if ( ! has_filter( 'comment_form_submit_field', [ $this, 'meta_comment_new' ] ) ) {
+				pods_no_conflict_off( $type, null, true );
 			}
 		}
 	}

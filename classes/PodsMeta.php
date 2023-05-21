@@ -11,11 +11,6 @@ use Pods\Whatsit\Object_Field;
 class PodsMeta {
 
 	/**
-	 * @var PodsMeta
-	 */
-	static $instance = null;
-
-	/**
 	 * @var PodsAPI
 	 */
 	private $api;
@@ -91,18 +86,15 @@ class PodsMeta {
 	public static $old_post_status = array();
 
 	/**
-	 * Singleton handling for a basic pods_meta() request
+	 * Backwards compatible handling for a pods_meta() call.
 	 *
 	 * @return \PodsMeta
 	 *
 	 * @since 2.3.5
+	 * @deprecated 2.9.14 Use pods_meta().
 	 */
 	public static function init() {
-		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
+		return pods_meta();
 	}
 
 	/**

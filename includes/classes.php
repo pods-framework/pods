@@ -219,7 +219,7 @@ function pods_admin() {
  * @since 2.0.0
  */
 function pods_meta() {
-	return PodsMeta::init();
+	return pods_container( PodsMeta::class );
 }
 
 /**

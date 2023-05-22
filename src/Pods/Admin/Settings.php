@@ -226,7 +226,7 @@ class Settings {
 			'label'              => __( 'Watch WP Metadata calls', 'pods' ),
 			'help'               => __( 'By default, Pods will watch Metadata calls and send any values to table-based fields as well as index relationship IDs when they are saved. You can disable this if you do not use table-based Pods and you only want to query meta-based Pods or settings.', 'pods' ),
 			'type'               => 'pick',
-			'default'            => '1',
+			'default'            => function_exists( 'wc_get_product' ) ? '0' : '1',
 			'pick_format'        => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [

@@ -1701,7 +1701,7 @@ class Pods implements Iterator {
 					$post_ID = $this->id();
 				}
 
-				$filter = pods_v( 'display_filter', $field_data );
+				$filter = pods_v( 'display_filter', $field_data, '', true );
 
 				if ( 0 < strlen( $filter ) ) {
 					$value_reset = false;

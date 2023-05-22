@@ -1405,7 +1405,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	// Allow views only if not targeting a file path (must be within theme)
-	if ( 0 < strlen( $tags['view'] ) ) {
+	if ( $tags['view'] && 0 < strlen( (string) $tags['view'] ) ) {
 		$return = '';
 
 		if ( ( ! defined( 'PODS_SHORTCODE_ALLOW_VIEWS' ) || PODS_SHORTCODE_ALLOW_VIEWS ) && ! file_exists( $tags['view'] ) ) {
@@ -1562,11 +1562,11 @@ function pods_shortcode_run( $tags, $content = null ) {
 				'use_current_pod' => true,
 			);
 
-			if ( 0 < strlen( $tags['orderby'] ) ) {
+			if ( $tags['orderby'] && 0 < strlen( (string) $tags['orderby'] ) ) {
 				$params['orderby'] = $tags['orderby'];
 			}
 
-			if ( 0 < strlen( $tags['where'] ) ) {
+			if ( $tags['where'] && 0 < strlen( (string) $tags['where'] ) ) {
 				$params['where'] = $tags['where'];
 
 				if ( pods_shortcode_allow_evaluate_tags() ) {
@@ -1574,7 +1574,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				}
 			}
 
-			if ( 0 < strlen( $tags['having'] ) ) {
+			if ( $tags['having'] && 0 < strlen( (string) $tags['having'] ) ) {
 				$params['having'] = $tags['having'];
 
 				if ( pods_shortcode_allow_evaluate_tags() ) {
@@ -1582,14 +1582,14 @@ function pods_shortcode_run( $tags, $content = null ) {
 				}
 			}
 
-			if ( 0 < strlen( $tags['groupby'] ) ) {
+			if ( $tags['groupby'] && 0 < strlen( (string) $tags['groupby'] ) ) {
 				$params['groupby'] = $tags['groupby'];
 			}
 
-			if ( 0 < strlen( $tags['select'] ) ) {
+			if ( $tags['select'] && 0 < strlen( (string) $tags['select'] ) ) {
 				$params['select'] = $tags['select'];
 			}
-			if ( 0 < strlen( $tags['join'] ) ) {
+			if ( $tags['join'] && 0 < strlen( (string) $tags['join'] ) ) {
 				$params['join'] = $tags['join'];
 			}
 		}//end if
@@ -2822,6 +2822,8 @@ function pods_register_type( $type, $name, $object = null ) {
 	foreach ( $fields as $field ) {
 		pods_register_field( $object['name'], $field['name'], $field );
 	}
+
+	pods_meta()->setup_hooks( $object );
 
 	return $registered;
 }

@@ -1186,7 +1186,7 @@ class PodsField_File extends PodsField {
 				}
 			}//end if
 
-			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->item_id, $params, $field );
+			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
 
 			if ( null === $custom_handler ) {
 
@@ -1197,8 +1197,8 @@ class PodsField_File extends PodsField {
 					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field, '' );
 					$context_pod = null;
 
-					if ( $params->item_id ) {
-						$context_pod = pods_get_instance( pods_v( 'name', $pod, false ), $params->item_id );
+					if ( $params->post_id ) {
+						$context_pod = pods_get_instance( pods_v( 'name', $pod, false ), $params->post_id );
 
 						if ( ! $context_pod->exists() ) {
 							$context_pod = null;
@@ -1238,13 +1238,7 @@ class PodsField_File extends PodsField {
 				}
 
 				// Upload file.
-				$post_id = 0;
-
-				if ( 'post_type' === pods_v( 'type', $pod, null ) ) {
-					$post_id = $params->item_id;
-				}
-
-				$attachment_id = media_handle_upload( 'Filedata', $post_id );
+				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
 				// End custom directory.
 				if ( 'wp' !== $upload_dir ) {

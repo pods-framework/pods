@@ -152,6 +152,8 @@ class PodsField_Pick extends PodsField {
 
 		$simple_objects = $this->simple_objects();
 
+		$slow_text = __( '(may be slow for large data sets)', 'pods' );
+
 		$options = [
 			static::$type . '_format_type'              => [
 				'label'                 => __( 'Selection Type', 'pods' ),
@@ -172,12 +174,12 @@ class PodsField_Pick extends PodsField {
 				'depends-on'            => [
 					static::$type . '_format_type' => 'single',
 				],
-				'default'               => 'dropdown',
+				'default'               => 'list',
 				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [
-					'dropdown'     => __( 'Drop Down', 'pods' ),
-					'radio'        => __( 'Radio Buttons', 'pods' ),
+					'dropdown'     => __( 'Drop Down', 'pods' ) . ' ' . $slow_text,
+					'radio'        => __( 'Radio Buttons', 'pods' ) . ' ' . $slow_text,
 					'autocomplete' => __( 'Autocomplete', 'pods' ),
 					'list'         => __( 'List View (single value)', 'pods' ),
 				] ),
@@ -194,8 +196,8 @@ class PodsField_Pick extends PodsField {
 				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
-					'checkbox'     => __( 'Checkboxes', 'pods' ),
-					'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ),
+					'checkbox'     => __( 'Checkboxes', 'pods' ) . ' ' . $slow_text,
+					'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ) . ' ' . $slow_text,
 					'autocomplete' => __( 'Autocomplete', 'pods' ),
 					'list'         => __( 'List View (with reordering)', 'pods' ),
 				] ),

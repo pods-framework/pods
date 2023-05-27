@@ -175,6 +175,20 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.9.14 - May 27th, 2023 =
+
+* Added: New component: Migrate: Import from the Advanced Custom Fields plugin -- It allows importing the Custom Post Types and Custom Taxonomies from ACF. Note: This does not migrate custom fields or field groups. (@sc0ttkclark)
+* Tweak: List View is now the default for Relationship fields that are single select.
+* Fixed: Always default the Pods setting for `metadata_integration` to off for new Pods installs when WooCommerce is detected to also be installed. (@sc0ttkclark)
+* Fixed: Validate cache mode used across Pods to ensure unknown modes do not trigger PHP errors. (@sc0ttkclark)
+* Fixed: Resolve PHP errors when registering ACTs via code/JSON. (@sc0ttkclark)
+* Fixed: Ensure the parent post ID gets set in more cases when uploading files via a Pod uploader. (@sc0ttkclark)
+* Fixed: Set default display filter as empty and avoid strlen PHP errors. #7076 #7075 (@JoryHogeveen)
+* Fixed: TinyMCE on frontend would sometimes not show line breaks as paragraphs. #7051 #7049 (@sc0ttkclark)
+* Fixed: Allow HTML5 date fields to allow empty values. #7063 #7016 (@Shelob9)
+* Fixed: Resolved more PHP 8.x warnings and notices. #7074 (@sc0ttkclark)
+* Fixed: Configurations registered via JSON/YML that include field groups are now working as expected to register each group and corresponding fields. #7062 (@sc0ttkclark)
+
 = 2.9.13 - March 15th, 2023 =
 
 * Added: API > New `pods_is_truthy()` helper function helps validate truthy strings and handles null/bool/int/float variables too. (@sc0ttkclark)

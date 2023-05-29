@@ -3252,6 +3252,10 @@ class PodsAdmin {
 					'label' => __( 'Pods Relationship Table Enabled', 'pods' ),
 					'value' => ( pods_podsrel_enabled() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
+				'pods-relationship-table-status'              => [
+					'label' => __( 'Pods Relationship Table Count' ),
+					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
+				],
 				'pods-light-mode'                    => [
 					'label' => __( 'Pods Light Mode Activated', 'pods' ),
 					'value' => ( pods_light() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
@@ -3279,10 +3283,6 @@ class PodsAdmin {
 				'pods-can-use-sessions'              => [
 					'label' => __( 'Pods Can Use Sessions' ),
 					'value' => ( pods_can_use_sessions( true ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
-				],
-				'pods-relationship-table-status'              => [
-					'label' => __( 'Pods Relationship Table Count' ),
-					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
 				],
 			],
 		];

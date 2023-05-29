@@ -175,11 +175,12 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.9.14 - May 27th, 2023 =
+= 2.9.14 - May 29th, 2023 =
 
 * Added: New component: Migrate: Import from the Advanced Custom Fields plugin -- It allows importing the Custom Post Types and Custom Taxonomies from ACF. Note: This does not migrate custom fields or field groups. (@sc0ttkclark)
-* Tweak: List View is now the default for Relationship fields that are single select.
-* Tweak: Updated Site Health info for Pods to include what Pods settings someone has and included memory limit with current memory limit for easier reference (@sc0ttkclark)
+* Tweak: List View is now the default for Relationship fields that are single select. (@sc0ttkclark)
+* Tweak: Updated Site Health info for Pods to include what Pods settings someone has and included memory limit with current memory limit for easier reference. (@sc0ttkclark)
+* Tweak: Default the "Watch WP Metadata calls" setting to off by default for Pods 2.9.14+. (@sc0ttkclark)
 * Fixed: Always default the Pods setting for `metadata_integration` to off for new Pods installs when WooCommerce is detected to also be installed. (@sc0ttkclark)
 * Fixed: Validate cache mode used across Pods to ensure unknown modes do not trigger PHP errors. (@sc0ttkclark)
 * Fixed: Resolve PHP errors when registering ACTs via code/JSON. (@sc0ttkclark)
@@ -189,6 +190,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Allow HTML5 date fields to allow empty values. #7063 #7016 (@Shelob9)
 * Fixed: Resolved more PHP 8.x warnings and notices. #7074 (@sc0ttkclark)
 * Fixed: Configurations registered via JSON/YML that include field groups are now working as expected to register each group and corresponding fields. #7062 (@sc0ttkclark)
+* Fixed: Removed the extra DB call to get registered Pods blocks from the DB that can be re-enabled via a filter `pods_blocks_api_get_blocks_bypass_post_type_find`. (@sc0ttkclark)
 
 = 2.9.13 - March 15th, 2023 =
 

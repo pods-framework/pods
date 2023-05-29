@@ -956,7 +956,7 @@ function pods_help( $text, $url = null, $container = null ) {
 		return;
 	}
 
-	if ( 0 < strlen( $url ) ) {
+	if ( $url && 0 < strlen( $url ) ) {
 		$text .= '<br /><br /><a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 

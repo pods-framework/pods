@@ -3156,6 +3156,8 @@ class PodsAdmin {
 
 		$fields = $settings->get_setting_fields();
 
+		$settings_values = $settings->get_settings();
+
 		$auto_start = pods_v( $auto_start, $fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
 		global $wpdb;
@@ -3286,6 +3288,39 @@ class PodsAdmin {
 				],
 			],
 		];
+
+		$settings_to_show = [
+			'types_only'            => __( 'Setting: Types only', 'pods' ),
+			'watch_changed_fields'  => __( 'Setting: Watch Changed fields', 'pods' ),
+			'metadata_integration'  => __( 'Setting: Watch WP Metadata calls', 'pods' ),
+			'metadata_override_get' => __( 'Setting: Override WP Metadata values', 'pods' ),
+		];
+
+		foreach ( $settings_to_show as $setting => $label ) {
+			$setting_key = 'pods-settings-' . sanitize_title_with_dashes( $setting );
+
+			$value = ucwords(
+				str_replace(
+					[ '_', '-' ],
+					' ',
+					(string) pods_v( $setting, $settings_values, __( 'Unknown', 'pods' )
+					)
+				)
+			);
+
+			if ( '0' === $value ) {
+				$value = __( 'No', 'pods' );
+			} elseif ( '1' === $value ) {
+				$value = __( 'Yes', 'pods' );
+			}
+
+			$info['pods']['fields'][ $setting_key ] = [
+				'label' => $label,
+				'value' => $value,
+			];
+		}
+
+		// @todo Later we should add which components are active.
 
 		return $info;
 	}

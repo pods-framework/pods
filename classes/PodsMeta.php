@@ -11,11 +11,6 @@ use Pods\Whatsit\Object_Field;
 class PodsMeta {
 
 	/**
-	 * @var PodsMeta
-	 */
-	static $instance = null;
-
-	/**
 	 * @var PodsAPI
 	 */
 	private $api;
@@ -91,18 +86,15 @@ class PodsMeta {
 	public static $old_post_status = array();
 
 	/**
-	 * Singleton handling for a basic pods_meta() request
+	 * Backwards compatible handling for a pods_meta() call.
 	 *
 	 * @return \PodsMeta
 	 *
 	 * @since 2.3.5
+	 * @deprecated 2.9.14 Use pods_meta().
 	 */
 	public static function init() {
-		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
+		return pods_meta();
 	}
 
 	/**
@@ -256,7 +248,9 @@ class PodsMeta {
 			}
 
 			foreach ( $objects as $name => $object ) {
-				self::${$type}[ $name ] = $object;
+				if ( isset( self::${$type} ) ) {
+					self::${$type}[ $name ] = $object;
+				}
 			}
 
 			unset( self::$queue[ $type ] );
@@ -380,15 +374,15 @@ class PodsMeta {
 		if ( ! empty( $pod ) ) {
 			$type = $pod['type'];
 
-			if ( 'post_type' === $pod['type'] ) {
+			if ( 'post_type' === $type ) {
 				$type = 'post_types';
-			} elseif ( 'taxonomy' === $pod['type'] ) {
+			} elseif ( 'taxonomy' === $type ) {
 				$type = 'taxonomies';
-			} elseif ( 'pod' === $pod['type'] ) {
+			} elseif ( 'pod' === $type ) {
 				$type = 'advanced_content_types';
 			}
 
-			if ( ! isset( self::$queue[ $pod['type'] ] ) ) {
+			if ( ! isset( self::$queue[ $type ] ) ) {
 				self::$queue[ $type ] = array();
 			}
 
@@ -786,26 +780,40 @@ class PodsMeta {
 
 		self::$groups[ $pod['type'] ][ $object_name ][] = $group;
 
+		$this->setup_hooks( $pod );
+	}
+
+	/**
+	 * Handle setting up hooks for a Pod.
+	 *
+	 * @since 2.9.14
+	 *
+	 * @param array|Pod $pod The Pod object.
+	 */
+	public function setup_hooks( $pod ) {
+		$type = pods_v( 'type', $pod );
+		$object = pods_v( 'object', $pod, pods_v( 'name', $pod ) );
+
 		// Hook it up!
-		if ( 'post_type' === $pod['type'] ) {
-			if ( ! has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) ) {
-				pods_no_conflict_off( $pod['type'], $pod['object'], true );
+		if ( 'post_type' === $type ) {
+			if ( ! has_action( 'add_meta_boxes', [ $this, 'meta_post_add' ] ) ) {
+				pods_no_conflict_off( $type, $object, true );
 			}
-		} elseif ( 'taxonomy' === $pod['type'] ) {
-			if ( ! has_action( $pod['object'] . '_edit_form_fields', array( $this, 'meta_taxonomy' ) ) ) {
-				pods_no_conflict_off( $pod['type'], $pod['object'], true );
+		} elseif ( 'taxonomy' === $type ) {
+			if ( ! has_action( $object . '_edit_form_fields', [ $this, 'meta_taxonomy' ] ) ) {
+				pods_no_conflict_off( $type, $object, true );
 			}
-		} elseif ( 'media' === $pod['type'] ) {
-			if ( ! has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ) ) ) {
-				pods_no_conflict_off( $pod['type'], null, true );
+		} elseif ( 'media' === $type ) {
+			if ( ! has_filter( 'wp_update_attachment_metadata', [ $this, 'save_media' ] ) ) {
+				pods_no_conflict_off( $type, null, true );
 			}
-		} elseif ( 'user' === $pod['type'] ) {
-			if ( ! has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
-				pods_no_conflict_off( $pod['type'], null, true );
+		} elseif ( 'user' === $type ) {
+			if ( ! has_action( 'show_user_profile', [ $this, 'meta_user' ] ) ) {
+				pods_no_conflict_off( $type, null, true );
 			}
-		} elseif ( 'comment' === $pod['type'] ) {
-			if ( ! has_filter( 'comment_form_submit_field', array( $this, 'meta_comment_new' ) ) ) {
-				pods_no_conflict_off( $pod['type'], null, true );
+		} elseif ( 'comment' === $type ) {
+			if ( ! has_filter( 'comment_form_submit_field', [ $this, 'meta_comment_new' ] ) ) {
+				pods_no_conflict_off( $type, null, true );
 			}
 		}
 	}

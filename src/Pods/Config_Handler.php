@@ -32,6 +32,7 @@ class Config_Handler {
 	 */
 	protected $registered_config_item_types = [
 		'pods'      => 'pods',
+		'groups'    => 'groups',
 		'fields'    => 'fields',
 		'templates' => 'templates',
 		'pages'     => 'pages',
@@ -493,6 +494,8 @@ class Config_Handler {
 
 			if ( 'pods' === $item_type ) {
 				$this->register_config_pods( $items, $file_path );
+			} elseif ( 'groups' === $item_type ) {
+				$this->register_config_groups( $items, $file_path );
 			} elseif ( 'fields' === $item_type ) {
 				$this->register_config_fields( $items, $file_path );
 			} elseif ( 'templates' === $item_type ) {
@@ -529,6 +532,10 @@ class Config_Handler {
 
 			if ( isset( $item['id'] ) ) {
 				unset( $item['id'] );
+			}
+
+			if ( empty( $item['groups'] ) ) {
+				$item['groups'] = [];
 			}
 
 			if ( empty( $item['fields'] ) ) {
@@ -584,6 +591,52 @@ class Config_Handler {
 			$item['_pods_file_source'] = $file_path;
 
 			$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ]['fields'][ $item['name'] ] = $item;
+
+			$this->file_path_configs[ $file_path ]['pods'] = $item['pod']['type'] . ':' . $item['pod']['name'] . ':' . $item['name'];
+		}
+
+	}
+
+	/**
+	 * Register pod field configs.
+	 *
+	 * @since 2.9.14
+	 *
+	 * @param array  $items     Config items.
+	 * @param string $file_path The config file path to use.
+	 */
+	protected function register_config_groups( array $items, $file_path = '' ) {
+		foreach ( $items as $item ) {
+			// Check if the pod name, pod type, item type, and item name exists.
+			if ( empty( $item['type'] ) || empty( $item['name'] ) || empty( $item['pod']['name'] ) || empty( $item['pod']['type'] ) ) {
+				continue;
+			}
+
+			if ( ! isset( $this->pods[ $item['pod']['type'] ] ) ) {
+				$this->pods[ $item['pod']['type'] ] = [];
+			}
+
+			if ( isset( $item['pod']['id'] ) ) {
+				unset( $item['pod']['id'] );
+			}
+
+			// Check if pod has been registered yet.
+			if ( ! isset( $this->pods[ $item['pod']['type'][ $item['pod']['name'] ] ] ) ) {
+				$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ] = $item['pod'];
+			}
+
+			// Check if pod has groups that have been registered yet.
+			if ( ! isset( $this->pods[ $item['pod']['type'][ $item['pod']['name'] ] ]['groups'] ) ) {
+				$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ]['groups'] = [];
+			}
+
+			if ( isset( $item['id'] ) ) {
+				unset( $item['id'] );
+			}
+
+			$item['_pods_file_source'] = $file_path;
+
+			$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ]['groups'][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pods'] = $item['pod']['type'] . ':' . $item['pod']['name'] . ':' . $item['name'];
 		}

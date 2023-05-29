@@ -300,14 +300,18 @@ const DateTime = ( {
 		return isAfterStartYear && isBeforeEndYear;
 	};
 
-	useEffect( () => {
+	useEffect(() => {
 		const rangeValidationRule = {
-			rule: dateTimeValidator( yearRange, getDBFormat() ),
+			rule: dateTimeValidator(
+				yearRange,
+				getDBFormat(),
+				fieldConfig.datetime_allow_empty || false
+			),
 			condition: () => true,
 		};
 
-		addValidationRules( [ rangeValidationRule ] );
-	}, [] );
+		addValidationRules([rangeValidationRule]);
+	}, []);
 
 	// If we can use an HTML5 input field, we can just return an input field.
 	if ( useHTML5Field ) {

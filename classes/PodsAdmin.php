@@ -3156,6 +3156,8 @@ class PodsAdmin {
 
 		$fields = $settings->get_setting_fields();
 
+		$settings_values = $settings->get_settings();
+
 		$auto_start = pods_v( $auto_start, $fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
 		global $wpdb;
@@ -3226,7 +3228,7 @@ class PodsAdmin {
 				],
 				'pods-memory-current-usage'          => [
 					'label' => __( 'Current Memory Usage', 'pods' ),
-					'value' => number_format_i18n( memory_get_usage() / 1024 / 1024, 3 ) . 'M',
+					'value' => number_format_i18n( memory_get_usage() / 1024 / 1024, 3 ) . 'M' . ( defined( 'WP_MEMORY_LIMIT' ) ? ' / ' . WP_MEMORY_LIMIT : '' ),
 				],
 				'pods-memory-current-usage-real'     => [
 					'label' => __( 'Current Memory Usage (real)', 'pods' ),
@@ -3251,6 +3253,10 @@ class PodsAdmin {
 				'pods-relationship-table-enabled'    => [
 					'label' => __( 'Pods Relationship Table Enabled', 'pods' ),
 					'value' => ( pods_podsrel_enabled() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				],
+				'pods-relationship-table-status'              => [
+					'label' => __( 'Pods Relationship Table Count' ),
+					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
 				],
 				'pods-light-mode'                    => [
 					'label' => __( 'Pods Light Mode Activated', 'pods' ),
@@ -3280,12 +3286,41 @@ class PodsAdmin {
 					'label' => __( 'Pods Can Use Sessions' ),
 					'value' => ( pods_can_use_sessions( true ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
-				'pods-relationship-table-status'              => [
-					'label' => __( 'Pods Relationship Table Count' ),
-					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
-				],
 			],
 		];
+
+		$settings_to_show = [
+			'types_only'            => __( 'Setting: Types only', 'pods' ),
+			'watch_changed_fields'  => __( 'Setting: Watch Changed fields', 'pods' ),
+			'metadata_integration'  => __( 'Setting: Watch WP Metadata calls', 'pods' ),
+			'metadata_override_get' => __( 'Setting: Override WP Metadata values', 'pods' ),
+		];
+
+		foreach ( $settings_to_show as $setting => $label ) {
+			$setting_key = 'pods-settings-' . sanitize_title_with_dashes( $setting );
+
+			$value = ucwords(
+				str_replace(
+					[ '_', '-' ],
+					' ',
+					(string) pods_v( $setting, $settings_values, __( 'Unknown', 'pods' )
+					)
+				)
+			);
+
+			if ( '0' === $value ) {
+				$value = __( 'No', 'pods' );
+			} elseif ( '1' === $value ) {
+				$value = __( 'Yes', 'pods' );
+			}
+
+			$info['pods']['fields'][ $setting_key ] = [
+				'label' => $label,
+				'value' => $value,
+			];
+		}
+
+		// @todo Later we should add which components are active.
 
 		return $info;
 	}

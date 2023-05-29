@@ -9,7 +9,7 @@
 			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 			<?php echo PodsForm::field( 'cleanup', 0, 'hidden', array( 'attributes' => array( 'id' => 'pods_cleanup' ) ) ); ?>
 
-			<h2 class="italicized"><?php _e( 'Migrate: Import from Custom Post Type UI', 'pods' ); ?></h2>
+			<h2 class="italicized"><?php _e( 'Migrate: Import from Advanced Custom Fields', 'pods' ); ?></h2>
 
 			<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
@@ -29,7 +29,7 @@
 				<div id="pods-wizard-main">
 					<div id="pods-wizard-panel-1" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
-							<p><?php _e( 'Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods', 'pods' ); ?></p>
+							<p><?php _e( 'Advanced Custom Fields provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods', 'pods' ); ?></p>
 						</div>
 						<div id="pods-wizard-options">
 							<div class="pods-wizard-option">
@@ -37,6 +37,7 @@
 									<h2><?php _e( 'Import Only', 'pods' ); ?></h2>
 
 									<p><?php _e( 'This will import your Custom Post Types and Taxonomies.', 'pods' ); ?></p>
+									<p><?php _e( 'Until you remove them from Advanced Custom Fields, these will be treated by Pods as extended content types.', 'pods' ); ?></p>
 								</a>
 
 								<p><br /></p>
@@ -45,7 +46,7 @@
 								<a href="#pods-wizard-import-clean" data-opt="1">
 									<h2><?php _e( 'Import and Clean Up', 'pods' ); ?></h2>
 
-									<p><?php _e( 'This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI.', 'pods' ); ?></p>
+									<p><?php _e( 'This will import your Custom Post Types and Taxonomies, and then remove them from Advanced Custom Fields.', 'pods' ); ?></p>
 								</a>
 
 								<p><br /></p>
@@ -74,13 +75,13 @@
 											<ul>
 												<?php
 												foreach ( $post_types as $post_type ) {
-													$post_type_name  = pods_var_raw( 'name', $post_type );
-													$post_type_label = pods_var_raw( 'label', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
+													$post_type_name  = pods_v( 'post_type', $post_type );
+													$post_type_label = pods_v( 'title', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
 													?>
 													<li>
 														<div class="pods-field pods-boolean">
 															<?php
-															echo PodsForm::field( 'post_type[' . $post_type_name . ']', pods_var_raw( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', [
+															echo PodsForm::field( 'post_type[' . $post_type_name . ']', pods_v( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', [
 																'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')',
 																'disable_dfv'       => true,
 															] );
@@ -120,12 +121,12 @@
 											<ul>
 												<?php
 												foreach ( $taxonomies as $taxonomy ) {
-													$taxonomy_name  = pods_var_raw( 'name', $taxonomy );
-													$taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
+													$taxonomy_name  = pods_v( 'taxonomy', $taxonomy );
+													$taxonomy_label = pods_v( 'title', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
 													?>
 													<li>
 														<?php
-														echo PodsForm::field( 'taxonomy[' . $taxonomy_name . ']', pods_var_raw( 'taxonomy[' . $taxonomy_name . ']', 'post', true ), 'boolean', [
+														echo PodsForm::field( 'taxonomy[' . $taxonomy_name . ']', pods_v( 'taxonomy[' . $taxonomy_name . ']', 'post', true ), 'boolean', [
 															'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')',
 															'disable_dfv'       => true,
 														] );

@@ -109,8 +109,14 @@ export const numberValidator = (
 export const dateTimeValidator = (
 	yearRange,
 	momentFormat,
-) => ( value ) => {
-	if ( 'undefined' === typeof yearRange || ! yearRange.length ) {
+	allowEmpty = true,
+) => (value) => {
+	//If no value is set, we don't need to validate range.
+	//@see https://github.com/pods-framework/pods/issues/7016
+	if (!value && allowEmpty) {
+		return true;
+	}
+	if ('undefined' === typeof yearRange || !yearRange.length) {
 		return true;
 	}
 

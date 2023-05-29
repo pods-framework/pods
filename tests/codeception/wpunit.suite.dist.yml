@@ -31,6 +31,6 @@ modules:
             adminEmail: admin@%WP_DOMAIN%
             title: 'Pods Tests'
             plugins:
-                - pods/init.php
+                - %PODS_ROOT_FOLDER%/init.php
             activatePlugins:
-                - pods/init.php
+                - %PODS_ROOT_FOLDER%/init.php

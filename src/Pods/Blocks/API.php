@@ -125,12 +125,21 @@ class API {
 
 		$api = pods_api();
 
+		/**
+		 * Allow filtering whether to bypass the post type find queries for blocks.
+		 *
+		 * @since 2.9.14
+		 *
+		 * @param bool $bypass_post_type_find Whether to bypass the post type find queries for blocks.
+		 */
+		$bypass_post_type_find = apply_filters( 'pods_blocks_api_get_blocks_bypass_post_type_find', true );
+
 		/** @var Block[] $blocks */
 		$blocks = $api->_load_objects( [
 			'object_type' => 'block',
 			'bypass_cache' => true,
 			// Disable DB queries for now.
-			'bypass_post_type_find' => false,
+			'bypass_post_type_find' => $bypass_post_type_find,
 		] );
 
 		// Ensure the response is an array.

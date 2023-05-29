@@ -3228,7 +3228,7 @@ class PodsAdmin {
 				],
 				'pods-memory-current-usage'          => [
 					'label' => __( 'Current Memory Usage', 'pods' ),
-					'value' => number_format_i18n( memory_get_usage() / 1024 / 1024, 3 ) . 'M ' . ( defined( 'WP_MEMORY_LIMIT' ) ? ' / ' . WP_MEMORY_LIMIT : '' ),
+					'value' => number_format_i18n( memory_get_usage() / 1024 / 1024, 3 ) . 'M' . ( defined( 'WP_MEMORY_LIMIT' ) ? ' / ' . WP_MEMORY_LIMIT : '' ),
 				],
 				'pods-memory-current-usage-real'     => [
 					'label' => __( 'Current Memory Usage (real)', 'pods' ),

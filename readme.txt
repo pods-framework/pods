@@ -179,6 +179,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 * Added: New component: Migrate: Import from the Advanced Custom Fields plugin -- It allows importing the Custom Post Types and Custom Taxonomies from ACF. Note: This does not migrate custom fields or field groups. (@sc0ttkclark)
 * Tweak: List View is now the default for Relationship fields that are single select.
+* Tweak: Updated Site Health info for Pods to include what Pods settings someone has and included memory limit with current memory limit for easier reference (@sc0ttkclark)
 * Fixed: Always default the Pods setting for `metadata_integration` to off for new Pods installs when WooCommerce is detected to also be installed. (@sc0ttkclark)
 * Fixed: Validate cache mode used across Pods to ensure unknown modes do not trigger PHP errors. (@sc0ttkclark)
 * Fixed: Resolve PHP errors when registering ACTs via code/JSON. (@sc0ttkclark)

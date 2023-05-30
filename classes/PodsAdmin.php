@@ -1003,7 +1003,7 @@ class PodsAdmin {
 			$pod_type_label = null;
 			$pod_storage    = $pod['storage'];
 
-			if ( empty( $pod_type ) ) {
+			if ( empty( $pod_type ) || ! is_string( $pod_type ) ) {
 				$pod_type = 'post_type';
 			}
 
@@ -2578,7 +2578,7 @@ class PodsAdmin {
 			} elseif ( 'post_type' === $pod['type'] ) {
 				$capability_type = pods_v_sanitized( 'capability_type_custom', $pod['options'], pods_v( 'name', $pod ) );
 
-				if ( 'custom' === pods_v( 'capability_type', $pod['options'] ) && 0 < strlen( $capability_type ) ) {
+				if ( 'custom' === pods_v( 'capability_type', $pod['options'] ) && is_string( $capability_type ) && 0 < strlen( $capability_type ) ) {
 					$capabilities[] = 'read_' . $capability_type;
 					$capabilities[] = 'edit_' . $capability_type;
 					$capabilities[] = 'delete_' . $capability_type;

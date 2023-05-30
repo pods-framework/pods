@@ -134,8 +134,8 @@ class PodsInit {
 			}
 		}
 
-		if ( empty( self::$version_last ) && 0 < strlen( get_option( 'pods_version' ) ) ) {
-			$old_version = get_option( 'pods_version' );
+		if ( empty( self::$version_last ) && 0 < strlen( (string) get_option( 'pods_version' ) ) ) {
+			$old_version = (string) get_option( 'pods_version' );
 
 			if ( ! empty( $old_version ) ) {
 				if ( false === strpos( $old_version, '.' ) ) {
@@ -860,8 +860,8 @@ class PodsInit {
 					'pods_upload_require_login',
 				), true
 			) ) {
-				if ( 0 < strlen( $security_settings[ $security_setting . '_cap' ] ) ) {
-					$setting = $security_settings[ $security_setting . '_cap' ];
+				if ( 0 < strlen( (string) $security_settings[ $security_setting . '_cap' ] ) ) {
+					$setting = (string) $security_settings[ $security_setting . '_cap' ];
 				}
 			} elseif ( in_array(
 				$security_setting, array(
@@ -1555,7 +1555,7 @@ class PodsInit {
 				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );
 
 				if ( $show_in_menu && 0 < strlen( (string) pods_v( 'menu_location_custom', $post_type ) ) ) {
-					$show_in_menu = pods_v( 'menu_location_custom', $post_type );
+					$show_in_menu = (string) pods_v( 'menu_location_custom', $post_type );
 				}
 
 				$menu_icon = pods_v( 'menu_icon', $post_type );

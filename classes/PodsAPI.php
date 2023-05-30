@@ -5202,7 +5202,7 @@ class PodsAPI {
 				// Handle Simple Relationships
 				if ( $simple ) {
 					if ( ! is_array( $value ) ) {
-						if ( 0 < strlen( $value ) ) {
+						if ( is_string( $value ) && 0 < strlen( $value ) ) {
 							$value = explode( ',', $value );
 						} else {
 							$value = array();
@@ -5227,7 +5227,7 @@ class PodsAPI {
 								$custom_values = array();
 
 								foreach ( $custom as $c => $cv ) {
-									if ( 0 < strlen( $cv ) ) {
+									if ( is_string( $cv ) && 0 < strlen( $cv ) ) {
 										$custom_label = explode( '|', $cv );
 
 										if ( ! isset( $custom_label[1] ) ) {
@@ -5603,7 +5603,7 @@ class PodsAPI {
 		if ( $params->clear_slug_cache && ! empty( $pod['field_slug'] ) ) {
 			$slug = pods_get_instance( $pod['name'], $params->id )->field( $pod['field_slug'] );
 
-			if ( 0 < strlen( $slug ) ) {
+			if ( is_string( $slug ) && 0 < strlen( $slug ) ) {
 				pods_cache_clear( $slug, 'pods_items_' . $pod['name'] );
 			}
 		}
@@ -6256,7 +6256,7 @@ class PodsAPI {
 			}
 
 			return false;
-		} elseif ( in_array( $pod['type'], array( 'post_type', 'taxonomy' ) ) && 0 < strlen( $pod['object'] ) ) {
+		} elseif ( in_array( $pod['type'], array( 'post_type', 'taxonomy' ) ) && is_string( $pod['object'] ) && 0 < strlen( $pod['object'] ) ) {
 			$pod['object'] = '';
 		}
 
@@ -6646,7 +6646,7 @@ class PodsAPI {
 			// @todo Add term compatibility to set unique name
 			// @todo Add user compatibility to set unique user_login/user_email
 
-			if ( ! empty( $value ) || ( ! is_array( $value ) && 0 < strlen( $value ) ) ) {
+			if ( ! empty( $value ) || ( is_string( $value ) && 0 < strlen( $value ) ) ) {
 				$save_params['data'][ $field['name'] ] = $value;
 			}
 		}
@@ -9951,8 +9951,8 @@ class PodsAPI {
 				$prefix = 'pod-';
 
 				// Make sure we actually have the prefix before trying anything with the name
-				if ( 0 === strpos( $object_type, $prefix ) ) {
-					$name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+				if ( 0 === strpos( (string) $object_type, $prefix ) ) {
+					$name = substr( (string) $object_type, strlen( $prefix ), strlen( (string) $object_type ) );
 				}
 			}
 
@@ -9977,8 +9977,8 @@ class PodsAPI {
 				$prefix = $object_type . '-';
 
 				// Make sure we actually have the prefix before trying anything with the name
-				if ( 0 === strpos( $object_type, $prefix ) ) {
-					$name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+				if ( 0 === strpos( (string) $object_type, $prefix ) ) {
+					$name = substr( (string) $object_type, strlen( $prefix ), strlen( (string) $object_type ) );
 				}
 			}
 
@@ -10011,8 +10011,8 @@ class PodsAPI {
 				$prefix = 'pod-';
 
 				// Make sure we actually have the prefix before trying anything with the name
-				if ( 0 === strpos( $object_type, $prefix ) ) {
-					$name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+				if ( 0 === strpos( (string) $object_type, $prefix ) ) {
+					$name = substr( (string) $object_type, strlen( $prefix ), strlen( (string) $object_type ) );
 				}
 			}
 
@@ -10239,8 +10239,8 @@ class PodsAPI {
 				$prefix = 'post_type-';
 
 				// Make sure we actually have the prefix before trying anything with the name
-				if ( 0 === strpos( $object_type, $prefix ) ) {
-					$name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+				if ( 0 === strpos( (string) $object_type, $prefix ) ) {
+					$name = substr( (string) $object_type, strlen( $prefix ), strlen( (string) $object_type ) );
 				}
 			}
 
@@ -10365,8 +10365,8 @@ class PodsAPI {
 				$prefix = 'taxonomy-';
 
 				// Make sure we actually have the prefix before trying anything with the name
-				if ( 0 === strpos( $object_type, $prefix ) ) {
-					$name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+				if ( 0 === strpos( (string) $object_type, $prefix ) ) {
+					$name = substr( (string) $object_type, strlen( $prefix ), strlen( (string) $object_type ) );
 				}
 			}
 

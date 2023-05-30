@@ -853,8 +853,8 @@ class PodsUI {
 			global $user_ID;
 			wp_get_current_user();
 
-			$color = get_user_meta( $user_ID, 'admin_color', true );
-			if ( strlen( $color ) < 1 ) {
+			$color = (string) get_user_meta( $user_ID, 'admin_color', true );
+			if ( ! $color || strlen( $color ) < 1 ) {
 				$color = 'fresh';
 			}
 
@@ -883,7 +883,7 @@ class PodsUI {
 		// wp-admin page
 		if ( is_object( $this->pod ) && isset( $this->pod->pod ) ) {
 			$unique_identifier = '_' . $this->pod->pod;
-		} elseif ( $this->sql['table'] && 0 < strlen( $this->sql['table'] ) ) {
+		} elseif ( is_string( $this->sql['table'] ) && 0 < strlen( $this->sql['table'] ) ) {
 			$unique_identifier = '_' . $this->sql['table'];
 		}
 

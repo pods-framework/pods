@@ -55,6 +55,7 @@ class PodsField_Link extends PodsField_Website {
 					'no-http-no-www'    => __( 'example.com (force removal of www)', 'pods' ),
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' ),
 				),
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_select_existing'   => array(

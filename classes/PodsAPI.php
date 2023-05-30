@@ -922,6 +922,7 @@ class PodsAPI {
 					'label'       => 'Status',
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
+					'pick_format_single' => 'dropdown',
 					'default'     => $this->do_hook( 'default_status_' . $pod_name, pods_v( 'default_status', pods_v( 'options', $pod ), 'draft', true ), $pod ),
 					'alias'       => [ 'status' ],
 				],

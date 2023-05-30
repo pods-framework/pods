@@ -54,6 +54,7 @@ class PodsField_Phone extends PodsField {
 						'international' => __( 'Any (no validation available)', 'pods' ),
 					),
 				),
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_options'     => array(

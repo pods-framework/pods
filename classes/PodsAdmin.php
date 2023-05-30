@@ -3020,6 +3020,7 @@ class PodsAdmin {
 				'label'             => __( 'Field Mode', 'pods' ),
 				'help'              => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
 				'type'              => 'pick',
+				'pick_format_single' => 'dropdown',
 				'default'           => 'value',
 				'depends-on'        => [ 'rest_enable' => true ],
 				'data'       => [
@@ -3068,6 +3069,7 @@ class PodsAdmin {
 				'label'      => __( 'Response Type', 'pods' ),
 				'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
 				'type'       => 'pick',
+				'pick_format_single' => 'dropdown',
 				'default'    => 'array',
 				'depends-on' => [
 					'type' => 'pick',

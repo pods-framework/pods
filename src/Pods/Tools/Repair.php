@@ -40,8 +40,9 @@ class Repair extends Base {
 
 		$results = [];
 
-		// Maybe fix fields with invalid field type.
-		$results[ __( 'Fixed pod with invalid pod type', 'pods' ) ] = $this->maybe_fix_pod_with_invalid_pod_type( $pod, $mode );
+		// Maybe fix fields with invalid pod/storage type.
+		$results[ __( 'Fixed pod with invalid pod type', 'pods' ) ]         = $this->maybe_fix_pod_with_invalid_pod_type( $pod, $mode );
+		$results[ __( 'Fixed pod with invalid pod storage type', 'pods' ) ] = $this->maybe_fix_pod_with_invalid_pod_storage_type( $pod, $mode );
 
 		// If no group needed to be created, attempt to find the first group ID.
 		if ( null === $group_id ) {
@@ -167,6 +168,60 @@ class Repair extends Base {
 					$pod->get_label(),
 					__( 'Old Type', 'pods' ),
 					$old_type,
+					__( 'Name', 'pods' ),
+					$pod->get_name(),
+					__( 'ID', 'pods' ),
+					$pod->get_id()
+				);
+			} catch ( Throwable $exception ) {
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
+			}
+		}
+
+		return $messages;
+	}
+
+	/**
+	 * Maybe fix pods with invalid pod storage type.
+	 *
+	 * @since 2.9.15
+	 *
+	 * @param Pod    $pod  The Pod object.
+	 * @param string $mode The repair mode (preview, upgrade, or full).
+	 *
+	 * @return string[] The label, name, and ID for each pod fixed.
+	 */
+	protected function maybe_fix_pod_with_invalid_pod_storage_type( Pod $pod, $mode ) {
+		$this->setup();
+
+		$supported_storage_types = pods_api()->get_storage_types();
+
+		$old_storage_type = $pod->get_storage();
+
+		$messages = [];
+
+		if ( ! in_array( $old_storage_type, $supported_storage_types, true ) ) {
+			try {
+				if ( $pod->get_id() <= 0 ) {
+					$this->errors[] = __( 'Unable to repair a Pod that was not registered in the database.', 'pods' );
+
+					return [];
+				}
+
+				if ( 'preview' !== $mode ) {
+					$this->api->save_pod( [
+						'id'      => $pod->get_id(),
+						'storage' => 'meta',
+					] );
+
+					$pod->set_arg( 'storage', 'meta' );
+				}
+
+				$messages[] = sprintf(
+					'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',
+					$pod->get_label(),
+					__( 'Old Storage Type', 'pods' ),
+					$old_storage_type,
 					__( 'Name', 'pods' ),
 					$pod->get_name(),
 					__( 'ID', 'pods' ),

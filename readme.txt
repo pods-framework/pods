@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.14
+Stable tag: 2.9.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,14 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.15 - May 30th, 2023 =
+
+* Added: Now showing text notices to explain where performance may be improved for Relationship single/multi select fields when relating to dynamic content which direct the admin to use Autocomplete or List View instead in certain circumstances. (@sc0ttkclark)
+* Added: Add repair tool that can help recover any Pods that have an invalid pod type / storage. (@sc0ttkclark) 
+* Tweak: Make the default as Dropdown for single select relationship fields again after seeing some reported issues. (@sc0ttkclark)
+* Fixed: Resolved more PHP 8.x compatibiltiy issues for `strlen()` usage. (@sc0ttkclark)
+* Fixed: Set default as Dropdown for relationship field configs across Pods. (@sc0ttkclark)
 
 = 2.9.14 - May 29th, 2023 =
 

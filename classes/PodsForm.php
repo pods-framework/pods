@@ -235,7 +235,7 @@ class PodsForm {
 		 *
 		 * @deprecated 2.7.0
 		 */
-		if ( $input_helper && 0 < strlen( $input_helper ) ) {
+		if ( is_string( $input_helper ) && 0 < strlen( $input_helper ) ) {
 			$helper = pods_api()->load_helper( array( 'name' => $input_helper ) );
 		}
 

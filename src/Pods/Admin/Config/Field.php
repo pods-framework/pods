@@ -154,6 +154,7 @@ class Field extends Base {
 				'default'    => 'text',
 				'required'   => true,
 				'data'       => [],
+				'pick_format_single' => 'dropdown',
 				'dependency' => true,
 				'help'       => 'help',
 			],
@@ -164,6 +165,7 @@ class Field extends Base {
 				'default'               => '',
 				'required'              => true,
 				'data'                  => [],
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
 				'depends-on'            => [
@@ -189,6 +191,7 @@ class Field extends Base {
 				'type'                  => 'pick',
 				'default'               => '',
 				'data'                  => [],
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 				'depends-on'            => [
 					'type'        => 'pick',
@@ -202,6 +205,7 @@ class Field extends Base {
 				'type'       => 'pick',
 				'default'    => '',
 				'data'       => [],
+				'pick_format_single' => 'dropdown',
 				'depends-on' => [
 					'type'        => 'pick',
 					'pick_object' => PodsForm::field_method( 'pick', 'bidirectional_objects' ),
@@ -269,6 +273,7 @@ class Field extends Base {
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				],
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
 			],

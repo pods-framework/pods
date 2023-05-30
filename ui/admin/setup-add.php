@@ -188,6 +188,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										echo PodsForm::field( 'create_pod_type', pods_v( 'create_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
+											'pick_format_single' => 'dropdown',
 											'dependency' => true,
 										] );
 										?>
@@ -250,6 +251,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										echo PodsForm::field( 'create_menu_location', pods_v( 'create_menu_location', 'post' ), 'pick', [
 											'data' => $data,
+											'pick_format_single' => 'dropdown',
 											'depends-on'      => [
 												'create_pod_type' => 'settings',
 											],
@@ -332,6 +334,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 												echo PodsForm::field( 'create_storage', pods_v( 'create_storage', 'post' ), 'pick', [
 													'data'       => $data,
+													'pick_format_single' => 'dropdown',
 													'depends-on' => [
 														'create_pod_type' => [
 															'post_type',
@@ -390,6 +393,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										echo PodsForm::field( 'extend_pod_type', pods_v( 'extend_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
+											'pick_format_single' => 'dropdown',
 											'dependency' => true,
 										] );
 										?>
@@ -420,6 +424,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										] );
 										echo PodsForm::field( 'extend_post_type', pods_v( 'extend_post_type', 'post' ), 'pick', [
 											'data'       => $post_types,
+											'pick_format_single' => 'dropdown',
 											'depends-on' => [
 												'extend_pod_type' => 'post_type',
 											],
@@ -451,6 +456,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										] );
 										echo PodsForm::field( 'extend_taxonomy', pods_v( 'extend_taxonomy', 'post' ), 'pick', [
 											'data'       => $taxonomies,
+											'pick_format_single' => 'dropdown',
 											'depends-on' => [
 												'extend_pod_type' => 'taxonomy',
 											],
@@ -480,6 +486,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 												echo PodsForm::field( 'extend_storage', pods_v( 'extend_storage', 'post' ), 'pick', [
 													'data'       => $data,
+													'pick_format_single' => 'dropdown',
 													'depends-on' => [
 														'extend_pod_type' => [
 															'post_type',

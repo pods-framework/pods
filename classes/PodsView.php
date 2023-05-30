@@ -151,7 +151,7 @@ class PodsView {
 		$key .= '-' . sanitize_key( PODS_VERSION );
 
 		// Patch for limitations in DB
-		if ( 44 < strlen( $group_key . $key ) ) {
+		if ( is_string( $group_key ) && 44 < strlen( $group_key . $key ) ) {
 			$key = md5( $key );
 		}
 
@@ -205,7 +205,7 @@ class PodsView {
 		$nocache      = array();
 
 		if ( null !== $pods_nocache && pods_is_admin() ) {
-			if ( 1 < strlen( $pods_nocache ) ) {
+			if ( is_string( $pods_nocache ) && 1 < strlen( $pods_nocache ) ) {
 				$nocache = explode( ',', $pods_nocache );
 				$nocache = array_flip( $nocache );
 			} else {

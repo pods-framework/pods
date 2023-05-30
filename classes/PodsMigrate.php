@@ -1147,7 +1147,7 @@ class PodsMigrate {
 						}
 					}
 
-					if ( 1 > strlen( $value ) && 1 === $field_info['required'] ) {
+					if ( 1 === $field_info['required'] && ( ! is_string( $value ) || strlen( $value ) < 1 ) ) {
 						die( '<h1 style="color:red;font-weight:bold;">ERROR: Field Required for <strong>' . $field . '</strong></h1>' );
 					}
 

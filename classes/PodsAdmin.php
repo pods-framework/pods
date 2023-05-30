@@ -1007,6 +1007,10 @@ class PodsAdmin {
 				$pod_type = 'post_type';
 			}
 
+			if ( empty( $pod_storage ) || ! is_string( $pod_storage ) ) {
+				$pod_storage = 'meta';
+			}
+
 			$show_meta_count = 'meta' === $pod_storage || in_array( $pod['type'], [ 'post_type', 'taxonomy', 'user', 'comment' ], true );
 
 			if ( ! empty( $pod['internal'] ) ) {

@@ -188,6 +188,25 @@ class PodsField_Pick extends PodsField {
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
 			],
+			static::$type . '_format_single_help'         => [
+				'label'             => '',
+				'type'              => 'html',
+				'default'           => 0,
+				'html_content'      => '<p><em>' . esc_html__( 'Please note: When relating to dynamic content with large amounts of data, Drop Down or Radio Buttons can cause the edit screen to load very slowly because it loads all data at once. Consider using the Autocomplete or List View instead.', 'pods' ) . '</em></p>',
+				'dependency'        => true,
+				'wildcard-on' => [
+					static::$type . '_format_single' => [
+						'^dropdown$',
+						'^radio$',
+					],
+					static::$type . '_object' => [
+						'^post_type-(?!(custom_css|customize_changeset)).*$',
+						'^taxonomy-.*$',
+						'^user$',
+						'^pod-.*$',
+					],
+				],
+			],
 			static::$type . '_format_multi'             => [
 				'label'                 => __( 'Input Type', 'pods' ),
 				'help'                  => $fallback_help,
@@ -206,6 +225,25 @@ class PodsField_Pick extends PodsField {
 				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
+			],
+			static::$type . '_format_multi_help'         => [
+				'label'             => '',
+				'type'              => 'html',
+				'default'           => 0,
+				'html_content'      => '<p><em>' . esc_html__( 'Please note: When relating to dynamic content with large amounts of data, Checkboxes or Multi Select can cause the edit screen to load very slowly because it loads all data at once. Consider using the Autocomplete or List View instead.', 'pods' ) . '</em></p>',
+				'dependency'        => true,
+				'wildcard-on' => [
+					static::$type . '_format_multi' => [
+						'^checkbox$',
+						'^multiselect$',
+					],
+					static::$type . '_object' => [
+						'^post_type-(?!(custom_css|customize_changeset)).*$',
+						'^taxonomy-.*$',
+						'^user$',
+						'^pod-.*$',
+					],
+				],
 			],
 			static::$type . '_display_format_multi'     => [
 				'label'                 => __( 'Display Format', 'pods' ),

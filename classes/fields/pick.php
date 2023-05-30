@@ -175,7 +175,7 @@ class PodsField_Pick extends PodsField {
 				'depends-on'            => [
 					static::$type . '_format_type' => 'single',
 				],
-				'default'               => 'list',
+				'default'               => 'dropdown',
 				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [

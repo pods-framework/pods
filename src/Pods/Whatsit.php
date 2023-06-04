@@ -562,13 +562,15 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		 */
 		do_action( "pods_whatsit_setup_{$class_hook}", $this, static::$type );
 
+		$content_type_for_is_types_only = ( $this->args['parent'] ? $this->args['parent'] : $this->args['name'] );
+
 		// If the type is a Pod or Group and types-only mode is enabled, force the groups/fields to be empty.
 		if (
 			(
 				'pod' === static::$type
 				|| 'group' === static::$type
 			)
-			&& pods_is_types_only()
+			&& pods_is_types_only( false, $content_type_for_is_types_only )
 		) {
 			$this->_groups = [];
 			$this->_fields = [];

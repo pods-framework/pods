@@ -160,7 +160,7 @@ class PodsComponents {
 
 			$capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( $component ) );
 
-			if ( 0 < strlen( $component_data['Capability'] ) ) {
+			if ( 0 < strlen( (string) $component_data['Capability'] ) ) {
 				$capability = $component_data['Capability'];
 			}
 
@@ -725,7 +725,7 @@ class PodsComponents {
 
 			$capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( str_replace( ' and ', ' ', strip_tags( $component_data['Name'] ) ) ) );
 
-			if ( 0 < strlen( $component_data['Capability'] ) ) {
+			if ( 0 < strlen( (string) $component_data['Capability'] ) ) {
 				$capability = $component_data['Capability'];
 			}
 

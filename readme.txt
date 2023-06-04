@@ -190,6 +190,14 @@ New minimum required versions have been updated as follows which includes notice
 * Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
 
+= 2.9.15 - May 30th, 2023 =
+
+* Added: Now showing text notices to explain where performance may be improved for Relationship single/multi select fields when relating to dynamic content which direct the admin to use Autocomplete or List View instead in certain circumstances. (@sc0ttkclark)
+* Added: Add repair tool that can help recover any Pods that have an invalid pod type / storage. (@sc0ttkclark) 
+* Tweak: Make the default as Dropdown for single select relationship fields again after seeing some reported issues. (@sc0ttkclark)
+* Fixed: Resolved more PHP 8.x compatibility issues for `strlen()` usage. (@sc0ttkclark)
+* Fixed: Set default as Dropdown for relationship field configs across Pods. (@sc0ttkclark)
+
 = 2.9.14 - May 29th, 2023 =
 
 * Added: New component: Migrate: Import from the Advanced Custom Fields plugin -- It allows importing the Custom Post Types and Custom Taxonomies from ACF. Note: This does not migrate custom fields or field groups. (@sc0ttkclark)

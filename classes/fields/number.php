@@ -48,6 +48,7 @@ class PodsField_Number extends PodsField {
 					'number' => __( 'Freeform Number', 'pods' ),
 					'slider' => __( 'Slider', 'pods' ),
 				),
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
@@ -64,6 +65,7 @@ class PodsField_Number extends PodsField {
 					'9 999,99'  => '1 234,00',
 					'9\'999.99' => '1\'234.00',
 				),
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_decimals'    => array(

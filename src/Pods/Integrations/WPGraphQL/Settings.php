@@ -135,7 +135,7 @@ class Settings {
 					'view-url'   => __( 'View URL only', 'pods' ),
 				],
 				'type'              => 'pick',
-				'boolean_yes_label' => '',
+				'pick_format_single' => 'dropdown',
 				'depends-on'        => [
 					'wpgraphql_enabled' => true,
 				],
@@ -151,7 +151,7 @@ class Settings {
 					'asset-url'  => __( 'Asset URL only', 'pods' ),
 				],
 				'type'              => 'pick',
-				'boolean_yes_label' => '',
+				'pick_format_single' => 'dropdown',
 				'depends-on'        => [
 					'wpgraphql_enabled' => true,
 				],
@@ -209,7 +209,7 @@ class Settings {
 					'view-url'   => __( 'View URL only', 'pods' ),
 				],
 				'type'              => 'pick',
-				'boolean_yes_label' => '',
+				'pick_format_single' => 'dropdown',
 				'depends-on'        => [
 					'type'              => 'pick',
 					'wpgraphql_enabled' => true,
@@ -241,7 +241,7 @@ class Settings {
 					'asset-url'  => __( 'Asset URL only', 'pods' ),
 				],
 				'type'              => 'pick',
-				'boolean_yes_label' => '',
+				'pick_format_single' => 'dropdown',
 				'depends-on'        => [
 					'type'              => 'file',
 					'wpgraphql_enabled' => true,

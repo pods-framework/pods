@@ -14,7 +14,7 @@ jobs:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
     - name: Send message to Slack API
-      uses: archive/github-actions-slack@v2.0.0
+      uses: archive/github-actions-slack@v2.7.0
       id: notify
       with:
         slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}

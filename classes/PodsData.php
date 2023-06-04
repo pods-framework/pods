@@ -826,7 +826,7 @@ class PodsData {
 
 		$params = (object) array_merge( $defaults, (array) $params );
 
-		if ( $params->sql && 0 < strlen( $params->sql ) ) {
+		if ( is_string( $params->sql ) && 0 < strlen( $params->sql ) ) {
 			return $params->sql;
 		}
 
@@ -1119,7 +1119,7 @@ class PodsData {
 
 		// Search.
 		if ( ! empty( $params->search ) && ! empty( $params->fields ) ) {
-			if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
+			if ( is_string( $params->search_query ) && 0 < strlen( $params->search_query ) ) {
 				$where            = [];
 				$having           = [];
 				$fields_to_search = [];
@@ -1662,17 +1662,17 @@ class PodsData {
 			}
 
 			// Replace variables.
-			if ( 0 < strlen( $params->select ) ) {
+			if ( 0 < strlen( (string) $params->select ) ) {
 				if ( false === stripos( $sql, '%%SELECT%% FROM ' ) ) {
 					$sql = str_ireplace( '%%SELECT%%', $params->select . ', ', $sql );
 				} else {
 					$sql = str_ireplace( '%%SELECT%%', $params->select, $sql );
 				}
 			}
-			if ( 0 < strlen( $params->join ) ) {
+			if ( 0 < strlen( (string) $params->join ) ) {
 				$sql = str_ireplace( '%%JOIN%%', $params->join, $sql );
 			}
-			if ( 0 < strlen( $params->where ) ) {
+			if ( 0 < strlen( (string) $params->where ) ) {
 				if ( false !== stripos( $sql, ' WHERE ' ) ) {
 					if ( false !== stripos( $sql, ' WHERE %%WHERE%% ' ) ) {
 						$sql = str_ireplace( '%%WHERE%%', $params->where . ' AND ', $sql );
@@ -1683,7 +1683,7 @@ class PodsData {
 					$sql = str_ireplace( '%%WHERE%%', ' WHERE ' . $params->where, $sql );
 				}
 			}
-			if ( 0 < strlen( $params->groupby ) ) {
+			if ( 0 < strlen( (string) $params->groupby ) ) {
 				if ( false !== stripos( $sql, ' GROUP BY ' ) ) {
 					if ( false !== stripos( $sql, ' GROUP BY %%GROUPBY%% ' ) ) {
 						$sql = str_ireplace( '%%GROUPBY%%', $params->groupby . ', ', $sql );
@@ -1694,7 +1694,7 @@ class PodsData {
 					$sql = str_ireplace( '%%GROUPBY%%', ' GROUP BY ' . $params->groupby, $sql );
 				}
 			}
-			if ( 0 < strlen( $params->having ) && false !== stripos( $sql, ' GROUP BY ' ) ) {
+			if ( 0 < strlen( (string) $params->having ) && false !== stripos( $sql, ' GROUP BY ' ) ) {
 				if ( false !== stripos( $sql, ' HAVING ' ) ) {
 					if ( false !== stripos( $sql, ' HAVING %%HAVING%% ' ) ) {
 						$sql = str_ireplace( '%%HAVING%%', $params->having . ' AND ', $sql );
@@ -1705,7 +1705,7 @@ class PodsData {
 					$sql = str_ireplace( '%%HAVING%%', ' HAVING ' . $params->having, $sql );
 				}
 			}
-			if ( 0 < strlen( $params->orderby ) ) {
+			if ( 0 < strlen( (string) $params->orderby ) ) {
 				if ( false !== stripos( $sql, ' ORDER BY ' ) ) {
 					if ( false !== stripos( $sql, ' ORDER BY %%ORDERBY%% ' ) ) {
 						$sql = str_ireplace( '%%ORDERBY%%', $params->groupby . ', ', $sql );
@@ -3145,7 +3145,7 @@ class PodsData {
 
 			$field_value = pods_v( 'filter_' . $field, 'get', false, true );
 
-			if ( ! empty( $field_value ) || 0 < strlen( $field_value ) ) {
+			if ( ! empty( $field_value ) || ( is_string( $field_value ) && 0 < strlen( $field_value ) ) ) {
 				$feed[ 'traverse_' . $field ] = array( $field );
 			}
 		}

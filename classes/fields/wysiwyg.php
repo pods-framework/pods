@@ -51,6 +51,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'cleditor' => __( 'CLEditor (No longer available, the fallback uses Quill Editor)', 'pods' ),
 					)
 				),
+				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),

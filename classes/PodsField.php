@@ -905,7 +905,7 @@ class PodsField {
 			if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
 				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
 
-				if ( 0 < strlen( $allowed_tags ) ) {
+				if ( is_string( $allowed_tags ) && 0 < strlen( $allowed_tags ) ) {
 					$allowed_tags = trim( str_replace( [ '<', '>', ',' ], ' ', $allowed_tags ) );
 					$allowed_tags = explode( ' ', $allowed_tags );
 					$allowed_tags = array_unique( array_filter( $allowed_tags ) );

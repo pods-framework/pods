@@ -3232,16 +3232,14 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		'action' => [],
 	];
 
-	// If Pods is not being used for any fields, bypass all hooks.
-	if ( pods_is_types_only() ) {
-		return $hooks;
-	}
+	// If Pods is not being used for any fields, bypass all hooks not needed.
+	$is_types_only = pods_is_types_only();
 
 	$first_pods_version = get_option( 'pods_framework_version_first' );
 	$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
-	$metadata_integration = 1 === (int) pods_get_setting( 'metadata_integration', 1 );
-	$watch_changed_fields = 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
+	$metadata_integration = ! $is_types_only && 1 === (int) pods_get_setting( 'metadata_integration', 1 );
+	$watch_changed_fields = ! $is_types_only && 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
 
 	$is_tableless = pods_tableless();
 
@@ -3292,7 +3290,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}
 	}
 
-	if ( 'taxonomy' === $object_type || 'all' === $object_type ) {
+	if ( ! $is_types_only && ( 'taxonomy' === $object_type || 'all' === $object_type ) ) {
 		// Handle *_term_meta
 		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'term' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
@@ -3344,7 +3342,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		$hooks['action'][] = [ 'split_shared_term', [ PodsInit::$meta, 'split_shared_term' ], 10, 4 ];
 	}
 
-	if ( 'media' === $object_type || 'all' === $object_type ) {
+	if ( ! $is_types_only && ( 'media' === $object_type || 'all' === $object_type ) ) {
 		// Handle old AJAX attachment saving.
 		$hooks['action'][] = [ 'wp_ajax_save-attachment-compat', [ PodsInit::$meta, 'save_media_ajax' ], 0, 1 ];
 
@@ -3371,7 +3369,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}
 	}
 
-	if ( 'user' === $object_type || 'all' === $object_type ) {
+	if ( ! $is_types_only && ( 'user' === $object_type || 'all' === $object_type ) ) {
 		// Handle *_user_meta.
 		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'user' ) ) {
 			if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
@@ -3408,7 +3406,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}
 	}
 
-	if ( 'comment' === $object_type || 'all' === $object_type ) {
+	if ( ! $is_types_only && ( 'comment' === $object_type || 'all' === $object_type ) ) {
 		if ( $metadata_integration && apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
 			// Handle *_comment_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'comment' ) ) {
@@ -3450,7 +3448,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}
 	}
 
-	if ( 'settings' === $object_type || 'all' === $object_type ) {
+	if ( ! $is_types_only && ( 'settings' === $object_type || 'all' === $object_type ) ) {
 		// @todo Patch core to provide $option back in filters, patch core to add filter pre_add_option to add_option.
 
 		// Undesirable way to do things which is heavy and requires access to looping through all fields, pulled from PodsMeta::core().
@@ -4348,14 +4346,25 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
  *
  * @since 2.8.11
  *
- * @param bool $check_constant_only Whether to only check the constant, unless there's a filter overriding things.
+ * @param bool        $check_constant_only Whether to only check the constant, unless there's a filter overriding things.
+ * @param null|string $content_type        The content type context we are in. If this is a _pods_* content type, this will enable types for internal purposes.
  *
  * @return bool Whether Pods is being used for content types only.
  */
-function pods_is_types_only( $check_constant_only = false ) {
+function pods_is_types_only( $check_constant_only = false, $content_type = null ) {
+	if (
+		$content_type
+		&& (
+			0 === strpos( $content_type, '_pods_' )
+			|| 0 === strpos( $content_type, 'pod/_pods_' )
+		)
+	) {
+		return false;
+	}
+
 	// Check if Pods is only being used for content types only.
-	if ( defined( 'PODS_META_TYPES_ONLY' ) && PODS_META_TYPES_ONLY ) {
-		return true;
+	if ( defined( 'PODS_META_TYPES_ONLY' ) ) {
+		return filter_var( PODS_META_TYPES_ONLY, FILTER_VALIDATE_BOOLEAN );
 	}
 
 	// Return null we want to only check the constant, unless there's a filter overriding things.
@@ -4371,7 +4380,8 @@ function pods_is_types_only( $check_constant_only = false ) {
 	 *
 	 * @since 2.8.11
 	 *
-	 * @param bool $is_types_only Whether Pods is being used for content types only.
+	 * @param bool        $is_types_only Whether Pods is being used for content types only.
+	 * @param null|string $content_type The content type context we are in.
 	 */
 	return (bool) apply_filters( 'pods_is_types_only', $is_types_only );
 }

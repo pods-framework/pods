@@ -1657,6 +1657,10 @@ class PodsAPI {
 			$params->bypass_table_schema = false;
 		}
 
+		if ( ! isset( $params->overwrite_table_schema ) ) {
+			$params->overwrite_table_schema = true;
+		}
+
 		$pod = null;
 
 		$lookup_type = null;
@@ -2251,7 +2255,7 @@ class PodsAPI {
 				'old_name'
 			);
 
-			$this->save_pod_table_schema( $pod, $all_fields, $old_info );
+			$this->save_pod_table_schema( $pod, $all_fields, $old_info, $params->overwrite_table_schema );
 		}
 
 		// Maybe handle renaming.
@@ -2546,15 +2550,16 @@ class PodsAPI {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param array $pod      The pod configuration.
-	 * @param array $fields   The list of fields on the pod.
-	 * @param array $old_info The old information to reference.
+	 * @param array   $pod                    The pod configuration.
+	 * @param array   $fields                 The list of fields on the pod.
+	 * @param array   $old_info               The old information to reference.
+	 * @param boolean $overwrite_table_schema Whether to overwrite the table schema if it exists already.
 	 *
 	 * @return bool|WP_Error True if the schema changes were handled, false or an error if it failed to create/update.
 	 *
 	 * @throws Exception
 	 */
-	public function save_pod_table_schema( $pod, array $fields, array $old_info ) {
+	public function save_pod_table_schema( $pod, array $fields, array $old_info, $overwrite_table_schema = true ) {
 		global $wpdb;
 
 		$tableless_field_types    = PodsForm::tableless_field_types();
@@ -2573,8 +2578,8 @@ class PodsAPI {
 			return;
 		}
 
-		$table_name     = "@wp_pods_{$pod['name']}";
-		$old_table_name = "@wp_pods_{$old_name}";
+		$table_name     = "{$wpdb->prefix}pods_{$pod['name']}";
+		$old_table_name = "{$wpdb->prefix}pods_{$old_name}";
 
 		if ( $old_storage !== $pod['storage'] ) {
 			// Create the table if it wasn't there before.
@@ -2606,6 +2611,25 @@ class PodsAPI {
 
 				if ( $definition && '' !== $definition ) {
 					$definitions[] = "`{$field['name']}` " . $definition;
+				}
+			}
+
+			// Check if the table exists first if we should not overwrite the table schema.
+			if ( ! $overwrite_table_schema ) {
+				$table_match = pods_query(
+					'
+						SELECT `TABLE_NAME`
+						FROM `information_schema`.`TABLES`
+						WHERE `TABLE_NAME` = %s AND `TABLE_SCHEMA` = %s
+					',
+					[
+						$table_name,
+						DB_NAME,
+					]
+				);
+
+				if ( ! empty( $table_match ) ) {
+					return false;
 				}
 			}
 

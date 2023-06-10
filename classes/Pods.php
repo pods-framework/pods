@@ -161,6 +161,10 @@ class Pods implements Iterator {
 				// Post Type Archive.
 				$pod       = $pod->name;
 				$id_lookup = false;
+			} elseif ( $pod instanceof WP_Taxonomy ) {
+				// Taxonomy object.
+				$pod       = $pod->name;
+				$id_lookup = false;
 			} else {
 				// Unsupported pod object.
 				$pod       = null;

@@ -223,12 +223,12 @@ class Repair extends Base {
 				}
 
 				if ( 'preview' !== $mode ) {
-					// Save the pod but don't mess with the DB table schema.
+					// Save the pod but don't overwrite the DB table schema if it exists.
 					$this->api->save_pod(
 						[
-							'id'                  => $pod->get_id(),
-							'storage'             => $new_storage_type,
-							'bypass_table_schema' => true,
+							'id'                     => $pod->get_id(),
+							'storage'                => $new_storage_type,
+							'overwrite_table_schema' => false,
 						]
 					);
 

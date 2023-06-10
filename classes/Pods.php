@@ -138,41 +138,31 @@ class Pods implements Iterator {
 		if ( $pod && ! is_string( $pod ) && ! $pod instanceof Pod ) {
 			if ( $pod instanceof WP_Post ) {
 				// Post Type Singular.
-				$id_lookup = false;
 				if ( null === $id ) {
 					$id = $pod->ID;
 				}
-				$pod       = $pod->post_type;
+				$pod = $pod->post_type;
 			} elseif ( $pod instanceof WP_Term ) {
 				// Term Archive.
-				$id_lookup = false;
 				if ( null === $id ) {
 					$id = $pod->term_id;
 				}
-				$pod       = $pod->taxonomy;
+				$pod = $pod->taxonomy;
 			} elseif ( $pod instanceof WP_User ) {
 				// Author Archive.
-				$id_lookup = false;
 				if ( null === $id ) {
 					$id = $pod->ID;
 				}
-				$pod       = 'user';
+				$pod = 'user';
 			} elseif ( $pod instanceof WP_Post_Type ) {
 				// Post Type Archive.
-				$pod       = $pod->name;
-				$id_lookup = false;
+				$pod = $pod->name;
 			} elseif ( $pod instanceof WP_Taxonomy ) {
 				// Taxonomy object.
-				$pod       = $pod->name;
-				$id_lookup = false;
+				$pod = $pod->name;
 			} else {
 				// Unsupported pod object.
-				$pod       = null;
-				$id_lookup = false;
-			}
-
-			if ( null === $id && $id_lookup ) {
-				$id = get_queried_object_id();
+				$pod = null;
 			}
 		}//end if
 

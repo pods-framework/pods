@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.15
+Stable tag: 2.9.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,14 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.16 - June 10th, 2023 =
+
+* Tweak: Allow bypassing table schema updates and overwriting table schemas in `PodsAPI::save_pod()` with the new parameters `bypass_table_schema` and `overwrite_table_schema`. (@sc0ttkclark)
+* Tweak: Support passing the full WP object (post/term/etc) into `pods( $wp_object )` and use the ID associated with it instead of only the `get_queried_object_id()`. #7094 #7095 (@JoryHogeveen)
+* Fixed: The Pods repair tool was overwriting the storage type for table-based pods to `meta`, now it uses the proper logic there and also uses a new abstracted method `Pod::get_default_storage()` for defaults when empty. The tool now also won't overwrite the table schema for each Pod to prevent unintended problems. (@sc0ttkclark)
+* Fixed: Resolved PHP error when using WordPress versions prior to 6.1 which did not have the `did_filter()` function that was called. (@sc0ttkclark)
+* Fixed: Resolved issues when using Content Types only mode (no custom fields) in the Pods Settings so that Components like Pods Pages and Pods Templates will continue to have their fields shown. (@sc0ttkclark)
 
 = 2.9.15 - May 30th, 2023 =
 

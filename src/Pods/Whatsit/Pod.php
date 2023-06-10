@@ -22,22 +22,37 @@ class Pod extends Whatsit {
 	 *
 	 * @since 2.8.1
 	 *
+	 * @param boolean $strict Whether to only get the argument, otherwise the default will be returned.
+	 *
 	 * @return string The storage used for the Pod data (meta, table, etc).
 	 */
-	public function get_storage() {
+	public function get_storage( $strict = false ) {
 		$storage = parent::get_arg( 'storage' );
 
-		if ( empty( $storage ) ) {
-			$type    = $this->get_type();
-			$storage = 'none';
+		if ( ! $strict && empty( $storage ) ) {
+			$storage = $this->get_default_storage();
+		}
 
-			if ( in_array( $type, [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
-				$storage = 'meta';
-			} elseif ( in_array( $type, [ 'pod', 'table' ], true ) ) {
-				$storage = 'table';
-			} elseif ( 'settings' === $type )  {
-				$storage = 'option';
-			}
+		return $storage;
+	}
+
+	/**
+	 * Get the default storage used for the Pod data (meta, table, etc) based on the current Pod type.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return string The default storage used for the Pod data (meta, table, etc).
+	 */
+	public function get_default_storage() {
+		$type    = $this->get_type();
+		$storage = 'none';
+
+		if ( in_array( $type, [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
+			$storage = 'meta';
+		} elseif ( in_array( $type, [ 'pod', 'table' ], true ) ) {
+			$storage = 'table';
+		} elseif ( 'settings' === $type )  {
+			$storage = 'option';
 		}
 
 		return $storage;

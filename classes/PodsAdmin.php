@@ -1078,7 +1078,7 @@ class PodsAdmin {
 			$group_count = 0;
 			$field_count = 0;
 
-			if ( ! pods_is_types_only() ) {
+			if ( ! pods_is_types_only( false, $pod->get_name() ) ) {
 				$group_count = $pod->count_groups();
 				$field_count = $pod->count_fields();
 			}
@@ -1194,7 +1194,7 @@ class PodsAdmin {
 				'pod_object' => $pod,
 			];
 
-			if ( ! pods_is_types_only() ) {
+			if ( ! pods_is_types_only( false, $pod['name'] ) ) {
 				$pod['group_count'] = number_format_i18n( $group_count );
 				$pod['field_count'] = number_format_i18n( $field_count );
 
@@ -1560,6 +1560,10 @@ class PodsAdmin {
 
 		foreach ( $obj->data as $row ) {
 			if ( (int) $row['id'] === (int) $obj->id ) {
+				if ( ! isset( $row['field_count'] ) ) {
+					$row['field_count'] = 0;
+				}
+
 				$original_field_count = (int) $row['field_count'];
 
 				break;
@@ -1775,34 +1779,34 @@ class PodsAdmin {
 	/**
 	 * Get the global config for Pods admin.
 	 *
-	 * @since 2.8.0
-	 *
-	 * @param null|\Pods\Whatsit $pod
+	 * @param null|\Pods\Whatsit $current_pod
 	 *
 	 * @return array Global config array.
+	 *@since 2.8.0
+	 *
 	 */
-	public function get_global_config( $pod = null ) {
+	public function get_global_config( $current_pod = null ) {
 		$config_pod   = pods_container( Config_Pod::class );
 		$config_group = pods_container( Config_Group::class );
 		$config_field = pods_container( Config_Field::class );
 
 		// Pod: Backwards compatible configs and hooks.
-		$pod_tabs        = $config_pod->get_tabs( $pod );
-		$pod_tab_options = $config_pod->get_fields( $pod, $pod_tabs );
+		$pod_tabs        = $config_pod->get_tabs( $current_pod);
+		$pod_tab_options = $config_pod->get_fields( $current_pod, $pod_tabs );
 
 		$this->backcompat_convert_tabs_to_groups( $pod_tabs, $pod_tab_options, 'pod/_pods_pod' );
 
 		// If not types-only mode, handle groups/fields configs.
-		if ( ! pods_is_types_only() ) {
+		if ( ! pods_is_types_only( false, $current_pod->get_name() ) ) {
 			// Group: Backwards compatible methods and hooks.
-			$group_tabs        = $config_group->get_tabs( $pod );
-			$group_tab_options = $config_group->get_fields( $pod, $group_tabs );
+			$group_tabs        = $config_group->get_tabs( $current_pod);
+			$group_tab_options = $config_group->get_fields( $current_pod, $group_tabs );
 
 			$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
 
 			// Field: Backwards compatible methods and hooks.
-			$field_tabs        = $config_field->get_tabs( $pod );
-			$field_tab_options = $config_field->get_fields( $pod, $field_tabs );
+			$field_tabs        = $config_field->get_tabs( $current_pod);
+			$field_tab_options = $config_field->get_fields( $current_pod, $field_tabs );
 
 			$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
 		}
@@ -1828,8 +1832,8 @@ class PodsAdmin {
 			'name'        => '_pods_field',
 		] );
 
-		$pod = [
-			'showFields' => ! pods_is_types_only(),
+		$global_config = [
+			'showFields' => ! pods_is_types_only( false, $current_pod->get_name() ),
 			'pod'        => $pod_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
@@ -1853,11 +1857,12 @@ class PodsAdmin {
 		/**
 		 * Allow hooking into the global config setup for a Pod.
 		 *
-		 * @param null|\Pods\Whatsit $pod The Pod object.
+		 * @param array              $global_config The global config object.
+		 * @param null|\Pods\Whatsit $current_pod   The Pod object.
 		 */
-		$pod = apply_filters( 'pods_admin_setup_global_config', $pod );
+		$global_config = apply_filters( 'pods_admin_setup_global_config', $global_config, $current_pod );
 
-		return $pod;
+		return $global_config;
 	}
 
 	/**

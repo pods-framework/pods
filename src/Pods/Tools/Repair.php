@@ -196,11 +196,25 @@ class Repair extends Base {
 
 		$supported_storage_types = pods_api()->get_storage_types();
 
-		$old_storage_type = $pod->get_storage();
+		$old_storage_type = $pod->get_storage( true );
+
+		if ( empty( $old_storage_type ) ) {
+			$old_storage_type = 'n/a';
+		}
+
+		$pod_type = $pod->get_type();
+
+		$force_storage_update = false;
+
+		if ( 'meta' === $old_storage_type && in_array( $pod_type, [ 'pod', 'table', 'settings' ], true ) ) {
+			$force_storage_update = true;
+		}
+
+		$new_storage_type = $pod->get_default_storage();
 
 		$messages = [];
 
-		if ( ! in_array( $old_storage_type, $supported_storage_types, true ) ) {
+		if ( $force_storage_update || ! isset( $supported_storage_types[ $old_storage_type ] ) ) {
 			try {
 				if ( $pod->get_id() <= 0 ) {
 					$this->errors[] = __( 'Unable to repair a Pod that was not registered in the database.', 'pods' );
@@ -209,26 +223,34 @@ class Repair extends Base {
 				}
 
 				if ( 'preview' !== $mode ) {
-					$this->api->save_pod( [
-						'id'      => $pod->get_id(),
-						'storage' => 'meta',
-					] );
+					// Save the pod but don't mess with the DB table schema.
+					$this->api->save_pod(
+						[
+							'id'                  => $pod->get_id(),
+							'storage'             => $new_storage_type,
+							'bypass_table_schema' => true,
+						]
+					);
 
-					$pod->set_arg( 'storage', 'meta' );
+					$pod->set_arg( 'storage', $new_storage_type );
 				}
 
 				$messages[] = sprintf(
-					'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',
+					'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$s | %8$s: %9$s | %10$s: %11$d)',
 					$pod->get_label(),
 					__( 'Old Storage Type', 'pods' ),
 					$old_storage_type,
+					__( 'New Storage Type', 'pods' ),
+					$new_storage_type,
 					__( 'Name', 'pods' ),
 					$pod->get_name(),
+					__( 'Type', 'pods' ),
+					$pod_type,
 					__( 'ID', 'pods' ),
 					$pod->get_id()
 				);
 			} catch ( Throwable $exception ) {
-				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $pod->get_name() . ' - #' . $pod->get_id() . ')';
 			}
 		}
 

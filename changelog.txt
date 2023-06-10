@@ -2,6 +2,21 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.16 - June 10th, 2023 =
+
+* Tweak: Allow bypassing table schema updates and overwriting table schemas in `PodsAPI::save_pod()` with the new parameters `bypass_table_schema` and `overwrite_table_schema`. (@sc0ttkclark)
+* Fixed: The Pods repair tool was overwriting the storage type for table-based pods to `meta`, now it uses the proper logic there and also uses a new abstracted method `Pod::get_default_storage()` for defaults when empty. The tool now also won't overwrite the table schema for each Pod to prevent unintended problems. (@sc0ttkclark)
+* Fixed: Resolved PHP error when using WordPress versions prior to 6.1 which did not have the `did_filter()` function that was called. (@sc0ttkclark)
+* Fixed: Resolved issues when using Content Types only mode (no custom fields) in the Pods Settings so that Components like Pods Pages and Pods Templates will continue to have their fields shown. (@sc0ttkclark)
+
+= 2.9.15 - May 30th, 2023 =
+
+* Added: Now showing text notices to explain where performance may be improved for Relationship single/multi select fields when relating to dynamic content which direct the admin to use Autocomplete or List View instead in certain circumstances. (@sc0ttkclark)
+* Added: Add repair tool that can help recover any Pods that have an invalid pod type / storage. (@sc0ttkclark) 
+* Tweak: Make the default as Dropdown for single select relationship fields again after seeing some reported issues. (@sc0ttkclark)
+* Fixed: Resolved more PHP 8.x compatibility issues for `strlen()` usage. (@sc0ttkclark)
+* Fixed: Set default as Dropdown for relationship field configs across Pods. (@sc0ttkclark)
+
 = 2.9.14 - May 29th, 2023 =
 
 * Added: New component: Migrate: Import from the Advanced Custom Fields plugin -- It allows importing the Custom Post Types and Custom Taxonomies from ACF. Note: This does not migrate custom fields or field groups. (@sc0ttkclark)

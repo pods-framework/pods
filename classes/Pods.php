@@ -141,18 +141,21 @@ class Pods implements Iterator {
 				if ( null === $id ) {
 					$id = $pod->ID;
 				}
+
 				$pod = $pod->post_type;
 			} elseif ( $pod instanceof WP_Term ) {
 				// Term Archive.
 				if ( null === $id ) {
 					$id = $pod->term_id;
 				}
+
 				$pod = $pod->taxonomy;
 			} elseif ( $pod instanceof WP_User ) {
 				// Author Archive.
 				if ( null === $id ) {
 					$id = $pod->ID;
 				}
+
 				$pod = 'user';
 			} elseif ( $pod instanceof WP_Post_Type ) {
 				// Post Type Archive.

@@ -1653,6 +1653,10 @@ class PodsAPI {
 			unset( $params->create_extend );
 		}
 
+		if ( ! isset( $params->bypass_table_schema ) ) {
+			$params->bypass_table_schema = false;
+		}
+
 		$pod = null;
 
 		$lookup_type = null;
@@ -2241,7 +2245,7 @@ class PodsAPI {
 		}
 
 		// Maybe save the pod table schema.
-		if ( $db ) {
+		if ( $db && ! $params->bypass_table_schema ) {
 			$old_info = compact(
 				'old_storage',
 				'old_name'

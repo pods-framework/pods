@@ -272,6 +272,9 @@ class Field extends Base {
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'br'         => __( 'Line breaks', 'pods' ),
+					'ul'         => __( 'Unordered list', 'pods' ),
+					'ol'         => __( 'Ordered list', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				],
 				'pick_format_single' => 'dropdown',

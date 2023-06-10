@@ -1950,18 +1950,33 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			$format = pods_v( 'repeatable_format', $params->field, 'default', true );
 
 			if ( 'default' !== $format ) {
-				$params->serial = false;
 
-				if ( 'custom' === $format ) {
-					$separator = pods_v( 'repeatable_format_separator', $params->field );
+				switch ( $format ) {
+					case 'ul':
+					case 'ol':
+						$value = '<' . $format . '><li>' . implode( '</li><li>', (array) $value ) . '</li></' . $format . '>';
+					break;
+					case 'br':
+						if ( is_array( $value ) ) {
+							$value = implode( '<br />', $value );
+						}
+					break;
+					case 'non_serial':
+						$params->serial = false;
+					break;
+					case 'custom':
+						$params->serial = false;
 
-					// Default to comma separator.
-					if ( '' === $separator ) {
-						$separator = ', ';
-					}
+						$separator = pods_v( 'repeatable_format_separator', $params->field );
 
-					$params->and       = $separator;
-					$params->separator = $separator;
+						// Default to comma separator.
+						if ( '' === $separator ) {
+							$separator = ', ';
+						}
+
+						$params->and       = $separator;
+						$params->separator = $separator;
+					break;
 				}
 			}
 		}

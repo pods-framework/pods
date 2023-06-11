@@ -190,6 +190,14 @@ New minimum required versions have been updated as follows which includes notice
 * Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
 
+= 2.9.16 - June 10th, 2023 =
+
+* Tweak: Allow bypassing table schema updates and overwriting table schemas in `PodsAPI::save_pod()` with the new parameters `bypass_table_schema` and `overwrite_table_schema`. (@sc0ttkclark)
+* Tweak: Support passing the full WP object (post/term/etc) into `pods( $wp_object )` and use the ID associated with it instead of only the `get_queried_object_id()`. #7094 #7095 (@JoryHogeveen)
+* Fixed: The Pods repair tool was overwriting the storage type for table-based pods to `meta`, now it uses the proper logic there and also uses a new abstracted method `Pod::get_default_storage()` for defaults when empty. The tool now also won't overwrite the table schema for each Pod to prevent unintended problems. (@sc0ttkclark)
+* Fixed: Resolved PHP error when using WordPress versions prior to 6.1 which did not have the `did_filter()` function that was called. (@sc0ttkclark)
+* Fixed: Resolved issues when using Content Types only mode (no custom fields) in the Pods Settings so that Components like Pods Pages and Pods Templates will continue to have their fields shown. (@sc0ttkclark)
+
 = 2.9.15 - May 30th, 2023 =
 
 * Added: Now showing text notices to explain where performance may be improved for Relationship single/multi select fields when relating to dynamic content which direct the admin to use Autocomplete or List View instead in certain circumstances. (@sc0ttkclark)

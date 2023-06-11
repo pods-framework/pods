@@ -251,6 +251,20 @@ class Settings {
 			'depends-on' => [ 'metadata_integration' => '1' ],
 		];
 
+		$fields['media_modal_fields'] = [
+			'name'               => 'media_modal_fields',
+			'label'              => __( 'Show Pods fields in Media Library modals', 'pods' ),
+			'help'               => __( 'This feature is only used when you have extended the WordPress Media object with Pods', 'pods' ),
+			'type'               => 'pick',
+			'default'            => version_compare( $first_pods_version, '2.9.16', '<=' ) ? '1' : '0',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable showing Pods fields in Media Library modals (may decrease performance with large numbers of items on admin screens with media grids)', 'pods' ),
+				'0' => __( 'Disable showing Pods fields in Media Library modals and only show them when in the full edit screen for an attachment', 'pods' ),
+			],
+		];
+
 		$session_auto_start            = pods_session_auto_start( true );
 		$session_auto_start_overridden = null !== $session_auto_start;
 

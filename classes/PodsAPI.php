@@ -1883,6 +1883,14 @@ class PodsAPI {
 			unset( $options['overwrite'] );
 		}
 
+		if ( isset( $options['bypass_table_schema'] ) ) {
+			unset( $options['bypass_table_schema'] );
+		}
+
+		if ( isset( $options['overwrite_table_schema'] ) ) {
+			unset( $options['overwrite_table_schema'] );
+		}
+
 		$pod = pods_config_merge_data( $pod, $options );
 
 		if ( is_array( $pod ) && isset( $pod['options'] ) ) {

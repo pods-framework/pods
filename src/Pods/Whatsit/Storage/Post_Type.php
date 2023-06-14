@@ -4,6 +4,7 @@ namespace Pods\Whatsit\Storage;
 
 use Pods\Whatsit;
 use Pods\Whatsit\Store;
+use WP_Post;
 use WP_Query;
 
 /**
@@ -97,11 +98,78 @@ class Post_Type extends Collection {
 	}
 
 	/**
+	 * Maybe get the post object by ID if the $args allow for it.
+	 *
+	 * @param array $post_args Arguments to use.
+	 *
+	 * @return WP_Post|false|null
+	 */
+	private function maybe_get_by_id( array $post_args ) {
+		// Only get by ID if we limit to one.
+		if ( ! isset( $post_args['posts_per_page'] ) || 1 !== $post_args['posts_per_page'] ) {
+			return null;
+		}
+
+		// Only get by ID if we have one post__in.
+		if ( ! isset( $post_args['post__in'] ) || 1 !== count( $post_args['post__in'] ) ) {
+			return null;
+		}
+
+		// Only get by ID if we are not filtering by meta / terms.
+		if ( ! empty( $post_args['meta_query'] ) || ! empty( $post_args['tax_query'] ) ) {
+			return null;
+		}
+
+		$first_id = (int) reset( $post_args['post__in'] );
+
+		// Check if we have a valid ID (1+).
+		if ( ! $first_id ) {
+			return false;
+		}
+
+		$post = get_post( $first_id );
+
+		if ( ! $post instanceof WP_Post ) {
+			return false;
+		}
+
+		// Manually check other criteria.
+
+		// Maybe filter by post_type.
+		if (
+			! isset( $post_args['post_type'] )
+			|| (
+				'any' !== $post_args['post_type']
+				&& ! in_array( $post->post_type, (array) $post_args['post_type'], true )
+			)
+		) {
+			return false;
+		}
+
+		// Maybe filter by post_status.
+		if (
+			! isset( $post_args['post_status'] )
+			|| (
+				'any' !== $post_args['post_status']
+				&& ! in_array( $post->post_status, (array) $post_args['post_status'], true )
+			)
+		) {
+			return false;
+		}
+
+		return $post;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function find( array $args = [] ) {
-		// Object type OR parent is required.
-		if ( empty( $args['object_type'] ) && empty( $args['parent'] ) ) {
+		// Object type AND parent/ID is required.
+		if (
+			empty( $args['object_type'] )
+			&& empty( $args['id'] )
+			&& empty( $args['parent'] )
+		) {
 			return [];
 		}
 
@@ -406,7 +474,7 @@ class Post_Type extends Collection {
 
 				// If we have no posts in static cache, we don't need to query again.
 				if ( [] !== $posts ) {
-					$posts = pods_transient_get($cache_key);
+					$posts = pods_transient_get( $cache_key );
 				}
 
 				// If we have no posts in static cache, we don't need to query again.
@@ -434,7 +502,21 @@ class Post_Type extends Collection {
 
 				$query = new WP_Query();
 
-				$posts = $query->query( $post_args );
+				$post_by_id = $this->maybe_get_by_id( $post_args );
+
+				if ( false === $post_by_id ) {
+					$query->posts       = [];
+					$query->found_posts = 0;
+				} elseif ( null !== $post_by_id ) {
+					$query->posts       = [
+						$post_by_id,
+					];
+					$query->found_posts = 1;
+
+					$posts = $query->posts;
+				} else {
+					$posts = $query->query( $post_args );
+				}
 
 				if ( ! $no_conflict_post ) {
 					pods_no_conflict_off( 'post' );

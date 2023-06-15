@@ -415,8 +415,17 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											}
 
 											$post_type                      = get_post_type_object( $post_type );
-											$post_types[ $post_type->name ] = $post_type->label;
+											$post_types[ $post_type->name ] = $post_type->label . ' (' . $post_type->name . ')';
 										}
+
+										/**
+										 * Allow filtering the list of post types that can be extended by Pods.
+										 *
+										 * @since 2.9.17
+										 *
+										 * @param array<string,string> $post_types The list of post types.
+										 */
+										$post_types = apply_filters( 'pods_admin_setup_add_extend_post_types', $post_types );
 
 										echo PodsForm::label( 'extend_post_type', __( 'Post Type', 'pods' ), [
 											__( '<h3>Post Types</h3> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_posts table. These are differentiated by a column called post_type.', 'pods' ),
@@ -447,8 +456,17 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											}
 
 											$taxonomy                      = get_taxonomy( $taxonomy );
-											$taxonomies[ $taxonomy->name ] = $taxonomy->label;
+											$taxonomies[ $taxonomy->name ] = $taxonomy->label . ' (' . $taxonomy->name . ')';
 										}
+
+										/**
+										 * Allow filtering the list of taxonomies that can be extended by Pods.
+										 *
+										 * @since 2.9.17
+										 *
+										 * @param array<string,string> $taxonomies The list of taxonomies.
+										 */
+										$taxonomies = apply_filters( 'pods_admin_setup_add_extend_taxonomies', $taxonomies );
 
 										echo PodsForm::label( 'extend_taxonomy', __( 'Taxonomy', 'pods' ), [
 											__( '<h3>Taxonomies</h3> A taxonomy is a way to group Post Types.', 'pods' ),

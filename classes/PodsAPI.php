@@ -1,6 +1,7 @@
 <?php
 
 use Pods\API\Whatsit\Value_Field;
+use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -4845,9 +4846,19 @@ class PodsAPI {
 		$fields        = array_map( [ Value_Field::class, 'init' ], $fields );
 		$object_fields = array_map( [ Value_Field::class, 'init' ], $object_fields );
 
+		/**
+		 * @var Value_Field[] $fields
+		 * @var Value_Field[] $object_fields
+		 */
+
 		$fields_active = array();
 		$custom_data   = array();
 		$custom_fields = array();
+
+		$is_process_form = in_array( $params->from, [
+			'process_form',
+			'process_form_meta',
+		], true );
 
 		// Find the active fields (loop through $params->data to retain order)
 		if ( ! empty( $params->data ) && is_array( $params->data ) ) {
@@ -4930,10 +4941,11 @@ class PodsAPI {
 					continue;
 				}
 
-				if ( in_array( $params->from, array(
-						'save',
-						'process_form'
-					), true ) || true === pods_permission( $fields[ $field ] ) ) {
+				if (
+					$is_process_form
+					|| 'save' === $params->from
+					|| true === pods_permission( $fields[ $field ] )
+				) {
 					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
@@ -4962,6 +4974,33 @@ class PodsAPI {
 
 						$fields_active[] = $field;
 					}
+				}
+			}
+
+			// Check if the fields are conditionally visible to be saved.
+			if ( $is_process_form ) {
+				// @todo In the future we will need to reference field values from $object_fields too.
+				$field_values = wp_list_pluck( $fields, 'value' );
+
+				foreach ( $fields_active as $active_key => $active_field_name ) {
+					// Skip if this is not a field we are working with.
+					if ( ! isset( $fields[ $active_field_name ] ) ) {
+						continue;
+					}
+
+					$conditional_logic = $fields[ $active_field_name ]->get_field_object()->get_conditional_logic();
+
+					// Skip if no conditional logic or the field is visible.
+					if ( ! $conditional_logic || $conditional_logic->is_visible( $field_values ) ) {
+						continue;
+					}
+
+					// Unset the field value.
+					$field_values[ $active_field_name ]    = null;
+					$fields[ $active_field_name ]['value'] = null;
+
+					// Remove from the active fields.
+					unset( $fields_active[ $active_key ] );
 				}
 			}
 

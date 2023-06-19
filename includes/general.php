@@ -760,7 +760,7 @@ function pods_light() {
  *
  * @return bool Whether Pods is in a demo.
  *
- * @since TBD
+ * @since 2.9.12
  */
 function pods_is_demo() {
 	return (

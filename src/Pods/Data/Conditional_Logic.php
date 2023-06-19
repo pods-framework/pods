@@ -7,7 +7,7 @@ use Pods\Whatsit;
 /**
  * Conditional logic class.
  *
- * @since TBD
+ * @since 3.0
  */
 class Conditional_Logic {
 
@@ -35,7 +35,7 @@ class Conditional_Logic {
 	/**
 	 * Set up the object.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param string $action The action to take (show/hide).
 	 * @param string $logic  The logic to use (any/all).
@@ -58,7 +58,7 @@ class Conditional_Logic {
 	/**
 	 * Set up the conditional logic object from a object.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param Whatsit|array $object The object data.
 	 *
@@ -85,7 +85,7 @@ class Conditional_Logic {
 	/**
 	 * Maybe migrate the field anme from old prefix naming convention.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param string|int $field_name The field name.
 	 *
@@ -108,7 +108,7 @@ class Conditional_Logic {
 	/**
 	 * Maybe set up the conditional logic object from old syntax.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param Whatsit|array $object The object data.
 	 *
@@ -190,7 +190,7 @@ class Conditional_Logic {
 	/**
 	 * Get the action.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @return string The action.
 	 */
@@ -201,7 +201,7 @@ class Conditional_Logic {
 	/**
 	 * Set the action.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param string $action The action.
 	 */
@@ -214,7 +214,7 @@ class Conditional_Logic {
 	/**
 	 * Get the logic.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @return string The logic.
 	 */
@@ -225,7 +225,7 @@ class Conditional_Logic {
 	/**
 	 * Set the logic.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param string $logic The logic.
 	 */
@@ -238,7 +238,7 @@ class Conditional_Logic {
 	/**
 	 * Get the conditional rules.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @return array The conditional rules.
 	 */
@@ -249,7 +249,7 @@ class Conditional_Logic {
 	/**
 	 * Set the conditional rules.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param array $rules The conditional rules.
 	 */
@@ -260,7 +260,7 @@ class Conditional_Logic {
 	/**
 	 * Get the conditional logic data as an array.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @return array The conditional logic data as an array.
 	 */
@@ -275,13 +275,13 @@ class Conditional_Logic {
 	/**
 	 * Determine whether the field is visible.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param array $values The field values.
 	 *
 	 * @return bool Whether the field is visible.
 	 */
-	public function is_field_visible( array $values ): bool {
+	public function is_visible( array $values ): bool {
 		$rules_passed = $this->validate_rules( $values );
 
 		if ( 'show' === $this->action ) {
@@ -296,7 +296,7 @@ class Conditional_Logic {
 	/**
 	 * Determine whether the rules validate for the field values provided.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param array $values The field values.
 	 *
@@ -306,6 +306,8 @@ class Conditional_Logic {
 		if ( empty( $this->rules ) ) {
 			return true;
 		}
+
+		$logic = strtoupper( $this->logic );
 
 		$rules_passed     = 0;
 		$rules_not_passed = 0;
@@ -320,11 +322,11 @@ class Conditional_Logic {
 			}
 		}
 
-		if ( 'any' === $this->logic ) {
+		if ( 'ANY' === $logic ) {
 			return 0 < $rules_passed;
 		}
 
-		if ( 'all' === $this->logic ) {
+		if ( 'ALL' === $logic ) {
 			return 0 === $rules_not_passed;
 		}
 
@@ -334,7 +336,7 @@ class Conditional_Logic {
 	/**
 	 * Determine whether the rule validates for the field values provided.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @param array $rule   The conditional rule.
 	 * @param array $values The field values.

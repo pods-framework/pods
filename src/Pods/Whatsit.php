@@ -1514,7 +1514,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Determine whether conditional logic is enabled.
 	 *
-	 * @since TBD
+	 * @since 3.0
 	 *
 	 * @return bool Whether conditional logic is enabled.
 	 */
@@ -1527,6 +1527,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 	/**
 	 * Get the conditional logic.
+	 *
+	 * @since 3.0
 	 *
 	 * @return array|null The conditional logic or null if not set.
 	 */

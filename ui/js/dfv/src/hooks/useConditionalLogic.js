@@ -46,7 +46,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 		return false;
 	}
 
-	rule = rule.toUpperCase();
+	rule = rule.toUpperCase().replace( '-', ' ' );
 
 	switch ( rule ) {
 		case 'LIKE':

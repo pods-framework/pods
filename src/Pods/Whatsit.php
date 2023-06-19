@@ -1532,7 +1532,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return array|null The conditional logic or null if not set.
 	 */
-	public function get_conditional_logic(): ?array {
+	public function get_conditional_logic(): ?Conditional_Logic {
 		if ( ! $this->is_conditional_logic_enabled() ) {
 			return null;
 		}
@@ -1541,10 +1541,21 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return null;
 		}
 
+		return Conditional_Logic::maybe_setup_from_object( $this );
+	}
+
+	/**
+	 * Get the conditional logic configuration array.
+	 *
+	 * @since 3.0
+	 *
+	 * @return array|null The conditional logic configuration array or null if not set.
+	 */
+	public function get_conditional_logic_config(): ?array {
 		$conditional_logic = $this->args['conditional_logic'];
 
 		if ( is_string( $conditional_logic ) ) {
-			$conditional_logic = json_decode( $conditional_logic, true );
+			$conditional_logic = 0 === strpos( $conditional_logic, '{' ) ? json_decode( $conditional_logic, true ) : null;
 
 			if ( empty( $conditional_logic ) || ! is_array( $conditional_logic ) ) {
 				unset( $this->args['conditional_logic'] );
@@ -1566,6 +1577,23 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		return $conditional_logic;
+	}
+
+	/**
+	 * Determine whether the conditional logic allows this object to be visible.
+	 *
+	 * @since 3.0
+	 *
+	 * @return bool Whether the conditional logic allows this object to be visible.
+	 */
+	public function is_visible( array $values ): bool {
+		$conditional_logic = $this->get_conditional_logic();
+
+		if ( ! $conditional_logic ) {
+			return true;
+		}
+
+		return $conditional_logic->is_field_visible( $values );
 	}
 
 	/**

@@ -11210,19 +11210,19 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
-	public function process_form( $params, $obj = null, $fields = null, $thank_you = null ) {
+	public function process_form( $form_params, $obj = null, $fields = null, $thank_you = null ) {
 		$old_display_errors = $this->display_errors;
 
 		$this->display_errors = false;
 
 		$form = null;
 
-		$nonce    = pods_v_sanitized( '_pods_nonce', $params );
-		$pod      = pods_v_sanitized( '_pods_pod', $params );
-		$id       = pods_v_sanitized( '_pods_id', $params );
-		$uri      = pods_v_sanitized( '_pods_uri', $params );
-		$form     = pods_v_sanitized( '_pods_form', $params );
-		$location = pods_v_sanitized( '_pods_location', $params );
+		$nonce    = pods_v_sanitized( '_pods_nonce', $form_params );
+		$pod      = pods_v_sanitized( '_pods_pod', $form_params );
+		$id       = pods_v_sanitized( '_pods_id', $form_params );
+		$uri      = pods_v_sanitized( '_pods_uri', $form_params );
+		$form     = pods_v_sanitized( '_pods_form', $form_params );
+		$location = pods_v_sanitized( '_pods_location', $form_params );
 
 		if ( is_object( $obj ) ) {
 			$pod = $obj->pod;
@@ -11261,7 +11261,7 @@ class PodsAPI {
 		$data = array();
 
 		foreach ( $fields as $field ) {
-			$data[ $field ] = pods_v( 'pods_field_' . $field, $params, '' );
+			$data[ $field ] = pods_v( 'pods_field_' . $field, $form_params, '' );
 		}
 
 		$params = array(
@@ -11277,11 +11277,13 @@ class PodsAPI {
 		/**
 		 * Fires after the form has been processed and save_pod_item has run.
 		 *
-		 * @param int       $id     Item ID.
-		 * @param array     $params save_pod_item parameters.
-		 * @param null|Pods $obj    Pod object (if set).
+		 * @param int       $id          The item ID.
+		 * @param array     $params      The PodsAPI::save_pod_item() parameters.
+		 * @param null|Pods $obj         The Pods object (if set).
+		 * @param mixed     $form_params The original PodsAPI::process_form parameters used.
+		 * @param string    $thank_you   The URL to send to upon success.
 		 */
-		do_action( 'pods_api_processed_form', $id, $params, $obj );
+		do_action( 'pods_api_processed_form', $id, $params, $obj, $form_params, $thank_you );
 
 		// Always return $id for AJAX requests.
 		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {

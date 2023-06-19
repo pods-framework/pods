@@ -83,19 +83,19 @@ class Conditional_LogicTest extends WPTestCase {
 		], $sut->to_array() );
 	}
 
-	public function test_is_field_visible_with_show_action_and_empty_rules() : void {
+	public function test_is_visible_with_show_action_and_empty_rules() : void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertTrue( $sut->is_field_visible( [] ) );
+		$this->assertTrue( $sut->is_visible( [] ) );
 	}
 
-	public function test_is_field_visible_with_hide_action_and_empty_rules() : void {
+	public function test_is_visible_with_hide_action_and_empty_rules() : void {
 		$sut = $this->sut( 'hide', 'any', [] );
 
-		$this->assertFalse( $sut->is_field_visible( [] ) );
+		$this->assertFalse( $sut->is_visible( [] ) );
 	}
 
-	public function test_is_field_visible_with_show_action() : void {
+	public function test_is_visible_with_show_action() : void {
 		$sut = $this->sut( 'show', 'any', [
 			[
 				'field'   => 'field_one',
@@ -104,15 +104,15 @@ class Conditional_LogicTest extends WPTestCase {
 			],
 		] );
 
-		$this->assertTrue( $sut->is_field_visible( [
+		$this->assertTrue( $sut->is_visible( [
 			'field_one' => '12345',
 		] ) );
-		$this->assertFalse( $sut->is_field_visible( [
+		$this->assertFalse( $sut->is_visible( [
 			'field_one' => '1234567890',
 		] ) );
 	}
 
-	public function test_is_field_visible_with_hide_action() : void {
+	public function test_is_visible_with_hide_action() : void {
 		$sut = $this->sut( 'hide', 'any', [
 			[
 				'field'   => 'field_one',
@@ -121,10 +121,10 @@ class Conditional_LogicTest extends WPTestCase {
 			],
 		] );
 
-		$this->assertFalse( $sut->is_field_visible( [
+		$this->assertFalse( $sut->is_visible( [
 			'field_one' => '12345',
 		] ) );
-		$this->assertTrue( $sut->is_field_visible( [
+		$this->assertTrue( $sut->is_visible( [
 			'field_one' => '1234567890',
 		] ) );
 	}

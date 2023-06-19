@@ -66,7 +66,7 @@ class Conditional_Logic {
 	 */
 	public static function maybe_setup_from_object( $object ): ?Conditional_Logic {
 		if ( $object instanceof Whatsit && $object->is_conditional_logic_enabled() ) {
-			$object_logic = $object->get_conditional_logic();
+			$object_logic = $object->get_conditional_logic_config();
 
 			if ( empty( $object_logic ) ) {
 				return null;

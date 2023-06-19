@@ -45,6 +45,11 @@ const FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS = [
 	'color',
 ];
 
+const COMPARE_TYPES_WITH_NO_VALUE = [
+	'empty',
+	'not-empty',
+];
+
 const ConditionalLogic = ( {
 	currentPodGroups,
 	currentPodAllFields,
@@ -137,19 +142,21 @@ const ConditionalLogic = ( {
 		} )
 	);
 
-	const setRuleOption = ( index, option, ruleValue ) => setConditions(
-		( oldConditions ) => ( {
-			...oldConditions,
-			rules: [
-				...( oldConditions.rules || [] ).slice( 0, index ),
-				{
-					...oldConditions.rules[ index ],
-					[ option ]: ruleValue,
-				},
-				...( oldConditions.rules || [] ).slice( index + 1 ),
-			],
-		} )
-	);
+	const setRuleOption = function( index, option, ruleValue ) {
+		return setConditions(
+			( oldConditions ) => ( {
+				...oldConditions,
+				rules: [
+					...( oldConditions.rules || [] ).slice( 0, index ),
+					{
+						...oldConditions.rules[ index ],
+						[ option ]: ruleValue,
+					},
+					...( oldConditions.rules || [] ).slice( index + 1 ),
+				],
+			} )
+		);
+	};
 
 	return (
 		<>
@@ -265,12 +272,14 @@ const ConditionalLogic = ( {
 
 						</select>
 
-						<input
-							type="text"
-							className="pods-conditional-logic-rule__value"
-							value={ rule.value }
-							onChange={ ( event ) => setRuleOption( index, 'value', event.target.value ) }
-						/>
+						{ ! COMPARE_TYPES_WITH_NO_VALUE.includes( rule.compare ) ? (
+							<input
+								type={ isNumericFieldType ? 'number' : 'text' }
+								className="pods-conditional-logic-rule__value"
+								value={ rule.value }
+								onChange={ ( event ) => setRuleOption( index, 'value', event.target.value ) }
+							/>
+						) : null }
 
 						<Button
 							onClick={ () => addRule( index ) }

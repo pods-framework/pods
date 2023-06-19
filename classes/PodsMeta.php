@@ -2810,25 +2810,35 @@ class PodsMeta {
 
 		$ignored_types = [
 			'post_type' => [
-				'revision'            => true,
-				'nav_menu_item'       => true,
-				'custom_css'          => true,
-				'customize_changeset' => true,
-				'oembed_cache'        => true,
-				'user_request'        => true,
-				'wp_block'            => true,
-				'wp_global_styles'    => true,
-				'wp_navigation'       => true,
-				'wp_template'         => true,
-				'wp_template_part'    => true,
+				'revision'             => true,
+				'nav_menu_item'        => true,
+				'custom_css'           => true,
+				'customize_changeset'  => true,
+				'oembed_cache'         => true,
+				'user_request'         => true,
+				'wp_block'             => true,
+				'wp_global_styles'     => true,
+				'wp_navigation'        => true,
+				'wp_template'          => true,
+				'wp_template_part'     => true,
 				// Disable Beaver Builder post types.
-				'fl-theme-layout'     => true,
-				'fl-builder-template' => true,
+				'fl-theme-layout'      => true,
+				'fl-builder-template'  => true,
 				// Disable Performance Monitor post types (loaded by Nexcess).
-				'pm_report'           => true,
-				'pm_page'             => true,
-				'pm_site_change'      => true,
-				'pm_insight'          => true,
+				'pm_report'            => true,
+				'pm_page'              => true,
+				'pm_site_change'       => true,
+				'pm_insight'           => true,
+				// Disable Elementor post types.
+				'e-landing-page'       => true,
+				'elementor_library'    => true,
+				'elementor_snippet'    => true,
+				'elementor_font'       => true,
+				'elementor_icons'      => true,
+				// Disable WooCommerce post types.
+				'product_variation'    => true,
+				'shop_order_placehold' => true,
+				'shop_order_refund'    => true,
 			],
 			'taxonomy'  => [
 				'nav_menu'                     => true,
@@ -2838,6 +2848,14 @@ class PodsMeta {
 				// Disable Beaver Builder taxonomies.
 				'fl-builder-template-category' => true,
 				'fl-builder-template-type'     => true,
+				// Disable Elementor taxonomies.
+				'elementor_library_type'       => true,
+				'elementor_library_category'   => true,
+				'elementor_font_type'          => true,
+				// Disable WooCommerce taxonomies.
+				'product_type'                 => true,
+				'product_visibility'           => true,
+				'product_shipping_class'       => true,
 			],
 		];
 

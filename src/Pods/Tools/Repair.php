@@ -140,13 +140,13 @@ class Repair extends Base {
 	protected function maybe_fix_pod_with_invalid_pod_type( Pod $pod, $mode ) {
 		$this->setup();
 
-		$supported_pod_types = PodsForm::pod_types_list();
+		$supported_pod_types = pods_api()->get_pod_types();
 
 		$old_type = $pod->get_type();
 
 		$messages = [];
 
-		if ( ! in_array( $old_type, $supported_pod_types, true ) ) {
+		if ( ! isset( $supported_pod_types[ $old_type ] ) ) {
 			try {
 				if ( $pod->get_id() <= 0 ) {
 					$this->errors[] = __( 'Unable to repair a Pod that was not registered in the database.', 'pods' );

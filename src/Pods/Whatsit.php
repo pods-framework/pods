@@ -1185,6 +1185,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		], $filtered_args, $args );
 
 		try {
+			if ( empty( $args['parent_identifier'] ) ) {
+				throw new Exception( 'Invalid parent identifier for field lookup by object' );
+			}
+
 			if ( ! empty( $args['object_type'] ) ) {
 				$objects = $api->_load_objects( $args );
 			} else {

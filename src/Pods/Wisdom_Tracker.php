@@ -276,7 +276,8 @@ class Wisdom_Tracker {
 		}
 
 		$plugins        = array_keys( get_plugins() );
-		$active_plugins = get_option( 'active_plugins', [] );
+		// @todo SKC customization: Contribute back to Wisdom project.
+		$active_plugins = (array) get_option( 'active_plugins', [] );
 
 		foreach ( $plugins as $key => $plugin ) {
 			if ( in_array( $plugin, $active_plugins ) ) {
@@ -547,7 +548,8 @@ class Wisdom_Tracker {
 	 */
 	public function get_is_time_to_track() {
 		// Let's see if we're due to track this plugin yet
-		$track_times = get_option( 'wisdom_last_track_time', [] );
+		// @todo SKC customization: Contribute back to Wisdom project.
+		$track_times = (array) get_option( 'wisdom_last_track_time', [] );
 		if ( ! isset( $track_times[ $this->plugin_name ] ) ) {
 			// If we haven't set a time for this plugin yet, then we must track it
 			return true;
@@ -576,7 +578,8 @@ class Wisdom_Tracker {
 	 */
 	public function set_track_time() {
 		// We've tracked, so record the time
-		$track_times = get_option( 'wisdom_last_track_time', [] );
+		// @todo SKC customization: Contribute back to Wisdom project.
+		$track_times = (array) get_option( 'wisdom_last_track_time', [] );
 		// Set different times according to plugin, in case we are tracking multiple plugins
 		$track_times[ $this->plugin_name ] = time();
 		update_option( 'wisdom_last_track_time', $track_times, 'yes' );
@@ -589,7 +592,9 @@ class Wisdom_Tracker {
 	 * @since 1.2.4
 	 */
 	public function set_notification_time() {
-		$notification_times = get_option( 'wisdom_notification_times', [] );
+		// @todo SKC customization: Contribute back to Wisdom project.
+		$notification_times = (array) get_option( 'wisdom_notification_times', [] );
+
 		// Set different times according to plugin, in case we are tracking multiple plugins
 		if ( ! isset( $notification_times[ $this->plugin_name ] ) ) {
 			$delay_notification = apply_filters( 'wisdom_delay_notification_' . $this->plugin_name, 0 );
@@ -607,7 +612,8 @@ class Wisdom_Tracker {
 	 * @return Boolean
 	 */
 	public function get_is_notification_time() {
-		$notification_times = get_option( 'wisdom_notification_times', [] );
+		// @todo SKC customization: Contribute back to Wisdom project.
+		$notification_times = (array) get_option( 'wisdom_notification_times', [] );
 		$time               = time();
 		// Set different times according to plugin, in case we are tracking multiple plugins
 		if ( isset( $notification_times[ $this->plugin_name ] ) ) {

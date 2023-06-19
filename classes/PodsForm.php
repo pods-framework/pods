@@ -1600,32 +1600,15 @@ class PodsForm {
 	}
 
 	/**
-	 * Get a list of all available Pod types.
+	 * Get a list of all available Pod types (no labels).
 	 *
 	 * @return string[] List of Pod types.
 	 *
 	 * @since 2.8.0
+	 * @deprecated 2.9.17 Use pods_api()->get_pod_types() instead.
 	 */
 	public static function pod_types_list() {
-		$pod_types = [
-			'post_type',
-			'taxonomy',
-			'user',
-			'media',
-			'comment',
-			'settings',
-			'pod',
-			'table',
-		];
-
-		/**
-		 * Allow filtering of the supported Pod types.
-		 *
-		 * @since 2.8.0
-		 *
-		 * @param array $pod_types List of Pod types supported.
-		 */
-		return apply_filters( 'pods_api_pod_types', $pod_types );
+		return array_keys( pods_api()->get_pod_types() );
 	}
 
 	/**

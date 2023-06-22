@@ -75,8 +75,8 @@ class Group extends Whatsit {
 		], $filtered_args, $args );
 
 		try {
-			if ( empty( $args['parent_identifier'] ) ) {
-				throw new Exception( 'Invalid parent identifier for field lookup by group' );
+			if ( empty( $args['parent_identifier'] ) && empty( $args['group_id'] ) ) {
+				throw new Exception( 'Invalid parent identifier for field lookup by group not by ID: ' . var_export( $args, true ) );
 			}
 
 			if ( ! empty( $args['object_type'] ) ) {

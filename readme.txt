@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.9.17-a-1
+Stable tag: 2.9.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,16 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.17 - June 22nd, 2023 =
+
+* Performance: Allow disabling showing fields in the Media Library modals for sites that experience heavy performance issues from large media grids in the admin area. This new option is available in Pods Admin > Settings > Performance. (@sc0ttkclark)
+* Tweak: Optimize single item lookups in the PodsAPI for post type configurations. (@sc0ttkclark)
+* Fixed: Normalize the calls to the list of pod types that were coming from multiple places so they come from `PodsAPI::get_pod_types()`. (@sc0ttkclark)
+* Fixed: Resolve issues where pod may not specifically be saved as extended but should be treated as extended for custom pod type objects. (@sc0ttkclark)
+* Fixed: Don't save the newer options for `PodsAPI::save_pod()` as actual pod config options. (@sc0ttkclark)
+* Fixed: Ignore more internal post types / taxonomies from plugins like Elementor and WooCommerce to prevent conflicts. (@sc0ttkclark)
+* Fixed: Resolve potential PHP errors when Wisdom options aren't an array as expected. (@sc0ttkclark)
 
 = 2.9.16 - June 10th, 2023 =
 

@@ -391,12 +391,17 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
-
-		if ( ! is_string( $debug ) ) {
+		if ( $debug instanceof Exception ) {
+			$debug = 'Exception bypassed: [' . $debug->getCode() . '] ' . $debug->getMessage();
+		} elseif ( ! is_string( $debug ) ) {
 			$debug = var_export( $debug, true );
 		}
 
-		codecept_debug( 'Pods Debug: ' . $debug . ' ' . pods_get_debug_timing() );
+		if ( '_null' === $prefix ) {
+			$prefix = 'Pods Debug';
+		}
+
+		codecept_debug( $prefix . ': ' . $debug . ' ' . pods_get_debug_timing() );
 
 		return;
 	}
@@ -406,7 +411,11 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 			$debug = var_export( $debug, true );
 		}
 
-		WP_CLI::debug( $debug );
+		if ( '_null' === $prefix ) {
+			$prefix = 'Pods Debug';
+		}
+
+		WP_CLI::debug( $prefix . ': ' . $debug );
 
 		return;
 	}
@@ -477,13 +486,10 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
  * @param mixed $debug The error message to be thrown / displayed.
  */
 function pods_debug_log( $debug ) {
-	// Maybe support additional arguments.
-	if ( 1 < func_get_args() ) {
-		$debug = func_get_args();
-	}
-
 	if ( function_exists( 'codecept_debug' ) || defined( 'WP_CLI' ) ) {
 		pods_debug( $debug, false, 'Output from pods_debug_log()' );
+
+		return;
 	}
 
 	if ( in_array( strtolower( (string) WP_DEBUG_LOG ), array( 'true', '1' ), true ) ) {

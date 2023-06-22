@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.7
-Tested up to: 6.1
+Tested up to: 6.2
 Requires PHP: 7.2
 Stable tag: 3.0.0-b-1
 License: GPLv2 or later
@@ -189,6 +189,16 @@ New minimum required versions have been updated as follows which includes notice
 * Feature: Conditional Logic for Fields - You can now choose to show or hide a field based on the value of another field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9) 
 * Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
+
+= 2.9.17 - June 22nd, 2023 =
+
+* Performance: Allow disabling showing fields in the Media Library modals for sites that experience heavy performance issues from large media grids in the admin area. This new option is available in Pods Admin > Settings > Performance. (@sc0ttkclark)
+* Tweak: Optimize single item lookups in the PodsAPI for post type configurations. (@sc0ttkclark)
+* Fixed: Normalize the calls to the list of pod types that were coming from multiple places so they come from `PodsAPI::get_pod_types()`. (@sc0ttkclark)
+* Fixed: Resolve issues where pod may not specifically be saved as extended but should be treated as extended for custom pod type objects. (@sc0ttkclark)
+* Fixed: Don't save the newer options for `PodsAPI::save_pod()` as actual pod config options. (@sc0ttkclark)
+* Fixed: Ignore more internal post types / taxonomies from plugins like Elementor and WooCommerce to prevent conflicts. (@sc0ttkclark)
+* Fixed: Resolve potential PHP errors when Wisdom options aren't an array as expected. (@sc0ttkclark)
 
 = 2.9.16 - June 10th, 2023 =
 

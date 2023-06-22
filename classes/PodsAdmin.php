@@ -1447,9 +1447,6 @@ class PodsAdmin {
 	 * @since 2.7.17
 	 */
 	public function handle_callouts_updates() {
-		// Don't show callouts right now until Pods 3.0.
-		return;
-
 		$callouts = get_option( 'pods_callouts' );
 
 		if ( ! $callouts ) {

@@ -2,6 +2,16 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.17 - June 22nd, 2023 =
+
+* Performance: Allow disabling showing fields in the Media Library modals for sites that experience heavy performance issues from large media grids in the admin area. This new option is available in Pods Admin > Settings > Performance. (@sc0ttkclark)
+* Tweak: Optimize single item lookups in the PodsAPI for post type configurations. (@sc0ttkclark)
+* Fixed: Normalize the calls to the list of pod types that were coming from multiple places so they come from `PodsAPI::get_pod_types()`. (@sc0ttkclark)
+* Fixed: Resolve issues where pod may not specifically be saved as extended but should be treated as extended for custom pod type objects. (@sc0ttkclark)
+* Fixed: Don't save the newer options for `PodsAPI::save_pod()` as actual pod config options. (@sc0ttkclark)
+* Fixed: Ignore more internal post types / taxonomies from plugins like Elementor and WooCommerce to prevent conflicts. (@sc0ttkclark)
+* Fixed: Resolve potential PHP errors when Wisdom options aren't an array as expected. (@sc0ttkclark)
+
 = 2.9.16 - June 10th, 2023 =
 
 * Tweak: Allow bypassing table schema updates and overwriting table schemas in `PodsAPI::save_pod()` with the new parameters `bypass_table_schema` and `overwrite_table_schema`. (@sc0ttkclark)

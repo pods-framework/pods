@@ -391,12 +391,17 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
-
-		if ( ! is_string( $debug ) ) {
+		if ( $debug instanceof Exception ) {
+			$debug = 'Exception bypassed: [' . $debug->getCode() . '] ' . $debug->getMessage();
+		} elseif ( ! is_string( $debug ) ) {
 			$debug = var_export( $debug, true );
 		}
 
-		codecept_debug( 'Pods Debug: ' . $debug . ' ' . pods_get_debug_timing() );
+		if ( '_null' === $prefix ) {
+			$prefix = 'Pods Debug';
+		}
+
+		codecept_debug( $prefix . ': ' . $debug . ' ' . pods_get_debug_timing() );
 
 		return;
 	}
@@ -406,7 +411,11 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 			$debug = var_export( $debug, true );
 		}
 
-		WP_CLI::debug( $debug );
+		if ( '_null' === $prefix ) {
+			$prefix = 'Pods Debug';
+		}
+
+		WP_CLI::debug( $prefix . ': ' . $debug );
 
 		return;
 	}
@@ -477,13 +486,10 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
  * @param mixed $debug The error message to be thrown / displayed.
  */
 function pods_debug_log( $debug ) {
-	// Maybe support additional arguments.
-	if ( 1 < func_get_args() ) {
-		$debug = func_get_args();
-	}
-
 	if ( function_exists( 'codecept_debug' ) || defined( 'WP_CLI' ) ) {
 		pods_debug( $debug, false, 'Output from pods_debug_log()' );
+
+		return;
 	}
 
 	if ( in_array( strtolower( (string) WP_DEBUG_LOG ), array( 'true', '1' ), true ) ) {
@@ -3240,6 +3246,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 
 	$metadata_integration = ! $is_types_only && 1 === (int) pods_get_setting( 'metadata_integration', 1 );
 	$watch_changed_fields = ! $is_types_only && 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
+	$media_modal_fields   = ! $is_types_only && 1 === (int) pods_get_setting( 'media_modal_fields', version_compare( $first_pods_version, '2.9.16', '<=' ) ? 1 : 0 );
 
 	$is_tableless = pods_tableless();
 
@@ -3346,11 +3353,14 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		// Handle old AJAX attachment saving.
 		$hooks['action'][] = [ 'wp_ajax_save-attachment-compat', [ PodsInit::$meta, 'save_media_ajax' ], 0, 1 ];
 
-		// Handle showing meta fields in modal.
-		$hooks['filter'][] = [ 'attachment_fields_to_edit', [ PodsInit::$meta, 'meta_media' ], 10, 2 ];
+		// Maybe integrate with the media modal.
+		if ( $media_modal_fields ) {
+			// Handle showing meta fields in modal.
+			$hooks['filter'][] = [ 'attachment_fields_to_edit', [ PodsInit::$meta, 'meta_media' ], 10, 2 ];
 
-		// Handle saving meta fields from modal.
-		$hooks['filter'][] = [ 'attachment_fields_to_save', [ PodsInit::$meta, 'save_media' ], 10, 2 ];
+			// Handle saving meta fields from modal.
+			$hooks['filter'][] = [ 'attachment_fields_to_save', [ PodsInit::$meta, 'save_media' ], 10, 2 ];
+		}
 
 		// Handle saving attachment metadata.
 		$hooks['filter'][] = [ 'wp_update_attachment_metadata', [ PodsInit::$meta, 'save_media' ], 10, 2 ];

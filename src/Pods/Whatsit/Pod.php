@@ -219,6 +219,8 @@ class Pod extends Whatsit {
 			return true;
 		} elseif ( 'comment' === $type ) {
 			return true;
+		} elseif ( $type === $name ) {
+			return true;
 		} elseif ( 'post_type' !== $type && 'taxonomy' !== $type ) {
 			return false;
 		}

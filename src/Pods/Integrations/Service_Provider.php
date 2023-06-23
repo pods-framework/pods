@@ -3,7 +3,7 @@
 namespace Pods\Integrations;
 
 use Pods\Integration;
-use tad_DI52_ServiceProvider;
+use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
 
 /**
  * Class Service_Provider
@@ -13,7 +13,7 @@ use tad_DI52_ServiceProvider;
  *
  * @since 2.8.0
  */
-class Service_Provider extends tad_DI52_ServiceProvider {
+class Service_Provider extends Tribe_ServiceProvider {
 
 	protected $integrations = [];
 

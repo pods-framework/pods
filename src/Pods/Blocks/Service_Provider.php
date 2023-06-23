@@ -9,7 +9,7 @@ use Pods\Blocks\Types\Item_List;
 use Pods\Blocks\Types\Item_Single;
 use Pods\Blocks\Types\Item_Single_List_Fields;
 use Pods\Blocks\Types\View;
-use tad_DI52_ServiceProvider;
+use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
 
 /**
  * Class Service_Provider
@@ -18,7 +18,7 @@ use tad_DI52_ServiceProvider;
  *
  * @since 2.8.0
  */
-class Service_Provider extends tad_DI52_ServiceProvider {
+class Service_Provider extends Tribe_ServiceProvider {
 
 	/**
 	 * Registers the classes and functionality needed for the Blocks API.

@@ -16,7 +16,6 @@ use Pods\REST\V1\Endpoints\Swagger_Documentation;
 use Pods\REST\V1\Validator\Base as Base_Validator;
 use Tribe__Documentation__Swagger__Builder_Interface as Swagger_Builder_Interface;
 use WP_REST_Server;
-use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
 
 /**
  * Class Service_Provider
@@ -25,7 +24,7 @@ use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
  *
  * @since 2.8.0
  */
-class Service_Provider extends Tribe_ServiceProvider {
+class Service_Provider extends \Pods\_Service_Provider {
 
 	/**
 	 * Binds and sets up implementations.

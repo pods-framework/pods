@@ -3,7 +3,6 @@
 namespace Pods\Integrations;
 
 use Pods\Integration;
-use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
 
 /**
  * Class Service_Provider
@@ -13,7 +12,7 @@ use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
  *
  * @since 2.8.0
  */
-class Service_Provider extends Tribe_ServiceProvider {
+class Service_Provider extends \Pods\_Service_Provider {
 
 	protected $integrations = [];
 

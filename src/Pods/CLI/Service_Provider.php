@@ -8,7 +8,6 @@ use Pods\CLI\Commands\Playbook;
 use Pods\CLI\Commands\Pod;
 use Pods\CLI\Commands\Tools;
 use WP_CLI;
-use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
 
 /**
  * Class Service_Provider
@@ -17,7 +16,7 @@ use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
  *
  * @since 2.8.0
  */
-class Service_Provider extends Tribe_ServiceProvider {
+class Service_Provider extends \Pods\_Service_Provider {
 
 	/**
 	 * Binds and sets up implementations.

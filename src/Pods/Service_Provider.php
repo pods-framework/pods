@@ -3,14 +3,13 @@
 namespace Pods;
 
 use PodsMeta;
-use \TEC\Common\Contracts\Service_Provider as Tribe_ServiceProvider;
 
 /**
  * Class Service_Provider
  *
  * @since 2.8.0
  */
-class Service_Provider extends Tribe_ServiceProvider {
+class Service_Provider extends \Pods\_Service_Provider {
 
 	/**
 	 * Registers the classes and functionality needed.

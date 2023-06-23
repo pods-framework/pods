@@ -8,7 +8,6 @@ use Pods\CLI\Commands\Playbook;
 use Pods\CLI\Commands\Pod;
 use Pods\CLI\Commands\Tools;
 use WP_CLI;
-use tad_DI52_ServiceProvider;
 
 /**
  * Class Service_Provider
@@ -17,7 +16,7 @@ use tad_DI52_ServiceProvider;
  *
  * @since 2.8.0
  */
-class Service_Provider extends tad_DI52_ServiceProvider {
+class Service_Provider extends \Pods\Service_Provider_Base {
 
 	/**
 	 * Binds and sets up implementations.

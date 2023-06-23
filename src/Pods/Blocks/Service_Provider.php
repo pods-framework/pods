@@ -17,7 +17,7 @@ use Pods\Blocks\Types\View;
  *
  * @since 2.8.0
  */
-class Service_Provider extends \Pods\_Service_Provider {
+class Service_Provider extends \Pods\Service_Provider_Base {
 
 	/**
 	 * Registers the classes and functionality needed for the Blocks API.
@@ -43,7 +43,7 @@ class Service_Provider extends \Pods\_Service_Provider {
 	 * @since 2.8.0
 	 */
 	protected function hooks() {
-		add_action( 'pods_setup_content_types', tribe_callback( 'pods.blocks', 'register_blocks' ) );
-		add_filter( 'widget_types_to_hide_from_legacy_widget_block', tribe_callback( 'pods.blocks', 'remove_from_legacy_widgets' ) );
+		add_action( 'pods_setup_content_types', pods_container_callback( 'pods.blocks', 'register_blocks' ) );
+		add_filter( 'widget_types_to_hide_from_legacy_widget_block', pods_container_callback( 'pods.blocks', 'remove_from_legacy_widgets' ) );
 	}
 }

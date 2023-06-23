@@ -12,7 +12,7 @@ use Pods\Integration;
  *
  * @since 2.8.0
  */
-class Service_Provider extends \Pods\_Service_Provider {
+class Service_Provider extends \Pods\Service_Provider_Base {
 
 	protected $integrations = [];
 

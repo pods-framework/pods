@@ -7,7 +7,7 @@ namespace Pods\Integrations\WPGraphQL;
  *
  * @since 2.9.0
  */
-class Service_Provider extends \Pods\_Service_Provider {
+class Service_Provider extends \Pods\Service_Provider_Base {
 
 	/**
 	 * Registers the classes and functionality needed.

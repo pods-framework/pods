@@ -24,7 +24,7 @@ use WP_REST_Server;
  *
  * @since 2.8.0
  */
-class Service_Provider extends \Pods\_Service_Provider {
+class Service_Provider extends \Pods\Service_Provider_Base {
 
 	/**
 	 * Binds and sets up implementations.

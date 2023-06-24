@@ -13,6 +13,11 @@ use PodsAPI;
 class ProcessFormTest extends Pods_UnitTestCase {
 
 	/**
+	 * @var bool
+	 */
+	public static $db_reset_teardown = false;
+
+	/**
 	 * @var PodsAPI
 	 */
 	protected $api;
@@ -99,7 +104,20 @@ class ProcessFormTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function tearDown(): void {
+		if ( $this->pod_id ) {
+			$this->api->delete_pod( [ 'id' => $this->pod_id ] );
+
+			$this->pod_id = null;
+		}
+
 		$this->api = null;
+
+		// Reset current user.
+		global $current_user;
+
+		$current_user = null;
+
+		wp_set_current_user( 0 );
 
 		parent::tearDown();
 	}

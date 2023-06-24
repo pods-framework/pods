@@ -13,6 +13,11 @@ use PodsAPI;
 class FieldTest extends Pods_UnitTestCase {
 
 	/**
+	 * @var bool
+	 */
+	public static $db_reset_teardown = false;
+
+	/**
 	 * @var PodsAPI
 	 */
 	protected $api;
@@ -59,6 +64,12 @@ class FieldTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function tearDown(): void {
+		if ( $this->pod_id ) {
+			$this->api->delete_pod( [ 'id' => $this->pod_id ] );
+
+			$this->pod_id = null;
+		}
+
 		$this->api = null;
 
 		parent::tearDown();

@@ -47,7 +47,6 @@ ui/js/pods-ui-ready.min.js.map
 # PHPCS
 phpcs-report-*.txt
 
-
 # Tests - local config files
 codeception.yml
 tests/codeception/*.suite.yml
@@ -57,6 +56,3 @@ tests/codeception/_support/_generated
 # Tests - local output files
 tests/codeception/_output
 /coverage/
-
-# Allowed vendor files
-!tribe-common/vendor

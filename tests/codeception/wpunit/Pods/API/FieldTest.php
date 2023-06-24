@@ -13,11 +13,6 @@ use PodsAPI;
 class FieldTest extends Pods_UnitTestCase {
 
 	/**
-	 * @var bool
-	 */
-	public static $db_reset_teardown = false;
-
-	/**
 	 * @var PodsAPI
 	 */
 	protected $api;

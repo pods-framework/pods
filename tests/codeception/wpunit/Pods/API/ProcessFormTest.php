@@ -2,6 +2,7 @@
 
 namespace Pods_Unit_Tests\Pods\API;
 
+use Exception;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods;
 use PodsAPI;
@@ -149,7 +150,7 @@ class ProcessFormTest extends Pods_UnitTestCase {
 		$this->field2_id = $this->api->save_field( [
 			'pod_id'          => $this->pod_id,
 			'group_id'        => $this->group_id,
-			'name'            => $this->field,
+			'name'            => $this->field2,
 			'label'           => 'Test field 2',
 		] );
 
@@ -163,11 +164,12 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$this->field_conditional_show    = 'test_conditional_show_field';
 		$this->field_conditional_show_id = $this->api->save_field( [
-			'pod_id'          => $this->pod_id,
-			'group_id'        => $this->group_id,
-			'name'            => $this->field_conditional_show,
-			'label'           => 'Test conditional show field',
-			'conditional_logic' => [
+			'pod_id'                   => $this->pod_id,
+			'group_id'                 => $this->group_id,
+			'name'                     => $this->field_conditional_show,
+			'label'                    => 'Test conditional show field',
+			'enable_conditional_logic' => 1,
+			'conditional_logic'        => [
 				'action' => 'show',
 				'logic'  => 'any',
 				'rules'  => [
@@ -182,11 +184,12 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$this->field_conditional_hide    = 'test_conditional_hide_field';
 		$this->field_conditional_hide_id = $this->api->save_field( [
-			'pod_id'          => $this->pod_id,
-			'group_id'        => $this->group_id,
-			'name'            => $this->field_conditional_hide,
-			'label'           => 'Test conditional hide field',
-			'conditional_logic' => [
+			'pod_id'                   => $this->pod_id,
+			'group_id'                 => $this->group_id,
+			'name'                     => $this->field_conditional_hide,
+			'label'                    => 'Test conditional hide field',
+			'enable_conditional_logic' => 1,
+			'conditional_logic'        => [
 				'action' => 'hide',
 				'logic'  => 'any',
 				'rules'  => [
@@ -203,7 +206,11 @@ class ProcessFormTest extends Pods_UnitTestCase {
 	protected function create_base_form_params( Pods $pod, array $submittable_fields, bool $duplicate = false ): array {
 		$path = '/my-page-with-form/';
 
-		$form_fields = implode( ',', array_keys( $submittable_fields ) );
+		if ( ! isset( $submittable_fields[0] ) ) {
+			$submittable_fields = array_keys( $submittable_fields );
+		}
+
+		$form_fields = implode( ',', $submittable_fields );
 
 		$uri_hash   = wp_create_nonce( 'pods_uri_' . $path );
 		$field_hash = wp_create_nonce( 'pods_fields_' . $form_fields );
@@ -230,7 +237,7 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 	public function test_process_form_with_no_values() {
 		$this->expectExceptionMessage( 'Invalid submission' );
-		$this->expectException( \Exception::class );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( [] );
 	}
@@ -246,7 +253,7 @@ class ProcessFormTest extends Pods_UnitTestCase {
 		$params['_pods_nonce'] = '';
 
 		$this->expectExceptionMessage( 'Invalid submission' );
-		$this->expectException( \Exception::class );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
@@ -262,7 +269,7 @@ class ProcessFormTest extends Pods_UnitTestCase {
 		$params['_pods_pod'] = '';
 
 		$this->expectExceptionMessage( 'Invalid submission' );
-		$this->expectException( \Exception::class );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
@@ -278,7 +285,7 @@ class ProcessFormTest extends Pods_UnitTestCase {
 		$params['_pods_uri'] = '';
 
 		$this->expectExceptionMessage( 'Invalid submission' );
-		$this->expectException( \Exception::class );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
@@ -294,12 +301,14 @@ class ProcessFormTest extends Pods_UnitTestCase {
 		$params['_pods_form'] = '';
 
 		$this->expectExceptionMessage( 'Invalid submission' );
-		$this->expectException( \Exception::class );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
 
 	public function test_process_form_with_invalid_nonce() {
+		wp_set_current_user( 1 );
+
 		/** @var Pods $pod */
 		$pod = pods( $this->pod );
 
@@ -313,13 +322,15 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$params['_pods_nonce'] = 'this_nonce_is_invalid';
 
-		$this->expectExceptionMessage( 'Pod ID or name is required' );
-		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Access denied, please refresh and try again.' );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
 
 	public function test_process_form_with_wrong_pod() {
+		wp_set_current_user( 1 );
+
 		/** @var Pods $pod */
 		$pod = pods( $this->pod );
 
@@ -333,13 +344,15 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$params['_pods_pod'] = 'different_pod';
 
-		$this->expectExceptionMessage( 'Pod ID or name is required' );
-		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Access denied, please refresh and try again.' );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
 
 	public function test_process_form_with_wrong_id() {
+		wp_set_current_user( 1 );
+
 		/** @var Pods $pod */
 		$pod = pods( $this->pod );
 
@@ -353,13 +366,15 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$params['_pods_id'] = '1234';
 
-		$this->expectExceptionMessage( 'Pod ID or name is required' );
-		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Access denied, please refresh and try again.' );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
 
 	public function test_process_form_with_wrong_uri() {
+		wp_set_current_user( 1 );
+
 		/** @var Pods $pod */
 		$pod = pods( $this->pod );
 
@@ -373,13 +388,15 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$params['_pods_uri'] = 'wrong_uri_hash';
 
-		$this->expectExceptionMessage( 'Pod ID or name is required' );
-		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Access denied, please refresh and try again.' );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
 
 	public function test_process_form_with_wrong_form() {
+		wp_set_current_user( 1 );
+
 		/** @var Pods $pod */
 		$pod = pods( $this->pod );
 
@@ -393,13 +410,15 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$params['_pods_form'] = 'wrong,list,of,fields';
 
-		$this->expectExceptionMessage( 'Pod ID or name is required' );
-		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Access denied, please refresh and try again.' );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
 
-	public function test_process_form_with_wrong_location() {
+	public function test_process_form_with_different_location() {
+		wp_set_current_user( 1 );
+
 		/** @var Pods $pod */
 		$pod = pods( $this->pod );
 
@@ -411,15 +430,39 @@ class ProcessFormTest extends Pods_UnitTestCase {
 			$this->field_conditional_hide,
 		] );
 
-		$params['_pods_location'] = '/wrong-page/';
+		$params['_pods_location'] = '/a-different-page/';
 
-		$this->expectExceptionMessage( 'Pod ID or name is required' );
-		$this->expectException( \Exception::class );
+		$id = $this->api->process_form( $params );
+
+		$this->assertIsInt( $id );
+		$this->assertGreaterThan( 0, $id );
+	}
+
+	public function test_process_form_with_different_user() {
+		wp_set_current_user( 1 );
+
+		/** @var Pods $pod */
+		$pod = pods( $this->pod );
+
+		$params = $this->create_base_form_params( $pod, [
+			$this->field,
+		] );
+
+		// Set some data that will be saved.
+		$params[ 'pods_field_' . $this->field ] = 'some value for the field: ' . $this->field;
+
+		// Overwrite the user ID that was used to create the nonce.
+		$GLOBALS['current_user']->ID = 2;
+
+		$this->expectExceptionMessage( 'Access denied, please refresh and try again.' );
+		$this->expectException( Exception::class );
 
 		$this->api->process_form( $params );
 	}
 
 	public function test_process_form_returns_valid_id() {
+		wp_set_current_user( 1 );
+
 		/** @var Pods $pod */
 		$pod = pods( $this->pod );
 
@@ -442,5 +485,13 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$this->assertIsInt( $id );
 		$this->assertGreaterThan( 0, $id );
+
+		$pod->fetch( $id );
+
+		$this->assertEquals( $params[ 'pods_field_' . $this->field ], $pod->field( $this->field ) );
+		$this->assertEquals( $params[ 'pods_field_' . $this->field2 ], $pod->field( $this->field2 ) );
+		$this->assertEquals( $params[ 'pods_field_' . $this->field_hidden ], $pod->field( $this->field_hidden ) );
+		$this->assertEquals( '', $pod->field( $this->field_conditional_show ) ); // This field would be hidden and won't save.
+		$this->assertEquals( $params[ 'pods_field_' . $this->field_conditional_hide ], $pod->field( $this->field_conditional_hide ) );
 	}
 }

@@ -1,7 +1,6 @@
 <?php
 
 use Pods\API\Whatsit\Value_Field;
-use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -4698,7 +4697,7 @@ class PodsAPI {
 	 * $params['pod_id'] string The Pod ID (pod or pod_id is required)
 	 * $params['id'] int|array The item ID, or an array of item IDs to save data for
 	 * $params['data'] array (optional) Associative array of field names + values
-	 * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
+	 * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers/hooks.
 	 * $params['track_changed_fields'] bool Set to true to enable tracking of saved fields via
 	 * PodsAPI::get_changed_fields()
 	 * $params['error_mode'] string Throw an 'exception', 'exit' with the message, return 'false', or return 'wp_error'
@@ -4977,10 +4976,18 @@ class PodsAPI {
 				}
 			}
 
+			/**
+			 * Allow filtering whether to exclude conditionally hidden fields from saving.
+			 *
+			 * @since 3.0
+			 *
+			 * @param bool $exclude_conditionally_hidden_fields Whether to exclude conditionally hidden fields from saving.
+			 */
+			$exclude_conditionally_hidden_fields = apply_filters( 'pods_api_save_pod_item_exclude_conditionally_hidden_fields', true );
+
 			// Check if the fields are conditionally visible to be saved.
-			if ( $is_process_form ) {
-				// @todo In the future we will need to reference field values from $object_fields too.
-				$field_values = wp_list_pluck( $fields, 'value' );
+			if ( $exclude_conditionally_hidden_fields && $is_process_form ) {
+				$field_values = array_merge( wp_list_pluck( $object_fields, 'value' ), wp_list_pluck( $fields, 'value' ) );
 
 				foreach ( $fields_active as $active_key => $active_field_name ) {
 					// Skip if this is not a field we are working with.
@@ -4990,8 +4997,13 @@ class PodsAPI {
 
 					$conditional_logic = $fields[ $active_field_name ]->get_field_object()->get_conditional_logic();
 
-					// Skip if no conditional logic or the field is visible.
-					if ( ! $conditional_logic || $conditional_logic->is_visible( $field_values ) ) {
+					// Skip if no conditional logic.
+					if ( ! $conditional_logic ) {
+						continue;
+					}
+
+					// Skip if the field is visible and can be saved.
+					if ( $conditional_logic->is_visible( $field_values ) ) {
 						continue;
 					}
 
@@ -5024,13 +5036,6 @@ class PodsAPI {
 			}
 		}
 
-		$columns            =& $fields; // @deprecated 2.0.0
-		$active_columns     =& $fields_active; // @deprecated 2.0.0
-		$params->tbl_row_id =& $params->id; // @deprecated 2.0.0
-
-		$pre_save_helpers  = array();
-		$post_save_helpers = array();
-
 		$pieces = array(
 			'fields',
 			'params',
@@ -5052,12 +5057,16 @@ class PodsAPI {
 			$hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
 
 			if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+				$hooked = array_intersect_key( $pieces, $hooked );
+
 				extract( $hooked );
 			}
 
 			$hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item, $params->id );
 
 			if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+				$hooked = array_intersect_key( $pieces, $hooked );
+
 				extract( $hooked );
 			}
 
@@ -5065,45 +5074,39 @@ class PodsAPI {
 				$hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+					$hooked = array_intersect_key( $pieces, $hooked );
+
 					extract( $hooked );
 				}
 
 				$hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+					$hooked = array_intersect_key( $pieces, $hooked );
+
 					extract( $hooked );
 				}
 			} else {
 				$hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ), $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+					$hooked = array_intersect_key( $pieces, $hooked );
+
 					extract( $hooked );
 				}
 
 				$hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ), $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+					$hooked = array_intersect_key( $pieces, $hooked );
+
 					extract( $hooked );
-				}
-			}
-
-			// Call any pre-save helpers (if not bypassed)
-			if ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) {
-				if ( ! empty( $pod ) ) {
-					$helpers = array( 'pre_save_helpers', 'post_save_helpers' );
-
-					foreach ( $helpers as $helper ) {
-						if ( isset( $pod[ $helper ] ) && ! empty( $pod[ $helper ] ) ) {
-							${$helper} = explode( ',', $pod[ $helper ] );
-						}
-					}
 				}
 			}
 		}
 
 		$table_data         = [];
 		$table_formats      = [];
-		$update_values      = [];
 		$rel_fields         = [];
 		$rel_field_ids      = [];
 		$fields_to_run_save = [];
@@ -5965,7 +5968,7 @@ class PodsAPI {
 	 *
 	 * $params['pod'] string The Pod name (pod or pod_id is required)
 	 * $params['pod_id'] string The Pod ID (pod or pod_id is required)
-	 * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
+	 * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers/hooks.
 	 *
 	 * $data['id'] int The item ID (optional)
 	 * $data['data'] array An associative array of field names + values
@@ -11215,8 +11218,6 @@ class PodsAPI {
 
 		$this->display_errors = false;
 
-		$form = null;
-
 		$nonce    = pods_v_sanitized( '_pods_nonce', $form_params );
 		$pod      = pods_v_sanitized( '_pods_pod', $form_params );
 		$id       = pods_v_sanitized( '_pods_id', $form_params );
@@ -11230,10 +11231,17 @@ class PodsAPI {
 		}
 
 		if ( ! empty( $fields ) ) {
-			$fields = array_keys( $fields );
-			$form   = implode( ',', $fields );
-		} else {
+			if ( ! is_array( $fields ) ) {
+				$fields = explode( ',', $fields );
+			} else {
+				$fields = array_keys( $fields );
+			}
+
+			$form = implode( ',', $fields );
+		} elseif ( ! empty( $form ) ) {
 			$fields = explode( ',', $form );
+		} else {
+			$fields = [];
 		}
 
 		if ( empty( $nonce ) || empty( $pod ) || empty( $uri ) || empty( $fields ) ) {

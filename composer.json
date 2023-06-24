@@ -12,28 +12,31 @@
   "authors": [
     {
       "name": "Scott Kingsley Clark",
-      "email": "scott@pods.io",
       "homepage": "https://www.scottkclark.com/",
       "role": "Lead Developer"
     },
     {
+      "name": "Jory Hogeveen",
+      "homepage": "https://www.keraweb.nl/",
+      "role": "Contributing Developer and Community Support"
+    },
+    {
+      "name": "Zack Rothauser",
+      "homepage": "https://zackrothauser.com/",
+      "role": "React Contributor and Contributing Developer"
+    },
+    {
       "name": "Jim True",
       "homepage": "https://jimtrue.com/",
-      "role": "Developer and Support"
+      "role": "Community Support"
     },
     {
       "name": "Matt Gibbs",
       "homepage": "https://facetwp.com/",
       "role": "Founding Developer"
-    },
-    {
-      "name": "Phil Lewis",
-      "homepage": "https://github.com/pglewis",
-      "role": "Contributing Developer"
     }
   ],
   "support": {
-    "email": "support@pods.io",
     "issues": "https://github.com/pods-framework/pods/issues",
     "forum": "https://wordpress.org/support/plugin/pods",
     "source": "https://github.com/pods-framework/pods",
@@ -45,11 +48,19 @@
       "type": "github",
       "url": "https://github.com/the-events-calendar/coding-standards",
       "no-api": true
+    },
+    {
+      "name": "lucatume/di52",
+      "type": "github",
+      "url": "https://github.com/lucatume/di52",
+      "no-api": true
     }
   ],
   "require": {
     "composer/installers": "1.12.*",
-    "php": ">=5.6"
+    "php": ">=7.2",
+    "lucatume/di52": "^3.3.0",
+    "mustangostang/spyc": "^0.6.3"
   },
   "require-dev": {
     "automattic/vipwpcs": "^2.0",
@@ -82,8 +93,35 @@
   "suggest": {
     "wp-cli/wp-cli": "Enables access to Pods CLI commands."
   },
+  "scripts": {
+    "strauss": [
+      "test -f ./bin/strauss.phar || curl -o bin/strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/download/0.14.0/strauss.phar",
+      "@php bin/strauss.phar"
+    ],
+    "post-install-cmd": [
+      "@strauss"
+    ],
+    "post-update-cmd": [
+      "@strauss"
+    ]
+  },
   "extra": {
-    "installer-name": "pods"
+    "installer-name": "pods",
+    "strauss": {
+      "target_directory": "vendor/vendor-prefixed",
+      "namespace_prefix": "Pods\\Prefixed",
+      "classmap_prefix": "Pods__Prefixed__",
+      "constant_prefix": "PODS_PREFIXED_",
+      "function_prefix": "pods_prefixed_",
+      "packages": [
+        "lucatume/di52",
+        "mustangostang/spyc"
+      ],
+      "exclude_from_prefix": {
+        "file_patterns": []
+      },
+      "delete_vendor_files": false
+    }
   },
   "config": {
     "allow-plugins": {

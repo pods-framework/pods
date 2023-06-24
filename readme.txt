@@ -2,7 +2,7 @@
 Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, dan.stefan, Desertsnowman, mgibbs189, Shelob9, clubduece, curtismchale, mikedamage, jchristopher, pcfreak30
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
-Requires at least: 5.7
+Requires at least: 6.0
 Tested up to: 6.2
 Requires PHP: 7.2
 Stable tag: 3.0.0-b-1
@@ -181,8 +181,8 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 New minimum required versions have been updated as follows which includes notices to let you know if you need to update something:
 
-* New minimum WP version required: WordPress 5.8+ (previously: WP 5.7+)
-* New minimum PHP version required: PHP 7.2+ (previously: PHP 5.6+) — Hey! You should take the time to update to PHP 8.1+ because that is the lowest version actively supported by The PHP Group.
+* New minimum WP version required: WordPress 6.0+ (previously: WP 5.7+)
+* New minimum PHP version required: PHP 7.2+ (previously: PHP 5.6+) — Hey! You should take the time to update to PHP 8.1+ because that is currently the lowest version actively supported by The PHP Group.
 
 **3.0 Changelog**
 

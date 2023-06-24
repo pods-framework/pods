@@ -6,6 +6,7 @@
 use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
 use Pods\Config_Handler;
+use Pods\Container\Container;
 use Pods\Permissions;
 use Pods\Data\Map_Field_Values;
 use Pods\Whatsit;
@@ -4401,20 +4402,16 @@ function pods_is_types_only( $check_constant_only = false, $content_type = null 
  *
  * @since 2.8.17
  *
- * @param string|null $slug_or_class Either the slug of a binding previously registered using `tribe_singleton` or
- *                                   `tribe_register` or the full class name that should be automagically created or
+ * @param string|null $slug_or_class Either the slug of a binding previously registered using singleton or
+ *                                   register or the full class name that should be automagically created or
  *                                   `null` to get the container instance itself.
  *
  * @return mixed|null The pods_container() object or null if the function does not exist yet.
  */
 function pods_container( $slug_or_class = null ) {
-	if ( ! function_exists( 'tribe' ) ) {
-		_doing_it_wrong( __FUNCTION__, 'The function tribe() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+	$container = Container::init();
 
-		return null;
-	}
-
-	return call_user_func_array( 'tribe', func_get_args() );
+	return null === $slug_or_class ? $container : $container->make( $slug_or_class );
 }
 
 /**
@@ -4430,13 +4427,19 @@ function pods_container( $slug_or_class = null ) {
  * @return callable|null A PHP Callable based on the Slug and Methods passed or null if the function does not exist yet.
  */
 function pods_container_callback( $slug_or_class, $method ) {
-	if ( ! function_exists( 'tribe_callback' ) ) {
-		_doing_it_wrong( __FUNCTION__, 'The function tribe_callback() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+	$container = Container::init();
 
-		return null;
+	$arguments = func_get_args();
+	$is_empty  = 2 === count( $arguments );
+
+	if ( $is_empty ) {
+		$callable = $container->callback( $slug_or_class, $method );
+	} else {
+		$callback = $container->callback( 'callback', 'get' );
+		$callable = call_user_func_array( $callback, $arguments );
 	}
 
-	return call_user_func_array( 'tribe_callback', func_get_args() );
+	return $callable;
 }
 
 /**
@@ -4447,11 +4450,7 @@ function pods_container_callback( $slug_or_class, $method ) {
  * @param  string $provider_class The full class name for the service provider.
  */
 function pods_container_register_service_provider( $provider_class ) {
-	if ( ! function_exists( 'tribe_register_provider' ) ) {
-		_doing_it_wrong( __FUNCTION__, 'The function tribe_register_provider() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+	$container = Container::init();
 
-		return;
-	}
-
-	call_user_func_array( 'tribe_register_provider', func_get_args() );
+	$container->register( $provider_class );
 }

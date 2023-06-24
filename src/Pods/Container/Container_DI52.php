@@ -18,6 +18,12 @@ use Pods\Prefixed\lucatume\DI52\Container as DI52Container;
  * @method void give( mixed $implementation )
  */
 class Container implements Container_Interface {
+
+	/**
+	 * @var self
+	 */
+	protected static $instance;
+
 	/**
 	 * @var DI52Container
 	 */
@@ -30,6 +36,17 @@ class Container implements Container_Interface {
 	 */
 	public function __construct( $container = null ) {
 		$this->container = $container ?: new DI52Container();
+	}
+
+	/**
+	 * @return self
+	 */
+	public static function init() {
+		if ( empty( self::$instance ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 
 	/**

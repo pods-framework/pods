@@ -2,13 +2,13 @@
 
 namespace Pods\REST\V1\Endpoints;
 
-use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
-use Tribe__REST__Endpoints__DELETE_Endpoint_Interface as DELETE_Interface;
-use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
-use Tribe__REST__Endpoints__UPDATE_Endpoint_Interface as UPDATE_Interface;
+use Pods\REST\Interfaces\Endpoints\DELETE_Interface;
+use Pods\REST\Interfaces\Endpoints\READ_Interface;
+use Pods\REST\Interfaces\Endpoints\UPDATE_Interface;
+use Pods\REST\Interfaces\Swagger\Provider_Interface;
 use WP_REST_Request;
 
-class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Interface, Swagger_Interface {
+class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Interface, Provider_Interface {
 
 	/**
 	 * {@inheritdoc}

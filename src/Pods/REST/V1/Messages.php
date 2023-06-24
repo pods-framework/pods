@@ -2,14 +2,14 @@
 
 namespace Pods\REST\V1;
 
-use Tribe__REST__Messages_Interface as REST__Messages_Interface;
+use Pods\REST\Interfaces\Messages_Interface;
 
 /**
  * Class Messages
  *
  * @since 2.8.0
  */
-class Messages implements REST__Messages_Interface {
+class Messages implements Messages_Interface {
 
 	/**
 	 * @var string

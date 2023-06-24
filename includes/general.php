@@ -6,7 +6,7 @@
 use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
 use Pods\Config_Handler;
-use Pods\Container\Container;
+use Pods\Container\Container_DI52;
 use Pods\Permissions;
 use Pods\Data\Map_Field_Values;
 use Pods\Whatsit;
@@ -4409,7 +4409,7 @@ function pods_is_types_only( $check_constant_only = false, $content_type = null 
  * @return mixed|null The pods_container() object or null if the function does not exist yet.
  */
 function pods_container( $slug_or_class = null ) {
-	$container = Container::init();
+	$container = Container_DI52::init();
 
 	return null === $slug_or_class ? $container : $container->make( $slug_or_class );
 }
@@ -4427,7 +4427,7 @@ function pods_container( $slug_or_class = null ) {
  * @return callable|null A PHP Callable based on the Slug and Methods passed or null if the function does not exist yet.
  */
 function pods_container_callback( $slug_or_class, $method ) {
-	$container = Container::init();
+	$container = Container_DI52::init();
 
 	$arguments = func_get_args();
 	$is_empty  = 2 === count( $arguments );
@@ -4450,7 +4450,7 @@ function pods_container_callback( $slug_or_class, $method ) {
  * @param  string $provider_class The full class name for the service provider.
  */
 function pods_container_register_service_provider( $provider_class ) {
-	$container = Container::init();
+	$container = Container_DI52::init();
 
 	$container->register( $provider_class );
 }

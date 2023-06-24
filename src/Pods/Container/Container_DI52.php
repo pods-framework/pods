@@ -17,7 +17,7 @@ use Pods\Prefixed\lucatume\DI52\Container as DI52Container;
  * @method self needs( string $id )
  * @method void give( mixed $implementation )
  */
-class Container implements Container_Interface {
+class Container_DI52 implements Container_Interface {
 
 	/**
 	 * @var self

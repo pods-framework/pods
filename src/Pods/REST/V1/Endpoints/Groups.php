@@ -41,7 +41,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Provider_
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns all the tickets matching the search criteria.', 'pods' ),
+						'description' => '', // @todo Fill this out
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -60,9 +60,9 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Provider_
 											'type'        => 'integer',
 											'description' => __( 'The total number of result pages matching the search criteria.', 'pods' ),
 										],
-										'tickets'     => [
+										'groups'     => [
 											'type'  => 'array',
-											'items' => [ '$ref' => '#/components/schemas/Ticket' ],
+											'items' => [ '$ref' => '#/components/schemas/Group' ],
 										],
 									],
 								],

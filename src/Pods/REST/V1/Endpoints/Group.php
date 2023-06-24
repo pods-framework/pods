@@ -54,21 +54,21 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 
 		return [
 			'get' => [
-				'summary'    => __( 'Returns a single ticket data.', 'pods' ),
+				'summary'    => '', // @todo Fill this out
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns the data of the ticket with the specified post ID.', 'pods' ),
+						'description' => '', // @todo Fill this out
 						'content'     => [
 							'application/json' => [
 								'schema' => [
-									'$ref' => '#/components/schemas/Ticket',
+									'$ref' => '#/components/schemas/Group',
 								],
 							],
 						],
 					],
 					'400' => [
-						'description' => __( 'The ticket post ID is invalid.', 'pods' ),
+						'description' => '', // @todo Fill this out
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -78,7 +78,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 						],
 					],
 					'401' => [
-						'description' => __( 'The ticket with the specified ID is not accessible.', 'pods' ),
+						'description' => '', // @todo Fill this out
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -88,7 +88,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 						],
 					],
 					'404' => [
-						'description' => __( 'A ticket with the specified ID does not exist.', 'pods' ),
+						'description' => '', // @todo Fill this out
 						'content'     => [
 							'application/json' => [
 								'schema' => [

@@ -42,7 +42,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns all the tickets matching the search criteria.', 'pods' ),
+						'description' => '', // @todo Fill this out
 						'content'     => [
 							'application/json' => [
 								'schema' => [

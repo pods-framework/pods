@@ -152,6 +152,7 @@ class PodsInit {
 		self::$upgrade_needed = $this->needs_upgrade();
 
 		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'run' ] );
 		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
 		add_action( 'after_setup_theme', [ $this, 'after_setup_theme' ] );
 		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );

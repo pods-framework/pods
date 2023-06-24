@@ -5054,53 +5054,65 @@ class PodsAPI {
 
 		if ( false === $bypass_helpers ) {
 			// Plugin hooks
-			$hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
+			if ( has_filter( 'pods_api_pre_save_pod_item' ) ) {
+				$hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
 
-			if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-				$hooked = array_intersect_key( $pieces, $hooked );
+				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+					$hooked = array_intersect_key( $pieces, $hooked );
 
-				extract( $hooked );
+					extract( $hooked );
+				}
 			}
 
-			$hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item, $params->id );
+			if ( has_filter( "pods_api_pre_save_pod_item_{$params->pod}" ) ) {
+				$hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item, $params->id );
 
-			if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-				$hooked = array_intersect_key( $pieces, $hooked );
+				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+					$hooked = array_intersect_key( $pieces, $hooked );
 
-				extract( $hooked );
+					extract( $hooked );
+				}
 			}
 
 			if ( $is_new_item ) {
-				$hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
+				if ( has_filter( 'pods_api_pre_create_pod_item' ) ) {
+					$hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
 
-				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+						$hooked = array_intersect_key( $pieces, $hooked );
 
-					extract( $hooked );
+						extract( $hooked );
+					}
 				}
 
-				$hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
+				if ( has_filter( "pods_api_pre_create_pod_item_{$params->pod}" ) ) {
+					$hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
 
-				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+						$hooked = array_intersect_key( $pieces, $hooked );
 
-					extract( $hooked );
+						extract( $hooked );
+					}
 				}
 			} else {
-				$hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ), $params->id );
+				if ( has_filter( 'pods_api_pre_edit_pod_item' ) ) {
+					$hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ), $params->id );
 
-				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+						$hooked = array_intersect_key( $pieces, $hooked );
 
-					extract( $hooked );
+						extract( $hooked );
+					}
 				}
 
-				$hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ), $params->id );
+				if ( has_filter( "pods_api_pre_edit_pod_item_{$params->pod}" ) ) {
+					$hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ), $params->id );
 
-				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
+						$hooked = array_intersect_key( $pieces, $hooked );
 
-					extract( $hooked );
+						extract( $hooked );
+					}
 				}
 			}
 		}

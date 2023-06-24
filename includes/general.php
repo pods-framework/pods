@@ -4416,3 +4416,42 @@ function pods_container( $slug_or_class = null ) {
 
 	return call_user_func_array( 'tribe', func_get_args() );
 }
+
+/**
+ * Set up the container callback and return it.
+ *
+ * @since 2.9.18
+ *
+ * @param  string $slug_or_class A class or interface fully qualified name or a string slug.
+ * @param  string $method        The method that should be called on the resolved implementation with the
+ *                               specified array arguments.
+ * @param  mixed  [$argsN]       (optional) Any number of arguments that will be passed down to the Callback.
+ *
+ * @return callable|null A PHP Callable based on the Slug and Methods passed or null if the function does not exist yet.
+ */
+function pods_container_callback( $slug_or_class, $method ) {
+	if ( ! function_exists( 'tribe_callback' ) ) {
+		_doing_it_wrong( __FUNCTION__, 'The function tribe_callback() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+
+		return null;
+	}
+
+	return call_user_func_array( 'tribe_callback', func_get_args() );
+}
+
+/**
+ * Register the service provider.
+ *
+ * @since 2.9.18
+ *
+ * @param  string $provider_class The full class name for the service provider.
+ */
+function pods_container_register_service_provider( $provider_class ) {
+	if ( ! function_exists( 'tribe_register_provider' ) ) {
+		_doing_it_wrong( __FUNCTION__, 'The function tribe_register_provider() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+
+		return;
+	}
+
+	call_user_func_array( 'tribe_register_provider', func_get_args() );
+}

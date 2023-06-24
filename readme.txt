@@ -190,6 +190,11 @@ New minimum required versions have been updated as follows which includes notice
 * Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
 
+= 2.9.18 - June 23rd, 2023 =
+
+* Tweak: Abstract all container calls for Tribe Common library to Pods specific functions. (@sc0ttkclark)
+* Fixed: Prevent fatal errors with our service provider classes that was caused by a new version of The Events Calendar / Event Tickets plugin from a change to the Tribe Common library that they made. #7105 #7106 (@JoryHogeveen, @sc0ttkclark)
+
 = 2.9.17 - June 22nd, 2023 =
 
 * Performance: Allow disabling showing fields in the Media Library modals for sites that experience heavy performance issues from large media grids in the admin area. This new option is available in Pods Admin > Settings > Performance. (@sc0ttkclark)

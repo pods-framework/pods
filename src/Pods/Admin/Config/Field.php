@@ -3,7 +3,6 @@
 namespace Pods\Admin\Config;
 
 use PodsForm;
-use Tribe__Main;
 
 /**
  * Field configuration class.
@@ -571,16 +570,13 @@ class Field extends Base {
 		$options['basic']['pick_table']['data']  = $field_settings['pick_table'];
 
 		// @todo Look into supporting these in the future.
-		/*Tribe__Main::array_insert_after_key( 'visibility', $options['advanced'], [
+		/*
 			'search' => [
 				'label'   => __( 'Include in searches', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			],
-		] );
-
-		Tribe__Main::array_insert_after_key( 'validation', $options['advanced'], [
 			'regex_validation' => [
 				'label'   => __( 'RegEx Validation', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
@@ -607,7 +603,7 @@ class Field extends Base {
 				'default'    => '',
 				'depends-on' => [ 'unique' => true ],
 			],
-		] );*/
+		*/
 
 		if ( 'table' === $pod['storage'] || 'pod' === $pod['type'] ) {
 			unset( $options['basic']['repeatable'] );

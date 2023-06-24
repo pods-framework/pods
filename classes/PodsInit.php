@@ -256,7 +256,7 @@ class PodsInit {
 					static function( $value ) {
 						remove_filter(
 							'determine_current_user',
-							tribe_callback( 'promoter.connector', 'authenticate_user_with_connector' )
+							pods_container_callback( 'promoter.connector', 'authenticate_user_with_connector' )
 						);
 
 						return $value;
@@ -2676,19 +2676,19 @@ class PodsInit {
 
 		$ran = true;
 
-		tribe_register_provider( \Pods\Service_Provider::class );
-		tribe_register_provider( \Pods\Admin\Service_Provider::class );
-		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
-		tribe_register_provider( \Pods\Integrations\Service_Provider::class );
-		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
-		tribe_register_provider( \Pods\Integrations\WPGraphQL\Service_Provider::class );
+		pods_container_register_service_provider( \Pods\Service_Provider::class );
+		pods_container_register_service_provider( \Pods\Admin\Service_Provider::class );
+		pods_container_register_service_provider( \Pods\Blocks\Service_Provider::class );
+		pods_container_register_service_provider( \Pods\Integrations\Service_Provider::class );
+		pods_container_register_service_provider( \Pods\REST\V1\Service_Provider::class );
+		pods_container_register_service_provider( \Pods\Integrations\WPGraphQL\Service_Provider::class );
 
 		// Add WP-CLI commands.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
 			require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
 
-			tribe_register_provider( \Pods\CLI\Service_Provider::class );
+			pods_container_register_service_provider( \Pods\CLI\Service_Provider::class );
 		}
 
 		$this->load_i18n();

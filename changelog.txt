@@ -2,6 +2,11 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.18 - June 23rd, 2023 =
+
+* Tweak: Abstract all container calls for Tribe Common library to Pods specific functions. (@sc0ttkclark)
+* Fixed: Prevent fatal errors with our service provider classes that was caused by a new version of The Events Calendar / Event Tickets plugin from a change to the Tribe Common library that they made. #7105 #7106 (@JoryHogeveen, @sc0ttkclark)
+
 = 2.9.17 - June 22nd, 2023 =
 
 * Performance: Allow disabling showing fields in the Media Library modals for sites that experience heavy performance issues from large media grids in the admin area. This new option is available in Pods Admin > Settings > Performance. (@sc0ttkclark)

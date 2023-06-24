@@ -4,7 +4,6 @@ namespace Pods\Whatsit;
 
 use Exception;
 use Pods\Whatsit;
-use Tribe__Utils__Array;
 use WP_Block;
 
 /**
@@ -44,7 +43,7 @@ class Block extends Pod {
 			'renderType'       => $this->get_arg( 'renderType', $this->get_arg( 'render_type', 'js' ) ),
 			'category'         => $category,
 			'icon'             => $this->get_arg( 'icon', 'align-right' ),
-			'keywords'         => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
+			'keywords'         => wp_parse_list( $this->get_arg( 'keywords', 'pods' ) ),
 			'supports'         => $this->get_arg( 'supports', [] ),
 			'editor_script'    => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
 			'editor_style'     => $this->get_arg( 'editor_style' ),

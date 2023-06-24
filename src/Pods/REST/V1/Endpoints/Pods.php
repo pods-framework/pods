@@ -2,14 +2,13 @@
 
 namespace Pods\REST\V1\Endpoints;
 
-use PodsForm;
-use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
-use Tribe__REST__Endpoints__CREATE_Endpoint_Interface as CREATE_Interface;
-use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
+use Pods\REST\Interfaces\Endpoints\CREATE_Interface;
+use Pods\REST\Interfaces\Endpoints\READ_Interface;
+use Pods\REST\Interfaces\Swagger\Provider_Interface;
 use WP_Error;
 use WP_REST_Request;
 
-class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Interface {
+class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_Interface {
 
 	/**
 	 * {@inheritdoc}
@@ -43,7 +42,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns all the tickets matching the search criteria.', 'pods' ),
+						'description' => '', // @todo Fill this out
 						'content'     => [
 							'application/json' => [
 								'schema' => [

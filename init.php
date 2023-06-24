@@ -95,6 +95,8 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 
 		spl_autoload_register( array( 'PodsInit', 'autoload_class' ) );
 
+		require_once PODS_DIR . 'vendor/vendor-prefixed/autoload.php';
+
 		// Include global functions.
 		require_once PODS_DIR . 'includes/classes.php';
 		require_once PODS_DIR . 'includes/data.php';

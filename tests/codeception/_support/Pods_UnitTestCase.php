@@ -3,9 +3,10 @@
 namespace Pods_Unit_Tests;
 
 use Pods\Whatsit\Store;
-use Pods\Whatsit\Storage;
+use Pods\Static_Cache;
 use Pods;
 use PodsMeta;
+use PodsView;
 
 /**
  * Class Pods_UnitTestCase
@@ -29,13 +30,13 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 		if ( static::$db_reset_teardown ) {
 			parent::tearDown();
 
-			PodsMeta::$post_types             = array();
-			PodsMeta::$taxonomies             = array();
-			PodsMeta::$media                  = array();
-			PodsMeta::$comment                = array();
-			PodsMeta::$user                   = array();
-			PodsMeta::$advanced_content_types = array();
-			PodsMeta::$settings               = array();
+			PodsMeta::$post_types             = [];
+			PodsMeta::$taxonomies             = [];
+			PodsMeta::$media                  = [];
+			PodsMeta::$comment                = [];
+			PodsMeta::$user                   = [];
+			PodsMeta::$advanced_content_types = [];
+			PodsMeta::$settings               = [];
 
 			$object_collection = Store::get_instance();
 			$object_collection->delete_objects();
@@ -65,7 +66,12 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 				$object_collection->flatten_object( $identifier );
 			}
 
-			pods_api()->cache_flush_pods();
+			PodsView::reset_cached_keys();
+
+			$static_cache = pods_container( Static_Cache::class );
+			$static_cache->flush();
+
+			self::flush_cache();
 		}
 
 		self::$pods = array();

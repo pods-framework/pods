@@ -94,10 +94,20 @@ class PodsView {
 	 *
 	 * @since 3.0
 	 *
-	 * @param string      $cache_mode The cache mode.
+	 * @param null|string $cache_mode The cache mode, null if resetting all.
 	 * @param null|string $group      The cache group, if needed.
 	 */
-	public static function reset_cached_keys( $cache_mode, $group = null ) {
+	public static function reset_cached_keys( $cache_mode = null, $group = null ) {
+		if ( null === $cache_mode ) {
+			foreach ( self::$cache_modes as $cache_mode ) {
+				if ( isset( self::$cached_keys[ $cache_mode ] ) ) {
+					self::$cached_keys[ $cache_mode ] = [];
+				}
+			}
+
+			return;
+		}
+
 		if ( $group ) {
 			if ( isset( self::$cached_keys[ $cache_mode ][ $group ] ) ) {
 				self::$cached_keys[ $cache_mode ][ $group ] = [];

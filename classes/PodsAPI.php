@@ -1558,6 +1558,12 @@ class PodsAPI {
 				}
 
 				$pod_params['name'] = $params->extend_post_type;
+
+				$post_type_obj = get_post_type_object( $pod_params['name'] );
+
+				if ( $post_type_obj && ! empty( $post_type_obj->label ) ) {
+					$pod_params['label'] = $post_type_obj->label;
+				}
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
 				$pod_params['storage'] = $params->extend_storage;
 
@@ -1570,6 +1576,12 @@ class PodsAPI {
 				}
 
 				$pod_params['name'] = $params->extend_taxonomy;
+
+				$taxonomy_obj = get_taxonomy( $pod_params['name'] );
+
+				if ( $taxonomy_obj && ! empty( $taxonomy_obj->label ) ) {
+					$pod_params['label'] = $taxonomy_obj->label;
+				}
 			} elseif ( 'table' === $pod_params['type'] ) {
 				$pod_params['storage'] = 'table';
 				$pod_params['name']    = $params->extend_table;
@@ -1583,7 +1595,10 @@ class PodsAPI {
 				$pod_params['name'] = $params->extend_pod_type;
 			}
 
-			$pod_params['label']  = ucwords( str_replace( '_', ' ', $pod_params['name'] ) );
+			if ( empty( $pod_params['label'] ) ) {
+				$pod_params['label'] = ucwords( str_replace( '_', ' ', $pod_params['name'] ) );
+			}
+
 			$pod_params['object'] = $pod_params['name'];
 		}
 

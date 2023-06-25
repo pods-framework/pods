@@ -8,6 +8,21 @@ use Pods\Static_Cache;
 class PodsView {
 
 	/**
+	 * List of keys that have been cached grouped by cache mode.
+	 *
+	 * @since 3.0
+	 *
+	 * @var array
+	 */
+	private static $cached_keys = [
+		'transient'      => [],
+		'site-transient' => [],
+		'cache'          => [],
+		'static-cache'   => [],
+		'option-cache'   => [],
+	];
+
+	/**
 	 * @var array $cache_modes Array of available cache modes
 	 */
 	public static $cache_modes = [
@@ -23,8 +38,77 @@ class PodsView {
 	 * @return \PodsView
 	 */
 	private function __construct() {
-
 		// !nope
+	}
+
+	/**
+	 * Add a cache key to keep track of for a cache mode.
+	 *
+	 * @since 3.0
+	 *
+	 * @param string      $cache_mode   The cache mode.
+	 * @param string      $cache_key    The cache key.
+	 * @param null|string $group        The cache group, if needed.
+	 * @param null|string $original_key The original cache key, if different from the cache key.
+	 */
+	public static function add_cached_key( $cache_mode, $cache_key, $group = null, $original_key = null ) {
+		if ( ! isset( self::$cached_keys[ $cache_mode ] ) ) {
+			self::$cached_keys[ $cache_mode ] = [];
+		}
+
+		if ( null === $original_key ) {
+			$original_key = $cache_key;
+		}
+
+		if ( $group ) {
+			if ( ! isset( self::$cached_keys[ $cache_mode ][ $group ] ) ) {
+				self::$cached_keys[ $cache_mode ][ $group ] = [];
+			}
+
+			self::$cached_keys[ $cache_mode ][ $group ][ $cache_key ] = $original_key;
+
+			return;
+		}
+
+		self::$cached_keys[ $cache_mode ][ $cache_key ] = $original_key;
+	}
+
+	/**
+	 * Get the list of cache keys based on cache mode.
+	 *
+	 * @since 3.0
+	 *
+	 * @param string      $cache_mode The cache mode.
+	 * @param null|string $group      The cache group, if needed.
+	 */
+	public static function get_cached_keys( $cache_mode, $group = null ) : array {
+		if ( $group ) {
+			return self::$cached_keys[ $cache_mode ][ $group ] ?? [];
+		}
+
+		return self::$cached_keys[ $cache_mode ] ?? [];
+	}
+
+	/**
+	 * Reset cache keys based on cache mode.
+	 *
+	 * @since 3.0
+	 *
+	 * @param string      $cache_mode The cache mode.
+	 * @param null|string $group      The cache group, if needed.
+	 */
+	public static function reset_cached_keys( $cache_mode, $group = null ) {
+		if ( $group ) {
+			if ( isset( self::$cached_keys[ $cache_mode ][ $group ] ) ) {
+				self::$cached_keys[ $cache_mode ][ $group ] = [];
+			}
+
+			return;
+		}
+
+		if ( isset( self::$cached_keys[ $cache_mode ] ) ) {
+			self::$cached_keys[ $cache_mode ] = [];
+		}
 	}
 
 	/**
@@ -349,18 +433,32 @@ class PodsView {
 		$key = self::get_key( $key, $group_key );
 
 		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $group_key . $key, $original_key, $value, $expires, $group ) ) {
+			self::add_cached_key( $cache_mode, $group_key . $key, null, $original_key );
+
 			return $value;
 		} elseif ( 'transient' === $cache_mode ) {
+			self::add_cached_key( $cache_mode, $group_key . $key, null, $original_key );
+
 			set_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'site-transient' === $cache_mode ) {
+			self::add_cached_key( $cache_mode, $group_key . $key, null, $original_key );
+
 			set_site_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'cache' === $cache_mode && $object_cache_enabled ) {
-			wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
+			$group = ( empty( $group ) ? 'pods_view' : $group );
+
+			self::add_cached_key( $cache_mode, $key, $group, $original_key );
+
+			wp_cache_set( $key, $value, $group, $expires );
 		} elseif ( 'option-cache' === $cache_mode ) {
+			$group = ( empty( $group ) ? 'pods_option_cache' : $group );
+
+			self::add_cached_key( $cache_mode, $key, $group, $original_key );
+
 			$value = apply_filters( "pre_set_transient_{$key}", $value );
 
 			if ( $external_object_cache ) {
-				$result = wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_option_cache' : $group ), $expires );
+				$result = wp_cache_set( $key, $value, $group, $expires );
 			} else {
 				$transient_timeout = '_pods_option_timeout_' . $key;
 				$key               = '_pods_option_' . $key;
@@ -388,7 +486,11 @@ class PodsView {
 			$static_cache = pods_container( Static_Cache::class );
 
 			if ( $static_cache ) {
-				$static_cache->set( $key, $value, ( empty( $group ) ? __CLASS__ : $group ) );
+				$group = ( empty( $group ) ? __CLASS__ : $group );
+
+				self::add_cached_key( $cache_mode, $key, $group, $original_key );
+
+				$static_cache->set( $key, $value, $group );
 			}
 		}//end if
 

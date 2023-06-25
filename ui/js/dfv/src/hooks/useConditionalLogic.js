@@ -26,7 +26,7 @@ const looseStringEqualityCheck = ( item1, item2 ) => {
 		item2 = item2 ? 1 : 0;
 	}
 
-	return item1.toString() === item2.toString();
+	return item1.toString().toLowerCase() === item2.toString().toLowerCase();
 };
 
 /**

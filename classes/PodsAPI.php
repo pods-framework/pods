@@ -1703,6 +1703,10 @@ class PodsAPI {
 			if ( $load_params ) {
 				$pod = $this->load_pod( $load_params );
 
+				if ( is_wp_error( $pod ) ) {
+					$pod = null;
+				}
+
 				if ( $fail_on_load ) {
 					if ( is_wp_error( $pod ) ) {
 						return $pod;
@@ -11142,7 +11146,13 @@ class PodsAPI {
 			// Delete Pods Options Cache in the database
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
-			pods_cache_clear( true );
+			if ( class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class ) ) {
+				// Maybe use the test-based cache flushing to prevent major slowdowns.
+				\Pods_Unit_Tests\Pods_UnitTestCase::flush_cache();
+			} else {
+				// Do normal cache clear.
+				pods_cache_clear( true );
+			}
 
 			if ( $flush_rewrites ) {
 				pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );

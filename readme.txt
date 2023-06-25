@@ -175,7 +175,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0 Beta 1 - April 28th, 2023 =
+= 3.0 RC 1 June 25th, 2023 =
 
 **Breaking compatibility warning**
 
@@ -189,6 +189,8 @@ New minimum required versions have been updated as follows which includes notice
 * Feature: Conditional Logic for Fields - You can now choose to show or hide a field based on the value of another field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9) 
 * Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
+* Fixed: When extending a post type or taxonomy it will now use the associated post type or taxonomy label when setting up the pod so it matches. #6350 (@sc0ttkclark)
+* Removed: The Tribe Common library has been removed from Pods and it will alleviate conflicts from plugins like The Events Calendar and Event Tickets going forward.
 
 = 2.9.18 - June 23rd, 2023 =
 

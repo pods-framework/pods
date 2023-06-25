@@ -89,9 +89,15 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 		}
 		case 'EMPTY': {
 			if ( Array.isArray( valueToTest ) ) {
+				console.debug( 'Conditional logic: value to test is an array' );
 				return valueToTest.length === 0;
+			} else if ( [ null, undefined ].includes( valueToTest ) ) {
+				console.debug( 'Conditional logic: value to test is null or undefined' );
+				// null and undefined are considered "empty".
+				return true;
 			} else if ( [ '0', 0 ].includes( valueToTest ) ) {
-				// The string '0' and '0' are not considered "empty".
+				console.debug( 'Conditional logic: value to test is \'0\' or 0' );
+				// The string '0' and 0 are not considered "empty".
 				return false;
 			}
 
@@ -99,9 +105,15 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 		}
 		case 'NOT EMPTY': {
 			if ( Array.isArray( valueToTest ) ) {
+				console.debug( 'Conditional logic: value to test is an array' );
 				return valueToTest.length > 0;
-			} else if ( 0 === valueToTest ) {
-				// The integer 0 is considered "not empty".
+			} else if ( [ null, undefined ].includes( valueToTest ) ) {
+				console.debug( 'Conditional logic: value to test is null or undefined' );
+				// null and undefined are considered "empty".
+				return false;
+			} else if ( [ '0', 0 ].includes( valueToTest ) ) {
+				console.debug( 'Conditional logic: value to test is \'0\' or 0' );
+				// The string '0' and 0 are not considered "empty".
 				return true;
 			}
 
@@ -222,7 +234,7 @@ const recursiveCheckConditionalLogicForField = (
 		} );
 
 		// If the value to test is not set, then it can't pass.
-		if ( 'undefined' === typeof valueToTest ) {
+		if ( 'undefined' === typeof valueToTest && ! [ 'EMPTY', 'NOT EMPTY' ].includes( compare.toUpperCase() ) ) {
 			console.debug( 'Conditional logic: no value to test' );
 			console.debug( { fieldName, fieldNameToTest, valueToTest, allPodValues } );
 			return false;

@@ -35,7 +35,7 @@ const looseStringEqualityCheck = ( item1, item2 ) => {
  * @param {string} rule        Any of the possible conditional rules: 'like', 'not like',
  *                             'begins', 'not begins', 'ends', 'not ends', 'matches', 'not matches',
  *                             'in', 'not in', 'empty', 'not empty', '=', '!=', '<', '<=', '>', '>='.
- * @param {string} ruleValue   The value to compare against.
+ * @param {string|array} ruleValue   The value to compare against.
  * @param {string} valueToTest The value to be tested.
  *
  * @return {boolean} True if the test passes.
@@ -43,6 +43,8 @@ const looseStringEqualityCheck = ( item1, item2 ) => {
 const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 	// Bail if the current value is not set at all.
 	if ( 'undefined' === typeof rule ) {
+		console.debug( 'Conditional logic: rule is undefined' );
+
 		return false;
 	}
 
@@ -141,8 +143,12 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 
 			return Number( ruleValue ) >= Number( valueToTest );
 		}
-		default:
+		default: {
+			console.debug( 'Conditional logic: rule is unsupported' );
+			console.debug( { rule, ruleValue, valueToTest } );
+
 			return false;
+		}
 	}
 };
 
@@ -154,6 +160,7 @@ const recursiveCheckConditionalLogicForField = (
 	const {
 		enable_conditional_logic: enableConditionalLogic,
 		conditional_logic: conditionalLogic,
+		name: fieldName,
 	} = fieldConfig;
 
 	// The field is always enabled if "conditional logic" is not turned on,
@@ -165,6 +172,9 @@ const recursiveCheckConditionalLogicForField = (
 	if ( 'object' !== typeof conditionalLogic ) {
 		return true;
 	}
+
+	console.debug( 'Conditional logic: enabled' );
+	console.debug( { fieldName, conditionalLogic, allPodValues } );
 
 	const {
 		action,
@@ -214,7 +224,7 @@ const recursiveCheckConditionalLogicForField = (
 		// If the value to test is not set, then it can't pass.
 		if ( 'undefined' === typeof valueToTest ) {
 			console.debug( 'Conditional logic: no value to test' );
-			console.debug( { fieldNameToTest, valueToTest, allPodValues } );
+			console.debug( { fieldName, fieldNameToTest, valueToTest, allPodValues } );
 			return false;
 		}
 
@@ -225,7 +235,7 @@ const recursiveCheckConditionalLogicForField = (
 		);
 
 		console.debug( 'Conditional logic: validateConditionalValue' );
-		console.debug( { doesValueMatch, compare, ruleValue, valueToTest } );
+		console.debug( { fieldName, fieldNameToTest, doesValueMatch, compare, ruleValue, valueToTest } );
 
 		// No need to go up the tree of dependencies if it already failed.
 		if ( false === doesValueMatch ) {

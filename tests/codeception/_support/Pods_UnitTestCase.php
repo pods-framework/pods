@@ -68,8 +68,7 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 
 			PodsView::reset_cached_keys();
 
-			$static_cache = pods_container( Static_Cache::class );
-			$static_cache->flush();
+			pods_static_cache_clear();
 
 			self::flush_cache();
 		}

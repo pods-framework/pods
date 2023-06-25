@@ -59,15 +59,13 @@ class FieldTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function tearDown(): void {
-		if ( $this->pod_id ) {
-			$this->api->delete_pod( [ 'id' => $this->pod_id ] );
+		parent::tearDown();
 
-			$this->pod_id = null;
+		if ( $this->pod ) {
+			$this->api->delete_pod( [ 'name' => $this->pod ] );
 		}
 
 		$this->api = null;
-
-		parent::tearDown();
 	}
 
 	public function populate() {
@@ -77,7 +75,7 @@ class FieldTest extends Pods_UnitTestCase {
 			'type'            => 'post_type',
 			'label'           => 'Test pod for groups',
 			'some_custom_key' => 'Some custom value',
-			'another_key'     => - 1,
+			'another_key'     => 0,
 		] );
 
 		$this->group    = 'test_group';
@@ -86,7 +84,7 @@ class FieldTest extends Pods_UnitTestCase {
 			'name'            => $this->group,
 			'label'           => 'Test group',
 			'some_custom_key' => 'One custom value',
-			'another_key'     => 0,
+			'another_key'     => 1,
 		] );
 	}
 
@@ -98,7 +96,7 @@ class FieldTest extends Pods_UnitTestCase {
 			'name'            => $this->field,
 			'label'           => 'Test field',
 			'some_custom_key' => 'Field custom value',
-			'another_key'     => 1,
+			'another_key'     => 2,
 		] );
 	}
 
@@ -111,7 +109,6 @@ class FieldTest extends Pods_UnitTestCase {
 		$params = [];
 
 		$this->expectExceptionMessage( 'Pod ID or name is required' );
-		$this->expectException( \Exception::class );
 
 		$this->api->save_field( $params );
 	}
@@ -127,7 +124,6 @@ class FieldTest extends Pods_UnitTestCase {
 		];
 
 		$this->expectExceptionMessage( 'Pod field name or label is required' );
-		$this->expectException( \Exception::class );
 
 		$this->api->save_field( $params );
 	}
@@ -567,7 +563,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$params = [
 			'args' => [
-				'another_key' => 1,
+				'another_key' => 2,
 			],
 		];
 
@@ -599,7 +595,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$params = [
 			'options' => [
-				'another_key' => 1,
+				'another_key' => 2,
 			],
 		];
 
@@ -633,7 +629,7 @@ class FieldTest extends Pods_UnitTestCase {
 			'where' => [
 				[
 					'key'   => 'another_key',
-					'value' => 1,
+					'value' => 2,
 				],
 			],
 		];
@@ -809,7 +805,6 @@ class FieldTest extends Pods_UnitTestCase {
 		];
 
 		$this->expectExceptionMessage( 'Field not found' );
-		$this->expectException( \Exception::class );
 
 		$this->api->delete_field( $params );
 	}

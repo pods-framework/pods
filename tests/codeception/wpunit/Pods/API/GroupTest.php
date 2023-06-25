@@ -49,15 +49,13 @@ class GroupTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function tearDown(): void {
-		if ( $this->pod_id ) {
-			$this->api->delete_pod( [ 'id' => $this->pod_id ] );
+		parent::tearDown();
 
-			$this->pod_id = null;
+		if ( $this->pod ) {
+			$this->api->delete_pod( [ 'name' => $this->pod ] );
 		}
 
 		$this->api = null;
-
-		parent::tearDown();
 	}
 
 	public function populate() {

@@ -5235,6 +5235,8 @@ class PodsAPI {
 				$fields[ $field ]['required'] = 0;
 			} else {
 				if ( $is_multi_repeatable_field ) {
+					$validate = true;
+
 					// Handle repeatable field values (if an array was sent).
 					foreach ( $value as $repeatable_value ) {
 						// Validate value.

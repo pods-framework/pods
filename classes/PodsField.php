@@ -626,6 +626,9 @@ class PodsField {
 			$config['placeholder'] = '';
 		}
 
+		$config['label']       = pods_kses_exclude_p( $config['label'] );
+		$config['description'] = pods_kses_exclude_p( $config['description'] );
+
 		return $config;
 
 	}

@@ -3699,6 +3699,12 @@ class PodsAPI {
 				'label',
 				'description',
 				'pod_id',
+				'group_id',
+				'attributes',
+				'depends-on',
+				'excludes-on',
+				'wildcard-on',
+				'overwrite',
 				'pod',
 				'weight',
 				'options',
@@ -3926,7 +3932,7 @@ class PodsAPI {
 			}
 		}
 
-		if ( ! empty( $old_id ) && 'meta' === $pod['storage'] && $old_name !== $field['name'] && $pod['meta_table'] !== $pod['table'] ) {
+		if ( $table_operation && ! empty( $old_id ) && 'meta' === $pod['storage'] && $old_name !== $field['name'] && $pod['meta_table'] !== $pod['table'] ) {
 			$prepare = array(
 				$field['name'],
 				$old_name

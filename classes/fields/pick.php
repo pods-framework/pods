@@ -548,7 +548,11 @@ class PodsField_Pick extends PodsField {
 			}
 		} elseif ( $force ) {
 			// If we are rebuilding, make sure we start with a clean slate.
-			self::$related_objects = array();
+			self::$related_objects = [];
+		}
+
+		if ( ! is_array( self::$related_objects ) ) {
+			self::$related_objects = [];
 		}
 
 		if ( empty( self::$related_objects ) ) {

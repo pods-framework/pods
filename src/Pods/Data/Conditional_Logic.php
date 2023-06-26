@@ -72,7 +72,8 @@ class Conditional_Logic {
 				return null;
 			}
 
-			return new self(
+			return self::setup_from_object(
+				$object,
 				$object_logic['action'],
 				$object_logic['logic'],
 				$object_logic['rules']
@@ -184,7 +185,43 @@ class Conditional_Logic {
 			return null;
 		}
 
-		return new self( $action, $logic, $rules );
+		return self::setup_from_object(
+			$object,
+			$action,
+			$logic,
+			$rules
+		);
+	}
+
+	/**
+	 * Set up the Conditional Logic instance from an object.
+	 *
+	 * @since 3.0
+	 *
+	 * @param Whatsit|array $object The object data.
+	 * @param string        $action The action to take (show/hide).
+	 * @param string        $logic  The logic to use (any/all).
+	 * @param array         $rules  The conditional rules.
+	 */
+	private static function setup_from_object( $object, $action, $logic, $rules ): Conditional_Logic {
+		$conditional_logic = new self( $action, $logic, $rules );
+
+		if ( $object instanceof Whatsit ) {
+			/**
+			 * Allow filtering the conditional logic object used for a Whatsit object.
+			 *
+			 * @since 3.0
+			 *
+			 * @param Conditional_Logic $conditional_logic The conditional logic object.
+			 * @param Whatsit           $object            The object data.
+			 * @param string            $action            The action to take (show/hide).
+			 * @param string            $logic             The logic to use (any/all).
+			 * @param array             $rules             The conditional rules.
+			 */
+			$conditional_logic = apply_filters( 'pods_data_conditional_logic_for_object', $conditional_logic, $object, $action, $logic, $rules );
+		}
+
+		return $conditional_logic;
 	}
 
 	/**

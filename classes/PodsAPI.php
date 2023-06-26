@@ -5027,8 +5027,28 @@ class PodsAPI {
 						continue;
 					}
 
+					$is_visible = $conditional_logic->is_visible( $field_values );
+
+					/**
+					 * Allow filtering whether the field is visible from conditional logic.
+					 *
+					 * @since 3.0
+					 *
+					 * @param bool   $is_visible   Whether the field is visible from conditional logic.
+					 * @param Field  $field        The field object.
+					 * @param array  $field_values The field values referenced.
+					 * @param object $params       The save_pod_item parameters.
+					 */
+					$is_visible = (bool) apply_filters(
+						'pods_api_save_pod_item_conditional_logic_field_is_visible',
+						$is_visible,
+						$fields[ $active_field_name ],
+						$field_values,
+						$params
+					);
+
 					// Skip if the field is visible and can be saved.
-					if ( $conditional_logic->is_visible( $field_values ) ) {
+					if ( $is_visible ) {
 						continue;
 					}
 

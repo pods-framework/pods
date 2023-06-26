@@ -614,7 +614,14 @@ class PodsField_Pick extends PodsField {
 			asort( $post_types );
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
+				if (
+					empty( $post_type )
+					|| 'attachment' === $post_type
+					|| (
+						$pods_meta
+						&& ! $pods_meta->is_type_covered( 'post_type', $post_type )
+					)
+				) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -638,7 +645,14 @@ class PodsField_Pick extends PodsField {
 			asort( $post_types );
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
+				if (
+					empty( $post_type )
+					|| 'attachment' === $post_type
+					|| (
+						$pods_meta
+						&& ! $pods_meta->is_type_covered( 'post_type', $post_type )
+					)
+				) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -662,7 +676,13 @@ class PodsField_Pick extends PodsField {
 			asort( $taxonomies );
 
 			foreach ( $taxonomies as $taxonomy => $label ) {
-				if ( empty( $taxonomy ) || ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
+				if (
+					empty( $taxonomy )
+					|| (
+						$pods_meta
+						&& ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy )
+					)
+				) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;

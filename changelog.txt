@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 2.9.19 - June 28th, 2023 =
+
+* Fixed: Ensure that cache modes are validated correctly to prevent transients / static cache / etc from being forced into persistent cache which could fill caches up. (@sc0ttkclark, props to Björn Hasselberg for helping debug and find this)
+
 = 2.9.18 - June 23rd, 2023 =
 
 * Tweak: Abstract all container calls for Tribe Common library to Pods specific functions. (@sc0ttkclark)

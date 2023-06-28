@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.7
 Tested up to: 6.2
 Requires PHP: 5.6
-Stable tag: 2.9.18
+Stable tag: 2.9.19
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,10 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.9.19 - June 28th, 2023 =
+
+* Fixed: Ensure that cache modes are validated correctly to prevent transients / static cache / etc from being forced into persistent cache which could fill caches up. (@sc0ttkclark, props to Björn Hasselberg for helping debug and find this)
 
 = 2.9.18 - June 23rd, 2023 =
 

@@ -864,7 +864,7 @@ class PodsView {
 		return (
 			$cache_mode
 			&& is_string( $cache_mode )
-			&& ! isset( self::$cache_modes[ $cache_mode ] )
+			&& isset( self::$cache_modes[ $cache_mode ] )
        );
 	}
 

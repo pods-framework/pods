@@ -193,6 +193,10 @@ New minimum required versions have been updated as follows which includes notice
 * Fixed: When extending a post type or taxonomy it will now use the associated post type or taxonomy label when setting up the pod so it matches. #6350 (@sc0ttkclark)
 * Removed: The Tribe Common library has been removed from Pods and it will alleviate conflicts from plugins like The Events Calendar and Event Tickets going forward.
 
+= 2.9.19 - June 28th, 2023 =
+
+* Fixed: Ensure that cache modes are validated correctly to prevent transients / static cache / etc from being forced into persistent cache which could fill caches up. (@sc0ttkclark, props to Björn Hasselberg for helping debug and find this)
+
 = 2.9.18 - June 23rd, 2023 =
 
 * Tweak: Abstract all container calls for Tribe Common library to Pods specific functions. (@sc0ttkclark)

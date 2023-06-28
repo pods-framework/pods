@@ -130,7 +130,7 @@ class PodsView {
 	 */
 	public static function reset_cached_keys( $cache_mode = null, $group = null ) {
 		if ( null === $cache_mode ) {
-			foreach ( self::$cache_modes as $cache_mode_to_reset ) {
+			foreach ( self::$cache_modes as $cache_mode_to_reset => $unused ) {
 				if ( isset( self::$cached_keys[ $cache_mode_to_reset ] ) ) {
 					self::$cached_keys[ $cache_mode_to_reset ] = [];
 				}

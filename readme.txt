@@ -175,7 +175,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0 RC 1 June 25th, 2023 =
+= 3.0 RC 1 - July 5th, 2023 =
 
 **Breaking compatibility warning**
 
@@ -186,8 +186,7 @@ New minimum required versions have been updated as follows which includes notice
 
 **3.0 Changelog**
 
-* Feature: Conditional Logic for Fields - You can now choose to show or hide a field based on the value of another field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9) 
-* Added: New filter `pods_tribe_common_vendor_autoload` will now let you remove conflicting libraries from loading so your own libraries can continue to be used when that occurs. (@sc0ttkclark)
+* Feature: Conditional Logic for Fields - You can now choose to show or hide a Pods field based on the value of another Pods field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9) 
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
 * Added: When importing and exporting Pods packages, they now include the list of active components.
 * Fixed: When extending a post type or taxonomy it will now use the associated post type or taxonomy label when setting up the pod so it matches. #6350 (@sc0ttkclark)
@@ -796,5 +795,8 @@ Our GitHub has the full list of all prior releases of Pods: https://github.com/p
 
 == Upgrade Notice ==
 
+= 3.0 =
+This upgrade requires a minimum versions of PHP 7.2+ and WordPress 6.0+.
+
 = 2.8 =
-This upgrade requires a minimum PHP version of 5.6+ and WordPress 5.5+.
+This upgrade requires a minimum versions of PHP 5.6+ and WordPress 5.5+.

@@ -190,6 +190,7 @@ New minimum required versions have been updated as follows which includes notice
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
 * Added: When importing and exporting Pods packages, they now include the list of active components.
 * Fixed: When extending a post type or taxonomy it will now use the associated post type or taxonomy label when setting up the pod so it matches. #6350 (@sc0ttkclark)
+* Fixed: Resolved problems with saving the featured image from frontend forms when a post type supports featured images. (@sc0ttkclark) 
 * Removed: The Tribe Common library has been removed from Pods and it will alleviate conflicts from plugins like The Events Calendar and Event Tickets going forward.
 
 = 2.9.19 - June 28th, 2023 =

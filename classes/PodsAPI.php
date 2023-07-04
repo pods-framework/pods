@@ -1079,6 +1079,19 @@ class PodsAPI {
 			];
 
 			if ( ! empty( $pod ) ) {
+				// Add featured image.
+				if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
+					$fields['_thumbnail_id'] = [
+						'name'             => '_thumbnail_id',
+						'label'            => __( 'Featured Image', 'pods' ),
+						'type'             => 'file',
+						'file_format_type' => 'single',
+						'file_type'        => 'images-any',
+						'file_edit_title'  => 0,
+					];
+				}
+
+				// Add taxonomies.
 				$taxonomies = get_object_taxonomies( $pod_name, 'objects' );
 
 				foreach ( $taxonomies as $taxonomy ) {
@@ -5301,6 +5314,23 @@ class PodsAPI {
 				if ( 'taxonomy' === $object_fields[ $field ]['type'] ) {
 					$post_term_data[ $field ] = $value;
 				} else {
+					// Maybe flatten the array for files.
+					if (
+						'file' === $object_fields[ $field ]['type']
+						&& array_key_exists( 'id', (array) current( $value ) )
+					) {
+						$value = array_values( wp_list_pluck( $value, 'id' ) );
+
+						// Maybe handle thumbnail as a single value.
+						if ( '_thumbnail_id' === $field ) {
+							if ( empty( $value ) ) {
+								$value = '';
+							} else {
+								$value = current( $value );
+							}
+						}
+					}
+
 					$object_data[ $field ] = $value;
 
 					$has_object_data_to_save = true;

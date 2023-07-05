@@ -2847,7 +2847,15 @@ class PodsField_Pick extends PodsField {
 					$params['where'] = null;
 				}
 
-				$results = $search_data->select( $params );
+				try {
+					$results = $search_data->select( $params );
+				} catch ( Exception $exception ) {
+					if ( pods_is_debug_display() ) {
+						pods_error_exception( $exception );
+					}
+
+					$results = [];
+				}
 
 				if ( $autocomplete && 0 < $params['limit'] && $params['limit'] < $search_data->total_found() ) {
 					if ( ! empty( $value ) ) {
@@ -2877,7 +2885,15 @@ class PodsField_Pick extends PodsField {
 
 						$params['where'] .= "`t`.`{$search_data->field_id}` IN ( {$ids} )";
 
-						$results = $search_data->select( $params );
+						try {
+							$results = $search_data->select( $params );
+						} catch ( Exception $exception ) {
+							if ( pods_is_debug_display() ) {
+								pods_error_exception( $exception );
+							}
+
+							$results = [];
+						}
 					}//end if
 				} else {
 					$autocomplete = false;

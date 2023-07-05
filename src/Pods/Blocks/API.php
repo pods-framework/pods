@@ -92,7 +92,7 @@ class API {
 				$blocks_config['commands'][] = [
 					'name'         => 'pods/edit',
 					'label'        => __( 'Edit this Pod', 'pods' ),
-					'searchLabel'  => __( 'Edit this Pod > Manage Field Groups, Fields, and other post type settings', 'pods' ),
+					'searchLabel'  => __( 'Edit this Pod > Manage Field Groups, Custom Fields, and other Custom Post Type settings', 'pods' ),
 					'icon'         => 'pods',
 					'callback_url' => admin_url( 'admin.php?page=pods&action=edit&id=' . $pods_instance->pod_data->get_id() ),
 				];

@@ -91,10 +91,10 @@ class API {
 			if ( $pods_instance instanceof Pods && $pods_instance->pod_data ) {
 				$blocks_config['commands'][] = [
 					'name'         => 'pods/edit',
-					'label'        => __( 'Edit this Pod', 'pods' ),
-					'searchLabel'  => __( 'Edit this Pod > Manage Field Groups, Custom Fields, and other Custom Post Type settings in the Pods Admin', 'pods' ),
+					'label'        => __( 'Edit this Pod configuration', 'pods' ),
+					'searchLabel'  => __( 'Edit this Pod configuration > Manage Field Groups, Custom Fields, and other Custom Post Type settings in the Pods Admin', 'pods' ),
 					'icon'         => 'pods',
-					'callback_url' => admin_url( 'admin.php?page=pods&action=edit&id=' . $pods_instance->pod_data->get_id() ),
+					'callbackUrl'  => admin_url( 'admin.php?page=pods&action=edit&id=' . $pods_instance->pod_data->get_id() ),
 				];
 			}
 		}

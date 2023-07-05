@@ -1,3 +1,3 @@
-# createBlockCollection
+# createCommand
 
-Dynamically creates a block collection.
+Dynamically creates a command.

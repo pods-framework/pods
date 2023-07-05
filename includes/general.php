@@ -553,44 +553,44 @@ function pods_is_debug_display() {
 /**
  * Determine if user has admin access
  *
- * @param string|array $cap Additional capabilities to check
+ * @param string|array $capabilities Additional capabilities to check
  *
  * @return bool Whether user has admin access
  *
  * @since 2.3.5
  */
-function pods_is_admin( $cap = null ) {
-	if ( is_user_logged_in() ) {
+function pods_is_admin( $capabilities = null ) {
+	// Normalize the capability we are checking.
+	if ( empty( $capabilities ) ) {
+		$capabilities = [];
+	} else {
+		$capabilities = (array) $capabilities;
+	}
 
+	if ( is_user_logged_in() ) {
 		if ( is_multisite() && is_super_admin() ) {
-			return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
+			return apply_filters( 'pods_is_admin', true, $capabilities, '_super_admin' );
 		}
 
-		$pods_admin_capabilities = array();
+		$pods_admin_capabilities = [];
 
 		if ( ! is_multisite() ) {
 			// Default is_super_admin() checks against this capability.
 			$pods_admin_capabilities[] = 'delete_users';
 		}
 
-		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
+		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $capabilities );
 
-		if ( empty( $cap ) ) {
-			$cap = array();
-		} else {
-			$cap = (array) $cap;
-		}
+		$capabilities = array_unique( array_filter( array_merge( $pods_admin_capabilities, $capabilities ) ) );
 
-		$cap = array_unique( array_filter( array_merge( $pods_admin_capabilities, $cap ) ) );
-
-		foreach ( $cap as $capability ) {
+		foreach ( $capabilities as $capability ) {
 			if ( current_user_can( $capability ) ) {
-				return apply_filters( 'pods_is_admin', true, $cap, $capability );
+				return apply_filters( 'pods_is_admin', true, $capabilities, $capability );
 			}
 		}
-	}//end if
+	}
 
-	return apply_filters( 'pods_is_admin', false, $cap, null );
+	return apply_filters( 'pods_is_admin', false, $capabilities, null );
 }
 
 /**

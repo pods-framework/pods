@@ -56,6 +56,7 @@ class Pod_Manager {
 		$find        = isset( $args['find'] ) ? $args['find'] : null;
 		$store_by_id = isset( $args['store_by_id'] ) && ! $args['store_by_id'];
 		$validation  = isset( $args['validation'] ) && $args['validation'];
+		$strict      = isset( $args['strict'] ) ? $args['strict'] : null;
 
 		if ( $id && $store_by_id ) {
 			$key .= '/' . $id;
@@ -71,7 +72,7 @@ class Pod_Manager {
 			return $this->instances[ $key ];
 		}
 
-		$pod = pods( $args['name'], $id );
+		$pod = pods( $args['name'], $id, $strict );
 
 		if ( $validation ) {
 			if ( ! $pod || ! $pod->valid() ) {

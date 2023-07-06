@@ -1700,7 +1700,9 @@ class PodsAPI {
 
 			$lookup_type = 'Pod';
 		} else {
-			$load_params = [];
+			$load_params = [
+				'auto_setup' => false,
+			];
 
 			$fail_on_load = false;
 

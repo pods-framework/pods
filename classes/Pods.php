@@ -123,14 +123,15 @@ class Pods implements Iterator {
 	 *
 	 * @since   1.0.0
 	 *
-	 * @param string $pod The pod name, leave null to auto-detect from The Loop.
-	 * @param mixed  $id  (optional) The ID or slug, to load a single record; Provide array of $params to run 'find';
-	 *                    Or leave null to auto-detect from The Loop.
+	 * @param string $pod    The pod name, leave null to auto-detect from The Loop.
+	 * @param mixed  $id     (optional) The ID or slug, to load a single record; Provide array of $params to run 'find';
+	 *                       Or leave null to auto-detect from The Loop.
+	 * @param bool   $strict (optional) If set to true, we will not attempt to auto-setup the pod based on the object.
 	 *
 	 * @link    https://docs.pods.io/code/pods/
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 */
-	public function __construct( $pod = null, $id = null ) {
+	public function __construct( $pod = null, $id = null, $strict = false ) {
 		if ( null === $pod ) {
 			$pod = get_queried_object();
 		}
@@ -175,7 +176,7 @@ class Pods implements Iterator {
 			$maybe_id = $id;
 		}
 
-		$this->data = pods_data( $pod, $maybe_id, false );
+		$this->data = pods_data( $pod, $maybe_id, $strict );
 
 		PodsData::$display_errors =& $this->display_errors;
 

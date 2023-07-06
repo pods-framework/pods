@@ -86,15 +86,51 @@ class API {
 		// Maybe add commands if the person has the right access.
 		if ( $screen && 'post' === $screen->base && $screen->post_type && pods_is_admin( 'pods' ) ) {
 			// Check if this is a Pod or not.
-			$pods_instance = pods_container( Pod_Manager::class )->get_pod( $screen->post_type );
+			$api = pods_api();
 
-			if ( $pods_instance instanceof Pods && $pods_instance->pod_data ) {
+			$pod = false;
+
+			try {
+				$pod = $api->load_pod( [
+					'name'       => $screen->post_type,
+					'auto_setup' => false,
+				] );
+
+				// Check if this was auto-setup before and isn't a full pod.
+				if ( $pod && true === $pod->get_arg( 'adhoc' ) ) {
+					$pod = false;
+				}
+			} catch ( \Exception $exception ) {
+				// Nothing to do here.
+			}
+
+			if ( $pod ) {
 				$blocks_config['commands'][] = [
 					'name'         => 'pods/edit',
 					'label'        => __( 'Edit this Pod configuration', 'pods' ),
 					'searchLabel'  => __( 'Edit this Pod configuration > Manage Field Groups, Custom Fields, and other Custom Post Type settings in the Pods Admin', 'pods' ),
 					'icon'         => 'pods',
-					'callbackUrl'  => admin_url( 'admin.php?page=pods&action=edit&id=' . $pods_instance->pod_data->get_id() ),
+					'callbackUrl'  => admin_url(
+						sprintf(
+							'admin.php?page=pods&action=edit&id=%d',
+							$pod->get_id()
+						)
+					),
+				];
+			} else {
+				$nonce = wp_create_nonce( 'pods_extend_post_type_' . $screen->post_type );
+
+				$blocks_config['commands'][] = [
+					'name'         => 'pods/extend',
+					'label'        => __( 'Extend this Post Type with Pods to add custom fields', 'pods' ),
+					'icon'         => 'pods',
+					'callbackUrl'  => admin_url(
+						sprintf(
+							'admin.php?page=pods-add-new&pods_extend_post_type=%1$s&pods_extend_post_type_nonce=%2$s',
+							$screen->post_type,
+							$nonce
+						)
+					),
 				];
 			}
 		}

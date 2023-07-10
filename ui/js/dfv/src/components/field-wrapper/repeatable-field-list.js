@@ -57,6 +57,7 @@ const RepeatableFieldList = ( {
 	allPodFieldsMap,
 	setFullValue,
 	setHasBlurred,
+	storeKey,
 } ) => {
 	// Helper functions for setting, moving, adding, and deleting the value
 	// or subvalues.
@@ -203,6 +204,7 @@ const RepeatableFieldList = ( {
 										/>
 									) : null }
 									key={ `${ fieldConfig.name }-${ index }` }
+									storeKey={ storeKey }
 								/>
 							);
 						} ) }
@@ -276,6 +278,11 @@ RepeatableFieldList.propTypes = {
 	 * Function to call when a field has blurred.
 	 */
 	setHasBlurred: PropTypes.func.isRequired,
+
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
 };
 
 export default RepeatableFieldList;

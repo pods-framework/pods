@@ -40,6 +40,7 @@ const SubfieldWrapper = ( {
 	allPodFieldsMap,
 	setValue,
 	setHasBlurred,
+	storeKey,
 } ) => {
 	// Adjust the `name`/`htmlAttr[name]` and IDs
 	// for repeatable fields, so that each value gets saved.
@@ -70,7 +71,8 @@ const SubfieldWrapper = ( {
 	const [ validationMessages, addValidationRules ] = useValidation(
 		[],
 		value,
-		subfieldConfig.name
+		subfieldConfig.name,
+		storeKey
 	);
 
 	// Set up useSortable hook
@@ -189,7 +191,7 @@ SubfieldWrapper.propTypes = {
 
 	/**
 	 * Pod slug being edited.
- 	*/
+	 */
 	podName: PropTypes.string,
 
 	/**
@@ -210,8 +212,13 @@ SubfieldWrapper.propTypes = {
 
 	/**
 	 * Function to call when a field has blurred.
- 	*/
+	 */
 	setHasBlurred: PropTypes.func.isRequired,
+
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
 };
 
 export default SubfieldWrapper;

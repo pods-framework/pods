@@ -84,7 +84,6 @@ export const initEditPodStore = ( config, storeKey = '' ) => {
 		},
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
 	};
-	console.log({initEditPodStore:initialState});
 	return initStore( initialState, storeKey );
 };
 
@@ -97,7 +96,6 @@ export const initPodStore = ( config = {}, initialValues = {}, storeKey = '' ) =
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
 		currentPod: initialValues,
 	};
-	console.log({initPodStore:initialState});
 
 	return initStore( initialState, storeKey );
 };

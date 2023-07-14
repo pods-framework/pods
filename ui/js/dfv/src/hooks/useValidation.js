@@ -11,7 +11,7 @@ const useValidation = ( defaultRules = [], value, fieldName, storeKey ) => {
 	const validationMessages = useSelect( ( select ) => {
 		const currentMessages = select( storeKey ).getValidationMessages();
 		//Return for this field
-		if ( currentMessages.hasOwnProperty( fieldName ) ) {
+		if ( currentMessages && currentMessages.hasOwnProperty( fieldName ) ) {
 			return currentMessages[ fieldName ];
 		}
 		return [];

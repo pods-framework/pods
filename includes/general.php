@@ -553,11 +553,11 @@ function pods_is_debug_display() {
 /**
  * Determine if user has admin access
  *
+ * @since 2.3.5
+ *
  * @param string|array $capabilities Additional capabilities to check
  *
  * @return bool Whether user has admin access
- *
- * @since 2.3.5
  */
 function pods_is_admin( $capabilities = null ) {
 	// Normalize the capability we are checking.
@@ -568,21 +568,15 @@ function pods_is_admin( $capabilities = null ) {
 	}
 
 	if ( is_user_logged_in() ) {
+		// Check if on multisite and this is a super admin.
 		if ( is_multisite() && is_super_admin() ) {
 			return apply_filters( 'pods_is_admin', true, $capabilities, '_super_admin' );
 		}
 
-		$pods_admin_capabilities = [];
+		// Get all the capabilities including Pods Admin capabilities.
+		$capabilities = pods_get_admin_capabilities( $capabilities );
 
-		if ( ! is_multisite() ) {
-			// Default is_super_admin() checks against this capability.
-			$pods_admin_capabilities[] = 'delete_users';
-		}
-
-		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $capabilities );
-
-		$capabilities = array_unique( array_filter( array_merge( $pods_admin_capabilities, $capabilities ) ) );
-
+		// Check if the user has access to any of the capabilities.
 		foreach ( $capabilities as $capability ) {
 			if ( current_user_can( $capability ) ) {
 				return apply_filters( 'pods_is_admin', true, $capabilities, $capability );
@@ -591,6 +585,70 @@ function pods_is_admin( $capabilities = null ) {
 	}
 
 	return apply_filters( 'pods_is_admin', false, $capabilities, null );
+}
+
+/**
+ * Determine if a specific user has admin access.
+ *
+ * @since 3.0.0
+ *
+ * @param string|array $capabilities Additional capabilities to check.
+ *
+ * @return bool Whether user has admin access.
+ */
+function pods_is_user_admin( int $user_id, $capabilities = null ): bool {
+	// Normalize the capability we are checking.
+	if ( empty( $capabilities ) ) {
+		$capabilities = [];
+	} else {
+		$capabilities = (array) $capabilities;
+	}
+
+	// Check if on multisite and this is a super admin.
+	if ( is_multisite() && is_super_admin( $user_id ) ) {
+		return apply_filters( 'pods_is_user_admin', true, $user_id, $capabilities, '_super_admin' );
+	}
+
+	// Get all the capabilities including Pods Admin capabilities.
+	$capabilities = pods_get_admin_capabilities( $capabilities );
+
+	// Check if the user exists.
+	$user = get_userdata( $user_id );
+
+	if ( ! $user || is_wp_error( $user ) ) {
+		return false;
+	}
+
+	// Check if the user has access to any of the capabilities.
+	foreach ( $capabilities as $capability ) {
+		if ( user_can( $user, $capability ) ) {
+			return apply_filters( 'pods_is_user_admin', true, $user_id, $capabilities, $capability );
+		}
+	}
+
+	return apply_filters( 'pods_is_user_admin', false, $user_id, $capabilities, null );
+}
+
+/**
+ * Get the list of Pods Admin capabilities.
+ *
+ * @since 3.0.0
+ *
+ * @param string|array $capabilities Additional capabilities to merge and include.
+ *
+ * @return array The list of Pods Admin capabilities.
+ */
+function pods_get_admin_capabilities( array $other_capabilities = [] ): array {
+	$pods_admin_capabilities = [];
+
+	if ( ! is_multisite() ) {
+		// Default is_super_admin() checks against this capability.
+		$pods_admin_capabilities[] = 'delete_users';
+	}
+
+	$pods_admin_capabilities = (array) apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $other_capabilities );
+
+	return array_unique( array_filter( array_merge( $pods_admin_capabilities, $other_capabilities ) ) );
 }
 
 /**

@@ -21,6 +21,11 @@
 	word-wrap: break-word;
 }
 
+/* #7118 */
+.qtip-content :is(h3, a) {
+	color: inherit;
+}
+
 .qtip-titlebar {
 	position: relative;
 	padding: 5px 35px 5px 10px;

@@ -117,23 +117,34 @@ function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
 /**
  * Message / Notice handling for Admin UI
  *
- * @param string $message The notice / error message shown.
- * @param string $type    The message type.
- * @param bool   $return  Whether to return the message.
+ * @param string $message        The notice / error message shown.
+ * @param string $type           The message type (success, info, warning, error, or nag).
+ * @param bool   $return         Whether to return the message.
+ * @param bool   $is_dismissible Whether the notice is dismissible.
  *
  * @return string|null The message or null if not returning.
  */
-function pods_message( $message, $type = null, $return = false ) {
-	if ( empty( $type ) || ! in_array( $type, array( 'notice', 'error' ), true ) ) {
-		$type = 'notice';
+function pods_message( $message, $type = null, $return = false, $is_dismissible = true ) {
+	$message = (string) $message;
+
+	$supported_notice_types = [
+		'success',
+		'info',
+		'warning',
+		'error',
+	];
+
+	// The "nag" type will be treated as "info", but we want to check to see if the constant has it turned off.
+	if ( 'nag' === $type && defined( 'DISABLE_NAG_NOTICES' ) && DISABLE_NAG_NOTICES ) {
+		if ( $return ) {
+			return '';
+		}
+
+		return null;
 	}
 
-	$class = '';
-
-	if ( 'notice' === $type ) {
-		$class = 'updated';
-	} elseif ( 'error' === $type ) {
-		$class = 'error';
+	if ( empty( $type ) || ! in_array( $type, $supported_notice_types, true ) ) {
+		$type = 'info';
 	}
 
 	// Maybe handle WP-CLI messages.
@@ -144,10 +155,52 @@ function pods_message( $message, $type = null, $return = false ) {
 			WP_CLI::line( $message );
 		}
 
+		if ( $return ) {
+			return '';
+		}
+
 		return null;
 	}
 
-	$html = '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
+	// Maybe wrap the message.
+	if ( false === strpos( $message, '</p>' ) ) {
+		$message = '<p>' . $message . '</p>';
+	}
+
+	$div_id = 'message';
+
+	$div_classes = [
+		'notice-' . $type,
+	];
+
+	if ( $is_dismissible ) {
+		$div_classes[] = 'is-dismissible';
+	}
+
+	$div_classes = array_filter( $div_classes );
+
+	// Maybe prefix the id/classes on frontend.
+	if ( ! is_admin() ) {
+		$div_classes = array_map(
+			static function( $class_name ) {
+				return 'pods-ui-notice-' . $class_name;
+			},
+			$div_classes
+		);
+
+		$div_classes[] = 'pods-ui-notice-front';
+
+		// No ID here since there may be multiple on the page.
+		$div_attr_id = '';
+		
+		wp_enqueue_style( 'pods-form' );
+	} else {
+		$div_attr_id = 'id="' . esc_attr( $div_id ) . '"';
+	}
+
+	$div_classes = implode( ' ', $div_classes );
+
+	$html = '<div ' . $div_attr_id . ' class="pods-ui-notice ' . esc_attr( $div_classes ) . '">' . $message . '</div>';
 
 	if ( $return ) {
 		return $html;

@@ -20,7 +20,7 @@ class Pod_Manager {
 	 *
 	 * @var array<string,Pods>
 	 */
-	private $instances;
+	private $instances = [];
 
 	/**
 	 * Get the Pods object for a specific pod name and item ID. Possibly use already built-object if available.
@@ -102,8 +102,6 @@ class Pod_Manager {
 	 * @param null|string|Pod $pod The pod name or the Pod object to flush instances for, otherwise leave as null to flush all instances.
 	 */
 	public function flush( $pod = null ) {
-		$pod_name = null;
-
 		if ( ! $pod ) {
 			$this->instances = [];
 

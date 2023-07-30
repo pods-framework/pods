@@ -1,6 +1,7 @@
 <?php
 
 use Pods\API\Whatsit\Value_Field;
+use Pods\Pod_Manager;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -5770,7 +5771,19 @@ class PodsAPI {
 		pods_cache_clear( $params->id, 'pods_items_' . $pod['name'] );
 
 		if ( $params->clear_slug_cache && ! empty( $pod['field_slug'] ) ) {
-			$slug = pods_get_instance( $pod['name'], $params->id )->field( $pod['field_slug'] );
+			$slug = null;
+
+			if ( ! empty( $object_data[ $pod['field_slug'] ] ) ) {
+				$slug = $object_data[ $pod['field_slug'] ];
+			} elseif ( ! empty( $object_meta[ $pod['field_slug'] ] ) ) {
+				$slug = $object_meta[ $pod['field_slug'] ];
+			} else {
+				$pod_instance = pods_get_instance( $pod['name'], $params->id );
+
+				if ( $pod_instance instanceof Pods ) {
+					$slug = $pod_instance->field( $pod['field_slug'] );
+				}
+			}
 
 			if ( is_string( $slug ) && 0 < strlen( $slug ) ) {
 				pods_cache_clear( $slug, 'pods_items_' . $pod['name'] );
@@ -11168,6 +11181,8 @@ class PodsAPI {
 			pods_transient_clear( 'pods_blocks' );
 			pods_transient_clear( 'pods_blocks_js' );
 
+			$manager = pods_container( Pod_Manager::class );
+
 			if ( is_array( $pod ) || $pod instanceof Pod ) {
 				pods_transient_clear( 'pods_pod_' . $pod['name'] );
 				pods_cache_clear( $pod['name'], 'pods-class' );
@@ -11176,8 +11191,14 @@ class PodsAPI {
 				if ( in_array( $pod['type'], [ 'post_type', 'taxonomy' ] ) ) {
 					pods_transient_clear( 'pods_wp_cpt_ct' );
 				}
+
+				pods_cache_clear( true, 'pods_items_' . $pod['name'] );
+
+				$manager->flush( $pod['name'] );
 			} else {
 				pods_transient_clear( 'pods_wp_cpt_ct' );
+
+				$manager->flush();
 			}
 
 			pods_cache_clear( true, 'pods_post_type_storage__pods_pod' );

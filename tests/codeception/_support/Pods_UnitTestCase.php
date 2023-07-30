@@ -3,7 +3,7 @@
 namespace Pods_Unit_Tests;
 
 use Pods\Whatsit\Store;
-use Pods\Static_Cache;
+use Pods\Pod_Manager;
 use Pods;
 use PodsMeta;
 use PodsView;
@@ -29,6 +29,9 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	public function tearDown(): void {
 		if ( static::$db_reset_teardown ) {
 			parent::tearDown();
+
+			$manager = pods_container( Pod_Manager::class );
+			$manager->flush();
 
 			PodsMeta::$post_types             = [];
 			PodsMeta::$taxonomies             = [];

@@ -3,6 +3,7 @@
 namespace Pods;
 
 use Pods;
+use Pods\Whatsit\Pod;
 use WP_Error;
 
 /**
@@ -17,7 +18,7 @@ class Pod_Manager {
 	 *
 	 * @since 2.9.0
 	 *
-	 * @var Pods[]
+	 * @var array<string,Pods>
 	 */
 	private $instances;
 
@@ -93,6 +94,31 @@ class Pod_Manager {
 		}
 
 		return $pod;
+	}
+
+	/**
+	 * Flush the instances stored.
+	 *
+	 * @param null|string|Pod $pod The pod name or the Pod object to flush instances for, otherwise leave as null to flush all instances.
+	 */
+	public function flush( $pod = null ) {
+		$pod_name = null;
+
+		if ( ! $pod ) {
+			$this->instances = [];
+
+			return;
+		}
+
+		$pod_name = $pod instanceof Pod ? $pod->get_name() : $pod;
+
+		foreach ( $this->instances as $key => $instance ) {
+			if ( $key === $pod_name ) {
+				unset( $this->instances[ $key ] );
+			} elseif ( $instance->pod_data && $instance->pod_data->get_name() === $pod_name ) {
+				unset( $this->instances[ $key ] );
+			}
+		}
 	}
 
 }

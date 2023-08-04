@@ -1645,6 +1645,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'build_default_group'   => false,
 			'assoc_keys'            => false,
 			'bypass_cache'          => false,
+			'ref_id'                => null,
 		];
 
 		$args = array_merge( $defaults, $args );
@@ -1655,12 +1656,15 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$data['groups'] = $this->get_export_for_items(
 				$this->get_groups( [
 					'bypass_cache' => $args['bypass_cache'],
+					'ref_id'       => $args['ref_id'],
 				] ),
 				[
 					'include_groups'     => false,
 					'include_fields'     => $args['include_group_fields'],
 					'include_field_data' => $args['include_field_data'],
 					'assoc_keys'         => $args['assoc_keys'],
+					'bypass_cache'       => $args['bypass_cache'],
+					'ref_id'             => $args['ref_id'],
 				]
 			);
 
@@ -1672,6 +1676,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 					$fields = $this->get_args_for_items(
 						$this->get_fields( [
 							'bypass_cache' => $args['bypass_cache'],
+							'ref_id'       => $args['ref_id'],
 						] ),
 						[
 							'include_field_data' => $args['include_field_data'],
@@ -1714,6 +1719,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$data['fields'] = $this->get_args_for_items(
 				$this->get_fields( [
 					'bypass_cache' => $args['bypass_cache'],
+					'ref_id'       => $args['ref_id'],
 				] ),
 				[
 					'include_field_data' => $args['include_field_data'],

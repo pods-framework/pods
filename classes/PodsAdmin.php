@@ -1843,6 +1843,7 @@ class PodsAdmin {
 				'include_fields'       => false,
 				'include_field_data'   => true,
 				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'group'      => $group_object->export( [
 				'include_groups'       => true,
@@ -1850,6 +1851,7 @@ class PodsAdmin {
 				'include_fields'       => false,
 				'include_field_data'   => true,
 				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'field'      => $field_object->export( [
 				'include_groups'       => true,
@@ -1857,6 +1859,7 @@ class PodsAdmin {
 				'include_fields'       => false,
 				'include_field_data'   => true,
 				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 		];
 

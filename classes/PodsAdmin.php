@@ -1818,18 +1818,21 @@ class PodsAdmin {
 
 		// Get objects from storage.
 		$pod_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_pod',
+			'object_type'  => 'pod',
+			'name'         => '_pods_pod',
+			'bypass_cache' => true,
 		] );
 
 		$group_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_group',
+			'object_type'  => 'pod',
+			'name'         => '_pods_group',
+			'bypass_cache' => true,
 		] );
 
 		$field_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_field',
+			'object_type'  => 'pod',
+			'name'         => '_pods_field',
+			'bypass_cache' => true,
 		] );
 
 		$global_config = [
@@ -1839,18 +1842,21 @@ class PodsAdmin {
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
 			] ),
 			'group'      => $group_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
 			] ),
 			'field'      => $field_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
 			] ),
 		];
 

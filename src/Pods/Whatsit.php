@@ -1644,6 +1644,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'include_table_info'    => false,
 			'build_default_group'   => false,
 			'assoc_keys'            => false,
+			'bypass_cache'          => false,
 		];
 
 		$args = array_merge( $defaults, $args );
@@ -1651,21 +1652,31 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$data = $this->get_args();
 
 		if ( $args['include_groups'] ) {
-			$data['groups'] = $this->get_export_for_items( $this->get_groups(), [
-				'include_groups'     => false,
-				'include_fields'     => $args['include_group_fields'],
-				'include_field_data' => $args['include_field_data'],
-				'assoc_keys'         => $args['assoc_keys'],
-			] );
+			$data['groups'] = $this->get_export_for_items(
+				$this->get_groups( [
+					'bypass_cache' => $args['bypass_cache'],
+				] ),
+				[
+					'include_groups'     => false,
+					'include_fields'     => $args['include_group_fields'],
+					'include_field_data' => $args['include_field_data'],
+					'assoc_keys'         => $args['assoc_keys'],
+				]
+			);
 
 			// If there are no groups, see if we need to build the default one.
 			if ( $args['build_default_group'] && empty( $data['groups'] ) ) {
 				$fields = [];
 
 				if ( $args['include_group_fields'] ) {
-					$fields = $this->get_args_for_items( $this->get_fields(), [
-						'include_field_data' => $args['include_field_data'],
-					] );
+					$fields = $this->get_args_for_items(
+						$this->get_fields( [
+							'bypass_cache' => $args['bypass_cache'],
+						] ),
+						[
+							'include_field_data' => $args['include_field_data'],
+						]
+					);
 
 					if ( ! $args['assoc_keys'] ) {
 						$fields = array_values( $fields );
@@ -1700,9 +1711,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( $args['include_fields'] ) {
-			$data['fields'] = $this->get_args_for_items( $this->get_fields(), [
-				'include_field_data' => $args['include_field_data'],
-			] );
+			$data['fields'] = $this->get_args_for_items(
+				$this->get_fields( [
+					'bypass_cache' => $args['bypass_cache'],
+				] ),
+				[
+					'include_field_data' => $args['include_field_data'],
+				]
+			);
 
 			if ( ! $args['assoc_keys'] ) {
 				$data['fields'] = array_values( $data['fields'] );

@@ -30,7 +30,7 @@ import './pick.scss';
 
 const getFieldItemDataFromDataProp = ( data ) => {
 	// Skip unless we're handling an object of values.
-	if ( 'object' !== typeof data || Array.isArray( data ) ) {
+	if ( 'object' !== typeof data && ! Array.isArray( data ) ) {
 		return [];
 	}
 

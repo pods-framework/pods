@@ -2167,6 +2167,9 @@ class PodsAdmin {
 	 * Get settings administration view
 	 */
 	public function admin_settings() {
+		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
 		/**
 		 * Allow hooking into our settings page to set up hooks.
 		 *

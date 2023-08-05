@@ -16,7 +16,8 @@
 		<?php $heading_tag = pods_v( $field['type'] . '_tag', $field, isset( $heading_tag ) ? $heading_tag : 'h2', true ); ?>
 		<td colspan="2">
 			<<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>
-				class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>">
+				class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>"
+				id="heading-<?php echo esc_attr( $field['name'] ); ?>">
 				<?php echo esc_html( $field['label'] ); ?>
 			</<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>>
 			<?php echo PodsForm::comment( $field['name'], pods_v( 'description', $field ), $field ); ?>

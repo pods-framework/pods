@@ -1126,7 +1126,7 @@ class PodsAPI {
 				],
 				'user_login'      => [
 					'name'    => 'user_login',
-					'label'   => 'Title',
+					'label'   => 'Login',
 					'type'    => 'text',
 					'alias'   => [ 'login' ],
 					'options' => [
@@ -1135,7 +1135,7 @@ class PodsAPI {
 				],
 				'user_nicename'   => [
 					'name'  => 'user_nicename',
-					'label' => 'Permalink',
+					'label' => 'Nicename',
 					'type'  => 'slug',
 					'alias' => [ 'nicename', 'slug', 'permalink' ],
 				],

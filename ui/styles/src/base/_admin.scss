@@ -668,7 +668,7 @@ body[class*="settings_page_pods-"] {
 	transition: 300ms ease background-color;
 	border-radius: 100%;
 
-	&:hover {
+	&:hover, &.pods-admin_friends-callout_close__no_image {
 		background-color: #85ab33;
 		cursor: pointer;
 	}
@@ -814,5 +814,15 @@ body[class*="settings_page_pods-"] {
 
 	.components-block-fields-checkbox-group .components-base-control {
 		margin-bottom: 10px;
+	}
+}
+
+ul.pods-ul-normal {
+	list-style: disc;
+	li {
+		margin: 0 0 8px 30px;
+		padding-left: 4px;
+		line-height: 22px;
+		list-style: disc;
 	}
 }

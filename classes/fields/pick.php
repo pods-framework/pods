@@ -1154,6 +1154,10 @@ class PodsField_Pick extends PodsField {
 			$field_options['select2_overrides'] = apply_filters( 'pods_pick_select2_overrides', $field_options['select2_overrides'] );
 		}
 
+        if ( ! empty( $args->build_item_data ) ) {
+            $field_options['item_data'] = $this->build_dfv_field_item_data( $args );
+        }
+
 		return $field_options;
 	}
 
@@ -1496,6 +1500,10 @@ class PodsField_Pick extends PodsField {
 
 		if ( ! isset( $args->options['supports_thumbnails'] ) ) {
 			$args->options['supports_thumbnails'] = null;
+		}
+
+		if ( ! isset( $args->options['pick_object'] ) ) {
+			$args->options['pick_object'] = null;
 		}
 
 		switch ( $args->options['pick_object'] ) {

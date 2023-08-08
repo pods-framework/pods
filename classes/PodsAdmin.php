@@ -2032,14 +2032,15 @@ class PodsAdmin {
 		$field_args['group']  = 'group/' . $parent . '/' . $group_name;
 
 		$dfv_args = (object) [
-			'id'      => 0,
-			'name'    => $field_args['name'],
-			'value'   => '',
-			'pod'     => null,
-			'type'    => pods_v( 'type', $field_args ),
-			'options' => array_merge( [
+			'id'              => 0,
+			'name'            => $field_args['name'],
+			'value'           => '',
+			'pod'             => null,
+			'type'            => pods_v( 'type', $field_args ),
+			'options'         => array_merge( [
 				'id' => 0,
-			], $field_args )
+			], $field_args ),
+			'build_item_data' => true,
 		];
 
 		if ( ! empty( $dfv_args->type ) ) {

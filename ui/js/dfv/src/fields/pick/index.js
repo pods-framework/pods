@@ -132,6 +132,7 @@ const Pick = ( props ) => {
 			read_only: readOnly,
 			fieldItemData,
 			data = [],
+			item_data: builtItemData = [],
 			label,
 			name,
 			required: isRequired = false,
@@ -177,6 +178,13 @@ const Pick = ( props ) => {
 		allPodValues,
 	} = props;
 
+	// Handle item data.
+	let itemData = fieldItemData;
+
+	if ( ! itemData && builtItemData ) {
+		itemData = builtItemData;
+	}
+
 	let fieldValue = value;
 
 	if ( 'object' === typeof value ) {
@@ -195,7 +203,7 @@ const Pick = ( props ) => {
 	// modified by the add/edit modals, or by loading ajax options, so we need to track
 	// this in state, starting with the supplied fieldItemData from the page load.
 	const [ modifiedFieldItemData, setModifiedFieldItemData ] = useState(
-		fieldItemData ? fieldItemData : getFieldItemDataFromDataProp( data )
+		itemData ? itemData : getFieldItemDataFromDataProp( data )
 	);
 
 	const { bidirectionFieldItemData } = useBidirectionalFieldData(

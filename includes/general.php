@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Pods\Global\Functions\General
  */
@@ -11,6 +12,7 @@ use Pods\Permissions;
 use Pods\Data\Map_Field_Values;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
 
@@ -192,7 +194,7 @@ function pods_message( $message, $type = null, $return = false, $is_dismissible 
 
 		// No ID here since there may be multiple on the page.
 		$div_attr_id = '';
-		
+
 		wp_enqueue_style( 'pods-form' );
 	} else {
 		$div_attr_id = 'id="' . esc_attr( $div_id ) . '"';
@@ -2278,7 +2280,7 @@ function pods_has_permissions( $object ) {
  * @param string|array $status  Post statuses to include (default is what user has access to)
  * @param bool         $return  Whether to return the 'id' or 'post'.
  *
- * @return WP_Post|null WP_Post on success or null on failure
+ * @return WP_Post|int|null WP_Post on success or null on failure
  *
  * @since 2.3.4
  */
@@ -4107,7 +4109,7 @@ function pod_has_items( $pod ) {
  * @param array|Field $config_to_merge_into The config to merge into.
  * @param array|Field $config_to_merge_from The config to merge from.
  *
- * @return array|Field The final config result.
+ * @return array|Field|Value_Field The final config result.
  */
 function pods_config_merge_data( $config_to_merge_into, $config_to_merge_from ) {
 	// The configs already match.

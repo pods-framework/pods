@@ -8191,7 +8191,7 @@ class PodsAPI {
 	 * $params['id'] int Pod ID
 	 * $params['name'] string Pod name
 	 *
-	 * @param array $params An associative array of parameters
+	 * @param array|string $params An associative array of parameters or the pod name.
 	 *
 	 * @return bool True if exists
 	 *

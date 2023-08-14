@@ -64,9 +64,21 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 		case 'NOT ENDS':
 			return ! valueToTest.toLowerCase().endsWith( ruleValue.toLowerCase() );
 		case 'MATCHES':
-			return Boolean( valueToTest.match( ruleValue ) );
+			if ( ! Array.isArray( valueToTest ) ) {
+				return Boolean( valueToTest.match( ruleValue ) );
+			}
+
+			return valueToTest.some(
+				( valueItem ) => Boolean( valueItem.match( ruleValue ) )
+			);
 		case 'NOT MATCHES':
-			return ! Boolean( valueToTest.match( ruleValue ) );
+			if ( ! Array.isArray( valueToTest ) ) {
+				return ! Boolean( valueToTest.match( ruleValue ) );
+			}
+
+			return ! valueToTest.some(
+				( valueItem ) => Boolean( valueItem.match( ruleValue ) )
+			);
 		case 'IN': {
 			// We can't compare 'in' if the rule's value is not an array.
 			if ( ! Array.isArray( ruleValue ) ) {
@@ -85,6 +97,26 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 
 			return ! ruleValue.some(
 				( ruleValueItem ) => looseStringEqualityCheck( ruleValueItem, valueToTest )
+			);
+		}
+		case 'IN VALUES': {
+			// We can't compare 'in' if the rule's value is not an array.
+			if ( ! Array.isArray( valueToTest ) ) {
+				return false;
+			}
+
+			return valueToTest.some(
+				( valueItem ) => looseStringEqualityCheck( valueItem, ruleValue )
+			);
+		}
+		case 'NOT IN VALUES': {
+			// We can't compare 'not in' if the rule's value is not an array.
+			if ( ! Array.isArray( valueToTest ) ) {
+				return false;
+			}
+
+			return ! valueToTest.some(
+				( valueItem ) => looseStringEqualityCheck( valueItem, ruleValue )
 			);
 		}
 		case 'EMPTY': {
@@ -246,7 +278,7 @@ const recursiveCheckConditionalLogicForField = (
 			valueToTest,
 		);
 
-		console.debug( 'Conditional logic: validateConditionalValue' );
+		console.debug( 'Conditional logic: validateConditionalValue doesValueMatch' );
 		console.debug( { fieldName, fieldNameToTest, doesValueMatch, compare, ruleValue, valueToTest } );
 
 		// No need to go up the tree of dependencies if it already failed.

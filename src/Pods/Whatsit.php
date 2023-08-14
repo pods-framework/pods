@@ -1609,6 +1609,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		if (
 			! isset( $this->args['depends-on'] )
 			&& ! isset( $this->args['depends-on-any'] )
+			&& ! isset( $this->args['depends-on-multi'] )
 			&& ! isset( $this->args['excludes-on'] )
 			&& ! isset( $this->args['wildcard-on'] )
 		) {

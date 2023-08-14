@@ -117,10 +117,11 @@ class Conditional_Logic {
 	 */
 	public static function maybe_setup_from_old_syntax( $object ): ?Conditional_Logic {
 		$old_syntax = [
-			'depends-on'     => (array) pods_v( 'depends-on', $object, [], true ),
-			'depends-on-any' => (array) pods_v( 'depends-on-any', $object, [], true ),
-			'excludes-on'    => (array) pods_v( 'excludes-on', $object, [], true ),
-			'wildcard-on'    => (array) pods_v( 'wildcard-on', $object, [], true ),
+			'depends-on'       => (array) pods_v( 'depends-on', $object, [], true ),
+			'depends-on-any'   => (array) pods_v( 'depends-on-any', $object, [], true ),
+			'depends-on-multi' => (array) pods_v( 'depends-on-multi', $object, [], true ),
+			'excludes-on'      => (array) pods_v( 'excludes-on', $object, [], true ),
+			'wildcard-on'      => (array) pods_v( 'wildcard-on', $object, [], true ),
 		];
 
 		$action = 'show';
@@ -148,6 +149,20 @@ class Conditional_Logic {
 				$rules[] = [
 					'field'   => $field_name,
 					'compare' => ( is_array( $value ) ? 'in' : '=' ),
+					'value'   => $value,
+				];
+			}
+		}
+
+		if ( $old_syntax['depends-on-multi'] ) {
+			$logic = 'all';
+
+			foreach ( $old_syntax['depends-on-multi'] as $field_name => $value ) {
+				$field_name = self::maybe_migrate_field_name( $field_name );
+
+				$rules[] = [
+					'field'   => $field_name,
+					'compare' => 'in-values',
 					'value'   => $value,
 				];
 			}
@@ -532,6 +547,16 @@ class Conditional_Logic {
 		}
 
 		if ( 'MATCHES' === $compare ) {
+			if ( is_array( $check_value ) ) {
+				foreach ( $check_value as $check_value_item ) {
+					if ( 1 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value_item ) ) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
 			if ( ! is_scalar( $check_value ) ) {
 				return false;
 			}
@@ -540,6 +565,16 @@ class Conditional_Logic {
 		}
 
 		if ( 'NOT MATCHES' === $compare ) {
+			if ( is_array( $check_value ) ) {
+				foreach ( $check_value as $check_value_item ) {
+					if ( 0 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value_item ) ) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
 			if ( ! is_scalar( $check_value ) ) {
 				return true;
 			}
@@ -561,6 +596,22 @@ class Conditional_Logic {
 			}
 
 			return ! in_array( $check_value, (array) $value, false );
+		}
+
+		if ( 'IN VALUES' === $compare ) {
+			if ( ! is_scalar( $value ) ) {
+				return false;
+			}
+
+			return in_array( $value, (array) $check_value, false );
+		}
+
+		if ( 'NOT IN VALUES' === $compare ) {
+			if ( ! is_scalar( $value ) ) {
+				return true;
+			}
+
+			return ! in_array( $value, (array) $check_value, false );
 		}
 
 		if ( 'EMPTY' === $compare ) {

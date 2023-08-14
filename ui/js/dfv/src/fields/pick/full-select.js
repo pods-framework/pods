@@ -33,6 +33,7 @@ import PropTypes from 'prop-types';
 import loadAjaxOptions from '../../helpers/loadAjaxOptions';
 
 import { AJAX_DATA } from 'dfv/src/config/prop-types';
+import {__} from "@wordpress/i18n";
 
 const SortableMultiValue = ( props ) => {
 	const {
@@ -61,7 +62,7 @@ const SortableMultiValue = ( props ) => {
 		<span
 			ref={ setNodeRef }
 			style={ style }
-			aria-label="drag"
+			aria-label={ __( 'Press and hold to drag this item to a new position in the list', 'pods' ) }
 			// eslint-disable-next-line react/jsx-props-no-spreading
 			{ ...listeners }
 			// eslint-disable-next-line react/jsx-props-no-spreading

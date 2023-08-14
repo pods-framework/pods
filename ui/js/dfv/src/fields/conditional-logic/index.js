@@ -285,6 +285,7 @@ const ConditionalLogic = ( {
 							onClick={ () => addRule( index ) }
 							isSecondary
 							className="pods-conditional-logic-rule__add"
+							aria-label={ __( 'Add new conditional logic rule', 'pods' ) }
 						>
 							{ __( '+', 'pods' ) }
 						</Button>
@@ -303,6 +304,7 @@ const ConditionalLogic = ( {
 										deleteRule( index );
 									}
 								} }
+								aria-label={ __( 'Remove conditional logic rule', 'pods' ) }
 							>
 								{ __( '-', 'pods' ) }
 							</Button>

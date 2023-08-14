@@ -472,6 +472,7 @@ const Pick = ( props ) => {
 					className="pods-related-add-new pods-modal"
 					onClick={ () => setShowAddNewIframe( true ) }
 					isSecondary
+					aria-label={ __( 'Create and add a new item to this list', 'pods' ) }
 				>
 					{ addNewLabel }
 				</Button>

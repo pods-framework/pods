@@ -171,12 +171,12 @@ const FieldGroup = ( props ) => {
 				className="pods-field-group_title"
 				onClick={ handleTitleClick }
 				onKeyPress={ handleKeyPress }
+				aria-label={ __( 'Press and hold to drag this item to a new position in the list', 'pods' ) }
 			>
 				<div className="pods-field-group_name">
 					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
 					<div
 						className="pods-field-group_handle"
-						aria-label="drag"
 						// eslint-disable-next-line react/jsx-props-no-spreading
 						{ ...listeners }
 						// eslint-disable-next-line react/jsx-props-no-spreading
@@ -207,6 +207,7 @@ const FieldGroup = ( props ) => {
 							<button
 								className="pods-field-group_button pods-field-group_manage_link"
 								onClick={ toggleExpanded }
+								aria-label={ __( 'Manage the fields for this field group', 'pods' ) }
 							>
 								{ __( 'Manage Fields', 'pods' ) }
 							</button>
@@ -217,6 +218,7 @@ const FieldGroup = ( props ) => {
 					<button
 						className="pods-field-group_button pods-field-group_edit"
 						onClick={ ( event ) => onEditGroupClick( event ) }
+						aria-label={ __( 'Edit this field group for the Pod', 'pods' ) }
 					>
 						{ __( 'Edit', 'pods' ) }
 					</button>
@@ -224,6 +226,7 @@ const FieldGroup = ( props ) => {
 					<button
 						className="pods-field-group_button pods-field-group_delete"
 						onClick={ onDeleteGroupClick }
+						aria-label={ __( 'Delete this field group from the Pod', 'pods' ) }
 					>
 						{ __( 'Delete', 'pods' ) }
 					</button>
@@ -231,6 +234,12 @@ const FieldGroup = ( props ) => {
 
 				<button
 					className="pods-field-group_button pods-field-group_manage"
+					aria-pressed={ isExpanded }
+					aria-label={
+						isExpanded
+							? __( 'Collapse this field group to hide the fields associated', 'pods' )
+							: __( 'Expand this field group to see the fields associated', 'pods' )
+					}
 				>
 					<Dashicon icon={ isExpanded ? 'arrow-up' : 'arrow-down' } />
 				</button>

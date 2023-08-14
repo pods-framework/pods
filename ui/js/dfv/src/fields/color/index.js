@@ -47,6 +47,7 @@ const Color = ( {
 							<Button
 								onClick={ state.onToggle }
 								className="button pods-color-select-button"
+								aria-label={ __( 'Select a color', 'pods' ) }
 							>
 								<ColorIndicator colorValue={ value || '' } />
 
@@ -60,6 +61,7 @@ const Color = ( {
 										setValue( '' );
 									} }
 									className="button"
+									aria-label={ __( 'Clear the selected color', 'pods' ) }
 								>
 									{ clearLabel }
 								</Button>

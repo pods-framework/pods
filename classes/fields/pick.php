@@ -2689,7 +2689,7 @@ class PodsField_Pick extends PodsField {
 
 					$params['limit'] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', $limit, $name, $value, $options, $pod, $id, $object_params );
 
-					if ( is_array( $value ) && $params['limit'] < count( $value ) ) {
+					if ( -1 !== (int) $params['limit'] && is_array( $value ) && $params['limit'] < count( $value ) ) {
 						$params['limit'] = count( $value );
 					}
 

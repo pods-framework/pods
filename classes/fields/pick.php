@@ -2831,7 +2831,8 @@ class PodsField_Pick extends PodsField {
 
 						$params['where'] .= "`t`.`{$search_data->field_id}` IN ( {$ids} )";
 
-						$results = $search_data->select( $params );
+						// Merge/append the current value(s) to the list of results.
+						$results = array_merge( $results, $search_data->select( $params ) );
 					}//end if
 				} else {
 					$autocomplete = false;

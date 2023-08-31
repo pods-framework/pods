@@ -379,6 +379,11 @@ class PodsUI {
 	 */
 	public $row = array();
 
+	/**
+	 * @var array
+	 */
+	public $temp_row = array();
+
 	// actions
 	/**
 	 * @var string

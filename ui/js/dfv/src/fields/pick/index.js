@@ -352,8 +352,8 @@ const Pick = ( props ) => {
 			);
 
 			const formattedOptions = modifiedFieldItemData.map( ( item ) => ( {
-				label: item.name,
-				value: item.id,
+				label: item.name ?? item.label,
+				value: item.id ?? item.collection,
 			} ) );
 
 			const addNewItem = ( newOption ) => {

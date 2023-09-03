@@ -172,6 +172,7 @@ function pods_message( $message, $type = null, $return = false, $is_dismissible 
 	$div_id = 'message';
 
 	$div_classes = [
+		'notice',
 		'notice-' . $type,
 	];
 

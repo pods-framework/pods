@@ -88,6 +88,14 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	if ( function_exists( 'pods_ui_manage' ) ) {
 		add_action( 'init', 'pods_deactivate_pods_ui' );
 	} else {
+		// If there was an install/update failure and the sub directories do not exist. Bail to avoid fatal errors.
+		if (
+			! file_exists( PODS_DIR . 'classes/PodsInit.php' )
+			|| ! file_exists( PODS_DIR . 'vendor/vendor-prefixed/autoload.php' )
+		) {
+			return;
+		}
+
 		global $pods, $pods_init, $pods_form;
 
 		// Init custom autoloader.

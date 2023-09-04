@@ -128,7 +128,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 							</p>
 
 							<?php if ( ! empty( $quick_actions ) ) : ?>
-								<div id="pods-wizard-quick-actions"<?php echo ( ! $submit_from_linked ? ' class="hidden"' : '' ); ?>>
+								<div id="pods-wizard-quick-actions"<?php echo ( $submit_from_linked ? ' class="hidden"' : '' ); ?>>
 									<h3><?php esc_html_e( 'One-Click Quick Actions', 'pods' ); ?></h3>
 
 									<ul class="normal">
@@ -148,7 +148,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</ul>
 								</div>
 
-								<div id="pods-wizard-quick-actions-saving-in-progress"<?php echo ( $submit_from_linked ? ' class="hidden"' : '' ); ?>>
+								<div id="pods-wizard-quick-actions-saving-in-progress"<?php echo ( ! $submit_from_linked ? ' class="hidden"' : '' ); ?>>
 									<p><span class="pods-dfv-field__loading-indicator" role="progressbar"></span> <?php esc_html_e( 'Creating your Extended Pod', 'pods' ); ?></p>
 								</div>
 							<?php endif; ?>

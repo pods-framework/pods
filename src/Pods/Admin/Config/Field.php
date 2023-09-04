@@ -48,7 +48,8 @@ class Field extends Base {
 			],
 		];
 
-		$core_tabs['advanced'] = __( 'Advanced', 'pods' );
+		$core_tabs['advanced']          = __( 'Advanced', 'pods' );
+		$core_tabs['conditional-logic'] = __( 'Conditional Logic', 'pods' );
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
@@ -270,6 +271,9 @@ class Field extends Base {
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'br'         => __( 'Line breaks', 'pods' ),
+					'ul'         => __( 'Unordered list', 'pods' ),
+					'ol'         => __( 'Ordered list', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				],
 				'pick_format_single' => 'dropdown',
@@ -422,6 +426,25 @@ class Field extends Base {
 					'restrict_capability' => true,
 				],
 				'help'       => __( 'If none are selected, this option will be ignored.', 'pods' ),
+			],
+		];
+
+		$options['conditional-logic'] = [
+			'enable_conditional_logic' => [
+				'name'    => 'enable_conditional_logic',
+				'label'   => __( 'Enable Conditional Logic', 'pods' ),
+				'help'    => __( 'Conditional logic can automatically show or hide this field depending on the value of other fields.', 'pods' ),
+				'type'    => 'boolean',
+				'default' => 0,
+			],
+			'conditional_logic'        => [
+				'name'       => 'conditional_logic',
+				'label'      => __( 'Conditions', 'pods' ),
+				'help'       => __( 'help', 'pods' ),
+				'type'       => 'conditional-logic',
+				'depends-on' => [
+					'enable_conditional_logic' => true,
+				],
 			],
 		];
 

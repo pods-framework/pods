@@ -2,6 +2,7 @@
 
 namespace Pods\Whatsit\Storage;
 
+use PodsAPI;
 use Pods\Whatsit;
 use Pods\Whatsit\Storage;
 use Pods\Whatsit\Store;
@@ -190,7 +191,7 @@ class Collection extends Storage {
 
 		$cache_key = wp_json_encode( $args ) . $object_collection->get_salt();
 
-		$use_cache = did_action( 'init' );
+		$use_cache = did_action( 'init' ) && empty( $args['bypass_cache'] );
 
 		$found_objects = null;
 
@@ -331,6 +332,14 @@ class Collection extends Storage {
 
 		$object_collection = Store::get_instance();
 		$object_collection->register_object( $object );
+
+		// Clear caches that may be missing this object.
+		pods_static_cache_clear( true, self::class . '/find_objects' );
+		pods_static_cache_clear( true, static::class . '/find_objects/any' );
+		pods_static_cache_clear( true, static::class . '/find_objects/' . $object->get_type() );
+
+		// We can't do this because it'll mess with all other caches every time a group/field gets registered.
+		// pods_cache_clear( true, PodsAPI::class . '/_load_objects' );
 
 		return true;
 	}

@@ -1,4 +1,7 @@
 <?php
+
+use Pods\Whatsit\Field;
+
 wp_enqueue_script( 'pods' );
 pods_form_enqueue_style( 'pods-form' );
 
@@ -10,6 +13,20 @@ pods_form_enqueue_style( 'pods-form' );
  * @param array $fields List of fields for the settings page.
  */
 $fields = apply_filters( 'pods_admin_settings_fields', array() );
+
+// Convert into Field objects.
+foreach ( $fields as $key => $field ) {
+	if ( ! $field instanceof Field ) {
+		$field['name'] = ! empty( $field['name'] ) ? $field['name'] : $key;
+
+		$field = new Field( $field );
+
+		// Replace dependency logic with conditional logic.
+		$field->maybe_migrate_dependency();
+
+		$fields[ $key ] = $field;
+	}
+}
 
 if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {
 	if ( isset( $_POST['pods_cache_flush'] ) ) {
@@ -81,12 +98,12 @@ if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-s
 $do = 'save';
 ?>
 
-<h3><?php _e( 'Clear Pods Cache', 'pods' ); ?></h3>
+<h3><?php _e( 'Pods Cache Reset', 'pods' ); ?></h3>
 
-<p><?php esc_html_e( 'This will clear all of the transients and object cache that are used by Pods and your site.', 'pods' ); ?></p>
+<p><?php esc_html_e( 'You can clear all of the transients and object caches that are used by Pods and your site.', 'pods' ); ?></p>
 
 <p class="submit">
-	<input type="submit" class="button button-primary" name="pods_cache_flush" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />
+	<input type="submit" class="button button-secondary" name="pods_cache_flush" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />
 </p>
 
 <hr />
@@ -106,8 +123,10 @@ $do = 'save';
 			continue;
 		}
 
+		$field['name_prefix'] = 'pods_field_';
+
 		// Output hidden field at top.
-		echo PodsForm::field( 'pods_field_' . $field['name'], pods_get_setting( $field['name'], pods_v( 'default', $field ) ), 'hidden' );
+		echo PodsForm::field( $field['name'], pods_get_setting( $field['name'], pods_v( 'default', $field ) ), 'hidden' );
 
 		// Remove from list of fields to render below.
 		unset( $fields[ $key ] );

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Pods\Global\Functions\General
  */
@@ -6,10 +7,12 @@
 use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
 use Pods\Config_Handler;
+use Pods\Container\Container_DI52;
 use Pods\Permissions;
 use Pods\Data\Map_Field_Values;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
 
@@ -116,23 +119,34 @@ function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
 /**
  * Message / Notice handling for Admin UI
  *
- * @param string $message The notice / error message shown.
- * @param string $type    The message type.
- * @param bool   $return  Whether to return the message.
+ * @param string $message        The notice / error message shown.
+ * @param string $type           The message type (success, info, warning, error, or nag).
+ * @param bool   $return         Whether to return the message.
+ * @param bool   $is_dismissible Whether the notice is dismissible.
  *
  * @return string|null The message or null if not returning.
  */
-function pods_message( $message, $type = null, $return = false ) {
-	if ( empty( $type ) || ! in_array( $type, array( 'notice', 'error' ), true ) ) {
-		$type = 'notice';
+function pods_message( $message, $type = null, $return = false, $is_dismissible = true ) {
+	$message = (string) $message;
+
+	$supported_notice_types = [
+		'success',
+		'info',
+		'warning',
+		'error',
+	];
+
+	// The "nag" type will be treated as "info", but we want to check to see if the constant has it turned off.
+	if ( 'nag' === $type && defined( 'DISABLE_NAG_NOTICES' ) && DISABLE_NAG_NOTICES ) {
+		if ( $return ) {
+			return '';
+		}
+
+		return null;
 	}
 
-	$class = '';
-
-	if ( 'notice' === $type ) {
-		$class = 'updated';
-	} elseif ( 'error' === $type ) {
-		$class = 'error';
+	if ( empty( $type ) || ! in_array( $type, $supported_notice_types, true ) ) {
+		$type = 'info';
 	}
 
 	// Maybe handle WP-CLI messages.
@@ -143,10 +157,53 @@ function pods_message( $message, $type = null, $return = false ) {
 			WP_CLI::line( $message );
 		}
 
+		if ( $return ) {
+			return '';
+		}
+
 		return null;
 	}
 
-	$html = '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
+	// Maybe wrap the message.
+	if ( false === strpos( $message, '</p>' ) ) {
+		$message = '<p>' . $message . '</p>';
+	}
+
+	$div_id = 'message';
+
+	$div_classes = [
+		'notice',
+		'notice-' . $type,
+	];
+
+	if ( $is_dismissible ) {
+		$div_classes[] = 'is-dismissible';
+	}
+
+	$div_classes = array_filter( $div_classes );
+
+	// Maybe prefix the id/classes on frontend.
+	if ( ! is_admin() ) {
+		$div_classes = array_map(
+			static function( $class_name ) {
+				return 'pods-ui-notice-' . $class_name;
+			},
+			$div_classes
+		);
+
+		$div_classes[] = 'pods-ui-notice-front';
+
+		// No ID here since there may be multiple on the page.
+		$div_attr_id = '';
+
+		wp_enqueue_style( 'pods-form' );
+	} else {
+		$div_attr_id = 'id="' . esc_attr( $div_id ) . '"';
+	}
+
+	$div_classes = implode( ' ', $div_classes );
+
+	$html = '<div ' . $div_attr_id . ' class="pods-ui-notice ' . esc_attr( $div_classes ) . '">' . $message . '</div>';
 
 	if ( $return ) {
 		return $html;
@@ -552,44 +609,102 @@ function pods_is_debug_display() {
 /**
  * Determine if user has admin access
  *
- * @param string|array $cap Additional capabilities to check
+ * @since 2.3.5
+ *
+ * @param string|array $capabilities Additional capabilities to check
  *
  * @return bool Whether user has admin access
- *
- * @since 2.3.5
  */
-function pods_is_admin( $cap = null ) {
+function pods_is_admin( $capabilities = null ) {
+	// Normalize the capability we are checking.
+	if ( empty( $capabilities ) ) {
+		$capabilities = [];
+	} else {
+		$capabilities = (array) $capabilities;
+	}
+
 	if ( is_user_logged_in() ) {
-
+		// Check if on multisite and this is a super admin.
 		if ( is_multisite() && is_super_admin() ) {
-			return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
+			return apply_filters( 'pods_is_admin', true, $capabilities, '_super_admin' );
 		}
 
-		$pods_admin_capabilities = array();
+		// Get all the capabilities including Pods Admin capabilities.
+		$capabilities = pods_get_admin_capabilities( $capabilities );
 
-		if ( ! is_multisite() ) {
-			// Default is_super_admin() checks against this capability.
-			$pods_admin_capabilities[] = 'delete_users';
-		}
-
-		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
-
-		if ( empty( $cap ) ) {
-			$cap = array();
-		} else {
-			$cap = (array) $cap;
-		}
-
-		$cap = array_unique( array_filter( array_merge( $pods_admin_capabilities, $cap ) ) );
-
-		foreach ( $cap as $capability ) {
+		// Check if the user has access to any of the capabilities.
+		foreach ( $capabilities as $capability ) {
 			if ( current_user_can( $capability ) ) {
-				return apply_filters( 'pods_is_admin', true, $cap, $capability );
+				return apply_filters( 'pods_is_admin', true, $capabilities, $capability );
 			}
 		}
-	}//end if
+	}
 
-	return apply_filters( 'pods_is_admin', false, $cap, null );
+	return apply_filters( 'pods_is_admin', false, $capabilities, null );
+}
+
+/**
+ * Determine if a specific user has admin access.
+ *
+ * @since 3.0.0
+ *
+ * @param string|array $capabilities Additional capabilities to check.
+ *
+ * @return bool Whether user has admin access.
+ */
+function pods_is_user_admin( int $user_id, $capabilities = null ): bool {
+	// Normalize the capability we are checking.
+	if ( empty( $capabilities ) ) {
+		$capabilities = [];
+	} else {
+		$capabilities = (array) $capabilities;
+	}
+
+	// Check if on multisite and this is a super admin.
+	if ( is_multisite() && is_super_admin( $user_id ) ) {
+		return apply_filters( 'pods_is_user_admin', true, $user_id, $capabilities, '_super_admin' );
+	}
+
+	// Get all the capabilities including Pods Admin capabilities.
+	$capabilities = pods_get_admin_capabilities( $capabilities );
+
+	// Check if the user exists.
+	$user = get_userdata( $user_id );
+
+	if ( ! $user || is_wp_error( $user ) ) {
+		return false;
+	}
+
+	// Check if the user has access to any of the capabilities.
+	foreach ( $capabilities as $capability ) {
+		if ( user_can( $user, $capability ) ) {
+			return apply_filters( 'pods_is_user_admin', true, $user_id, $capabilities, $capability );
+		}
+	}
+
+	return apply_filters( 'pods_is_user_admin', false, $user_id, $capabilities, null );
+}
+
+/**
+ * Get the list of Pods Admin capabilities.
+ *
+ * @since 3.0.0
+ *
+ * @param string|array $capabilities Additional capabilities to merge and include.
+ *
+ * @return array The list of Pods Admin capabilities.
+ */
+function pods_get_admin_capabilities( array $other_capabilities = [] ): array {
+	$pods_admin_capabilities = [];
+
+	if ( ! is_multisite() ) {
+		// Default is_super_admin() checks against this capability.
+		$pods_admin_capabilities[] = 'delete_users';
+	}
+
+	$pods_admin_capabilities = (array) apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $other_capabilities );
+
+	return array_unique( array_filter( array_merge( $pods_admin_capabilities, $other_capabilities ) ) );
 }
 
 /**
@@ -766,7 +881,7 @@ function pods_light() {
  *
  * @return bool Whether Pods is in a demo.
  *
- * @since TBD
+ * @since 2.9.12
  */
 function pods_is_demo() {
 	return (
@@ -2166,7 +2281,7 @@ function pods_has_permissions( $object ) {
  * @param string|array $status  Post statuses to include (default is what user has access to)
  * @param bool         $return  Whether to return the 'id' or 'post'.
  *
- * @return WP_Post|null WP_Post on success or null on failure
+ * @return WP_Post|int|null WP_Post on success or null on failure
  *
  * @since 2.3.4
  */
@@ -3995,7 +4110,7 @@ function pod_has_items( $pod ) {
  * @param array|Field $config_to_merge_into The config to merge into.
  * @param array|Field $config_to_merge_from The config to merge from.
  *
- * @return array|Field The final config result.
+ * @return array|Field|Value_Field The final config result.
  */
 function pods_config_merge_data( $config_to_merge_into, $config_to_merge_from ) {
 	// The configs already match.
@@ -4162,7 +4277,7 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
  *
  * @since 2.8.0
  *
- * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
+ * @param Pod|Pods|array|string $pod The Pod configuration object, Pods() object, old-style array, or name.
  *
  * @return false|Pod The Pod object or false if invalid.
  */
@@ -4401,20 +4516,16 @@ function pods_is_types_only( $check_constant_only = false, $content_type = null 
  *
  * @since 2.8.17
  *
- * @param string|null $slug_or_class Either the slug of a binding previously registered using `tribe_singleton` or
- *                                   `tribe_register` or the full class name that should be automagically created or
+ * @param string|null $slug_or_class Either the slug of a binding previously registered using singleton or
+ *                                   register or the full class name that should be automagically created or
  *                                   `null` to get the container instance itself.
  *
  * @return mixed|null The pods_container() object or null if the function does not exist yet.
  */
 function pods_container( $slug_or_class = null ) {
-	if ( ! function_exists( 'tribe' ) ) {
-		_doing_it_wrong( __FUNCTION__, 'The function tribe() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+	$container = Container_DI52::init();
 
-		return null;
-	}
-
-	return call_user_func_array( 'tribe', func_get_args() );
+	return null === $slug_or_class ? $container : $container->make( $slug_or_class );
 }
 
 /**
@@ -4430,13 +4541,19 @@ function pods_container( $slug_or_class = null ) {
  * @return callable|null A PHP Callable based on the Slug and Methods passed or null if the function does not exist yet.
  */
 function pods_container_callback( $slug_or_class, $method ) {
-	if ( ! function_exists( 'tribe_callback' ) ) {
-		_doing_it_wrong( __FUNCTION__, 'The function tribe_callback() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+	$container = Container_DI52::init();
 
-		return null;
+	$arguments = func_get_args();
+	$is_empty  = 2 === count( $arguments );
+
+	if ( $is_empty ) {
+		$callable = $container->callback( $slug_or_class, $method );
+	} else {
+		$callback = $container->callback( 'callback', 'get' );
+		$callable = call_user_func_array( $callback, $arguments );
 	}
 
-	return call_user_func_array( 'tribe_callback', func_get_args() );
+	return $callable;
 }
 
 /**
@@ -4447,11 +4564,7 @@ function pods_container_callback( $slug_or_class, $method ) {
  * @param  string $provider_class The full class name for the service provider.
  */
 function pods_container_register_service_provider( $provider_class ) {
-	if ( ! function_exists( 'tribe_register_provider' ) ) {
-		_doing_it_wrong( __FUNCTION__, 'The function tribe_register_provider() is not defined yet, there may be a problem loading the Tribe Common library.', '2.8.17' );
+	$container = Container_DI52::init();
 
-		return;
-	}
-
-	call_user_func_array( 'tribe_register_provider', func_get_args() );
+	$container->register( $provider_class );
 }

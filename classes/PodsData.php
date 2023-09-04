@@ -229,7 +229,7 @@ class PodsData {
 	public static function init( $pod = null, $id = null, $strict = true ) {
 
 		if ( ! in_array( $pod, array( null, false ), true ) || ! in_array( $id, array( null, 0 ), true ) ) {
-			$object = new PodsData( $pod, $id );
+			$object = new PodsData( $pod, $id, $strict );
 
 			if ( empty( $object->pod_data ) && true === $strict ) {
 				return pods_error( 'Pod not found', $object );
@@ -258,13 +258,14 @@ class PodsData {
 	/**
 	 * Data Abstraction Class for Pods
 	 *
-	 * @param string|null $pod Pod name.
-	 * @param int|string  $id  Pod Item ID.
+	 * @param string|null $pod    Pod name.
+	 * @param int|string  $id     Pod Item ID.
+	 * @param bool        $strict (optional) If set to true, we will not attempt to auto-setup the pod based on the object.
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since 2.0.0
 	 */
-	public function __construct( $pod = null, $id = 0 ) {
+	public function __construct( $pod = null, $id = 0, $strict = false ) {
 
 		global $wpdb;
 
@@ -282,7 +283,8 @@ class PodsData {
 		} else {
 			$this->pod_data = $this->api->load_pod( [
 				'name'       => $pod,
-				'auto_setup' => true,
+				// Auto-setup only if not in strict mode.
+				'auto_setup' => ! $strict,
 			], false );
 		}
 

@@ -1,7 +1,4 @@
 <?php
-if ( class_exists( 'Pods_PFAT_Frontend' ) ) {
-	return;
-}
 
 /**
  * Class Pods_Templates_Auto_Template_Front_End

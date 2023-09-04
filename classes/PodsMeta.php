@@ -1478,7 +1478,8 @@ class PodsMeta {
 
 				$pod->save( $data, null, $id, array(
 					'is_new_item' => $is_new_item,
-					'podsmeta'    => true
+					'podsmeta'    => true,
+					'from'        => 'process_form_meta',
 				) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
@@ -1706,7 +1707,10 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array(
+				'podsmeta' => true,
+				'from'     => 'process_form_meta',
+			) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'post' );
 
@@ -1958,7 +1962,11 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array(
+				'is_new_item' => $is_new_item,
+				'podsmeta'    => true,
+				'from'        => 'process_form_meta',
+			) );
 		}
 
 		pods_no_conflict_off( 'taxonomy' );
@@ -2197,7 +2205,11 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+				$pod->save( $data, null, $id, array(
+					'is_new_item' => $is_new_item,
+					'podsmeta'    => true,
+					'from'        => 'process_form_meta',
+				) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_user_meta( $id, $field, $value );
@@ -2320,6 +2332,8 @@ class PodsMeta {
 			};
 
 			foreach ( $fields as $field ) {
+				$field['name_prefix'] = $field_prefix;
+
 				$hidden_field = 1 === (int) pods_v( 'hidden', $field, 0 );
 
 				if (
@@ -2612,7 +2626,10 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array(
+				'podsmeta' => true,
+				'from'     => 'process_form_meta',
+			) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'comment' );
 
@@ -4202,7 +4219,10 @@ class PodsMeta {
 			}
 		}
 
-		$pod->save( $meta_key, $meta_value, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );
+		$pod->save( $meta_key, $meta_value, $object_id, array(
+			'podsmeta_direct' => true,
+			'error_mode'      => 'false',
+		) );
 
 		return $object_id;
 	}
@@ -4361,7 +4381,7 @@ class PodsMeta {
 
 			$pod->save( array( $meta_key => null ), null, $object_id, array(
 				'podsmeta_direct' => true,
-				'error_mode'      => 'false'
+				'error_mode'      => 'false',
 			) );
 		}
 

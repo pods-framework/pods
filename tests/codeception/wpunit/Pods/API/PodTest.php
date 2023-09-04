@@ -38,9 +38,13 @@ class PodTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function tearDown(): void {
-		$this->api = null;
-
 		parent::tearDown();
+
+		if ( $this->pod ) {
+			$this->api->delete_pod( [ 'name' => $this->pod ] );
+		}
+
+		$this->api = null;
 	}
 
 	public function populate_pod() {

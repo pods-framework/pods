@@ -2,7 +2,7 @@
 
 namespace Pods;
 
-use Spyc;
+use Pods__Prefixed__Spyc as Spyc;
 
 /**
  * Class to handle registration of Pods configs and loading/saving of config files.
@@ -421,8 +421,6 @@ class Config_Handler {
 		$config = null;
 
 		if ( 'yml' === $config_type ) {
-			require_once PODS_DIR . 'vendor/mustangostang/spyc/Spyc.php';
-
 			$config = Spyc::YAMLLoadString( $raw_config );
 		} elseif ( 'json' === $config_type ) {
 			$config = json_decode( $raw_config, true );

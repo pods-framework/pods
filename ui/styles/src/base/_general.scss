@@ -1,0 +1,38 @@
+.pods-ui-notice-front {
+	border: 1px solid;
+	margin: 10px 0;
+	padding: 15px;
+
+	&.pods-ui-notice-error {
+		color: #790000;
+		font-weight: bold;
+	}
+
+	&.pods-ui-notice-success {
+		color: #4F8A10;
+		background: #DFF2BF url(#{$ImagesPath}/green-check.png) no-repeat 10px center;
+	}
+
+	p {
+		&:first-of-type {
+			margin-top: 0;
+		}
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+
+		.pods-ui-notice-action-links {
+			font-size: medium;
+		}
+	}
+}
+
+
+.pods-form-front-success {
+	color: #4F8A10;
+	border: 1px solid;
+	margin: 10px 0;
+	padding: 15px 10px 15px 50px;
+	background: #DFF2BF url(#{$ImagesPath}/green-check.png) no-repeat 10px center;
+}

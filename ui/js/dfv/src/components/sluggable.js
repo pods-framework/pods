@@ -36,6 +36,7 @@ const NotEditing = ( {
 			<Button
 				isSecondary
 				onClick={ handleEditClick }
+				aria-label={ __( 'Edit the slug', 'pods' ) }
 			>
 				{ __( 'Edit', 'pods' ) }
 			</Button>
@@ -83,6 +84,7 @@ const Editing = ( {
 			<Button
 				isSecondary
 				onClick={ handleOkClick }
+				aria-label={ __( 'Set the slug', 'pods' ) }
 			>
 				{ __( 'OK', 'pods' ) }
 			</Button>
@@ -91,6 +93,7 @@ const Editing = ( {
 				isTertiary
 				isLink
 				onClick={ handleCancelClick }
+				aria-label={ __( 'Cancel editing the slug', 'pods' ) }
 			>
 				{ __( 'Cancel', 'pods' ) }
 			</Button>

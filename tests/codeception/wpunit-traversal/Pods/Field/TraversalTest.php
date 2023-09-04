@@ -66,6 +66,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @group        pods-traversal-field
 	 * @group        pods-traversal-deep
 	 * @group        pods-traversal-field-deep
+	 * @group        pods-traversal-value-deep
 	 *
 	 * @covers       Pods::valid
 	 * @covers       Pods::exists
@@ -109,6 +110,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @group        pods-traversal-display
 	 * @group        pods-traversal-deep
 	 * @group        pods-traversal-display-deep
+	 * @group        pods-traversal-value-deep
 	 *
 	 * @covers       Pods::valid
 	 * @covers       Pods::exists

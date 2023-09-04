@@ -475,8 +475,10 @@ class Repair extends Base {
 
 		$sql = "
 			SELECT DISTINCT
-				`primary`.`ID`,
-				`primary`.`post_name`
+				`primary`.`ID` AS `primary_id`,
+				`primary`.`post_name` AS `primary_name`,
+				`duplicate`.`ID` AS `duplicate_id`,
+				`duplicate`.`post_name` AS `duplicate_name`
 			FROM `{$wpdb->posts}` AS `primary`
 			LEFT JOIN `{$wpdb->posts}` AS `duplicate`
 				ON `duplicate`.`post_name` = `primary`.`post_name`
@@ -502,40 +504,45 @@ class Repair extends Base {
 		$fields_to_resolve = [];
 
 		foreach ( $duplicate_fields as $duplicate_field ) {
-			if ( ! isset( $fields_to_resolve[ $duplicate_field->post_name ] ) ) {
-				$fields_to_resolve[ $duplicate_field->post_name ] = [];
+			if ( ! isset( $fields_to_resolve[ $duplicate_field->primary_name ] ) ) {
+				$fields_to_resolve[ $duplicate_field->primary_name ] = [];
 			}
 
 			try {
-				$field = $this->api->load_field( [ 'id' => $duplicate_field->ID ] );
+				$field = $this->api->load_field( [ 'id' => $duplicate_field->duplicate_id ] );
 
 				if ( $field ) {
-					$fields_to_resolve[ $duplicate_field->post_name ][] = $field;
+					$fields_to_resolve[ $duplicate_field->primary_name ][] = $field;
 				} else {
 					throw new Exception( __( 'Failed to load duplicate field to resolve.', 'pods' ) );
 				}
 			} catch ( Throwable $exception ) {
-				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $duplicate_field->post_name . ' - #' . $duplicate_field->ID . ')';
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $duplicate_field->duplicate_name . ' - #' . $duplicate_field->duplicate_id . ' - Primary: ' . $duplicate_field->primary_name . ' - #' . $duplicate_field->primary_id . ')';
 			}
 		}
 
 		$resolved_fields = [];
 
-		foreach ( $fields_to_resolve as $field_name => $fields ) {
-			if ( 1 < count( $fields ) ) {
-				// Remove the first field.
-				array_shift( $fields );
-			}
-
+		foreach ( $fields_to_resolve as $primary_field_name => $fields ) {
 			foreach ( $fields as $field ) {
 				/** @var Field $field */
 				try {
 					if ( 'preview' !== $mode ) {
+						// Prevent renaming the original field data by using a temp one first, then renaming that.
+						wp_update_post( [
+							'ID'        => $field->get_id(),
+							'post_name' => '_temp_' . $primary_field_name . '_' . $field->get_id(),
+						] );
+
+						// Flush the field cache.
+						$this->api->cache_flush_fields();
+
+						// Save the field with the new name.
 						$this->api->save_field( [
 							'id'       => $field->get_id(),
 							'pod_data' => $pod,
 							'field'    => $field,
-							'new_name' => $field_name . '_' . $field->get_id(),
+							'new_name' => $primary_field_name . '_' . $field->get_id(),
 						], false );
 					}
 
@@ -543,9 +550,9 @@ class Repair extends Base {
 						'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',
 						$field->get_label(),
 						__( 'Old Name', 'pods' ),
-						$field_name,
+						$primary_field_name,
 						__( 'New Name', 'pods' ),
-						$field_name . '_' . $field->get_id(),
+						$primary_field_name . '_' . $field->get_id(),
 						__( 'ID', 'pods' ),
 						$field->get_id()
 					);

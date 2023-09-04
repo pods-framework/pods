@@ -2319,7 +2319,7 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 
 	if ( 0 < $page ) {
 		if ( 'id' === $return ) {
-			return $page;
+			return pods_v( $page, 'post_id' );
 		}
 
 		return get_post( $page, $output );

@@ -1422,12 +1422,12 @@ class PodsAdmin {
 
 		if ( ! $callouts ) {
 			$callouts = array(
-				'friends_2022_30' => 1,
+				'friends_2023_docs' => 1,
 			);
 		}
 
 		// Handle Friends of Pods callout logic.
-		$callouts['friends_2022_30'] = ! isset( $callouts['friends_2022_30'] ) || $callouts['friends_2022_30'] || $force_callouts ? 1 : 0;
+		$callouts['friends_2023_docs'] = ! isset( $callouts['friends_2023_docs'] ) || $callouts['friends_2023_docs'] || $force_callouts ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.
@@ -1447,9 +1447,6 @@ class PodsAdmin {
 	 * @since 2.7.17
 	 */
 	public function handle_callouts_updates() {
-		// Don't show callouts right now until Pods 3.0.
-		return;
-
 		$callouts = get_option( 'pods_callouts' );
 
 		if ( ! $callouts ) {
@@ -1462,8 +1459,8 @@ class PodsAdmin {
 		$is_demo = pods_is_demo();
 
 		// Disable Friends of Pods callout.
-		if ( $is_demo || 'friends_2022_30' === $callout_dismiss ) {
-			$callouts['friends_2022_30'] = 0;
+		if ( $is_demo || 'friends_2023_docs' === $callout_dismiss ) {
+			$callouts['friends_2023_docs'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
 		} elseif ( 'reset' === $callout_dismiss ) {
@@ -1511,8 +1508,8 @@ class PodsAdmin {
 
 		$callouts = $this->get_callouts();
 
-		if ( ! empty( $callouts['friends_2022_30'] ) ) {
-			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2022_30.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $callouts['friends_2023_docs'] ) ) {
+			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2023_docs.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 	}
 
@@ -1821,18 +1818,21 @@ class PodsAdmin {
 
 		// Get objects from storage.
 		$pod_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_pod',
+			'object_type'  => 'pod',
+			'name'         => '_pods_pod',
+			'bypass_cache' => true,
 		] );
 
 		$group_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_group',
+			'object_type'  => 'pod',
+			'name'         => '_pods_group',
+			'bypass_cache' => true,
 		] );
 
 		$field_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_field',
+			'object_type'  => 'pod',
+			'name'         => '_pods_field',
+			'bypass_cache' => true,
 		] );
 
 		$global_config = [
@@ -1842,18 +1842,24 @@ class PodsAdmin {
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'group'      => $group_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'field'      => $field_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 		];
 
@@ -2026,14 +2032,15 @@ class PodsAdmin {
 		$field_args['group']  = 'group/' . $parent . '/' . $group_name;
 
 		$dfv_args = (object) [
-			'id'      => 0,
-			'name'    => $field_args['name'],
-			'value'   => '',
-			'pod'     => null,
-			'type'    => pods_v( 'type', $field_args ),
-			'options' => array_merge( [
+			'id'              => 0,
+			'name'            => $field_args['name'],
+			'value'           => '',
+			'pod'             => null,
+			'type'            => pods_v( 'type', $field_args ),
+			'options'         => array_merge( [
 				'id' => 0,
-			], $field_args )
+			], $field_args ),
+			'build_item_data' => true,
 		];
 
 		if ( ! empty( $dfv_args->type ) ) {
@@ -2161,6 +2168,9 @@ class PodsAdmin {
 	 * Get settings administration view
 	 */
 	public function admin_settings() {
+		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
 		/**
 		 * Allow hooking into our settings page to set up hooks.
 		 *

@@ -48,7 +48,7 @@ const FileReadOnly = ( props ) => {
 		value: item.id,
 	} ) );
 
-	console.log( 'readonly File value', value, mediaItemsData );
+	console.debug( 'readonly File value', value, mediaItemsData );
 	// @todo take getMediaItemData() from FileFull component and use it to get data in the right format.
 
 	if ( 0 === formattedValues.length ) {

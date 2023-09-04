@@ -3991,18 +3991,29 @@ class PodsUI {
 										);
 									}
 								} else {
-									ob_start();
+									$row_value_is_array = is_array( $row_value );
+									$row_values = (array) $row_value;
 
-									$field_value = PodsForm::field_method( $attributes['type'], 'ui', $this->id, $row_value, $field, $attributes, $fields, $this->pod );
+									foreach ( $row_values as $row_value_key => $row_value_item ) {
+										ob_start();
 
-									$field_output = trim( (string) ob_get_clean() );
+										$field_value = PodsForm::field_method( $attributes['type'], 'ui', $this->id, $row_value_item, $field, $attributes, $fields, $this->pod );
 
-									if ( false === $field_value ) {
-										$row_value = '';
-									} elseif ( 0 < strlen( trim( (string) $field_value ) ) ) {
-										$row_value = trim( (string) $field_value );
-									} elseif ( 0 < strlen( $field_output ) ) {
-										$row_value = $field_output;
+										$field_output = trim( (string) ob_get_clean() );
+
+										if ( false === $field_value ) {
+											$row_values[ $row_value_key ] = '';
+										} elseif ( $field_value && 0 < strlen( trim( (string) $field_value ) ) ) {
+											$row_values[ $row_value_key ] = trim( (string) $field_value );
+										} elseif ( $field_output && 0 < strlen( $field_output ) ) {
+											$row_values[ $row_value_key ] = $field_output;
+										}
+									}
+
+									$row_value = $row_values;
+
+									if ( ! $row_value_is_array ) {
+										$row_value = $row_value ? current( $row_value ) : null;
 									}
 								}//end if
 

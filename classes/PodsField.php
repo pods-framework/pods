@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Value_Field;
@@ -624,6 +625,9 @@ class PodsField {
 		if ( ! isset( $config['placeholder'] ) || ! is_string( $config['placeholder'] ) ) {
 			$config['placeholder'] = '';
 		}
+
+		$config['label']       = pods_kses_exclude_p( $config['label'] );
+		$config['description'] = pods_kses_exclude_p( $config['description'] );
 
 		return $config;
 

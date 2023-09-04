@@ -683,8 +683,6 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
 						$value = '';
-					} elseif ( isset( $user->{$var} ) ) {
-						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {
 						$value = '';
 
@@ -692,7 +690,14 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 							$value = array_shift( $user->roles );
 						}
 					} else {
-						$value = get_user_meta( $user->ID, $var );
+						$value = '';
+						if ( isset( $user->data->{$var} ) ) {
+							$value = $user->data->{$var};
+						} elseif ( metadata_exists( 'user', $user->ID, $var ) ) {
+							$value = get_user_meta( $user->ID, $var );
+						} elseif ( isset( $user->{$var} ) ) {
+							$value = $user->{$var};
+						}
 					}
 
 					if ( is_array( $value ) && ! empty( $value ) ) {

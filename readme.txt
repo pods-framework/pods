@@ -2,10 +2,10 @@
 Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, dan.stefan, Desertsnowman, mgibbs189, Shelob9, clubduece, curtismchale, mikedamage, jchristopher, pcfreak30
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
-Requires at least: 5.7
-Tested up to: 6.2
-Requires PHP: 5.6
-Stable tag: 2.9.19
+Requires at least: 6.0
+Tested up to: 6.3
+Requires PHP: 7.2
+Stable tag: 3.0.0-rc-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,26 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.0 RC 1 - July 5th, 2023 =
+
+**Breaking compatibility warning**
+
+New minimum required versions have been updated as follows which includes notices to let you know if you need to update something:
+
+* New minimum WP version required: WordPress 6.0+ (previously: WP 5.7+)
+* New minimum PHP version required: PHP 7.2+ (previously: PHP 5.6+) — Hey! You should take the time to update to PHP 8.1+ because that is currently the lowest version actively supported by The PHP Group.
+
+**3.0 Changelog**
+
+* Feature: Conditional Logic for Fields - You can now choose to show or hide a Pods field based on the value of another Pods field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9)
+* Feature: Support for the new WordPress 6.3 (or if you are using the Gutenberg plugin) feature for Command Palettes. This will allow you to contextually go to the Edit Pod screen for the matching Pod configuration of that post type. (@sc0ttkclark)  
+* Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
+* Added: When importing and exporting Pods packages, they now include the list of active components.
+* Fixed: When extending a post type or taxonomy it will now use the associated post type or taxonomy label when setting up the pod so it matches. #6350 (@sc0ttkclark)
+* Fixed: Resolved problems with saving the featured image from frontend forms when a post type supports featured images. (@sc0ttkclark)
+* Fixed: Don't show SQL errors when getting relationship data for forms if the debug display is disabled in WP. (@sc0ttkclark) 
+* Removed: The Tribe Common library has been removed from Pods and it will alleviate conflicts from plugins like The Events Calendar and Event Tickets going forward.
 
 = 2.9.19 - June 28th, 2023 =
 
@@ -778,5 +798,8 @@ Our GitHub has the full list of all prior releases of Pods: https://github.com/p
 
 == Upgrade Notice ==
 
+= 3.0 =
+This upgrade requires a minimum versions of PHP 7.2+ and WordPress 6.0+.
+
 = 2.8 =
-This upgrade requires a minimum PHP version of 5.6+ and WordPress 5.5+.
+This upgrade requires a minimum versions of PHP 5.6+ and WordPress 5.5+.

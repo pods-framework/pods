@@ -345,6 +345,7 @@ const FieldGroups = ( {
 
 						setShowAddGroupModal( true );
 					} }
+					aria-label={ __( 'Add new field group to the Pod', 'pods' ) }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
 				</button>
@@ -419,6 +420,7 @@ const FieldGroups = ( {
 				<button
 					className="pods-button-group_add-new"
 					onClick={ () => setShowAddGroupModal( true ) }
+					aria-label={ __( 'Add new field group to the Pod', 'pods' ) }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
 				</button>

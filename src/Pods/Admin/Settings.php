@@ -19,7 +19,7 @@ class Settings {
 	 * @since 2.8.0
 	 */
 	public function hook() {
-		add_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
+		add_filter( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
 	}
 
 	/**
@@ -28,7 +28,7 @@ class Settings {
 	 * @since 2.8.0
 	 */
 	public function unhook() {
-		remove_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
+		remove_filter( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
 	}
 
 	/**
@@ -248,7 +248,7 @@ class Settings {
 				'1' => __( 'Enable overriding WP Metadata values (may conflict with certain plugins and decrease performance with large processes)', 'pods' ),
 				'0' => __( 'Disable overriding WP Metadata values', 'pods' ),
 			],
-			'depends-on' => [ 'pods_field_metadata_integration' => '1' ],
+			'depends-on' => [ 'metadata_integration' => '1' ],
 		];
 
 		$fields['media_modal_fields'] = [

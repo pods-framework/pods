@@ -257,6 +257,9 @@ class PodsField_Pick extends PodsField {
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'br'         => __( 'One per line (br HTML tags)', 'pods' ),
+					'ul'         => __( 'Unordered HTML list', 'pods' ),
+					'ol'         => __( 'Ordered HTML list', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				],
 				'pick_format_single' => 'dropdown',
@@ -545,7 +548,11 @@ class PodsField_Pick extends PodsField {
 			}
 		} elseif ( $force ) {
 			// If we are rebuilding, make sure we start with a clean slate.
-			self::$related_objects = array();
+			self::$related_objects = [];
+		}
+
+		if ( ! is_array( self::$related_objects ) ) {
+			self::$related_objects = [];
 		}
 
 		if ( empty( self::$related_objects ) ) {
@@ -607,7 +614,14 @@ class PodsField_Pick extends PodsField {
 			asort( $post_types );
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
+				if (
+					empty( $post_type )
+					|| 'attachment' === $post_type
+					|| (
+						$pods_meta
+						&& ! $pods_meta->is_type_covered( 'post_type', $post_type )
+					)
+				) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -631,7 +645,14 @@ class PodsField_Pick extends PodsField {
 			asort( $post_types );
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
+				if (
+					empty( $post_type )
+					|| 'attachment' === $post_type
+					|| (
+						$pods_meta
+						&& ! $pods_meta->is_type_covered( 'post_type', $post_type )
+					)
+				) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -655,7 +676,13 @@ class PodsField_Pick extends PodsField {
 			asort( $taxonomies );
 
 			foreach ( $taxonomies as $taxonomy => $label ) {
-				if ( empty( $taxonomy ) || ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
+				if (
+					empty( $taxonomy )
+					|| (
+						$pods_meta
+						&& ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy )
+					)
+				) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;
@@ -912,17 +939,13 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+		$field = pods_config_for_field( $options );
 
-		$schema = false;
-
-		$simple_tableless_objects = $this->simple_objects();
-
-		if ( in_array( pods_v( static::$type . '_object', $options ), $simple_tableless_objects, true ) ) {
-			$schema = 'LONGTEXT';
+		if ( $field && $field->is_simple_relationship() ) {
+			return 'LONGTEXT';
 		}
 
-		return $schema;
-
+		return false;
 	}
 
 	/**
@@ -948,23 +971,36 @@ class PodsField_Pick extends PodsField {
 
 		$display_format = pods_v( static::$type . '_display_format_multi', $options, 'default' );
 
-		if ( 'non_serial' === $display_format ) {
-			$args['serial'] = false;
+		switch ( $display_format ) {
+			case 'ul':
+			case 'ol':
+				$value = '<' . $display_format . '><li>' . implode( '</li><li>', (array) $value ) . '</li></' . $display_format . '>';
+				break;
+			case 'br':
+				$value = implode( '<br />', $value );
+				break;
+			case 'non_serial':
+				$args['serial'] = false;
+				$value = pods_serial_comma( $value, $args );
+				break;
+			case 'custom':
+				$args['serial'] = false;
+
+				$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
+				if ( ! empty( $separator ) ) {
+					$args['separator'] = $separator;
+
+					// Replicate separator behavior.
+					$args['and'] = $args['separator'];
+				}
+				$value = pods_serial_comma( $value, $args );
+				break;
+			default:
+				$value = pods_serial_comma( $value, $args );
+				break;
 		}
 
-		if ( 'custom' === $display_format ) {
-			$args['serial'] = false;
-
-			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
-			if ( ! empty( $separator ) ) {
-				$args['separator'] = $separator;
-
-				// Replicate separator behavior.
-				$args['and'] = $args['separator'];
-			}
-		}
-
-		return pods_serial_comma( $value, $args );
+		return $value;
 	}
 
 	/**
@@ -1117,6 +1153,10 @@ class PodsField_Pick extends PodsField {
 			 */
 			$field_options['select2_overrides'] = apply_filters( 'pods_pick_select2_overrides', $field_options['select2_overrides'] );
 		}
+
+        if ( ! empty( $args->build_item_data ) ) {
+            $field_options['item_data'] = $this->build_dfv_field_item_data( $args );
+        }
 
 		return $field_options;
 	}
@@ -1462,6 +1502,10 @@ class PodsField_Pick extends PodsField {
 			$args->options['supports_thumbnails'] = null;
 		}
 
+		if ( ! isset( $args->options['pick_object'] ) ) {
+			$args->options['pick_object'] = null;
+		}
+
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
 				if ( null === $args->options['supports_thumbnails'] && ! empty( $args->options['pick_val'] ) ) {
@@ -1681,7 +1725,7 @@ class PodsField_Pick extends PodsField {
 			self::$api = pods_api();
 		}
 
-		$simple_tableless_objects = $this->simple_objects();
+		$field = pods_config_for_field( $options, $pod );
 
 		$related_pick_limit  = 0;
 		$related_field       = false;
@@ -1709,7 +1753,12 @@ class PodsField_Pick extends PodsField {
 
 		$related_data = pods_static_cache_get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
-		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
+		if (
+			! empty( $related_sister_id )
+			&& ! empty( $related_object )
+			&& $field
+			&& ! $field->is_simple_relationship()
+		) {
 			$related_pod = self::$api->load_pod( [
 				'name'       => $related_val,
 				'auto_setup' => true,
@@ -1956,7 +2005,7 @@ class PodsField_Pick extends PodsField {
 			self::$api = pods_api();
 		}
 
-		$simple_tableless_objects = $this->simple_objects();
+		$field = pods_config_for_field( $options, $pod );
 
 		// Bidirectional relationship requirement checks.
 		$related_object = pods_v( static::$type . '_object', $options, '' );
@@ -1973,7 +2022,12 @@ class PodsField_Pick extends PodsField {
 			$related_sister_id = 0;
 		}
 
-		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
+		if (
+			! empty( $related_sister_id )
+			&& ! empty( $related_object )
+			&& $field
+			&& ! $field->is_simple_relationship()
+		) {
 			$related_pod = self::$api->load_pod( [
 				'name'       => $related_val,
 				'auto_setup' => true,
@@ -2801,7 +2855,15 @@ class PodsField_Pick extends PodsField {
 					$params['where'] = null;
 				}
 
-				$results = $search_data->select( $params );
+				try {
+					$results = $search_data->select( $params );
+				} catch ( Exception $exception ) {
+					if ( pods_is_debug_display() ) {
+						pods_error_exception( $exception );
+					}
+
+					$results = [];
+				}
 
 				if ( $autocomplete && 0 < $params['limit'] && $params['limit'] < $search_data->total_found() ) {
 					if ( ! empty( $value ) ) {
@@ -2831,7 +2893,15 @@ class PodsField_Pick extends PodsField {
 
 						$params['where'] .= "`t`.`{$search_data->field_id}` IN ( {$ids} )";
 
-						$results = $search_data->select( $params );
+						try {
+							$results = $search_data->select( $params );
+						} catch ( Exception $exception ) {
+							if ( pods_is_debug_display() ) {
+								pods_error_exception( $exception );
+							}
+
+							$results = [];
+						}
 					}//end if
 				} else {
 					$autocomplete = false;

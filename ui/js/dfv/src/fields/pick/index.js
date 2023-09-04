@@ -30,7 +30,7 @@ import './pick.scss';
 
 const getFieldItemDataFromDataProp = ( data ) => {
 	// Skip unless we're handling an object of values.
-	if ( 'object' !== typeof data || Array.isArray( data ) ) {
+	if ( 'object' !== typeof data && ! Array.isArray( data ) ) {
 		return [];
 	}
 
@@ -132,6 +132,7 @@ const Pick = ( props ) => {
 			read_only: readOnly,
 			fieldItemData,
 			data = [],
+			item_data: builtItemData = [],
 			label,
 			name,
 			required: isRequired = false,
@@ -177,6 +178,13 @@ const Pick = ( props ) => {
 		allPodValues,
 	} = props;
 
+	// Handle item data.
+	let itemData = fieldItemData;
+
+	if ( ! itemData && builtItemData ) {
+		itemData = builtItemData;
+	}
+
 	let fieldValue = value;
 
 	if ( 'object' === typeof value ) {
@@ -195,7 +203,7 @@ const Pick = ( props ) => {
 	// modified by the add/edit modals, or by loading ajax options, so we need to track
 	// this in state, starting with the supplied fieldItemData from the page load.
 	const [ modifiedFieldItemData, setModifiedFieldItemData ] = useState(
-		fieldItemData ? fieldItemData : getFieldItemDataFromDataProp( data )
+		itemData ? itemData : getFieldItemDataFromDataProp( data )
 	);
 
 	const { bidirectionFieldItemData } = useBidirectionalFieldData(
@@ -337,6 +345,8 @@ const Pick = ( props ) => {
 			);
 		}
 
+		const htmlName = htmlAttributes.name || name;
+
 		if (
 			( isSingle && 'list' === formatSingle ) ||
 			( isMulti && 'list' === formatMulti ) ||
@@ -430,7 +440,7 @@ const Pick = ( props ) => {
 
 					{ formattedValue.map( ( selectedValue, index ) => (
 						<input
-							name={ `${ name }[${ index }]` }
+							name={ `${ htmlName }[${ index }]` }
 							key={ `${ name }-${ selectedValue.value }` }
 							type="hidden"
 							value={ selectedValue.value }
@@ -462,6 +472,7 @@ const Pick = ( props ) => {
 					className="pods-related-add-new pods-modal"
 					onClick={ () => setShowAddNewIframe( true ) }
 					isSecondary
+					aria-label={ __( 'Create and add a new item to this list', 'pods' ) }
 				>
 					{ addNewLabel }
 				</Button>

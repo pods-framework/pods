@@ -2,10 +2,10 @@
 
 namespace Pods\REST\V1\Endpoints;
 
+use Pods\REST\Interfaces\Endpoints\READ_Interface;
 use Pods\REST\V1\Main;
-use Tribe__Documentation__Swagger__Builder_Interface as Builder_Interface;
-use Tribe__Documentation__Swagger__Provider_Interface as Provider_Interface;
-use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Endpoint_Interface;
+use Pods\REST\Interfaces\Swagger\Builder_Interface;
+use Pods\REST\Interfaces\Swagger\Provider_Interface;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -14,7 +14,7 @@ use WP_REST_Response;
  *
  * @since 2.8.0
  */
-class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interface, Builder_Interface {
+class Swagger_Documentation implements Provider_Interface, READ_Interface, Builder_Interface {
 
 	/**
 	 * @var string

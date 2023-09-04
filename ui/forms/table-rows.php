@@ -21,6 +21,8 @@ $post_callback     = isset( $post_callback ) ? $post_callback : null;
 $th_scope          = isset( $th_scope ) ? $th_scope : '';
 
 foreach ( $fields as $field ) {
+	$field['name_prefix'] = $field_prefix;
+
 	$hidden_field = 'hidden' === $field['type'] || filter_var( pods_v( 'hidden', $field, false ), FILTER_VALIDATE_BOOLEAN );
 
 	if (

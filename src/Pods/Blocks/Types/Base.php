@@ -3,7 +3,7 @@
 namespace Pods\Blocks\Types;
 
 use Exception;
-use Tribe__Editor__Blocks__Abstract;
+use Pods\Blocks\Blocks_Abstract;
 use WP_Block;
 
 /**
@@ -11,7 +11,7 @@ use WP_Block;
  *
  * @since 2.8.0
  */
-abstract class Base extends Tribe__Editor__Blocks__Abstract {
+abstract class Base extends Blocks_Abstract {
 
 	/**
 	 * Set the default attributes of this block.

@@ -201,6 +201,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 * @throws \Exception
 	 */
 	public static function _initialize_pods_related_data( $depth = 0 ) {
+		pods_query( "TRUNCATE @wp_podsrel" );
+
 		$data = self::$related_data;
 
 		$import_data = file_get_contents( dirname( __DIR__ ) . '/_data/traversal-related-data.json' );

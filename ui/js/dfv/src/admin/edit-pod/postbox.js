@@ -75,6 +75,8 @@ export const Postbox = ( {
 										<button
 											onClick={ deleteHandler }
 											className="components-button editor-post-trash is-link"
+											disabled={ isSaving }
+											aria-disabled={ isSaving }
 										>
 											{ __( 'Delete Pod', 'pods' ) }
 										</button>
@@ -86,6 +88,7 @@ export const Postbox = ( {
 											className="button-primary"
 											type="submit"
 											disabled={ isSaving }
+											aria-disabled={ isSaving }
 											onClick={ () => savePod( options, podID ) }
 										>
 											{ __( 'Save Pod', 'pods' ) }

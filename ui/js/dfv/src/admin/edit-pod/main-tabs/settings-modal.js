@@ -370,6 +370,8 @@ const SettingsModal = ( {
 					isSecondary
 					onClick={ handleCancel }
 					disabled={ isSaving }
+					aria-disabled={ isSaving }
+					aria-label={ __( 'Cancel the modal changes', 'pods' ) }
 				>
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
@@ -378,6 +380,7 @@ const SettingsModal = ( {
 					isPrimary
 					onClick={ handleSave }
 					disabled={ ! isValid || isSaving }
+					aria-disabled={ ! isValid || isSaving }
 				>
 					{ saveButtonText }
 				</Button>

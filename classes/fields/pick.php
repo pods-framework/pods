@@ -2743,7 +2743,7 @@ class PodsField_Pick extends PodsField {
 
 					$params['limit'] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', $limit, $name, $value, $options, $pod, $id, $object_params );
 
-					if ( is_array( $value ) && $params['limit'] < count( $value ) ) {
+					if ( -1 !== (int) $params['limit'] && is_array( $value ) && $params['limit'] < count( $value ) ) {
 						$params['limit'] = count( $value );
 					}
 
@@ -2894,7 +2894,7 @@ class PodsField_Pick extends PodsField {
 						$params['where'] .= "`t`.`{$search_data->field_id}` IN ( {$ids} )";
 
 						try {
-							$results = $search_data->select( $params );
+							$results = array_merge( $results, $search_data->select( $params ) );
 						} catch ( Exception $exception ) {
 							if ( pods_is_debug_display() ) {
 								pods_error_exception( $exception );

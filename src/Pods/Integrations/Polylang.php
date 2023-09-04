@@ -400,11 +400,21 @@ class Polylang extends Integration {
 
 		// If the language object exists, add it!
 		if ( $language && ! empty( $language->term_id ) ) {
-			$lang_data['t_id']     = (int) $language->term_id;
-			$lang_data['tt_id']    = (int) $language->term_taxonomy_id;
-			$lang_data['tl_t_id']  = (int) $language->tl_term_id;
-			$lang_data['tl_tt_id'] = (int) $language->tl_term_taxonomy_id;
-			$lang_data['term']     = $language;
+
+			$lang_data['term'] = $language;
+			$lang_data['t_id'] = (int) $language->term_id;
+
+			if ( method_exists( $language, 'get_tax_prop' ) ) {
+				// Since Polylang 3.4
+				$lang_data['tt_id']    = (int) $language->get_tax_prop( 'language', 'term_taxonomy_id' );
+				$lang_data['tl_t_id']  = (int) $language->get_tax_prop( 'term_language', 'term_id' );
+				$lang_data['tl_tt_id'] = (int) $language->get_tax_prop( 'term_language', 'term_taxonomy_id' );
+			} else {
+				// Pre Polylang 3.4
+				$lang_data['tt_id']    = (int) $language->term_taxonomy_id;
+				$lang_data['tl_t_id']  = (int) $language->tl_term_id;
+				$lang_data['tl_tt_id'] = (int) $language->tl_term_taxonomy_id;
+			}
 		}
 
 		$lang_data[ $locale ] = $lang_data;

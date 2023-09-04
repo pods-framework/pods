@@ -1799,6 +1799,23 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		return $value;
 	}
 
+	// User special magic tag.
+	if ( 0 === strpos( $tag, 'user.' ) ) {
+		$pod = pods( 'user', get_current_user_id() );
+		if ( $pod->is_valid() && $pod->exists() ) {
+			$value = $pod->do_magic_tags( '{@' . substr( $tag, 5 ) . '}' );
+
+			if ( $value ) {
+
+				if ( $sanitize ) {
+					$value = pods_sanitize( $value );
+				}
+
+				return $value;
+			}
+		}
+	}
+
 	$tag = trim( $tag, ' {@}' );
 	$tag = explode( ',', $tag );
 	$tag = pods_trim( $tag );

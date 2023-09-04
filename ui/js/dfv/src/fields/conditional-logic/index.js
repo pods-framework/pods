@@ -32,6 +32,12 @@ const NUMERIC_FIELD_TYPES = [
 	'number',
 ];
 
+const RELATIONAL_FIELD_TYPES = [
+	'file',
+	'avatar',
+	'pick',
+];
+
 const FIELD_TYPES_WITH_NO_BLANK_COMPARISONS = [
 	'boolean',
 ];
@@ -60,6 +66,10 @@ const ConditionalLogic = ( {
 	const {
 		conditional_logic_affected_field_name: affectedFieldName,
 	} = fieldConfig;
+
+	const allAvailableFields = currentPodAllFields.filter( ( field ) => {
+		return ! UNSUPPORTED_FIELD_TYPES.includes( field.type ) && field.name !== affectedFieldName;
+	} );
 
 	const [ conditions, setConditions ] = useState( {
 		action: 'show',
@@ -185,13 +195,21 @@ const ConditionalLogic = ( {
 			</div>
 
 			{ conditions.rules.map( ( rule, index ) => {
-				const ruleFieldObject = currentPodAllFields.find(
+				let ruleFieldObject = allAvailableFields.find(
 					( field ) => field.name === rule.field,
 				);
+
+				// Default the field object / rule to the first available field in the list if no field is selected.
+				if ( ! ruleFieldObject ) {
+					ruleFieldObject = allAvailableFields[ 0 ];
+
+					rule.field = ruleFieldObject.name;
+				}
 
 				const ruleFieldType = ruleFieldObject?.type;
 
 				const isNumericFieldType = NUMERIC_FIELD_TYPES.includes( ruleFieldType );
+				const isRelationalFieldType = RELATIONAL_FIELD_TYPES.includes( ruleFieldType );
 
 				return (
 					<div
@@ -224,6 +242,7 @@ const ConditionalLogic = ( {
 											<option
 												value={ field.name }
 												key={ field.name }
+												data-field-type={ field.type }
 											>
 												{ field.label }
 											</option>
@@ -238,8 +257,8 @@ const ConditionalLogic = ( {
 							value={ rule.compare }
 							onChange={ ( event ) => setRuleOption( index, 'compare', event.target.value ) }
 						>
-							<option value="=">{ __( 'is', 'pods' ) }</option>
-							<option value="!=">{ __( 'is not', 'pods' ) }</option>
+							<option value="=">{ isRelationalFieldType ? __( 'is (id/value)', 'pods' ) : __( 'is', 'pods' ) }</option>
+							<option value="!=">{ isRelationalFieldType ? __( 'is not (id/value)', 'pods' ) : __( 'is not', 'pods' ) }</option>
 
 							{ ! FIELD_TYPES_WITH_NO_BLANK_COMPARISONS.includes( ruleFieldType ) ? (
 								<>

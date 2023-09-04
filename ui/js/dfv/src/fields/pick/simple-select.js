@@ -53,7 +53,10 @@ const SimpleSelect = ( {
 			readOnly={ toBool( readOnly ) }
 		>
 			<>
-				{ options.map( ( { name: optionLabel, id: optionValue } ) => {
+				{ options.map( ( { name: optionLabel, id: optionValue, label: collectionLabel, collection: collection } ) => {
+					optionLabel = optionLabel ?? collectionLabel;
+					optionValue = optionValue ?? collection;
+
 					if ( 'string' === typeof optionValue || 'number' === typeof optionValue ) {
 						return (
 							<option key={ optionValue } value={ optionValue }>

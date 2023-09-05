@@ -29,7 +29,7 @@ jobs:
       # Checkout the repo
       # ------------------------------------------------------------------------------
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1000
           submodules: recursive
@@ -44,7 +44,7 @@ jobs:
       # Checkout slic
       # ------------------------------------------------------------------------------
       - name: Checkout slic
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: stellarwp/slic
           ref: main
@@ -54,13 +54,12 @@ jobs:
       # Prepare our composer cache directory
       # ------------------------------------------------------------------------------
       - name: Get Composer Cache Directory
-        id: get-composer-cache-dir
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v2
         id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
         with:
-          path: ${{ steps.get-composer-cache-dir.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-

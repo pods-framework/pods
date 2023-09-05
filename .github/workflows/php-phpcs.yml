@@ -15,21 +15,21 @@ jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v1
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
       - name: Run PHPCS inspection
-        uses: rtCamp/action-phpcs-code-review@v2
+        uses: rtCamp/action-phpcs-code-review@v3
         env:
           GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
           SKIP_FOLDERS: ".github,.wordpress-org,tests,tribe-common,vendor"

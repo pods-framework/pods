@@ -991,10 +991,10 @@ class PodsField {
 		}
 
 		// Maybe trim empty p tags.
-		$value = preg_replace( '/^\s*<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>(.*)/Umis', '$2', $value );
-		$value = preg_replace( '/^\s*(\s|&nbsp;|<\/?\s?br\s?\/?>)*(.*)/Umis', '$2', $value );
-		$value = preg_replace( '/(.*)<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>\s*$/Umis', '$1', $value );
-		$value = preg_replace( '/(.*)(\s|&nbsp;|<\/?\s?br\s?\/?>)*\s*$/Umis', '$1', $value );
+		$value = preg_replace( '/^\s*<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>(.*)$/Umis', '$2', $value );
+		$value = preg_replace( '/^\s*(\s|&nbsp;|<\/?\s?br\s?\/?>)*(.*)$/Umis', '$2', $value );
+		$value = preg_replace( '/^(.*)<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>\s*$/Umis', '$1', $value );
+		$value = preg_replace( '/^(.*)(\s|&nbsp;|<\/?\s?br\s?\/?>)*\s*$/Umis', '$1', $value );
 
 		return trim( $value );
 	}

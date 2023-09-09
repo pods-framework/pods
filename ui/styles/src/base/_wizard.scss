@@ -26,23 +26,41 @@
 				list-style:none;
 				display: block;
 				float: left;
-				height: 30px;
-				padding-top: 5px;
+				/* #7161 */
+				height: 37px;
+				padding-top: 6px;
+				box-sizing: border-box;
 				color: #ababab;
 				margin-bottom: 0;
 				font: 18px 'Garamond, Georgia';
 				position: relative;
-				border-top: 1px solid $grey-border;
-				border-bottom: 1px solid $grey-border;
+				// border-top: 1px solid $grey-border;
+				// border-bottom: 1px solid $grey-border;
 				@include vertical-gradient(#f9f9f9, #ededed);
 				i {
-					display: block;
-					width: 11px;
-					height: 35px;
+					// display: block;
+					// width: 11px;
+					// height: 35px;
 					position: absolute;
 					top: 0;
-					left: 0;
-					background: url(#{$ImagesPath}/arrow_next.png);
+					// left: 0;
+					// background: url(#{$ImagesPath}/arrow_next.png);
+				}
+				&:last-child i {
+					/*
+						#7161
+						Replace png arrow with CSS only arrow.
+						So for step 1 and step 2, we just need to update border color,
+						doing this we can remove the need of two PNG arrow iamges.
+					*/
+					border: solid transparent;
+					border-color: rgba(194, 225, 245, 0);
+					border-left-color: #6e6e6e;
+					border-width: 18.5px;
+					border-left-width: 12px;
+				}
+				&:last-child.pods-wizard-menu-current i {
+					border-left-color: #bbddbd;
 				}
 				span {
 					display: inline-block;
@@ -60,30 +78,32 @@
 				}
 				&.pods-wizard-menu-current {
 					color: #fff;
-					border-bottom: 1px solid #6e6e6e;
-					border-top: 1px solid #808080;
+					// border-bottom: 1px solid #6e6e6e;
+					// border-top: 1px solid #808080;
 					text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-					@include vertical-gradient(#808080, #6e6e6e);
+					background: #6e6e6e;
+					// @include vertical-gradient(#808080, #6e6e6e);
 					span {
 						text-shadow: none;
 						background: #fff;
 						color: #6f6f6f;
 						@include box-shadow(1px, 1px, 2px, 0.2);
 					}
-					&+ li > i {
-						background: url(#{$ImagesPath}/arrow_current.png);
-					}
+					// &+ li > i {
+					// 	background: url(#{$ImagesPath}/arrow_current.png);
+					// }
 				}
 				&.pods-wizard-menu-complete {
 					color: $green-dark;
 					border-bottom: 1px solid #bbddbd;
-					@include vertical-gradient(#d4f4d6, #bbddbd);
-					&+ li > i {
-						background: url(#{$ImagesPath}/arrow_complete.png);
-					}
-					&+ li.pods-wizard-menu-complete > i {
-						background: url(#{$ImagesPath}/arrow_complete_previous.png);
-					}
+					background: #bbddbd;
+					// @include vertical-gradient(#d4f4d6, #bbddbd);
+					// &+ li > i {
+					// 	background: url(#{$ImagesPath}/arrow_complete.png);
+					// }
+					// &+ li.pods-wizard-menu-complete > i {
+					// 	background: url(#{$ImagesPath}/arrow_complete_previous.png);
+					// }
 					span {
 						background: $green-dark;
 						color: $green-mid;

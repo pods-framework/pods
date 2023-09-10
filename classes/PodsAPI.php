@@ -3029,6 +3029,10 @@ class PodsAPI {
 		$params->is_new    = true;
 		$params->overwrite = false;
 
+		if ( isset( $params->old_name ) ) {
+			unset( $params->old_name );
+		}
+
 		return $this->save_field( $params, $table_operation, $sanitized, $db );
 	}
 

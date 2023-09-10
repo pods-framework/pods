@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods\Fields
  */
@@ -125,8 +127,20 @@ class PodsField_HTML extends PodsField {
 		// Enforce boolean.
 		$options[ static::$type . '_no_label' ] = filter_var( pods_v( static::$type . '_no_label', $options, false ), FILTER_VALIDATE_BOOLEAN );
 
-		// @codingStandardsIgnoreLine
-		echo $this->display( $value, $name, $options, $pod, $id );
+		// Format content.
+		$options[ static::$type . '_content' ] = $this->display( $options[ static::$type . '_content' ], $name, $options, $pod, $id );
+
+		if ( isset( $options['_field_object'] ) && $options['_field_object'] instanceof Field ) {
+			$options['_field_object']->set_arg( static::$type . '_no_label', $options[ static::$type . '_no_label' ] );
+			$options['_field_object']->set_arg( static::$type . '_content', $options[ static::$type . '_content' ] );
+		}
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

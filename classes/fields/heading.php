@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods\Fields
  */
@@ -92,8 +94,19 @@ class PodsField_Heading extends PodsField {
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		// @codingStandardsIgnoreLine
-		echo $this->display( $value, $name, $options, $pod, $id );
+		// Format content.
+		$options[ static::$type . '_content' ] = $this->display( $options[ static::$type . '_content' ], $name, $options, $pod, $id );
+
+		if ( isset( $options['_field_object'] ) && $options['_field_object'] instanceof Field ) {
+			$options['_field_object']->set_arg( static::$type . '_content', $options[ static::$type . '_content' ] );
+		}
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

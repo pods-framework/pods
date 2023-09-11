@@ -20,9 +20,7 @@ import './conditional-logic.scss';
 const UNSUPPORTED_FIELD_TYPES = [
 	'boolean_group',
 	'conditional-logic',
-	'date',
-	'datetime',
-	'time',
+	'wysiwyg',
 	'heading',
 	'html',
 ];

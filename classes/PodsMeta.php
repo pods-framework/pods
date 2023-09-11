@@ -1258,7 +1258,13 @@ class PodsMeta {
 			return;
 		}
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_meta_type ), 'hidden' );
+		static $nonced_types = [];
+
+		if ( ! isset( $nonced_types[ $pod_meta_type ] ) ) {
+			$nonced_types[ $pod_meta_type ] = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_meta_type ), 'hidden' );
+		}
 		?>
 		<table class="form-table pods-metabox pods-admin pods-dependency">
 			<?php
@@ -1795,7 +1801,13 @@ class PodsMeta {
 
 		$pod = null;
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_taxonomy' ), 'hidden' );
+		static $nonced_types = [];
+
+		if ( ! isset( $nonced_types[ $taxonomy_name ] ) ) {
+			$nonced_types[ $taxonomy_name ] = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $taxonomy_name ), 'hidden' );
+		}
 
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
@@ -1869,7 +1881,7 @@ class PodsMeta {
 			$is_new_item = true;
 		}
 
-		if ( empty( $_POST ) || ! wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_taxonomy' ) ) {
+		if ( empty( $_POST ) || ! wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_' . $taxonomy ) ) {
 			return $term_id;
 		}
 
@@ -2039,6 +2051,16 @@ class PodsMeta {
 		$id  = $user_id;
 		$pod = null;
 
+		static $nonced = false;
+
+		$show_nonce = true;
+
+		if ( ! $nonced ) {
+			$nonced = true;
+		} else {
+			$show_nonce = false;
+		}
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -2098,14 +2120,20 @@ class PodsMeta {
 				<fieldset class="bbp-form pods-meta">
 					<legend><?php echo wp_kses_post( $group['label'] ); ?></legend>
 
-					<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+					<?php if ( $show_nonce ) { ?>
+						<?php $show_nonce = false; ?>
+						<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+					<?php } ?>
 
 					<?php pods_view( PODS_DIR . 'ui/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) ); ?>
 				</fieldset>
 			<?php } else { ?>
 				<h3><?php echo wp_kses_post( $group['label'] ); ?></h3>
 
-				<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+				<?php if ( $show_nonce ) { ?>
+					<?php $show_nonce = false; ?>
+					<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+				<?php } ?>
 
 				<table class="form-table pods-meta">
 					<tbody>
@@ -2278,7 +2306,13 @@ class PodsMeta {
 		$id  = null;
 		$pod = null;
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
+		static $nonced = false;
+
+		if ( ! $nonced ) {
+			$nonced = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment'  ), 'hidden' );
+		}
 
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
@@ -2444,7 +2478,13 @@ class PodsMeta {
 
 		$hidden_fields = array();
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
+		static $nonced = false;
+
+		if ( ! $nonced ) {
+			$nonced = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment'  ), 'hidden' );
+		}
 		?>
 		<table class="form-table editcomment pods-metabox">
 			<?php

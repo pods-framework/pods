@@ -746,6 +746,18 @@ class PodsInit {
 			'wp_locale'      => $GLOBALS['wp_locale'],
 			'userLocale'     => str_replace( '_', '-', get_user_locale() ),
 			'currencies'     => PodsField_Currency::data_currencies(),
+			'fieldTypeInfo'  => [
+				'tableless'          => PodsForm::tableless_field_types(),
+				'file'               => PodsForm::file_field_types(),
+				'text'               => PodsForm::text_field_types(),
+				'number'             => PodsForm::number_field_types(),
+				'date'               => PodsForm::date_field_types(),
+				'layout'             => PodsForm::layout_field_types(),
+				'non_input'          => PodsForm::non_input_field_types(),
+				'separator_excluded' => PodsForm::separator_excluded_field_types(),
+				'simple_tableless'   => PodsForm::simple_tableless_objects(),
+				'repeatable'         => PodsForm::repeatable_field_types(),
+			],
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
 				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),

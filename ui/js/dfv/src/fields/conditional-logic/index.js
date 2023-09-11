@@ -45,7 +45,6 @@ const FIELD_TYPES_WITH_NO_BLANK_COMPARISONS = [
 const FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS = [
 	'file',
 	'avatar',
-	'oembed',
 	'pick',
 	'boolean',
 	'color',

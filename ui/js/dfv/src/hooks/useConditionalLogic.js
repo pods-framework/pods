@@ -52,32 +52,32 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 
 	switch ( rule ) {
 		case 'LIKE':
-			return ( valueToTest.toLowerCase() ).includes( ruleValue.toLowerCase() );
+			return ( valueToTest.toString().toLowerCase() ).includes( ruleValue.toString().toLowerCase() );
 		case 'NOT LIKE':
-			return ! ( valueToTest.toLowerCase() ).includes( ruleValue.toLowerCase() );
+			return ! ( valueToTest.toString().toLowerCase() ).includes( ruleValue.toString().toLowerCase() );
 		case 'BEGINS':
-			return ( valueToTest.toLowerCase() ).startsWith( ruleValue.toLowerCase() );
+			return ( valueToTest.toString().toLowerCase() ).startsWith( ruleValue.toString().toLowerCase() );
 		case 'NOT BEGINS':
-			return ! ( valueToTest.toLowerCase() ).startsWith( ruleValue.toLowerCase() );
+			return ! ( valueToTest.toString().toLowerCase() ).startsWith( ruleValue.toString().toLowerCase() );
 		case 'ENDS':
-			return valueToTest.toLowerCase().endsWith( ruleValue.toLowerCase() );
+			return valueToTest.toString().toLowerCase().endsWith( ruleValue.toString().toLowerCase() );
 		case 'NOT ENDS':
-			return ! valueToTest.toLowerCase().endsWith( ruleValue.toLowerCase() );
+			return ! valueToTest.toString().toLowerCase().endsWith( ruleValue.toString().toLowerCase() );
 		case 'MATCHES':
 			if ( ! Array.isArray( valueToTest ) ) {
-				return Boolean( valueToTest.match( ruleValue ) );
+				return Boolean( valueToTest.toString().match( ruleValue ) );
 			}
 
 			return valueToTest.some(
-				( valueItem ) => Boolean( valueItem.match( ruleValue ) )
+				( valueItem ) => Boolean( valueItem.toString().match( ruleValue ) )
 			);
 		case 'NOT MATCHES':
 			if ( ! Array.isArray( valueToTest ) ) {
-				return ! Boolean( valueToTest.match( ruleValue ) );
+				return ! Boolean( valueToTest.toString().match( ruleValue ) );
 			}
 
 			return ! valueToTest.some(
-				( valueItem ) => Boolean( valueItem.match( ruleValue ) )
+				( valueItem ) => Boolean( valueItem.toString().match( ruleValue ) )
 			);
 		case 'IN': {
 			// We can't compare 'in' if the rule's value is not an array.
@@ -161,7 +161,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 				return false;
 			}
 
-			return Number( ruleValue ) < Number( valueToTest );
+			return Number( valueToTest ) < Number( ruleValue );
 		}
 		case '<=': {
 			// Don't compare arrays.
@@ -169,7 +169,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 				return false;
 			}
 
-			return Number( ruleValue ) <= Number( valueToTest );
+			return Number( valueToTest ) <= Number( ruleValue );
 		}
 		case '>': {
 			// Don't compare arrays.
@@ -177,7 +177,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 				return false;
 			}
 
-			return Number( ruleValue ) > Number( valueToTest );
+			return Number( valueToTest ) > Number( ruleValue );
 		}
 		case '>=': {
 			// Don't compare arrays.
@@ -185,7 +185,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 				return false;
 			}
 
-			return Number( ruleValue ) >= Number( valueToTest );
+			return Number( valueToTest ) >= Number( ruleValue );
 		}
 		default: {
 			console.debug( 'Conditional logic: rule is unsupported' );

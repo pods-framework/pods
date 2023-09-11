@@ -3137,7 +3137,7 @@
               "type": "pick",
               "required": "0",
               "pick_object": "custom-simple",
-              "pick_custom": "item-1|Item 1\ntest-item-2|Test Item 2\ntest|test\ntest-item-4|test Item 4\nitem-5-test|Item 5 test",
+              "pick_custom": "Item 1\nTest Item 2\nTest\ntest\ntest Item 5\nItem 6 test",
               "pick_max_length": "255",
               "pick_html5": "0",
               "repeatable": "0",
@@ -3151,7 +3151,7 @@
               "weight": 1,
               "type": "html",
               "required": "0",
-              "html_content": "Relationship (simple) field equals test",
+              "html_content": "Relationship (simple) field equals test Item 5",
               "html_no_label": "1",
               "enable_conditional_logic": "1",
               "conditional_logic": {
@@ -3161,7 +3161,7 @@
                   {
                     "field": "pick_simple_field",
                     "compare": "=",
-                    "value": "test"
+                    "value": "test Item 5"
                   }
                 ]
               }
@@ -3173,7 +3173,7 @@
               "weight": 2,
               "type": "html",
               "required": "0",
-              "html_content": "Relationship (simple) field not equals test",
+              "html_content": "Relationship (simple) field not equals test Item 5",
               "html_no_label": "1",
               "enable_conditional_logic": "1",
               "conditional_logic": {
@@ -3183,7 +3183,7 @@
                   {
                     "field": "pick_simple_field",
                     "compare": "!=",
-                    "value": "test"
+                    "value": "test Item 5"
                   }
                 ]
               }
@@ -3205,7 +3205,7 @@
                   {
                     "field": "pick_simple_field",
                     "compare": "empty",
-                    "value": "test"
+                    "value": "test Item 5"
                   }
                 ]
               }
@@ -3227,7 +3227,7 @@
                   {
                     "field": "pick_simple_field",
                     "compare": "not-empty",
-                    "value": "test"
+                    "value": "test Item 5"
                   }
                 ]
               }
@@ -3250,7 +3250,7 @@
               "type": "pick",
               "required": "0",
               "pick_object": "custom-simple",
-              "pick_custom": "Item 1\nTest Item 2\nTest\ntest\ntest Item 5\nItem 6 test",
+              "pick_custom": "item-1|Item 1\ntest-item-2|Test Item 2\ntest|test\ntest-item-4|test Item 4\nitem-5-test|Item 5 test\nitem-6-test|test",
               "pick_max_length": "255",
               "pick_html5": "0",
               "repeatable": "0",

@@ -1027,6 +1027,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'depends-on',
 				'excludes-on',
 				'_locale',
+				'required_help_boolean',
 			);
 
 			$field_types = PodsForm::field_types();

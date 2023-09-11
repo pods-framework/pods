@@ -744,6 +744,7 @@ class PodsInit {
 
 		$config = [
 			'wp_locale'      => $GLOBALS['wp_locale'],
+			'admin_url'      => admin_url(),
 			'userLocale'     => str_replace( '_', '-', get_user_locale() ),
 			'currencies'     => PodsField_Currency::data_currencies(),
 			'fieldTypeInfo'  => [

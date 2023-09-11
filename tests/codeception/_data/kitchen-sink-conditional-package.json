@@ -2325,6 +2325,867 @@
           ]
         },
         {
+          "name": "datetime_test",
+          "label": "Date Time test",
+          "description": "",
+          "weight": 8,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "datetime_field",
+              "label": "Date Time field",
+              "description": "",
+              "weight": 0,
+              "type": "datetime",
+              "required": "0",
+              "datetime_max_length": "255",
+              "datetime_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "datetime_field_equals",
+              "label": "Date Time field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field equals 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "=",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_equals",
+              "label": "Date Time field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not equals 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "!=",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_blank",
+              "label": "Date Time field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "empty",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_blank",
+              "label": "Date Time field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-empty",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_contains",
+              "label": "Date Time field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field contains 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "like",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_contains",
+              "label": "Date Time field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not contains 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-like",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_starts_with",
+              "label": "Date Time field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_starts_with",
+              "label": "Date Time field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_ends_with",
+              "label": "Date Time field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field ends with 00:01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "ends",
+                    "value": "00:01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_ends_with",
+              "label": "Date Time field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not ends with 00:01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-ends",
+                    "value": "00:01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_pattern",
+              "label": "Date Time field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field pattern is ^\\d{4}-01-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "matches",
+                    "value": "^\\d{4}-01-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_pattern",
+              "label": "Date Time field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not pattern is ^\\d{4}-01-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-matches",
+                    "value": "^\\d{4}-01-"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "date_test",
+          "label": "Date test",
+          "description": "",
+          "weight": 7,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "date_field",
+              "label": "Date field",
+              "description": "",
+              "weight": 0,
+              "type": "date",
+              "required": "0",
+              "date_max_length": "255",
+              "date_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "date_field_equals",
+              "label": "Date field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field equals 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "=",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_equals",
+              "label": "Date field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not equals 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "!=",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_blank",
+              "label": "Date field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "empty",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_blank",
+              "label": "Date field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-empty",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_contains",
+              "label": "Date field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field contains 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "like",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_contains",
+              "label": "Date field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not contains 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-like",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_starts_with",
+              "label": "Date field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_starts_with",
+              "label": "Date field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_ends_with",
+              "label": "Date field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field ends with -01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "ends",
+                    "value": "-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_ends_with",
+              "label": "Date field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not ends with -01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-ends",
+                    "value": "-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_pattern",
+              "label": "Date field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field pattern is ^\\d{4}-01-\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "matches",
+                    "value": "^\\d{4}-01-\\d{2}$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_pattern",
+              "label": "Date field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not pattern is ^\\d{4}-01-\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-matches",
+                    "value": "^\\d{4}-01-\\d{2}$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "time_test",
+          "label": "Time test",
+          "description": "",
+          "weight": 7,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "time_field",
+              "label": "Time field",
+              "description": "",
+              "weight": 0,
+              "type": "time",
+              "required": "0",
+              "time_max_length": "255",
+              "time_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "time_field_equals",
+              "label": "Time field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field equals 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "=",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_equals",
+              "label": "Time field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not equals 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "!=",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_blank",
+              "label": "Time field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "empty",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_blank",
+              "label": "Time field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-empty",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_contains",
+              "label": "Time field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field contains 25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "like",
+                    "value": "25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_contains",
+              "label": "Time field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not contains 25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-like",
+                    "value": "25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_starts_with",
+              "label": "Time field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field starts with 12:",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "begins",
+                    "value": "12:"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_starts_with",
+              "label": "Time field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not starts with 12:",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-begins",
+                    "value": "12:"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_ends_with",
+              "label": "Time field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field ends with :25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "ends",
+                    "value": ":25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_ends_with",
+              "label": "Time field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not ends with :25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-ends",
+                    "value": ":25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_pattern",
+              "label": "Time field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field pattern is ^\\d{2}:25:\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "matches",
+                    "value": "^\\d{2}:25:\\d{2}$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_pattern",
+              "label": "Time field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not pattern is ^\\d{2}:25:\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-matches",
+                    "value": "^\\d{2}:25:\\d{2}$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "number_test",
           "label": "Number test",
           "description": "",

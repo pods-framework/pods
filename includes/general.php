@@ -3474,10 +3474,10 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		if ( $media_modal_fields ) {
 			// Handle showing meta fields in modal.
 			$hooks['filter'][] = [ 'attachment_fields_to_edit', [ PodsInit::$meta, 'meta_media' ], 10, 2 ];
-
-			// Handle saving meta fields from modal.
-			$hooks['filter'][] = [ 'attachment_fields_to_save', [ PodsInit::$meta, 'save_media' ], 10, 2 ];
 		}
+
+		// Handle saving meta fields from modal.
+		$hooks['filter'][] = [ 'attachment_fields_to_save', [ PodsInit::$meta, 'save_media' ], 10, 2 ];
 
 		// Handle saving attachment metadata.
 		$hooks['filter'][] = [ 'wp_update_attachment_metadata', [ PodsInit::$meta, 'save_media' ], 10, 2 ];

@@ -3075,47 +3075,61 @@ class PodsAdmin {
 			return $options;
 		}
 
-		$options['rest'][ __( 'Read/ Write', 'pods' ) ] = [
+		$layout_non_input_field_types = PodsForm::layout_field_types() + PodsForm::non_input_field_types();
+
+		$options['rest'][ __( 'Read/Write', 'pods' ) ] = [
 			'rest_read'  => [
-				'label'   => __( 'Read via REST API', 'pods' ),
-				'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
-				'type'    => 'boolean',
-				'default' => '',
+				'label'       => __( 'Read via REST API', 'pods' ),
+				'help'        => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'type'        => 'boolean',
+				'default'     => '',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'rest_write' => [
-				'label'   => __( 'Write via REST API', 'pods' ),
-				'help'    => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
-				'type'    => 'boolean',
-				'default' => '',
+				'label'       => __( 'Write via REST API', 'pods' ),
+				'help'        => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'type'        => 'boolean',
+				'default'     => '',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 		];
 
 		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
 			'rest_pick_response' => [
-				'label'      => __( 'Response Type', 'pods' ),
-				'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
-				'type'       => 'pick',
+				'label'              => __( 'Response Type', 'pods' ),
+				'help'               => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
+				'type'               => 'pick',
 				'pick_format_single' => 'dropdown',
-				'default'    => 'array',
-				'depends-on' => [
+				'default'            => 'array',
+				'depends-on'         => [
 					'type' => 'pick',
 				],
-				'dependency' => true,
-				'data'       => [
+				'dependency'         => true,
+				'data'               => [
 					'array'  => __( 'All fields', 'pods' ),
 					'id'     => __( 'ID only', 'pods' ),
 					'name'   => __( 'Name only', 'pods' ),
 					'custom' => __( 'Custom return (specify field to return)', 'pods' ),
 				],
+				'excludes-on'        => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'rest_pick_depth'    => [
-				'label'      => __( 'Depth', 'pods' ),
-				'help'       => __( 'How far to traverse relationships in response. 1 will get you all of the fields on the related item. 2 will get you all of those fields plus related items and their fields. The higher the depth, the more data will be returned and the slower performance the REST API calls will be. Updates to this field do NOT take depth into account, so you will always send the ID of the related item when saving.', 'pods' ),
-				'type'       => 'number',
-				'default'    => '1',
-				'depends-on' => [
+				'label'       => __( 'Depth', 'pods' ),
+				'help'        => __( 'How far to traverse relationships in response. 1 will get you all of the fields on the related item. 2 will get you all of those fields plus related items and their fields. The higher the depth, the more data will be returned and the slower performance the REST API calls will be. Updates to this field do NOT take depth into account, so you will always send the ID of the related item when saving.', 'pods' ),
+				'type'        => 'number',
+				'default'     => '1',
+				'depends-on'  => [
 					'type'               => 'pick',
 					'rest_pick_response' => 'array',
+				],
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
 				],
 			],
 			'rest_pick_custom'   => [
@@ -3128,12 +3142,17 @@ class PodsAdmin {
 					'type'               => 'pick',
 					'rest_pick_response' => 'custom',
 				],
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'rest_pick_notice'   => [
 				'label'        => 'Relationship Options',
 				'type'         => 'html',
 				'html_content' => __( 'If you have a relationship field, you will see additional options to customize here.', 'pods' ),
-				'excludes-on'  => [ 'type' => 'pick' ],
+				'excludes-on'  => [
+					'type' => [ 'pick' ] + $layout_non_input_field_types,
+				],
 			],
 		];
 

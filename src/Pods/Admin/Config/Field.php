@@ -114,6 +114,7 @@ class Field extends Base {
 		$tableless_field_types          = PodsForm::tableless_field_types();
 		$repeatable_field_types         = PodsForm::repeatable_field_types();
 		$separator_excluded_field_types = PodsForm::separator_excluded_field_types();
+		$layout_non_input_field_types   = PodsForm::layout_field_types() + PodsForm::non_input_field_types();
 
 		// Remove repeatable fields custom separator options.
 		$serial_repeatable_field_types = array_values( array_diff( $repeatable_field_types, $separator_excluded_field_types ) );
@@ -218,6 +219,9 @@ class Field extends Base {
 				'type'              => 'boolean',
 				'default'           => 0,
 				'boolean_yes_label' => '',
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
 				'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 			],
 			'required_help_boolean'    => [
@@ -308,26 +312,33 @@ class Field extends Base {
 				'default' => '',
 			],
 			'values'                  => [
-				'name'  => 'values',
-				'label' => __( 'Values', 'pods' ),
-				'type'  => 'heading',
+				'name'        => 'values',
+				'label'       => __( 'Values', 'pods' ),
+				'type'        => 'heading',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'default_value'           => [
-				'name'    => 'default_value',
-				'label'   => __( 'Default Value', 'pods' ),
-				'help'    => __( 'This is the default value used when the Add New form is used.', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-				'options' => [
-					'text_max_length' => - 1,
+				'name'            => 'default_value',
+				'label'           => __( 'Default Value', 'pods' ),
+				'help'            => __( 'This is the default value used when the Add New form is used.', 'pods' ),
+				'type'            => 'text',
+				'default'         => '',
+				'text_max_length' => - 1,
+				'excludes-on'     => [
+					'type' => $layout_non_input_field_types,
 				],
 			],
 			'default_value_parameter' => [
-				'name'    => 'default_value_parameter',
-				'label'   => __( 'Set Default Value via Parameter', 'pods' ),
-				'help'    => __( 'You can automatically populate the value of this field from the URL parameter "your_field" such as ?your_field=1234', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
+				'name'        => 'default_value_parameter',
+				'label'       => __( 'Set Default Value via Parameter', 'pods' ),
+				'help'        => __( 'You can automatically populate the value of this field from the URL parameter "your_field" such as ?your_field=1234', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'visibility'              => [
 				'name'  => 'visibility',

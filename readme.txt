@@ -175,9 +175,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0 RC 1 - July 5th, 2023 =
+= 3.0 - September 12th, 2023 =
 
-**Breaking compatibility warning**
+**Compatibility warning**
 
 New minimum required versions have been updated as follows which includes notices to let you know if you need to update something:
 
@@ -187,13 +187,16 @@ New minimum required versions have been updated as follows which includes notice
 **3.0 Changelog**
 
 * Feature: Conditional Logic for Fields - You can now choose to show or hide a Pods field based on the value of another Pods field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9)
-* Feature: Support for the new WordPress 6.3 (or if you are using the Gutenberg plugin) feature for Command Palettes. This will allow you to contextually go to the Edit Pod screen for the matching Pod configuration of that post type. (@sc0ttkclark)  
+* Feature: Support for the new Command Palettes feature added in WordPress 6.3. This will allow you to contextually go to the Edit Pod screen for the matching Pod configuration of that post type. (@sc0ttkclark)  
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
-* Added: When importing and exporting Pods packages, they now include the list of active components.
+* Added: When importing and exporting Pods packages, they now include the list of active components. (@sc0ttkclark)
+* Fixed: Improved compatibility with Polylang. #7139 #7140 (@JoryHogeveen)
+* Fixed: 
 * Fixed: When extending a post type or taxonomy it will now use the associated post type or taxonomy label when setting up the pod so it matches. #6350 (@sc0ttkclark)
 * Fixed: Resolved problems with saving the featured image from frontend forms when a post type supports featured images. (@sc0ttkclark)
-* Fixed: Don't show SQL errors when getting relationship data for forms if the debug display is disabled in WP. (@sc0ttkclark) 
-* Removed: The Tribe Common library has been removed from Pods and it will alleviate conflicts from plugins like The Events Calendar and Event Tickets going forward.
+* Fixed: Don't show SQL errors when getting relationship data for forms if the debug display is disabled in WP. (@sc0ttkclark)
+* Fixed: Improved tooltip appearances with better color contrast. #7119 #7118 (@heybran) 
+* Removed: The Tribe Common library has been removed from Pods and it will alleviate conflicts from plugins like The Events Calendar and Event Tickets going forward. (@sc0ttkclark)
 
 = 2.9.19 - June 28th, 2023 =
 

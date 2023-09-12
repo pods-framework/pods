@@ -175,7 +175,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0 - September 12th, 2023 =
+= 3.0 - September 13th, 2023 =
 
 **Compatibility warning**
 

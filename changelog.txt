@@ -14,7 +14,7 @@ New minimum required versions have been updated as follows which includes notice
 **3.0 Changelog**
 
 * Feature: [Conditional Logic for Fields](https://docs.pods.io/fields/conditional-logic-for-fields/) - You can now choose to show or hide a Pods field based on the value of another Pods field. More will be expanded into this functionality in the future. #609 (@zrothauser, @sc0ttkclark, @Shelob9)
-* Feature: Support for the new Command Palettes feature added in WordPress 6.3. This will allow you to contextually go to the Edit Pod screen for the matching Pod configuration of that post type. (@sc0ttkclark)  
+* Feature: Support for the new Command Palettes feature added in WordPress 6.3. This will allow you to contextually go to the Edit Pod screen for the matching Pod configuration of that post type directly from the Edit Post screen. (@sc0ttkclark)  
 * Added: Set up backward compatible updates to our prior `depends-on` and related logic for internal conditional logic prior to Pods 3.0 so they now properly translate over to the new format required. (@sc0ttkclark)
 * Added: When importing and exporting Pods packages, they now include the list of active components. (@sc0ttkclark)
 * Fixed: Media saving issue has been resolved when the Media Modal fields are disabled, it now saves fields as expected. #7158 (@sc0ttkclark, @pd-cm)

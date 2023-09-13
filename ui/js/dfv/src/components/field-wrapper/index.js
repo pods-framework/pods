@@ -120,6 +120,56 @@ export const FieldWrapper = ( props ) => {
 		setOptionValue( name, newValue );
 	};
 
+	// Maybe handle updating the value to the default option if empty.
+	if (
+		'pick' === field?.type
+		&& (
+			'single' === field?.pick_format_type
+			|| 'undefined' === typeof field.pick_format_type
+		)
+		&& (
+			'dropdown' === field?.pick_format_single
+			|| 'undefined' === typeof field.pick_format_single
+		)
+		&& ! Boolean( parseInt( field?.pick_show_select_text ) )
+		&& field?.required
+	) {
+		// Check if we have a field value.
+		let fieldValue = undefined;
+		let fieldVariation = undefined;
+
+		let variations = [
+			field.name,
+			'pods_meta_' + field.name,
+			'pods_field_' + field.name,
+		];
+
+		variations.every( variation => {
+			// Stop the loop if we found the value we were looking for.
+			if ( 'undefined' !== typeof allPodValues[ variation ] ) {
+				fieldValue = allPodValues[ variation ];
+				fieldVariation = variation;
+
+				return false;
+			}
+
+			// Continue to the next variation.
+			return true;
+		} );
+
+		if (
+			'' === fieldValue
+			|| (
+				'undefined' !== typeof field?.data['']
+				&& field?.data[''] === fieldValue
+			)
+		) {
+			setValue( field?.default ?? '' );
+
+			allPodValues[ fieldVariation ] = field?.default ?? '';
+		}
+	}
+
 	// Calculate dependencies.
 	const meetsConditionalLogic = useConditionalLogic(
 		field,

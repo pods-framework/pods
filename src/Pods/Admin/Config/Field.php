@@ -163,7 +163,7 @@ class Field extends Base {
 				'name'                  => 'pick_object',
 				'label'                 => __( 'Related Type', 'pods' ),
 				'type'                  => 'pick',
-				'default'               => '',
+				'default'               => 'custom-simple',
 				'required'              => true,
 				'data'                  => [],
 				'pick_format_single' => 'dropdown',

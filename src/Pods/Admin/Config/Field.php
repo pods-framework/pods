@@ -457,6 +457,33 @@ class Field extends Base {
 					'enable_conditional_logic' => true,
 				],
 			],
+			'conditional_logic_help'        => [
+				'name'         => 'conditional_logic_help',
+				'label'        => '',
+				'help'         => __( 'help', 'pods' ),
+				'type'         => 'html',
+				'html_content' => wpautop(
+					sprintf(
+						'
+							%1$s
+
+							<ul>
+								<li>%2$s</li>
+								<li>%3$s</li>
+							</ul>
+
+							<a href="https://docs.pods.io/fields/conditional-logic-for-fields/">%4$s &raquo;</a>
+						',
+						__( 'Each field type has their own conditional options available to them.', 'pods' ),
+						__( 'For pattern matching on text-based fields: Use Regular Expressions and do not use the wrapping character "/" like "/[a-z]/", you will need to use "[a-z]"', 'pods' ),
+						__( 'For relationships: Use the ID for any relationship object or the text value for any custom defined / simple relationship', 'pods' ),
+						__( 'Learn more about conditional logic for fields', 'pods' )
+					)
+				),
+				'depends-on'   => [
+					'enable_conditional_logic' => true,
+				],
+			],
 		];
 
 		$pick_tables = pods_transient_get( 'pods_tables' );

@@ -65,7 +65,14 @@ const ConditionalLogic = ( {
 	} = fieldConfig;
 
 	const allAvailableFields = currentPodAllFields.filter( ( field ) => {
-		return ! UNSUPPORTED_FIELD_TYPES.includes( field.type ) && field.name !== affectedFieldName;
+		return (
+			! UNSUPPORTED_FIELD_TYPES.includes( field.type )
+			&& field.name !== affectedFieldName
+			&& (
+				'undefined' === typeof field?.repeatable
+				|| 0 === parseInt( field.repeatable )
+			)
+		);
 	} );
 
 	const [ conditions, setConditions ] = useState( {
@@ -232,6 +239,11 @@ const ConditionalLogic = ( {
 
 										// Don't render an option if it's an unsupported field type.
 										if ( UNSUPPORTED_FIELD_TYPES.includes( field.type ) ) {
+											return null;
+										}
+
+										// Don't render an option if it's repeatable.
+										if ( 'undefined' !== typeof field?.repeatable && 1 === parseInt( field.repeatable ) ) {
 											return null;
 										}
 

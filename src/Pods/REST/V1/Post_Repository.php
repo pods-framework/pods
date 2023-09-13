@@ -2,8 +2,7 @@
 
 namespace Pods\REST\V1;
 
-use Tribe__REST__Messages_Interface as REST_Messages_Interface;
-use Tribe__REST__Post_Repository as REST_Post_Repository;
+use Pods\REST\Interfaces\Messages_Interface;
 use WP_Post;
 
 /**
@@ -11,7 +10,7 @@ use WP_Post;
  *
  * @since 2.8.0
  */
-class Post_Repository extends REST_Post_Repository {
+class Post_Repository {
 
 	/**
 	 * A post type to get data request handler map.
@@ -21,7 +20,7 @@ class Post_Repository extends REST_Post_Repository {
 	protected $types_get_map = [];
 
 	/**
-	 * @var REST_Messages_Interface
+	 * @var Messages_Interface
 	 */
 	protected $messages;
 
@@ -30,9 +29,9 @@ class Post_Repository extends REST_Post_Repository {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param REST_Messages_Interface|null $messages The messages object.
+	 * @param Messages_Interface|null $messages The messages object.
 	 */
-	public function __construct( REST_Messages_Interface $messages = null ) {
+	public function __construct( Messages_Interface $messages = null ) {
 		$this->types_get_map = [
 			'_pods_pod'   => [ $this, 'get_pod_data' ],
 			'_pods_group' => [ $this, 'get_group_data' ],

@@ -16,7 +16,7 @@ $quick_actions = [];
 
 if ( ! pods_is_types_only() ) {
 	if ( ! isset( $all_pods['post'] ) ) {
-		$quick_actions[] = [
+		$quick_actions['post_type-post'] = [
 			'label'         => __( 'Add custom fields to Posts', 'pods' ),
 			'create_extend' => 'extend',
 			'type'          => 'post_type',
@@ -25,7 +25,7 @@ if ( ! pods_is_types_only() ) {
 	}
 
 	if ( ! isset( $all_pods['page'] ) ) {
-		$quick_actions[] = [
+		$quick_actions['post_type-page'] = [
 			'label'         => __( 'Add custom fields to Pages', 'pods' ),
 			'create_extend' => 'extend',
 			'type'          => 'post_type',
@@ -34,7 +34,7 @@ if ( ! pods_is_types_only() ) {
 	}
 
 	if ( ! isset( $all_pods['category'] ) ) {
-		$quick_actions[] = [
+		$quick_actions['taxonomy-category'] = [
 			'label'         => __( 'Add custom fields to Categories', 'pods' ),
 			'create_extend' => 'extend',
 			'type'          => 'taxonomy',
@@ -43,13 +43,30 @@ if ( ! pods_is_types_only() ) {
 	}
 
 	if ( ! isset( $all_pods['user'] ) ) {
-		$quick_actions[] = [
+		$quick_actions['user'] = [
 			'label'         => __( 'Add custom fields to Users', 'pods' ),
 			'create_extend' => 'extend',
 			'type'          => 'user',
 			'object'        => 'user',
 		];
 	}
+}
+
+$extend_post_type_linked = pods_v( 'pods_extend_post_type' );
+$extend_post_type_nonce  = pods_v( 'pods_extend_post_type_nonce' );
+
+$submit_from_linked = false;
+
+if ( $extend_post_type_linked && wp_verify_nonce( $extend_post_type_nonce, 'pods_extend_post_type_' . $extend_post_type_linked ) ) {
+	$submit_from_linked = 'post_type-' . $extend_post_type_linked;
+
+	$quick_actions[ $submit_from_linked ] = [
+		// Translators: %s is the post type name (not label).
+		'label'         => sprintf( __( 'Extend Post Type: %s', 'pods' ), $extend_post_type_linked ),
+		'create_extend' => 'extend',
+		'type'          => 'post_type',
+		'object'        => $extend_post_type_linked,
+	];
 }
 
 /**
@@ -111,22 +128,29 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 							</p>
 
 							<?php if ( ! empty( $quick_actions ) ) : ?>
-								<h3><?php esc_html_e( 'One-Click Quick Actions', 'pods' ); ?></h3>
+								<div id="pods-wizard-quick-actions"<?php echo ( $submit_from_linked ? ' class="hidden"' : '' ); ?>>
+									<h3><?php esc_html_e( 'One-Click Quick Actions', 'pods' ); ?></h3>
 
-								<ul class="normal">
-									<?php foreach ( $quick_actions as $quick_action ) : ?>
-										<li>
-											<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ); ?>"
-												data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
-												data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
-												data-type="<?php echo esc_attr( $quick_action['type'] ); ?>"
-												class="pods-wizard-quick-action"
-											>
-												<?php echo esc_html( $quick_action['label'] ); ?>
-											</a>
-										</li>
-									<?php endforeach; ?>
-								</ul>
+									<ul class="normal">
+										<?php foreach ( $quick_actions as $quick_action_key => $quick_action ) : ?>
+											<li>
+												<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ); ?>"
+													data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
+													data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
+													data-type="<?php echo esc_attr( $quick_action['type'] ); ?>"
+													class="pods-wizard-quick-action"
+													id="pods-wizard-quick-action-<?php echo esc_attr( $quick_action_key ); ?>"
+												>
+													<?php echo esc_html( $quick_action['label'] ); ?>
+												</a>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								</div>
+
+								<div id="pods-wizard-quick-actions-saving-in-progress"<?php echo ( ! $submit_from_linked ? ' class="hidden"' : '' ); ?>>
+									<p><span class="pods-dfv-field__loading-indicator" role="progressbar"></span> <?php esc_html_e( 'Creating your Extended Pod', 'pods' ); ?></p>
+								</div>
 							<?php endif; ?>
 						</div>
 						<div id="pods-wizard-options">
@@ -552,6 +576,13 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 		}
 	};
 
+	var pods_admin_submit_error_callback = function ( err_msg ) {
+		alert( 'Error: ' + err_msg );
+		if ( window.console ) console.log( err_msg );
+
+		jQuery( '#pods-wizard-quick-actions-saving-in-progress' ).hide();
+	};
+
 	var pods_admin_option_select_callback = function ( $opt ) {
 		jQuery( '#pods_create_extend' ).val( $opt.data( 'opt' ) );
 	};
@@ -583,6 +614,15 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 				$action.closest( 'form' ).submit();
 			} );
+
+			<?php if ( $submit_from_linked ) : ?>
+				jQuery( '#pods-wizard-quick-action-<?php echo esc_attr( $submit_from_linked ); ?>' ).click();
+
+				$quick_actions.off( 'click' );
+
+				jQuery( '#pods-wizard-quick-actions' ).hide();
+				jQuery( '#pods-wizard-quick-actions-saving-in-progress' ).show();
+			<?php endif; ?>
 		}
 	} );
 </script>

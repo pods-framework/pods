@@ -242,8 +242,9 @@ ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
 }
 
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon img {
-	max-width: none;
-	max-height: none;
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: cover;
 	float: none;
 	display: inline-block;
 	vertical-align: middle;

@@ -333,6 +333,17 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * @param array $data The import data.
 	 */
 	public static function import_settings( $data ) {
+		if ( isset( $data['active_components'] ) ) {
+			$components = $data['active_components'];
+
+			if ( is_array( $components ) ) {
+				foreach ( $components as $component ) {
+					PodsInit::$components->activate_component( $component );
+				}
+			}
+
+			unset( $data['active_components'] );
+		}
 		pods_update_settings( $data );
 	}
 
@@ -926,6 +937,20 @@ class Pods_Migrate_Packages extends PodsComponent {
 				if ( isset( $export['settings']['wisdom_registered_setting'] ) ) {
 					unset( $export['settings']['wisdom_registered_setting'] );
 				}
+
+				$components = PodsInit::$components->get_components();
+
+				$active_components = [];
+
+				foreach ( $components as $component => $component_data ) {
+					if ( PodsInit::$components->is_component_active( $component ) ) {
+						$active_components[] = $component;
+					}
+				}
+
+				$export['settings']['active_components'] = $active_components;
+
+				PodsInit::$components->is_component_active( $component );
 			} else {
 				foreach ( $setting_keys as $setting_key ) {
 					$setting = pods_get_setting( $setting_key );
@@ -1002,6 +1027,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'depends-on',
 				'excludes-on',
 				'_locale',
+				'required_help_boolean',
 			);
 
 			$field_types = PodsForm::field_types();

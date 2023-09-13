@@ -20,12 +20,13 @@ const Color = ( {
 		color_select_label: selectLabel = __( 'Select Color', 'pods' ),
 		color_clear_label: clearLabel = __( 'Clear', 'pods' ),
 		read_only: readOnly,
+		htmlAttr: htmlAttributes = {},
 	} = fieldConfig;
 
 	return (
 		<div className="pods-color-buttons">
 			<input
-				name={ name }
+				name={ htmlAttributes.name || name }
 				type="hidden"
 				value={ value || '' }
 			/>
@@ -46,6 +47,7 @@ const Color = ( {
 							<Button
 								onClick={ state.onToggle }
 								className="button pods-color-select-button"
+								aria-label={ __( 'Select a color', 'pods' ) }
 							>
 								<ColorIndicator colorValue={ value || '' } />
 
@@ -59,6 +61,7 @@ const Color = ( {
 										setValue( '' );
 									} }
 									className="button"
+									aria-label={ __( 'Clear the selected color', 'pods' ) }
 								>
 									{ clearLabel }
 								</Button>

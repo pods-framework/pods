@@ -94,7 +94,7 @@ const ListSelectItem = forwardRef( ( {
 					<>
 						<li
 							className="pods-list-select-item__col pods-list-select-item__drag-handle"
-							aria-label="drag"
+							aria-label={ __( 'Press and hold to drag this item to a new position in the list', 'pods' ) }
 							// eslint-disable-next-line react/jsx-props-no-spreading
 							{ ...listeners }
 							// eslint-disable-next-line react/jsx-props-no-spreading
@@ -115,10 +115,12 @@ const ListSelectItem = forwardRef( ( {
 									)
 								}
 								showTooltip
+								aria-disabled={ ! moveUp }
 								disabled={ ! moveUp }
 								onClick={ moveUp }
 								icon={ chevronUp }
 								label={ __( 'Move up', 'pods' ) }
+								aria-label={ __( 'Move this list item up in position within the list', 'pods' ) }
 							/>
 
 							<Button
@@ -129,10 +131,12 @@ const ListSelectItem = forwardRef( ( {
 									)
 								}
 								showTooltip
+								aria-disabled={ ! moveDown }
 								disabled={ ! moveDown }
 								onClick={ moveDown }
 								icon={ chevronDown }
 								label={ __( 'Move down', 'pods' ) }
+								aria-label={ __( 'Move this list item down in position within the list', 'pods' ) }
 							/>
 						</li>
 					</>

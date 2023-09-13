@@ -48,7 +48,8 @@ class Field extends Base {
 			],
 		];
 
-		$core_tabs['advanced'] = __( 'Advanced', 'pods' );
+		$core_tabs['advanced']          = __( 'Advanced', 'pods' );
+		$core_tabs['conditional-logic'] = __( 'Conditional Logic', 'pods' );
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
@@ -113,6 +114,7 @@ class Field extends Base {
 		$tableless_field_types          = PodsForm::tableless_field_types();
 		$repeatable_field_types         = PodsForm::repeatable_field_types();
 		$separator_excluded_field_types = PodsForm::separator_excluded_field_types();
+		$layout_non_input_field_types   = PodsForm::layout_field_types() + PodsForm::non_input_field_types();
 
 		// Remove repeatable fields custom separator options.
 		$serial_repeatable_field_types = array_values( array_diff( $repeatable_field_types, $separator_excluded_field_types ) );
@@ -161,7 +163,7 @@ class Field extends Base {
 				'name'                  => 'pick_object',
 				'label'                 => __( 'Related Type', 'pods' ),
 				'type'                  => 'pick',
-				'default'               => '',
+				'default'               => 'custom-simple',
 				'required'              => true,
 				'data'                  => [],
 				'pick_format_single' => 'dropdown',
@@ -217,6 +219,9 @@ class Field extends Base {
 				'type'              => 'boolean',
 				'default'           => 0,
 				'boolean_yes_label' => '',
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
 				'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 			],
 			'required_help_boolean'    => [
@@ -270,6 +275,9 @@ class Field extends Base {
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'br'         => __( 'Line breaks', 'pods' ),
+					'ul'         => __( 'Unordered list', 'pods' ),
+					'ol'         => __( 'Ordered list', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				],
 				'pick_format_single' => 'dropdown',
@@ -304,26 +312,33 @@ class Field extends Base {
 				'default' => '',
 			],
 			'values'                  => [
-				'name'  => 'values',
-				'label' => __( 'Values', 'pods' ),
-				'type'  => 'heading',
+				'name'        => 'values',
+				'label'       => __( 'Values', 'pods' ),
+				'type'        => 'heading',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'default_value'           => [
-				'name'    => 'default_value',
-				'label'   => __( 'Default Value', 'pods' ),
-				'help'    => __( 'This is the default value used when the Add New form is used.', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-				'options' => [
-					'text_max_length' => - 1,
+				'name'            => 'default_value',
+				'label'           => __( 'Default Value', 'pods' ),
+				'help'            => __( 'This is the default value used when the Add New form is used.', 'pods' ),
+				'type'            => 'text',
+				'default'         => '',
+				'text_max_length' => - 1,
+				'excludes-on'     => [
+					'type' => $layout_non_input_field_types,
 				],
 			],
 			'default_value_parameter' => [
-				'name'    => 'default_value_parameter',
-				'label'   => __( 'Set Default Value via Parameter', 'pods' ),
-				'help'    => __( 'You can automatically populate the value of this field from the URL parameter "your_field" such as ?your_field=1234', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
+				'name'        => 'default_value_parameter',
+				'label'       => __( 'Set Default Value via Parameter', 'pods' ),
+				'help'        => __( 'You can automatically populate the value of this field from the URL parameter "your_field" such as ?your_field=1234', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'visibility'              => [
 				'name'  => 'visibility',
@@ -422,6 +437,52 @@ class Field extends Base {
 					'restrict_capability' => true,
 				],
 				'help'       => __( 'If none are selected, this option will be ignored.', 'pods' ),
+			],
+		];
+
+		$options['conditional-logic'] = [
+			'enable_conditional_logic' => [
+				'name'    => 'enable_conditional_logic',
+				'label'   => __( 'Enable Conditional Logic', 'pods' ),
+				'help'    => __( 'Conditional logic can automatically show or hide this field depending on the value of other fields.', 'pods' ),
+				'type'    => 'boolean',
+				'default' => 0,
+			],
+			'conditional_logic'        => [
+				'name'       => 'conditional_logic',
+				'label'      => __( 'Conditions', 'pods' ),
+				'help'       => __( 'help', 'pods' ),
+				'type'       => 'conditional-logic',
+				'depends-on' => [
+					'enable_conditional_logic' => true,
+				],
+			],
+			'conditional_logic_help'        => [
+				'name'         => 'conditional_logic_help',
+				'label'        => '',
+				'help'         => __( 'help', 'pods' ),
+				'type'         => 'html',
+				'html_content' => wpautop(
+					sprintf(
+						'
+							%1$s
+
+							<ul>
+								<li>%2$s</li>
+								<li>%3$s</li>
+							</ul>
+
+							<a href="https://docs.pods.io/fields/conditional-logic-for-fields/">%4$s &raquo;</a>
+						',
+						__( 'Each field type has their own conditional options available to them.', 'pods' ),
+						__( 'For pattern matching on text-based fields: Use Regular Expressions and do not use the wrapping character "/" like "/[a-z]/", you will need to use "[a-z]"', 'pods' ),
+						__( 'For relationships: Use the ID for any relationship object or the text value for any custom defined / simple relationship', 'pods' ),
+						__( 'Learn more about conditional logic for fields', 'pods' )
+					)
+				),
+				'depends-on'   => [
+					'enable_conditional_logic' => true,
+				],
 			],
 		];
 

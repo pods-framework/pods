@@ -2,19 +2,24 @@
 
 namespace Pods\REST\V1;
 
-use Tribe__REST__Messages_Interface as REST__Messages_Interface;
+use Pods\REST\Interfaces\Messages_Interface;
 
 /**
  * Class Messages
  *
  * @since 2.8.0
  */
-class Messages implements REST__Messages_Interface {
+class Messages implements Messages_Interface {
 
 	/**
 	 * @var string
 	 */
 	protected $message_prefix = 'rest-v1:';
+
+	/**
+	 * @var array
+	 */
+	protected $messages = [];
 
 	/**
 	 * Messages constructor.
@@ -23,21 +28,7 @@ class Messages implements REST__Messages_Interface {
 	 */
 	public function __construct() {
 		$this->messages = [
-			'missing-attendee-id'         => __( 'The attendee ID is missing from the request', 'pods' ),
-			'attendee-not-found'          => __( 'The requested post ID does not exist or is not an attendee', 'pods' ),
-			'attendee-not-accessible'     => __( 'The requested attendee is not accessible', 'pods' ),
-			'attendee-check-in-not-found' => __( 'The requested attendee check in is not available', 'pods' ),
-			'ticket-not-found'            => __( 'The requested ticket post could not be found', 'pods' ),
-			'ticket-provider-not-found'   => __( 'The ticket provider for the requested ticket is not available', 'pods' ),
-			'ticket-post-not-found'       => __( 'The post associated with the requested ticket was not found', 'pods' ),
-			'ticket-object-not-found'     => __( 'The requested ticket object could not be built or found', 'pods' ),
-			'ticket-not-accessible'       => __( 'The requested ticket is not accessible', 'pods' ),
-			'error-global-id-generation'  => __( 'The ticket global id could not be generated', 'pods' ),
-			// this is an internal error, not same as the `ticket-not-found` one
-			'error-ticket-post'           => __( 'There was a problem while fetching the requested ticket post', 'pods' ),
-			'error-attendee-post'         => __( 'There was a problem while fetching the requested attendee post', 'pods' ),
-			// same as WordPress REST API
-			'invalid-page-number'         => __( 'The page number requested is larger than the number of pages available.', 'default' ),
+			// @todo Fill this out.
 		];
 	}
 

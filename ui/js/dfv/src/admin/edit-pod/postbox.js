@@ -36,8 +36,7 @@ export const Postbox = ( {
 	useEffect( () => {
 		// Redirect if the Pod has successfully been deleted.
 		if ( deleteStatus === DELETE_STATUSES.DELETE_SUCCESS ) {
-			// @todo This should be based on the adminurl instead of hardcoded to /wp-admin/ -- fix this later.
-			window.location.replace( '/wp-admin/admin.php?page=pods&deleted=1' );
+			window.location.replace( window.podsDFVConfig.admin_url + 'admin.php?page=pods&deleted=1' );
 		}
 	}, [ deleteStatus ] );
 
@@ -75,6 +74,8 @@ export const Postbox = ( {
 										<button
 											onClick={ deleteHandler }
 											className="components-button editor-post-trash is-link"
+											disabled={ isSaving }
+											aria-disabled={ isSaving }
 										>
 											{ __( 'Delete Pod', 'pods' ) }
 										</button>
@@ -86,6 +87,7 @@ export const Postbox = ( {
 											className="button-primary"
 											type="submit"
 											disabled={ isSaving }
+											aria-disabled={ isSaving }
 											onClick={ () => savePod( options, podID ) }
 										>
 											{ __( 'Save Pod', 'pods' ) }

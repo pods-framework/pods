@@ -21,6 +21,7 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		$this->container->singleton( Permissions::class, Permissions::class );
 		$this->container->singleton( Pod_Manager::class, Pod_Manager::class );
 		$this->container->singleton( Static_Cache::class, Static_Cache::class );
+		$this->container->bind( Data\Conditional_Logic::class, Data\Conditional_Logic::class );
 		$this->container->singleton( Data\Map_Field_Values::class, Data\Map_Field_Values::class );
 		$this->container->singleton( Theme\WP_Query_Integration::class, Theme\WP_Query_Integration::class );
 		$this->container->singleton( Tools\Repair::class, Tools\Repair::class );

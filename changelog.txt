@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.0.1 - September 13th, 2023 =
+
+* Fixed: Custom Settings Pages no longer have the error when saving that was introduced by changes made in Pods 3.0. (@sc0ttkclark)
+
 = 3.0 - September 13th, 2023 =
 
 **Compatibility warning**

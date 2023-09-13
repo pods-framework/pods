@@ -13,6 +13,8 @@ import { createStoreKey } from 'dfv/src/store/store';
  */
 import isEditPodScreen from 'dfv/src/helpers/isEditPodScreen';
 
+import { STORE_KEY_DFV } from 'dfv/src/store/constants';
+
 const API = {
 	/**
 	 * Store the field configs for reference.

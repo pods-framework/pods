@@ -57,7 +57,7 @@
     }
   ],
   "require": {
-    "composer/installers": "1.12.*",
+    "composer/installers": "2.2.*",
     "lucatume/di52": "^3.3.0",
     "mustangostang/spyc": "^0.6.3",
     "php": ">=7.2"

@@ -2591,6 +2591,11 @@ class PodsField_Pick extends PodsField {
 					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $options );
 				}
 
+				// If the ACT was not found, return nothing.
+				if ( 'pod' === $pick_object && $table_info && ! $table_info['pod'] ) {
+					return [];
+				}
+
 				if ( null === $related_pod && $table_info && $table_info['pod'] ) {
 					$related_pod = $table_info['pod'];
 				}

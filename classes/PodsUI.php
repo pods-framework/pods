@@ -3725,6 +3725,9 @@ class PodsUI {
 			<?php
 			return false;
 		}
+
+		$tableless_field_types = PodsForm::tableless_field_types();
+
 		if ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] ) {
 
 			?>
@@ -3999,6 +4002,16 @@ class PodsUI {
 									$row_value_is_array = is_array( $row_value );
 									$row_values = (array) $row_value;
 
+									if (
+										$row_values
+										&& ! isset( $row_values[0] )
+										&& in_array( $attributes['type'], $tableless_field_types, true )
+									) {
+										$row_values = [
+											$row_values,
+										];
+									}
+
 									foreach ( $row_values as $row_value_key => $row_value_item ) {
 										ob_start();
 
@@ -4020,7 +4033,7 @@ class PodsUI {
 									if ( ! $row_value_is_array ) {
 										$row_value = $row_value ? current( $row_value ) : null;
 									}
-								}//end if
+								}
 
 								if ( false !== $attributes['custom_relate'] ) {
 									global $wpdb;

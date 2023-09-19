@@ -171,16 +171,16 @@ function frontier_if_block( $attributes, $code ) {
 			return frontier_do_shortcode( $template );
 		}
 
-		$first_character = substr( $attributes['value'], 0, 1 );
+		$first_character = $attributes['value'] ? substr( (string) $attributes['value'], 0, 1 ) : null;
 
 		// check if + or - are present
 		if ( '+' === $first_character ) {
 			// is greater
-			$attributes['value']   = (float) substr( $attributes['value'], 1 ) + 1;
+			$attributes['value']   = (float) substr( (string) $attributes['value'], 1 ) + 1;
 			$attributes['compare'] = '>';
 		} elseif ( '-' === $first_character ) {
 			// is smaller
-			$attributes['value']   = (float) substr( $attributes['value'], 1 ) - 1;
+			$attributes['value']   = (float) substr( (string) $attributes['value'], 1 ) - 1;
 			$attributes['compare'] = '<';
 		}
 

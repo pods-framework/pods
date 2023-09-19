@@ -2189,7 +2189,7 @@ class PodsField_Pick extends PodsField {
 	public function simple_value( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
 
 		if ( in_array( pods_v( static::$type . '_object', $options ), $this->simple_objects(), true ) ) {
-			if ( ! is_array( $value ) && 0 < strlen( $value ) ) {
+			if ( ! is_array( $value ) && 0 < strlen( (string) $value ) ) {
 				$simple = @json_decode( $value, true );
 
 				if ( is_array( $simple ) ) {
@@ -2258,7 +2258,7 @@ class PodsField_Pick extends PodsField {
 				} else {
 					$value = array_slice( $value, 0, $limit, true );
 				}
-			} elseif ( ! is_array( $value ) && null !== $value && 0 < strlen( $value ) ) {
+			} elseif ( ! is_array( $value ) && null !== $value && 0 < strlen( (string) $value ) ) {
 				if ( 1 !== $limit || ( true === $raw && 'multi' === $single_multi ) ) {
 					$value = array(
 						$key => $value,
@@ -2580,7 +2580,7 @@ class PodsField_Pick extends PodsField {
 						$related_pod = $pod->pod_data;
 					} elseif ( is_array( $pod ) ) {
 						$pick_val = $pod['name'];
-					} elseif ( 0 < strlen( $pod ) ) {
+					} elseif ( is_string( $pod ) && 0 < strlen( $pod ) ) {
 						$pick_val = $pod;
 					}
 				}
@@ -2668,7 +2668,7 @@ class PodsField_Pick extends PodsField {
 				$display_field_name  = $search_data->field_index;
 				$display_field_alias = false;
 
-				if ( 0 < strlen( $display ) ) {
+				if ( is_string( $display ) && 0 < strlen( $display ) ) {
 					if ( ! empty( $table_info['pod'] ) ) {
 						/** @var Pod $related_pod */
 						$related_pod = $table_info['pod'];
@@ -2793,7 +2793,7 @@ class PodsField_Pick extends PodsField {
 
 						$pick_orderby = pods_v( static::$type . '_orderby', $options, null, true );
 
-						if ( 0 < strlen( $pick_orderby ) ) {
+						if ( is_string( $pick_orderby ) && 0 < strlen( $pick_orderby ) ) {
 							$orderby[] = $pick_orderby;
 						}
 
@@ -2961,7 +2961,7 @@ class PodsField_Pick extends PodsField {
 
 						$display_filter = pods_v( 'display_filter', $field_index_data_to_use );
 
-						if ( 0 < strlen( $display_filter ) ) {
+						if ( is_string( $display_filter ) && 0 < strlen( $display_filter ) ) {
 							$display_filter_args = pods_v( 'display_filter_args', $field_index_data_to_use );
 
 							$filter_args = array(

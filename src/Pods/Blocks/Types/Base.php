@@ -245,17 +245,25 @@ abstract class Base extends Blocks_Abstract {
 	 * @return bool Whether the block is being rendered in editor mode.
 	 */
 	public function in_editor_mode( $attributes = [] ) {
-		return (
-			! empty( $attributes['_is_editor'] )
-			|| (
-				is_admin()
-				&& $screen = get_current_screen()
-				&& 'post' === $screen->base
-			)
-			|| (
-				wp_is_json_request()
-				&& did_action( 'rest_api_init' )
-			)
-		);
+		if ( ! empty( $attributes['_is_editor'] ) ) {
+			return true;
+		}
+
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			if ( $screen && 'post' === $screen->base ) {
+				return true;
+			}
+		}
+
+		if (
+			wp_is_json_request()
+			&& did_action( 'rest_api_init' )
+		) {
+			return true;
+		}
+
+		return false;
 	}
 }

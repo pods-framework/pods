@@ -4753,7 +4753,7 @@ class PodsAPI {
 	 *
 	 * @param array|object $params An associative array of parameters
 	 *
-	 * @return int|array The item ID, or an array of item IDs (if `id` is an array if IDs)
+	 * @return int|string|array The item ID, slug, or an array of item IDs (if `id` is an array if IDs)
 	 *
 	 * @throws Exception
 	 *
@@ -5637,7 +5637,7 @@ class PodsAPI {
 			}
 
 			if ( 'settings' === $pod['type'] ) {
-				$params->id = $pod['id'];
+				$params->id = $pod['name'];
 			}
 		}
 
@@ -5664,7 +5664,9 @@ class PodsAPI {
 			}
 		}
 
-		$params->id = (int) $params->id;
+		if ( is_numeric( $params->id ) ) {
+			$params->id = (int) $params->id;
+		}
 
 		// Save terms for taxonomies associated to a post type
 		if ( 0 < $params->id && 'post_type' === $pod['type'] && ! empty( $post_term_data ) ) {

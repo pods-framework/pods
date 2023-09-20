@@ -767,7 +767,10 @@ class PodsAdmin {
 			$page_title = pods_v( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data['name'] ) ), true );
 			$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod->pod_data );
 
+			$pod_pod_name = $pod->pod;
+
 			$ui = array(
+				'id'               => $pod_pod_name,
 				'pod'              => $pod,
 				'fields'           => array(
 					'edit' => $pod->pod_data->get_fields(),
@@ -782,8 +785,6 @@ class PodsAdmin {
 				'icon'             => pods_evaluate_tags( pods_v( 'menu_icon', $pod->pod_data['options'] ), true ),
 				'actions_disabled' => $actions_disabled,
 			);
-
-			$pod_pod_name = $pod->pod;
 
 			$ui = apply_filters( "pods_admin_ui_{$pod_pod_name}", apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
 
@@ -2730,13 +2731,13 @@ class PodsAdmin {
 		$params = (object) $params;
 
 		$methods = array(
-			'add_pod'                 => array( 'priv' => true ),
-			'save_pod'                => array( 'priv' => true ),
-			'load_sister_fields'      => array( 'priv' => true ),
-			'process_form'            => array( 'custom_nonce' => true ),
+			'add_pod'            => array( 'priv' => true ),
+			'save_pod'           => array( 'priv' => true ),
+			'load_sister_fields' => array( 'priv' => true ),
+			'process_form'       => array( 'custom_nonce' => true ),
 			// priv handled through nonce
-							'upgrade' => array( 'priv' => true ),
-			'migrate'                 => array( 'priv' => true ),
+			'upgrade'            => array( 'priv' => true ),
+			'migrate'            => array( 'priv' => true ),
 		);
 
 		/**

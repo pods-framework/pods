@@ -329,7 +329,7 @@ class PodsData {
 		}
 
 		if ( $this->pod_data && 'settings' === $this->pod_data['type'] ) {
-			$this->id = $this->pod_data['id'];
+			$this->id = $this->pod_data['name'];
 
 			$this->fetch( $this->id );
 		} elseif ( null !== $id && ! is_array( $id ) && ! is_object( $id ) ) {
@@ -2028,8 +2028,8 @@ class PodsData {
 
 				$current_row_id = false;
 
-				if ( $this->pod_data && 'settings' === $this->pod_data['type'] ) {
-					$current_row_id = $this->pod_data['id'];
+				if ( $this->pod_data && 'settings' === $this->pod_data->get_type() ) {
+					$current_row_id = $this->pod_data->get_name();
 
 					$is_settings_pod = true;
 				} else {
@@ -2067,7 +2067,8 @@ class PodsData {
 			$id   = pods_absint( $row );
 
 			if ( $is_settings_pod ) {
-				$id = $this->pod_data->get_id();
+				$mode = 'slug';
+				$id   = $this->pod_data->get_name();
 			}
 
 			if (
@@ -2145,7 +2146,7 @@ class PodsData {
 				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
-					$current_row_id = $this->row['ID'];
+					$current_row_id = (int) $this->row['ID'];
 				}
 
 				$get_table_data = true;
@@ -2196,7 +2197,7 @@ class PodsData {
 				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
-					$current_row_id = $this->row['term_id'];
+					$current_row_id = (int) $this->row['term_id'];
 				}
 
 				$get_table_data = true;
@@ -2224,7 +2225,7 @@ class PodsData {
 
 					unset( $this->row['user_pass'] );
 
-					$current_row_id = $this->row['ID'];
+					$current_row_id = (int) $this->row['ID'];
 				}
 
 				$get_table_data = true;
@@ -2235,7 +2236,7 @@ class PodsData {
 				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
-					$current_row_id = $this->row['comment_ID'];
+					$current_row_id = (int) $this->row['comment_ID'];
 				}
 
 				$get_table_data = true;
@@ -2245,14 +2246,18 @@ class PodsData {
 				if ( empty( $this->fields ) || ! $this->pod_data ) {
 					$this->row = false;
 				} else {
+					/** @var Field $field */
 					foreach ( $this->fields as $field ) {
-						if ( ! in_array( $field['type'], $tableless_field_types, true ) ) {
-							$this->row[ $field['name'] ] = get_option( $this->pod_data['name'] . '_' . $field['name'], null );
+						if (
+							! in_array( $field['type'], $tableless_field_types, true )
+							|| $field->is_simple_relationship()
+						) {
+							$this->row[ $field['name'] ] = get_option( $this->pod_data->get_name() . '_' . $field['name'], null );
 						}
 					}
 
-					// Force ID.
-					$this->id               = $this->pod_data['id'];
+					// Force the pod name as the ID.
+					$this->id               = $this->pod_data->get_name();
 					$this->row['option_id'] = $this->id;
 				}
 			} else {

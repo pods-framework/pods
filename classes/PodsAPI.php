@@ -5328,9 +5328,10 @@ class PodsAPI {
 					// Maybe flatten the array for files.
 					if (
 						'file' === $object_fields[ $field ]['type']
-						&& array_key_exists( 'id', (array) current( $value ) )
+						&& ! is_int( $value )
+						&& array_key_exists( 'id', (array) current( (array) $value ) )
 					) {
-						$value = array_values( wp_list_pluck( $value, 'id' ) );
+						$value = array_values( wp_list_pluck( (array) $value, 'id' ) );
 
 						// Maybe handle thumbnail as a single value.
 						if ( '_thumbnail_id' === $field ) {

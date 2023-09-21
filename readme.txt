@@ -19,6 +19,7 @@ Manage all your custom content needs in one location with the Pods Framework.
 * **Extend and customize content types** including Posts, Pages, Categories, Tags, Users, and Media with one easy click
 * **Create custom settings pages** easily within seconds
 * **Add custom fields** to *any* content type
+* **Conditionally show fields** based on the value of other fields with Conditional Logic
 * **Group your fields** however you'd like into their own sections and add additional headings to help organize
 * **Show your fields** anywhere using our [blocks](https://docs.pods.io/displaying-pods/pods-blocks/), [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://docs.pods.io/displaying-pods/pods-widgets/), or the non-coder [Pods Template](https://docs.pods.io/displaying-pods/pods-templates/) approach along with our [automatic theme integration](https://docs.pods.io/displaying-pods/pods-templates/auto-templates/)
 * **Create connections** between any of your content with [relationship fields](https://docs.pods.io/fields/relationship/) to keep your content organized
@@ -57,6 +58,7 @@ You can also control visibility by role/capability and [other advanced options](
 * **Relationships / Media:** File / Image / Video (Media library and basic upload options available), Avatar (for extended Users), oEmbed, Relationship (Dropdown, Multi Select, Autocomplete, Checkboxes, Radio Buttons, and List View available)
 * **Checkbox** (Yes / No)
 * **Color Picker**
+* **Layout Fields:** Heading text, HTML content
 
 = Relationships to rule the world with =
 

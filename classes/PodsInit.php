@@ -1274,10 +1274,15 @@ class PodsInit {
 					'has_archive'         => ( (boolean) pods_v( 'has_archive', $post_type, false ) ) ? pods_v( 'has_archive_slug', $post_type, true, true ) : false,
 					'rewrite'             => $cpt_rewrite,
 					'query_var'           => ( false !== (boolean) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
-					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
 					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
 					'_provider'           => 'pods',
 				);
+
+				if ( (boolean) pods_v( 'disable_create_posts', $post_type, false ) ) {
+					$pods_post_types[ $post_type_name ]['capabilities'] = [
+						'create_posts' => false,
+					];
+				}
 
 				// Check if we have a custom archive page slug.
 				if ( is_string( $pods_post_types[ $post_type_name ]['has_archive'] ) ) {

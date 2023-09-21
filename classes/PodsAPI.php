@@ -4753,7 +4753,7 @@ class PodsAPI {
 	 *
 	 * @param array|object $params An associative array of parameters
 	 *
-	 * @return int|array The item ID, or an array of item IDs (if `id` is an array if IDs)
+	 * @return int|string|array The item ID, slug, or an array of item IDs (if `id` is an array if IDs)
 	 *
 	 * @throws Exception
 	 *
@@ -5328,9 +5328,10 @@ class PodsAPI {
 					// Maybe flatten the array for files.
 					if (
 						'file' === $object_fields[ $field ]['type']
-						&& array_key_exists( 'id', (array) current( $value ) )
+						&& ! is_int( $value )
+						&& array_key_exists( 'id', (array) current( (array) $value ) )
 					) {
-						$value = array_values( wp_list_pluck( $value, 'id' ) );
+						$value = array_values( wp_list_pluck( (array) $value, 'id' ) );
 
 						// Maybe handle thumbnail as a single value.
 						if ( '_thumbnail_id' === $field ) {
@@ -5637,7 +5638,7 @@ class PodsAPI {
 			}
 
 			if ( 'settings' === $pod['type'] ) {
-				$params->id = $pod['id'];
+				$params->id = $pod['name'];
 			}
 		}
 
@@ -5664,7 +5665,9 @@ class PodsAPI {
 			}
 		}
 
-		$params->id = (int) $params->id;
+		if ( is_numeric( $params->id ) ) {
+			$params->id = (int) $params->id;
+		}
 
 		// Save terms for taxonomies associated to a post type
 		if ( 0 < $params->id && 'post_type' === $pod['type'] && ! empty( $post_term_data ) ) {
@@ -5747,8 +5750,14 @@ class PodsAPI {
 						$this->save_relationships( $params->id, $value_ids, $pod, $field_data );
 					}
 
+					$pick_save_params = $params;
+
+					$pick_save_params->current_ids = $related_ids;
+					$pick_save_params->value_ids   = $value_ids;
+					$pick_save_params->remove_ids  = $remove_ids;
+
 					// Run save function for field type (where needed).
-					PodsForm::save( $type, $field_save_values, $params->id, $field_name, $field_data, $all_fields, $pod, $params );
+					PodsForm::save( $type, $field_save_values, $params->id, $field_name, $field_data, $all_fields, $pod, $pick_save_params );
 				}
 
 				// Unset data no longer needed

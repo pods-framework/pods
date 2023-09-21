@@ -1406,7 +1406,9 @@ class PodsField_Pick extends PodsField {
 			$data = $this->get_raw_data( $args->options );
 		} elseif ( ! empty( $args->data ) ) {
 			$data = $args->data;
-		}
+		} else {
+            $data = $this->data( $args->name, $args->value, $args->options, $args->pod, $args->id );
+        }
 
 		if ( [] !== $data ) {
 			$item_data = $this->build_dfv_field_item_data_recurse( $data, $args );
@@ -1885,7 +1887,13 @@ class PodsField_Pick extends PodsField {
 			];
 		}
 
-		$value_ids = array_unique( array_filter( $value ) );
+		$current_ids = isset( $params->current_ids ) ? $params->current_ids : null;
+		$value_ids   = isset( $params->value_ids ) ? $params->value_ids : null;
+		$remove_ids  = isset( $params->remove_ids ) ? $params->remove_ids : null;
+
+		if ( null === $value_ids ) {
+			$value_ids = array_unique( array_filter( $value ) );
+		}
 
 		$related_data = pods_static_cache_get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
@@ -1893,8 +1901,14 @@ class PodsField_Pick extends PodsField {
 			$related_pod        = $related_data['related_pod'];
 			$related_field      = $related_data['related_field'];
 			$related_pick_limit = $related_data['related_pick_limit'];
-			$current_ids        = $related_data[ 'current_ids_' . $id ];
-			$remove_ids         = $related_data[ 'remove_ids_' . $id ];
+
+			if ( null === $current_ids ) {
+				$current_ids = $related_data[ 'current_ids_' . $id ];
+			}
+
+			if ( null === $remove_ids ) {
+				$remove_ids = $related_data[ 'remove_ids_' . $id ];
+			}
 		} elseif ( $options instanceof Field || $options instanceof Value_Field ) {
 			$related_field = $options->get_bidirectional_field();
 
@@ -1904,10 +1918,15 @@ class PodsField_Pick extends PodsField {
 
 			$related_pod        = $related_field->get_parent_object();
 			$related_pick_limit = $related_field->get_limit();
-			$current_ids        = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
+
+			if ( null === $current_ids ) {
+				$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
+			}
 
 			// Get ids to remove.
-			$remove_ids = array_diff( $current_ids, $value_ids );
+			if ( null === $remove_ids ) {
+				$remove_ids = array_diff( $current_ids, $value_ids );
+			}
 		}
 
 		if ( empty( $related_field ) || empty( $related_pod ) ) {
@@ -2189,7 +2208,7 @@ class PodsField_Pick extends PodsField {
 	public function simple_value( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
 
 		if ( in_array( pods_v( static::$type . '_object', $options ), $this->simple_objects(), true ) ) {
-			if ( ! is_array( $value ) && 0 < strlen( $value ) ) {
+			if ( ! is_array( $value ) && 0 < strlen( (string) $value ) ) {
 				$simple = @json_decode( $value, true );
 
 				if ( is_array( $simple ) ) {
@@ -2258,7 +2277,7 @@ class PodsField_Pick extends PodsField {
 				} else {
 					$value = array_slice( $value, 0, $limit, true );
 				}
-			} elseif ( ! is_array( $value ) && null !== $value && 0 < strlen( $value ) ) {
+			} elseif ( ! is_array( $value ) && null !== $value && 0 < strlen( (string) $value ) ) {
 				if ( 1 !== $limit || ( true === $raw && 'multi' === $single_multi ) ) {
 					$value = array(
 						$key => $value,
@@ -2580,7 +2599,7 @@ class PodsField_Pick extends PodsField {
 						$related_pod = $pod->pod_data;
 					} elseif ( is_array( $pod ) ) {
 						$pick_val = $pod['name'];
-					} elseif ( 0 < strlen( $pod ) ) {
+					} elseif ( is_string( $pod ) && 0 < strlen( $pod ) ) {
 						$pick_val = $pod;
 					}
 				}
@@ -2589,6 +2608,11 @@ class PodsField_Pick extends PodsField {
 
 				if ( empty( $table_info ) && ! empty( $pick_object ) ) {
 					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $options );
+				}
+
+				// If the ACT was not found, return nothing.
+				if ( 'pod' === $pick_object && $table_info && ! $table_info['pod'] ) {
+					return [];
 				}
 
 				if ( null === $related_pod && $table_info && $table_info['pod'] ) {
@@ -2663,7 +2687,7 @@ class PodsField_Pick extends PodsField {
 				$display_field_name  = $search_data->field_index;
 				$display_field_alias = false;
 
-				if ( 0 < strlen( $display ) ) {
+				if ( is_string( $display ) && 0 < strlen( $display ) ) {
 					if ( ! empty( $table_info['pod'] ) ) {
 						/** @var Pod $related_pod */
 						$related_pod = $table_info['pod'];
@@ -2788,7 +2812,7 @@ class PodsField_Pick extends PodsField {
 
 						$pick_orderby = pods_v( static::$type . '_orderby', $options, null, true );
 
-						if ( 0 < strlen( $pick_orderby ) ) {
+						if ( is_string( $pick_orderby ) && 0 < strlen( $pick_orderby ) ) {
 							$orderby[] = $pick_orderby;
 						}
 
@@ -2956,7 +2980,7 @@ class PodsField_Pick extends PodsField {
 
 						$display_filter = pods_v( 'display_filter', $field_index_data_to_use );
 
-						if ( 0 < strlen( $display_filter ) ) {
+						if ( is_string( $display_filter ) && 0 < strlen( $display_filter ) ) {
 							$display_filter_args = pods_v( 'display_filter_args', $field_index_data_to_use );
 
 							$filter_args = array(

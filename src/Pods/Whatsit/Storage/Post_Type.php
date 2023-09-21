@@ -615,7 +615,16 @@ class Post_Type extends Collection {
 		}
 
 		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
-			$posts = array_merge( $posts, parent::find( $args ) );
+			$other_configs = parent::find( $args );
+
+			// Merge the other configs into the posts array but don't overwrite them.
+			foreach ( $other_configs as $key => $config ) {
+				if ( is_int( $key ) ) {
+					$posts[] = $config;
+				} elseif ( ! isset( $posts[ $key ] ) ) {
+					$posts[ $key ] = $config;
+				}
+			}
 		}
 
 		if ( ! empty( $args['limit'] ) ) {

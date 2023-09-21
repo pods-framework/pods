@@ -143,8 +143,12 @@ const FullSelect = ( {
 		}),
 		menu: (provided, state) => ({
 			...provided,
-			zIndex: 2,
+			zIndex: 999999999,
 		}),
+		menuPortal: provided => ({
+			...provided,
+			zIndex: 999999999,
+		})
 	};
 
 	return (
@@ -175,6 +179,8 @@ const FullSelect = ( {
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
+						menuPortalTarget={ document.body }
+						menuPosition="fixed"
 						styles={ selectStyles }
 						classNamePrefix="pods-dfv-pick-full-select"
 					/>
@@ -191,6 +197,8 @@ const FullSelect = ( {
 						components={ {
 							MultiValue: SortableMultiValue,
 						} }
+						menuPortalTarget={ document.body }
+						menuPosition="fixed"
 						styles={ selectStyles }
 						classNamePrefix="pods-dfv-pick-full-select"
 					/>

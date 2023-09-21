@@ -175,9 +175,21 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0.2 - September 20th, 2023 =
+= 3.0.2 - September 21st, 2023 =
 
-* Fixed: 
+* Feature: You can now disable the Add New forms for a Post Type pod under the Advanced tab. (@sc0ttkclark)
+* Fixed: Bi-directional field saving has been restored after breaking in Pods 2.9.x. #7172 (@sc0ttkclark)
+* Fixed: More PHP notices/warnings/errors with PHP 8+ addressed. #7170 #7171 (@sc0ttkclark)
+* Fixed: Settings saving for simple relationships fixed when using a setting pod registered by code/file. #7169 (@sc0ttkclark)
+* Fixed: Settings forms would sometimes say the save failed when it was successful. (@sc0ttkclark) 
+* Fixed: Fix relationship rendering in tables for Advanced Content Types. #7173 (@sc0ttkclark)
+* Fixed: Potential SQL errors when a Pod does not exist but it's still set a relationship object for a field. (@sc0ttkclark)
+* Fixed: Pod config data is now correctly passed in all instances of `pods_meta_default_box_title` filter so it's uniform in usage. (@sc0ttkclark)
+* Fixed: Bypass "@" prefixed items from being processed in file-based configs. (@sc0ttkclark)
+* Fixed: Removed extra line in array for post type definition where `can_export` was set two times. (@sc0ttkclark)
+* Fixed: Resolved some cases where boolean return types were treated as filters in `Store::find()`` calls. (@sc0ttkclark)
+* Fixed: The `Pods\Blocks\Types\Base::in_editor_mode()` method resolves PHP issue with current screen reference. (@sc0ttkclark)
+* Fixed: Ensure code/file based configs do not overwrite DB configs to avoid potential issues where duplicate configs get pulled up in lookups. (@sc0ttkclark)
 
 = 3.0.1 - September 13th, 2023 =
 

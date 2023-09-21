@@ -1406,7 +1406,9 @@ class PodsField_Pick extends PodsField {
 			$data = $this->get_raw_data( $args->options );
 		} elseif ( ! empty( $args->data ) ) {
 			$data = $args->data;
-		}
+		} else {
+            $data = $this->data( $args->name, $args->value, $args->options, $args->pod, $args->id );
+        }
 
 		if ( [] !== $data ) {
 			$item_data = $this->build_dfv_field_item_data_recurse( $data, $args );

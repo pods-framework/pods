@@ -44,7 +44,7 @@ const NumberField = ( {
 	// a formatted string, so be able to handle either one, but keep
 	// a formatted version available locally.
 	const [ formattedValue, setFormattedValue ] = useState(
-		formatNumberWithPodsFormat( value, format, softFormat )
+		formatNumberWithPodsFormat( value, format, softFormat, keepLeadingZeroes )
 	);
 
 	useEffect( () => {

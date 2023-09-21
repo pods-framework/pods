@@ -157,7 +157,7 @@ class PodsField_Number extends PodsField {
 
 		$schema = 'DECIMAL(' . $length . ',' . $decimals . ')';
 
-		if ( 1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 255 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 0 ) ) {
 			$schema = 'VARCHAR(' . $length . ')';
 		}
 
@@ -358,11 +358,24 @@ class PodsField_Number extends PodsField {
 			return null;
 		}
 
+		$prefix = null;
+
+		if (
+			1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 0 )
+			&& preg_match( '/^(0+)/', $value, $leading_zeroes )
+		) {
+			$prefix = $leading_zeroes[0];
+		}
+
 		$value = number_format( (float) $value, $decimals, '.', '' );
 
 		// Optionally remove trailing decimal zero's.
 		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
 			$value = $this->trim_decimals( $value, '.' );
+		}
+
+		if ( null !== $prefix ) {
+			$value = $prefix . $value;
 		}
 
 		return $value;
@@ -383,6 +396,15 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 		$decimals    = $format_args['decimals'];
 
+		$prefix = null;
+
+		if (
+			1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 0 )
+			&& preg_match( '/^(0+)/', $value, $leading_zeroes )
+		) {
+			$prefix = $leading_zeroes[0];
+		}
+
 		if ( 'i18n' === pods_v( static::$type . '_format', $options ) ) {
 			$value = number_format_i18n( (float) $value, $decimals );
 		} else {
@@ -392,6 +414,10 @@ class PodsField_Number extends PodsField {
 		// Optionally remove trailing decimal zero's.
 		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
 			$value = $this->trim_decimals( $value, $dot );
+		}
+
+		if ( null !== $prefix ) {
+			$value = $prefix . $value;
 		}
 
 		return $value;

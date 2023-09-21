@@ -157,6 +157,10 @@ class PodsField_Number extends PodsField {
 
 		$schema = 'DECIMAL(' . $length . ',' . $decimals . ')';
 
+		if ( 1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 255 ) ) {
+			$schema = 'VARCHAR(' . $length . ')';
+		}
+
 		return $schema;
 
 	}

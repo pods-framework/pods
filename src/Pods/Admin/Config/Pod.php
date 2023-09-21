@@ -825,6 +825,14 @@ class Pod extends Base {
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
+				'disable_create_posts'    => [
+					'label'             => __( 'Disable Add New forms', 'pods' ),
+					'help'              => __( 'If disabled, the Add New form will be disabled on the WordPress post editor".', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => false,
+					'dependency'        => true,
+					'boolean_yes_label' => '',
+				],
 				'has_archive'             => [
 					'label'             => __( 'Enable Archive Page', 'pods' ),
 					'help'              => __( 'If enabled, creates an archive page with list of of items in this custom post type. Functions like a category page for posts. Can be controlled with a template in your theme called "archive-{$post-type}.php".', 'pods' ),

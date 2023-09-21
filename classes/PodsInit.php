@@ -1279,6 +1279,12 @@ class PodsInit {
 					'_provider'           => 'pods',
 				);
 
+				if ( (boolean) pods_v( 'disable_create_posts', $post_type, false ) ) {
+					$pods_post_types[ $post_type_name ]['capabilities'] = [
+						'create_posts' => false,
+					];
+				}
+
 				// Check if we have a custom archive page slug.
 				if ( is_string( $pods_post_types[ $post_type_name ]['has_archive'] ) ) {
 					// Only allow specific characters.

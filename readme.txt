@@ -190,6 +190,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Resolved some cases where boolean return types were treated as filters in `Store::find()`` calls. (@sc0ttkclark)
 * Fixed: The `Pods\Blocks\Types\Base::in_editor_mode()` method resolves PHP issue with current screen reference. (@sc0ttkclark)
 * Fixed: Ensure code/file based configs do not overwrite DB configs to avoid potential issues where duplicate configs get pulled up in lookups. (@sc0ttkclark)
+* Fixed: Some relationship field options were not showing their available options to select from when editing a field on the Edit Pod screen. #7176 (@sc0ttkclark)
 
 = 3.0.1 - September 13th, 2023 =
 

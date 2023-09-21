@@ -5750,8 +5750,14 @@ class PodsAPI {
 						$this->save_relationships( $params->id, $value_ids, $pod, $field_data );
 					}
 
+					$pick_save_params = $params;
+
+					$pick_save_params->current_ids = $related_ids;
+					$pick_save_params->value_ids   = $value_ids;
+					$pick_save_params->remove_ids  = $remove_ids;
+
 					// Run save function for field type (where needed).
-					PodsForm::save( $type, $field_save_values, $params->id, $field_name, $field_data, $all_fields, $pod, $params );
+					PodsForm::save( $type, $field_save_values, $params->id, $field_name, $field_data, $all_fields, $pod, $pick_save_params );
 				}
 
 				// Unset data no longer needed

@@ -1885,7 +1885,13 @@ class PodsField_Pick extends PodsField {
 			];
 		}
 
-		$value_ids = array_unique( array_filter( $value ) );
+		$current_ids = isset( $params->current_ids ) ? $params->current_ids : null;
+		$value_ids   = isset( $params->value_ids ) ? $params->value_ids : null;
+		$remove_ids  = isset( $params->remove_ids ) ? $params->remove_ids : null;
+
+		if ( null === $value_ids ) {
+			$value_ids = array_unique( array_filter( $value ) );
+		}
 
 		$related_data = pods_static_cache_get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
@@ -1893,8 +1899,14 @@ class PodsField_Pick extends PodsField {
 			$related_pod        = $related_data['related_pod'];
 			$related_field      = $related_data['related_field'];
 			$related_pick_limit = $related_data['related_pick_limit'];
-			$current_ids        = $related_data[ 'current_ids_' . $id ];
-			$remove_ids         = $related_data[ 'remove_ids_' . $id ];
+
+			if ( null === $current_ids ) {
+				$current_ids = $related_data[ 'current_ids_' . $id ];
+			}
+
+			if ( null === $remove_ids ) {
+				$remove_ids = $related_data[ 'remove_ids_' . $id ];
+			}
 		} elseif ( $options instanceof Field || $options instanceof Value_Field ) {
 			$related_field = $options->get_bidirectional_field();
 
@@ -1904,10 +1916,15 @@ class PodsField_Pick extends PodsField {
 
 			$related_pod        = $related_field->get_parent_object();
 			$related_pick_limit = $related_field->get_limit();
-			$current_ids        = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
+
+			if ( null === $current_ids ) {
+				$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
+			}
 
 			// Get ids to remove.
-			$remove_ids = array_diff( $current_ids, $value_ids );
+			if ( null === $remove_ids ) {
+				$remove_ids = array_diff( $current_ids, $value_ids );
+			}
 		}
 
 		if ( empty( $related_field ) || empty( $related_pod ) ) {

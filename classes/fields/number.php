@@ -82,6 +82,16 @@ class PodsField_Number extends PodsField {
 				'type'        => 'boolean',
 				'excludes-on' => array( static::$type . '_decimals' => 0 ),
 			),
+			static::$type . '_keep_leading_zeroes' => array(
+				'label'       => __( 'Keep Leading Zeroes', 'pods' ),
+				'help'        => __( 'By default, Pods will remove leading zeroes from numbers like "00123" which will become "123". When you keep them, the zeroes at the start of the value will be preserved when formatted.', 'pods' ),
+				'default'     => 0,
+				'type'        => 'boolean',
+				'depends-on' => array(
+					static::$type . '_format_type' => 'number',
+					static::$type . '_html5' => false,
+				),
+			),
 			static::$type . '_step'        => array(
 				'label'      => __( 'Slider Increment (Step)', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
@@ -232,6 +242,7 @@ class PodsField_Number extends PodsField {
 		// Enforce boolean.
 		$options[ static::$type . '_html5' ]       = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
 		$options[ static::$type . '_format_soft' ] = filter_var( pods_v( static::$type . '_format_soft', $options, false ), FILTER_VALIDATE_BOOLEAN );
+		$options[ static::$type . '_keep_leading_zeroes' ] = filter_var( pods_v( static::$type . '_keep_leading_zeroes', $options, false ), FILTER_VALIDATE_BOOLEAN );
 
 		// Only format the value for non-HTML5 inputs.
 		if ( ! $options[ static::$type . '_html5' ] ) {

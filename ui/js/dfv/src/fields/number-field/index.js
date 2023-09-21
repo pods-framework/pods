@@ -29,6 +29,7 @@ const NumberField = ( {
 		number_format: format,
 		number_format_soft: softFormat,
 		number_format_type: type = 'number',
+		number_keep_leading_zeroes: keepLeadingZeroes = false,
 		number_html5: html5,
 		number_max: max,
 		number_max_length: digitMaxLength,
@@ -71,7 +72,7 @@ const NumberField = ( {
 			setValue( parseFloatWithPodsFormat( event.target.value, 0 <= event.target.value.indexOf( ',' ) ? '9999.99' : '9999,99' ) );
 			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
 		} else {
-			setValue( parseFloatWithPodsFormat( event.target.value, format ) );
+			setValue( parseFloatWithPodsFormat( event.target.value, format, keepLeadingZeroes ) );
 			setFormattedValue( event.target.value );
 		}
 	};
@@ -80,7 +81,8 @@ const NumberField = ( {
 		const newFormattedValue = formatNumberWithPodsFormat(
 			value,
 			format,
-			softFormat
+			softFormat,
+			keepLeadingZeroes,
 		);
 
 		setFormattedValue( newFormattedValue );

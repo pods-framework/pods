@@ -143,8 +143,12 @@ const FullSelect = ( {
 		}),
 		menu: (provided, state) => ({
 			...provided,
-			zIndex: 2,
+			zIndex: 999999999,
 		}),
+		menuPortal: provided => ({
+			...provided,
+			zIndex: 999999999,
+		})
 	};
 
 	return (

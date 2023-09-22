@@ -5720,6 +5720,12 @@ class PodsAPI {
 
 		// Save relationship / file data
 		if ( ! empty( $rel_fields ) ) {
+			$item_id_for_lookup = $params->id;
+
+			if ( 'settings' === $pod['type'] && $pod['id'] ) {
+				$item_id_for_lookup = $pod['id'];
+			}
+
 			foreach ( $rel_fields as $type => $data ) {
 				foreach ( $data as $field_name => $value_data ) {
 					$field_data = $fields[ $field_name ];
@@ -5731,10 +5737,10 @@ class PodsAPI {
 					$related_data = pods_static_cache_get( $field_name . '/' . $field_id, 'PodsField_Pick/related_data' ) ?: [];
 
 					// Get current values
-					if ( 'pick' === $type && isset( $related_data[ 'current_ids_' . $params->id ] ) ) {
-						$related_ids = $related_data[ 'current_ids_' . $params->id ];
+					if ( 'pick' === $type && isset( $related_data[ 'current_ids_' . $item_id_for_lookup ] ) ) {
+						$related_ids = $related_data[ 'current_ids_' . $item_id_for_lookup ];
 					} else {
-						$related_ids = $this->lookup_related_items( $field_id, $pod['id'], $params->id, $field_data, $pod );
+						$related_ids = $this->lookup_related_items( $field_id, $pod['id'], $item_id_for_lookup, $field_data, $pod );
 					}
 
 					// Get ids to remove
@@ -5742,12 +5748,12 @@ class PodsAPI {
 
 					// Delete relationships
 					if ( ! empty( $remove_ids ) ) {
-						$this->delete_relationships( $params->id, $remove_ids, $pod, $field_data );
+						$this->delete_relationships( $item_id_for_lookup, $remove_ids, $pod, $field_data );
 					}
 
 					// Save relationships
 					if ( ! empty( $value_ids ) ) {
-						$this->save_relationships( $params->id, $value_ids, $pod, $field_data );
+						$this->save_relationships( $item_id_for_lookup, $value_ids, $pod, $field_data );
 					}
 
 					$pick_save_params = $params;
@@ -5757,7 +5763,7 @@ class PodsAPI {
 					$pick_save_params->remove_ids  = $remove_ids;
 
 					// Run save function for field type (where needed).
-					PodsForm::save( $type, $field_save_values, $params->id, $field_name, $field_data, $all_fields, $pod, $pick_save_params );
+					PodsForm::save( $type, $field_save_values, $item_id_for_lookup, $field_name, $field_data, $all_fields, $pod, $pick_save_params );
 				}
 
 				// Unset data no longer needed
@@ -9582,6 +9588,11 @@ class PodsAPI {
 	 * @uses  pods_query()
 	 */
 	public function lookup_related_items( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
+		// Handle settings lookups slightly differently.
+		if ( $pod && 'settings' === $pod['type'] && $pod['id'] && ! is_array( $ids ) && ! is_numeric( $ids ) ) {
+			$ids = $pod['id'];
+		}
+
 		$params = [
 			'field_id'    => $field_id,
 			'pod_id'      => $pod_id,

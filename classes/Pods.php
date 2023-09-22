@@ -1048,9 +1048,16 @@ class Pods implements Iterator {
 					}
 				} else {
 					// Dot-traversal.
-					$pod        = $this->pod_data['name'];
-					$ids        = array( $this->id() );
-					$all_fields = array();
+					$pod = $this->pod_data['name'];
+					$ids = [];
+
+					if ( 'settings' === $pod_type && $this->pod_data['id'] ) {
+						$ids[] = $this->pod_data['id'];
+					} else {
+						$ids[] = $this->id();
+					}
+
+					$all_fields = [];
 
 					$lookup = $params->traverse;
 

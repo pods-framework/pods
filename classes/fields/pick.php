@@ -1949,7 +1949,10 @@ class PodsField_Pick extends PodsField {
 		if ( empty( $value_ids ) ) {
 			// Remove all bidirectional relationships.
 			if ( ! empty( $remove_ids ) ) {
+				// Remove this ID from the related IDS.
 				self::$api->delete_relationships( $remove_ids, $id, $related_pod, $related_field );
+
+				// Remove the related IDs from this ID.
 				self::$api->delete_relationships( $id, $remove_ids, $pod, $options );
 			}
 
@@ -1991,7 +1994,7 @@ class PodsField_Pick extends PodsField {
 			if ( ! in_array( $id, $bidirectional_ids, true ) ) {
 				// Add to related items.
 				$bidirectional_ids[] = $id;
-			} elseif ( empty( $remove_ids ) ) {
+			} elseif ( empty( $bidirectional_remove_ids ) ) {
 				// Nothing to change.
 				continue;
 			}
@@ -2002,6 +2005,11 @@ class PodsField_Pick extends PodsField {
 				self::$api->delete_relationships( $bidirectional_remove_ids, $related_id, $pod, $options );
 			}
 		}//end foreach
+
+		// Remove this ID from the related IDs.
+		if ( ! empty( $remove_ids ) ) {
+			self::$api->delete_relationships( $remove_ids, $id, $related_pod, $related_field );
+		}
 
 		if ( ! $no_conflict ) {
 			pods_no_conflict_off( $related_pod['type'] );

@@ -764,11 +764,6 @@ class Repair extends Base {
 					'compare' => 'LIKE',
 				],
 				[
-					'key'     => 'conditional_logic',
-					'value'   => 's:6:"a:0:{}"',
-					'compare' => 'LIKE',
-				],
-				[
 					'key'     => 'depends-on',
 					'compare' => 'EXISTS',
 				],

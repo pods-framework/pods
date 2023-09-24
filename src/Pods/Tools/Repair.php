@@ -588,7 +588,13 @@ class Repair extends Base {
 		] );
 
 		$groups = wp_list_pluck( $groups, 'id' );
-		$groups = array_filter( $groups );
+		$groups = array_values( array_filter( $groups ) );
+
+		if ( $group_id ) {
+			$groups[] = $group_id;
+		}
+
+		$groups = array_unique( $groups );
 
 		$fields = $pod->get_fields( [
 			'fallback_mode' => false,
@@ -643,6 +649,10 @@ class Repair extends Base {
 		$reassigned_fields = [];
 
 		foreach ( $fields as $field ) {
+			if ( $field->get_arg( 'group' ) === $group_id ) {
+				continue;
+			}
+
 			try {
 				if ( 'preview' !== $mode ) {
 					$this->api->save_field( [
@@ -756,6 +766,7 @@ class Repair extends Base {
 
 		$invalid_args = [
 			'conditional_logic',
+			'attributes',
 			'depends-on',
 			'depends-on-any',
 			'depends-on-multi',
@@ -817,6 +828,7 @@ class Repair extends Base {
 
 		$invalid_args = [
 			'conditional_logic',
+			'attributes',
 			'depends-on',
 			'depends-on-any',
 			'depends-on-multi',
@@ -846,27 +858,17 @@ class Repair extends Base {
 			}
 
 			if ( 'preview' !== $mode ) {
-				$field_args_to_save = [
-					'id'       => $field_id,
-					'pod_data' => $pod,
-					'field'    => $field,
-				];
-
 				foreach ( $found_invalid_args as $invalid_arg => $arg_value ) {
 					if ( 'conditional_logic' === $invalid_arg ) {
-						$field_args_to_save['enable_conditional_logic'] = 0;
-						$field_args_to_save[ $invalid_arg ]             = null;
+						update_post_meta( $field_id, 'enable_conditional_logic', 0 );
 
 						$field->set_arg( 'enable_conditional_logic', 0 );
-						$field->set_arg( $invalid_arg, null );
-					} else {
-						$field_args_to_save[ $invalid_arg ] = null;
-
-						$field->set_arg( $invalid_arg, null );
 					}
-				}
 
-				$this->api->save_field( $field_args_to_save );
+					delete_post_meta( $field_id, $invalid_arg );
+
+					$field->set_arg( $invalid_arg, null );
+				}
 			}
 
 			return sprintf(

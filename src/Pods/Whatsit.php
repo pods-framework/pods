@@ -619,11 +619,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @param string     $arg     Argument name.
 	 * @param mixed|null $default Default to use if not set.
 	 * @param bool       $strict  Whether to check only normal arguments and not special arguments.
+	 * @param bool       $raw     Whether only get the raw value.
 	 *
 	 * @return null|mixed Argument value, or null if not set.
 	 */
-	public function get_arg( $arg, $default = null, $strict = false ) {
+	public function get_arg( $arg, $default = null, $strict = false, $raw = false ) {
 		$arg = (string) $arg;
+
+		if ( $raw ) {
+			return $this->args[ $arg ] ?? $default;
+		}
 
 		$special_args = [
 			'identifier'        => 'get_identifier',

@@ -754,39 +754,66 @@ class Repair extends Base {
 	protected function maybe_fix_fields_with_invalid_conditional_logic( Pod $pod, $mode ) {
 		$this->setup();
 
-		$fields = $pod->get_fields( [
-			'fallback_mode' => false,
-			'meta_query'    => [
-				'relation' => 'OR',
-				[
-					'key'     => 'conditional_logic',
-					'value'   => 'a:0:{}',
-					'compare' => 'LIKE',
-				],
-				[
-					'key'     => 'depends-on',
-					'compare' => 'EXISTS',
-				],
-				[
-					'key'     => 'depends-on-any',
-					'compare' => 'EXISTS',
-				],
-				[
-					'key'     => 'depends-on-multi',
-					'compare' => 'EXISTS',
-				],
-				[
-					'key'     => 'excludes-on',
-					'compare' => 'EXISTS',
-				],
-				[
-					'key'     => 'wildcard-on',
-					'compare' => 'EXISTS',
-				],
-			],
-		] );
+		$invalid_args = [
+			'conditional_logic',
+			'depends-on',
+			'depends-on-any',
+			'depends-on-multi',
+			'excludes-on',
+			'wildcard-on',
+		];
 
 		$fixed_fields = [];
+
+		foreach ( $invalid_args as $invalid_arg ) {
+			$meta_query_check = [
+				'key'     => $invalid_arg,
+				'compare' => 'EXISTS',
+			];
+
+			if ( 'conditional_logic' === $invalid_arg ) {
+				$meta_query_check['value']   = 'a:0:{}';
+				$meta_query_check['compare'] = 'LIKE';
+			}
+
+			$fields = $pod->get_fields( [
+				'fallback_mode' => false,
+				'meta_query'    => [
+					$meta_query_check,
+				],
+			] );
+
+			foreach ( $fields as $field ) {
+				$fixed_field = $this->maybe_fix_fields_with_invalid_conditional_logic_for_field( $pod, $field, $mode );
+
+				if ( $fixed_field ) {
+					$fixed_fields[] = $fixed_field;
+				}
+			}
+		}
+
+		return $fixed_fields;
+	}
+
+	/**
+	 * Maybe fix a field with invalid conditional logic.
+	 *
+	 * @since 3.0.4
+	 *
+	 * @param Pod    $pod   The Pod object.
+	 * @param Field  $field The Field object.
+	 * @param string $mode  The repair mode (preview, upgrade, or full).
+	 *
+	 * @return string[]|false The label, name, and ID for the field fixed, or false if not fixed.
+	 */
+	protected function maybe_fix_fields_with_invalid_conditional_logic_for_field( Pod $pod, Field $field, $mode ) {
+		$this->setup();
+
+		$field_id = $field->get_id();
+
+		if ( empty( $field_id ) ) {
+			return false;
+		}
 
 		$invalid_args = [
 			'conditional_logic',
@@ -797,64 +824,66 @@ class Repair extends Base {
 			'wildcard-on',
 		];
 
-		foreach ( $fields as $field ) {
-			$field_id = $field->get_id();
+		try {
+			$found_invalid_args = [];
 
-			if ( empty( $field_id ) ) {
-				continue;
+			foreach ( $invalid_args as $invalid_arg ) {
+				$arg_value = $field->get_arg( $invalid_arg, null, false, true );
+
+				if ( null !== $arg_value ) {
+					if (
+						'conditional_logic' === $invalid_arg
+						&& (
+							empty( $arg_value )
+							|| is_array( $arg_value )
+						)
+					) {
+						continue;
+					}
+
+					$found_invalid_args[ $invalid_arg ] = $arg_value;
+				}
 			}
 
-			try {
-				$found_invalid_args = [];
+			if ( 'preview' !== $mode ) {
+				$field_args_to_save = [
+					'id'       => $field_id,
+					'pod_data' => $pod,
+					'field'    => $field,
+				];
 
-				foreach ( $invalid_args as $invalid_arg ) {
-					$arg_value = $field->get_arg( $invalid_arg );
+				foreach ( $found_invalid_args as $invalid_arg => $arg_value ) {
+					if ( 'conditional_logic' === $invalid_arg ) {
+						$field_args_to_save['enable_conditional_logic'] = 0;
+						$field_args_to_save[ $invalid_arg ]             = null;
 
-					if ( null !== $arg_value ) {
-						$found_invalid_args[ $invalid_arg ] = $arg_value;
+						$field->set_arg( 'enable_conditional_logic', 0 );
+						$field->set_arg( $invalid_arg, null );
+					} else {
+						$field_args_to_save[ $invalid_arg ] = null;
+
+						$field->set_arg( $invalid_arg, null );
 					}
 				}
 
-				if ( 'preview' !== $mode ) {
-					$field_args_to_save = [
-						'id'       => $field_id,
-						'pod_data' => $pod,
-						'field'    => $field,
-					];
-
-					foreach ( $found_invalid_args as $invalid_arg => $arg_value ) {
-						if ( 'conditional_logic' === $invalid_arg ) {
-							$field_args_to_save['enable_conditional_logic'] = 0;
-							$field_args_to_save[ $invalid_arg ]             = null;
-
-							$field->set_arg( 'enable_conditional_logic', 0 );
-							$field->set_arg( $invalid_arg, null );
-						} else {
-							$field_args_to_save[ $invalid_arg ] = null;
-
-							$field->set_arg( $invalid_arg, null );
-						}
-					}
-
-					$this->api->save_field( $field_args_to_save );
-				}
-
-				$fixed_fields[] = sprintf(
-					'%1$s (%2$s: [%3$s] | %4$s: %5$s | %6$s: %7$d)',
-					$field->get_label(),
-					__( 'Fixed invalid conditional logic args', 'pods' ),
-					implode( ', ', array_keys( $found_invalid_args ) ),
-					__( 'Name', 'pods' ),
-					$field->get_name(),
-					__( 'ID', 'pods' ),
-					$field->get_id()
-				);
-			} catch ( Throwable $exception ) {
-				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
+				$this->api->save_field( $field_args_to_save );
 			}
+
+			return sprintf(
+				'%1$s (%2$s: [%3$s] | %4$s: %5$s | %6$s: %7$d)',
+				$field->get_label(),
+				__( 'Fixed invalid conditional logic args', 'pods' ),
+				implode( ', ', array_keys( $found_invalid_args ) ),
+				__( 'Name', 'pods' ),
+				$field->get_name(),
+				__( 'ID', 'pods' ),
+				$field->get_id()
+			);
+		} catch ( Throwable $exception ) {
+			$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
 		}
 
-		return $fixed_fields;
+		return false;
 	}
 
 }

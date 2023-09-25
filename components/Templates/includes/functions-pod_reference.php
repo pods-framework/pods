@@ -54,7 +54,9 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 
 	$recurse_queue = array();
 
-	$image_sizes  = get_intermediate_image_sizes();
+	$image_sizes   = get_intermediate_image_sizes();
+	$image_sizes[] = 'full';
+
 	$media_fields = [
 		'title',
 		'caption',

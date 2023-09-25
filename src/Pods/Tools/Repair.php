@@ -84,8 +84,8 @@ class Repair extends Base {
 		// Maybe fix fields with invalid field type.
 		$results[ __( 'Fixed fields with invalid field type', 'pods' ) ] = $this->maybe_fix_fields_with_invalid_field_type( $pod, $mode );
 
-		// Maybe fix fields with invalid conditional logic.
-		$results[ __( 'Fixed fields with invalid conditional logic', 'pods' ) ] = $this->maybe_fix_fields_with_invalid_conditional_logic( $pod, $mode );
+		// Maybe fix fields with invalid arguments.
+		$results[ __( 'Fixed fields with invalid arguments', 'pods' ) ] = $this->maybe_fix_fields_with_invalid_args( $pod, $mode );
 
 		// Check if changes were made to the Pod.
 		$changes_made = [] !== array_filter( $results );
@@ -752,7 +752,7 @@ class Repair extends Base {
 	}
 
 	/**
-	 * Maybe fix fields with invalid conditional logic.
+	 * Maybe fix pod fields with invalid arguments.
 	 *
 	 * @since 3.0.4
 	 *
@@ -761,12 +761,13 @@ class Repair extends Base {
 	 *
 	 * @return string[] The label, name, and ID for each field fixed.
 	 */
-	protected function maybe_fix_fields_with_invalid_conditional_logic( Pod $pod, $mode ) {
+	protected function maybe_fix_fields_with_invalid_args( Pod $pod, $mode ) {
 		$this->setup();
 
 		$invalid_args = [
 			'conditional_logic',
 			'attributes',
+			'grouped',
 			'depends-on',
 			'depends-on-any',
 			'depends-on-multi',
@@ -795,7 +796,7 @@ class Repair extends Base {
 			] );
 
 			foreach ( $fields as $field ) {
-				$fixed_field = $this->maybe_fix_fields_with_invalid_conditional_logic_for_field( $pod, $field, $invalid_arg, $mode );
+				$fixed_field = $this->maybe_fix_fields_with_invalid_args_for_field( $pod, $field, $invalid_arg, $mode );
 
 				if ( $fixed_field ) {
 					$fixed_fields[] = $fixed_field;
@@ -807,7 +808,7 @@ class Repair extends Base {
 	}
 
 	/**
-	 * Maybe fix a field with invalid conditional logic.
+	 * Maybe fix a field with invalid arguments.
 	 *
 	 * @since 3.0.4
 	 *
@@ -818,7 +819,7 @@ class Repair extends Base {
 	 *
 	 * @return string[]|false The label, name, and ID for the field fixed, or false if not fixed.
 	 */
-	protected function maybe_fix_fields_with_invalid_conditional_logic_for_field( Pod $pod, Field $field, string $invalid_arg, $mode ) {
+	protected function maybe_fix_fields_with_invalid_args_for_field( Pod $pod, Field $field, string $invalid_arg, $mode ) {
 		$this->setup();
 
 		$field_id = $field->get_id();
@@ -830,6 +831,7 @@ class Repair extends Base {
 		$invalid_args = [
 			'conditional_logic',
 			'attributes',
+			'grouped',
 			'depends-on',
 			'depends-on-any',
 			'depends-on-multi',
@@ -838,7 +840,9 @@ class Repair extends Base {
 		];
 
 		try {
-			$found_invalid_args = [];
+			$found_invalid_args = [
+				$invalid_arg => null,
+			];
 
 			foreach ( $invalid_args as $other_invalid_arg ) {
 				$arg_value = $field->get_arg( $other_invalid_arg, null, false, true );
@@ -871,6 +875,8 @@ class Repair extends Base {
 
 					$field->set_arg( $found_invalid_arg, null );
 				}
+
+				pods_api()->cache_flush_fields();
 			}
 
 			return sprintf(

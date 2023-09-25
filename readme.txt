@@ -177,9 +177,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0.4 - September 23rd, 2023 =
+= 3.0.4 - September 25th, 2023 =
 
 * Fixed: Resolve bidirectional removal issue from Pods 2.x where bidirectional relationships would not have the current item removed when you removed that related item. (@sc0ttkclark)
+* Fixed: Added repair tool to address the potential for invalid conditional logic saved to the DB in early Pods 3.0 releases or future cases, this is when conditional logic stores a rule that ends up being a long serialized PHP string that contains a serialized PHP array. (@sc0ttkclark)
 
 = 3.0.3 - September 22nd, 2023 =
 

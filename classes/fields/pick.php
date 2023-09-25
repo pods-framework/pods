@@ -2860,13 +2860,7 @@ class PodsField_Pick extends PodsField {
 								continue;
 							}
 
-							$prefix = $wpdb->base_prefix;
-
-							if ( is_multisite() && ! is_main_site() ) {
-								$prefix .= get_current_blog_id() . '_';
-							}
-
-							$where[] = $prefix . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
+							$where[] = $wpdb->prefix . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
 						}
 
 						if ( ! empty( $where ) ) {

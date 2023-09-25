@@ -795,7 +795,7 @@ class Repair extends Base {
 			] );
 
 			foreach ( $fields as $field ) {
-				$fixed_field = $this->maybe_fix_fields_with_invalid_conditional_logic_for_field( $pod, $field, $mode );
+				$fixed_field = $this->maybe_fix_fields_with_invalid_conditional_logic_for_field( $pod, $field, $invalid_arg, $mode );
 
 				if ( $fixed_field ) {
 					$fixed_fields[] = $fixed_field;
@@ -811,13 +811,14 @@ class Repair extends Base {
 	 *
 	 * @since 3.0.4
 	 *
-	 * @param Pod    $pod   The Pod object.
-	 * @param Field  $field The Field object.
-	 * @param string $mode  The repair mode (preview, upgrade, or full).
+	 * @param Pod    $pod         The Pod object.
+	 * @param Field  $field       The Field object.
+	 * @param string $invalid_arg The invalid argument.
+	 * @param string $mode        The repair mode (preview, upgrade, or full).
 	 *
 	 * @return string[]|false The label, name, and ID for the field fixed, or false if not fixed.
 	 */
-	protected function maybe_fix_fields_with_invalid_conditional_logic_for_field( Pod $pod, Field $field, $mode ) {
+	protected function maybe_fix_fields_with_invalid_conditional_logic_for_field( Pod $pod, Field $field, string $invalid_arg, $mode ) {
 		$this->setup();
 
 		$field_id = $field->get_id();
@@ -839,12 +840,13 @@ class Repair extends Base {
 		try {
 			$found_invalid_args = [];
 
-			foreach ( $invalid_args as $invalid_arg ) {
-				$arg_value = $field->get_arg( $invalid_arg, null, false, true );
+			foreach ( $invalid_args as $other_invalid_arg ) {
+				$arg_value = $field->get_arg( $other_invalid_arg, null, false, true );
 
 				if ( null !== $arg_value ) {
 					if (
-						'conditional_logic' === $invalid_arg
+						'conditional_logic' !== $invalid_arg
+						&& 'conditional_logic' === $other_invalid_arg
 						&& (
 							empty( $arg_value )
 							|| is_array( $arg_value )
@@ -853,21 +855,21 @@ class Repair extends Base {
 						continue;
 					}
 
-					$found_invalid_args[ $invalid_arg ] = $arg_value;
+					$found_invalid_args[ $other_invalid_arg ] = $arg_value;
 				}
 			}
 
 			if ( 'preview' !== $mode ) {
-				foreach ( $found_invalid_args as $invalid_arg => $arg_value ) {
-					if ( 'conditional_logic' === $invalid_arg ) {
+				foreach ( $found_invalid_args as $found_invalid_arg => $arg_value ) {
+					if ( 'conditional_logic' === $found_invalid_arg ) {
 						update_post_meta( $field_id, 'enable_conditional_logic', 0 );
 
 						$field->set_arg( 'enable_conditional_logic', 0 );
 					}
 
-					delete_post_meta( $field_id, $invalid_arg );
+					delete_post_meta( $field_id, $found_invalid_arg );
 
-					$field->set_arg( $invalid_arg, null );
+					$field->set_arg( $found_invalid_arg, null );
 				}
 			}
 

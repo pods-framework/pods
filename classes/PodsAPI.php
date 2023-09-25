@@ -3724,6 +3724,7 @@ class PodsAPI {
 				'group_id',
 				'attributes',
 				'depends-on',
+				'depends-on-any',
 				'depends-on-multi',
 				'excludes-on',
 				'wildcard-on',

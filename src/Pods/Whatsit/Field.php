@@ -64,7 +64,11 @@ class Field extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null, $strict = false ) {
+	public function get_arg( $arg, $default = null, $strict = false, $raw = false ) {
+		if ( $raw ) {
+			return parent::get_arg( $arg, $default, $strict, $raw );
+		}
+
 		$arg = (string) $arg;
 
 		$special_args = [

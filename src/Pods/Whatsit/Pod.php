@@ -87,7 +87,11 @@ class Pod extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null, $strict = false ) {
+	public function get_arg( $arg, $default = null, $strict = false, $raw = false ) {
+		if ( $raw ) {
+			return parent::get_arg( $arg, $default, $strict, $raw );
+		}
+
 		if ( 'storage' === $arg ) {
 			return $this->get_storage();
 		}

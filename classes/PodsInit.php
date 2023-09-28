@@ -1167,6 +1167,7 @@ class PodsInit {
 					'revisions'       => (boolean) pods_v( 'supports_revisions', $post_type, false ),
 					'page-attributes' => (boolean) pods_v( 'supports_page_attributes', $post_type, false ),
 					'post-formats'    => (boolean) pods_v( 'supports_post_formats', $post_type, false ),
+					'quick-edit'      => (boolean) pods_v( 'supports_quick_edit', $post_type, true ),
 				);
 
 				// Custom Supported
@@ -1812,6 +1813,50 @@ class PodsInit {
 	}
 
 	/**
+	 * Filter whether Quick Edit should be enabled for the given post type.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool   $enable    Whether to enable the Quick Edit functionality.
+	 * @param string $post_type The post type name.
+	 *
+	 * @return bool Whether to enable the Quick Edit functionality.
+	 */
+	public function quick_edit_enabled_for_post_type( bool $enable, string $post_type ) {
+		if ( ! $enable ) {
+			return $enable;
+		}
+
+		if ( ! isset( PodsMeta::$post_types[ $post_type ] ) ) {
+			return $enable;
+		}
+
+		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$post_types[ $post_type ], true );
+	}
+
+	/**
+	 * Filter whether Quick Edit should be enabled for the given taxonomy.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool   $enable   Whether to enable the Quick Edit functionality.
+	 * @param string $taxonomy The taxonomy name.
+	 *
+	 * @return bool Whether to enable the Quick Edit functionality.
+	 */
+	public function quick_edit_enabled_for_taxonomy( bool $enable, string $taxonomy ) {
+		if ( ! $enable ) {
+			return $enable;
+		}
+
+		if ( ! isset( PodsMeta::$taxonomies[ $taxonomy ] ) ) {
+			return $enable;
+		}
+
+		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$taxonomies[ $taxonomy ], true );
+	}
+
+	/**
 	 * Check if we need to flush WordPress rewrite rules
 	 * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
 	 */
@@ -2438,6 +2483,10 @@ class PodsInit {
 
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
+
+		// Support for quick edit in WP 6.4+.
+		add_filter( 'quick_edit_enabled_for_post_type', [ $this, 'quick_edit_enabled_for_post_type' ], 10, 2 );
+		add_filter( 'quick_edit_enabled_for_taxonomy', [ $this, 'quick_edit_enabled_for_taxonomy' ], 10, 2 );
 	}
 
 	/**

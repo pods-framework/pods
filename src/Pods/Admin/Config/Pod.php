@@ -1015,6 +1015,16 @@ class Pod extends Base {
 				],
 			];
 
+			// Add support for disabling Quick Edit in WP 6.4+.
+			if ( pods_version_check( 'wp', '6.4-beta-1' ) ) {
+				$options['advanced']['post_type_supports']['boolean_group']['supports_quick_edit'] = [
+					'name'    => 'supports_quick_edit',
+					'label'   => __( 'Quick Edit', 'pods' ),
+					'type'    => 'boolean',
+					'default' => 1,
+				];
+			}
+
 			/**
 			 * Allow filtering the list of supported features for the post type
 			 *
@@ -1321,6 +1331,16 @@ class Pod extends Base {
 					'excludes-on' => [ 'default_term_name' => '' ],
 				],
 			];
+
+			// Add support for disabling Quick Edit in WP 6.4+.
+			if ( pods_version_check( 'wp', '6.4-beta-1' ) ) {
+				$options['advanced']['supports_quick_edit'] = [
+					'name'    => 'supports_quick_edit',
+					'label'   => __( 'Enable Quick Edit', 'pods' ),
+					'type'    => 'boolean',
+					'default' => 1,
+				];
+			}
 
 			$related_objects = PodsForm::field_method( 'pick', 'related_objects', true );
 

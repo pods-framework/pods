@@ -251,8 +251,10 @@ class PodsField_WYSIWYG extends PodsField {
 		$value = $this->normalize_value_for_input( $value, $options, "\n" );
 
 		// Normalize the line breaks for React.
-		$value = str_replace( "\r\n", "\n", $value );
-		$value = str_replace( "\r", "\n", $value );
+		if ( null !== $value ) {
+			$value = str_replace( "\r\n", "\n", $value );
+			$value = str_replace( "\r", "\n", $value );
+		}
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {

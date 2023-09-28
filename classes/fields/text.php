@@ -38,56 +38,62 @@ class PodsField_Text extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
-
-		$options = array(
-			'output_options'                     => array(
-				'label' => __( 'Output Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'boolean_group' => array(
-					static::$type . '_trim'      => array(
+		return [
+			'output_options'                     => [
+				'label'         => __( 'Output Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_trim'            => [
 						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-					static::$type . '_allow_html'      => array(
+					],
+					static::$type . '_allow_html'      => [
 						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-					static::$type . '_allow_shortcode' => array(
+					],
+					static::$type . '_allow_shortcode' => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-				),
-			),
-			static::$type . '_allowed_html_tags' => array(
+					],
+				],
+			],
+			static::$type . '_trim_p_brs'        => [
+				'label'      => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+				'dependency' => true,
+				'depends-on' => [
+					static::$type . '_trim' => 1,
+				],
+			],
+			static::$type . '_allowed_html_tags' => [
 				'label'      => __( 'Allowed HTML Tags', 'pods' ),
-				'depends-on' => array( static::$type . '_allow_html' => true ),
+				'depends-on' => [ static::$type . '_allow_html' => true ],
 				'default'    => 'strong em a ul ol li b i',
 				'type'       => 'text',
-			),
-			static::$type . '_max_length'        => array(
+			],
+			static::$type . '_max_length'        => [
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			),
-			static::$type . '_placeholder'       => array(
+			],
+			static::$type . '_placeholder'       => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => array(
+				'help'    => [
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				),
-			),
-		);
-
-		return $options;
+				],
+			],
+		];
 	}
 
 	/**

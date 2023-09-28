@@ -41,32 +41,41 @@ class PodsField_Code extends PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			'output_options'              => array(
-				'label' => __( 'Output Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'boolean_group' => array(
-					static::$type . '_trim'      => array(
+		$options = [
+			'output_options'              => [
+				'label'         => __( 'Output Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_trim'            => [
 						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-					static::$type . '_allow_shortcode' => array(
+					],
+					static::$type . '_allow_shortcode' => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-				),
-			),
-			static::$type . '_max_length' => array(
+					],
+				],
+			],
+			static::$type . '_trim_p_brs' => [
+				'label'      => __( 'Remove blank lines including "p" tags that are empty or only contain whitespace and "br" tags', 'pods' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+				'dependency' => true,
+				'depends-on' => [
+					static::$type . '_trim' => 1,
+				],
+			],
+			static::$type . '_max_length' => [
 				'label'   => __( 'Maximum Length', 'pods' ),
-				'default' => -1,
+				'default' => - 1,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			),
-		);
+			],
+		];
 
 		return $options;
 	}

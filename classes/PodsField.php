@@ -981,6 +981,8 @@ class PodsField {
 			return $value;
 		}
 
+		$trim_p_brs = false;
+
 		if ( $options ) {
 			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
@@ -988,13 +990,18 @@ class PodsField {
 			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 0 ) ) {
 				return $value;
 			}
+
+			// Check if we should trim the content.
+			$trim_p_brs = 1 === (int) pods_v( static::$type . '_trim_p_brs', $options, 0 );
 		}
 
-		// Maybe trim empty p tags.
-		$value = preg_replace( '/^\s*<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>(.*)$/Umis', '$2', $value );
-		$value = preg_replace( '/^\s*(\s|&nbsp;|<\/?\s?br\s?\/?>)*(.*)$/Umis', '$2', $value );
-		$value = preg_replace( '/^(.*)<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>\s*$/Umis', '$1', $value );
-		$value = preg_replace( '/^(.*)(\s|&nbsp;|<\/?\s?br\s?\/?>)*\s*$/Umis', '$1', $value );
+		if ( $trim_p_brs ) {
+			// Maybe trim the p tags that are empty or filled with whitespace / br tags.
+			$value = preg_replace( '/(<p[^>]*>\s*(\s|&nbsp;|<br\s*?\/?>)*\s*<\/?p>)/Umi', '', $value );
+
+			// Remove consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r])+/', "\n", $value );
+		}
 
 		return trim( $value );
 	}

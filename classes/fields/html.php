@@ -54,12 +54,12 @@ class PodsField_HTML extends PodsField {
 				'label' => __( 'Output Options', 'pods' ),
 				'type'  => 'boolean_group',
 				'boolean_group' => [
-					static::$type . '_trim'      => array(
+					static::$type . '_trim'            => [
 						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
+					],
 					static::$type . '_oembed'          => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
@@ -106,6 +106,15 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Shortcode_API',
 						],
 					],
+				],
+			],
+			static::$type . '_trim_p_brs' => [
+				'label'      => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+				'dependency' => true,
+				'depends-on' => [
+					static::$type . '_trim' => 1,
 				],
 			],
 		];

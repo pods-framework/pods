@@ -985,7 +985,7 @@ class PodsField {
 			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 			// Check if we should trim the content.
-			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
+			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 0 ) ) {
 				return $value;
 			}
 		}

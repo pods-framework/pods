@@ -69,17 +69,24 @@ export const getDecimalSeparatorFromPodsFormat = ( format ) => {
 };
 
 export const parseFloatWithPodsFormat = (
-	newValue,
-	format
+	value,
+	format,
+	keepLeadingZeroes = false,
 ) => {
 	// Turn empty string to 0.
-	if ( '' === newValue ) {
+	if ( '' === value || undefined === value || null === value || false === value ) {
 		return 0;
 	}
 
 	// If we get a float value, we don't need to do anything.
-	if ( 'number' === typeof newValue ) {
-		return newValue;
+	if ( 'number' === typeof value ) {
+		return value;
+	}
+
+	let prefix = null;
+
+	if ( keepLeadingZeroes ) {
+		prefix = ( value.match( /^0+/ ) || [ '' ] )[ 0 ];
 	}
 
 	const thousands = getThousandsSeparatorFromPodsFormat( format );
@@ -87,18 +94,25 @@ export const parseFloatWithPodsFormat = (
 
 	// Remove the thousands separators and change the decimal separator to a period,
 	// so that parseFloat can handle the rest.
-	return parseFloat(
-		newValue.split( thousands ).join( '' ).split( dot ).join( '.' )
+	let newValue = parseFloat(
+		value.split( thousands ).join( '' ).split( dot ).join( '.' )
 	);
+
+	if ( keepLeadingZeroes && prefix ) {
+		newValue = prefix + newValue.toString();
+	}
+
+	return newValue;
 };
 
 export const formatNumberWithPodsFormat = (
 	newValue,
 	format,
 	trimZeroDecimals = false,
+	keepLeadingZeroes = false,
 ) => {
 	// Skip empty strings or undefined.
-	if ( '' === newValue || undefined === newValue || null === newValue ) {
+	if ( '' === newValue || undefined === newValue || null === newValue || false === newValue ) {
 		return '0';
 	}
 
@@ -110,12 +124,23 @@ export const formatNumberWithPodsFormat = (
 		? parseFloatWithPodsFormat( newValue, format )
 		: newValue;
 
-	const formattedNumber = isNaN( floatNewValue )
-		? undefined
-		: formatNumber( floatNewValue, 'auto', dotSeparator, thousands );
+	if ( isNaN( floatNewValue ) ) {
+		return undefined;
+	}
+
+	let formattedNumber = formatNumber( floatNewValue, 'auto', dotSeparator, thousands );
+	let prefix = null;
+
+	if ( keepLeadingZeroes ) {
+		prefix = ( newValue.match( /^0+/ ) || [ '' ] )[ 0 ];
+	}
+
+	if ( keepLeadingZeroes && prefix ) {
+		formattedNumber = prefix + formattedNumber.toString();
+	}
 
 	// We may need to trim decimals
-	if ( ! trimZeroDecimals || undefined === formattedNumber ) {
+	if ( ! trimZeroDecimals ) {
 		return formattedNumber;
 	}
 

@@ -40,33 +40,37 @@ class PodsField_Code extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
-
-		$options = [
+		return [
 			'output_options'              => [
 				'label'         => __( 'Output Options', 'pods' ),
 				'type'          => 'boolean_group',
 				'boolean_group' => [
-					static::$type . '_trim'            => [
-						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
-						'default'    => 1,
-						'type'       => 'boolean',
-						'dependency' => true,
+					static::$type . '_trim'             => [
+						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
 					],
-					static::$type . '_allow_shortcode' => [
+					static::$type . '_trim_lines'       => [
+						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_p_brs'       => [
+						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_extra_lines' => [
+						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_allow_shortcode'  => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
 					],
-				],
-			],
-			static::$type . '_trim_p_brs' => [
-				'label'      => __( 'Remove blank lines including "p" tags that are empty or only contain whitespace and "br" tags', 'pods' ),
-				'default'    => 0,
-				'type'       => 'boolean',
-				'dependency' => true,
-				'depends-on' => [
-					static::$type . '_trim' => 1,
 				],
 			],
 			static::$type . '_max_length' => [
@@ -76,8 +80,6 @@ class PodsField_Code extends PodsField {
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			],
 		];
-
-		return $options;
 	}
 
 	/**

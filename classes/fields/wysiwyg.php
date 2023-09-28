@@ -82,7 +82,21 @@ class PodsField_WYSIWYG extends PodsField {
 						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
-						'dependency' => true,
+					],
+					static::$type . '_trim_lines'        => [
+						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_p_brs'        => [
+						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_extra_lines'  => [
+						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
 					],
 					static::$type . '_oembed'          => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
@@ -130,15 +144,6 @@ class PodsField_WYSIWYG extends PodsField {
 							'https://codex.wordpress.org/Shortcode_API',
 						],
 					],
-				],
-			],
-			static::$type . '_trim_p_brs'        => [
-				'label'      => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
-				'default'    => 0,
-				'type'       => 'boolean',
-				'dependency' => true,
-				'depends-on' => [
-					static::$type . '_trim' => 1,
 				],
 			],
 			static::$type . '_allowed_html_tags' => [

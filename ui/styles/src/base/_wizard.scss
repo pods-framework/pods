@@ -2,12 +2,12 @@
 #pods-wizard-box {
 	width: $width + 2;
 	color: #555555;
-	margin: 20px;
+	margin: 20px 20px 20px 0;
 	&.pods-wizard-steps-1 #pods-wizard-heading ul li {
 		width: $width;
 	}
 	&.pods-wizard-steps-2 #pods-wizard-heading ul li {
-		width: calc($width / 2);
+		width: 50%;
 	}
 	&.pods-wizard-steps-3 #pods-wizard-heading ul li {
 		width: calc($width / 3);
@@ -32,19 +32,12 @@
 				box-sizing: border-box;
 				color: #ababab;
 				margin-bottom: 0;
-				font: 18px 'Garamond, Georgia';
+				font-size: 18px;
 				position: relative;
-				// border-top: 1px solid $grey-border;
-				// border-bottom: 1px solid $grey-border;
 				@include vertical-gradient(#f9f9f9, #ededed);
 				i {
-					// display: block;
-					// width: 11px;
-					// height: 35px;
 					position: absolute;
 					top: 0;
-					// left: 0;
-					// background: url(#{$ImagesPath}/arrow_next.png);
 				}
 				&:last-child i {
 					/*
@@ -78,32 +71,19 @@
 				}
 				&.pods-wizard-menu-current {
 					color: #fff;
-					// border-bottom: 1px solid #6e6e6e;
-					// border-top: 1px solid #808080;
 					text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 					background: #6e6e6e;
-					// @include vertical-gradient(#808080, #6e6e6e);
 					span {
 						text-shadow: none;
 						background: #fff;
 						color: #6f6f6f;
 						@include box-shadow(1px, 1px, 2px, 0.2);
 					}
-					// &+ li > i {
-					// 	background: url(#{$ImagesPath}/arrow_current.png);
-					// }
 				}
 				&.pods-wizard-menu-complete {
 					color: $green-dark;
 					border-bottom: 1px solid #bbddbd;
 					background: #bbddbd;
-					// @include vertical-gradient(#d4f4d6, #bbddbd);
-					// &+ li > i {
-					// 	background: url(#{$ImagesPath}/arrow_complete.png);
-					// }
-					// &+ li.pods-wizard-menu-complete > i {
-					// 	background: url(#{$ImagesPath}/arrow_complete_previous.png);
-					// }
 					span {
 						background: $green-dark;
 						color: $green-mid;
@@ -271,7 +251,6 @@
 			}
 			.pods-wizard-content {
 				padding: 20px;
-				margin-bottom: 25px;
 				background: #fff;
 				&.pods-wizard-grey {
 					background: #f9f9f9;
@@ -377,53 +356,95 @@
 			}
 			#pods-wizard-options {
 				text-align: center;
+				background-color: #fff;
+				padding: 20px;
+				h3 {
+					margin-block-start: 0;
+					text-align: left;
+				}
 				.pods-wizard-options-list {
-					display: flex;
-					justify-content: space-evenly;
+					display: grid;
+					// grid-template-columns: 2fr 3fr;
+					gap: 1em;
 
 					.pods-wizard-option {
-						&:first-child {
-							margin-right: 0 !important;
-						}
+						background: #95BF3B;
+    				color: white;
+						border-radius: 8px;
+						overflow: hidden;
 					}
 				}
 				.pods-wizard-option {
-					width: 290px;
-					display: inline-block;
 					vertical-align: top;
-					&:first-child {
-						margin-right: 40px;
+					.one-click-actions-wrap {
+						display: grid;
+						grid-template-columns: auto auto;
+						align-items: center;
+						gap: .5em;
+						h3 {
+							color: #fff;
+						}
 					}
-					a {
+					.one-click-actions-heading {
+						color: #fff;
+						margin-bottom: .3em;
+						padding-left: 20px;
+						text-align: left;
+					}
+					.one-click-actions {
+						display: grid;
+						grid-template-columns: 1fr 1fr;
+						padding: 1em 20px;
+						margin: 0;
+						gap: 0.5em;
+						.one-click-action {
+							margin-bottom: 0;
+							a {
+								background: #80a82ce3;
+								padding: 0.75em 0.5em;
+								border-radius: 0.25em;
+								color: white;
+								display: block;
+								text-decoration: none;
+								font-weight: 500;
+							}
+						}
+					}
+
+					a:not(.one-click-action > a) {
+						display: grid;
+						grid-template-columns: 1fr 5em;
+						align-items: center;
 						min-height: 140px;
-						padding: 10px 0;
-						display: block;
-						background: #f9f9f9;
+						height: 100%;
+						// background: #f9f9f9;
 						position: relative;
 						text-decoration: none;
+						text-align: left;
+						padding-left: 20px;
 						@include multi-border-radius(8px, 8px, 8px, 8px);
-						@include box-shadow(0px, 0px, 4px, 0.3);
+						// @include box-shadow(0px, 0px, 4px, 0.3);
 						h2 {
-							color: #21759B;
+							color: #fff;
 							font-weight: bold;
-							font-size: 1.5em;
-							padding-right: 0;
+							font-size: 2em;
+							margin-top: 0;
 						}
 						p {
 							font-style: normal;
 							font-size: 14px;
-							color: #555555;
-							margin: 7px;
+							color: #fff;
+							margin: 7px 0;
 							line-height: 17px;
 						}
-						&:hover {
-							background: #feffe0;
-							h2 {
-								color: #D54E21;
-							}
-						}
 						span {
-							display: none;
+							color: #fff;
+							font-size: 4em;	
+							background-color: #80a82ce3;
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
 						}
 						&.pods-wizard-option-active {
 							background: #feffe0;
@@ -442,12 +463,20 @@
 								@include multi-border-radius(0, 0, 8px, 8px);
 							}
 						}
-						&:visited {
-							p {
-								color: #555555;
-							}
-						}
+						// &:visited {
+						// 	p {
+						// 		color: #555555;
+						// 	}
+						// }
 					}
+
+					&:nth-child(2) a:not(.one-click-action > a) {
+						height: unset;
+						border-bottom-left-radius: 0;
+						border-bottom-right-radius: 0;
+						border-bottom: 2px solid #80a82ce3;
+					}
+
 					p {
 						font-size: 12px;
 						line-height: 17px;

@@ -131,14 +131,34 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 								<br /><br />
 								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://docs.pods.io/creating-editing-pods/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
 							</p>
+						</div>
+						<div id="pods-wizard-options">
+							<h3><?php esc_html_e( 'Add New Pod Wizard', 'pods' ); ?></h3>
 
-							<?php if ( ! empty( $quick_actions ) ) : ?>
-								<div id="pods-wizard-quick-actions"<?php echo ( $submit_from_linked ? ' class="hidden"' : '' ); ?>>
-									<h3><?php esc_html_e( 'One-Click Quick Actions', 'pods' ); ?></h3>
+							<div class="pods-wizard-options-list">
+								<div class="pods-wizard-option">
+									<a href="#pods-wizard-create" data-opt="create">
+										<div>
+											<h2><?php esc_html_e( 'Create New', 'pods' ); ?></h2>
+											<p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
+										</div>
+										<span>&#10095;</span>
+									</a>
+								</div>
 
-									<ul class="normal">
+								<div class="pods-wizard-option">
+									<a href="#pods-wizard-extend" data-opt="extend">
+										<div>
+											<h2><?php esc_html_e( 'Extend Existing', 'pods' ); ?></h2>
+											<p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
+										</div>
+										<span>&#10095;</span>
+									</a>
+									<?php if ( ! empty( $quick_actions ) ) : ?>
+									<h2 class="one-click-actions-heading"><?php esc_html_e( 'One-Click Quick Actions', 'pods' ); ?></h2>
+									<ul class="one-click-actions">
 										<?php foreach ( $quick_actions as $quick_action_key => $quick_action ) : ?>
-											<li>
+											<li class="one-click-action">
 												<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ); ?>"
 													data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
 													data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
@@ -151,31 +171,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											</li>
 										<?php endforeach; ?>
 									</ul>
-								</div>
-
-								<div id="pods-wizard-quick-actions-saving-in-progress"<?php echo ( ! $submit_from_linked ? ' class="hidden"' : '' ); ?>>
-									<p><span class="pods-dfv-field__loading-indicator" role="progressbar"></span> <?php esc_html_e( 'Creating your Extended Pod', 'pods' ); ?></p>
-								</div>
-							<?php endif; ?>
-						</div>
-						<div id="pods-wizard-options">
-							<h3><?php esc_html_e( 'Add New Pod Wizard', 'pods' ); ?></h3>
-
-							<div class="pods-wizard-options-list">
-								<div class="pods-wizard-option">
-									<a href="#pods-wizard-create" data-opt="create">
-										<h2><?php esc_html_e( 'Create New', 'pods' ); ?> &raquo;</h2>
-
-										<p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
-									</a>
-								</div>
-
-								<div class="pods-wizard-option">
-									<a href="#pods-wizard-extend" data-opt="extend">
-										<h2><?php esc_html_e( 'Extend Existing', 'pods' ); ?> &raquo;</h2>
-
-										<p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
-									</a>
+									<?php endif; ?>
 								</div>
 							</div>
 						</div>

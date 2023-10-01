@@ -177,6 +177,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.0.5 - September 28th, 2023 =
+
+* Fixed: 
+
 = 3.0.4 - September 25th, 2023 =
 
 * Fixed: Resolve bidirectional removal issue from Pods 2.x where bidirectional relationships would not have the current item removed when you removed that related item. (@sc0ttkclark)

@@ -372,6 +372,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ): bool {
 		return $this->__isset( $offset );
 	}

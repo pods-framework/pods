@@ -186,7 +186,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Normalize numbers when doing conditional logic comparisons. (@sc0ttkclark)
 * Fixed: Add new options to trim content of fields by removing empty p tags, trimming whitespace at the end of lines, and removing extra lines. Default those to off (previously they were just always on). (@sc0ttkclark)
 * Fixed: Add `tribe()` backward compatibilty function for Pods add-ons that still call that function. This only gets included by Pods when Tribe Common is not detected on the site. (@sc0ttkclark)
-* Fixed: Resolve file/relationship lookups for settings pages that are DB vs file-based configs. (@sc0ttkclark)  
+* Fixed: Resolve file/relationship lookups for settings pages that are DB vs file-based configs. (@sc0ttkclark)
 
 = 3.0.4 - September 25th, 2023 =
 

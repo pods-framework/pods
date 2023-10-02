@@ -67,6 +67,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return $this->__isset( $offset );
 	}

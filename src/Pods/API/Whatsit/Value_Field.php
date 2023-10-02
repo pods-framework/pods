@@ -56,6 +56,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @uses Whatsit::__toString()
 	 */
+	#[\ReturnTypeWillChange]
 	public function __toString() {
 		return $this->_field->get_identifier();
 	}
@@ -67,6 +68,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return $this->__isset( $offset );
 	}
@@ -78,6 +80,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
+	#[\ReturnTypeWillChange]
 	public function &offsetGet( $offset ) {
 		// We fake the pass by reference to avoid PHP errors for backcompat.
 		$value = $this->__get( $offset );
@@ -118,6 +121,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @uses Whatsit::__isset()
 	 */
+	#[\ReturnTypeWillChange]
 	public function __isset( $offset ) {
 		if ( 'value' === $offset ) {
 			return isset( $this->_value );
@@ -135,6 +139,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @uses Whatsit::__get()
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $offset ) {
 		if ( 'value' === $offset ) {
 			return $this->_value;
@@ -186,6 +191,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @return mixed The method response.
 	 */
+	#[\ReturnTypeWillChange]
 	public function __call( $method, $arguments ) {
 		return call_user_func_array( [ $this->_field, $method ], $arguments );
 	}

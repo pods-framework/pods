@@ -361,6 +361,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return string Object identifier.
 	 */
+	#[\ReturnTypeWillChange]
 	public function __toString() {
 		return $this->get_identifier();
 	}
@@ -372,6 +373,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ): bool {
 		return $this->__isset( $offset );
 	}
@@ -422,6 +424,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
+	#[\ReturnTypeWillChange]
 	public function __isset( $offset ) {
 		if ( is_int( $offset ) ) {
 			$args = $this->getArrayCopy();
@@ -453,6 +456,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $offset ) {
 		if ( is_int( $offset ) ) {
 			$args = $this->getArrayCopy();

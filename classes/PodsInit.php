@@ -2438,6 +2438,8 @@ class PodsInit {
 
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
+
+		require_once PODS_DIR . 'includes/compatibility.php';
 	}
 
 	/**

@@ -26,6 +26,12 @@ const looseStringEqualityCheck = ( item1, item2 ) => {
 		item2 = item2 ? 1 : 0;
 	}
 
+	// Attempt to normalize the number.
+	if ( ! isNaN( item1 ) && ! isNaN( item2 ) ) {
+		item1 = parseFloat( item1 );
+		item2 = parseFloat( item2 );
+	}
+
 	return item1.toString().toLowerCase() === item2.toString().toLowerCase();
 };
 

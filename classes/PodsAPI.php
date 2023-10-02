@@ -9612,13 +9612,36 @@ class PodsAPI {
 
 		$params = (object) $params;
 
+		$meta_type = null;
+
+		if ( ! $params->pod && $params->field instanceof Field ) {
+			$related_pod = $params->field->get_parent_object();
+
+			if ( $related_pod ) {
+				$params->pod = $related_pod;
+			}
+		}
+
+		if ( $params->pod ) {
+			$meta_type = $params->pod['type'];
+
+			if ( in_array( $meta_type, [ 'post_type', 'media' ], true ) ) {
+				$meta_type = 'post';
+			} elseif ( 'taxonomy' === $meta_type ) {
+				$meta_type = 'term';
+			}
+		}
+
 		$related_ids = array();
 
 		if ( ! is_array( $params->ids ) ) {
 			$params->ids = explode( ',', $params->ids );
 		}
 
-		$params->ids = array_map( 'absint', $params->ids );
+		if ( 'settings' !== $meta_type ) {
+			$params->ids = array_map( 'absint', $params->ids );
+		}
+
 		$params->ids = array_unique( array_filter( $params->ids ) );
 
 		if ( empty( $params->ids ) ) {
@@ -9687,18 +9710,6 @@ class PodsAPI {
 
 			// Temporary hack until there's some better handling here.
 			$related_pick_limit *= count( $params->ids );
-		}
-
-		$meta_type = null;
-
-		if ( $params->pod ) {
-			$meta_type = $params->pod['type'];
-
-			if ( in_array( $meta_type, [ 'post_type', 'media' ], true ) ) {
-				$meta_type = 'post';
-			} elseif ( 'taxonomy' === $meta_type ) {
-				$meta_type = 'term';
-			}
 		}
 
 		$meta_types_with_object_pick_data_storage = [

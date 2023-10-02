@@ -38,115 +38,128 @@ class PodsField_WYSIWYG extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
-
-		$options = array(
-			static::$type . '_editor'            => array(
-				'label'      => __( 'Editor', 'pods' ),
-				'default'    => 'tinymce',
-				'type'       => 'pick',
-				'data'       => apply_filters(
-					'pods_form_ui_field_wysiwyg_editors', array(
+		$options = [
+			static::$type . '_editor'            => [
+				'label'                 => __( 'Editor', 'pods' ),
+				'default'               => 'tinymce',
+				'type'                  => 'pick',
+				'data'                  => apply_filters(
+					'pods_form_ui_field_wysiwyg_editors', [
 						'tinymce'  => __( 'TinyMCE (WP Default, cannot be used with repeatable fields)', 'pods' ),
 						'quill'    => __( 'Quill Editor (Limited line break functionality)', 'pods' ),
 						'cleditor' => __( 'CLEditor (No longer available, the fallback uses Quill Editor)', 'pods' ),
-					)
+					]
 				),
-				'pick_format_single' => 'dropdown',
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			'editor_options'                     => array(
-				'label'      => __( 'Editor Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'depends-on' => array( static::$type . '_editor' => 'tinymce' ),
-				'boolean_group'      => array(
-					static::$type . '_media_buttons' => array(
+				'dependency'            => true,
+			],
+			'editor_options'                     => [
+				'label'         => __( 'Editor Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'depends-on'    => [ static::$type . '_editor' => 'tinymce' ],
+				'boolean_group' => [
+					static::$type . '_media_buttons' => [
 						'label'   => __( 'Enable Media Buttons', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-					),
-				),
-			),
-			static::$type . '_editor_height'     => array(
+					],
+				],
+			],
+			static::$type . '_editor_height'     => [
 				'label'           => __( 'Editor Height', 'pods' ),
 				'help'            => __( 'Height in pixels', 'pods' ),
 				'default'         => '',
 				'type'            => 'number',
-				'depends-on'      => array( static::$type . '_editor' => 'tinymce' ),
+				'depends-on'      => [ static::$type . '_editor' => 'tinymce' ],
 				'number_decimals' => 0,
-			),
-			'output_options'                     => array(
-				'label' => __( 'Output Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'boolean_group' => array(
-					static::$type . '_trim'      => array(
+			],
+			'output_options'                     => [
+				'label'         => __( 'Output Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_trim'            => [
 						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
-						'dependency' => true,
-					),
-					static::$type . '_oembed'          => array(
+					],
+					static::$type . '_trim_lines'        => [
+						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_p_brs'        => [
+						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_extra_lines'  => [
+						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_oembed'          => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
 							'https://wordpress.org/support/article/embeds/',
-						),
-					),
-					static::$type . '_wptexturize'     => array(
+						],
+					],
+					static::$type . '_wptexturize'     => [
 						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'https://developer.wordpress.org/reference/functions/wptexturize/',
-						),
-					),
-					static::$type . '_convert_chars'   => array(
+						],
+					],
+					static::$type . '_convert_chars'   => [
 						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
 							'https://developer.wordpress.org/reference/functions/convert_chars/',
-						),
-					),
-					static::$type . '_wpautop'         => array(
+						],
+					],
+					static::$type . '_wpautop'         => [
 						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Changes double line-breaks in the text into HTML paragraphs', 'pods' ),
 							'https://developer.wordpress.org/reference/functions/wpautop/',
-						),
-					),
-					static::$type . '_allow_shortcode' => array(
+						],
+					],
+					static::$type . '_allow_shortcode' => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-						'help'       => array(
+						'help'       => [
 							__( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
 							'https://codex.wordpress.org/Shortcode_API',
-						),
-					),
-				),
-			),
-			static::$type . '_allowed_html_tags' => array(
+						],
+					],
+				],
+			],
+			static::$type . '_allowed_html_tags' => [
 				'label'   => __( 'Allowed HTML Tags', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
 				'help'    => __( 'Format: strong em a ul ol li b i', 'pods' ),
-			),
-		);
+			],
+		];
 
 		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['boolean_group'][ static::$type . '_allow_markdown' ] = array(
+			$options['output_options']['boolean_group'][ static::$type . '_allow_markdown' ] = [
 				'label'   => __( 'Allow Markdown Syntax', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
-			);
+			];
 		}
 
 		return $options;
@@ -238,8 +251,10 @@ class PodsField_WYSIWYG extends PodsField {
 		$value = $this->normalize_value_for_input( $value, $options, "\n" );
 
 		// Normalize the line breaks for React.
-		$value = str_replace( "\r\n", "\n", $value );
-		$value = str_replace( "\r", "\n", $value );
+		if ( null !== $value ) {
+			$value = str_replace( "\r\n", "\n", $value );
+			$value = str_replace( "\r", "\n", $value );
+		}
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {

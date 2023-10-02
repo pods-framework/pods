@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 6.0
 Tested up to: 6.3
 Requires PHP: 7.2
-Stable tag: 3.0.4
+Stable tag: 3.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,17 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.0.5 - October 2nd, 2023 =
+
+* Tweak: Added the "full" image size to the reference list in the Pods Template editor. #7183 #7184 (@JoryHogeveen) 
+* Fixed: PHP deprecated notices resolved for WYSIWYG field. #7182 (@sc0ttkclark)
+* Fixed: Relationships with user capabilities filtered will now work as expected in more cases when using WP multisite. #7181 #7185 (@JoryHogeveen)
+* Fixed: Enforce single value for inputs instead of arrays of values in single format for file/relationship field. This resolves issues with Conditional Logic not seeing the initial value on reload. (@sc0ttkclark)
+* Fixed: Normalize numbers when doing conditional logic comparisons. (@sc0ttkclark)
+* Fixed: Add new options to trim content of fields by removing empty p tags, trimming whitespace at the end of lines, and removing extra lines. Default those to off (previously they were just always on). (@sc0ttkclark)
+* Fixed: Add `tribe()` backward compatibilty function for Pods add-ons that still call that function. This only gets included by Pods when Tribe Common is not detected on the site. (@sc0ttkclark)
+* Fixed: Resolve file/relationship lookups for settings pages that are DB vs file-based configs. (@sc0ttkclark)  
 
 = 3.0.4 - September 25th, 2023 =
 

@@ -1095,6 +1095,10 @@ class PodsField_Pick extends PodsField {
 		if ( 'single' === $format_type ) {
 			$format_single = pods_v( $args->type . '_format_single', $field_options, 'dropdown', true );
 
+			if ( ! empty( $args->value ) && is_array( $args->value ) ) {
+				$args->value = reset( $args->value );
+			}
+
 			if ( 'dropdown' === $format_single ) {
 				$field_options['view_name'] = 'select';
 			} elseif ( 'radio' === $format_single ) {
@@ -2868,13 +2872,7 @@ class PodsField_Pick extends PodsField {
 								continue;
 							}
 
-							$prefix = $wpdb->base_prefix;
-
-							if ( is_multisite() && ! is_main_site() ) {
-								$prefix .= get_current_blog_id() . '_';
-							}
-
-							$where[] = $prefix . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
+							$where[] = $wpdb->prefix . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
 						}
 
 						if ( ! empty( $where ) ) {

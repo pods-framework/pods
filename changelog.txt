@@ -4,8 +4,8 @@ Our GitHub has the full list of all prior releases of Pods: https://github.com/p
 
 = 3.0.6 - October 2nd, 2023 =
 
-* Fixed: 
-* Fixed: PHP deprecated notices resolved for return types in PHP 8+
+* Fixed: Resolved a plugin conflict with The Events Calendar / Event Tickets plugins that was introduced in 3.0.5. (@sc0ttkclark)
+* Fixed: PHP deprecated notices resolved for return types in PHP 8+ (@sc0ttkclark)
 
 = 3.0.5 - October 2nd, 2023 =
 

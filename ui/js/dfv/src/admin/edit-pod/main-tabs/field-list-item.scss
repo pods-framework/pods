@@ -36,7 +36,8 @@
 	padding: .7em 0;
 	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
 
-	&:hover .pods-field_controls-container {
+	&:hover .pods-field_controls-container,
+	&:focus-within .pods-field_controls-container {
 		opacity: 1;
 	}
 }
@@ -62,6 +63,10 @@
 	padding-right: 10px;
 	cursor: move;
 	margin-bottom: 1em;
+
+	&:focus-visible span {
+	   outline: 1px solid #4f94d4;
+	}
 }
 
 .pods-field_required {
@@ -120,6 +125,13 @@
 .pods-field_label,
 .pods-field_name {
 	color: #0073aa;
+}
+
+.pods-field_name button {
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .pods-field_label__link {

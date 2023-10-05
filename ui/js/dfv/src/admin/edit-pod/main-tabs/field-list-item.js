@@ -60,9 +60,14 @@ export const FieldListItem = ( props ) => {
 		draggableSetNodeRef = () => {},
 	} = props;
 
-	const { id, name, label, type } = field;
+	const {
+		id,
+		name,
+		label,
+		type,
+	} = field;
 
-	const required = field.required && '0' !== field.required ? true : false;
+	const required = ( field.required && '0' !== field.required ) ? true : false;
 
 	const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
 	const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
@@ -93,27 +98,25 @@ export const FieldListItem = ( props ) => {
 		resetFieldSaveStatus( name );
 	};
 
-	const onEditFieldSave =
-		( updatedOptions = {} ) =>
-			( event ) => {
-				event.stopPropagation();
+	const onEditFieldSave = ( updatedOptions = {} ) => ( event ) => {
+		event.stopPropagation();
 
-				if ( ! saveField ) {
-					return;
-				}
+		if ( ! saveField ) {
+			return;
+		}
 
-				saveField(
-					podID,
-					groupID,
-					groupName,
-					name,
-					updatedOptions.name || name,
-					updatedOptions.label || label || name,
-					updatedOptions.type || type,
-					omit( updatedOptions, [ 'name', 'label', 'id', 'group' ] ),
-					id
-				);
-			};
+		saveField(
+			podID,
+			groupID,
+			groupName,
+			name,
+			updatedOptions.name || name,
+			updatedOptions.label || label || name,
+			updatedOptions.type || type,
+			omit( updatedOptions, [ 'name', 'label', 'id', 'group' ] ),
+			id,
+		);
+	};
 
 	const onDeleteFieldClick = ( event ) => {
 		event.stopPropagation();
@@ -121,10 +124,7 @@ export const FieldListItem = ( props ) => {
 		// eslint-disable-next-line no-alert
 		const confirmation = confirm(
 			// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
-			__(
-				'You are about to permanently delete this Field. Make sure you have recent backups just in case. Are you sure you would like to delete this Field?\n\nClick ‘OK’ to continue, or ‘Cancel’ to make no changes.',
-				'pods'
-			)
+			__( 'You are about to permanently delete this Field. Make sure you have recent backups just in case. Are you sure you would like to delete this Field?\n\nClick ‘OK’ to continue, or ‘Cancel’ to make no changes.', 'pods' )
 		);
 
 		if ( confirmation ) {
@@ -156,7 +156,7 @@ export const FieldListItem = ( props ) => {
 		isOverlay && 'pods-field_wrapper--overlay',
 		hasMoved && 'pods-field_wrapper--unsaved',
 		isDeleting && 'pods-field_wrapper--deleting',
-		hasDeleteFailed && 'pods-field_wrapper--errored'
+		hasDeleteFailed && 'pods-field_wrapper--errored',
 	);
 
 	const isRepeatable = toBool( field?.repeatable );
@@ -170,10 +170,7 @@ export const FieldListItem = ( props ) => {
 			<div className={ classes }>
 				<div
 					className="pods-field pods-field_handle"
-					aria-label={ __(
-						'Press and hold to drag this item to a new position in the list',
-						'pods'
-					) }
+					aria-label={ __( 'Press and hold to drag this item to a new position in the list', 'pods' ) }
 					// eslint-disable-next-line react/jsx-props-no-spreading
 					{ ...draggableListeners }
 					// eslint-disable-next-line react/jsx-props-no-spreading
@@ -191,7 +188,7 @@ export const FieldListItem = ( props ) => {
 						onKeyPress={ handleKeyPress }
 					>
 						{ label }
-						{ required && <span className="pods-field_required">&nbsp;*</span> }
+						{ required && ( <span className="pods-field_required">&nbsp;*</span> ) }
 					</span>
 
 					<div className="pods-field_id"> [id = { id }]</div>
@@ -225,10 +222,7 @@ export const FieldListItem = ( props ) => {
 
 										cloneField( typeObject.type );
 									} }
-									aria-label={ __(
-										'Duplicate this field from the Pod to copy it into a new field',
-										'pods'
-									) }
+									aria-label={ __( 'Duplicate this field from the Pod to copy it into a new field', 'pods' ) }
 								>
 									{ __( 'Duplicate', 'pods' ) }
 								</button>
@@ -251,7 +245,10 @@ export const FieldListItem = ( props ) => {
 				</div>
 
 				<div className="pods-field pods-field_name">
-					<button onClick={ onEditFieldClick } onKeyPress={ handleKeyPress }>
+					<button
+						onClick={ onEditFieldClick }
+						onKeyPress={ handleKeyPress }
+					>
 						{ name }
 					</button>
 				</div>
@@ -259,10 +256,7 @@ export const FieldListItem = ( props ) => {
 				<div className="pods-field pods-field_type">
 					{ typeObject?.label }
 					{ isRepeatable && (
-						<span className="pods-field_repeatable">
-							{ ' ' }
-							({ __( 'repeatable', 'pods' ) })
-						</span>
+						<span className="pods-field_repeatable"> ({ __( 'repeatable', 'pods' ) })</span>
 					) }
 					{ typeObject?.type && (
 						<div className="pods-field_id"> [type = { typeObject.type }]</div>
@@ -270,16 +264,13 @@ export const FieldListItem = ( props ) => {
 					{ relatedObject?.label && (
 						<div className="pods-field_related_object">
 							&raquo; { relatedObject.label }
-							<div className="pods-field_id">
-								{ ' ' }
-								[object = { relatedObject.name }]
-							</div>
+							<div className="pods-field_id"> [object = { relatedObject.name }]</div>
 						</div>
 					) }
 				</div>
 			</div>
 
-			{ showEditFieldSettings && editFieldPod ? (
+			{ ( showEditFieldSettings && editFieldPod ) ? (
 				<SettingsModal
 					storeKey={ storeKey }
 					podType={ podType }
@@ -349,7 +340,10 @@ FieldListItem.propTypes = {
 
 const ConnectedFieldListItem = compose( [
 	withSelect( ( select, ownProps ) => {
-		const { field = {}, storeKey } = ownProps;
+		const {
+			field = {},
+			storeKey
+		} = ownProps;
 
 		const storeSelect = select( storeKey );
 
@@ -359,9 +353,12 @@ const ConnectedFieldListItem = compose( [
 
 		if ( 'pick' === field.type && field.pick_object ) {
 			const relatedObjects = storeSelect.getFieldRelatedObjects();
-			const relatedObjectFallbacks = [ 'post_type', 'taxonomy' ];
+			const relatedObjectFallbacks = [
+				'post_type',
+				'taxonomy',
+			];
 
-			const key = field.pick_val
+			let key = field.pick_val
 				? `${ field.pick_object }-${ field.pick_val }`
 				: field.pick_object;
 
@@ -369,13 +366,9 @@ const ConnectedFieldListItem = compose( [
 				relatedObject = relatedObjects[ key ];
 			}
 
-			if (
-				'undefined' === typeof relatedObject &&
-				'pod' === field.pick_object &&
-				field.pick_val
-			) {
+			if ( 'undefined' === typeof relatedObject && 'pod' === field.pick_object && field.pick_val ) {
 				relatedObjectFallbacks.every( ( objectFallback ) => {
-					const key = `${ objectFallback }-${ field.pick_val }`;
+					let key = `${ objectFallback }-${ field.pick_val }`;
 
 					if ( ! relatedObjects.hasOwnProperty( key ) ) {
 						// Keep looking for a match.
@@ -406,7 +399,10 @@ const ConnectedFieldListItem = compose( [
 	withDispatch( ( dispatch, ownProps ) => {
 		const {
 			storeKey,
-			field: { id: fieldID, name: fieldName },
+			field: {
+				id: fieldID,
+				name: fieldName,
+			},
 			groupID,
 		} = ownProps;
 
@@ -414,8 +410,7 @@ const ConnectedFieldListItem = compose( [
 
 		return {
 			deleteField: () => storeDispatch.deleteField( fieldID, fieldName ),
-			removeFieldFromGroup: () =>
-				storeDispatch.removeGroupField( groupID, fieldID ),
+			removeFieldFromGroup: () => storeDispatch.removeGroupField( groupID, fieldID ),
 			resetFieldSaveStatus: storeDispatch.resetFieldSaveStatus,
 			saveField: storeDispatch.saveField,
 		};

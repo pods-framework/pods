@@ -3769,6 +3769,12 @@ class PodsUI {
 			return $this->error( __( '<strong>Error:</strong> Invalid Configuration - Missing "fields" definition.', 'pods' ) );
 		}
 			?>
+			<style>
+				/* #7196 Improve tab support for /admin.php?page=pods pods table */
+				tr:focus-within .row-actions {
+					position: static;
+				}
+			</style>
 			<table class="widefat page fixed wp-list-table" cellspacing="0"<?php echo ( 1 == $reorder && $this->reorder ) ? ' id="admin_ui_reorder"' : ''; ?>>
 				<thead>
 				<tr>

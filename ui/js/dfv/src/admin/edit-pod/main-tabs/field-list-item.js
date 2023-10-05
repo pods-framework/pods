@@ -19,8 +19,8 @@ import SettingsModal from './settings-modal';
 import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
 import {
-  GROUP_PROP_TYPE_SHAPE,
-  FIELD_PROP_TYPE_SHAPE,
+	GROUP_PROP_TYPE_SHAPE,
+	FIELD_PROP_TYPE_SHAPE,
 } from 'dfv/src/config/prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
@@ -29,392 +29,397 @@ import './field-list-item.scss';
 
 const ENTER_KEY = 13;
 
-export const FieldListItem = (props) => {
-  const {
-    storeKey,
-    podType,
-    podName,
-    podID,
-    podLabel,
-    field,
-    saveStatus,
-    deleteStatus,
-    saveMessage,
-    typeObject,
-    relatedObject,
-    editFieldPod,
-    saveField,
-    resetFieldSaveStatus,
-    groupName,
-    groupLabel,
-    groupID,
-    hasMoved,
-    cloneField,
-    deleteField,
-    removeFieldFromGroup,
-    isDragging,
-    isOverlay,
-    style = {},
-    draggableAttributes = {},
-    draggableListeners = {},
-    draggableSetNodeRef = () => { },
-  } = props;
+export const FieldListItem = ( props ) => {
+	const {
+		storeKey,
+		podType,
+		podName,
+		podID,
+		podLabel,
+		field,
+		saveStatus,
+		deleteStatus,
+		saveMessage,
+		typeObject,
+		relatedObject,
+		editFieldPod,
+		saveField,
+		resetFieldSaveStatus,
+		groupName,
+		groupLabel,
+		groupID,
+		hasMoved,
+		cloneField,
+		deleteField,
+		removeFieldFromGroup,
+		isDragging,
+		isOverlay,
+		style = {},
+		draggableAttributes = {},
+		draggableListeners = {},
+		draggableSetNodeRef = () => {},
+	} = props;
 
-  const {
-    id,
-    name,
-    label,
-    type,
-  } = field;
+	const { id, name, label, type } = field;
 
-  const required = (field.required && '0' !== field.required) ? true : false;
+	const required = field.required && '0' !== field.required ? true : false;
 
-  const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
-  const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
+	const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
+	const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
 
-  const [showEditFieldSettings, setShowEditFieldSettings] = useState(false);
+	const [ showEditFieldSettings, setShowEditFieldSettings ] = useState( false );
 
-  const handleKeyPress = (event) => {
-    if (event.charCode === ENTER_KEY) {
-      event.stopPropagation();
-      setShowEditFieldSettings(true);
-    }
-  };
+	const handleKeyPress = ( event ) => {
+		if ( event.charCode === ENTER_KEY ) {
+			event.stopPropagation();
+			setShowEditFieldSettings( true );
+		}
+	};
 
-  const onEditFieldClick = (event) => {
-    event.stopPropagation();
-    setShowEditFieldSettings(true);
-  };
+	const onEditFieldClick = ( event ) => {
+		event.stopPropagation();
+		setShowEditFieldSettings( true );
+	};
 
-  const onEditFieldCancel = (event) => {
-    event.stopPropagation();
+	const onEditFieldCancel = ( event ) => {
+		event.stopPropagation();
 
-    setShowEditFieldSettings(false);
+		setShowEditFieldSettings( false );
 
-    if (!resetFieldSaveStatus) {
-      return;
-    }
+		if ( ! resetFieldSaveStatus ) {
+			return;
+		}
 
-    resetFieldSaveStatus(name);
-  };
+		resetFieldSaveStatus( name );
+	};
 
-  const onEditFieldSave = (updatedOptions = {}) => (event) => {
-    event.stopPropagation();
+	const onEditFieldSave =
+		( updatedOptions = {} ) =>
+			( event ) => {
+				event.stopPropagation();
 
-    if (!saveField) {
-      return;
-    }
+				if ( ! saveField ) {
+					return;
+				}
 
-    saveField(
-      podID,
-      groupID,
-      groupName,
-      name,
-      updatedOptions.name || name,
-      updatedOptions.label || label || name,
-      updatedOptions.type || type,
-      omit(updatedOptions, ['name', 'label', 'id', 'group']),
-      id,
-    );
-  };
+				saveField(
+					podID,
+					groupID,
+					groupName,
+					name,
+					updatedOptions.name || name,
+					updatedOptions.label || label || name,
+					updatedOptions.type || type,
+					omit( updatedOptions, [ 'name', 'label', 'id', 'group' ] ),
+					id
+				);
+			};
 
-  const onDeleteFieldClick = (event) => {
-    event.stopPropagation();
+	const onDeleteFieldClick = ( event ) => {
+		event.stopPropagation();
 
-    // eslint-disable-next-line no-alert
-    const confirmation = confirm(
-      // eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
-      __('You are about to permanently delete this Field. Make sure you have recent backups just in case. Are you sure you would like to delete this Field?\n\nClick ‘OK’ to continue, or ‘Cancel’ to make no changes.', 'pods')
-    );
+		// eslint-disable-next-line no-alert
+		const confirmation = confirm(
+			// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
+			__(
+				'You are about to permanently delete this Field. Make sure you have recent backups just in case. Are you sure you would like to delete this Field?\n\nClick ‘OK’ to continue, or ‘Cancel’ to make no changes.',
+				'pods'
+			)
+		);
 
-    if (confirmation) {
-      deleteField();
-    }
-  };
+		if ( confirmation ) {
+			deleteField();
+		}
+	};
 
-  useEffect(() => {
-    // Close the Field Settings modal if we finished saving.
-    if (SAVE_STATUSES.SAVE_SUCCESS === saveStatus) {
-      setShowEditFieldSettings(false);
-    }
-  }, [saveStatus]);
+	useEffect( () => {
+		// Close the Field Settings modal if we finished saving.
+		if ( SAVE_STATUSES.SAVE_SUCCESS === saveStatus ) {
+			setShowEditFieldSettings( false );
+		}
+	}, [ saveStatus ] );
 
-  useEffect(() => {
-    if (!removeFieldFromGroup) {
-      return;
-    }
+	useEffect( () => {
+		if ( ! removeFieldFromGroup ) {
+			return;
+		}
 
-    // After the field deletion is finished, remove the field from its group.
-    if (DELETE_STATUSES.DELETE_SUCCESS === deleteStatus) {
-      removeFieldFromGroup();
-    }
-  }, [deleteStatus]);
+		// After the field deletion is finished, remove the field from its group.
+		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
+			removeFieldFromGroup();
+		}
+	}, [ deleteStatus ] );
 
-  const classes = classnames(
-    'pods-field_wrapper',
-    isDragging && 'pods-field_wrapper--dragging',
-    isOverlay && 'pods-field_wrapper--overlay',
-    hasMoved && 'pods-field_wrapper--unsaved',
-    isDeleting && 'pods-field_wrapper--deleting',
-    hasDeleteFailed && 'pods-field_wrapper--errored',
-  );
+	const classes = classnames(
+		'pods-field_wrapper',
+		isDragging && 'pods-field_wrapper--dragging',
+		isOverlay && 'pods-field_wrapper--overlay',
+		hasMoved && 'pods-field_wrapper--unsaved',
+		isDeleting && 'pods-field_wrapper--deleting',
+		hasDeleteFailed && 'pods-field_wrapper--errored'
+	);
 
-  const isRepeatable = toBool(field?.repeatable);
+	const isRepeatable = toBool( field?.repeatable );
 
-  return (
-    <div
-      ref={draggableSetNodeRef}
-      className="pods-field_outer-wrapper"
-      style={style || {}}
-    >
-      <div className={classes}>
-        <div
-          className="pods-field pods-field_handle"
-          aria-label={__('Press and hold to drag this item to a new position in the list', 'pods')}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...draggableListeners}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...draggableAttributes}
-        >
-          <Dashicon icon="menu" />
-        </div>
+	return (
+		<div
+			ref={ draggableSetNodeRef }
+			className="pods-field_outer-wrapper"
+			style={ style || {} }
+		>
+			<div className={ classes }>
+				<div
+					className="pods-field pods-field_handle"
+					aria-label={ __(
+						'Press and hold to drag this item to a new position in the list',
+						'pods'
+					) }
+					// eslint-disable-next-line react/jsx-props-no-spreading
+					{ ...draggableListeners }
+					// eslint-disable-next-line react/jsx-props-no-spreading
+					{ ...draggableAttributes }
+				>
+					<Dashicon icon="menu" />
+				</div>
 
-        <div className="pods-field pods-field_label">
-          <span
-            className="pods-field_label__link"
-            tabIndex={0}
-            role="button"
-            onClick={onEditFieldClick}
-            onKeyPress={handleKeyPress}
-          >
-            {label}
-            {required && (<span className="pods-field_required">&nbsp;*</span>)}
-          </span>
+				<div className="pods-field pods-field_label">
+					<span
+						className="pods-field_label__link"
+						tabIndex={ 0 }
+						role="button"
+						onClick={ onEditFieldClick }
+						onKeyPress={ handleKeyPress }
+					>
+						{ label }
+						{ required && <span className="pods-field_required">&nbsp;*</span> }
+					</span>
 
-          <div className="pods-field_id"> [id = {id}]</div>
+					<div className="pods-field_id"> [id = { id }]</div>
 
-          {hasDeleteFailed ? (
-            <div className="pods-field_controls-container__error">
-              {__('Delete failed. Try again?', 'pods')}
-            </div>
-          ) : null}
+					{ hasDeleteFailed ? (
+						<div className="pods-field_controls-container__error">
+							{ __( 'Delete failed. Try again?', 'pods' ) }
+						</div>
+					) : null }
 
-          <div className="pods-field_controls-container">
-            <button
-              className="pods-field_button pods-field_edit"
-              onClick={onEditFieldClick}
-              aria-label={__('Edit this field from the Pod', 'pods')}
-            >
-              {__('Edit', 'pods')}
-            </button>
+					<div className="pods-field_controls-container">
+						<button
+							className="pods-field_button pods-field_edit"
+							onClick={ onEditFieldClick }
+							aria-label={ __( 'Edit this field from the Pod', 'pods' ) }
+						>
+							{ __( 'Edit', 'pods' ) }
+						</button>
 
-            {cloneField ? (
-              <>
-                |
-                <button
-                  className="pods-field_button pods-field_duplicate"
-                  onClick={(e) => {
-                    if (!typeObject) {
-                      return;
-                    }
+						{ cloneField ? (
+							<>
+								|
+								<button
+									className="pods-field_button pods-field_duplicate"
+									onClick={ ( e ) => {
+										if ( ! typeObject ) {
+											return;
+										}
 
-                    e.stopPropagation();
+										e.stopPropagation();
 
-                    cloneField(typeObject.type);
-                  }}
-                  aria-label={__('Duplicate this field from the Pod to copy it into a new field', 'pods')}
-                >
-                  {__('Duplicate', 'pods')}
-                </button>
-              </>
-            ) : null}
+										cloneField( typeObject.type );
+									} }
+									aria-label={ __(
+										'Duplicate this field from the Pod to copy it into a new field',
+										'pods'
+									) }
+								>
+									{ __( 'Duplicate', 'pods' ) }
+								</button>
+							</>
+						) : null }
 
-            {deleteField ? (
-              <>
-                |
-                <button
-                  className="pods-field_button pods-field_delete"
-                  onClick={onDeleteFieldClick}
-                  aria-label={__('Delete this field from the Pod', 'pods')}
-                >
-                  {__('Delete', 'pods')}
-                </button>
-              </>
-            ) : null}
-          </div>
-        </div>
+						{ deleteField ? (
+							<>
+								|
+								<button
+									className="pods-field_button pods-field_delete"
+									onClick={ onDeleteFieldClick }
+									aria-label={ __( 'Delete this field from the Pod', 'pods' ) }
+								>
+									{ __( 'Delete', 'pods' ) }
+								</button>
+							</>
+						) : null }
+					</div>
+				</div>
 
-        <div className="pods-field pods-field_name">
-          <button
-            onClick={onEditFieldClick}
-            onKeyPress={handleKeyPress}
-          >
-            {name}
-          </button>
-        </div>
+				<div className="pods-field pods-field_name">
+					<button onClick={ onEditFieldClick } onKeyPress={ handleKeyPress }>
+						{ name }
+					</button>
+				</div>
 
-        <div className="pods-field pods-field_type">
-          {typeObject?.label}
-          {isRepeatable && (
-            <span className="pods-field_repeatable"> ({__('repeatable', 'pods')})</span>
-          )}
-          {typeObject?.type && (
-            <div className="pods-field_id"> [type = {typeObject.type}]</div>
-          )}
-          {relatedObject?.label && (
-            <div className="pods-field_related_object">
-              &raquo; {relatedObject.label}
-              <div className="pods-field_id"> [object = {relatedObject.name}]</div>
-            </div>
-          )}
-        </div>
-      </div>
+				<div className="pods-field pods-field_type">
+					{ typeObject?.label }
+					{ isRepeatable && (
+						<span className="pods-field_repeatable">
+							{ ' ' }
+							({ __( 'repeatable', 'pods' ) })
+						</span>
+					) }
+					{ typeObject?.type && (
+						<div className="pods-field_id"> [type = { typeObject.type }]</div>
+					) }
+					{ relatedObject?.label && (
+						<div className="pods-field_related_object">
+							&raquo; { relatedObject.label }
+							<div className="pods-field_id">
+								{ ' ' }
+								[object = { relatedObject.name }]
+							</div>
+						</div>
+					) }
+				</div>
+			</div>
 
-      {(showEditFieldSettings && editFieldPod) ? (
-        <SettingsModal
-          storeKey={storeKey}
-          podType={podType}
-          podName={podName}
-          optionsPod={editFieldPod}
-          selectedOptions={field}
-          title={sprintf(
-            // @todo Zack: Make these into elements we can style the parent pod / group label differently.
-            /* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
-            __('%1$s > %2$s > %3$s > Edit Field', 'pods'),
-            podLabel,
-            groupLabel,
-            label
-          )}
-          isSaving={saveStatus === SAVE_STATUSES.SAVING}
-          hasSaveError={saveStatus === SAVE_STATUSES.SAVE_ERROR}
-          errorMessage={
-            saveMessage ||
-            __('There was an error saving the field, please try again.', 'pods')
-          }
-          saveButtonText={__('Save Field', 'pods')}
-          cancelEditing={onEditFieldCancel}
-          save={onEditFieldSave}
-        />
-      ) : null}
-    </div>
-  );
+			{ showEditFieldSettings && editFieldPod ? (
+				<SettingsModal
+					storeKey={ storeKey }
+					podType={ podType }
+					podName={ podName }
+					optionsPod={ editFieldPod }
+					selectedOptions={ field }
+					title={ sprintf(
+						// @todo Zack: Make these into elements we can style the parent pod / group label differently.
+						/* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
+						__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
+						podLabel,
+						groupLabel,
+						label
+					) }
+					isSaving={ saveStatus === SAVE_STATUSES.SAVING }
+					hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
+					errorMessage={
+						saveMessage ||
+						__( 'There was an error saving the field, please try again.', 'pods' )
+					}
+					saveButtonText={ __( 'Save Field', 'pods' ) }
+					cancelEditing={ onEditFieldCancel }
+					save={ onEditFieldSave }
+				/>
+			) : null }
+		</div>
+	);
 };
 
 FieldListItem.propTypes = {
-  storeKey: PropTypes.string.isRequired,
-  podType: PropTypes.string.isRequired,
-  podName: PropTypes.string.isRequired,
-  podID: PropTypes.number.isRequired,
-  podLabel: PropTypes.string.isRequired,
-  field: FIELD_PROP_TYPE_SHAPE,
-  groupName: PropTypes.string.isRequired,
-  groupLabel: PropTypes.string.isRequired,
-  groupID: PropTypes.number.isRequired,
-  hasMoved: PropTypes.bool,
+	storeKey: PropTypes.string.isRequired,
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
+	podID: PropTypes.number.isRequired,
+	podLabel: PropTypes.string.isRequired,
+	field: FIELD_PROP_TYPE_SHAPE,
+	groupName: PropTypes.string.isRequired,
+	groupLabel: PropTypes.string.isRequired,
+	groupID: PropTypes.number.isRequired,
+	hasMoved: PropTypes.bool,
 
-  // Props from withSelect:
-  editFieldPod: PropTypes.object,
-  relatedObject: PropTypes.object,
-  typeObject: PropTypes.object.isRequired,
-  saveStatus: PropTypes.string,
-  deleteStatus: PropTypes.string,
-  saveMessage: PropTypes.string,
+	// Props from withSelect:
+	editFieldPod: PropTypes.object,
+	relatedObject: PropTypes.object,
+	typeObject: PropTypes.object.isRequired,
+	saveStatus: PropTypes.string,
+	deleteStatus: PropTypes.string,
+	saveMessage: PropTypes.string,
 
-  // Props from withDispatch:
-  saveField: PropTypes.func,
-  resetFieldSaveStatus: PropTypes.func,
-  cloneField: PropTypes.func,
-  deleteField: PropTypes.func,
-  removeFieldFromGroup: PropTypes.func,
+	// Props from withDispatch:
+	saveField: PropTypes.func,
+	resetFieldSaveStatus: PropTypes.func,
+	cloneField: PropTypes.func,
+	deleteField: PropTypes.func,
+	removeFieldFromGroup: PropTypes.func,
 
-  // Props from the DraggableFieldItem wrapper:
-  isDragging: PropTypes.bool,
-  style: PropTypes.object,
-  draggableAttributes: PropTypes.object,
-  draggableListeners: PropTypes.object,
-  draggableSetNodeRef: PropTypes.func,
+	// Props from the DraggableFieldItem wrapper:
+	isDragging: PropTypes.bool,
+	style: PropTypes.object,
+	draggableAttributes: PropTypes.object,
+	draggableListeners: PropTypes.object,
+	draggableSetNodeRef: PropTypes.func,
 
-  // From FieldGroups (as drag overlay):
-  isOverlay: PropTypes.bool,
+	// From FieldGroups (as drag overlay):
+	isOverlay: PropTypes.bool,
 };
 
-const ConnectedFieldListItem = compose([
-  withSelect((select, ownProps) => {
-    const {
-      field = {},
-      storeKey,
-    } = ownProps;
+const ConnectedFieldListItem = compose( [
+	withSelect( ( select, ownProps ) => {
+		const { field = {}, storeKey } = ownProps;
 
-    const storeSelect = select(storeKey);
+		const storeSelect = select( storeKey );
 
-    // Look up the relatedObject, to find the key for it, we may have to combine
-    // pick_object and pick_val
-    let relatedObject;
+		// Look up the relatedObject, to find the key for it, we may have to combine
+		// pick_object and pick_val
+		let relatedObject;
 
-    if ('pick' === field.type && field.pick_object) {
-      const relatedObjects = storeSelect.getFieldRelatedObjects();
-      const relatedObjectFallbacks = [
-        'post_type',
-        'taxonomy',
-      ];
+		if ( 'pick' === field.type && field.pick_object ) {
+			const relatedObjects = storeSelect.getFieldRelatedObjects();
+			const relatedObjectFallbacks = [ 'post_type', 'taxonomy' ];
 
-      let key = field.pick_val
-        ? `${field.pick_object}-${field.pick_val}`
-        : field.pick_object;
+			const key = field.pick_val
+				? `${ field.pick_object }-${ field.pick_val }`
+				: field.pick_object;
 
-      if (relatedObjects.hasOwnProperty(key)) {
-        relatedObject = relatedObjects[key];
-      }
+			if ( relatedObjects.hasOwnProperty( key ) ) {
+				relatedObject = relatedObjects[ key ];
+			}
 
-      if ('undefined' === typeof relatedObject && 'pod' === field.pick_object && field.pick_val) {
-        relatedObjectFallbacks.every((objectFallback) => {
-          let key = `${objectFallback}-${field.pick_val}`;
+			if (
+				'undefined' === typeof relatedObject &&
+				'pod' === field.pick_object &&
+				field.pick_val
+			) {
+				relatedObjectFallbacks.every( ( objectFallback ) => {
+					const key = `${ objectFallback }-${ field.pick_val }`;
 
-          if (!relatedObjects.hasOwnProperty(key)) {
-            // Keep looking for a match.
-            return true;
-          }
+					if ( ! relatedObjects.hasOwnProperty( key ) ) {
+						// Keep looking for a match.
+						return true;
+					}
 
-          // Attempt to overwrite the pick_object?
-          field.pick_object = objectFallback;
+					// Attempt to overwrite the pick_object?
+					field.pick_object = objectFallback;
 
-          relatedObject = relatedObjects[key];
+					relatedObject = relatedObjects[ key ];
 
-          // Found a match, stop looking.
-          return false;
-        });
-      }
-    }
+					// Found a match, stop looking.
+					return false;
+				} );
+			}
+		}
 
-    return {
-      editFieldPod: storeSelect.getGlobalFieldOptions(),
-      currentFieldName: field.name,
-      relatedObject,
-      typeObject: storeSelect.getFieldTypeObject(field.type),
-      saveStatus: storeSelect.getFieldSaveStatus(field.name),
-      deleteStatus: storeSelect.getFieldDeleteStatus(field.name),
-      saveMessage: storeSelect.getFieldSaveMessage(field.name),
-    };
-  }),
-  withDispatch((dispatch, ownProps) => {
-    const {
-      storeKey,
-      field: {
-        id: fieldID,
-        name: fieldName,
-      },
-      groupID,
-    } = ownProps;
+		return {
+			editFieldPod: storeSelect.getGlobalFieldOptions(),
+			currentFieldName: field.name,
+			relatedObject,
+			typeObject: storeSelect.getFieldTypeObject( field.type ),
+			saveStatus: storeSelect.getFieldSaveStatus( field.name ),
+			deleteStatus: storeSelect.getFieldDeleteStatus( field.name ),
+			saveMessage: storeSelect.getFieldSaveMessage( field.name ),
+		};
+	} ),
+	withDispatch( ( dispatch, ownProps ) => {
+		const {
+			storeKey,
+			field: { id: fieldID, name: fieldName },
+			groupID,
+		} = ownProps;
 
-    const storeDispatch = dispatch(storeKey);
+		const storeDispatch = dispatch( storeKey );
 
-    return {
-      deleteField: () => storeDispatch.deleteField(fieldID, fieldName),
-      removeFieldFromGroup: () => storeDispatch.removeGroupField(groupID, fieldID),
-      resetFieldSaveStatus: storeDispatch.resetFieldSaveStatus,
-      saveField: storeDispatch.saveField,
-    };
-  }),
-])(FieldListItem);
+		return {
+			deleteField: () => storeDispatch.deleteField( fieldID, fieldName ),
+			removeFieldFromGroup: () =>
+				storeDispatch.removeGroupField( groupID, fieldID ),
+			resetFieldSaveStatus: storeDispatch.resetFieldSaveStatus,
+			saveField: storeDispatch.saveField,
+		};
+	} ),
+] )( FieldListItem );
 
 export default ConnectedFieldListItem;

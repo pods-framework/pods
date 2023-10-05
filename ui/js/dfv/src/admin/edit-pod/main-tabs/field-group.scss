@@ -9,15 +9,15 @@ $outline-color: #4f94d4;
 	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
 
 	&:focus-within .pods-field-group_buttons {
-	   opacity: 1;
+		opacity: 1;
 	}
 
 	> [role="button"]:focus-visible {
-	   outline: 1px solid $outline-color;
+		outline: 1px solid $outline-color;
 	}
 
 	.pods-field-group_handle:focus-visible span {
-	   outline: 1px solid $outline-color;
+		outline: 1px solid $outline-color;
 	}
 }
 

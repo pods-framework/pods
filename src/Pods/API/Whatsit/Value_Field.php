@@ -94,6 +94,7 @@ class Value_Field implements \ArrayAccess {
 	 * @param mixed $offset Offset name.
 	 * @param mixed $value  Offset value.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		if ( null === $offset ) {
 			// Do not allow $object[] additions.
@@ -108,6 +109,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @param mixed $offset Offset name.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		$this->__unset( $offset );
 	}
@@ -156,6 +158,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @uses Whatsit::__set()
 	 */
+	#[\ReturnTypeWillChange]
 	public function __set( $offset, $value ) {
 		if ( 'value' === $offset ) {
 			$this->_value = $value;
@@ -173,6 +176,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @uses Whatsit::__unset()
 	 */
+	#[\ReturnTypeWillChange]
 	public function __unset( $offset ) {
 		if ( 'value' === $offset ) {
 			$this->_value = null;

@@ -182,6 +182,7 @@ class Base implements Validator_Interface {
 	 *
 	 * @return mixed The method return response.
 	 */
+	#[\ReturnTypeWillChange]
 	public function __call( $name, array $arguments ) {
 		$mapped = [
 			'is_pod_item_id_valid_for_pod_'         => 'is_pod_item_id_valid',

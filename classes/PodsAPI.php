@@ -11490,6 +11490,7 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 
 		$name = (string) $name;

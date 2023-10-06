@@ -442,7 +442,7 @@ class PodsData {
 			}
 		}
 
-		list( $table, $data, $format ) = self::do_hook( 'insert', array( $table, $data, $format ), $this );
+		[ $table, $data, $format ] = self::do_hook( 'insert', array( $table, $data, $format ), $this );
 
 		$result          = $wpdb->insert( $table, $data, $format );
 		$this->insert_id = $wpdb->insert_id;
@@ -560,7 +560,7 @@ class PodsData {
 			}
 		}
 
-		list( $table, $data, $where, $format, $where_format ) = self::do_hook(
+		[ $table, $data, $where, $format, $where_format ] = self::do_hook(
 			'update', array(
 				$table,
 				$data,
@@ -626,7 +626,7 @@ class PodsData {
 
 		$sql = "DELETE FROM `$table` WHERE " . implode( ' AND ', $wheres );
 
-		list( $sql, $where ) = self::do_hook(
+		[ $sql, $where ] = self::do_hook(
 			'delete', array(
 				$sql,
 				array_values( $where ),
@@ -1965,7 +1965,7 @@ class PodsData {
 		$success = false;
 		$ids     = (array) $ids;
 
-		list( $table, $weight_field, $id_field, $ids ) = self::do_hook(
+		[ $table, $weight_field, $id_field, $ids ] = self::do_hook(
 			'reorder', array(
 				$table,
 				$weight_field,
@@ -2622,7 +2622,7 @@ class PodsData {
 		 * @var $wpdb wpdb
 		 */
 		global $wpdb;
-		list( $sql, $data ) = apply_filters( 'pods_data_prepare', array( $sql, $data ) );
+		[ $sql, $data ] = apply_filters( 'pods_data_prepare', array( $sql, $data ) );
 
 		return $wpdb->prepare( $sql, $data );
 	}
@@ -3907,6 +3907,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 		$name = (string) $name;
 
@@ -3964,7 +3965,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __set( $name, $value ) {
+	public function __set( $name, $value ): void {
 		$supported_overrides = array(
 			'select'        => 'select',
 			'table'         => 'table',
@@ -3992,7 +3993,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __isset( $name ) {
+	public function __isset( $name ): bool {
 		// Handle alias Pod properties.
 		$supported_pods_object = array(
 			'pod'           => 'name',
@@ -4034,7 +4035,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __unset( $name ) {
+	public function __unset( $name ): void {
 		// Don't do anything.
 		return;
 	}

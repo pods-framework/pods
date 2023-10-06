@@ -234,7 +234,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return array Data for debugging with.
 	 */
-	public function __debugInfo() {
+	public function __debugInfo(): array {
 		return [
 			'args' => $this->args,
 		];
@@ -245,6 +245,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return self Object with state set.
 	 */
+	#[\ReturnTypeWillChange]
 	public static function __set_state( $data ) {
 		$args = [];
 
@@ -260,7 +261,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return array List of properties to serialize.
 	 */
-	public function __sleep() {
+	public function __sleep(): array {
 		// @todo If DB based config, return only name, id, parent, group
 		// @todo Maybe set up a variable with the custom array and implement Serializable::serialize/unserialize
 		/*
@@ -286,7 +287,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * On unserialization of this object, setup the object.
 	 */
-	public function __wakeup() {
+	public function __wakeup(): void {
 		// Setup the object.
 		$this->setup();
 	}
@@ -311,7 +312,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getArrayCopy() {
+	public function getArrayCopy(): array {
 		return array_values( $this->args );
 	}
 
@@ -361,8 +362,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return string Object identifier.
 	 */
-	#[\ReturnTypeWillChange]
-	public function __toString() {
+	public function __toString(): string {
 		return $this->get_identifier();
 	}
 
@@ -373,7 +373,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
-	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ): bool {
 		return $this->__isset( $offset );
 	}
@@ -420,16 +419,15 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Check if offset exists.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 *
 	 * @return bool Whether the offset exists.
 	 */
-	#[\ReturnTypeWillChange]
-	public function __isset( $offset ) {
-		if ( is_int( $offset ) ) {
+	public function __isset( $name ): bool {
+		if ( is_int( $name ) ) {
 			$args = $this->getArrayCopy();
 
-			return isset( $args[ $offset ] );
+			return isset( $args[ $name ] );
 		}
 
 		$special_args = [
@@ -440,11 +438,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'options'       => 'get_args',
 		];
 
-		if ( isset( $special_args[ $offset ] ) ) {
+		if ( isset( $special_args[ $name ] ) ) {
 			return true;
 		}
 
-		$value = $this->get_arg( $offset, null );
+		$value = $this->get_arg( $name, null );
 
 		return ( null !== $value );
 	}
@@ -452,38 +450,38 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get offset value.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
 	#[\ReturnTypeWillChange]
-	public function __get( $offset ) {
-		if ( is_int( $offset ) ) {
+	public function __get( $name ) {
+		if ( is_int( $name ) ) {
 			$args = $this->getArrayCopy();
 
-			return isset( $args[ $offset ] );
+			return isset( $args[ $name ] );
 		}
 
-		return $this->get_arg( $offset );
+		return $this->get_arg( $name );
 	}
 
 	/**
 	 * Set offset value.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 * @param mixed $value  Offset value.
 	 */
-	public function __set( $offset, $value ) {
-		$this->set_arg( $offset, $value );
+	public function __set( $name, $value ): void {
+		$this->set_arg( $name, $value );
 	}
 
 	/**
 	 * Unset offset value.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 */
-	public function __unset( $offset ) {
-		$this->set_arg( $offset, null );
+	public function __unset( $name ): void {
+		$this->set_arg( $name, null );
 	}
 
 	/**
@@ -1810,6 +1808,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return mixed|null
 	 */
+	#[\ReturnTypeWillChange]
 	public function __call( $name, $arguments ) {
 		$object = null;
 		$method = null;

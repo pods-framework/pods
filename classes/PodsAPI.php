@@ -4844,6 +4844,18 @@ class PodsAPI {
 			return $ids;
 		}
 
+		// Get array of Pods
+		$pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ), false );
+
+		if ( false === $pod ) {
+			// Bypass if doing a normal object sync from PodsMeta.
+			if ( $params->podsmeta ) {
+				return;
+			}
+
+			return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
+		}
+
 		// Allow Helpers to know what's going on, are we adding or saving?
 		$is_new_item = false;
 
@@ -4867,18 +4879,6 @@ class PodsAPI {
 
 		if ( isset( $params->allow_custom_fields ) && false !== $params->allow_custom_fields ) {
 			$allow_custom_fields = true;
-		}
-
-		// Get array of Pods
-		$pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ), false );
-
-		if ( false === $pod ) {
-			// Bypass if doing a normal object sync from PodsMeta.
-			if ( $params->podsmeta ) {
-				return;
-			}
-
-			return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
 		}
 
 		$params->pod    = $pod['name'];

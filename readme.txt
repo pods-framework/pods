@@ -177,8 +177,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0.8 - October TBD, 2023 =
+= 3.0.8 - October 20th, 2023 =
 
+* Fixed: Resolved the hooked var handling for pre-save hooks in PodsAPI::save_pod_item(). #5532 #7195 (@sc0ttkclark, @olivierguerriat, @HmCody)
 * Fixed: Resolve PHP deprecated notice in the `PodsUpgrade` class. #7190 (@sc0ttkclark)
 
 = 3.0.7 - October 19th, 2023 =

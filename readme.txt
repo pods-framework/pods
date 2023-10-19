@@ -177,8 +177,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0.7 - October TBD, 2023 =
+= 3.0.7 - October 19th, 2023 =
 
+* Fixed: Avoid duplicate fields showing up when registering fields manually through `pods_group_add()` instead of through normal DB or file-based configs. #6317 (@sc0ttkclark)
+* Fixed: Resolve cases where Settings pod types would treat every save as a new item. (@sc0ttkclark) 
 * Fixed: Swept through the codebase to fix all remaining return type issues with PHP 8+ for the most common extended/implemented methods. (@sc0ttkclark)
 
 = 3.0.6 - October 2nd, 2023 =

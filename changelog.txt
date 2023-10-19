@@ -2,6 +2,12 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.0.7 - October 19th, 2023 =
+
+* Fixed: Avoid duplicate fields showing up when registering fields manually through `pods_group_add()` instead of through normal DB or file-based configs. #6317 (@sc0ttkclark)
+* Fixed: Resolve cases where Settings pod types would treat every save as a new item. (@sc0ttkclark) 
+* Fixed: Swept through the codebase to fix all remaining return type issues with PHP 8+ for the most common extended/implemented methods. (@sc0ttkclark)
+
 = 3.0.6 - October 2nd, 2023 =
 
 * Fixed: Resolved a plugin conflict with The Events Calendar / Event Tickets plugins that was introduced in 3.0.5. (@sc0ttkclark)

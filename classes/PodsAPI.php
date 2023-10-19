@@ -4844,10 +4844,22 @@ class PodsAPI {
 			return $ids;
 		}
 
+		// Get array of Pods
+		$pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ), false );
+
+		if ( false === $pod ) {
+			// Bypass if doing a normal object sync from PodsMeta.
+			if ( $params->podsmeta ) {
+				return;
+			}
+
+			return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
+		}
+
 		// Allow Helpers to know what's going on, are we adding or saving?
 		$is_new_item = false;
 
-		if ( empty( $params->id ) ) {
+		if ( empty( $params->id ) && 'settings' !== $pod['type'] ) {
 			$is_new_item = true;
 		}
 
@@ -4867,18 +4879,6 @@ class PodsAPI {
 
 		if ( isset( $params->allow_custom_fields ) && false !== $params->allow_custom_fields ) {
 			$allow_custom_fields = true;
-		}
-
-		// Get array of Pods
-		$pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ), false );
-
-		if ( false === $pod ) {
-			// Bypass if doing a normal object sync from PodsMeta.
-			if ( $params->podsmeta ) {
-				return;
-			}
-
-			return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
 		}
 
 		$params->pod    = $pod['name'];
@@ -4984,7 +4984,7 @@ class PodsAPI {
 		}
 
 		// Handle hidden fields
-		if ( empty( $params->id ) ) {
+		if ( empty( $params->id ) && 'settings' !== $pod['type'] ) {
 			foreach ( $fields as $field => $field_data ) {
 				if ( in_array( $field, $fields_active, true ) ) {
 					continue;
@@ -11490,6 +11490,7 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 
 		$name = (string) $name;

@@ -1021,6 +1021,10 @@ class PodsMeta {
 			}
 
 			if ( $has_custom_groups ) {
+				// Clean up the dynamic groups to prevent duplicate fields showing.
+				$this->groups_cleanup( $groups, self::$groups[ $type ][ $name ] );
+
+				// Now add our custom groups to those dynamic groups.
 				$groups = array_merge( $groups, self::$groups[ $type ][ $name ] );
 			}
 		} elseif ( $has_custom_groups ) {
@@ -1058,6 +1062,50 @@ class PodsMeta {
 		pods_static_cache_set( $cache_key, $groups, __CLASS__ . '/groups_get' );
 
 		return $groups;
+	}
+
+	/**
+	 * Clean up the groups to prevent duplicate fields from showing based on reference groups.
+	 *
+	 * @since 3.0.7
+	 *
+	 * @param array $groups           The groups to clean up.
+	 * @param array $reference_groups The groups to reference for fields that take precedence.
+	 */
+	public function groups_cleanup( array &$groups, array &$reference_groups ) {
+		$found_fields = [];
+
+		// Remove duplicates fields from reference groups.
+		foreach ( $reference_groups as $group_key => $reference_group ) {
+			$group_fields = wp_list_pluck( $reference_group['fields'], 'name' );
+
+			foreach ( $group_fields as $field_key => $field_name ) {
+				// Remove duplicate fields.
+				if ( isset( $found_fields[ $field_name ] ) ) {
+					unset( $reference_groups[ $group_key ]['fields'][ $field_key ] );
+
+					continue;
+				}
+
+				$found_fields[ $field_name ] = true;
+			}
+		}
+
+		// Remove duplicates fields from groups.
+		foreach ( $groups as $group_key => $group ) {
+			$group_fields = wp_list_pluck( $group['fields'], 'name' );
+
+			foreach ( $group_fields as $field_key => $field_name ) {
+				// Remove duplicate fields.
+				if ( isset( $found_fields[ $field_name ] ) ) {
+					unset( $groups[ $group_key ]['fields'][ $field_key ] );
+
+					continue;
+				}
+
+				$found_fields[ $field_name ] = true;
+			}
+		}
 	}
 
 	/**

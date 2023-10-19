@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 6.0
 Tested up to: 6.3
 Requires PHP: 7.2
-Stable tag: 3.0.6
+Stable tag: 3.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,12 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.0.7 - October 19th, 2023 =
+
+* Fixed: Avoid duplicate fields showing up when registering fields manually through `pods_group_add()` instead of through normal DB or file-based configs. #6317 (@sc0ttkclark)
+* Fixed: Resolve cases where Settings pod types would treat every save as a new item. (@sc0ttkclark) 
+* Fixed: Swept through the codebase to fix all remaining return type issues with PHP 8+ for the most common extended/implemented methods. (@sc0ttkclark)
 
 = 3.0.6 - October 2nd, 2023 =
 

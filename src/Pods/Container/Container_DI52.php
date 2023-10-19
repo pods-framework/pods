@@ -87,7 +87,8 @@ class Container_DI52 implements Container_Interface {
 	/**
 	 * Defer all other calls to the container object.
 	 */
-	public function __call( $name, $args ) {
-		return $this->container->{$name}( ...$args );
+	#[\ReturnTypeWillChange]
+	public function __call( $name, $arguments ) {
+		return $this->container->{$name}( ...$arguments );
 	}
 }

@@ -177,6 +177,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.0.8 - October TBD, 2023 =
+
+* Fixed: Resolve PHP deprecated notice in the `PodsUpgrade` class. #7190 (@sc0ttkclark)
+
 = 3.0.7 - October 19th, 2023 =
 
 * Fixed: Avoid duplicate fields showing up when registering fields manually through `pods_group_add()` instead of through normal DB or file-based configs. #6317 (@sc0ttkclark)

@@ -2,6 +2,11 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.0.8 - October 20th, 2023 =
+
+* Fixed: Resolved the hooked var handling for pre-save hooks in PodsAPI::save_pod_item() that was broken in Pods 3.0. #5532 #7195 (@sc0ttkclark, @olivierguerriat, @HmCody)
+* Fixed: Resolve PHP deprecated notice in the `PodsUpgrade` class. #7190 (@sc0ttkclark)
+
 = 3.0.7 - October 19th, 2023 =
 
 * Fixed: Avoid duplicate fields showing up when registering fields manually through `pods_group_add()` instead of through normal DB or file-based configs. #6317 (@sc0ttkclark)

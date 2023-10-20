@@ -5128,7 +5128,7 @@ class PodsAPI {
 				$hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 					extract( $hooked );
 				}
@@ -5138,7 +5138,7 @@ class PodsAPI {
 				$hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item, $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 					extract( $hooked );
 				}
@@ -5149,7 +5149,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}
@@ -5159,7 +5159,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}
@@ -5169,7 +5169,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ), $params->id );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}
@@ -5179,7 +5179,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ), $params->id );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}

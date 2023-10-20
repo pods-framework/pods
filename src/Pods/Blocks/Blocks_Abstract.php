@@ -139,7 +139,7 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 			return $this->render( $attributes );
 		} catch ( Throwable $throwable ) {
 			return $this->render_placeholder(
-				'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Block Error', 'pods' ),
+				'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Renderer Error', 'pods' ),
 				esc_html__( 'There was an error with rendering this block.', 'pods' )
 				. "\n\n" . $throwable->getMessage()
 			);

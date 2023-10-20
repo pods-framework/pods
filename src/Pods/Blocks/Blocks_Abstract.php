@@ -146,8 +146,14 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 				$return = $this->render_placeholder(
 					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Block Render Error', 'pods' ),
 					esc_html__( 'There was an error with rendering this block.', 'pods' )
-					. "\n\n" . esc_html( $throwable->getMessage() )
-					. "\n\n" . '<pre style="overflow:scroll">' . esc_html( $throwable->getTraceAsString() ) . '</pre>'
+					. "\n\n" . '<details open>'
+					. '<summary><strong>' . esc_html__( 'Error message', 'pods' ) . '</strong></summary>'
+					. '<pre>' . esc_html( $throwable->getMessage() ) . '</pre>'
+					. '</details>'
+					. "\n\n" . '<details>'
+					. '<summary><strong>' . esc_html__( 'Debug backtrace', 'pods' ) . '</strong></summary>'
+					. '<pre>' . esc_html( $throwable->getTraceAsString() ) . '</pre>'
+					. '</details>'
 				);
 			} elseif (
 				is_user_logged_in()

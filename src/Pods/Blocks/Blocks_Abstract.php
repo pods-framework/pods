@@ -2,6 +2,7 @@
 
 namespace Pods\Blocks;
 
+use Throwable;
 use WP_Post;
 
 /**
@@ -125,6 +126,27 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 	}
 
 	/**
+	 * Safely render the block, if there are errors or exceptions, catch those and display as best as we can.
+	 *
+	 * @since 3.0.9
+	 *
+	 * @param array $attributes The block attributes.
+	 *
+	 * @return string The block output.
+	 */
+	public function safe_render( $attributes = [] ) {
+		try {
+			return $this->render( $attributes );
+		} catch ( Throwable $throwable ) {
+			return $this->render_placeholder(
+				'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Block Error', 'pods' ),
+				esc_html__( 'There was an error with rendering this block.', 'pods' )
+				. "\n\n" . $throwable->getMessage()
+			);
+		}
+	}
+
+	/**
 	 * Sends a valid JSON response to the AJAX request for the block contents
 	 *
 	 * @since 3.0
@@ -145,7 +167,7 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 	 */
 	public function register() {
 		$block_args = [
-			'render_callback' => [ $this, 'render' ],
+			'render_callback' => [ $this, 'safe_render' ],
 		];
 
 		register_block_type( $this->name(), $block_args );

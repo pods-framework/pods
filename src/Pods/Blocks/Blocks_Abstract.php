@@ -135,15 +135,40 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 	 * @return string The block output.
 	 */
 	public function safe_render( $attributes = [] ) {
+		add_filter( 'pods_shortcode_throw_errors', '__return_true' );
+
 		try {
-			return $this->render( $attributes );
+			$return = $this->render( $attributes );
 		} catch ( Throwable $throwable ) {
-			return $this->render_placeholder(
-				'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Renderer Error', 'pods' ),
-				esc_html__( 'There was an error with rendering this block.', 'pods' )
-				. "\n\n" . $throwable->getMessage()
-			);
+			$return = '';
+
+			if ( pods_is_debug_display() ) {
+				$return = $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Block Render Error', 'pods' ),
+					esc_html__( 'There was an error with rendering this block.', 'pods' )
+					. "\n\n" . esc_html( $throwable->getMessage() )
+					. "\n\n" . '<pre style="overflow:scroll">' . esc_html( $throwable->getTraceAsString() ) . '</pre>'
+				);
+			} elseif (
+				is_user_logged_in()
+				&& (
+					is_admin()
+					|| (
+						wp_is_json_request()
+						&& did_action( 'rest_api_init' )
+					)
+				)
+			) {
+				$return = $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Block Render Error', 'pods' ),
+					esc_html__( 'There was a problem displaying this content, enable WP_DEBUG in wp-config.php to show more details.', 'pods' )
+				);
+			}
 		}
+
+		remove_filter( 'pods_shortcode_throw_errors', '__return_true' );
+
+		return $return;
 	}
 
 	/**

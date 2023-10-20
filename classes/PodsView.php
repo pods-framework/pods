@@ -598,7 +598,7 @@ class PodsView {
 				$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_{$group_key}%'" );
 
 				if ( $object_cache_enabled ) {
-					if ( $group && function_exists( 'wp_cache_flush_group' ) ) {
+					if ( $group && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
 						wp_cache_flush_group( $group );
 					} else {
 						wp_cache_flush();
@@ -618,7 +618,7 @@ class PodsView {
 				$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_site_transient_{$group_key}%'" );
 
 				if ( $object_cache_enabled ) {
-					if ( $group && function_exists( 'wp_cache_flush_group' ) ) {
+					if ( $group && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
 						wp_cache_flush_group( $group );
 					} else {
 						wp_cache_flush();
@@ -633,7 +633,7 @@ class PodsView {
 			}
 		} elseif ( 'cache' === $cache_mode && $object_cache_enabled ) {
 			if ( true === $key ) {
-				if ( $group && function_exists( 'wp_cache_flush_group' ) ) {
+				if ( $group && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
 					wp_cache_flush_group( $group );
 
 					self::reset_cached_keys( $cache_mode, $group );

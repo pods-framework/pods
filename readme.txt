@@ -179,7 +179,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 3.0.9 - TBD, 2023 =
 
-
+* Tweak: Revamped the Pods Blocks error handling so it looks nicer. (@sc0ttkclark)
+* Fixed: Added more handling for SQL errors for Pods Blocks. #7207 (@sc0ttkclark)
+* Fixed: Resolved WP debug notices when calling `wp_cache_flush_group` by checking if `wp_wp_cache_supports( 'flush_group' )` first. (@sc0ttkclark)
 
 = 3.0.8 - October 20th, 2023 =
 

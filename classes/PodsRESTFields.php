@@ -40,6 +40,7 @@ class PodsRESTFields {
 
 		if ( $this->pod ) {
 			add_action( 'rest_api_init', [ $this, 'add_fields' ] );
+			add_filter( 'rest_' . $this->pod->get_name() . '_query', [ $this, 'query_fields' ], 10, 2 );
 		}
 	}
 
@@ -86,6 +87,35 @@ class PodsRESTFields {
 		}
 
 		$this->pod = $pod;
+	}
+
+	/**
+	 * @since  3.0.9
+	 *
+	 * @param \WP_REST_Request $request ArrayAccess
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function query_fields( $args, $request ) {
+		$fields = $this->pod->get_fields();
+		$meta_query = [];
+		foreach ( $fields as $field ) {
+			$name = $field->get_name();
+			if ( isset( $request[ $name ] ) ) {
+				$value        = $request[ $name ];
+				$meta_query[] = [
+					'key'     => $name,
+					'value'   => $value,
+				];
+			}
+		}
+
+		if ( $meta_query ) {
+			$args['meta_query']['pods'] = $meta_query;
+		}
+
+		return $args;
 	}
 
 	/**

@@ -98,8 +98,9 @@ class PodsRESTFields {
 	 * @return array
 	 */
 	public function query_fields( $args, $request ) {
-		$fields = $this->pod->get_fields();
+		$fields     = $this->pod->get_fields();
 		$meta_query = [];
+
 		foreach ( $fields as $field ) {
 			$name = $field->get_name();
 			if ( isset( $request[ $name ] ) ) {

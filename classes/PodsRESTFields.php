@@ -106,6 +106,7 @@ class PodsRESTFields {
 				$value        = $request[ $name ];
 				$meta_query[] = [
 					'key'     => $name,
+					'compare' => is_array( $value ) ? 'IN' : '=',
 					'value'   => $value,
 				];
 			}

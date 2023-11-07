@@ -17,8 +17,8 @@
   "license": "GPL-2.0+",
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "scripts": {
-    "wporg-full-update": "npm run version-number && npm run update-required-php && npm run update-minimum-wp && npm run update-tested-wp",
-    "version-number": "npm run wporg-replace-stable-tag && npm run wporg-replace-plugin-version && npm run wporg-replace-package-version",
+    "wporg-full-update": "npm run update-version-number && npm run update-required-php && npm run update-minimum-wp && npm run update-tested-wp",
+    "update-version-number": "npm run wporg-replace-stable-tag && npm run wporg-replace-plugin-version && npm run wporg-replace-package-version",
     "update-required-php": "npm run wporg-replace-requires-php",
     "update-minimum-wp": "npm run wporg-replace-requires-at-least",
     "update-tested-wp": "npm run wporg-replace-tested-up-to",

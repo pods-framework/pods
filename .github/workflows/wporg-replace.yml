@@ -26,7 +26,7 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
       - name: Run wporg-replace
-        uses: sc0ttkclark/wporg-replace@v1
+        uses: sc0ttkclark/wporg-replace@v1.0.0
         with:
           plugin_version: ${{ github.event.inputs.plugin_version }}
           plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}

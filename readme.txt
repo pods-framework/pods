@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 6.0
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 7.2
 Stable tag: 3.0.9-a-1
 License: GPLv2 or later
@@ -96,6 +96,7 @@ You can enable some of our included components to extend your WordPress site eve
 
 = Plugins that integrate with Pods =
 
+* [Bricks Builder](https://bricksbuilder.io/)
 * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using premium [Admin Columns Pro](https://www.admincolumns.com/pods/) Pods integration
 * [Conductor](https://conductorplugin.com/)
 * [Elementor Pro](https://elementor.com/pro/)
@@ -116,8 +117,11 @@ You can enable some of our included components to extend your WordPress site eve
 * [Pods Alternative Cache Add-On](https://wordpress.org/plugins/pods-alternative-cache/) - Speed up Pods on servers with limited object caching capabilities
 * [Pods SEO Add-On](https://wordpress.org/plugins/pods-seo/) - Integrates Pods Advanced Content Types with Yoast SEO
 * [Pods AJAX Views Add-On](https://wordpress.org/plugins/pods-ajax-views/) - Adds new functions you can use to output template parts that load via AJAX after other page elements
-* [Paid Memberships Pro - Pods Add On](https://wordpress.org/plugins/pmpro-pods/) - Integrates Pods with [Paid Memberships Pro](https://wordpress.org/plugins/paid-memberships-pro/)
-* [Panda Pods Repeater Field Add-On](https://wordpress.org/plugins/panda-pods-repeater-field/) - (Advanced setup required) Add groups of fields that repeat and are stored in their own custom database table
+
+= Extend Pods with Free Third-party Add-Ons =
+
+* [Paid Memberships Pro - Pods Add On](https://wordpress.org/plugins/pmpro-pods/) - Integrates Pods with [Paid Memberships Pro](https://wordpress.org/plugins/paid-memberships-pro/) to extend PMPro objects with custom fields added by Pods
+* [Panda Pods Repeater Field Add-On](https://wordpress.org/plugins/panda-pods-repeater-field/) - Lets you add groups of fields that repeat and are stored in their own custom database table (Advanced setup required) 
 
 = Pods Pro by SKCDEV Premium Add-Ons =
 

@@ -17,11 +17,6 @@
   "license": "GPL-2.0+",
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "scripts": {
-    "wporg-full-update": "npm run update-version-number && npm run update-required-php && npm run update-minimum-wp && npm run update-tested-wp",
-    "update-version-number": "npm run wporg-replace-stable-tag && npm run wporg-replace-plugin-version && npm run wporg-replace-package-version",
-    "update-required-php": "npm run wporg-replace-requires-php",
-    "update-minimum-wp": "npm run wporg-replace-requires-at-least",
-    "update-tested-wp": "npm run wporg-replace-tested-up-to",
     "build-dev": "npm run webpack-dev && npm run scss",
     "build-production": "npm run webpack-production && npm run scss",
     "format-js": "./node_modules/.bin/eslint --fix ./ui/js",
@@ -34,13 +29,7 @@
     "scss:watch": "sass --no-source-map --style=compressed --update --watch ui/styles/src ui/styles/dist",
     "webpack-dev": "webpack --config webpack.dev.js --progress",
     "webpack-dev:watch": "webpack --config webpack.dev.js --progress -w",
-    "webpack-production": "webpack --config webpack.prod.js --progress",
-    "wporg-replace-stable-tag": "replace 'Stable tag:(\\s+)([\\.\\d\\w\\-]*)\n' \"Stable tag:\\$1$npm_config_version_number\n\" readme.txt",
-    "wporg-replace-plugin-version": "replace 'Version:(\\s+)([\\.\\d\\w\\-]*)\n' \"Version:\\$1$npm_config_version_number\n\" $npm_config_plugin_file",
-    "wporg-replace-package-version": "replace '\"version\": \"([\\.\\d\\w\\-]*)\",\n' \"\\\"version\\\": \\\"$npm_config_version_number\\\",\n\" package.json",
-    "wporg-replace-requires-php": "replace 'Requires PHP:(\\s+)([\\.\\d\\w\\-]*)\n' \"Requires PHP:\\$1$npm_config_required_php\n\" $npm_config_plugin_file readme.txt",
-    "wporg-replace-requires-at-least": "replace 'Requires at least:(\\s+)([\\.\\d\\w\\-]*)\n' \"Requires at least:\\$1$npm_config_minimum_wp\n\" $npm_config_plugin_file readme.txt",
-    "wporg-replace-tested-up-to": "replace 'Tested up to:(\\s+)([\\.\\d\\w\\-]*)\n' \"Tested up to:\\$1$npm_config_tested_wp\n\" $npm_config_plugin_file readme.txt"
+    "webpack-production": "webpack --config webpack.prod.js --progress"
   },
   "engines": {
     "node": ">=16.13.2",
@@ -126,6 +115,7 @@
     "react-quill": "^2.0.0-beta.4",
     "react-select": "^5.4.0",
     "sanitize-html": "^2.7.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "wporg-replace-helper": "github:sc0ttkclark/wporg-replace-helper"
   }
 }

@@ -1,0 +1,42 @@
+name: WordPress.org Replace Strings
+env:
+  WPORG_PLUGIN_VERSION_CONSTANT_NAME: 'PODS_VERSION'
+  WPORG_MINIMUM_WP_VERSION_CONSTANT_NAME: 'PODS_WP_VERSION_MINIMUM'
+  WPORG_MINIMUM_PHP_VERSION_CONSTANT_NAME: 'PODS_PHP_VERSION_MINIMUM'
+on:
+  workflow_dispatch:
+    inputs:
+      plugin_version:
+        description: 'Plugin version'
+        required: false
+      tested_wp_version:
+        description: 'Tested up to WP version'
+        required: false
+      minimum_wp_version:
+        description: 'Minimum WP version'
+        required: false
+      minimum_php_version:
+        description: 'Minimum PHP version'
+        required: false
+      plugin_file:
+        description: 'Plugin file'
+        required: false
+jobs:
+  prepare_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Run wporg-replace
+        uses: sc0ttkclark/wporg-replace@v1
+        with:
+          plugin_version: ${{ github.event.inputs.plugin_version }}
+          plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
+          tested_wp_version: ${{ github.event.inputs.tested_wp_version }}
+          tested_wp_version_constant_name: ${{ env.WPORG_TESTED_WP_VERSION_CONSTANT_NAME }}
+          minimum_wp_version: ${{ github.event.inputs.minimum_wp_version }}
+          minimum_wp_version_constant_name: ${{ env.WPORG_MINIMUM_WP_VERSION_CONSTANT_NAME }}
+          minimum_php_version: ${{ github.event.inputs.minimum_php_version }}
+          minimum_php_version_constant_name: ${{ env.WPORG_MINIMUM_PHP_VERSION_CONSTANT_NAME }}
+          plugin_file: ${{ github.event.inputs.plugin_file }}
+          plugin_path: ${{ github.workspace }}

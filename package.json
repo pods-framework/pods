@@ -116,6 +116,6 @@
     "react-select": "^5.4.0",
     "sanitize-html": "^2.7.0",
     "uuid": "^8.3.2",
-    "wporg-replace-helper": "github:sc0ttkclark/wporg-replace-helper"
+    "wporg-replace-helper": "github:sc0ttkclark/wporg-replace-helper#^1.0.0"
   }
 }

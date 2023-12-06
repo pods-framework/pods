@@ -32,7 +32,7 @@ jobs:
           echo minimum_wp_version: ${{ github.event.inputs.minimum_wp_version }}
           echo minimum_php_version: ${{ github.event.inputs.minimum_php_version }}
       - name: Run wporg-replace
-        uses: sc0ttkclark/wporg-replace@v1.0.1
+        uses: sc0ttkclark/wporg-replace@v1.0.2
         with:
           plugin_version: ${{ github.event.inputs.plugin_version }}
           plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}

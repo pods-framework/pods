@@ -814,11 +814,11 @@ class Pod extends Base {
 					'dependency'            => true,
 				],
 				'capability_type_custom'  => [
-					'label'      => __( 'Custom User Capability', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => [ 'capability_type' => 'custom' ],
+					'label'            => __( 'Custom User Capability', 'pods' ),
+					'help'             => __( 'help', 'pods' ),
+					'type'             => 'text',
+					'text_placeholder' => pods_v( 'name', $pod ),
+					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'capability_type_extra'   => [
 					'label'             => __( 'Additional User Capabilities', 'pods' ),
@@ -1263,11 +1263,11 @@ class Pod extends Base {
 					'dependency'            => true,
 				],
 				'capability_type_custom'   => [
-					'label'      => __( 'Custom User Capability', 'pods' ),
-					'help'       => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
-					'type'       => 'text',
-					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => [ 'capability_type' => 'custom' ],
+					'label'            => __( 'Custom User Capability', 'pods' ),
+					'help'             => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
+					'type'             => 'text',
+					'text_placeholder' => pods_v( 'name', $pod ),
+					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'query_var'                => [
 					'label'             => __( 'Query Var', 'pods' ),

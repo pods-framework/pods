@@ -1,5 +1,6 @@
 name: WordPress.org Replace Strings
 env:
+  WPORG_PLUGIN_FILE: 'init.php'
   WPORG_PLUGIN_VERSION_CONSTANT_NAME: 'PODS_VERSION'
   WPORG_MINIMUM_WP_VERSION_CONSTANT_NAME: 'PODS_WP_VERSION_MINIMUM'
   WPORG_MINIMUM_PHP_VERSION_CONSTANT_NAME: 'PODS_PHP_VERSION_MINIMUM'
@@ -18,9 +19,6 @@ on:
       minimum_php_version:
         description: 'Minimum PHP version'
         required: false
-      plugin_file:
-        description: 'Plugin file'
-        required: false
 jobs:
   prepare_release:
     runs-on: ubuntu-latest
@@ -38,5 +36,16 @@ jobs:
           minimum_wp_version_constant_name: ${{ env.WPORG_MINIMUM_WP_VERSION_CONSTANT_NAME }}
           minimum_php_version: ${{ github.event.inputs.minimum_php_version }}
           minimum_php_version_constant_name: ${{ env.WPORG_MINIMUM_PHP_VERSION_CONSTANT_NAME }}
-          plugin_file: ${{ github.event.inputs.plugin_file }}
+          plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
           plugin_path: ${{ github.workspace }}
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: ${{ env.WPORG_PLUGIN_FILE }} readme.txt package.json
+          commit_message: Update wporg version(s)
+      - name: "Run if changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        run: echo "Changes!"
+      - name: "Run if no changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+        run: echo "No Changes!"

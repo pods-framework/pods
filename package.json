@@ -1,6 +1,6 @@
 {
   "name": "pods",
-  "version": "3.0.8",
+  "version": "3.0.9-a-2",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
   "homepage": "https://pods.io/",
@@ -27,7 +27,6 @@
     "rebuild": "rm -rf node_modules && composer update && npm install && npm run build",
     "scss": "sass --no-source-map --style=compressed ui/styles/src:ui/styles/dist",
     "scss:watch": "sass --no-source-map --style=compressed --update --watch ui/styles/src ui/styles/dist",
-    "version_number": "grunt version_number",
     "webpack-dev": "webpack --config webpack.dev.js --progress",
     "webpack-dev:watch": "webpack --config webpack.dev.js --progress -w",
     "webpack-production": "webpack --config webpack.prod.js --progress"
@@ -79,18 +78,14 @@
     "eslint-plugin-jsdoc": "^39.2.7",
     "eslint-plugin-react": "^7.29.4",
     "glob": "^8.0.1",
-    "grunt": "^1.5.3",
-    "grunt-cli": "^1.4.3",
-    "grunt-exec": "^3.0.0",
-    "grunt-text-replace": "^0.4.0",
     "jest": "^28.1.1",
     "jquery": "^3.6.0",
-    "load-grunt-tasks": "^3.5.0",
     "lodash": "^4.17.21",
     "mocha": "^9.2.2",
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "replace": "^1.2.2",
     "sass": "^1.50.1",
     "sass-loader": "^12.6.0",
     "sprintf-js": "^1.1.2",
@@ -120,6 +115,7 @@
     "react-quill": "^2.0.0-beta.4",
     "react-select": "^5.4.0",
     "sanitize-html": "^2.7.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "wporg-replace-helper": "github:sc0ttkclark/wporg-replace-helper#^1.0.0"
   }
 }

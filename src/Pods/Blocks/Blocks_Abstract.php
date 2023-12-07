@@ -2,6 +2,7 @@
 
 namespace Pods\Blocks;
 
+use Throwable;
 use WP_Post;
 
 /**
@@ -125,6 +126,58 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 	}
 
 	/**
+	 * Safely render the block, if there are errors or exceptions, catch those and display as best as we can.
+	 *
+	 * @since 3.0.9
+	 *
+	 * @param array $attributes The block attributes.
+	 *
+	 * @return string The block output.
+	 */
+	public function safe_render( $attributes = [] ) {
+		add_filter( 'pods_shortcode_throw_errors', '__return_true' );
+
+		try {
+			$return = $this->render( $attributes );
+		} catch ( Throwable $throwable ) {
+			$return = '';
+
+			if ( pods_is_debug_display() ) {
+				$return = $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Block Render Error', 'pods' ),
+					esc_html__( 'There was an error with rendering this block.', 'pods' )
+					. "\n\n" . '<details open>'
+					. '<summary><strong>' . esc_html__( 'Error message', 'pods' ) . '</strong></summary>'
+					. '<pre>' . esc_html( $throwable->getMessage() ) . '</pre>'
+					. '</details>'
+					. "\n\n" . '<details>'
+					. '<summary><strong>' . esc_html__( 'Debug backtrace', 'pods' ) . '</strong></summary>'
+					. '<pre>' . esc_html( $throwable->getTraceAsString() ) . '</pre>'
+					. '</details>'
+				);
+			} elseif (
+				is_user_logged_in()
+				&& (
+					is_admin()
+					|| (
+						wp_is_json_request()
+						&& did_action( 'rest_api_init' )
+					)
+				)
+			) {
+				$return = $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Block Render Error', 'pods' ),
+					esc_html__( 'There was a problem displaying this content, enable WP_DEBUG in wp-config.php to show more details.', 'pods' )
+				);
+			}
+		}
+
+		remove_filter( 'pods_shortcode_throw_errors', '__return_true' );
+
+		return $return;
+	}
+
+	/**
 	 * Sends a valid JSON response to the AJAX request for the block contents
 	 *
 	 * @since 3.0
@@ -145,7 +198,7 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 	 */
 	public function register() {
 		$block_args = [
-			'render_callback' => [ $this, 'render' ],
+			'render_callback' => [ $this, 'safe_render' ],
 		];
 
 		register_block_type( $this->name(), $block_args );

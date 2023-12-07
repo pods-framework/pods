@@ -1992,7 +1992,7 @@ class PodsInit {
 		if ( 'post_type' === $type ) {
 			$labels['menu_name']                = strip_tags( pods_v( 'menu_name', $labels, $label, true ) );
 			$labels['name_admin_bar']           = pods_v( 'name_admin_bar', $labels, $singular_label, true );
-			$labels['add_new']                  = pods_v( 'add_new', $labels, __( 'Add New', 'pods' ), true );
+			$labels['add_new']                  = pods_v( 'add_new', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
 			$labels['add_new_item']             = pods_v( 'add_new_item', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
 			$labels['new_item']                 = pods_v( 'new_item', $labels, sprintf( __( 'New %s', 'pods' ), $singular_label ), true );
 			$labels['edit']                     = pods_v( 'edit', $labels, __( 'Edit', 'pods' ), true );

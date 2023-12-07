@@ -145,6 +145,8 @@ class API {
 		$blocks_config = (array) apply_filters( 'pods_blocks_api_config', $blocks_config );
 
 		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', $blocks_config );
+
+		wp_enqueue_style( 'pods-styles' );
 	}
 
 	/**

@@ -40,35 +40,46 @@ class PodsField_Code extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
-
-		$options = array(
-			'output_options'              => array(
-				'label' => __( 'Output Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'boolean_group' => array(
-					static::$type . '_trim'      => array(
-						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
-						'default'    => 1,
-						'type'       => 'boolean',
-						'dependency' => true,
-					),
-					static::$type . '_allow_shortcode' => array(
+		return [
+			'output_options'              => [
+				'label'         => __( 'Output Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_trim'             => [
+						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_lines'       => [
+						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_p_brs'       => [
+						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_extra_lines' => [
+						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_allow_shortcode'  => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-				),
-			),
-			static::$type . '_max_length' => array(
+					],
+				],
+			],
+			static::$type . '_max_length' => [
 				'label'   => __( 'Maximum Length', 'pods' ),
-				'default' => -1,
+				'default' => - 1,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			),
-		);
-
-		return $options;
+			],
+		];
 	}
 
 	/**

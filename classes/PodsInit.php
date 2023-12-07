@@ -2487,6 +2487,8 @@ class PodsInit {
 		// Support for quick edit in WP 6.4+.
 		add_filter( 'quick_edit_enabled_for_post_type', [ $this, 'quick_edit_enabled_for_post_type' ], 10, 2 );
 		add_filter( 'quick_edit_enabled_for_taxonomy', [ $this, 'quick_edit_enabled_for_taxonomy' ], 10, 2 );
+
+		require_once PODS_DIR . 'includes/compatibility.php';
 	}
 
 	/**

@@ -981,22 +981,44 @@ class PodsField {
 			return $value;
 		}
 
+		$trim       = true;
+		$trim_p_brs = false;
+		$trim_lines = false;
+
 		if ( $options ) {
 			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 			// Check if we should trim the content.
-			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
-				return $value;
-			}
+			$trim = 1 === (int) pods_v( static::$type . '_trim', $options, 0 );
+
+			// Check if we should remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$trim_p_brs = 1 === (int) pods_v( static::$type . '_trim_p_brs', $options, 0 );
+
+			// Check if we should remove whitespace at the end of lines.
+			$trim_lines = 1 === (int) pods_v( static::$type . '_trim_lines', $options, 0 );
 		}
 
-		// Maybe trim empty p tags.
-		$value = preg_replace( '/^\s*<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>(.*)$/Umis', '$2', $value );
-		$value = preg_replace( '/^\s*(\s|&nbsp;|<\/?\s?br\s?\/?>)*(.*)$/Umis', '$2', $value );
-		$value = preg_replace( '/^(.*)<p[^>]*>(\s|&nbsp;|<\/?\s?br\s?\/?>)*<\/?p>\s*$/Umis', '$1', $value );
-		$value = preg_replace( '/^(.*)(\s|&nbsp;|<\/?\s?br\s?\/?>)*\s*$/Umis', '$1', $value );
+		if ( $trim_p_brs ) {
+			// Remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$value = preg_replace( '/(<p[^>]*>\s*(\s|&nbsp;|<br\s*?\/?>)*\s*<\/?p>)/Umi', '', $value );
 
-		return trim( $value );
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim_lines ) {
+			// Trim whitespace at the end of lines.
+			$value = preg_replace( '/\h+$/m', '', $value );
+
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim ) {
+			$value = trim( $value );
+		}
+
+		return $value;
 	}
 
 	/**

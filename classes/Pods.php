@@ -4593,6 +4593,7 @@ class Pods implements Iterator {
 	 *
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 		$name = (string) $name;
 
@@ -4659,7 +4660,7 @@ class Pods implements Iterator {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __set( $name, $value ) {
+	public function __set( $name, $value ): void {
 		$name = (string) $name;
 
 		$supported_pods_data = array(
@@ -4691,7 +4692,7 @@ class Pods implements Iterator {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __isset( $name ) {
+	public function __isset( $name ): bool {
 		$value = $this->__get( $name );
 
 		return ( null !== $value );
@@ -4704,7 +4705,7 @@ class Pods implements Iterator {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __unset( $name ) {
+	public function __unset( $name ): void {
 		$this->__set( $name, null );
 	}
 
@@ -4712,19 +4713,20 @@ class Pods implements Iterator {
 	 * Handle methods that have been deprecated and any aliasing.
 	 *
 	 * @param string $name Function name.
-	 * @param array  $args Arguments passed to function.
+	 * @param array  $arguments Arguments passed to function.
 	 *
 	 * @return mixed|null
 	 *
 	 * @since 2.0.0
 	 */
-	public function __call( $name, $args ) {
+	#[\ReturnTypeWillChange]
+	public function __call( $name, $arguments ) {
 
 		$name = (string) $name;
 
 		// select > find alias.
 		if ( 'select' === $name ) {
-			return call_user_func_array( array( $this, 'find' ), $args );
+			return call_user_func_array( array( $this, 'find' ), $arguments );
 		}
 
 		if ( ! $this->deprecated ) {
@@ -4736,7 +4738,7 @@ class Pods implements Iterator {
 		$pod_class_exists = class_exists( 'Deprecated_Pod' );
 
 		if ( method_exists( $this->deprecated, $name ) ) {
-			return call_user_func_array( array( $this->deprecated, $name ), $args );
+			return call_user_func_array( array( $this->deprecated, $name ), $arguments );
 			// @codingStandardsIgnoreLine
 		} elseif ( ! $pod_class_exists || Deprecated_Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
@@ -4750,7 +4752,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string Pod type and name in CURIE notation
 	 */
-	public function __toString() {
+	public function __toString(): string {
 
 		$string = '';
 

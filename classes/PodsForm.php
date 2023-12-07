@@ -76,6 +76,7 @@ class PodsForm {
 	 *
 	 * @since 2.3.0
 	 */
+	#[\ReturnTypeWillChange]
 	private function __clone() {
 		// Hulk smash
 	}

@@ -1337,7 +1337,20 @@ function pods_shortcode( $tags, $content = null ) {
 
 	try {
 		$return = pods_shortcode_run( $tags, $content );
-	} catch ( Exception $exception ) {
+	} catch ( Throwable $throwable ) {
+		/**
+		 * Allow filtering whether to throw errors for the shortcode.
+		 *
+		 * @since 3.0.9
+		 *
+		 * @param bool $throw_errors Whether to throw errors for the shortcode.
+		 */
+		$throw_errors = apply_filters( 'pods_shortcode_throw_errors', false );
+
+		if ( $throw_errors ) {
+			throw $throwable;
+		}
+
 		$return = '';
 
 		if ( pods_is_debug_display() ) {
@@ -1345,13 +1358,13 @@ function pods_shortcode( $tags, $content = null ) {
 				sprintf(
 					'<strong>%1$s:</strong> %2$s',
 					esc_html__( 'Pods Renderer Error', 'pods' ),
-					esc_html( $exception->getMessage() )
+					esc_html( $throwable->getMessage() )
 				),
 				'error',
 				true
 			);
 
-			$return .= '<pre style="overflow:scroll">' . esc_html( $exception->getTraceAsString() ) . '</pre>';
+			$return .= '<pre style="overflow:scroll">' . esc_html( $throwable->getTraceAsString() ) . '</pre>';
 		} elseif (
 			is_user_logged_in()
 			&& (

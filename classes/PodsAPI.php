@@ -5464,7 +5464,11 @@ class PodsAPI {
 						|| $save_non_simple_to_table
 					)
 				) {
-					$value_data = $this->prepare_tableless_data_for_save( $pod, $field_data, $value, compact( $pieces ) );
+					try {
+						$value_data = $this->prepare_tableless_data_for_save( $pod, $field_data, $value, compact( $pieces ) );
+					} catch ( Throwable $throwable ) {
+						return pods_error( $throwable->getMessage(), $error_mode );
+					}
 				}
 
 				// Prepare all table / meta data.
@@ -5991,10 +5995,19 @@ class PodsAPI {
 					if ( empty( $v ) ) {
 						try {
 							$v = pods_attachment_import( $v );
-						} catch ( Exception $exception ) {
-							pods_debug_log( $exception );
+						} catch ( Throwable $throwable ) {
+							pods_debug_log( $throwable );
 
-							continue;
+							throw new Exception(
+								sprintf(
+									// translators: %1$s is the field label, %2$s is the file value.
+									__( 'Pods file field error for field "%1$s" - Unable to import file from: %2$s', 'pods' ),
+									esc_html( $field->get_label() ),
+									esc_html( $v )
+								),
+								500,
+								$throwable
+							);
 						}
 					}
 				} elseif ( $search_data ) {

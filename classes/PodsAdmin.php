@@ -280,7 +280,7 @@ class PodsAdmin {
 									if ( 'edit' === pods_v( 'action', 'get', 'manage' ) ) {
 										$all_title = pods_v( 'label_edit_item', $pod['options'], __( 'Edit', 'pods' ) . ' ' . $singular_label );
 									} elseif ( 'add' === pods_v( 'action', 'get', 'manage' ) ) {
-										$all_title = pods_v( 'label_add_new_item', $pod['options'], __( 'Add New', 'pods' ) . ' ' . $singular_label );
+										$all_title = pods_v( 'label_add_new_item', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
 									}
 								}
 
@@ -307,8 +307,8 @@ class PodsAdmin {
 								add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
 							}
 
-							$add_title = pods_v( 'label_add_new_item', $pod['options'], __( 'Add New', 'pods' ) . ' ' . $singular_label );
-							$add_label = pods_v( 'label_add_new', $pod['options'], __( 'Add New', 'pods' ) );
+							$add_title = pods_v( 'label_add_new_item', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
+							$add_label = pods_v( 'label_add_new', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
 
 							add_submenu_page(
 								$parent_page, $add_title, $add_label, 'read', $page, array(

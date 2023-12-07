@@ -744,7 +744,7 @@ class PodsUI {
 		$options->validate(
 			'heading', array(
 				'manage'    => pods_v( 'label_manage', $this->label, __( 'Manage', 'pods' ) ),
-				'add'       => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+				'add'       => pods_v( 'label_add_new', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
 				'edit'      => pods_v( 'label_edit', $this->label, __( 'Edit', 'pods' ) ),
 				'duplicate' => pods_v( 'label_duplicate', $this->label, __( 'Duplicate', 'pods' ) ),
 				'view'      => pods_v( 'label_view', $this->label, __( 'View', 'pods' ) ),
@@ -769,7 +769,7 @@ class PodsUI {
 		$options->validate(
 			'label', array(
 				'add'       => pods_v( 'label_add_new_item', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
-				'add_new'   => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+				'add_new'   => pods_v( 'label_add_new', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
 				'edit'      => pods_v( 'label_update_item', $this->label, sprintf( __( 'Update %s', 'pods' ), $options->item ) ),
 				'duplicate' => pods_v( 'label_duplicate_item', $this->label, sprintf( __( 'Duplicate %s', 'pods' ), $options->item ) ),
 				'delete'    => pods_v( 'label_delete_item', $this->label, sprintf( __( 'Delete this %s', 'pods' ), $options->item ) ),

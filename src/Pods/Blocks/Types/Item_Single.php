@@ -38,7 +38,7 @@ class Item_Single extends Base {
 			'category'        => 'pods',
 			'icon'            => 'pods',
 			'renderType'      => 'php',
-			'render_callback' => [ $this, 'render' ],
+			'render_callback' => [ $this, 'safe_render' ],
 			'keywords'        => [
 				'pods',
 				'single',

@@ -1,7 +1,5 @@
 @import '../edit-pod-variables';
 
-$outline-color: #4f94d4;
-
 .pods-field-group-wrapper {
 	margin-bottom: 10px;
 	border: 1px solid $color--light-grey;
@@ -13,11 +11,11 @@ $outline-color: #4f94d4;
 	}
 
 	> [role="button"]:focus-visible {
-		outline: 1px solid $outline-color;
+		outline: 1px solid $color--wp-blue-light;
 	}
 
 	.pods-field-group_handle:focus-visible span {
-		outline: 1px solid $outline-color;
+		outline: 1px solid $color--wp-blue-light;
 	}
 }
 

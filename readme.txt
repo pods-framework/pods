@@ -181,9 +181,12 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0.9 - TBD, 2023 =
+= 3.0.9 - December 7th, 2023 =
 
+* Feature: Added support for disabling Quick Edit for custom post types for sites on WP 6.4+. (@sc0ttkclark) 
 * Tweak: Revamped the Pods Blocks error handling so it looks nicer. (@sc0ttkclark)
+* Tweak: Updated the default values used for "Add New" labels to use "Add New {singularLabel}" instead to follow WP core's direction. (@sc0ttkclark) 
+* Fixed: Custom capability types now save as empty and remain empty as intended. When empty, they will default to the current post type name and a placeholder shows what that would be. #7218 (@sc0ttkclark)
 * Fixed: Added more handling for SQL errors for Pods Blocks. #7207 (@sc0ttkclark)
 * Fixed: Resolved WP debug notices when calling `wp_cache_flush_group` by checking if `wp_wp_cache_supports( 'flush_group' )` first. (@sc0ttkclark)
 

@@ -368,17 +368,11 @@ $button-outline-color: #4f94d4;
 				}
 				.pods-wizard-options-list {
 					display: grid;
-					// grid-template-columns: 2fr 3fr;
 					gap: 1em;
 
 					.pods-wizard-option {
 						background: #f0f0f1;
-    				// color: white;
 						border-radius: 8px;
-						// overflow: hidden;
-						// &:has(a:focus) {
-						// 	overflow: auto;
-						// }
 					}
 				}
 				.pods-wizard-option {

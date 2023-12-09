@@ -282,9 +282,9 @@ class PodsForm {
 			 * @deprecated 2.7.0
 			 */
 			eval( '?>' . $helper['code'] );
-		} elseif ( method_exists( get_class(), 'field_' . $type ) ) {
+		} elseif ( method_exists( static::class, 'field_' . $type ) ) {
 			// @todo Move these custom field methods into real/faux field classes
-			echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
+			echo call_user_func( array( static::class, 'field_' . $type ), $name, $value, $options );
 		} elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
 			// Force non-repeatable field types to be non-repeatable even if option is set to 1.
 			if ( ! empty( $options['repeatable'] ) && ! in_array( $type, $repeatable_field_types, true ) ) {

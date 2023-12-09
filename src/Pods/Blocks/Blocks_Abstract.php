@@ -3,6 +3,7 @@
 namespace Pods\Blocks;
 
 use Throwable;
+use WP_Block;
 use WP_Post;
 
 /**
@@ -130,15 +131,17 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 	 *
 	 * @since 3.0.9
 	 *
-	 * @param array $attributes The block attributes.
+	 * @param array         $attributes The block attributes.
+	 * @param string        $content    The block default content.
+	 * @param WP_Block|null $block      The block instance.
 	 *
-	 * @return string The block output.
+	 * @return string The block content to render.
 	 */
-	public function safe_render( $attributes = [] ) {
+	public function safe_render( $attributes = [], $content = '', $block = null ) {
 		add_filter( 'pods_shortcode_throw_errors', '__return_true' );
 
 		try {
-			$return = $this->render( $attributes );
+			$return = $this->render( $attributes, $content, $block );
 		} catch ( Throwable $throwable ) {
 			$return = '';
 

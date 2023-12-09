@@ -3,7 +3,7 @@
 namespace Pods\Blocks\Types;
 
 use Exception;
-use Tribe__Editor__Blocks__Abstract;
+use Pods\Blocks\Blocks_Abstract;
 use WP_Block;
 
 /**
@@ -11,7 +11,7 @@ use WP_Block;
  *
  * @since 2.8.0
  */
-abstract class Base extends Tribe__Editor__Blocks__Abstract {
+abstract class Base extends Blocks_Abstract {
 
 	/**
 	 * Set the default attributes of this block.
@@ -245,17 +245,25 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	 * @return bool Whether the block is being rendered in editor mode.
 	 */
 	public function in_editor_mode( $attributes = [] ) {
-		return (
-			! empty( $attributes['_is_editor'] )
-			|| (
-				is_admin()
-				&& $screen = get_current_screen()
-				&& 'post' === $screen->base
-			)
-			|| (
-				wp_is_json_request()
-				&& did_action( 'rest_api_init' )
-			)
-		);
+		if ( ! empty( $attributes['_is_editor'] ) ) {
+			return true;
+		}
+
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			if ( $screen && 'post' === $screen->base ) {
+				return true;
+			}
+		}
+
+		if (
+			wp_is_json_request()
+			&& did_action( 'rest_api_init' )
+		) {
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -24,6 +24,11 @@ export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 	PropTypes.number,
 ] );
 
+export const OBJECT_OR_JSON_STRING = PropTypes.oneOfType( [
+	PropTypes.object,
+	PropTypes.string,
+] );
+
 export const PICK_OPTIONS = PropTypes.arrayOf(
 	PropTypes.shape( {
 		id: PropTypes.oneOfType( [
@@ -65,6 +70,15 @@ export const FIELD_PROP_TYPE = {
 	attributes: OBJECT_OR_ARRAY,
 	class: PropTypes.string,
 	data: PropTypes.any,
+	conditional_logic: PropTypes.shape( {
+		action: PropTypes.string,
+		logic: PropTypes.string,
+		rules: PropTypes.arrayOf( PropTypes.shape( {
+			field: PropTypes.string,
+			compare: PropTypes.string,
+			value: PropTypes.any,
+		} ) ),
+	} ),
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
@@ -76,8 +90,6 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.number,
 	] ),
 	default_value_param: PropTypes.string,
-	'depends-on': OBJECT_OR_ARRAY,
-	'depends-on-any': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
 	description_param: PropTypes.string,
@@ -90,7 +102,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.string, // @todo is this an error message, or a back-end bug?
 		PropTypes.object,
 	] ),
-	'excludes-on': OBJECT_OR_ARRAY,
+	enable_conditional_logic: BOOLEAN_ALL_TYPES,
 	field_type: PropTypes.string,
 	group: NUMBER_OR_NUMBER_AS_STRING,
 	fields: PropTypes.arrayOf(
@@ -118,6 +130,7 @@ export const FIELD_PROP_TYPE = {
 	label_param: PropTypes.string,
 	label_param_default: PropTypes.string,
 	name: PropTypes.string.isRequired,
+	name_prefix: PropTypes.string,
 	object_type: PropTypes.string,
 	old_name: PropTypes.string,
 	options: PropTypes.oneOfType( [
@@ -152,7 +165,6 @@ export const FIELD_PROP_TYPE = {
 	repeatable_reorder: BOOLEAN_ALL_TYPES,
 	repeatable_limit: NUMBER_OR_NUMBER_AS_STRING,
 	weight: PropTypes.number,
-	'wildcard-on': OBJECT_OR_ARRAY,
 	_locale: PropTypes.string,
 
 	// Avatar fields
@@ -202,6 +214,9 @@ export const FIELD_PROP_TYPE = {
 	// Color fields
 	color_select_label: PropTypes.string,
 	color_clear_label: PropTypes.string,
+
+	// Conditional Logic fields
+	conditional_logic_affected_field_name: PropTypes.string,
 
 	// Currency fields
 	currency_decimal_handling: PropTypes.string,

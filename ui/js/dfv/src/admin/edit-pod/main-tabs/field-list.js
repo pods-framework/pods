@@ -156,6 +156,7 @@ const FieldList = ( {
 						isSecondary
 						className="pods-field-group_add_field_link"
 						onClick={ () => setShowAddFieldModal( true ) }
+						aria-label={ __( 'Add a new field to this field group', 'pods' ) }
 					>
 						{ __( 'Add Field', 'pods' ) }
 					</Button>
@@ -201,6 +202,7 @@ const FieldList = ( {
 				isSecondary
 				className="pods-field-group_add_field_link"
 				onClick={ () => setShowAddFieldModal( true ) }
+				aria-label={ __( 'Add a new field to this field group', 'pods' ) }
 			>
 				{ __( 'Add Field', 'pods' ) }
 			</Button>

@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods\Fields
  */
@@ -38,7 +40,7 @@ class PodsField_HTML extends PodsField {
 	 */
 	public function options() {
 		return [
-			static::$type . '_content' => [
+			static::$type . '_content'  => [
 				'label' => __( 'HTML Content', 'pods' ),
 				'type'  => 'code',
 			],
@@ -48,17 +50,31 @@ class PodsField_HTML extends PodsField {
 				'type'    => 'boolean',
 				'help'    => __( 'By disabling the form label, the HTML will show as full width without the label text. Only the HTML content will be displayed in the form.', 'pods' ),
 			],
-			'output_options'           => [
-				'label' => __( 'Output Options', 'pods' ),
-				'type'  => 'boolean_group',
+			'output_options'            => [
+				'label'         => __( 'Output Options', 'pods' ),
+				'type'          => 'boolean_group',
 				'boolean_group' => [
-					static::$type . '_trim'      => array(
-						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
-						'default'    => 1,
-						'type'       => 'boolean',
-						'dependency' => true,
-					),
-					static::$type . '_oembed'          => [
+					static::$type . '_trim'             => [
+						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_lines'       => [
+						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_p_brs'       => [
+						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_extra_lines' => [
+						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_oembed'           => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
@@ -67,7 +83,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Embeds',
 						],
 					],
-					static::$type . '_wptexturize'     => [
+					static::$type . '_wptexturize'      => [
 						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -76,7 +92,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
 						],
 					],
-					static::$type . '_convert_chars'   => [
+					static::$type . '_convert_chars'    => [
 						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -85,7 +101,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/convert_chars',
 						],
 					],
-					static::$type . '_wpautop'         => [
+					static::$type . '_wpautop'          => [
 						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -94,7 +110,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wpautop',
 						],
 					],
-					static::$type . '_allow_shortcode' => [
+					static::$type . '_allow_shortcode'  => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -125,8 +141,20 @@ class PodsField_HTML extends PodsField {
 		// Enforce boolean.
 		$options[ static::$type . '_no_label' ] = filter_var( pods_v( static::$type . '_no_label', $options, false ), FILTER_VALIDATE_BOOLEAN );
 
-		// @codingStandardsIgnoreLine
-		echo $this->display( $value, $name, $options, $pod, $id );
+		// Format content.
+		$options[ static::$type . '_content' ] = $this->display( $options[ static::$type . '_content' ], $name, $options, $pod, $id );
+
+		if ( isset( $options['_field_object'] ) && $options['_field_object'] instanceof Field ) {
+			$options['_field_object']->set_arg( static::$type . '_no_label', $options[ static::$type . '_no_label' ] );
+			$options['_field_object']->set_arg( static::$type . '_content', $options[ static::$type . '_content' ] );
+		}
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

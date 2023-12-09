@@ -1021,6 +1021,10 @@ class PodsMeta {
 			}
 
 			if ( $has_custom_groups ) {
+				// Clean up the dynamic groups to prevent duplicate fields showing.
+				$this->groups_cleanup( $groups, self::$groups[ $type ][ $name ] );
+
+				// Now add our custom groups to those dynamic groups.
 				$groups = array_merge( $groups, self::$groups[ $type ][ $name ] );
 			}
 		} elseif ( $has_custom_groups ) {
@@ -1058,6 +1062,50 @@ class PodsMeta {
 		pods_static_cache_set( $cache_key, $groups, __CLASS__ . '/groups_get' );
 
 		return $groups;
+	}
+
+	/**
+	 * Clean up the groups to prevent duplicate fields from showing based on reference groups.
+	 *
+	 * @since 3.0.7
+	 *
+	 * @param array $groups           The groups to clean up.
+	 * @param array $reference_groups The groups to reference for fields that take precedence.
+	 */
+	public function groups_cleanup( array &$groups, array &$reference_groups ) {
+		$found_fields = [];
+
+		// Remove duplicates fields from reference groups.
+		foreach ( $reference_groups as $group_key => $reference_group ) {
+			$group_fields = wp_list_pluck( $reference_group['fields'], 'name' );
+
+			foreach ( $group_fields as $field_key => $field_name ) {
+				// Remove duplicate fields.
+				if ( isset( $found_fields[ $field_name ] ) ) {
+					unset( $reference_groups[ $group_key ]['fields'][ $field_key ] );
+
+					continue;
+				}
+
+				$found_fields[ $field_name ] = true;
+			}
+		}
+
+		// Remove duplicates fields from groups.
+		foreach ( $groups as $group_key => $group ) {
+			$group_fields = wp_list_pluck( $group['fields'], 'name' );
+
+			foreach ( $group_fields as $field_key => $field_name ) {
+				// Remove duplicate fields.
+				if ( isset( $found_fields[ $field_name ] ) ) {
+					unset( $groups[ $group_key ]['fields'][ $field_key ] );
+
+					continue;
+				}
+
+				$found_fields[ $field_name ] = true;
+			}
+		}
 	}
 
 	/**
@@ -1258,7 +1306,13 @@ class PodsMeta {
 			return;
 		}
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_meta_type ), 'hidden' );
+		static $nonced_types = [];
+
+		if ( ! isset( $nonced_types[ $pod_meta_type ] ) ) {
+			$nonced_types[ $pod_meta_type ] = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_meta_type ), 'hidden' );
+		}
 		?>
 		<table class="form-table pods-metabox pods-admin pods-dependency">
 			<?php
@@ -1478,7 +1532,8 @@ class PodsMeta {
 
 				$pod->save( $data, null, $id, array(
 					'is_new_item' => $is_new_item,
-					'podsmeta'    => true
+					'podsmeta'    => true,
+					'from'        => 'process_form_meta',
 				) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
@@ -1706,7 +1761,10 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array(
+				'podsmeta' => true,
+				'from'     => 'process_form_meta',
+			) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'post' );
 
@@ -1791,7 +1849,13 @@ class PodsMeta {
 
 		$pod = null;
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_taxonomy' ), 'hidden' );
+		static $nonced_types = [];
+
+		if ( ! isset( $nonced_types[ $taxonomy_name ] ) ) {
+			$nonced_types[ $taxonomy_name ] = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $taxonomy_name ), 'hidden' );
+		}
 
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
@@ -1865,7 +1929,7 @@ class PodsMeta {
 			$is_new_item = true;
 		}
 
-		if ( empty( $_POST ) || ! wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_taxonomy' ) ) {
+		if ( empty( $_POST ) || ! wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_' . $taxonomy ) ) {
 			return $term_id;
 		}
 
@@ -1958,7 +2022,11 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array(
+				'is_new_item' => $is_new_item,
+				'podsmeta'    => true,
+				'from'        => 'process_form_meta',
+			) );
 		}
 
 		pods_no_conflict_off( 'taxonomy' );
@@ -2031,6 +2099,16 @@ class PodsMeta {
 		$id  = $user_id;
 		$pod = null;
 
+		static $nonced = false;
+
+		$show_nonce = true;
+
+		if ( ! $nonced ) {
+			$nonced = true;
+		} else {
+			$show_nonce = false;
+		}
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -2090,14 +2168,20 @@ class PodsMeta {
 				<fieldset class="bbp-form pods-meta">
 					<legend><?php echo wp_kses_post( $group['label'] ); ?></legend>
 
-					<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+					<?php if ( $show_nonce ) { ?>
+						<?php $show_nonce = false; ?>
+						<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+					<?php } ?>
 
 					<?php pods_view( PODS_DIR . 'ui/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) ); ?>
 				</fieldset>
 			<?php } else { ?>
 				<h3><?php echo wp_kses_post( $group['label'] ); ?></h3>
 
-				<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+				<?php if ( $show_nonce ) { ?>
+					<?php $show_nonce = false; ?>
+					<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+				<?php } ?>
 
 				<table class="form-table pods-meta">
 					<tbody>
@@ -2197,7 +2281,11 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+				$pod->save( $data, null, $id, array(
+					'is_new_item' => $is_new_item,
+					'podsmeta'    => true,
+					'from'        => 'process_form_meta',
+				) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_user_meta( $id, $field, $value );
@@ -2266,7 +2354,13 @@ class PodsMeta {
 		$id  = null;
 		$pod = null;
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
+		static $nonced = false;
+
+		if ( ! $nonced ) {
+			$nonced = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment'  ), 'hidden' );
+		}
 
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
@@ -2320,6 +2414,8 @@ class PodsMeta {
 			};
 
 			foreach ( $fields as $field ) {
+				$field['name_prefix'] = $field_prefix;
+
 				$hidden_field = 1 === (int) pods_v( 'hidden', $field, 0 );
 
 				if (
@@ -2430,7 +2526,13 @@ class PodsMeta {
 
 		$hidden_fields = array();
 
-		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
+		static $nonced = false;
+
+		if ( ! $nonced ) {
+			$nonced = true;
+
+			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment'  ), 'hidden' );
+		}
 		?>
 		<table class="form-table editcomment pods-metabox">
 			<?php
@@ -2612,7 +2714,10 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array(
+				'podsmeta' => true,
+				'from'     => 'process_form_meta',
+			) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'comment' );
 
@@ -4202,7 +4307,10 @@ class PodsMeta {
 			}
 		}
 
-		$pod->save( $meta_key, $meta_value, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );
+		$pod->save( $meta_key, $meta_value, $object_id, array(
+			'podsmeta_direct' => true,
+			'error_mode'      => 'false',
+		) );
 
 		return $object_id;
 	}
@@ -4361,7 +4469,7 @@ class PodsMeta {
 
 			$pod->save( array( $meta_key => null ), null, $object_id, array(
 				'podsmeta_direct' => true,
-				'error_mode'      => 'false'
+				'error_mode'      => 'false',
 			) );
 		}
 

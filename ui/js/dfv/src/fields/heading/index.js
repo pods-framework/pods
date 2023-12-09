@@ -26,7 +26,7 @@ const Heading = ( props ) => {
 		: undefined;
 
 	return (
-		<HeadingTag type={ headingTag } className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
+		<HeadingTag type={ headingTag } className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` } id={ `heading-${ name }` }>
 			{ label }
 			{ shouldShowHelpText && (
 				<HelpTooltip

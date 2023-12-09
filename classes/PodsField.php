@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Value_Field;
@@ -573,18 +574,18 @@ class PodsField {
 	 * @return array
 	 */
 	public function build_dfv_field_config( $args ) {
-		if ( $args->options instanceof Field ) {
-			$config = $args->options->export();
-
-			$config['repeatable']                  = $args->options->is_repeatable();
-			$config['repeatable_add_new_label']    = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
-			$config['repeatable_reorder']          = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
-			$config['repeatable_limit']            = $args->options->get_limit();
-			$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
-			$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
-		} else {
-			$config = (array) $args->options;
+		if ( ! $args->options instanceof Field ) {
+			$args->options = new Field( (array) $args->options );
 		}
+
+		$config = $args->options->export();
+
+		$config['repeatable']                  = $args->options->is_repeatable();
+		$config['repeatable_add_new_label']    = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
+		$config['repeatable_reorder']          = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
+		$config['repeatable_limit']            = $args->options->get_limit();
+		$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
+		$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
 
 		// Backcompat readonly argument handling.
 		if ( isset( $config['readonly'] ) ) {
@@ -624,6 +625,9 @@ class PodsField {
 		if ( ! isset( $config['placeholder'] ) || ! is_string( $config['placeholder'] ) ) {
 			$config['placeholder'] = '';
 		}
+
+		$config['label']       = pods_kses_exclude_p( $config['label'] );
+		$config['description'] = pods_kses_exclude_p( $config['description'] );
 
 		return $config;
 
@@ -977,16 +981,44 @@ class PodsField {
 			return $value;
 		}
 
+		$trim       = true;
+		$trim_p_brs = false;
+		$trim_lines = false;
+
 		if ( $options ) {
 			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 			// Check if we should trim the content.
-			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
-				return $value;
-			}
+			$trim = 1 === (int) pods_v( static::$type . '_trim', $options, 0 );
+
+			// Check if we should remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$trim_p_brs = 1 === (int) pods_v( static::$type . '_trim_p_brs', $options, 0 );
+
+			// Check if we should remove whitespace at the end of lines.
+			$trim_lines = 1 === (int) pods_v( static::$type . '_trim_lines', $options, 0 );
 		}
 
-		return trim( $value );
+		if ( $trim_p_brs ) {
+			// Remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$value = preg_replace( '/(<p[^>]*>\s*(\s|&nbsp;|<br\s*?\/?>)*\s*<\/?p>)/Umi', '', $value );
+
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim_lines ) {
+			// Trim whitespace at the end of lines.
+			$value = preg_replace( '/\h+$/m', '', $value );
+
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim ) {
+			$value = trim( $value );
+		}
+
+		return $value;
 	}
 
 	/**

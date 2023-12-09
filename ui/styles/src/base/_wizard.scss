@@ -161,6 +161,19 @@ $button-outline-color: #4f94d4;
 				padding: 7px 10px;
 				font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
 			}
+			/* 
+				issue #7118 
+				h3 color: inherit - improve color contract (accessibility)
+				 a color: inherit - improve color contract (accessibility)
+			*/
+			.qtip-content {
+				h3 {
+					color: inherit;
+				}
+				a {
+					color: inherit;
+				}
+			}
 			.inside {
 				padding: 0;
 

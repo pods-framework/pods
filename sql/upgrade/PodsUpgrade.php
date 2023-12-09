@@ -185,7 +185,11 @@ class PodsUpgrade {
 			}
 		}
 
-		$progress = (array) get_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ), array() );
+		if ( empty( $this->version ) ) {
+			return;
+		}
+
+		$progress = (array) get_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ), [] );
 
 		if ( ! empty( $progress ) ) {
 			$this->progress = array_merge( $this->progress, $progress );

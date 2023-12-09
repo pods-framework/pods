@@ -280,7 +280,7 @@ class PodsAdmin {
 									if ( 'edit' === pods_v( 'action', 'get', 'manage' ) ) {
 										$all_title = pods_v( 'label_edit_item', $pod['options'], __( 'Edit', 'pods' ) . ' ' . $singular_label );
 									} elseif ( 'add' === pods_v( 'action', 'get', 'manage' ) ) {
-										$all_title = pods_v( 'label_add_new_item', $pod['options'], __( 'Add New', 'pods' ) . ' ' . $singular_label );
+										$all_title = pods_v( 'label_add_new_item', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
 									}
 								}
 
@@ -307,8 +307,8 @@ class PodsAdmin {
 								add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
 							}
 
-							$add_title = pods_v( 'label_add_new_item', $pod['options'], __( 'Add New', 'pods' ) . ' ' . $singular_label );
-							$add_label = pods_v( 'label_add_new', $pod['options'], __( 'Add New', 'pods' ) );
+							$add_title = pods_v( 'label_add_new_item', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
+							$add_label = pods_v( 'label_add_new', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
 
 							add_submenu_page(
 								$parent_page, $add_title, $add_label, 'read', $page, array(
@@ -767,7 +767,10 @@ class PodsAdmin {
 			$page_title = pods_v( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data['name'] ) ), true );
 			$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod->pod_data );
 
+			$pod_pod_name = $pod->pod;
+
 			$ui = array(
+				'id'               => $pod_pod_name,
 				'pod'              => $pod,
 				'fields'           => array(
 					'edit' => $pod->pod_data->get_fields(),
@@ -782,8 +785,6 @@ class PodsAdmin {
 				'icon'             => pods_evaluate_tags( pods_v( 'menu_icon', $pod->pod_data['options'] ), true ),
 				'actions_disabled' => $actions_disabled,
 			);
-
-			$pod_pod_name = $pod->pod;
 
 			$ui = apply_filters( "pods_admin_ui_{$pod_pod_name}", apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
 
@@ -1422,12 +1423,12 @@ class PodsAdmin {
 
 		if ( ! $callouts ) {
 			$callouts = array(
-				'friends_2022_30' => 1,
+				'friends_2023_docs' => 1,
 			);
 		}
 
 		// Handle Friends of Pods callout logic.
-		$callouts['friends_2022_30'] = ! isset( $callouts['friends_2022_30'] ) || $callouts['friends_2022_30'] || $force_callouts ? 1 : 0;
+		$callouts['friends_2023_docs'] = ! isset( $callouts['friends_2023_docs'] ) || $callouts['friends_2023_docs'] || $force_callouts ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.
@@ -1447,9 +1448,6 @@ class PodsAdmin {
 	 * @since 2.7.17
 	 */
 	public function handle_callouts_updates() {
-		// Don't show callouts right now until Pods 3.0.
-		return;
-
 		$callouts = get_option( 'pods_callouts' );
 
 		if ( ! $callouts ) {
@@ -1462,8 +1460,8 @@ class PodsAdmin {
 		$is_demo = pods_is_demo();
 
 		// Disable Friends of Pods callout.
-		if ( $is_demo || 'friends_2022_30' === $callout_dismiss ) {
-			$callouts['friends_2022_30'] = 0;
+		if ( $is_demo || 'friends_2023_docs' === $callout_dismiss ) {
+			$callouts['friends_2023_docs'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
 		} elseif ( 'reset' === $callout_dismiss ) {
@@ -1511,8 +1509,8 @@ class PodsAdmin {
 
 		$callouts = $this->get_callouts();
 
-		if ( ! empty( $callouts['friends_2022_30'] ) ) {
-			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2022_30.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $callouts['friends_2023_docs'] ) ) {
+			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2023_docs.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 	}
 
@@ -1821,18 +1819,21 @@ class PodsAdmin {
 
 		// Get objects from storage.
 		$pod_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_pod',
+			'object_type'  => 'pod',
+			'name'         => '_pods_pod',
+			'bypass_cache' => true,
 		] );
 
 		$group_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_group',
+			'object_type'  => 'pod',
+			'name'         => '_pods_group',
+			'bypass_cache' => true,
 		] );
 
 		$field_object = $storage->get( [
-			'object_type' => 'pod',
-			'name'        => '_pods_field',
+			'object_type'  => 'pod',
+			'name'         => '_pods_field',
+			'bypass_cache' => true,
 		] );
 
 		$global_config = [
@@ -1842,18 +1843,24 @@ class PodsAdmin {
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'group'      => $group_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'field'      => $field_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 				'include_field_data'   => true,
+				'bypass_cache'         => true,
+                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 		];
 
@@ -2026,14 +2033,15 @@ class PodsAdmin {
 		$field_args['group']  = 'group/' . $parent . '/' . $group_name;
 
 		$dfv_args = (object) [
-			'id'      => 0,
-			'name'    => $field_args['name'],
-			'value'   => '',
-			'pod'     => null,
-			'type'    => pods_v( 'type', $field_args ),
-			'options' => array_merge( [
+			'id'              => 0,
+			'name'            => $field_args['name'],
+			'value'           => '',
+			'pod'             => null,
+			'type'            => pods_v( 'type', $field_args ),
+			'options'         => array_merge( [
 				'id' => 0,
-			], $field_args )
+			], $field_args ),
+			'build_item_data' => true,
 		];
 
 		if ( ! empty( $dfv_args->type ) ) {
@@ -2161,6 +2169,9 @@ class PodsAdmin {
 	 * Get settings administration view
 	 */
 	public function admin_settings() {
+		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
 		/**
 		 * Allow hooking into our settings page to set up hooks.
 		 *
@@ -2720,13 +2731,13 @@ class PodsAdmin {
 		$params = (object) $params;
 
 		$methods = array(
-			'add_pod'                 => array( 'priv' => true ),
-			'save_pod'                => array( 'priv' => true ),
-			'load_sister_fields'      => array( 'priv' => true ),
-			'process_form'            => array( 'custom_nonce' => true ),
+			'add_pod'            => array( 'priv' => true ),
+			'save_pod'           => array( 'priv' => true ),
+			'load_sister_fields' => array( 'priv' => true ),
+			'process_form'       => array( 'custom_nonce' => true ),
 			// priv handled through nonce
-							'upgrade' => array( 'priv' => true ),
-			'migrate'                 => array( 'priv' => true ),
+			'upgrade'            => array( 'priv' => true ),
+			'migrate'            => array( 'priv' => true ),
 		);
 
 		/**
@@ -3065,47 +3076,61 @@ class PodsAdmin {
 			return $options;
 		}
 
-		$options['rest'][ __( 'Read/ Write', 'pods' ) ] = [
+		$layout_non_input_field_types = PodsForm::layout_field_types() + PodsForm::non_input_field_types();
+
+		$options['rest'][ __( 'Read/Write', 'pods' ) ] = [
 			'rest_read'  => [
-				'label'   => __( 'Read via REST API', 'pods' ),
-				'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
-				'type'    => 'boolean',
-				'default' => '',
+				'label'       => __( 'Read via REST API', 'pods' ),
+				'help'        => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'type'        => 'boolean',
+				'default'     => '',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'rest_write' => [
-				'label'   => __( 'Write via REST API', 'pods' ),
-				'help'    => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
-				'type'    => 'boolean',
-				'default' => '',
+				'label'       => __( 'Write via REST API', 'pods' ),
+				'help'        => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'type'        => 'boolean',
+				'default'     => '',
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 		];
 
 		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
 			'rest_pick_response' => [
-				'label'      => __( 'Response Type', 'pods' ),
-				'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
-				'type'       => 'pick',
+				'label'              => __( 'Response Type', 'pods' ),
+				'help'               => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
+				'type'               => 'pick',
 				'pick_format_single' => 'dropdown',
-				'default'    => 'array',
-				'depends-on' => [
+				'default'            => 'array',
+				'depends-on'         => [
 					'type' => 'pick',
 				],
-				'dependency' => true,
-				'data'       => [
+				'dependency'         => true,
+				'data'               => [
 					'array'  => __( 'All fields', 'pods' ),
 					'id'     => __( 'ID only', 'pods' ),
 					'name'   => __( 'Name only', 'pods' ),
 					'custom' => __( 'Custom return (specify field to return)', 'pods' ),
 				],
+				'excludes-on'        => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'rest_pick_depth'    => [
-				'label'      => __( 'Depth', 'pods' ),
-				'help'       => __( 'How far to traverse relationships in response. 1 will get you all of the fields on the related item. 2 will get you all of those fields plus related items and their fields. The higher the depth, the more data will be returned and the slower performance the REST API calls will be. Updates to this field do NOT take depth into account, so you will always send the ID of the related item when saving.', 'pods' ),
-				'type'       => 'number',
-				'default'    => '1',
-				'depends-on' => [
+				'label'       => __( 'Depth', 'pods' ),
+				'help'        => __( 'How far to traverse relationships in response. 1 will get you all of the fields on the related item. 2 will get you all of those fields plus related items and their fields. The higher the depth, the more data will be returned and the slower performance the REST API calls will be. Updates to this field do NOT take depth into account, so you will always send the ID of the related item when saving.', 'pods' ),
+				'type'        => 'number',
+				'default'     => '1',
+				'depends-on'  => [
 					'type'               => 'pick',
 					'rest_pick_response' => 'array',
+				],
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
 				],
 			],
 			'rest_pick_custom'   => [
@@ -3118,12 +3143,17 @@ class PodsAdmin {
 					'type'               => 'pick',
 					'rest_pick_response' => 'custom',
 				],
+				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
 			],
 			'rest_pick_notice'   => [
 				'label'        => 'Relationship Options',
 				'type'         => 'html',
 				'html_content' => __( 'If you have a relationship field, you will see additional options to customize here.', 'pods' ),
-				'excludes-on'  => [ 'type' => 'pick' ],
+				'excludes-on'  => [
+					'type' => [ 'pick' ] + $layout_non_input_field_types,
+				],
 			],
 		];
 

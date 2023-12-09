@@ -89,6 +89,22 @@ class PodsField_PickTest extends Pods_UnitTestCase {
 		$expected = 'item1 | item2 | item3';
 
 		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
+
+		// List display format.
+
+		$options['pick_display_format_multi'] = 'ul';
+
+		$expected = '<ul><li>item1</li><li>item2</li><li>item3</li></ul>';
+
+		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
+
+		// Line break display format.
+
+		$options['pick_display_format_multi'] = 'br';
+
+		$expected = 'item1<br />item2<br />item3';
+
+		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
 	}
 
 	/**

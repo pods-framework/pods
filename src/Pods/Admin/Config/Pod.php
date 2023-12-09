@@ -156,17 +156,19 @@ class Pod extends Base {
 					'object_type' => [ 'post_type' ],
 				],
 				'label_add_new'                    => [
-					'label'       => __( 'Add New', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => [ 'post_type', 'pod' ],
-				],
-				'label_add_new_item'               => [
-					'label'               => __( 'Add new %s', 'pods' ),
+					'label'               => __( 'Add New %s (links)', 'pods' ),
 					'label_param'         => 'label_singular',
 					'label_param_default' => __( 'Item', 'pods' ),
-					'help'                => __( 'help', 'pods' ),
+					'help'                => __( 'This is the text used for the "Add New" links in the menu and when editing an existing item. This "add_new" text used to be separate from the newer "add_new_item" but as of WordPress 6.4 they are following the same default context instead of just "Add New" as the text.', 'pods' ),
+					'type'                => 'text',
+					'default'             => '',
+					'object_type'         => [ 'post_type', 'pod' ],
+				],
+				'label_add_new_item'               => [
+					'label'               => __( 'Add new %s (Add New screen title)', 'pods' ),
+					'label_param'         => 'label_singular',
+					'label_param_default' => __( 'Item', 'pods' ),
+					'help'                => __( 'This is the text used for the "Add New" screen title.', 'pods' ),
 					'type'                => 'text',
 					'default'             => '',
 				],
@@ -812,17 +814,25 @@ class Pod extends Base {
 					'dependency'            => true,
 				],
 				'capability_type_custom'  => [
-					'label'      => __( 'Custom User Capability', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => [ 'capability_type' => 'custom' ],
+					'label'            => __( 'Custom User Capability', 'pods' ),
+					'help'             => __( 'help', 'pods' ),
+					'type'             => 'text',
+					'text_placeholder' => pods_v( 'name', $pod ),
+					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'capability_type_extra'   => [
 					'label'             => __( 'Additional User Capabilities', 'pods' ),
 					'help'              => __( 'Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
+					'boolean_yes_label' => '',
+				],
+				'disable_create_posts'    => [
+					'label'             => __( 'Disable Add New forms', 'pods' ),
+					'help'              => __( 'If disabled, the Add New form will be disabled on the WordPress post editor".', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => false,
+					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
 				'has_archive'             => [
@@ -1006,6 +1016,16 @@ class Pod extends Base {
 					'boolean_yes_label' => __( 'Include posts from this post type when deleting authors and choosing not to reassign posts to a new author.', 'pods' ),
 				],
 			];
+
+			// Add support for disabling Quick Edit in WP 6.4+.
+			if ( pods_version_check( 'wp', '6.4-beta-1' ) ) {
+				$options['advanced']['post_type_supports']['boolean_group']['supports_quick_edit'] = [
+					'name'    => 'supports_quick_edit',
+					'label'   => __( 'Quick Edit', 'pods' ),
+					'type'    => 'boolean',
+					'default' => 1,
+				];
+			}
 
 			/**
 			 * Allow filtering the list of supported features for the post type
@@ -1253,11 +1273,11 @@ class Pod extends Base {
 					'dependency'            => true,
 				],
 				'capability_type_custom'   => [
-					'label'      => __( 'Custom User Capability', 'pods' ),
-					'help'       => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
-					'type'       => 'text',
-					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => [ 'capability_type' => 'custom' ],
+					'label'            => __( 'Custom User Capability', 'pods' ),
+					'help'             => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
+					'type'             => 'text',
+					'text_placeholder' => pods_v( 'name', $pod ),
+					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'query_var'                => [
 					'label'             => __( 'Query Var', 'pods' ),
@@ -1313,6 +1333,16 @@ class Pod extends Base {
 					'excludes-on' => [ 'default_term_name' => '' ],
 				],
 			];
+
+			// Add support for disabling Quick Edit in WP 6.4+.
+			if ( pods_version_check( 'wp', '6.4-beta-1' ) ) {
+				$options['advanced']['supports_quick_edit'] = [
+					'name'    => 'supports_quick_edit',
+					'label'   => __( 'Enable Quick Edit', 'pods' ),
+					'type'    => 'boolean',
+					'default' => 1,
+				];
+			}
 
 			$related_objects = PodsForm::field_method( 'pick', 'related_objects', true );
 

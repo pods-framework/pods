@@ -404,7 +404,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 							}
 
 							/** This filter is documented in classes/PodsMeta.php */
-							$title = apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->pod_data['type'], $pod->pod );
+							$title = apply_filters( 'pods_meta_default_box_title', $title, $pod->pod_data, $fields, $pod->pod_data['type'], $pod->pod );
 							?>
 							<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
 								<?php PodsForm::render_postbox_header( $title ); ?>

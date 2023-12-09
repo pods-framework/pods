@@ -152,195 +152,10 @@ class PodsInit {
 		self::$upgrade_needed = $this->needs_upgrade();
 
 		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'run' ] );
 		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
 		add_action( 'after_setup_theme', [ $this, 'after_setup_theme' ] );
 		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
-
-		// Setup common info for after TEC/ET load.
-		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
-		add_action( 'plugins_loaded', [ $this, 'maybe_load_common' ], 11 );
-		add_action( 'tribe_common_loaded', [ $this, 'run' ], 11 );
-	}
-
-	/**
-	 * Setup of Common Library.
-	 *
-	 * @since 2.8.0
-	 */
-	public function maybe_set_common_lib_info() {
-		// Set up the path for /tribe-common/ loading.
-		$common_version = file_get_contents( PODS_DIR . 'tribe-common/src/Tribe/Main.php' );
-
-		// If there isn't a tribe-common version, bail.
-		if ( ! preg_match( "/const\s+VERSION\s*=\s*'([^']+)'/m", $common_version, $matches ) ) {
-			add_action( 'admin_head', [ $this, 'missing_common_libs' ] );
-
-			return;
-		}
-
-		$common_version = $matches[1];
-
-		/**
-		 * Attempt to load our Common if it's not already loaded.
-		 */
-		if ( empty( $GLOBALS['tribe-common-info'] ) ) {
-			/**
-			 * Custom tribe-common package:
-			 *
-			 * - Removed /vendor/freemius/ folder.
-			 * - Removed /lang/ folder (for now).
-			 * - Removed /src/resources/ folder (for now).
-			 */
-			$solo_install = empty( $GLOBALS['tribe-common-info'] );
-
-			// Handle stopping anything we don't want to run in Tribe Common.
-			if ( $solo_install ) {
-				// Bypass Tribe-related options.
-				$tribe_options = [
-					'tribe_settings_errors',
-					'pue_install_key_promoter',
-					'external_updates-promoter',
-					'tribe_pue_key_notices',
-					'tribe_events_calendar_options',
-					'tribe_settings_major_error',
-					'tribe_settings_sent_data',
-					'tribe_events_calendar_network_options',
-				];
-
-				$tribe_empty_options = [
-					'pue_install_key_promoter',
-					'tribe_settings_major_error',
-					'_tribe_admin_notices',
-				];
-
-				foreach ( $tribe_options as $option_name ) {
-					$return_third_param = static function() {
-						return func_get_arg( 2 );
-					};
-					$return_fourth_param = static function() {
-						return func_get_arg( 3 );
-					};
-
-					add_filter( "pre_option_{$option_name}", $return_third_param, 10, 3 );
-					add_filter( "pre_site_option_{$option_name}", $return_fourth_param, 10, 4 );
-				}
-
-				foreach ( $tribe_empty_options as $option_name ) {
-					add_filter( "pre_option_{$option_name}", '__return_null' );
-					add_filter( "pre_site_option_{$option_name}", '__return_null' );
-					add_filter( "pre_transient_{$option_name}", '__return_null' );
-				}
-
-				// Remove hooks that are added and run before we can remove them.
-				add_action( 'tribe_common_loaded', static function() {
-					$main = Tribe__Main::instance();
-
-					remove_action( 'tribe_common_loaded', [ $main, 'load_assets' ], 1 );
-					remove_action( 'plugins_loaded', [ $main, 'tribe_plugins_loaded' ], PHP_INT_MAX );
-					remove_filter( 'body_class', [ $main, 'add_js_class' ] );
-					remove_action( 'wp_footer', [ $main, 'toggle_js_class' ] );
-				}, 0 );
-
-				if ( ! defined( 'TRIBE_HIDE_MARKETING_NOTICES' ) ) {
-					define( 'TRIBE_HIDE_MARKETING_NOTICES', true );
-				}
-
-				// Disable shortcodes/customizer/widgets handling since we aren't using these.
-				add_filter( 'tribe_shortcodes_is_active', '__return_false' );
-				add_filter( 'tribe_customizer_is_active', '__return_false' );
-				add_filter( 'tribe_widgets_is_active', '__return_false' );
-
-				// Disable the Promoter auth.
-				add_filter(
-					'determine_current_user',
-					static function( $value ) {
-						remove_filter(
-							'determine_current_user',
-							pods_container_callback( 'promoter.connector', 'authenticate_user_with_connector' )
-						);
-
-						return $value;
-					},
-					9
-				);
-			}
-
-			$GLOBALS['tribe-common-info'] = [
-				'dir'     => PODS_DIR . 'tribe-common/src/Tribe',
-				'version' => $common_version,
-			];
-
-			/**
-			 * After this method we can use any `Tribe__` and `\Pods\...` classes
-			 */
-			$this->init_autoloading();
-
-			// Start up Common.
-			$main = Tribe__Main::instance();
-			$main->plugins_loaded();
-
-			// Handle anything we want to unhook/stop in Tribe Common.
-			if ( $solo_install ) {
-				// Look into any others here.
-				remove_action( 'plugins_loaded', [ 'Tribe__App_Shop', 'instance' ] );
-				remove_action( 'plugins_loaded', [ 'Tribe__Admin__Notices', 'instance' ], 1 );
-
-				/** @var Tribe__Assets $assets */
-				$assets = pods_container( 'assets' );
-				$assets->remove( 'tribe-tooltip' );
-
-				/** @var Tribe__Asset__Data $asset_data */
-				$asset_data = pods_container( 'asset.data' );
-
-				remove_action( 'admin_footer', [ $asset_data, 'render_json' ] );
-				remove_action( 'customize_controls_print_footer_scripts', [ $asset_data, 'render_json' ] );
-				remove_action( 'wp_footer', [ $asset_data, 'render_json' ] );
-
-				/** @var Tribe__Assets_Pipeline $assets_pipeline */
-				$assets_pipeline = pods_container( 'assets.pipeline' );
-				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
-
-				// Disable the Debug Bar panels.
-				add_filter( 'tribe_debug_bar_panels', '__return_empty_array', 15 );
-			}
-		}
-	}
-
-	/**
-	 * If common was registered but not ultimately loaded, register ours and load it.
-	 *
-	 * @since 2.9.2
-	 */
-	public function maybe_load_common() {
-		// Don't load if Common is already loaded or if Common info was never registered.
-		if ( empty( $GLOBALS['tribe-common-info'] ) || did_action( 'tribe_common_loaded' ) ) {
-			return;
-		}
-
-		// Reset common info so we can register ours.
-		$GLOBALS['tribe-common-info'] = null;
-
-		$this->maybe_set_common_lib_info();
-	}
-
-	/**
-	 * Display a missing-tribe-common library error.
-	 *
-	 * @since 2.8.0
-	 */
-	public function missing_common_libs() {
-		?>
-		<div class="error">
-			<p>
-				<?php
-				esc_html_e(
-					'It appears as if the tribe-common libraries cannot be found! The directory should be in the "common/" directory in the Pods plugin.',
-					'pods'
-				);
-				?>
-			</p>
-		</div>
-		<?php
 	}
 
 	/**
@@ -629,149 +444,6 @@ class PodsInit {
 		}
 
 		return $stats_tracking;
-	}
-
-	/**
-	 * Override Freemius strings.
-	 */
-	public function override_freemius_strings() {
-		$override_text = array(
-			'free'                     => __( 'Free (WordPress.org)', 'pods' ),
-			'install-free-version-now' => __( 'Install Now', 'pods' ),
-			'download-latest'          => __( 'Donate', 'pods' ),
-			'complete-the-install'     => __( 'complete the process', 'pods' ),
-		);
-
-		$freemius_addons = $this->get_freemius_addons();
-
-		fs_override_i18n( $override_text, 'pods' );
-
-		foreach ( $freemius_addons as $addon_slug => $addon ) {
-			fs_override_i18n( $override_text, $addon_slug );
-		}
-	}
-
-	/**
-	 * Filter the Freemius plugins API data.
-	 *
-	 * @since 2.7.17
-	 *
-	 * @param object $data Freemius plugins API data.
-	 *
-	 * @return object Freemius plugins API data.
-	 */
-	public function filter_freemius_plugins_api_data( $data ) {
-		if ( empty( $data->sections['features'] ) ) {
-			return $data;
-		}
-
-		$data->sections['features'] = preg_replace( '/(<span\s+class="fs-price"><\/span>)/Uim', '<span class="fs-price">Friends-only</span>', $data->sections['features'] );
-
-		return $data;
-	}
-
-	/**
-	 * Filter the Freemius add-ons HTML.
-	 *
-	 * @since 2.7.17
-	 *
-	 * @param string $html Freemius add-ons HTML.
-	 *
-	 * @return string Freemius add-ons HTML.
-	 */
-	public function filter_freemius_addons_html( $html ) {
-		$freemius_friends_addons = $this->get_freemius_friends_addons();
-
-		// Replace blank prices with Friends-only.
-		$html = preg_replace( '/<span\s+class="fs-price"><\/span>/Uim', '<span class="fs-price">Friends-only</span>', $html );
-
-		// Remove dropdown arrow for action links.
-		$html = preg_replace( '/<div\s+class="button button-primary fs-dropdown-arrow-button">/Uim', '<div class="hidden">', $html );
-
-		// Use landing page for Become a Friend link.
-		$replace = '$1<a target="_blank" rel="noopener noreferrer" href="' . esc_url( $this->get_freemius_action_link() ) . '"$2class="$3">';
-
-		// Replace all Friends-only add-on links.
-		foreach ( $freemius_friends_addons as $addon_slug => $addon ) {
-			$pattern = '/(<li class="fs-card fs-addon" data-slug="' . preg_quote( esc_attr( $addon_slug ), '/' ) . '">\s+)<a href="[^"]+"([^>]+)class="thickbox([^>]+)">/Uim';
-
-			$html = preg_replace( $pattern, $replace, $html );
-		}
-
-		return $html;
-	}
-
-	/**
-	 * Get action link URL.
-	 *
-	 * @since 2.7.17
-	 *
-	 * @param string $url Action link URL.
-	 *
-	 * @return string Action link URL.
-	 */
-	public function get_freemius_action_link( $url = null ) {
-		return 'https://friends.pods.io/add-ons/';
-	}
-
-	/**
-	 * Get list of add-ons for Freemius.
-	 *
-	 * @since 2.7.17
-	 *
-	 * @return array List of add-ons for Freemius.
-	 */
-	public function get_freemius_addons() {
-		return array(
-			'pods-beaver-builder-themer-add-on' => 'Pods Beaver Themer Add-On',
-			'pods-gravity-forms'                => 'Pods Gravity Forms Add-On',
-			'pods-alternative-cache'            => 'Pods Alternative Cache',
-			'pods-simple-relationships'         => 'Pods Simple Relationships',
-			'pods-seo'                          => 'Pods SEO',
-			'pods-ajax-views'                   => 'Pods AJAX Views',
-		);
-	}
-
-	/**
-	 * Get list of Friends-only add-ons for Freemius.
-	 *
-	 * @since TB2.7.17D
-	 *
-	 * @return array List of Friends-only add-ons for Freemius.
-	 */
-	public function get_freemius_friends_addons() {
-		return array(
-			'pods-simple-relationships' => 'Pods Simple Relationships',
-		);
-	}
-
-	/**
-	 * Sets up autoloading.
-	 *
-	 * @since 2.8.0
-	 */
-	protected function init_autoloading() {
-		$autoloader = $this->get_autoloader_instance();
-		$autoloader->register_autoloader();
-	}
-
-	/**
-	 * Returns the autoloader singleton instance to use in a context-aware manner.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @return \Tribe__Autoloader The singleton common Autoloader instance.
-	 */
-	public function get_autoloader_instance() {
-		if ( ! class_exists( 'Tribe__Autoloader' ) ) {
-			require_once $GLOBALS['tribe-common-info']['dir'] . '/Autoloader.php';
-
-			Tribe__Autoloader::instance()->register_prefixes( [
-				'Tribe__' => $GLOBALS['tribe-common-info']['dir'],
-			] );
-		}
-
-		return Tribe__Autoloader::instance();
 	}
 
 	/**
@@ -1072,8 +744,21 @@ class PodsInit {
 
 		$config = [
 			'wp_locale'      => $GLOBALS['wp_locale'],
+			'admin_url'      => admin_url(),
 			'userLocale'     => str_replace( '_', '-', get_user_locale() ),
 			'currencies'     => PodsField_Currency::data_currencies(),
+			'fieldTypeInfo'  => [
+				'tableless'          => PodsForm::tableless_field_types(),
+				'file'               => PodsForm::file_field_types(),
+				'text'               => PodsForm::text_field_types(),
+				'number'             => PodsForm::number_field_types(),
+				'date'               => PodsForm::date_field_types(),
+				'layout'             => PodsForm::layout_field_types(),
+				'non_input'          => PodsForm::non_input_field_types(),
+				'separator_excluded' => PodsForm::separator_excluded_field_types(),
+				'simple_tableless'   => PodsForm::simple_tableless_objects(),
+				'repeatable'         => PodsForm::repeatable_field_types(),
+			],
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
 				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
@@ -1482,6 +1167,7 @@ class PodsInit {
 					'revisions'       => (boolean) pods_v( 'supports_revisions', $post_type, false ),
 					'page-attributes' => (boolean) pods_v( 'supports_page_attributes', $post_type, false ),
 					'post-formats'    => (boolean) pods_v( 'supports_post_formats', $post_type, false ),
+					'quick-edit'      => (boolean) pods_v( 'supports_quick_edit', $post_type, true ),
 				);
 
 				// Custom Supported
@@ -1589,10 +1275,15 @@ class PodsInit {
 					'has_archive'         => ( (boolean) pods_v( 'has_archive', $post_type, false ) ) ? pods_v( 'has_archive_slug', $post_type, true, true ) : false,
 					'rewrite'             => $cpt_rewrite,
 					'query_var'           => ( false !== (boolean) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
-					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
 					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
 					'_provider'           => 'pods',
 				);
+
+				if ( (boolean) pods_v( 'disable_create_posts', $post_type, false ) ) {
+					$pods_post_types[ $post_type_name ]['capabilities'] = [
+						'create_posts' => false,
+					];
+				}
 
 				// Check if we have a custom archive page slug.
 				if ( is_string( $pods_post_types[ $post_type_name ]['has_archive'] ) ) {
@@ -2122,6 +1813,50 @@ class PodsInit {
 	}
 
 	/**
+	 * Filter whether Quick Edit should be enabled for the given post type.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool   $enable    Whether to enable the Quick Edit functionality.
+	 * @param string $post_type The post type name.
+	 *
+	 * @return bool Whether to enable the Quick Edit functionality.
+	 */
+	public function quick_edit_enabled_for_post_type( bool $enable, string $post_type ) {
+		if ( ! $enable ) {
+			return $enable;
+		}
+
+		if ( ! isset( PodsMeta::$post_types[ $post_type ] ) ) {
+			return $enable;
+		}
+
+		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$post_types[ $post_type ], true );
+	}
+
+	/**
+	 * Filter whether Quick Edit should be enabled for the given taxonomy.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool   $enable   Whether to enable the Quick Edit functionality.
+	 * @param string $taxonomy The taxonomy name.
+	 *
+	 * @return bool Whether to enable the Quick Edit functionality.
+	 */
+	public function quick_edit_enabled_for_taxonomy( bool $enable, string $taxonomy ) {
+		if ( ! $enable ) {
+			return $enable;
+		}
+
+		if ( ! isset( PodsMeta::$taxonomies[ $taxonomy ] ) ) {
+			return $enable;
+		}
+
+		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$taxonomies[ $taxonomy ], true );
+	}
+
+	/**
 	 * Check if we need to flush WordPress rewrite rules
 	 * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
 	 */
@@ -2257,7 +1992,7 @@ class PodsInit {
 		if ( 'post_type' === $type ) {
 			$labels['menu_name']                = strip_tags( pods_v( 'menu_name', $labels, $label, true ) );
 			$labels['name_admin_bar']           = pods_v( 'name_admin_bar', $labels, $singular_label, true );
-			$labels['add_new']                  = pods_v( 'add_new', $labels, __( 'Add New', 'pods' ), true );
+			$labels['add_new']                  = pods_v( 'add_new', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
 			$labels['add_new_item']             = pods_v( 'add_new_item', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
 			$labels['new_item']                 = pods_v( 'new_item', $labels, sprintf( __( 'New %s', 'pods' ), $singular_label ), true );
 			$labels['edit']                     = pods_v( 'edit', $labels, __( 'Edit', 'pods' ), true );
@@ -2749,32 +2484,11 @@ class PodsInit {
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
 
-		// Remove Common menus
-		add_action( 'admin_menu', array( $this, 'remove_common_menu' ), 11 );
-		add_action( 'network_admin_menu', array( $this, 'remove_common_network_menu' ), 11 );
-	}
+		// Support for quick edit in WP 6.4+.
+		add_filter( 'quick_edit_enabled_for_post_type', [ $this, 'quick_edit_enabled_for_post_type' ], 10, 2 );
+		add_filter( 'quick_edit_enabled_for_taxonomy', [ $this, 'quick_edit_enabled_for_taxonomy' ], 10, 2 );
 
-	/**
-	 * Remove Common menu.
-	 *
-	 * @since 2.8.0
-	 */
-	public function remove_common_menu() {
-		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
-			remove_menu_page( 'tribe-common' );
-		}
-	}
-
-	/**
-	 * Remove Common network menu.
-	 *
-	 * @since 2.8.0
-	 */
-	public function remove_common_network_menu() {
-		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
-			remove_submenu_page( 'settings.php', 'tribe-common' );
-			remove_submenu_page( 'settings.php', 'tribe-common-help' );
-		}
+		require_once PODS_DIR . 'includes/compatibility.php';
 	}
 
 	/**

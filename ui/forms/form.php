@@ -107,14 +107,13 @@ $submit_result = null;
 if ( isset( $_POST['_pods_nonce'] ) ) {
 	try {
 		$params = pods_unslash( (array) $_POST );
-		$new_id     = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 
-		$submit_result = 0 < $new_id;
+		$submit_result = 0 !== $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 	} catch ( Exception $e ) {
 		echo $obj->error( $e->getMessage() );
 	}
 } elseif ( isset( $_GET['do'] ) ) {
-	$submit_result = 0 < $pod->id();
+	$submit_result = 0 !== $pod->id();
 }
 
 if ( null !== $submit_result ) {

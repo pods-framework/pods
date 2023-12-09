@@ -27,7 +27,7 @@ import { requiredValidator } from 'dfv/src/helpers/validators';
 import { toBool } from 'dfv/src/helpers/booleans';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import isFieldRepeatable from 'dfv/src/helpers/isFieldRepeatable';
-import useDependencyCheck from 'dfv/src/hooks/useDependencyCheck';
+import useConditionalLogic from 'dfv/src/hooks/useConditionalLogic';
 import useValidation from 'dfv/src/hooks/useValidation';
 import useHideContainerDOM from 'dfv/src/components/field-wrapper/useHideContainerDOM';
 
@@ -39,6 +39,7 @@ import RepeatableFieldList from './repeatable-field-list';
 
 export const FieldWrapper = ( props ) => {
 	const {
+		storeKey,
 		field = {},
 		podName,
 		podType,
@@ -119,15 +120,65 @@ export const FieldWrapper = ( props ) => {
 		setOptionValue( name, newValue );
 	};
 
+	// Maybe handle updating the value to the default option if empty.
+	if (
+		'pick' === field?.type
+		&& (
+			'single' === field?.pick_format_type
+			|| 'undefined' === typeof field.pick_format_type
+		)
+		&& (
+			'dropdown' === field?.pick_format_single
+			|| 'undefined' === typeof field.pick_format_single
+		)
+		&& ! Boolean( parseInt( field?.pick_show_select_text ) )
+		&& field?.required
+	) {
+		// Check if we have a field value.
+		let fieldValue = undefined;
+		let fieldVariation = undefined;
+
+		let variations = [
+			field.name,
+			'pods_meta_' + field.name,
+			'pods_field_' + field.name,
+		];
+
+		variations.every( variation => {
+			// Stop the loop if we found the value we were looking for.
+			if ( 'undefined' !== typeof allPodValues[ variation ] ) {
+				fieldValue = allPodValues[ variation ];
+				fieldVariation = variation;
+
+				return false;
+			}
+
+			// Continue to the next variation.
+			return true;
+		} );
+
+		if (
+			'' === fieldValue
+			|| (
+				'undefined' !== typeof field?.data['']
+				&& field?.data[''] === fieldValue
+			)
+		) {
+			setValue( field?.default ?? '' );
+
+			allPodValues[ fieldVariation ] = field?.default ?? '';
+		}
+	}
+
 	// Calculate dependencies.
-	const meetsDependencies = useDependencyCheck(
+	const meetsConditionalLogic = useConditionalLogic(
 		field,
 		allPodValues,
 		allPodFieldsMap,
 	);
 
 	// Use hook to hide the container element
-	useHideContainerDOM( name, fieldRef, meetsDependencies );
+	useHideContainerDOM( name, fieldRef, meetsConditionalLogic );
 
 	// The only validator set up by default is to validate a required
 	// field, but the field child component may set additional rules.
@@ -142,7 +193,7 @@ export const FieldWrapper = ( props ) => {
 	);
 
 	// Don't render a field that hasn't had its dependencies met.
-	if ( ! meetsDependencies ) {
+	if ( ! meetsConditionalLogic ) {
 		return <span ref={ fieldRef } />;
 	}
 
@@ -167,6 +218,7 @@ export const FieldWrapper = ( props ) => {
 					if ( true === isBooleanGroupField ) {
 						return (
 							<FieldComponent
+								storeKey={ storeKey }
 								values={ values }
 								podName={ podName }
 								podType={ podType }
@@ -184,6 +236,7 @@ export const FieldWrapper = ( props ) => {
 					if ( true === isRepeatable ) {
 						return (
 							<RepeatableFieldList
+								storeKey={ storeKey }
 								fieldConfig={ processedFieldConfig }
 								valuesArray={ valuesArray }
 								FieldComponent={ FieldComponent }
@@ -199,6 +252,7 @@ export const FieldWrapper = ( props ) => {
 
 					return (
 						<FieldComponent
+							storeKey={ storeKey }
 							value={ value }
 							podName={ podName }
 							podType={ podType }
@@ -243,6 +297,11 @@ export const FieldWrapper = ( props ) => {
 };
 
 FieldWrapper.propTypes = {
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
+
 	/**
 	 * Field config.
 	 */
@@ -331,12 +390,9 @@ const MemoizedFieldWrapper = React.memo(
 
 		// Look up the dependencies, we may need to re-render if any of the
 		// values have changed.
-		const allDependencyFieldSlugs = [
-			...Object.keys( nextProps.field[ 'depends-on' ] || {} ),
-			...Object.keys( nextProps.field[ 'depends-on-any' ] || {} ),
-			...Object.keys( nextProps.field[ 'excludes-on' ] || {} ),
-			...Object.keys( nextProps.field[ 'wildcard-on' ] || {} ),
-		];
+		const allDependencyFieldSlugs = ( nextProps.field?.conditional_logic?.rules || [] ).map(
+			( rule ) => rule.field
+		);
 
 		// If it's a boolean group, there are also subfields to check.
 		if ( 'boolean_group' === nextProps.field?.type ) {
@@ -344,10 +400,9 @@ const MemoizedFieldWrapper = React.memo(
 
 			subfields.forEach( ( subfield ) => {
 				allDependencyFieldSlugs.push(
-					...Object.keys( subfield[ 'depends-on' ] || {} ),
-					...Object.keys( subfield[ 'depends-on-any' ] || {} ),
-					...Object.keys( subfield[ 'excludes-on' ] || {} ),
-					...Object.keys( subfield[ 'wildcard-on' ] || {} ),
+					...( ( subfield?.conditional_logic?.rules || [] ).map(
+						( rule ) => rule.field
+					) )
 				);
 			} );
 		}
@@ -373,17 +428,15 @@ const MemoizedFieldWrapper = React.memo(
 				}
 
 				parentDependencySlugs.push(
-					...Object.keys( parentField[ 'depends-on' ] || {} ),
-					...Object.keys( parentField[ 'depends-on-any' ] || {} ),
-					...Object.keys( parentField[ 'excludes-on' ] || {} ),
-					...Object.keys( parentField[ 'wildcard-on' ] || {} ),
+					...( ( parentField?.conditional_logic?.rules || [] ).map(
+						( rule ) => rule.field
+					) )
 				);
 			} );
 
 			const nextLevelSlugs = parentDependencySlugs.length
 				? unstackParentDependencies( parentDependencySlugs )
 				: [];
-
 			return uniq(
 				[
 					...dependencyFieldSlugs,

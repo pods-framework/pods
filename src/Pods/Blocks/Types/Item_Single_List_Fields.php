@@ -38,7 +38,7 @@ class Item_Single_List_Fields extends Item_Single {
 			'category'        => 'pods',
 			'icon'            => 'pods',
 			'renderType'      => 'php',
-			'render_callback' => [ $this, 'render' ],
+			'render_callback' => [ $this, 'safe_render' ],
 			'keywords'        => [
 				'pods',
 				'single',

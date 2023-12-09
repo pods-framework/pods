@@ -341,12 +341,12 @@ class Block_Field extends Field {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null, $strict = false ) {
+	public function get_arg( $arg, $default = null, $strict = false, $raw = false ) {
 		if ( 'block' === $arg ) {
 			return $this->get_parent_name();
 		}
 
-		return Whatsit::get_arg( $arg, $default );
+		return Whatsit::get_arg( $arg, $default, $strict, $raw );
 	}
 
 	/**

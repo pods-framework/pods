@@ -36,9 +36,7 @@ $RECYCLE.BIN/
 /composer.lock
 /node_modules/
 /vendor/*
-!/vendor/mustangostang/COPYING
-!/vendor/mustangostang/README.md
-!/vendor/mustangostang/Spyc.php
+!/vendor/vendor-prefixed/
 npm-debug.log
 
 # Source maps should just be built locally
@@ -46,7 +44,6 @@ ui/js/pods-ui-ready.min.js.map
 
 # PHPCS
 phpcs-report-*.txt
-
 
 # Tests - local config files
 codeception.yml
@@ -57,6 +54,3 @@ tests/codeception/_support/_generated
 # Tests - local output files
 tests/codeception/_output
 /coverage/
-
-# Allowed vendor files
-!tribe-common/vendor

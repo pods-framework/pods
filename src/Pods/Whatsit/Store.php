@@ -548,7 +548,7 @@ class Store {
 	public function get_objects( array $args = [] ) {
 		$objects = null;
 
-		if ( isset( $args['ids'] ) ) {
+		if ( isset( $args['ids'] ) && ! is_bool( $args['ids'] ) ) {
 			// Filter objects by IDs (for faster lookups).
 			$args['ids'] = (array) $args['ids'];
 			$args['ids'] = array_map( 'absint', $args['ids'] );
@@ -563,7 +563,7 @@ class Store {
 					$objects[ $identifier ] = $this->objects[ $identifier ];
 				}
 			}
-		} elseif ( isset( $args['identifiers'] ) ) {
+		} elseif ( isset( $args['identifiers'] ) && ! is_bool( $args['identifiers'] ) ) {
 			// Filter objects by identifiers (for faster lookups).
 			$args['identifiers'] = (array) $args['identifiers'];
 
@@ -577,7 +577,7 @@ class Store {
 		}
 
 		// Filter objects by object storage type.
-		if ( isset( $args['object_storage_types'] ) ) {
+		if ( isset( $args['object_storage_types'] ) && ! is_bool( $args['object_storage_types'] ) ) {
 			$args['object_storage_types'] = (array) $args['object_storage_types'];
 
 			// If no objects were filtered by ID, build by the index we have.
@@ -628,7 +628,7 @@ class Store {
 		}
 
 		// Filter objects by object type.
-		if ( isset( $args['object_types'] ) ) {
+		if ( isset( $args['object_types'] ) && ! is_bool( $args['object_types'] ) ) {
 			$args['object_types'] = (array) $args['object_types'];
 
 			// Maybe use isset() instead of in_array() for the comparisons.
@@ -653,7 +653,7 @@ class Store {
 		}
 
 		// Filter objects by name.
-		if ( isset( $args['names'] ) ) {
+		if ( isset( $args['names'] ) && ! is_bool( $args['names'] ) ) {
 			$args['names'] = (array) $args['names'];
 			$args['names'] = array_map( 'trim', $args['names'] );
 			$args['names'] = array_filter( $args['names'] );

@@ -25,7 +25,7 @@ use Pods\Pod_Manager;
  * @link  https://docs.pods.io/code/pods/
  */
 function pods( $type = null, $id = null, $strict = null ) {
-	$pod = new Pods( $type, $id );
+	$pod = new Pods( $type, $id, $strict );
 
 	if ( null === $strict ) {
 		$strict = pods_strict();
@@ -56,11 +56,19 @@ function pods( $type = null, $id = null, $strict = null ) {
  * @link  https://docs.pods.io/code/pods/
  */
 function pods_get_instance( $type = null, $id = null, $strict = null ) {
+	if ( null === $strict ) {
+		$strict = pods_strict( false );
+	}
+
 	$manager = pods_container( Pod_Manager::class );
 
 	$args = [
 		'name' => $type,
 	];
+
+	if ( $strict ) {
+		$args['strict'] = $strict;
+	}
 
 	if ( null !== $id ) {
 		if ( is_array( $id ) ) {
@@ -71,10 +79,6 @@ function pods_get_instance( $type = null, $id = null, $strict = null ) {
 	}
 
 	$pod = $manager->get_pod( $args );
-
-	if ( null === $strict ) {
-		$strict = pods_strict();
-	}
 
 	if (
 		true === $strict

@@ -175,7 +175,7 @@ class Pods_Templates extends PodsComponent {
 				'name'       => 'restrict_capability',
 				'label'      => __( 'Restrict access by Capability', 'pods' ),
 				'help'       => [
-					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
+					__( '<h3>Capabilities</h3> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
 				],
 				'default'    => 0,

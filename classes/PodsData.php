@@ -229,7 +229,7 @@ class PodsData {
 	public static function init( $pod = null, $id = null, $strict = true ) {
 
 		if ( ! in_array( $pod, array( null, false ), true ) || ! in_array( $id, array( null, 0 ), true ) ) {
-			$object = new PodsData( $pod, $id );
+			$object = new PodsData( $pod, $id, $strict );
 
 			if ( empty( $object->pod_data ) && true === $strict ) {
 				return pods_error( 'Pod not found', $object );
@@ -258,13 +258,14 @@ class PodsData {
 	/**
 	 * Data Abstraction Class for Pods
 	 *
-	 * @param string|null $pod Pod name.
-	 * @param int|string  $id  Pod Item ID.
+	 * @param string|null $pod    Pod name.
+	 * @param int|string  $id     Pod Item ID.
+	 * @param bool        $strict (optional) If set to true, we will not attempt to auto-setup the pod based on the object.
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since 2.0.0
 	 */
-	public function __construct( $pod = null, $id = 0 ) {
+	public function __construct( $pod = null, $id = 0, $strict = false ) {
 
 		global $wpdb;
 
@@ -282,7 +283,8 @@ class PodsData {
 		} else {
 			$this->pod_data = $this->api->load_pod( [
 				'name'       => $pod,
-				'auto_setup' => true,
+				// Auto-setup only if not in strict mode.
+				'auto_setup' => ! $strict,
 			], false );
 		}
 
@@ -327,7 +329,7 @@ class PodsData {
 		}
 
 		if ( $this->pod_data && 'settings' === $this->pod_data['type'] ) {
-			$this->id = $this->pod_data['id'];
+			$this->id = $this->pod_data['name'];
 
 			$this->fetch( $this->id );
 		} elseif ( null !== $id && ! is_array( $id ) && ! is_object( $id ) ) {
@@ -440,7 +442,7 @@ class PodsData {
 			}
 		}
 
-		list( $table, $data, $format ) = self::do_hook( 'insert', array( $table, $data, $format ), $this );
+		[ $table, $data, $format ] = self::do_hook( 'insert', array( $table, $data, $format ), $this );
 
 		$result          = $wpdb->insert( $table, $data, $format );
 		$this->insert_id = $wpdb->insert_id;
@@ -558,7 +560,7 @@ class PodsData {
 			}
 		}
 
-		list( $table, $data, $where, $format, $where_format ) = self::do_hook(
+		[ $table, $data, $where, $format, $where_format ] = self::do_hook(
 			'update', array(
 				$table,
 				$data,
@@ -624,7 +626,7 @@ class PodsData {
 
 		$sql = "DELETE FROM `$table` WHERE " . implode( ' AND ', $wheres );
 
-		list( $sql, $where ) = self::do_hook(
+		[ $sql, $where ] = self::do_hook(
 			'delete', array(
 				$sql,
 				array_values( $where ),
@@ -697,7 +699,7 @@ class PodsData {
 
 			// Cache if enabled.
 			if ( false !== $cache_key ) {
-				pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, false ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
+				pods_view_set( $cache_key, $results, (int) pods_v( 'expires', $params, 0, false ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
 			}
 		}//end if
 
@@ -1963,7 +1965,7 @@ class PodsData {
 		$success = false;
 		$ids     = (array) $ids;
 
-		list( $table, $weight_field, $id_field, $ids ) = self::do_hook(
+		[ $table, $weight_field, $id_field, $ids ] = self::do_hook(
 			'reorder', array(
 				$table,
 				$weight_field,
@@ -2026,8 +2028,8 @@ class PodsData {
 
 				$current_row_id = false;
 
-				if ( $this->pod_data && 'settings' === $this->pod_data['type'] ) {
-					$current_row_id = $this->pod_data['id'];
+				if ( $this->pod_data && 'settings' === $this->pod_data->get_type() ) {
+					$current_row_id = $this->pod_data->get_name();
 
 					$is_settings_pod = true;
 				} else {
@@ -2065,7 +2067,8 @@ class PodsData {
 			$id   = pods_absint( $row );
 
 			if ( $is_settings_pod ) {
-				$id = $this->pod_data->get_id();
+				$mode = 'slug';
+				$id   = $this->pod_data->get_name();
 			}
 
 			if (
@@ -2143,7 +2146,7 @@ class PodsData {
 				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
-					$current_row_id = $this->row['ID'];
+					$current_row_id = (int) $this->row['ID'];
 				}
 
 				$get_table_data = true;
@@ -2194,7 +2197,7 @@ class PodsData {
 				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
-					$current_row_id = $this->row['term_id'];
+					$current_row_id = (int) $this->row['term_id'];
 				}
 
 				$get_table_data = true;
@@ -2222,7 +2225,7 @@ class PodsData {
 
 					unset( $this->row['user_pass'] );
 
-					$current_row_id = $this->row['ID'];
+					$current_row_id = (int) $this->row['ID'];
 				}
 
 				$get_table_data = true;
@@ -2233,7 +2236,7 @@ class PodsData {
 				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
-					$current_row_id = $this->row['comment_ID'];
+					$current_row_id = (int) $this->row['comment_ID'];
 				}
 
 				$get_table_data = true;
@@ -2243,14 +2246,18 @@ class PodsData {
 				if ( empty( $this->fields ) || ! $this->pod_data ) {
 					$this->row = false;
 				} else {
+					/** @var Field $field */
 					foreach ( $this->fields as $field ) {
-						if ( ! in_array( $field['type'], $tableless_field_types, true ) ) {
-							$this->row[ $field['name'] ] = get_option( $this->pod_data['name'] . '_' . $field['name'], null );
+						if (
+							! in_array( $field['type'], $tableless_field_types, true )
+							|| $field->is_simple_relationship()
+						) {
+							$this->row[ $field['name'] ] = get_option( $this->pod_data->get_name() . '_' . $field['name'], null );
 						}
 					}
 
-					// Force ID.
-					$this->id               = $this->pod_data['id'];
+					// Force the pod name as the ID.
+					$this->id               = $this->pod_data->get_name();
 					$this->row['option_id'] = $this->id;
 				}
 			} else {
@@ -2615,7 +2622,7 @@ class PodsData {
 		 * @var $wpdb wpdb
 		 */
 		global $wpdb;
-		list( $sql, $data ) = apply_filters( 'pods_data_prepare', array( $sql, $data ) );
+		[ $sql, $data ] = apply_filters( 'pods_data_prepare', array( $sql, $data ) );
 
 		return $wpdb->prepare( $sql, $data );
 	}
@@ -3900,6 +3907,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 		$name = (string) $name;
 
@@ -3957,7 +3965,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __set( $name, $value ) {
+	public function __set( $name, $value ): void {
 		$supported_overrides = array(
 			'select'        => 'select',
 			'table'         => 'table',
@@ -3985,7 +3993,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __isset( $name ) {
+	public function __isset( $name ): bool {
 		// Handle alias Pod properties.
 		$supported_pods_object = array(
 			'pod'           => 'name',
@@ -4027,7 +4035,7 @@ class PodsData {
 	 *
 	 * @since 2.8.0
 	 */
-	public function __unset( $name ) {
+	public function __unset( $name ): void {
 		// Don't do anything.
 		return;
 	}

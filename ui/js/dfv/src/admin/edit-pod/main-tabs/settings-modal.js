@@ -149,6 +149,8 @@ const SettingsModal = ( {
 
 	const tabContentRef = useRef( null );
 
+	const ignoreOptions = [];
+
 	const changeTab = ( tabName ) => {
 		setSelectedTab( tabName );
 
@@ -181,6 +183,11 @@ const SettingsModal = ( {
 	// Wrapper around setChangedOptions(), which also sets the name/slug
 	// based on the Label, if the slug hasn't previously been set.
 	const setOptionValue = ( optionName, value ) => {
+		// Do nothing if this option was ignored.
+		if ( ignoreOptions.includes( optionName ) ) {
+			return;
+		}
+
 		const newOptions = {
 			[ optionName ]: value,
 		};
@@ -211,6 +218,11 @@ const SettingsModal = ( {
 			}
 
 			optionsSection.fields.forEach( ( field ) => {
+				// If this is a field type that should not have values, do not store them or use them.
+				if ( 'boolean_group' === field.type || window.podsDFVConfig.fieldTypeInfo.layout.includes( field.type ) || window.podsDFVConfig.fieldTypeInfo.non_input.includes( field.type ) ) {
+					return;
+				}
+
 				// Don't overwrite values that we already took from the changedOptions.
 				if ( 'undefined' !== typeof changedOptions[ field.name ] ) {
 					return;
@@ -370,6 +382,8 @@ const SettingsModal = ( {
 					isSecondary
 					onClick={ handleCancel }
 					disabled={ isSaving }
+					aria-disabled={ isSaving }
+					aria-label={ __( 'Cancel the modal changes', 'pods' ) }
 				>
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
@@ -378,6 +392,7 @@ const SettingsModal = ( {
 					isPrimary
 					onClick={ handleSave }
 					disabled={ ! isValid || isSaving }
+					aria-disabled={ ! isValid || isSaving }
 				>
 					{ saveButtonText }
 				</Button>

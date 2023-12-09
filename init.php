@@ -10,14 +10,14 @@
  * Plugin Name:       Pods - Custom Content Types and Fields
  * Plugin URI:        https://pods.io/
  * Description:       Pods is a framework for creating, managing, and deploying customized content types and fields
- * Version:           2.9.19
+ * Version:           3.0.9
  * Author:            Pods Framework Team
  * Author URI:        https://pods.io/about/
  * Text Domain:       pods
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Requires at least: 5.7
- * Requires PHP:      5.6
+ * Requires at least: 6.0
+ * Requires PHP:      7.2
  * GitHub Plugin URI: https://github.com/pods-framework/pods
  * Primary Branch:    main
  */
@@ -43,9 +43,9 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version.
-	define( 'PODS_VERSION', '2.9.19' );
+	define( 'PODS_VERSION', '3.0.9' );
 
-	// Current database version, this is the last version we had a database migration added in the /sql/ directory.
+	// Current database version, this is the last version the database changed.
 	define( 'PODS_DB_VERSION', '2.3.5' );
 
 	/**
@@ -56,7 +56,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * To be updated each Major x.x Pods release.
 	 */
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '5.7' );
+		define( 'PODS_WP_VERSION_MINIMUM', '6.0' );
 	}
 
 	/**
@@ -67,7 +67,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * Next planned minimum PHP version: 7.2 (to match WooCommerce and others pushing WP forward).
 	 */
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_PHP_VERSION_MINIMUM', '5.6' );
+		define( 'PODS_PHP_VERSION_MINIMUM', '7.2' );
 	}
 
 	/**
@@ -88,12 +88,22 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	if ( function_exists( 'pods_ui_manage' ) ) {
 		add_action( 'init', 'pods_deactivate_pods_ui' );
 	} else {
+		// If there was an install/update failure and the sub directories do not exist. Bail to avoid fatal errors.
+		if (
+			! file_exists( PODS_DIR . 'classes/PodsInit.php' )
+			|| ! file_exists( PODS_DIR . 'vendor/vendor-prefixed/autoload.php' )
+		) {
+			return;
+		}
+
 		global $pods, $pods_init, $pods_form;
 
 		// Init custom autoloader.
 		require_once PODS_DIR . 'classes/PodsInit.php';
 
 		spl_autoload_register( array( 'PodsInit', 'autoload_class' ) );
+
+		require_once PODS_DIR . 'vendor/vendor-prefixed/autoload.php';
 
 		// Include global functions.
 		require_once PODS_DIR . 'includes/classes.php';

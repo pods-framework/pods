@@ -2,15 +2,16 @@
 
 namespace Pods\REST\V1\Validator;
 
-use Tribe__Validator__Base as Validator_Base;
-use Tribe__Validator__Interface as Validator_Interface;
+use Pods\REST\Interfaces\Validator_Interface;
 
 /**
  * Class Base
  *
+ * @credit The Events Calendar team - https://github.com/the-events-calendar/tribe-common
+ *
  * @since 2.8.0
  */
-class Base extends Validator_Base implements Validator_Interface {
+class Base implements Validator_Interface {
 	/**
 	 * Whether the value corresponds to an existing post ID or not.
 	 *
@@ -161,6 +162,8 @@ class Base extends Validator_Base implements Validator_Interface {
 	/**
 	 * Determine whether the value is valid JSON.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @param mixed $value The value.
 	 *
 	 * @return bool Whether the value is valid JSON.
@@ -179,6 +182,7 @@ class Base extends Validator_Base implements Validator_Interface {
 	 *
 	 * @return mixed The method return response.
 	 */
+	#[\ReturnTypeWillChange]
 	public function __call( $name, array $arguments ) {
 		$mapped = [
 			'is_pod_item_id_valid_for_pod_'         => 'is_pod_item_id_valid',
@@ -195,5 +199,18 @@ class Base extends Validator_Base implements Validator_Interface {
 				return $this->{$mapped_method}( ...$arguments );
 			}
 		}
+	}
+
+	/**
+	 * Determine whether the value is not null.
+	 *
+	 * @since 3.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public function is_not_null( $value ) {
+		return null !== $value;
 	}
 }

@@ -473,12 +473,12 @@ class Post_Type extends Collection {
 				$post_objects = pods_static_cache_get( $cache_key_static_check . '_objects', self::class . '/find_objects/' . $cache_key_post_type );
 
 				// If we have no posts in static cache, we don't need to query again.
-				if ( [] !== $posts ) {
+				if ( ! is_array( $posts ) || [] === $posts ) {
 					$posts = pods_transient_get( $cache_key );
 				}
 
 				// If we have no posts in static cache, we don't need to query again.
-				if ( [] !== $post_objects ) {
+				if ( ! is_array( $post_objects ) || [] === $post_objects ) {
 					$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage_' . $cache_key_post_type );
 				}
 			}
@@ -498,6 +498,11 @@ class Post_Type extends Collection {
 
 				if ( ! $no_conflict_user ) {
 					pods_no_conflict_on( 'user' );
+				}
+
+				// Disable query cache when testing.
+				if ( function_exists( 'codecept_debug' ) ) {
+					$post_args['cache_results'] = false;
 				}
 
 				$query = new WP_Query();
@@ -530,7 +535,7 @@ class Post_Type extends Collection {
 				if ( ! empty( $args['count'] ) ) {
 					$posts = array_fill( 0, $query->found_posts, 'temp_count_holder' );
 				} elseif ( 'ids' !== $post_args['fields'] ) {
-					// This variable should always containt the post ID's.
+					// This variable should always contain the post ID's.
 					$posts = wp_list_pluck( $posts, 'ID' );
 				}
 
@@ -610,7 +615,16 @@ class Post_Type extends Collection {
 		}
 
 		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
-			$posts = array_merge( $posts, parent::find( $args ) );
+			$other_configs = parent::find( $args );
+
+			// Merge the other configs into the posts array but don't overwrite them.
+			foreach ( $other_configs as $key => $config ) {
+				if ( is_int( $key ) ) {
+					$posts[] = $config;
+				} elseif ( ! isset( $posts[ $key ] ) ) {
+					$posts[ $key ] = $config;
+				}
+			}
 		}
 
 		if ( ! empty( $args['limit'] ) ) {

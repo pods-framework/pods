@@ -14,7 +14,7 @@ use Pods\REST\V1\Endpoints\Pod_Slug;
 use Pods\REST\V1\Endpoints\Pods;
 use Pods\REST\V1\Endpoints\Swagger_Documentation;
 use Pods\REST\V1\Validator\Base as Base_Validator;
-use Tribe__Documentation__Swagger__Builder_Interface as Swagger_Builder_Interface;
+use Pods\REST\Interfaces\Swagger\Builder_Interface;
 use WP_REST_Server;
 
 /**
@@ -126,10 +126,10 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @return Swagger_Builder_Interface
+	 * @return Builder_Interface
 	 */
 	protected function register_endpoint_documentation() {
-		/** @var Swagger_Builder_Interface $endpoint */
+		/** @var Builder_Interface $endpoint */
 		$endpoint = pods_container( 'pods.rest-v1.endpoints.documentation' );
 
 		register_rest_route( $this->namespace, '/doc', [
@@ -138,7 +138,7 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 			'permission_callback' => '__return_true',
 		] );
 
-		//$endpoint->register_definition_provider( 'XYZ', new Tribe__REST__V1__Documentation__XYZ_Definition_Provider() );
+		//$endpoint->register_definition_provider( 'XYZ', new XYZ_Definition_Provider() );
 
 		$endpoint->register_documentation_provider( '/doc', $endpoint );
 

@@ -21,7 +21,7 @@ const HelpTooltip = ( {
 			zIndex={ 100001 }
 			interactive
 			content={ helpLink ? (
-				<a href={ helpLink } target="_blank" rel="noreferrer">
+				<a href={ helpLink } target="_blank" rel="noopener noreferrer">
 					<span
 						dangerouslySetInnerHTML={ {
 							__html: sanitizeHtml( helpText, richTextInlineOnly ),

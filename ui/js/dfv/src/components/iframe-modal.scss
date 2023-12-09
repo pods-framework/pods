@@ -6,7 +6,8 @@
 	max-width: calc(100% - 60px);
 }
 
-.pods-iframe-modal__iframe {
+.pods-iframe-modal__iframe,
+.pods-iframe-modal div.components-modal__content > div:nth-child(2) {
 	height: 100%;
 	width: 100%;
 }

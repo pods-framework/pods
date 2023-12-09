@@ -7,6 +7,7 @@ import { F10, isKeyboardEvent } from '@wordpress/keycodes';
 // Based on the core Freeform block's edit component, see:
 // https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/freeform/edit.js
 const TinyMCE = ( {
+	htmlAttributes,
 	name,
 	value,
 	setValue,
@@ -16,7 +17,7 @@ const TinyMCE = ( {
 	defaultEditor,
 	onBlur,
 } ) => {
-	const fieldId = `pods-form-ui-${ name }`;
+	const fieldId = htmlAttributes.id || `pods-form-ui-${ name }`;
 
 	const didMount = useRef( false );
 
@@ -155,13 +156,18 @@ const TinyMCE = ( {
 				id={ fieldId }
 				value={ value || '' }
 				onChange={ ( event ) => setValue( event.target.value ) }
-				name={ name }
+				name={ htmlAttributes.name || name }
 			/>
 		</div>
 	);
 };
 
 TinyMCE.propTypes = {
+	htmlAttributes: PropTypes.shape( {
+		id: PropTypes.string,
+		class: PropTypes.string,
+		name: PropTypes.string,
+	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.string,
 	setValue: PropTypes.func.isRequired,

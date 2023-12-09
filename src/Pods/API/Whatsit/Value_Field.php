@@ -56,7 +56,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @uses Whatsit::__toString()
 	 */
-	public function __toString() {
+	public function __toString(): string {
 		return $this->_field->get_identifier();
 	}
 
@@ -67,7 +67,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
-	public function offsetExists( $offset ) {
+	public function offsetExists( $offset ): bool {
 		return $this->__isset( $offset );
 	}
 
@@ -78,6 +78,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
+	#[\ReturnTypeWillChange]
 	public function &offsetGet( $offset ) {
 		// We fake the pass by reference to avoid PHP errors for backcompat.
 		$value = $this->__get( $offset );
@@ -91,7 +92,7 @@ class Value_Field implements \ArrayAccess {
 	 * @param mixed $offset Offset name.
 	 * @param mixed $value  Offset value.
 	 */
-	public function offsetSet( $offset, $value ) {
+	public function offsetSet( $offset, $value ): void {
 		if ( null === $offset ) {
 			// Do not allow $object[] additions.
 			return;
@@ -105,89 +106,91 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @param mixed $offset Offset name.
 	 */
-	public function offsetUnset( $offset ) {
+	public function offsetUnset( $offset ): void {
 		$this->__unset( $offset );
 	}
 
 	/**
 	 * Check if offset exists.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 *
 	 * @return bool Whether the offset exists.
 	 *
 	 * @uses Whatsit::__isset()
 	 */
-	public function __isset( $offset ) {
-		if ( 'value' === $offset ) {
+	public function __isset( $name ): bool {
+		if ( 'value' === $name ) {
 			return isset( $this->_value );
 		}
 
-		return $this->_field->__isset( $offset );
+		return $this->_field->__isset( $name );
 	}
 
 	/**
 	 * Get offset value.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 *
 	 * @uses Whatsit::__get()
 	 */
-	public function __get( $offset ) {
-		if ( 'value' === $offset ) {
+	#[\ReturnTypeWillChange]
+	public function __get( $name ) {
+		if ( 'value' === $name ) {
 			return $this->_value;
 		}
 
-		return $this->_field->__get( $offset );
+		return $this->_field->__get( $name );
 	}
 
 	/**
 	 * Set offset value.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 * @param mixed $value  Offset value.
 	 *
 	 * @uses Whatsit::__set()
 	 */
-	public function __set( $offset, $value ) {
-		if ( 'value' === $offset ) {
+	public function __set( $name, $value ): void {
+		if ( 'value' === $name ) {
 			$this->_value = $value;
 
 			return;
 		}
 
-		$this->_field->__set( $offset, $value );
+		$this->_field->__set( $name, $value );
 	}
 
 	/**
 	 * Unset offset value.
 	 *
-	 * @param mixed $offset Offset name.
+	 * @param mixed $name Offset name.
 	 *
 	 * @uses Whatsit::__unset()
 	 */
-	public function __unset( $offset ) {
-		if ( 'value' === $offset ) {
+	public function __unset( $name ): void {
+		if ( 'value' === $name ) {
 			$this->_value = null;
 
 			return;
 		}
 
-		$this->_field->__unset( $offset );
+		$this->_field->__unset( $name );
 	}
 
 	/**
 	 * Call a method on the field.
 	 *
-	 * @param string $method    The method name.
+	 * @param string $name      The method name.
 	 * @param array  $arguments List of arguments.
 	 *
 	 * @return mixed The method response.
 	 */
-	public function __call( $method, $arguments ) {
-		return call_user_func_array( [ $this->_field, $method ], $arguments );
+	#[\ReturnTypeWillChange]
+	public function __call( $name, $arguments ) {
+		return call_user_func_array( [ $this->_field, $name ], $arguments );
 	}
 
 	/**

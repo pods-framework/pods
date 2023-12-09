@@ -54,7 +54,9 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 
 	$recurse_queue = array();
 
-	$image_sizes  = get_intermediate_image_sizes();
+	$image_sizes   = get_intermediate_image_sizes();
+	$image_sizes[] = 'full';
+
 	$media_fields = [
 		'title',
 		'caption',
@@ -89,7 +91,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		$fields[] = $prefix . $name;
 
 		// Field type specific handling
-		if ( 'file' === $field['type'] && 'attachment' === $field['options']['file_uploader'] ) {
+		if ( 'file' === $field['type'] && 'attachment' === pods_v( 'file_uploader', $field ) ) {
 			$fields[] = $prefix . $name . '._src';
 			$fields[] = $prefix . $name . '._img';
 
@@ -100,7 +102,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 			foreach ( $image_sizes as $image_size ) {
 				$fields[] = "{$prefix}{$name}._src.{$image_size}";
 
-				if ( 'multi' !== $field['options']['file_format_type'] ) {
+				if ( 'multi' !== pods_v( 'file_format_type', $field ) ) {
 					$fields[] = "{$prefix}{$name}._src_relative.{$image_size}";
 					$fields[] = "{$prefix}{$name}._src_schemeless.{$image_size}";
 				}

@@ -18,7 +18,10 @@ import SettingsModal from './settings-modal';
 
 import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import {
+	GROUP_PROP_TYPE_SHAPE,
+	FIELD_PROP_TYPE_SHAPE,
+} from 'dfv/src/config/prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 
@@ -167,7 +170,7 @@ export const FieldListItem = ( props ) => {
 			<div className={ classes }>
 				<div
 					className="pods-field pods-field_handle"
-					aria-label="drag"
+					aria-label={ __( 'Press and hold to drag this item to a new position in the list', 'pods' ) }
 					// eslint-disable-next-line react/jsx-props-no-spreading
 					{ ...draggableListeners }
 					// eslint-disable-next-line react/jsx-props-no-spreading
@@ -200,6 +203,7 @@ export const FieldListItem = ( props ) => {
 						<button
 							className="pods-field_button pods-field_edit"
 							onClick={ onEditFieldClick }
+							aria-label={ __( 'Edit this field from the Pod', 'pods' ) }
 						>
 							{ __( 'Edit', 'pods' ) }
 						</button>
@@ -218,6 +222,7 @@ export const FieldListItem = ( props ) => {
 
 										cloneField( typeObject.type );
 									} }
+									aria-label={ __( 'Duplicate this field from the Pod to copy it into a new field', 'pods' ) }
 								>
 									{ __( 'Duplicate', 'pods' ) }
 								</button>
@@ -230,6 +235,7 @@ export const FieldListItem = ( props ) => {
 								<button
 									className="pods-field_button pods-field_delete"
 									onClick={ onDeleteFieldClick }
+									aria-label={ __( 'Delete this field from the Pod', 'pods' ) }
 								>
 									{ __( 'Delete', 'pods' ) }
 								</button>
@@ -383,6 +389,7 @@ const ConnectedFieldListItem = compose( [
 
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
+			currentFieldName: field.name,
 			relatedObject,
 			typeObject: storeSelect.getFieldTypeObject( field.type ),
 			saveStatus: storeSelect.getFieldSaveStatus( field.name ),

@@ -4,10 +4,10 @@ namespace Pods\REST\V1\Endpoints;
 
 use Pods;
 use Exception;
+use Pods\REST\V1\Post_Repository;
 use Pods\Whatsit;
-use Tribe__REST__Messages_Interface as Messages_Interface;
-use Tribe__REST__Post_Repository as Post_Repository;
-use Tribe__Validator__Interface as Validator_Interface;
+use Pods\REST\Interfaces\Messages_Interface;
+use Pods\REST\Interfaces\Validator_Interface;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Server;
@@ -186,19 +186,6 @@ abstract class Base {
 		];
 
 		return pods_v( $type, $rest_to_swagger_type_map, $type, true );
-	}
-
-	/**
-	 * Check whether a value is null or not.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @param mixed $value The value to check.
-	 *
-	 * @return bool Whether a value is null or not.
-	 */
-	public function is_not_null( $value ) {
-		return null !== $value;
 	}
 
 	/**
@@ -707,7 +694,7 @@ abstract class Base {
 			}
 		}
 
-		$args = wp_parse_args( array_filter( $args, [ $this, 'is_not_null' ] ), $defaults );
+		$args = wp_parse_args( array_filter( $args, [ $this->validator, 'is_not_null' ] ), $defaults );
 
 		return $args;
 	}

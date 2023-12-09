@@ -181,6 +181,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.0.10 - TBD =
+
+* 
+
 = 3.0.9 - December 7th, 2023 =
 
 * Feature: Added support for disabling Quick Edit for custom post types for sites on WP 6.4+. (@sc0ttkclark) 

@@ -181,9 +181,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.0.10 - TBD =
+= 3.0.10 - December 9th, 2023 =
 
-* 
+* Fixed: The safe rendering handler for Pods Blocks now properly passes along context to all Pods Blocks so that they work within Query Loops again and other places they could take on context. (@sc0ttkclark)
+* Fixed: Resolved PHP 8.3 deprecation notice with `get_class()` usage. #7225 (@netlas, @sc0ttkclark)
 
 = 3.0.9 - December 7th, 2023 =
 

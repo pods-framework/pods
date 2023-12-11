@@ -31,6 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Maybe build Pods Blocks JS API, Pods DFV, and styles assets
+        run: npm run build-production
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css

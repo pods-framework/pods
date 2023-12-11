@@ -2,6 +2,12 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.0.10 - December 11th, 2023 =
+
+* Fixed: The safe rendering handler for Pods Blocks now properly passes along context to all Pods Blocks so that they work within Query Loops again and other places they could take on context. (@sc0ttkclark)
+* Fixed: Resolved PHP 8.3 deprecation notice with `get_class()` usage. #7225 (@netlas, @sc0ttkclark)
+* Fixed: File fields using the direct plupload option will properly avoid uploading files above the limit and handle uploading multiple files without losing all but the first file in the file list. #7138 (@sc0ttkclark, @PD-CM) 
+
 = 3.0.9 - December 7th, 2023 =
 
 * Feature: Added support for disabling Quick Edit for custom post types for sites on WP 6.4+. (@sc0ttkclark) 

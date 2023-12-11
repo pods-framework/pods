@@ -23,6 +23,9 @@ on:
       minimum_mysql_version:
         description: 'Minimum MySQL version'
         required: false
+  pull_request:
+    paths:
+      - 'package.json'
 jobs:
   wporg_replace:
     runs-on: ubuntu-latest

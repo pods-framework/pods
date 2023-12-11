@@ -7,7 +7,6 @@ on:
       - 'ui/js/blocks/src/**'
       - 'ui/js/dfv/src/**'
       - 'ui/styles/src/**'
-      - 'package.json'
       - 'webpack.*.js'
 jobs:
   build:
@@ -32,11 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Maybe build Pods Blocks JS API, Pods DFV, and styles assets
-      - name: Run wporg-update-versions for package.json version change
-        runs:
-          using: "composite"
-          steps:
-            - uses: ./.github/actions/wporg-update-versions
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css

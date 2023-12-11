@@ -39,6 +39,8 @@ jobs:
           echo minimum_mysql_version: ${{ github.event.inputs.minimum_mysql_version }}
       - name: Checkout the code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
       - name: Check the version number from package.json
         shell: bash
         run: echo "PLUGIN_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
@@ -62,7 +64,6 @@ jobs:
         with:
           file_pattern: ${{ env.WPORG_PLUGIN_FILE }} readme.txt package.json
           commit_message: Update wporg version(s)
-          token: ${{ secrets.GH_BOT_PUSH }}
       - name: "Run if changes have been detected"
         if: steps.auto-commit-action.outputs.changes_detected == 'true'
         run: echo "Changes!"

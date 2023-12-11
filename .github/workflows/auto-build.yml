@@ -32,7 +32,10 @@ jobs:
         run: npm install
       - name: Maybe build Pods Blocks JS API, Pods DFV, and styles assets
       - name: Run wporg-update-versions for package.json version change
-        uses: ./.github/actions/wporg-update-versions
+        runs:
+          using: "composite"
+          steps:
+            - uses: ./.github/actions/wporg-update-versions
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css

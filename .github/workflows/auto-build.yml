@@ -37,11 +37,11 @@ jobs:
         run: npm run build-production
       - name: Check the version number
         shell: bash
-        run: PLUGIN_VERSION=`jq -r .version package.json`
+        run: echo "PLUGIN_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Run wporg-replace
         uses: sc0ttkclark/wporg-replace@v1.0.7
         with:
-          plugin_version: ${{ PLUGIN_VERSION }}
+          plugin_version: ${{ env.PLUGIN_VERSION }}
           plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
           plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
           plugin_path: ${{ github.workspace }}

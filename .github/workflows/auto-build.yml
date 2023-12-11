@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - '.github/workflows/auto-build.yml'
       - 'ui/js/blocks/src/**'
       - 'ui/js/dfv/src/**'
       - 'ui/styles/src/**'

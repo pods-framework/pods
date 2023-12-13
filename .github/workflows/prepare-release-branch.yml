@@ -4,7 +4,6 @@ env:
   PR_LABELS: 'Type: Release'
   MILESTONE_PREFIX: 'Pods '
   BRANCH_PREFIX: 'release/'
-  VERSION_INCREMENT: 'patch'
   WPORG_PLUGIN_FILE: 'init.php'
   WPORG_PLUGIN_VERSION_CONSTANT_NAME: 'PODS_VERSION'
 on:
@@ -13,6 +12,15 @@ on:
       new_plugin_version:
         description: 'New plugin version (without the "-a-1"), defaults to the next incremental version from package.json'
         required: false
+      version_increment:
+        description: 'Version increment scheme (if incrementing the package.json version)'
+        required: true
+        type: choice
+        default: 'patch'
+        options:
+          - 'major'
+          - 'minor'
+          - 'patch'
 jobs:
   prepare_release_branch:
     runs-on: ubuntu-latest
@@ -38,7 +46,7 @@ jobs:
         id: version-increment
         with:
           scheme: semver
-          increment: ${{ env.VERSION_INCREMENT }}
+          increment: ${{ github.event.inputs.version_increment }}
       - name: Maybe store the next version
         if: ${{ steps.version-increment.outputs.version != null && steps.version-increment.outputs.version != '' }}
         shell: bash

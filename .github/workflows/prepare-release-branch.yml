@@ -3,7 +3,6 @@ env:
   PR_PREFIX: 'Pods '
   PR_LABELS: 'Type: Release'
   BRANCH_PREFIX: 'release/'
-  DEFAULT_BRANCH: 'main'
   VERSION_INCREMENT: 'patch'
   WPORG_PLUGIN_FILE: 'init.php'
   WPORG_PLUGIN_VERSION_CONSTANT_NAME: 'PODS_VERSION'
@@ -17,17 +16,15 @@ jobs:
   prepare_release_branch:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
       - name: Maybe use the version number from inputs
         if: ${{ github.event.inputs.new_plugin_version != null && github.event.inputs.new_plugin_version != '' }}
         shell: bash
         run: |
           echo "PLUGIN_VERSION=${{ github.event.inputs.new_plugin_version }}" >> $GITHUB_ENV
-      - name: Maybe checkout the code from the branch
-        if: ${{ github.event.inputs.new_plugin_version == null || github.event.inputs.new_plugin_version == '' }}
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_BOT_PUSH }}
-          ref: ${{ env.DEFAULT_BRANCH }}
       - name: Maybe lookup the version number from package.json
         id: version-lookup
         if: ${{ github.event.inputs.new_plugin_version == null || github.event.inputs.new_plugin_version == '' }}
@@ -49,17 +46,6 @@ jobs:
       - name: What are we doing?
         run: |
           echo PLUGIN_VERSION: ${{ env.PLUGIN_VERSION }}
-      - name: Create the new release branch
-        uses: peterjgrainger/action-create-branch@v2.3.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_BOT_PUSH }}
-        with:
-          branch: '${{ env.BRANCH_PREFIX }}${{ env.PLUGIN_VERSION }}'
-      - name: Checkout the code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_BOT_PUSH }}
-          ref: '${{ env.BRANCH_PREFIX }}${{ env.PLUGIN_VERSION }}'
       - name: Run wporg-replace
         uses: sc0ttkclark/wporg-replace@v1.0.7
         with:
@@ -67,24 +53,13 @@ jobs:
           plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
           plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
           plugin_path: ${{ github.workspace }}
-      - name: Commit changes
-        id: auto-commit-action
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          file_pattern: ${{ env.WPORG_PLUGIN_FILE }} readme.txt package.json
-          commit_message: 'Set version to ${{ env.PLUGIN_VERSION }}-a-1'
-      - name: "Run if changes have been detected"
-        if: steps.auto-commit-action.outputs.changes_detected == 'true'
-        run: echo "Changes!"
-      - name: "Run if no changes have been detected"
-        if: steps.auto-commit-action.outputs.changes_detected == 'false'
-        run: echo "No Changes!"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5.0.2
         with:
           token: ${{ secrets.GH_BOT_PUSH }}
-          base: ${{ env.DEFAULT_BRANCH }}
           branch: '${{ env.BRANCH_PREFIX }}${{ env.PLUGIN_VERSION }}'
+          commit-message: 'Set version to ${{ env.PLUGIN_VERSION }}-a-1'
           title: '${{ env.PR_PREFIX }}${{ env.PLUGIN_VERSION }}'
           labels: ${{ env.PR_LABELS }}
           assignees: ${{ github.actor }}
+          draft: true

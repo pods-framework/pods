@@ -1,0 +1,84 @@
+name: Prepare Release Branch
+env:
+  PR_PREFIX: 'Pods '
+  PR_LABELS: 'Type: Release'
+  BRANCH_PREFIX: 'release/'
+  DEFAULT_BRANCH: 'main'
+  VERSION_INCREMENT: 'patch'
+  WPORG_PLUGIN_FILE: 'init.php'
+  WPORG_PLUGIN_VERSION_CONSTANT_NAME: 'PODS_VERSION'
+on:
+  workflow_dispatch:
+    inputs:
+      new_plugin_version:
+        description: 'New plugin version (without the "-a-1"), defaults to the next incremental version from package.json'
+        required: false
+jobs:
+  prepare_release_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maybe use the version number from inputs
+        if: ${{ github.event.inputs.new_plugin_version != null && github.event.inputs.new_plugin_version != '' }}
+        shell: bash
+        run: |
+          echo "PLUGIN_VERSION=${{ github.event.inputs.new_plugin_version }}" >> $GITHUB_ENV
+      - name: Maybe lookup the version number from package.json
+        id: version-lookup
+        if: ${{ github.event.inputs.new_plugin_version == null || github.event.inputs.new_plugin_version == '' }}
+        shell: bash
+        run: |
+          echo "CURRENT_VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+      - name: Maybe get the next version information
+        if: ${{ steps.version-lookup.outputs.CURRENT_VERSION != null && steps.version-lookup.outputs.CURRENT_VERSION != '' }}
+        uses: reecetech/version-increment@2023.10.2
+        id: version-increment
+        with:
+          scheme: semver
+          increment: ${{ env.VERSION_INCREMENT }}
+      - name: Maybe store the next version
+        if: ${{ steps.version-increment.outputs.version != null && steps.version-increment.outputs.version != '' }}
+        shell: bash
+        run: |
+          echo "PLUGIN_VERSION=${{ steps.version-increment.outputs.version }}" >> $GITHUB_ENV
+      - name: What are we doing?
+        run: |
+          echo PLUGIN_VERSION: ${{ env.PLUGIN_VERSION }}
+      - name: Create the new release branch
+        uses: peterjgrainger/action-create-branch@v2.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_BOT_PUSH }}
+        with:
+          branch: '${{ env.BRANCH_PREFIX }}/${{ env.PLUGIN_VERSION }}'
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
+          ref: '${{ env.BRANCH_PREFIX }}/${{ env.PLUGIN_VERSION }}'
+      - name: Run wporg-replace
+        uses: sc0ttkclark/wporg-replace@v1.0.7
+        with:
+          plugin_version: '${{ env.PLUGIN_VERSION }}-a-1'
+          plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
+          plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
+          plugin_path: ${{ github.workspace }}
+      - name: Commit changes
+        id: auto-commit-action
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: ${{ env.WPORG_PLUGIN_FILE }} readme.txt package.json
+          commit_message: 'Set version to ${{ env.PLUGIN_VERSION }}-a-1'
+      - name: "Run if changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        run: echo "Changes!"
+      - name: "Run if no changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+        run: echo "No Changes!"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5.0.2
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
+          base: ${{ env.DEFAULT_BRANCH }}
+          branch: '${{ env.BRANCH_PREFIX }}/${{ env.PLUGIN_VERSION }}'
+          title: '${{ env.PR_PREFIX }}${{ env.PLUGIN_VERSION }}'
+          labels: ${{ env.PR_LABELS }}
+          assignees: ${{ github.actor }}

@@ -55,7 +55,7 @@ jobs:
           plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
           plugin_path: ${{ github.workspace }}
       - name: Create Milestone
-        id: createmilestone
+        id: create-milestone
         uses: WyriHaximus/github-action-create-milestone@v1.2.0
         continue-on-error: true
         with:
@@ -63,6 +63,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Pull Request
+        id: create-pull-request
         uses: peter-evans/create-pull-request@v5.0.2
         with:
           token: ${{ secrets.GH_BOT_PUSH }}
@@ -71,5 +72,5 @@ jobs:
           title: '${{ env.PR_PREFIX }}${{ env.PLUGIN_VERSION }}'
           labels: ${{ env.PR_LABELS }}
           assignees: ${{ github.actor }}
-          milestone: "${{ env.MILESTONE_PREFIX }}${{ env.PLUGIN_VERSION }}"
+          milestone: ${{ steps.create-milestone.outputs.number }}
           draft: true

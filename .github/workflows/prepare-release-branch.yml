@@ -63,3 +63,11 @@ jobs:
           labels: ${{ env.PR_LABELS }}
           assignees: ${{ github.actor }}
           draft: true
+      - name: 'Create Milestone'
+        id: createmilestone
+        uses: "WyriHaximus/github-action-create-milestone@v1"
+        continue-on-error: true
+        with:
+          title: ${{ env.PLUGIN_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

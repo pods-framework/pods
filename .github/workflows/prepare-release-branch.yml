@@ -2,6 +2,7 @@ name: Prepare Release Branch
 env:
   PR_PREFIX: 'Pods '
   PR_LABELS: 'Type: Release'
+  MILESTONE_PREFIX: 'Pods '
   BRANCH_PREFIX: 'release/'
   VERSION_INCREMENT: 'patch'
   WPORG_PLUGIN_FILE: 'init.php'
@@ -53,6 +54,14 @@ jobs:
           plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
           plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
           plugin_path: ${{ github.workspace }}
+      - name: Create Milestone
+        id: createmilestone
+        uses: WyriHaximus/github-action-create-milestone@v1.2.0
+        continue-on-error: true
+        with:
+          title: "${{ env.MILESTONE_PREFIX }}${{ env.PLUGIN_VERSION }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5.0.2
         with:
@@ -62,12 +71,5 @@ jobs:
           title: '${{ env.PR_PREFIX }}${{ env.PLUGIN_VERSION }}'
           labels: ${{ env.PR_LABELS }}
           assignees: ${{ github.actor }}
+          milestone: "${{ env.MILESTONE_PREFIX }}${{ env.PLUGIN_VERSION }}"
           draft: true
-      - name: 'Create Milestone'
-        id: createmilestone
-        uses: "WyriHaximus/github-action-create-milestone@v1"
-        continue-on-error: true
-        with:
-          title: ${{ env.PLUGIN_VERSION }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

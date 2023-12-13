@@ -50,7 +50,6 @@ jobs:
           plugin_version: ${{ (github.event.inputs.plugin_version != '') && github.event.inputs.plugin_version || env.PLUGIN_VERSION }}
           plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
           tested_wp_version: ${{ github.event.inputs.tested_wp_version }}
-          tested_wp_version_constant_name: ${{ env.WPORG_TESTED_WP_VERSION_CONSTANT_NAME }}
           minimum_wp_version: ${{ github.event.inputs.minimum_wp_version }}
           minimum_wp_version_constant_name: ${{ env.WPORG_MINIMUM_WP_VERSION_CONSTANT_NAME }}
           minimum_php_version: ${{ github.event.inputs.minimum_php_version }}
@@ -60,6 +59,7 @@ jobs:
           plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
           plugin_path: ${{ github.workspace }}
       - name: Commit changes
+        id: auto-commit-action
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: ${{ env.WPORG_PLUGIN_FILE }} readme.txt package.json

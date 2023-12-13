@@ -54,12 +54,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_BOT_PUSH }}
         with:
-          branch: '${{ env.BRANCH_PREFIX }}/${{ env.PLUGIN_VERSION }}'
+          branch: '${{ env.BRANCH_PREFIX }}${{ env.PLUGIN_VERSION }}'
       - name: Checkout the code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_BOT_PUSH }}
-          ref: '${{ env.BRANCH_PREFIX }}/${{ env.PLUGIN_VERSION }}'
+          ref: '${{ env.BRANCH_PREFIX }}${{ env.PLUGIN_VERSION }}'
       - name: Run wporg-replace
         uses: sc0ttkclark/wporg-replace@v1.0.7
         with:
@@ -84,7 +84,7 @@ jobs:
         with:
           token: ${{ secrets.GH_BOT_PUSH }}
           base: ${{ env.DEFAULT_BRANCH }}
-          branch: '${{ env.BRANCH_PREFIX }}/${{ env.PLUGIN_VERSION }}'
+          branch: '${{ env.BRANCH_PREFIX }}${{ env.PLUGIN_VERSION }}'
           title: '${{ env.PR_PREFIX }}${{ env.PLUGIN_VERSION }}'
           labels: ${{ env.PR_LABELS }}
           assignees: ${{ github.actor }}

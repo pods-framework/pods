@@ -59,9 +59,9 @@ jobs:
         uses: WyriHaximus/github-action-create-milestone@v1.2.0
         continue-on-error: true
         with:
-          title: "${{ env.MILESTONE_PREFIX }}${{ env.PLUGIN_VERSION }}"
+          title: '${{ env.MILESTONE_PREFIX }}${{ env.PLUGIN_VERSION }}'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_BOT_PUSH }}
       - name: Create Pull Request
         id: create-pull-request
         uses: peter-evans/create-pull-request@v5.0.2

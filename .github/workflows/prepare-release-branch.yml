@@ -22,6 +22,12 @@ jobs:
         shell: bash
         run: |
           echo "PLUGIN_VERSION=${{ github.event.inputs.new_plugin_version }}" >> $GITHUB_ENV
+      - name: Maybe checkout the code from the branch
+        if: ${{ github.event.inputs.new_plugin_version == null || github.event.inputs.new_plugin_version == '' }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
+          ref: ${{ env.DEFAULT_BRANCH }}
       - name: Maybe lookup the version number from package.json
         id: version-lookup
         if: ${{ github.event.inputs.new_plugin_version == null || github.event.inputs.new_plugin_version == '' }}

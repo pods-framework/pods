@@ -30,7 +30,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$serialized = str_replace( $serialized_pattern, 'a:', $serialized );
 		$serialized = str_replace( "s:7:\"\0*\0args\"", 's:4:"args"', $serialized );
 
-		$to = unserialize( $serialized );
+		$to = pods_maybe_safely_unserialize( $serialized );
 
 		$this->assertInternalType( 'array', $to );
 		$this->assertArrayHasKey( 'args', $to );

@@ -139,7 +139,7 @@ class Field extends Base {
 		$attributes = array_map( 'pods_trim', $attributes );
 
 		if ( empty( $attributes['field'] ) ) {
-			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
+			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(
 					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Field Value', 'pods' ),
 					esc_html__( 'Please specify a "Field Name" under "More Settings" to configure this block.', 'pods' )
@@ -161,6 +161,9 @@ class Field extends Base {
 			$attributes['use_current'] = false;
 		}
 
+		$provided_post_id = $this->in_editor_mode( $attributes ) ? pods_v( 'post_id', 'get', 0, true ) : get_the_ID();
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, $provided_post_id, true ) );
+
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
 			// Detect post type / ID from context.
 			$attributes['name'] = $block->context['postType'];
@@ -171,12 +174,11 @@ class Field extends Base {
 				unset( $attributes['use_current'] );
 			}
 		} elseif (
-			! empty( $attributes['use_current'] )
-			&& ! empty( $_GET['post_id'] )
-			&& wp_is_json_request()
-			&& did_action( 'rest_api_init' )
+			$attributes['use_current']
+			&& 0 !== $provided_post_id
+			&& $this->in_editor_mode( $attributes )
 		) {
-			$attributes['slug'] = absint( $_GET['post_id'] );
+			$attributes['slug'] = $provided_post_id;
 
 			if ( empty( $attributes['name'] ) ) {
 				$attributes['name'] = get_post_type( $attributes['slug'] );

@@ -79,11 +79,23 @@ class API {
 		do_action( 'pods_blocks_api_pre_init' );
 
 		pods_container( 'pods.blocks.collection.pods' );
-		pods_container( 'pods.blocks.field' );
-		pods_container( 'pods.blocks.form' );
-		pods_container( 'pods.blocks.list' );
-		pods_container( 'pods.blocks.single' );
-		pods_container( 'pods.blocks.view' );
+
+		// Check if the feature is enabled.
+		if ( pods_can_use_dynamic_feature( 'display' ) ) {
+			pods_container( 'pods.blocks.field' );
+			pods_container( 'pods.blocks.list' );
+			pods_container( 'pods.blocks.single' );
+		}
+
+		// Check if the feature is enabled.
+		if ( pods_can_use_dynamic_feature( 'form' ) ) {
+			pods_container( 'pods.blocks.form' );
+		}
+
+		// Check if the feature is enabled.
+		if ( pods_can_use_dynamic_feature( 'view' ) ) {
+			pods_container( 'pods.blocks.view' );
+		}
 
 		/**
 		 * Allow custom blocks to be registered with Pods.

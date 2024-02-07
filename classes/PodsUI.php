@@ -1296,7 +1296,7 @@ class PodsUI {
 				$this->save();
 			}
 			$this->edit( ( 'duplicate' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) ? true : false );
-		} elseif ( 'delete' === $this->action && ! in_array( $this->action, $this->actions_disabled ) && false !== wp_verify_nonce( $this->_nonce, 'pods-ui-action-delete' ) ) {
+		} elseif ( 'delete' === $this->action && ! in_array( $this->action, $this->actions_disabled ) && false !== wp_verify_nonce( $this->_nonce, 'pods-ui-action-delete-' . $this->id ) ) {
 			$this->delete( $this->id );
 			$this->manage();
 		} elseif ( 'reorder' === $this->action && ! in_array( $this->action, $this->actions_disabled ) && false !== $this->reorder['on'] ) {
@@ -1317,10 +1317,16 @@ class PodsUI {
 			$this->view();
 		} else {
 			if ( isset( $this->actions_custom[ $this->action ] ) ) {
-				$more_args = false;
+				$use_nonce = false;
 
-				if ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ]['more_args'] ) ) {
-					$more_args = $this->actions_custom[ $this->action ]['more_args'];
+				if ( is_array( $this->actions_custom[ $this->action ] ) ) {
+					$more_args = [];
+
+					if ( ! empty( $this->actions_custom[ $this->action ]['more_args'] ) ) {
+						$more_args = $this->actions_custom[ $this->action ]['more_args'];
+					}
+
+					$use_nonce = ! empty( $this->actions_custom[ $this->action ]['nonce'] ) || ! empty( $more_args['nonce'] );
 				}
 
 				$row = $this->row;
@@ -1329,7 +1335,13 @@ class PodsUI {
 					$row = $this->get_row();
 				}
 
-				if ( $this->restricted( $this->action, $row ) || ( $more_args && ! empty( $more_args['nonce'] ) && false === wp_verify_nonce( $this->_nonce, 'pods-ui-action-' . $this->action ) ) ) {
+				if (
+					$this->restricted( $this->action, $row )
+					|| (
+						$use_nonce
+						&& false === wp_verify_nonce( $this->_nonce, 'pods-ui-action-' . $this->action . '-' . $this->id )
+					)
+				) {
 					return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 				} elseif ( $more_args && false !== $this->callback_action( true, $this->action, $this->id, $row ) ) {
 					return null;
@@ -1542,7 +1554,7 @@ class PodsUI {
 			}
 
 			$label = $this->do_template( $this->label['edit'] );
-			$id    = $this->row[ $this->sql['field_id'] ];
+			$id    = pods_v( $this->sql['field_id'], $this->row );
 			$vars  = array(
 				$this->num_prefix . 'action' . $this->num => $this->action_after['edit'],
 				$this->num_prefix . 'do' . $this->num     => 'save',
@@ -3176,15 +3188,15 @@ class PodsUI {
 								);
 
 								if ( $this->view == $view ) {
-									$label = '<a href="' . esc_url( $link ) . '" class="current">' . esc_html( $label ) . '</a>';
+									$label = '<a href="' . esc_url( $link ) . '" class="current">' . wp_kses_post( $label ) . '</a>';
 								} else {
-									$label = '<a href="' . esc_url( $link ) . '">' . esc_html( $label ) . '</a>';
+									$label = '<a href="' . esc_url( $link ) . '">' . wp_kses_post( $label ) . '</a>';
 								}
 							} else {
 								$label = wp_kses_post( $label );
 							}
 							?>
-							<li class="<?php echo esc_attr( $view ); ?>">
+							<li class="view-<?php echo esc_attr( sanitize_html_class( str_replace( '/', '--', $view ) ) ); ?>">
 								<?php
 								/* Escaped above to support links */
 								echo $label;
@@ -4414,12 +4426,12 @@ class PodsUI {
 				array(
 					$this->num_prefix . 'action' . $this->num   => 'delete',
 					$this->num_prefix . 'id' . $this->num       => $field_id,
-					$this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-delete' ),
+					$this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-delete-' . $field_id ),
 				), self::$allowed, $this->exclusion()
 			);
 
 			if ( ! empty( $this->action_links['delete'] ) ) {
-				$link = add_query_arg( array( $this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-delete' ) ), $this->do_template( $this->action_links['delete'], $row ) );
+				$link = add_query_arg( array( $this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-delete-' . $field_id ) ), $this->do_template( $this->action_links['delete'], $row ) );
 			}
 
 			$actions['delete'] = '<span class="delete"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . esc_attr__( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
@@ -4460,7 +4472,7 @@ class PodsUI {
 							$vars = array(
 								$this->num_prefix . 'action' . $this->num   => $custom_action,
 								$this->num_prefix . 'id' . $this->num       => $field_id,
-								$this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-' . $custom_action ),
+								$this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-' . $custom_action . '-' . $field_id ),
 							);
 
 							if ( 'toggle' === $custom_action ) {
@@ -4471,7 +4483,7 @@ class PodsUI {
 							$custom_data['link'] = pods_query_arg( $vars, self::$allowed, $this->exclusion() );
 
 							if ( isset( $this->action_links[ $custom_action ] ) && ! empty( $this->action_links[ $custom_action ] ) ) {
-								$custom_data['link'] = add_query_arg( array( $this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-' . $custom_action ) ), $this->do_template( $this->action_links[ $custom_action ], $row ) );
+								$custom_data['link'] = add_query_arg( array( $this->num_prefix . '_wpnonce' . $this->num => wp_create_nonce( 'pods-ui-action-' . $custom_action . '-' . $field_id ) ), $this->do_template( $this->action_links[ $custom_action ], $row ) );
 							}
 						}
 

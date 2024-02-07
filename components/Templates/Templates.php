@@ -523,11 +523,12 @@ class Pods_Templates extends PodsComponent {
 	 * @param string $code          Custom template code to use instead
 	 * @param object $obj           The Pods object
 	 * @param bool   $deprecated    Whether to use deprecated functionality based on old function usage
+	 * @param bool   $check_access  Whether to check access for Posts that are Password-protected.
 	 *
 	 * @return mixed|string|void
 	 * @since 2.0.0
 	 */
-	public static function template( $template_name, $code = null, $obj = null, $deprecated = false ) {
+	public static function template( $template_name, $code = null, $obj = null, $deprecated = false, $check_access = false ) {
 
 		if ( ! empty( $obj ) ) {
 			self::$obj =& $obj;
@@ -603,16 +604,41 @@ class Pods_Templates extends PodsComponent {
 		$code = apply_filters( 'pods_templates_pre_template', $code, $template, $obj );
 		$code = apply_filters( "pods_templates_pre_template_{$slug}", $code, $template, $obj );
 
+		$info = $check_access ? pods_info_from_args( [ 'pods' => $obj ] ) : [];
+
 		ob_start();
 
 		if ( ! empty( $code ) ) {
 			// Only detail templates need $this->id
 			if ( empty( $obj->id ) ) {
 				while ( $obj->fetch() ) {
+					$info['item_id'] = $obj->id();
+
+					// Ensure the post is not password protected.
+					if (
+						$check_access
+						&& (
+							pods_access_bypass_post_with_password( $info )
+							|| pods_access_bypass_private_post( $info )
+						)
+					) {
+						continue;
+					}
+
 					echo self::do_template( $code, $obj );
 				}
 			} else {
-				echo self::do_template( $code, $obj );
+				$info['item_id'] = $obj->id();
+
+				if (
+					! $check_access
+					|| (
+						! pods_access_bypass_post_with_password( $info )
+						&& ! pods_access_bypass_private_post( $info )
+					)
+				) {
+					echo self::do_template( $code, $obj );
+				}
 			}
 		} elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
 			$default_templates = array(
@@ -625,10 +651,33 @@ class Pods_Templates extends PodsComponent {
 
 			if ( empty( $obj->id ) ) {
 				while ( $obj->fetch() ) {
+					$info['item_id'] = $obj->id();
+
+					// Ensure the post is not password protected.
+					if (
+						$check_access
+						&& (
+							pods_access_bypass_post_with_password( $info )
+							|| pods_access_bypass_private_post( $info )
+						)
+					) {
+						continue;
+					}
+
 					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
 				}
 			} else {
-				pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				$info['item_id'] = $obj->id();
+
+				if (
+					! $check_access
+					|| (
+						! pods_access_bypass_post_with_password( $info )
+						&& ! pods_access_bypass_private_post( $info )
+					)
+				) {
+					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				}
 			}
 		}//end if
 

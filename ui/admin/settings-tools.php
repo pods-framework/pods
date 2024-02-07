@@ -2,6 +2,11 @@
 
 use Pods\Tools\Repair;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+	die( '-1' );
+}
+
 global $wpdb;
 
 $pods_api = pods_api();

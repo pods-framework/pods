@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 $field_number = PodsForm::field_loader( 'currency' );
 
 $value = $field_number->format( $value, $name, $options, $pod, $id );

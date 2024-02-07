@@ -273,7 +273,7 @@ class PodsField_OEmbed extends PodsField {
 		}
 
 		// Strip HTML
-		$value = strip_tags( $value );
+		$value = wp_strip_all_tags( $value );
 
 		// Strip shortcodes
 		$value = strip_shortcodes( $value );

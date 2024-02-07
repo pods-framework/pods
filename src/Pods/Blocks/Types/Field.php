@@ -154,7 +154,8 @@ class Field extends Base {
 			$attributes['use_current'] = false;
 		}
 
-		$provided_post_id = absint( pods_v( '_post_id', $attributes, pods_v( 'post_id', 'get', 0, true ), true ) );
+		$provided_post_id = $this->in_editor_mode( $attributes ) ? pods_v( 'post_id', 'get', 0, true ) : get_the_ID();
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, $provided_post_id, true ) );
 
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
 			// Detect post type / ID from context.

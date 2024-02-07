@@ -714,6 +714,25 @@ class PodsData {
 		 */
 		$results = apply_filters( 'pods_data_select', $results, $params, $this );
 
+		// Clean up data we don't want to work with.
+		if (
+			(
+				$this->pod_data
+				&& 'user' === $this->pod_data->get_type()
+			)
+			|| $wpdb->users === $this->table
+		) {
+			$results = pods_access_bleep_items( $results );
+		} elseif (
+			(
+				$this->pod_data
+				&& 'post_type' === $this->pod_data->get_type()
+			)
+			|| $wpdb->posts === $this->table
+		) {
+			$results = pods_access_bleep_items( $results );
+		}
+
 		$this->rows = $results;
 
 		$this->row_number = - 1;
@@ -2147,6 +2166,8 @@ class PodsData {
 					$this->row = false;
 				} else {
 					$current_row_id = (int) $this->row['ID'];
+
+					$this->row = pods_access_bleep_data( $this->row );
 				}
 
 				$get_table_data = true;
@@ -2223,7 +2244,7 @@ class PodsData {
 					$this->row['caps']    = $caps;
 					$this->row['allcaps'] = $allcaps;
 
-					unset( $this->row['user_pass'] );
+					$this->row = pods_access_bleep_data( $this->row );
 
 					$current_row_id = (int) $this->row['ID'];
 				}
@@ -2330,6 +2351,8 @@ class PodsData {
 				pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, WEEK_IN_SECONDS );
 			}
 		}//end if
+
+		$this->row = pods_access_bleep_data( $this->row );
 
 		$this->row = apply_filters( 'pods_data_fetch', $this->row, $id, $this->row_number, $this );
 

@@ -63,7 +63,7 @@
     "php": ">=7.2"
   },
   "require-dev": {
-    "automattic/vipwpcs": "^2.0",
+    "automattic/vipwpcs": "^3.0.0",
     "bvanhoekelen/performance": "^2.5.1",
     "codeception/codeception": "^4.0",
     "codeception/module-asserts": "^1.0",
@@ -86,7 +86,7 @@
     "spatie/phpunit-snapshot-assertions": "^1.4.2",
     "the-events-calendar/coding-standards": "dev-master",
     "wp-cli/wp-cli": "2.*",
-    "wp-coding-standards/wpcs": "^2.1"
+    "wp-coding-standards/wpcs": "^3.0.1"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
@@ -95,7 +95,7 @@
   },
   "scripts": {
     "strauss": [
-      "test -f ./bin/strauss.phar || curl -o bin/strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/download/0.14.0/strauss.phar",
+      "test -f ./bin/strauss.phar || curl -o bin/strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/latest/download/strauss.phar",
       "@php bin/strauss.phar"
     ],
     "post-install-cmd": [

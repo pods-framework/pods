@@ -288,9 +288,7 @@ class PodsField {
 	 * @since 2.0.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-
+		return $this->maybe_sanitize_output( $value, $options );
 	}
 
 	/**
@@ -920,11 +918,47 @@ class PodsField {
 					}
 				}
 
-				return $value;
+				return $this->maybe_sanitize_output( $value, $options );
 			}
 		}
 
-		return strip_tags( $value );
+		return wp_strip_all_tags( $value );
+	}
+
+	/**
+	 * Determine whether the field value needs to be sanitized and sanitize it.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param mixed            $value   The field value.
+	 * @param null|array|Field $options The field options.
+	 *
+	 * @return mixed The sanitized field value if it needs to be sanitized.
+	 */
+	public function maybe_sanitize_output( $value, $options = null ) {
+		// Maybe check for a sanitize output option.
+		$should_sanitize = null === $options || 1 === (int) pods_v( 'sanitize_output', $options, 1 );
+
+		/**
+		 * Allow filtering whether to sanitize the field value before output.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool             $should_sanitize Whether the field value should be sanitized.
+		 * @param mixed            $value           The field value.
+		 * @param null|array|Field $options         The field options.
+		 */
+		$should_sanitize = apply_filters( 'pods_field_maybe_sanitize_output', $should_sanitize, $value, $options );
+
+		if ( $should_sanitize ) {
+			if ( is_string( $value ) ) {
+				$value = wp_kses_post( $value );
+			} elseif ( is_array( $value ) || is_object( $value ) ) {
+				$value = wp_kses_post_deep( $value );
+			}
+		}
+
+		return $value;
 	}
 
 	/**

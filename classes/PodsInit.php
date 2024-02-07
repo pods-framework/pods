@@ -393,9 +393,9 @@ class PodsInit {
 
 		add_filter( 'wisdom_notice_text_' . $plugin_slug, static function() {
 			return
-				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings.', 'pods' )
+				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings. Tracking is completely optional.', 'pods' )
 				. "\n\n"
-				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists. Tracking is completely optional.', 'pods' );
+				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists.', 'pods' );
 		} );
 
 		// Handle non-Pods pages, we don't want certain things happening.
@@ -1463,6 +1463,7 @@ class PodsInit {
 					'labels'                => $ct_labels,
 					'description'           => esc_html( pods_v( 'description', $taxonomy ) ),
 					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
+					'publicly_queryable'    => (boolean) pods_v( 'publicly_queryable', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_ui'               => (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_nav_menus'     => (boolean) pods_v( 'show_in_nav_menus', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
@@ -2610,14 +2611,24 @@ class PodsInit {
 	 * Register widgets for Pods
 	 */
 	public function register_widgets() {
+		$widgets = [];
 
-		$widgets = array(
-			'PodsWidgetSingle',
-			'PodsWidgetList',
-			'PodsWidgetField',
-			'PodsWidgetForm',
-			'PodsWidgetView',
-		);
+		// Maybe register the display widgets.
+		if ( pods_can_use_dynamic_feature( 'display' ) ) {
+			$widgets[] = 'PodsWidgetSingle';
+			$widgets[] = 'PodsWidgetList';
+			$widgets[] = 'PodsWidgetField';
+		}
+
+		// Maybe register the form widget.
+		if ( pods_can_use_dynamic_feature( 'form' ) ) {
+			$widgets[] = 'PodsWidgetForm';
+		}
+
+		// Maybe register the view widget.
+		if ( pods_can_use_dynamic_feature( 'view' ) ) {
+			$widgets[] = 'PodsWidgetView';
+		}
 
 		foreach ( $widgets as $widget ) {
 			if ( ! file_exists( PODS_DIR . 'classes/widgets/' . $widget . '.php' ) ) {

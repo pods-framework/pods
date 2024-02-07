@@ -102,12 +102,11 @@ class PodsField_Code extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
 		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
 			$value = do_shortcode( $value );
 		}
 
-		return $value;
+		return $this->maybe_sanitize_output( $value, $options );
 	}
 
 	/**

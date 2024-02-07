@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 $settings                  = array();
 $settings['textarea_name'] = $name;
 $settings['media_buttons'] = false;

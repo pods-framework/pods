@@ -88,12 +88,30 @@ class ProcessFormTest extends Pods_UnitTestCase {
 	 */
 	protected $field_conditional_hide_id;
 
+	protected $test_blocks;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->api = pods_api();
 
 		$this->populate();
+
+		$this->test_blocks = '<!-- wp:paragraph -->
+<p>Test block here with <strong>bold</strong> text</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:group {"layout":{"type":"constrained"}} -->
+<div class="wp-block-group"><!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity" />
+<!-- /wp:separator --></div>
+<!-- /wp:group -->
+
+<!-- wp:buttons -->
+<div class="wp-block-buttons"><!-- wp:button -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button">Test button block here</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons -->';
 	}
 
 	/**
@@ -453,6 +471,7 @@ class ProcessFormTest extends Pods_UnitTestCase {
 		$pod = pods( $this->pod );
 
 		$params = $this->create_base_form_params( $pod, [
+			'post_content',
 			$this->field,
 			$this->field2,
 			$this->field_hidden,
@@ -461,6 +480,8 @@ class ProcessFormTest extends Pods_UnitTestCase {
 		] );
 
 		// Set some data that will be saved.
+		$params[ 'pods_field_post_content' ] = '[pods]test[/pods] some text here ' . $this->test_blocks;
+
 		$params[ 'pods_field_' . $this->field ]                  = 'some value for the field: ' . $this->field;
 		$params[ 'pods_field_' . $this->field2 ]                 = 'some value for the field: ' . $this->field2;
 		$params[ 'pods_field_' . $this->field_hidden ]           = 'some value for the field: ' . $this->field_hidden;
@@ -474,6 +495,55 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$pod->fetch( $id );
 
+		$this->assertEquals( ' some text here ' . $this->test_blocks, $pod->field( 'post_content' ) );
+		$this->assertEquals( $params[ 'pods_field_' . $this->field ], $pod->field( $this->field ) );
+		$this->assertEquals( $params[ 'pods_field_' . $this->field2 ], $pod->field( $this->field2 ) );
+		$this->assertEquals( $params[ 'pods_field_' . $this->field_hidden ], $pod->field( $this->field_hidden ) );
+		$this->assertEquals( '', $pod->field( $this->field_conditional_show ) ); // This field would be hidden and won't save.
+		$this->assertEquals( $params[ 'pods_field_' . $this->field_conditional_hide ], $pod->field( $this->field_conditional_hide ) );
+	}
+
+	public function test_process_form_returns_valid_id_and_restricts_post_content_submitted() {
+		$user_id = wp_insert_user( [
+			'user_login' => 'testsubscriber',
+			'user_email' => 'testsubscriber@test.local',
+			'user_pass'  => 'hayyyyyy',
+			'role'       => 'subscriber',
+		] );
+
+		$this->assertIsInt( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		/** @var Pods $pod */
+		$pod = pods( $this->pod );
+
+		$params = $this->create_base_form_params( $pod, [
+			'post_content',
+			$this->field,
+			$this->field2,
+			$this->field_hidden,
+			$this->field_conditional_show,
+			$this->field_conditional_hide,
+		] );
+
+		// Set some data that will be saved.
+		$params[ 'pods_field_post_content' ] = '[pods]test[/pods]' . $this->test_blocks;
+
+		$params[ 'pods_field_' . $this->field ]                  = 'some value for the field: ' . $this->field;
+		$params[ 'pods_field_' . $this->field2 ]                 = 'some value for the field: ' . $this->field2;
+		$params[ 'pods_field_' . $this->field_hidden ]           = 'some value for the field: ' . $this->field_hidden;
+		$params[ 'pods_field_' . $this->field_conditional_show ] = 'some value for the field: ' . $this->field_conditional_show;
+		$params[ 'pods_field_' . $this->field_conditional_hide ] = 'some value for the field: ' . $this->field_conditional_hide;
+
+		$id = $this->api->process_form( $params );
+
+		$this->assertIsInt( $id );
+		$this->assertGreaterThan( 0, $id );
+
+		$pod->fetch( $id );
+
+		$this->assertEquals( '<p>Test block here with <strong>bold</strong> text</p>', $pod->field( 'post_content' ) );
 		$this->assertEquals( $params[ 'pods_field_' . $this->field ], $pod->field( $this->field ) );
 		$this->assertEquals( $params[ 'pods_field_' . $this->field2 ], $pod->field( $this->field2 ) );
 		$this->assertEquals( $params[ 'pods_field_' . $this->field_hidden ], $pod->field( $this->field_hidden ) );

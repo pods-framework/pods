@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 $type                   = 'textarea';
 $attributes             = array();
 $attributes['tabindex'] = 2;

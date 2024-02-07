@@ -2762,7 +2762,14 @@ class PodsAdmin {
 
 		$method = (object) array_merge( $defaults, (array) $methods[ $params->method ] );
 
-		if ( true !== $method->custom_nonce && ( ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method ) ) ) {
+		if (
+			true !== $method->custom_nonce
+			&& (
+				! is_user_logged_in()
+				|| ! isset( $params->_wpnonce )
+				|| false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method )
+			)
+		) {
 			pods_error( __( 'Unauthorized request', 'pods' ), $this );
 		}
 
@@ -2775,8 +2782,13 @@ class PodsAdmin {
 		}
 
 		// Check permissions (convert to array to support multiple)
-		if ( ! empty( $method->priv ) && ! pods_is_admin( array( 'pods' ) ) && true !== $method->priv && ! pods_is_admin( $method->priv ) ) {
-			pods_error( __( 'Access denied', 'pods' ), $this );
+		if ( ! empty( $method->priv ) && ! pods_is_admin( array( 'pods' ) ) ) {
+			if ( true !== $method->priv && pods_is_admin( $method->priv ) ) {
+				// They have access to the custom priv.
+			} else {
+				// They do not have access.
+				pods_error( __( 'Access denied', 'pods' ), $this );
+			}
 		}
 
 		$params->method = $method->name;

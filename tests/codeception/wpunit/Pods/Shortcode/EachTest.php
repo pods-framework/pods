@@ -34,6 +34,17 @@ class EachTest extends Pods_UnitTestCase {
 	public function setUp() : void {
 		parent::setUp();
 
+		add_filter( 'pods_is_type_public', '__return_true' );
+		add_filter( 'pods_access_bypass_private_post', '__return_false' );
+		add_filter( 'pods_user_can_access_object_pre_check', '__return_true' );
+		add_filter( 'pods_access_can_use_dynamic_features', '__return_true' );
+		add_filter( 'pods_access_can_use_dynamic_feature', '__return_true' );
+		add_filter( 'pods_access_can_use_dynamic_features_unrestricted', '__return_true' );
+
+		if ( ! shortcode_exists( 'pod_sub_template' ) ) {
+			add_shortcode( 'pod_sub_template', 'frontier_do_subtemplate' );
+		}
+
 		add_shortcode( 'test_each_recurse', function ( $args, $content ) {
 			return do_shortcode( $content );
 		} );
@@ -41,8 +52,12 @@ class EachTest extends Pods_UnitTestCase {
 		$api = pods_api();
 
 		$this->pod_id = $api->save_pod( [
-			'type' => 'post_type',
-			'name' => $this->pod_name,
+			'type'                      => 'post_type',
+			'name'                      => $this->pod_name,
+			'public'                    => 1,
+			'publicly_queryable'        => 1,
+			'dynamic_features_allow'    => 1,
+			'restrict_dynamic_features' => 0,
 		] );
 
 		$params = [
@@ -89,6 +104,17 @@ class EachTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function tearDown() : void {
+		remove_filter( 'pods_is_type_public', '__return_true' );
+		remove_filter( 'pods_access_bypass_private_post', '__return_false' );
+		remove_filter( 'pods_user_can_access_object_pre_check', '__return_true' );
+		remove_filter( 'pods_access_can_dynamic_features', '__return_true' );
+		remove_filter( 'pods_access_can_dynamic_feature', '__return_true' );
+		remove_filter( 'pods_access_can_dynamic_features_unrestricted', '__return_true' );
+
+		if ( shortcode_exists( 'pod_sub_template' ) ) {
+			remove_shortcode( 'pod_sub_template' );
+		}
+
 		if ( shortcode_exists( 'test_each_recurse' ) ) {
 			remove_shortcode( 'test_each_recurse' );
 		}

@@ -660,6 +660,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			case 'globals':
 				if ( isset( $GLOBALS[ $var ] ) ) {
 					$output = $GLOBALS[ $var ];
+
+					$output = pods_access_bleep_data( $output );
 				}
 				break;
 			case 'cookie':
@@ -681,9 +683,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
 
-					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
-						$value = '';
-					} elseif ( isset( $user->{$var} ) ) {
+					$user = pods_access_bleep_data( $user );
+
+					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {
 						$value = '';
@@ -2010,15 +2012,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		return $value;
 	}
 
-	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
-	if ( isset( $value['user_pass'] ) ) {
-		unset( $value['user_pass'] );
-
-		// Since we know this is a single select, just pass display name through as the fallback.
-		if ( isset( $value['display_name'] ) ) {
-			$value = array( $value['display_name'] );
-		}
-	}
+	$value = pods_access_bleep_data( $value );
 
 	$original_value = $value;
 

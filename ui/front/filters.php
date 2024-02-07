@@ -1,3 +1,9 @@
+<?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+?>
 <form method="get" class="pods-form-filters pods-form-filters-<?php echo esc_attr( $pod->pod ); ?>" action="<?php echo esc_attr( $action ); ?>">
 	<input type="hidden" name="type" value="<?php echo esc_attr( $pod->pod ); ?>" />
 

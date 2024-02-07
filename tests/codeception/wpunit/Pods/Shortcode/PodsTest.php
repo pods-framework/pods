@@ -29,6 +29,21 @@ class PodsTest extends Pods_UnitTestCase {
 	protected $pod;
 
 	/**
+	 * @var string
+	 */
+	protected $non_public_pod_name = 'test_pods_non_public';
+
+	/**
+	 * @var int
+	 */
+	protected $non_public_pod_id = 0;
+
+	/**
+	 * @var Pods
+	 */
+	protected $non_public_pod;
+
+	/**
 	 *
 	 */
 	public function setUp(): void {
@@ -37,8 +52,8 @@ class PodsTest extends Pods_UnitTestCase {
 		$api = pods_api();
 
 		$this->pod_id = $api->save_pod( array(
-			'type' => 'pod',
-			'name' => $this->pod_name,
+			'type'   => 'pod',
+			'name'   => $this->pod_name,
 		) );
 
 		$params = array(
@@ -50,14 +65,36 @@ class PodsTest extends Pods_UnitTestCase {
 		$api->save_field( $params );
 
 		$this->pod = pods( $this->pod_name );
+
+		$this->non_public_pod_id = $api->save_pod( array(
+			'type'    => 'post_type',
+			'storage' => 'meta',
+			'name'    => $this->non_public_pod_name,
+			'public'  => 0,
+		) );
+
+		$params = array(
+			'pod_id' => $this->non_public_pod_id,
+			'name'   => 'number2',
+			'type'   => 'number',
+		);
+
+		$api->save_field( $params );
+
+		$this->non_public_pod = pods( $this->non_public_pod_name );
 	}
 
 	/**
 	 *
 	 */
 	public function tearDown(): void {
-		$this->pod_id = null;
-		$this->pod    = null;
+		$this->pod_id            = null;
+		$this->pod               = null;
+		$this->non_public_pod_id = null;
+		$this->non_public_pod    = null;
+
+		pods_update_setting( 'session_auto_start', null );
+		remove_all_filters( 'pods_session_id' );
 
 		parent::tearDown();
 	}
@@ -66,7 +103,6 @@ class PodsTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_shortcode_pods() {
-		$this->assertNotFalse( $this->pod );
 
 		$pod_name = $this->pod_name;
 
@@ -130,7 +166,6 @@ class PodsTest extends Pods_UnitTestCase {
 	 * @since 2.8.0
 	 */
 	public function test_shortcode_pods_field_in_shortcode() {
-		$this->assertNotFalse( $this->pod );
 
 		$pod_name = $this->pod_name;
 
@@ -140,10 +175,138 @@ class PodsTest extends Pods_UnitTestCase {
 			'number1' => 5,
 		) );
 
-		$this->pod->find( array( 'where' => 't.number1=5' ) );
-
 		// test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name="' . $pod_name . '" where="t.number1=5" field="number1"]' ) );
+	}
+
+	public function test_shortcode_pods_with_non_public_cpt_using_field_returns_empty() {
+		$pod_name = $this->non_public_pod_name;
+
+		// add an item
+		$this->non_public_pod->add( [
+			'name'        => 'Dagobah',
+			'number2'     => 555,
+			'post_status' => 'publish',
+		] );
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555" field="number2"]' );
+
+		$this->assertEquals( '', $output );
+	}
+
+	public function test_shortcode_pods_with_non_public_cpt_and_admin_user_with_access_and_notice_shown() {
+		wp_set_current_user( 1 );
+
+		$pod_name = $this->non_public_pod_name;
+
+		// add an item
+		$this->non_public_pod->add( [
+			'name'        => 'Dagobah',
+			'number2'     => 555,
+			'post_status' => 'publish',
+		] );
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555"]{@number2}[/pods]' );
+
+		$this->assertContains( '<!-- pods:access-notices/admin/content-hidden ', $output );
+		$this->assertContains( '555', $output );
+	}
+
+	public function test_shortcode_pods_form() {
+		$pod_name = $this->pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( 'Anonymous form submissions are not enabled for this site', $output );
+	}
+
+	public function test_shortcode_pods_form_with_anon_enabled() {
+		pods_update_setting( 'session_auto_start', '1' );
+
+		$pod_name = $this->pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( 'Anonymous form submissions are not compatible with sessions on this site', $output );
+	}
+
+	public function test_shortcode_pods_form_with_anon_enabled_and_compatible() {
+		pods_update_setting( 'session_auto_start', '1' );
+
+		add_filter( 'pods_session_id', static function() { return 'testsession'; } );
+
+		$pod_name = $this->pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( '<form', $output );
+	}
+
+	public function test_shortcode_pods_form_logged_in() {
+		wp_set_current_user( 1 );
+
+		$pod_name = $this->pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( '<form', $output );
+	}
+
+	public function test_shortcode_pods_form_with_non_public_cpt_with_error_shown_by_global() {
+		$pod_name = $this->non_public_pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( '<!-- pods:access-notices/user/content-hidden ', $output );
+		$this->assertNotContains( '<form', $output );
+	}
+
+	public function test_shortcode_pods_form_with_non_public_cpt_with_error_shown_by_pod() {
+		$pod_name = $this->non_public_pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( '<!-- pods:access-notices/user/content-hidden ', $output );
+		$this->assertNotContains( '<form', $output );
+	}
+
+	public function test_shortcode_pods_form_with_non_public_cpt_and_user_without_access_with_error_shown() {
+		$new_user_id = wp_insert_user( [
+			'user_login' => 'testcontributor',
+			'user_email' => 'testcontributor@test.local',
+			'user_pass'  => 'hayyyyyy',
+			'role'       => 'contributor',
+		] );
+
+		wp_set_current_user( $new_user_id );
+
+		$pod_name = $this->non_public_pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( '<!-- pods:access-notices/user/content-hidden ', $output );
+		$this->assertNotContains( '<form', $output );
+	}
+
+	public function test_shortcode_pods_form_with_non_public_cpt_and_admin_user_with_access_and_notice_shown() {
+		wp_set_current_user( 1 );
+
+		$pod_name = $this->non_public_pod_name;
+
+		// test shortcode
+		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
+
+		$this->assertContains( '<!-- pods:access-notices/admin/content-hidden ', $output );
+		$this->assertContains( '<form', $output );
 	}
 
 }

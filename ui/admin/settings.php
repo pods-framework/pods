@@ -1,3 +1,9 @@
+<?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+	die( '-1' );
+}
+?>
 <div class="wrap pods-admin pods-admin--flex">
 	<div class="pods-admin__content-container">
 		<form action="" method="post" class="pods-submittable pods-form pods-form-settings">

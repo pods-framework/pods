@@ -358,6 +358,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 	$defaults = array(
 		'casting' => false,
 		'allowed' => null,
+		'source'  => null,
 	);
 
 	$params = (object) array_merge( $defaults, (array) $params );
@@ -376,6 +377,46 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 		}
 	} else {
 		$type = strtolower( (string) $type );
+
+		if ( $params->source ) {
+			// Using keys for faster isset() checks instead of in_array().
+			$disallowed_types = [];
+
+			if ( 'magic-tag' === $params->source ) {
+				$disallowed_types = [
+					'server'              => false,
+					'session'             => false,
+					'global'              => false,
+					'globals'             => false,
+					'cookie'              => false,
+					'constant'            => false,
+					'option'              => false,
+					'site-option'         => false,
+					'transient'           => false,
+					'site-transient'      => false,
+					'cache'               => false,
+					'pods-transient'      => false,
+					'pods-site-transient' => false,
+					'pods-cache'          => false,
+					'pods-option-cache'   => false,
+				];
+			}
+
+			/**
+			 * Allow filtering the list of disallowed variable types for the source.
+			 *
+			 * @since 2.9.4
+			 *
+			 * @param array  $disallowed_types The list of disallowed variable types for the source.
+			 * @param string $source           The source calling pods_v().
+			 */
+			$disallowed_types = apply_filters( "pods_v_disallowed_types_for_source_{$params->source}", $disallowed_types, $params->source );
+
+			if ( isset( $disallowed_types[ $type ] ) ) {
+				return $default;
+			}
+		}
+
 		switch ( $type ) {
 			case 'get':
 				if ( isset( $_GET[ $var ] ) ) {
@@ -616,6 +657,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			case 'globals':
 				if ( isset( $GLOBALS[ $var ] ) ) {
 					$output = $GLOBALS[ $var ];
+
+					$output = pods_access_bleep_data( $output );
 				}
 				break;
 			case 'cookie':
@@ -629,13 +672,15 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				}
 				break;
 			case 'user':
+				// Prevent deprecation notice from WP.
+				if ( 'id' === $var ) {
+					$var = 'ID';
+				}
+
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
 
-					// Prevent deprecation notice from WP.
-					if ( 'id' === $var ) {
-						$var = 'ID';
-					}
+					$user = pods_access_bleep_data( $user );
 
 					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
@@ -654,7 +699,10 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					} elseif ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 						$output = $value;
 					}
-				}//end if
+				} elseif ( 'ID' === $var ) {
+					// Return 0 when logged out and calling the ID.
+					$output = 0;
+				}
 				break;
 			case 'option':
 				$output = get_option( $var, $default );
@@ -1131,7 +1179,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 	$allowed  = array_unique( array_merge( $pods_query_args['allowed'], $allowed ) );
 	$excluded = array_unique( array_merge( $pods_query_args['excluded'], $excluded ) );
 
-	if ( ! isset( $_GET ) ) {
+	if ( ! isset( $_GET ) || $url ) {
 		$query_args = array();
 	} else {
 		$query_args = pods_unsanitize( $_GET );
@@ -1252,6 +1300,7 @@ function pods_cast( $value, $cast_from = null ) {
  * @since 1.8.9
  */
 function pods_create_slug( $orig, $strict = true ) {
+	$str = remove_accents( $orig );
 	$str = preg_replace( '/([_ \\/])/', '-', trim( $orig ) );
 
 	if ( $strict ) {
@@ -1351,7 +1400,12 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
  * @since 1.2.0
  */
 function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
-	$str = trim( $orig );
+	if ( null === $orig ) {
+		return '';
+	}
+
+	$str = trim( (string) $orig );
+	$str = remove_accents( $str );
 	$str = preg_replace( '/([^0-9a-zA-Z\-_\s])/', '', $str );
 	$str = preg_replace( '/(\s_)/', '_', $str );
 	$str = preg_replace( '/(\s+)/', '_', $str );
@@ -1416,6 +1470,12 @@ function pods_js_camelcase_name( $orig ) {
  * @since 2.0.0
  */
 function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
+	if ( is_null( $maybeint ) ) {
+		$maybeint = 0;
+	} elseif ( is_bool( $maybeint ) ) {
+		$maybeint = (int) $maybeint;
+	}
+
 	if ( true === $strict && ! is_numeric( trim( $maybeint ) ) ) {
 		return 0;
 	}
@@ -1777,24 +1837,43 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		'prefix',
 	);
 
+	$pods_v_var  = '';
+	$pods_v_type = 'get';
+
 	if ( in_array( $tag[0], $single_supported, true ) ) {
-		$value = pods_v( '', $tag[0], null );
+		$pods_v_type = $tag[0];
 	} elseif ( 1 === count( $tag ) ) {
-		$value = pods_v( $tag[0], 'get', null );
+		$pods_v_var = $tag[0];
 	} elseif ( 2 === count( $tag ) ) {
-		$value = pods_v( $tag[1], $tag[0], null );
+		$pods_v_var  = $tag[1];
+		$pods_v_type = $tag[0];
 	} else {
 		// Some magic tags support traversal.
-		$value = pods_v( array_slice( $tag, 1 ), $tag[0], null );
+		$pods_v_var  = array_slice( $tag, 1 );
+		$pods_v_type = $tag[0];
 	}
+
+	$value = pods_v( $pods_v_var, $pods_v_type, null, false, [
+		'source' => 'magic-tag',
+	] );
 
 	if ( $helper ) {
 		if ( ! $pod instanceof Pods ) {
 			$pod = pods();
 		}
+
 		$value = $pod->helper( $helper, $value );
 	}
 
+	/**
+	 * Allow filtering the evaluated tag value.
+	 *
+	 * @since unknown
+	 *
+	 * @param mixed      $value    The evaluated tag value.
+	 * @param string     $tag      The evaluated tag name.
+	 * @param null|mixed $fallback The fallback value to use if not set, should already be sanitized.
+	 */
 	$value = apply_filters( 'pods_evaluate_tag', $value, $tag, $fallback );
 
 	if ( is_array( $value ) && 1 === count( $value ) ) {
@@ -1905,15 +1984,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		return $value;
 	}
 
-	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
-	if ( isset( $value['user_pass'] ) ) {
-		unset( $value['user_pass'] );
-
-		// Since we know this is a single select, just pass display name through as the fallback.
-		if ( isset( $value['display_name'] ) ) {
-			$value = array( $value['display_name'] );
-		}
-	}
+	$value = pods_access_bleep_data( $value );
 
 	$original_value = $value;
 

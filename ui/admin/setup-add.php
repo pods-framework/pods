@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods' ) ) {
+	die( '-1' );
+}
+
 $pods_meta = pods_meta();
 
 $ignore = [];

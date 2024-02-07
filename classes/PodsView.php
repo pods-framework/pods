@@ -27,12 +27,13 @@ class PodsView {
 	 * @param array|null     $data       (optional) Data to pass on to the template
 	 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
 	 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
+	 * @param bool           $limited    (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
 	 * @since 2.0.0
 	 */
-	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
+	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache', $limited = false ) {
 
 		/**
 		 * Override the value of $view. For example, using Pods AJAX View.
@@ -44,6 +45,7 @@ class PodsView {
 		 * @param array|null     $data       (optional) Data to pass on to the template
 		 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
 		 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
+		 * @param bool           $limited    (optional) Whether to limit the view to only the theme directory, defaults to false
 		 *
 		 * @since 2.4.1
 		 */
@@ -84,7 +86,7 @@ class PodsView {
 			$view_id = pods_evaluate_tags( $view_id );
 		}
 
-		$view = apply_filters( 'pods_view_inc', $view, $data, $expires, $cache_mode );
+		$view = apply_filters( 'pods_view_inc', $view, $data, $expires, $cache_mode, $limited );
 
 		$view_key = $view;
 
@@ -126,6 +128,53 @@ class PodsView {
 		$output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode );
 
 		return $output;
+	}
+
+	/**
+	 * Get the full path of the view if it exists.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $view    Path of the view file
+	 * @param bool   $limited (optional) Whether to limit the view to only the theme directory, defaults to false
+	 *
+	 * @return string|false The full path of the view if it exists.
+	 */
+	public static function view_get_path( $view, $limited = false ) {
+		// Support my-view.php?custom-key=X#hash keying for cache
+		if ( ! is_array( $view ) ) {
+			$view_q = explode( '?', $view );
+
+			if ( 1 < count( $view_q ) ) {
+				$view = $view_q[0];
+			}
+
+			$view_h = explode( '#', $view );
+
+			if ( 1 < count( $view_h ) ) {
+				$view = $view_h[0];
+			}
+		}
+
+		$view = apply_filters( 'pods_view_inc', $view, null, false, 'cache', $limited );
+
+		$view_key = $view;
+
+		if ( is_array( $view_key ) ) {
+			$view_key = implode( '-', $view_key ) . '.php';
+		}
+
+		if ( false !== realpath( $view_key ) ) {
+			$view_key = realpath( $view_key );
+		}
+
+		$view_path = self::locate_template( $view_key, $limited );
+
+		if ( empty( $view_path ) ) {
+			return false;
+		}
+
+		return $view_path;
 	}
 
 	/**
@@ -507,10 +556,11 @@ class PodsView {
 	 *
 	 * @param            $_view
 	 * @param null|array $_data
+	 * @param bool       $limited (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|string|void
 	 */
-	public static function get_template_part( $_view, $_data = null ) {
+	public static function get_template_part( $_view, $_data = null, $limited = false ) {
 
 		/*
 		To be reviewed later, should have more checks and restrictions like a whitelist etc.
@@ -527,7 +577,7 @@ class PodsView {
 		}
 		*/
 
-		$_view = self::locate_template( $_view );
+		$_view = self::locate_template( $_view, $limited );
 
 		if ( empty( $_view ) ) {
 			return $_view;
@@ -547,11 +597,12 @@ class PodsView {
 	/**
 	 * @static
 	 *
-	 * @param $_view
+	 * @param array|string $_view
+	 * @param bool         $limited (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|string|void
 	 */
-	private static function locate_template( $_view ) {
+	private static function locate_template( $_view, $limited = false ) {
 		if ( is_array( $_view ) ) {
 			$_views = [];
 
@@ -580,9 +631,15 @@ class PodsView {
 			return $_view;
 		}//end if
 
+		$paths_to_check = [ 'plugins', 'pods', 'theme' ];
+
+		if ( $limited ) {
+			$paths_to_check = [ 'theme' ];
+		}
+
 		// Is the view's file somewhere within the plugin directory tree?
 		// Note: we include PODS_DIR for the case of symlinks (see issue #2945).
-		$located = pods_validate_safe_path( $_view, [ 'plugins', 'pods', 'theme' ] );
+		$located = pods_validate_safe_path( $_view, $paths_to_check );
 
 		/**
 		 * Allow filtering the validated view file path to use.

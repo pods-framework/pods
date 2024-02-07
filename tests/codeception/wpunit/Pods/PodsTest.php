@@ -12,17 +12,89 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
 class PodsTest extends Pods_UnitTestCase {
 
 	/**
-	 * The pods system under test
-	 * @var   \Pods
+	 * @var string
 	 */
-	private $pod;
+	protected $pod_name = 'test_pods';
 
+	/**
+	 * @var int
+	 */
+	protected $pod_id = 0;
+
+	/**
+	 * @var Pods
+	 */
+	protected $pod;
+
+	/**
+	 * @var string
+	 */
+	protected $non_public_pod_name = 'test_pods_non_public';
+
+	/**
+	 * @var int
+	 */
+	protected $non_public_pod_id = 0;
+
+	/**
+	 * @var Pods
+	 */
+	protected $non_public_pod;
+
+	/**
+	 *
+	 */
 	public function setUp(): void {
-		$this->pod = pods();
+		parent::setUp();
+
+		$api = pods_api();
+
+		$this->pod_id = $api->save_pod( array(
+			'type'   => 'pod',
+			'name'   => $this->pod_name,
+		) );
+
+		$params = array(
+			'pod_id' => $this->pod_id,
+			'name'   => 'number1',
+			'type'   => 'number',
+		);
+
+		$api->save_field( $params );
+
+		$this->pod = pods( $this->pod_name );
+
+		$this->non_public_pod_id = $api->save_pod( array(
+			'type'    => 'post_type',
+			'storage' => 'meta',
+			'name'    => $this->non_public_pod_name,
+			'public'  => 0,
+		) );
+
+		$params = array(
+			'pod_id' => $this->non_public_pod_id,
+			'name'   => 'number2',
+			'type'   => 'number',
+		);
+
+		$api->save_field( $params );
+
+		$this->non_public_pod = pods( $this->non_public_pod_name );
 	}
 
+	/**
+	 *
+	 */
 	public function tearDown(): void {
-		unset( $this->pod );
+		$this->pod_id            = null;
+		$this->pod               = null;
+		$this->non_public_pod_id = null;
+		$this->non_public_pod    = null;
+
+		pods_update_setting( 'session_auto_start', null );
+		remove_all_filters( 'pods_session_id' );
+
+		parent::tearDown();
 	}
 
 	/**
@@ -66,15 +138,29 @@ class PodsTest extends Pods_UnitTestCase {
 	 */
 	public function test_method_exists_valid() {
 		$this->assertTrue( method_exists( $this->pod, 'valid' ), 'Method valid does not exist' );
+		$this->assertTrue( method_exists( $this->pod, 'is_valid' ), 'Method valid does not exist' );
 	}
 
-	/**
-	 * Test for invalid pod
-	 * @covers  Pods::valid
-	 * @depends test_method_exists_valid
-	 */
+	public function test_method_valid() {
+		$this->assertTrue( $this->pod->valid() );
+		$this->assertTrue( $this->pod->is_valid() );
+	}
+
 	public function test_method_valid_invalid() {
-		$this->assertFalse( $this->pod->valid() );
+		$this->assertFalse( pods()->valid() );
+		$this->assertFalse( pods()->is_valid() );
+	}
+
+	public function test_method_valid_invalid_with_non_existent_pod() {
+		$pod = pods( 'truly_not_a_pod', null, false );
+
+		$this->assertInstanceOf( Pods::class, $pod );
+		$this->assertFalse( $pod->valid() );
+		$this->assertFalse( $pod->is_valid() );
+	}
+
+	public function test_method_valid_invalid_with_non_existent_pod_with_strict_mode() {
+		$this->assertFalse( pods( 'truly_not_a_pod', null, true ) );
 	}
 
 	/**
@@ -337,5 +423,90 @@ class PodsTest extends Pods_UnitTestCase {
 		$this->assertInstanceOf( Pods::class, $pod );
 		$this->assertTrue( $pod->valid() );
 		$this->assertEquals( 'taxonomy', $pod->pod_data['type'] );
+	}
+
+	public function test_pods_form() {
+		// test shortcode
+		$output = $this->pod->form( [ 'check_access' => false ] );
+
+		$this->assertContains( 'Anonymous form submissions are not enabled for this site', $output );
+	}
+
+	public function test_pods_form_with_anon_enabled() {
+		pods_update_setting( 'session_auto_start', '1' );
+
+		// test shortcode
+		$output = $this->pod->form( [ 'check_access' => false ] );
+
+		$this->assertContains( 'Anonymous form submissions are not compatible with sessions on this site', $output );
+	}
+
+	public function test_pods_form_with_anon_enabled_and_compatible() {
+		pods_update_setting( 'session_auto_start', '1' );
+
+		add_filter( 'pods_session_id', static function() { return 'testsession'; } );
+
+		// test shortcode
+		$output = $this->pod->form( [ 'check_access' => false ] );
+
+		$this->assertContains( '<form', $output );
+	}
+
+	public function test_pods_form_logged_in() {
+		wp_set_current_user( 1 );
+
+		// test shortcode
+		$output = $this->pod->form( [ 'check_access' => false ] );
+
+		$this->assertContains( '<form', $output );
+	}
+
+	public function test_pods_form_with_non_public_cpt_with_error_shown() {
+		$new_user_id = wp_insert_user( [
+			'user_login' => 'testsubscriber',
+			'user_email' => 'testsubscriber@test.local',
+			'user_pass'  => 'hayyyyyy',
+			'role'       => 'subscriber',
+		] );
+
+		wp_set_current_user( $new_user_id );
+
+		$this->non_public_pod = pods( $this->non_public_pod_name );
+
+		// test shortcode
+		$output = $this->non_public_pod->form();
+
+		$this->assertContains( '<!-- pods:access-notices/user/content-hidden ', $output );
+		$this->assertNotContains( '<form', $output );
+	}
+
+	public function test_pods_form_with_non_public_cpt_and_user_without_access_with_error_shown() {
+		$new_user_id = wp_insert_user( [
+			'user_login' => 'testcontributor',
+			'user_email' => 'testcontributor@test.local',
+			'user_pass'  => 'hayyyyyy',
+			'role'       => 'contributor',
+		] );
+
+		wp_set_current_user( $new_user_id );
+
+		$this->non_public_pod = pods( $this->non_public_pod_name );
+		// test shortcode
+		$output = $this->non_public_pod->form();
+
+		$this->assertContains( '<!-- pods:access-notices/user/content-hidden ', $output );
+		$this->assertNotContains( '<form', $output );
+	}
+
+	public function test_pods_form_with_non_public_cpt_and_admin_user_with_access_and_notice_shown() {
+		wp_set_current_user( 1 );
+
+		$this->non_public_pod = pods( $this->non_public_pod_name );
+
+		// test shortcode
+		$output = $this->non_public_pod->form();
+
+		$this->assertContains( '<!-- pods:access-notices/admin/content-hidden ', $output );
+		$this->assertContains( '<form', $output );
 	}
 }

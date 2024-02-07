@@ -123,6 +123,10 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 			}
 		}
 
+		$params['_is_editor_mode'] = $this->in_editor_mode( $params );
+		$params['_is_preview']     = is_preview();
+		$params['_preview_id']     = $params['_is_preview'] ? get_queried_object_id() : null;
+
 		return parent::attributes( $params );
 	}
 
@@ -189,5 +193,35 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 		 * @param Base          $block_type           The block type object (not WP_Block).
 		 */
 		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $this );
+	}
+
+	/**
+	 * Determine whether the block is being rendered in editor mode.
+	 *
+	 * @param array $attributes The block attributes used.
+	 *
+	 * @return bool Whether the block is being rendered in editor mode.
+	 */
+	public function in_editor_mode( $attributes = [] ) {
+		if ( ! empty( $attributes['_is_editor'] ) && ! empty( $attributes['_is_editor_mode'] ) ) {
+			return true;
+		}
+
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			if ( $screen && 'post' === $screen->base ) {
+				return true;
+			}
+		}
+
+		if (
+			wp_is_json_request()
+			&& did_action( 'rest_api_init' )
+		) {
+			return true;
+		}
+
+		return false;
 	}
 }

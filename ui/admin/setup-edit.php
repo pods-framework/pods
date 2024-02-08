@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods' ) ) {
+	die( '-1' );
+}
+
 global $pods_i;
 
 $api = pods_api();

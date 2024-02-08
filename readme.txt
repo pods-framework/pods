@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.8
 Requires PHP: 5.3
-Stable tag: 2.7.31
+Stable tag: 2.7.31.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,25 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.31.1 - February 21st, 2024 =
+
+*Security Release*
+
+While this release is meant to be as backwards compatible as possible, some aspects of security hardening may require manual intervention by site owners and their developers. There were no known reports and no known attempts to take advantage of the issues resolved by this release except where noted.
+
+Read more about [How access rights work with Pods](https://docs.pods.io/displaying-pods/access-rights-in-pods/) for more details including new filters/snippets that can provide limited access.
+
+Upgrade now to Pods 3.1 to get the full benefits of the new Access Rights feature with additional customization settings available.
+
+* Security hardening: Introduced new access checks and additional fine-grained control over dynamic features across any place in Pods that allows embedding content or forms. This only applies to usage through Pods Blocks or Shortcodes. Using PHP will continue to expect you are handling this on your own unless you pass the appropriate arguments to the corresponding Pods methods. (@sc0ttkclark)
+* Security hardening: Prevent using the Pods Views Block / Shortcode to embed any files outside of the current theme. Props to the Nex Team / Wordfence for responsibly reporting this. (@sc0ttkclark)
+* Security hardening: Prevent output of `user_pass`, `user_activation_key`, and `post_password` through Pods dynamic features / PHP. These values will be set in Pods references to `****************` if they were not-empty so you can still do conditional checks as normal. While Scott was already aware of this in pre-planned security release work, additional props go to the Nex Team / Wordfence for responsibly reporting this too. (@sc0ttkclark)
+* Security hardening: Prevent more unsavory PHP display callbacks from being used with magic tags in addition to those already prevented. Props to the Nex Team / Wordfence for responsibly reporting this. (@sc0ttkclark)
+* Security hardening: All SQL fragments used by Dynamic Features are checked for disallowed usage like subqueries. (@sc0ttkclark)
+* Feature: Pods Display > The Display-related Pods Blocks and Shortcodes have additional checks that limit access to content based on the user viewing it. For Post Types that are non-public, they must have access to the `read` capability from that post type as a normal user. For displaying content from Users, they must have access to `list_users` capability to view that. [Read more about how access rights work with Pods](https://docs.pods.io/displaying-pods/access-rights-in-pods/) (@sc0ttkclark)
+* Feature: Pods Forms > The Pods Form Block and Form Shortcode have additional checks that limit access to creating/editing content based on the user submitting the form. For Post Types that are non-public, they must have access to the 'create' capability from that post type as a normal user. Forms that submit to the Users pod, now require that the submitter must have access to the `create_users` or `edit_users` capability to create or edit that user. [Read more about how access rights work with Pods](https://docs.pods.io/displaying-pods/access-rights-in-pods/) (@sc0ttkclark)
+* Feature: Pods Forms > When a user has access to create or edit content through a Pods form for a post type, the `post_content` field is cleaned based on the level of access they have to prevent inserting unintentional shortcodes or blocks. (@sc0ttkclark) 
 
 = 2.7.31 - September 23rd, 2021 =
 

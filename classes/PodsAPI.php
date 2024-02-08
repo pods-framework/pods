@@ -1064,7 +1064,8 @@ class PodsAPI {
 					'name'  => 'post_password',
 					'label' => 'Password',
 					'type'  => 'password',
-					'alias' => array()
+					'alias' => array(),
+					'hide_in_default_form' => true,
 				),
 				'post_name'             => array(
 					'name'  => 'post_name',
@@ -6290,7 +6291,7 @@ class PodsAPI {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $k => $v ) {
 					if ( ! is_array( $v ) ) {
-						$value[ $k ] = maybe_unserialize( $v );
+						$value[ $k ] = pods_maybe_safely_unserialize( $v );
 					}
 				}
 
@@ -6298,7 +6299,7 @@ class PodsAPI {
 					$value = current( $value );
 				}
 			} else {
-				$value = maybe_unserialize( $value );
+				$value = pods_maybe_safely_unserialize( $value );
 			}
 
 			$pod['options'][ $option ] = $value;
@@ -6935,7 +6936,7 @@ class PodsAPI {
 					if ( is_array( $value ) ) {
 						foreach ( $value as $k => $v ) {
 							if ( ! is_array( $v ) ) {
-								$value[ $k ] = maybe_unserialize( $v );
+								$value[ $k ] = pods_maybe_safely_unserialize( $v );
 							}
 						}
 
@@ -6943,7 +6944,7 @@ class PodsAPI {
 							$value = current( $value );
 						}
 					} else {
-						$value = maybe_unserialize( $value );
+						$value = pods_maybe_safely_unserialize( $value );
 					}
 
 					$field['options'][ $option ] = $value;
@@ -9258,9 +9259,17 @@ class PodsAPI {
 		$form     = pods_var( '_pods_form', $params );
 		$location = pods_var( '_pods_location', $params );
 
+		$obj = null;
+
 		if ( is_object( $obj ) ) {
 			$pod = $obj->pod;
 			$id  = $obj->id();
+		} elseif ( $pod ) {
+			$obj = pods( $pod, $id, true );
+
+			if ( ! $obj || is_wp_error( $obj ) || ! $obj->valid() ) {
+				$obj = null;
+			}
 		}
 
 		if ( ! empty( $fields ) ) {
@@ -9296,6 +9305,46 @@ class PodsAPI {
 
 		foreach ( $fields as $field ) {
 			$data[ $field ] = pods_var_raw( 'pods_field_' . $field, $params, '' );
+		}
+
+		// Check if the user should have access to shortcodes/blocks.
+		if (
+			$obj
+			&& 'post_type' === $obj->pod_data['type']
+			&& ! empty( $data['post_content'] )
+		) {
+			$restrict_content = ! current_user_can( 'edit_posts', $id ?: null );
+
+			/**
+			 * Allow filtering whether the post content needs to be restricted to have shortcodes/blocks removed.
+			 *
+			 * @since 3.1.0
+			 *
+			 * @param bool        $restrict_content Whether the post content needs to be restricted to have shortcodes/blocks removed.
+			 * @param string      $object_type      The object type.
+			 * @param string|null $object_name      The object name (if different from the object type like post_type, taxonomy, and setting have).
+			 * @param string|int  $id               The item ID (if editing).
+			 */
+			$restrict_content = (bool) apply_filters(
+				'pods_api_process_form_restrict_content',
+				$restrict_content,
+				$obj->pod_data['type'],
+				$obj->pod_data['name'],
+				$id
+			);
+
+			if ( $restrict_content ) {
+				// Strip shortcodes.
+				$data['post_content'] = strip_shortcodes( $data['post_content'] );
+
+				// Allow minimal blocks.
+				$data['post_content'] = function_exists( 'excerpt_remove_blocks' ) ? excerpt_remove_blocks( $data['post_content'] ) : $data['post_content'];
+
+				// Clean up the content where missing blocks might be.
+				$data['post_content'] = str_replace( "\n\n\n", "\n", $data['post_content'] );
+			}
+
+			$data['post_content'] = trim( $data['post_content'] );
 		}
 
 		$params = array(

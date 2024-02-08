@@ -1,3 +1,9 @@
+<?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+?>
 <div class="wrap pods-admin pods-admin--flex">
 	<div class="pods-admin__content-container">
 		<div id="icon-pods" class="icon32"><br /></div>

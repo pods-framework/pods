@@ -282,9 +282,7 @@ class PodsField {
 	 * @since 2.0.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-
+		return $this->maybe_sanitize_output( $value, $options );
 	}
 
 	/**
@@ -774,48 +772,144 @@ class PodsField {
 	 * @return string
 	 */
 	public function strip_html( $value, $options = null ) {
-
 		if ( is_array( $value ) ) {
-			// @codingStandardsIgnoreLine
-			$value = @implode( ' ', $value );
-		}
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->strip_html( $v, $options );
+			}
 
-		$value = trim( $value );
+			return $value;
+		}
 
 		if ( empty( $value ) ) {
 			return $value;
 		}
 
-		$options = (array) $options;
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		// Strip HTML
-		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
-			$allowed_html_tags = '';
-
-			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
+			// Strip HTML
+			if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
 				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
-				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
-				$allowed_tags = explode( ' ', $allowed_tags );
-				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
 
-				if ( ! empty( $allowed_tags ) ) {
-					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+				if ( 0 < strlen( $allowed_tags ) ) {
+					$allowed_tags = trim( str_replace( [ '<', '>', ',' ], ' ', $allowed_tags ) );
+					$allowed_tags = explode( ' ', $allowed_tags );
+					$allowed_tags = array_unique( array_filter( $allowed_tags ) );
+
+					if ( ! empty( $allowed_tags ) ) {
+						$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+
+						$value = strip_tags( $value, $allowed_html_tags );
+					}
 				}
-			}
 
-			if ( ! empty( $allowed_html_tags ) ) {
-				$value = strip_tags( $value, $allowed_html_tags );
+				return $this->maybe_sanitize_output( $value, $options );
 			}
-		} else {
-			$value = strip_tags( $value );
 		}
 
-		// Strip shortcodes
-		if ( 0 === (int) pods_v( static::$type . '_allow_shortcode', $options ) ) {
-			$value = strip_shortcodes( $value );
+		return wp_strip_all_tags( $value );
+	}
+
+	/**
+	 * Determine whether the field value needs to be sanitized and sanitize it.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param mixed            $value   The field value.
+	 * @param null|array|Field $options The field options.
+	 *
+	 * @return mixed The sanitized field value if it needs to be sanitized.
+	 */
+	public function maybe_sanitize_output( $value, $options = null ) {
+		// Maybe check for a sanitize output option.
+		$should_sanitize = null === $options || 1 === (int) pods_v( 'sanitize_output', $options, 1 );
+
+		/**
+		 * Allow filtering whether to sanitize the field value before output.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool             $should_sanitize Whether the field value should be sanitized.
+		 * @param mixed            $value           The field value.
+		 * @param null|array|Field $options         The field options.
+		 */
+		$should_sanitize = apply_filters( 'pods_field_maybe_sanitize_output', $should_sanitize, $value, $options );
+
+		if ( $should_sanitize ) {
+			if ( is_string( $value ) ) {
+				$value = wp_kses_post( $value );
+			} elseif ( is_array( $value ) || is_object( $value ) ) {
+				$value = wp_kses_post_deep( $value );
+			}
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Strip shortcodes based on options.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string|array     $value   The field value.
+	 * @param array|Field|null $options The field options.
+	 *
+	 * @return string The field value.
+	 */
+	public function strip_shortcodes( $value, $options = null ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->strip_shortcodes( $v, $options );
+			}
+
+			return $value;
+		}
+
+		if ( empty( $value ) ) {
+			return $value;
+		}
+
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+
+			// Check if we should strip shortcodes.
+			if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+				return $value;
+			}
+		}
+
+		return strip_shortcodes( $value );
+	}
+
+	/**
+	 * Trim whitespace based on options.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string|array     $value   The field value.
+	 * @param array|Field|null $options The field options.
+	 *
+	 * @return string The field value.
+	 */
+	public function trim_whitespace( $value, $options = null ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->trim_whitespace( $v, $options );
+			}
+
+			return $value;
+		}
+
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+
+			// Check if we should trim the content.
+			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
+				return $value;
+			}
+		}
+
+		return trim( $value );
 	}
 
 	/**

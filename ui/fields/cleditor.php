@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 wp_enqueue_script( 'pods-cleditor' );
 wp_enqueue_style( 'pods-styles' );
 

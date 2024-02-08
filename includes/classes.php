@@ -218,17 +218,18 @@ function pods_i18n() {
  * @param string     $cache_mode (optional) Specify the caching method to use for the view, available options include
  *                               cache, transient, or site-transient
  * @param bool       $return     (optional) Whether to return the view or not, defaults to false and will echo it
+ * @param bool       $limited    (optional) Whether to limit the view to only the theme directory, defaults to false
  *
  * @return string|bool The view output
  *
  * @since 2.0.0
  * @link  https://pods.io/docs/pods-view/
  */
-function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
+function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false, $limited = false ) {
 
 	require_once PODS_DIR . 'classes/PodsView.php';
 
-	$view = PodsView::view( $view, $data, $expires, $cache_mode );
+	$view = PodsView::view( $view, $data, $expires, $cache_mode, $limited );
 
 	if ( $return ) {
 		return $view;

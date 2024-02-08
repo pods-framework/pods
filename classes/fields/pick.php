@@ -2349,8 +2349,8 @@ class PodsField_Pick extends PodsField {
 							$ids = wp_list_pluck( $ids, $search_data->field_id );
 						}
 
-						if ( $params['limit'] < count( $ids ) ) {
-							$params['limit'] = count( $ids );
+						if ( $params['limit'] < count( (array) $ids ) ) {
+							$params['limit'] = count( (array) $ids );
 						}
 
 						if ( is_array( $ids ) ) {

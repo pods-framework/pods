@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+	die( '-1' );
+}
+
 global $pods_init;
 
 if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'], 'pods-settings' ) ) {

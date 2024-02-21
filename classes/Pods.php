@@ -1372,10 +1372,8 @@ class Pods implements Iterator {
 											continue;
 										}
 
-										// Bypass pass field.
-										if ( isset( $item->user_pass ) ) {
-											unset( $item->user_pass );
-										}
+										// Bypass sensitive fields.
+										$item = pods_access_bleep_data( $item );
 
 										// Get Item ID.
 										$item_id = $item->pod_item_id;
@@ -1388,6 +1386,10 @@ class Pods implements Iterator {
 										} elseif ( 'objects' === $params->output ) {
 											if ( in_array( $object_type, array( 'post_type', 'media' ), true ) ) {
 												$item = get_post( $item_id );
+
+												if ( ! empty( $item ) ) {
+													$item = pods_access_bleep_data( $item );
+												}
 											} elseif ( 'taxonomy' === $object_type ) {
 												$item = get_term( $item_id, $object );
 											} elseif ( 'user' === $object_type ) {
@@ -1406,7 +1408,7 @@ class Pods implements Iterator {
 													$item->caps    = $caps;
 													$item->allcaps = $allcaps;
 
-													unset( $item->user_pass );
+													$item = pods_access_bleep_data( $item );
 												}
 											} elseif ( 'comment' === $object_type ) {
 												$item = get_comment( $item_id );
@@ -3557,20 +3559,6 @@ class Pods implements Iterator {
 		}
 
 		/**
-		 * Allows changing whether callbacks are allowed to run.
-		 *
-		 * @param bool  $allow_callbacks Whether callbacks are allowed to run.
-		 * @param array $params          Parameters used by Pods::helper() method.
-		 *
-		 * @since 2.8.0
-		 */
-		$allow_callbacks = (boolean) apply_filters( 'pods_helper_allow_callbacks', true, $params );
-
-		if ( ! $allow_callbacks ) {
-			return $value;
-		}
-
-		/**
 		 * Allows changing whether to include the Pods object as the second value to the callback.
 		 *
 		 * @param bool  $include_obj Whether to include the Pods object as the second value to the callback.
@@ -3580,111 +3568,25 @@ class Pods implements Iterator {
 		 */
 		$include_obj = (boolean) apply_filters( 'pods_helper_include_obj', false, $params );
 
-		if ( ! is_callable( $params['helper'] ) ) {
-			if ( $include_obj ) {
-				return apply_filters( $params['helper'], $value, $this );
-			} else {
-				return apply_filters( $params['helper'], $value );
-			}
-		}
-
-		$disallowed = [
-			// Regex related.
-			'preg_replace',
-			'preg_replace_array',
-			'preg_replace_callback',
-			'preg_replace_callback_array',
-			'preg_match',
-			'preg_match_all',
-			// Eval related.
-			'system',
-			'exec',
-			'eval',
-			'create_function',
-			// File related.
-			'popen',
-			'include',
-			'include_once',
-			'require',
-			'require_once',
-			'file_get_contents',
-			'file_put_contents',
-			'get_template_part',
-			// Nonce related.
-			'wp_nonce_url',
-			'wp_nonce_field',
-			'wp_create_nonce',
-			'check_admin_referer',
-			'check_ajax_referer',
-			'wp_verify_nonce',
-			// PHP related.
-			'constant',
-			'defined',
-			'get_current_user',
-			'get_defined_constants',
-			'get_defined_functions',
-			'get_defined_vars',
-			'get_extension_funcs',
-			'get_include_path',
-			'get_included_files',
-			'get_loaded_extensions',
-			'get_required_files',
-			'get_resources',
-			'getenv',
-			'getopt',
-			'ini_alter',
-			'ini_get',
-			'ini_get_all',
-			'ini_restore',
-			'ini_set',
-			'php_ini_loaded_file',
-			'php_ini_scanned_files',
-			'php_sapi_name',
-			'php_uname',
-			'phpinfo',
-			'phpversion',
-			'putenv',
-		];
-
-		$allowed = [];
-
-		/**
-		 * Allows adjusting the disallowed callbacks as needed.
-		 *
-		 * @param array $disallowed List of callbacks not allowed.
-		 * @param array $params     Parameters used by Pods::helper() method.
-		 *
-		 * @since 2.7.0
-		 */
-		$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, $params );
-
-		/**
-		 * Allows adjusting the allowed callbacks as needed.
-		 *
-		 * @param array $allowed List of callbacks explicitly allowed.
-		 * @param array $params  Parameters used by Pods::helper() method.
-		 *
-		 * @since 2.7.0
-		 */
-		$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, $params );
-
 		// Clean up helper callback (if string).
 		if ( is_string( $params['helper'] ) ) {
 			$params['helper'] = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params['helper'] ) );
 		}
 
-		$is_allowed = false;
-
-		if ( ! empty( $allowed ) ) {
-			if ( in_array( $params['helper'], $allowed, true ) ) {
-				$is_allowed = true;
-			}
-		} elseif ( ! in_array( $params['helper'], $disallowed, true ) ) {
-			$is_allowed = true;
+		if ( ! pods_access_callback_allowed( $params['helper'], $params ) ) {
+			return $value;
 		}
 
-		if ( ! $is_allowed ) {
-			return $value;
+		if ( ! is_callable( $params['helper'] ) ) {
+			if ( ! is_string( $params['helper'] ) ) {
+				return '';
+			}
+
+			if ( $include_obj ) {
+				return apply_filters( $params['helper'], $value, $this );
+			}
+
+			return apply_filters( $params['helper'], $value );
 		}
 
 		try {
@@ -3746,20 +3648,21 @@ class Pods implements Iterator {
 	 * @param string      $template_name The template name.
 	 * @param string|null $code          Custom template code to use instead.
 	 * @param bool        $deprecated    Whether to use deprecated functionality based on old function usage.
+	 * @param bool        $check_access  Whether to check access for Posts that are Password-protected.
 	 *
 	 * @return mixed Template output
 	 *
 	 * @since 2.0.0
 	 * @link  https://docs.pods.io/code/pods/template/
 	 */
-	public function template( $template_name, $code = null, $deprecated = false ) {
+	public function template( $template_name, $code = null, $deprecated = false, $check_access = false ) {
 
 		$out = null;
 
 		$obj =& $this;
 
 		if ( class_exists( 'Pods_Templates' ) ) {
-			$out = Pods_Templates::template( $template_name, $code, $this, $deprecated );
+			$out = Pods_Templates::template( $template_name, $code, $this, $deprecated, $check_access );
 		} elseif ( ! empty( $code ) ) {
 			// backwards compatibility.
 			$code = str_replace( '$this->', '$obj->', $code );
@@ -3782,18 +3685,43 @@ class Pods implements Iterator {
 			 */
 			$code = apply_filters( "pods_templates_pre_template_{$template_name}", $code, $template_name, $this );
 
+			$info = $check_access ? pods_info_from_args( [ 'pods' => $this ] ) : [];
+
 			ob_start();
 
 			if ( ! empty( $code ) ) {
 				// Only detail templates need $this->id.
 				if ( empty( $this->id ) ) {
 					while ( $this->fetch() ) {
+						$info['item_id'] = $this->id();
+
+						// Ensure the post is not password protected.
+						if (
+							$check_access
+							&& (
+								pods_access_bypass_post_with_password( $info )
+								|| pods_access_bypass_private_post( $info )
+							)
+						) {
+							continue;
+						}
+
 						// @codingStandardsIgnoreLine
 						echo $this->do_magic_tags( $code );
 					}
 				} else {
-					// @codingStandardsIgnoreLine
-					echo $this->do_magic_tags( $code );
+					$info['item_id'] = $this->id();
+
+					if (
+						! $check_access
+						|| (
+							! pods_access_bypass_post_with_password( $info )
+							&& ! pods_access_bypass_private_post( $info )
+						)
+					) {
+						// @codingStandardsIgnoreLine
+						echo $this->do_magic_tags( $code );
+					}
 				}
 			}
 
@@ -3846,10 +3774,33 @@ class Pods implements Iterator {
 			// Only detail templates need $this->id.
 			if ( empty( $this->id ) ) {
 				while ( $this->fetch() ) {
+					$info['item_id'] = $this->id();
+
+					// Ensure the post is not password protected.
+					if (
+						$check_access
+						&& (
+							pods_access_bypass_post_with_password( $info )
+							|| pods_access_bypass_private_post( $info )
+						)
+					) {
+						continue;
+					}
+
 					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
 				}
 			} else {
-				pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				$info['item_id'] = $this->id();
+
+				if (
+					! $check_access
+					|| (
+						! pods_access_bypass_post_with_password( $info )
+						&& ! pods_access_bypass_private_post( $info )
+					)
+				) {
+					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				}
 			}
 
 			$out = ob_get_clean();
@@ -3918,7 +3869,7 @@ class Pods implements Iterator {
 					esc_html__( 'Anonymous form submissions are not enabled for this site', 'pods' ),
 					esc_url( wp_login_url( pods_current_url() ) ),
 					esc_html__( 'try logging in first', 'pods' ),
-					esc_html__( 'contacting your site administrator', 'pods' )
+					esc_html__( 'or contacting your site administrator', 'pods' )
 				);
 			}
 
@@ -3943,18 +3894,65 @@ class Pods implements Iterator {
 			}
 		}
 
-		$defaults = array(
-			'fields'      => $params,
-			'label'       => $label,
-			'thank_you'   => $thank_you,
-			'fields_only' => false,
-			'output_type' => 'div',
-		);
+		$defaults = [
+			'fields'       => $params,
+			'label'        => $label,
+			'thank_you'    => $thank_you,
+			'fields_only'  => false,
+			'output_type'  => 'div',
+			'check_access' => true,
+			'form_key'     => null,
+		];
 
 		if ( is_array( $params ) ) {
 			$params = array_merge( $defaults, $params );
 		} else {
 			$params = $defaults;
+		}
+
+		$access_type = $this->exists() ? 'edit' : 'add';
+
+		$return = '';
+
+		// Check if the current user has access to the object.
+		if ( ! empty( $params['check_access'] ) ) {
+			$dynamic_feature_unrestricted = pods_can_use_dynamic_feature_unrestricted(
+				[
+					'pods' => $this,
+				],
+				'form',
+				$access_type
+			);
+
+			if (
+				! pods_current_user_can_access_object(
+					[
+						'pods' => $this,
+					],
+					$access_type,
+					$params['form_key']
+				)
+				&& ! $dynamic_feature_unrestricted
+			) {
+				// Stop display and only return the notice.
+				return pods_get_access_user_notice(
+					[
+						'pods' => $this,
+					],
+					false,
+					esc_html__( 'You do not have access to this embedded form.', 'pods' )
+				) ?: '';
+			}
+
+			// Show the admin-specific notice that this content may not be visible to others since it is not public.
+			if ( ! $dynamic_feature_unrestricted && pods_is_admin() ) {
+				// Include the notice in the display output to let the admin know and continue the display.
+				$return .= pods_get_access_admin_notice(
+					[
+						'pods' => $this,
+					]
+				) ?: '';
+			}
 		}
 
 		$pod =& $this;
@@ -4093,7 +4091,7 @@ class Pods implements Iterator {
 
 		pods_view( PODS_DIR . 'ui/front/form.php', compact( array_keys( get_defined_vars() ) ) );
 
-		$output = ob_get_clean();
+		$output = $return . ob_get_clean();
 
 		if ( empty( $this->id ) ) {
 			$this->row_override = array();

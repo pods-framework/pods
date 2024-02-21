@@ -92,6 +92,16 @@ class Block_Field extends Field {
 					'type' => 'string',
 				],
 			],
+			'html'      => [
+				'type'             => 'html',
+				'fieldOptions'     => [
+					'className' => 'text__container',
+					'type'      => 'text',
+				],
+				'attributeOptions' => [
+					'type' => 'string',
+				],
+			],
 		];
 	}
 
@@ -147,6 +157,10 @@ class Block_Field extends Field {
 		$block_args['name'] = $name;
 
 		$block_args['fieldOptions']['help'] = $this->get_arg( 'description' );
+
+		if ( 'html' === $type ) {
+			$block_args['fieldOptions']['html_content'] = $this->get_arg( 'html_content' );
+		}
 
 		if ( 'boolean' !== $type ) {
 			$block_args['fieldOptions']['label'] = $this->get_arg( 'label' );

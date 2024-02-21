@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @var bool $force_callouts Whether to force the callouts.
  */
@@ -24,11 +30,16 @@ $feature_callout_link = add_query_arg( $campaign_args, $feature_callout_link );
 $pods_pro_link        = add_query_arg( $campaign_args, $pods_pro_link );
 $learn_more_link      = add_query_arg( $campaign_args, $learn_more_link );
 $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
+
+$callout_dismiss_link = add_query_arg( [
+	'pods_callout_dismiss'       => $callout,
+	'pods_callout_dismiss_nonce' => wp_create_nonce( 'pods_callout_dismiss_' . $callout ),
+] );
 ?>
 
-<div class="pods-admin_friends-callout_container">
+<div class="pods-admin_friends-callout_container pods-admin_friends-callout_container-vertical">
 	<?php if ( ! $force_callouts ) : ?>
-		<a href="<?php echo esc_url( add_query_arg( 'pods_callout_dismiss', $callout ) ); ?>" class="pods-admin_friends-callout_close">
+		<a href="<?php echo esc_url( $callout_dismiss_link ); ?>" class="pods-admin_friends-callout_close">
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 125" enable-background="new 0 0 100 100" xml:space="preserve"><polygon points="95,17 83,5 50,38 17,5 5,17 38,50 5,83 17,95 50,62 83,95 95,83 62,50 "/></svg>
 		</a>
 	<?php endif; ?>
@@ -49,7 +60,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 		<p class="pods-admin_friends-callout_text">
 			🎉&nbsp;
 			<?php
-				esc_html_e( 'Pods 3.0 is out and we are spending the next release cycle entirely focused on Documentation, Tutorials, and Video content', 'pods' );
+				esc_html_e( 'Pods 3.1 is out and we are spending the next release cycle entirely focused on Documentation, Tutorials, and Video content', 'pods' );
 
 				/*printf(
 					'%1$s: %2$s',
@@ -57,7 +68,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 					esc_html__( 'Conditional Logic for Fields', 'pods' )
 				);*/
 				/*printf(
-					'%1$s: <a href="%2$s" target="_blank" rel="noreferrer">%3$s</a>',
+					'%1$s: <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>',
 					esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
 					esc_url( $feature_callout_link ),
 					esc_html__( 'Conditional Logic for Fields', 'pods' )
@@ -95,12 +106,12 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 		</div>
 		<div class="pods-admin_friends-callout_button-group">
 			<a href="<?php echo esc_url( $learn_more_link ); ?>"
-				target="_blank" rel="noreferrer"
+				target="_blank" rel="noopener noreferrer"
 				class="pods-admin_friends-callout_button">
 				<?php esc_html_e( 'Learn More', 'pods' ); ?>
 			</a>
 			<a href="<?php echo esc_url( $donate_now_link ); ?>"
-				target="_blank" rel="noreferrer"
+				target="_blank" rel="noopener noreferrer"
 				class="pods-admin_friends-callout_button--join">
 				<?php esc_html_e( 'Donate Now', 'pods' ); ?> &raquo;
 			</a>
@@ -111,7 +122,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 				// translators: %s: Pods Pro by SKCDEV link.
 				printf(
 					esc_html__( 'You can also check out the new add-ons available from %s which has partnered with Friends of Pods to help bring in more donations.', 'pods' ),
-					'<a href="' . esc_url( $pods_pro_link ) . '" target="_blank" rel="noreferrer">Pods Pro by SKCDEV</a>'
+					'<a href="' . esc_url( $pods_pro_link ) . '" target="_blank" rel="noopener noreferrer">Pods Pro by SKCDEV</a>'
 				);
 			?>
 		</p>

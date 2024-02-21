@@ -1,3 +1,9 @@
+<?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+?>
 <label<?php PodsForm::attributes( $attributes, $name, 'label' ); ?>>
 	<?php
 	echo pods_kses_exclude_p( $label );

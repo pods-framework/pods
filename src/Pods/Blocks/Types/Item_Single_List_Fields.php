@@ -71,6 +71,17 @@ class Item_Single_List_Fields extends Item_Single {
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
 			[
+				'name'    => 'access_rights_help',
+				'label'   => __( 'Access Rights', 'pods' ),
+				'type'    => 'html',
+				'default' => '',
+				'html_content' => sprintf(
+					// translators: %s is the Read Documentation link.
+					esc_html__( 'Read about how access rights control what can be displayed to other users: %s', 'pods' ),
+					'<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'pods' ) . '</a>'
+				),
+			],
+			[
 				'name'        => 'slug',
 				'label'       => __( 'Slug or ID', 'pods' ),
 				'type'        => 'text',
@@ -117,6 +128,11 @@ class Item_Single_List_Fields extends Item_Single {
 	 * @return string The block content to render.
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
+		// If the feature is disabled then return early.
+		if ( ! pods_can_use_dynamic_feature( 'display' ) ) {
+			return '';
+		}
+
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 

@@ -25,6 +25,7 @@ class Pod extends Base {
 		$admin_ui    = false;
 		$connections = false;
 		$advanced    = false;
+		$access      = true;
 
 		$pod_type    = pods_v( 'type', $pod );
 		$is_extended = $pod->is_extended();
@@ -64,6 +65,10 @@ class Pod extends Base {
 
 		if ( $advanced ) {
 			$core_tabs['advanced'] = __( 'Advanced Options', 'pods' );
+		}
+
+		if ( $access ) {
+			$core_tabs['access-rights'] = __( 'Access Rights', 'pods' );
 		}
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
@@ -137,14 +142,14 @@ class Pod extends Base {
 					'label'           => __( 'Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod_name ) ) ),
 					'text_max_length' => 30,
 				],
 				'label_singular'                   => [
 					'label'           => __( 'Singular Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ) ),
+					'default'         => pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod_name ) ) ) ),
 					'text_max_length' => 30,
 				],
 				'placeholder_enter_title_here'     => [
@@ -640,14 +645,14 @@ class Pod extends Base {
 					'label'           => __( 'Page Title', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
+					'default'         => str_replace( '_', ' ', $pod_name ),
 					'text_max_length' => 30,
 				],
 				'menu_name' => [
 					'label'           => __( 'Menu Name', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod_name ) ) ),
 					'text_max_length' => 30,
 				],
 			];
@@ -730,7 +735,7 @@ class Pod extends Base {
 				],
 			];
 
-			$post_type_name = pods_v( 'name', $pod, 'post_type', true );
+			$post_type_name = $pod_name ?: 'post_type';
 
 			/**
 			 * Allow filtering the default post status.
@@ -778,9 +783,10 @@ class Pod extends Base {
 			];
 
 			$options['advanced'] = [
-				'public'                  => [
+				'public' => [
 					'label'             => __( 'Public', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'When a content type is public, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
@@ -817,7 +823,7 @@ class Pod extends Base {
 					'label'            => __( 'Custom User Capability', 'pods' ),
 					'help'             => __( 'help', 'pods' ),
 					'type'             => 'text',
-					'text_placeholder' => pods_v( 'name', $pod ),
+					'text_placeholder' => $pod_name,
 					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'capability_type_extra'   => [
@@ -910,13 +916,6 @@ class Pod extends Base {
 				'query_var'               => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'The Query Var is used in the URL and underneath the WordPress Rewrite API to tell WordPress what page or post type you are on. For a list of reserved Query Vars, read <a href="http://codex.wordpress.org/WordPress_Query_Vars">WordPress Query Vars</a> from the WordPress Codex.', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => true,
-					'boolean_yes_label' => '',
-				],
-				'can_export'              => [
-					'label'             => __( 'Exportable', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
@@ -1214,9 +1213,17 @@ class Pod extends Base {
 			$options['advanced'] = [
 				'public'                   => [
 					'label'             => __( 'Public', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'When a content type is public, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
+					'boolean_yes_label' => '',
+				],
+				'publicly_queryable'      => [
+					'label'             => __( 'Publicly Queryable', 'pods' ),
+					'help'              => __( 'help', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
 				],
 				'hierarchical'             => [
@@ -1276,7 +1283,7 @@ class Pod extends Base {
 					'label'            => __( 'Custom User Capability', 'pods' ),
 					'help'             => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
 					'type'             => 'text',
-					'text_placeholder' => pods_v( 'name', $pod ),
+					'text_placeholder' => $pod_name,
 					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'query_var'                => [
@@ -1284,14 +1291,6 @@ class Pod extends Base {
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
-					'boolean_yes_label' => '',
-				],
-				'query_var'                => [
-					'label'             => __( 'Query Var', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
 				'query_var_string'         => [
@@ -1421,12 +1420,6 @@ class Pod extends Base {
 					'default'    => '',
 					'depends-on' => [ 'menu_location' => 'top' ],
 				],
-			];
-
-			// @todo fill this in
-			$options['advanced'] = [
-				'temporary' => 'This type has the fields hardcoded',
-				// :(
 			];
 		} elseif ( 'pod' === $pod_type ) {
 			$actions_enabled = [
@@ -1635,13 +1628,13 @@ class Pod extends Base {
 			];
 		}//end if
 
+		// Add access rights options.
+		$options['access-rights'] = pods_access_pod_options( $pod_type, $pod_name, $pod );
+
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
 			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink-config.json' ), true );
 		}
-
-		$pod_type = $pod['type'];
-		$pod_name = $pod['name'];
 
 		/**
 		 * Add admin fields to the Pods editor for a specific Pod.

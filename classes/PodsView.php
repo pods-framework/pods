@@ -159,27 +159,27 @@ class PodsView {
 	 * @param array|null     $data       (optional) Data to pass on to the template
 	 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
 	 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
+	 * @param bool           $limited    (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
 	 * @since 2.0.0
 	 */
-	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
+	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache', $limited = false ) {
 
 		/**
-		 * Override the value of $view. For example, using Pods AJAX View.
-		 *
-		 * To use, set first param to true. If that param in not null, this method returns its value.
-		 *
-		 * @param null|bool      If          not set to null, this filter overrides the rest of the method.
-		 * @param string         $view       Path of the view file
-		 * @param array|null     $data       (optional) Data to pass on to the template
-		 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
-		 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
+		 * Allow filtering the view before the logic runs.
 		 *
 		 * @since 2.4.1
+		 *
+		 * @param null|false|string $filter_check The filter check. If not set to null, return the value as the output. Set to false to fail to load the view.
+		 * @param string            $view         Path of the view file.
+		 * @param array|null        $data         Data to pass on to the template.
+		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
+		 * @param string            $cache_mode   Decides the caching method to use for the view.
+		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
 		 */
-		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode );
+		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode, $limited );
 
 		if ( null !== $filter_check ) {
 			return $filter_check;
@@ -216,7 +216,18 @@ class PodsView {
 			$view_id = pods_evaluate_tags( $view_id );
 		}
 
-		$view = apply_filters( 'pods_view_inc', $view, $data, $expires, $cache_mode );
+		/**
+		 * Allow filtering the path of the view to use.
+		 *
+		 * @since unknown
+		 *
+		 * @param string            $view         Path of the view file.
+		 * @param array|null        $data         Data to pass on to the template.
+		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
+		 * @param string            $cache_mode   Decides the caching method to use for the view.
+		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
+		 */
+		$view = apply_filters( 'pods_view_inc', $view, $data, $expires, $cache_mode, $limited );
 
 		$view_key = $view;
 
@@ -254,10 +265,82 @@ class PodsView {
 			self::set( 'pods-view-' . $cache_key . $view_id, $output, $expires, $cache_mode, 'pods_view' );
 		}
 
-		$output = apply_filters( "pods_view_output_{$cache_key}", $output, $view, $data, $expires, $cache_mode );
-		$output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode );
+		/**
+		 * Allow filtering the path of the view to use based on the cache key.
+		 *
+		 * @since unknown
+		 *
+		 * @param string|false      $output       The view output. Returns as false if the view fails to load.
+		 * @param string            $view         Path of the view file.
+		 * @param array|null        $data         Data to pass on to the template.
+		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
+		 * @param string            $cache_mode   Decides the caching method to use for the view.
+		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
+		 */
+		$output = apply_filters( "pods_view_output_{$cache_key}", $output, $view, $data, $expires, $cache_mode, $limited );
+
+		/**
+		 * Allow filtering the path of the view to use.
+		 *
+		 * @since unknown
+		 *
+		 * @param string|false      $output       The view output. Returns as false if the view fails to load.
+		 * @param string            $view         Path of the view file.
+		 * @param array|null        $data         Data to pass on to the template.
+		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
+		 * @param string            $cache_mode   Decides the caching method to use for the view.
+		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
+		 */
+		$output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode, $limited );
 
 		return $output;
+	}
+
+	/**
+	 * Get the full path of the view if it exists.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $view    Path of the view file
+	 * @param bool   $limited (optional) Whether to limit the view to only the theme directory, defaults to false
+	 *
+	 * @return string|false The full path of the view if it exists.
+	 */
+	public static function view_get_path( $view, $limited = false ) {
+		// Support my-view.php?custom-key=X#hash keying for cache
+		if ( ! is_array( $view ) ) {
+			$view_q = explode( '?', $view );
+
+			if ( 1 < count( $view_q ) ) {
+				$view = $view_q[0];
+			}
+
+			$view_h = explode( '#', $view );
+
+			if ( 1 < count( $view_h ) ) {
+				$view = $view_h[0];
+			}
+		}
+
+		$view = apply_filters( 'pods_view_inc', $view, null, false, 'cache', $limited );
+
+		$view_key = $view;
+
+		if ( is_array( $view_key ) ) {
+			$view_key = implode( '-', $view_key ) . '.php';
+		}
+
+		if ( false !== realpath( $view_key ) ) {
+			$view_key = realpath( $view_key );
+		}
+
+		$view_path = self::locate_template( $view_key, $limited );
+
+		if ( empty( $view_path ) ) {
+			return false;
+		}
+
+		return $view_path;
 	}
 
 	/**
@@ -703,10 +786,11 @@ class PodsView {
 	 *
 	 * @param            $_view
 	 * @param null|array $_data
+	 * @param bool       $limited (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|string|void
 	 */
-	public static function get_template_part( $_view, $_data = null ) {
+	public static function get_template_part( $_view, $_data = null, $limited = false ) {
 
 		/*
 		To be reviewed later, should have more checks and restrictions like a whitelist etc.
@@ -723,7 +807,7 @@ class PodsView {
 		}
 		*/
 
-		$_view = self::locate_template( $_view );
+		$_view = self::locate_template( $_view, $limited );
 
 		if ( empty( $_view ) ) {
 			return $_view;
@@ -743,11 +827,12 @@ class PodsView {
 	/**
 	 * @static
 	 *
-	 * @param $_view
+	 * @param array|string $_view
+	 * @param bool         $limited (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|string|void
 	 */
-	private static function locate_template( $_view ) {
+	private static function locate_template( $_view, $limited = false ) {
 		if ( is_array( $_view ) ) {
 			$_views = [];
 
@@ -776,9 +861,15 @@ class PodsView {
 			return $_view;
 		}//end if
 
+		$paths_to_check = [ 'plugins', 'pods', 'theme' ];
+
+		if ( $limited ) {
+			$paths_to_check = [ 'theme' ];
+		}
+
 		// Is the view's file somewhere within the plugin directory tree?
 		// Note: we include PODS_DIR for the case of symlinks (see issue #2945).
-		$located = pods_validate_safe_path( $_view, [ 'plugins', 'pods', 'theme' ] );
+		$located = pods_validate_safe_path( $_view, $paths_to_check );
 
 		/**
 		 * Allow filtering the validated view file path to use.

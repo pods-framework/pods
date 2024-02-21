@@ -3,7 +3,7 @@
  * The base service provider class.
  *
  * @license GPL-3.0
- * Modified by Scott Kingsley Clark on 24-June-2023 using Strauss.
+ * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 

@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @var array         $fields
  * @var Pods          $pod
@@ -121,7 +126,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 								$link = pods_query_arg(
 									array(
 										'action'   => 'delete',
-										'_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ),
+										'_wpnonce' => wp_create_nonce( 'pods-ui-action-delete-' . $pod->id() ),
 									)
 								);
 								?>

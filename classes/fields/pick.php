@@ -2731,8 +2731,8 @@ class PodsField_Pick extends PodsField {
 						} else {
 							$display_field = "`t`.`{$display_field_name}`";
 						}
-					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ] ) ) {
-						$display_field_name = $table_info['object_fields'][ $display ];
+					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ]['name'] ) ) {
+						$display_field_name = $table_info['object_fields'][ $display ]['name'];
 
 						$display_field = "`t`.`{$display_field_name}`";
 					}//end if

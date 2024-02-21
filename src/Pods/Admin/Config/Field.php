@@ -570,16 +570,27 @@ class Field extends Base {
 			}
 
 			/**
-			 * Modify Additional Field Options tab
+			 * Modify Additional Field Options tab for a specific field type.
 			 *
 			 * @since 2.7.0
 			 *
-			 * @param array                  $type_options Additional field type options,
-			 * @param string                 $type         Field type,
-			 * @param array                  $options      Tabs, indexed by label,
+			 * @param array                  $type_options Additional field type options.
+			 * @param string                 $type         Field type.
+			 * @param array                  $options      Tabs, indexed by label.
 			 * @param null|\Pods\Whatsit\Pod $pod          Pods object for the Pod this UI is for.
 			 */
 			$type_options = apply_filters( "pods_admin_setup_edit_{$type}_additional_field_options", $type_options, $type, $options, $pod );
+
+			/**
+			 * Modify Additional Field Options tab.
+			 *
+			 * @since 2.7.0
+			 *
+			 * @param array                  $type_options Additional field type options.
+			 * @param string                 $type         Field type.
+			 * @param array                  $options      Tabs, indexed by label.
+			 * @param null|\Pods\Whatsit\Pod $pod          Pods object for the Pod this UI is for.
+			 */
 			$type_options = apply_filters( 'pods_admin_setup_edit_additional_field_options', $type_options, $type, $options, $pod );
 
 			$options[ 'additional-field-' . $type ] = $type_options;

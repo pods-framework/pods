@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 $options['data'] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
 if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {

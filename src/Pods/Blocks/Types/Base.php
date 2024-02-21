@@ -123,6 +123,10 @@ abstract class Base extends Blocks_Abstract {
 			}
 		}
 
+		$params['_is_editor_mode'] = $this->in_editor_mode( $params );
+		$params['_is_preview']     = is_preview();
+		$params['_preview_id']     = $params['_is_preview'] ? get_queried_object_id() : null;
+
 		return parent::attributes( $params );
 	}
 
@@ -245,7 +249,7 @@ abstract class Base extends Blocks_Abstract {
 	 * @return bool Whether the block is being rendered in editor mode.
 	 */
 	public function in_editor_mode( $attributes = [] ) {
-		if ( ! empty( $attributes['_is_editor'] ) ) {
+		if ( ! empty( $attributes['_is_editor'] ) && ! empty( $attributes['_is_editor_mode'] ) ) {
 			return true;
 		}
 

@@ -17,6 +17,158 @@ use Pods\Whatsit\Pod;
 class Repair extends Base {
 
 	/**
+	 * Repair Pod configurations.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $mode The repair mode (preview, upgrade, or full).
+	 *
+	 * @return array The results with information about the repair done.
+	 */
+	public function repair_pods( $mode ) {
+		$this->setup();
+
+		$this->errors = [];
+
+		$is_preview_mode = 'preview' === $mode;
+
+		$results = [];
+
+		$results[ __( 'Check for duplicate Pods in the database', 'pods' ) ] = $this->maybe_resolve_pod_conflicts( $mode );
+
+		// Check if changes were made to the Pod.
+		$changes_made = [] !== array_filter( $results );
+
+		if ( ! $is_preview_mode && $changes_made ) {
+			$this->api->cache_flush_pods();
+		}
+
+		$tool_heading = __( 'Repair results', 'pods' );
+
+		$results['message_html'] = $this->get_message_html( $tool_heading, $results, $mode );
+
+		return $results;
+	}
+
+	/**
+	 * Maybe resolve pod conflicts.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $mode The repair mode (preview, upgrade, or full).
+	 *
+	 * @return string[] The label, name, and ID for each pod resolved.
+	 */
+	protected function maybe_resolve_pod_conflicts( $mode ) {
+		$this->setup();
+
+		// Find any pod that has the same name as another pod.
+		global $wpdb;
+
+		$sql = "
+			SELECT DISTINCT
+				`primary`.`ID` AS `primary_id`,
+				`primary`.`post_name` AS `primary_name`,
+				`duplicate`.`ID` AS `duplicate_id`,
+				`duplicate`.`post_name` AS `duplicate_name`
+			FROM `{$wpdb->posts}` AS `primary`
+			LEFT JOIN `{$wpdb->posts}` AS `duplicate`
+				ON `duplicate`.`post_name` = `primary`.`post_name`
+			WHERE
+				`primary`.`post_type` = %s
+				AND `duplicate`.`ID` != `primary`.`ID`
+				AND `duplicate`.`post_type` = `primary`.`post_type`
+			ORDER BY `primary`.`ID`
+		";
+
+		$duplicate_pods = $wpdb->get_results(
+			$wpdb->prepare(
+				$sql,
+				[
+					'_pods_pod',
+				]
+			)
+		);
+
+		$pods_to_resolve = [];
+
+		$duplicate_ids = [];
+
+		foreach ( $duplicate_pods as $duplicate_pod ) {
+			// Skip if we have already referenced a primary pod.
+			if (
+				isset( $duplicate_ids[ $duplicate_pod->duplicate_id ] )
+				&& $duplicate_ids[ $duplicate_pod->duplicate_id ] === $duplicate_pod->primary_id
+			) {
+				continue;
+			}
+
+			$duplicate_ids[ $duplicate_pod->primary_id ] = $duplicate_pod->duplicate_id;
+
+			if ( ! isset( $pods_to_resolve[ $duplicate_pod->primary_name ] ) ) {
+				$pods_to_resolve[ $duplicate_pod->primary_name ] = [];
+			}
+
+			try {
+				$pod = $this->api->load_pod( [ 'id' => $duplicate_pod->duplicate_id ] );
+
+				if ( $pod ) {
+					$pods_to_resolve[ $duplicate_pod->primary_name ][] = $pod;
+				} else {
+					throw new Exception( __( 'Failed to load duplicate pod to resolve.', 'pods' ) );
+				}
+			} catch ( Throwable $exception ) {
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $duplicate_pod->duplicate_name . ' - #' . $duplicate_pod->duplicate_id . ' - Primary: ' . $duplicate_pod->primary_name . ' - #' . $duplicate_pod->primary_id . ')';
+			}
+		}
+
+		$resolved_pods = [];
+
+		foreach ( $pods_to_resolve as $primary_pod_name => $pods ) {
+			foreach ( $pods as $pod ) {
+				/** @var Pod $pod */
+				try {
+					if ( 'preview' !== $mode ) {
+						// Prevent renaming the original pod data by using a temp one first, then renaming that.
+						wp_update_post( [
+							'ID'        => $pod->get_id(),
+							'post_name' => '_temp_' . $primary_pod_name . '_' . $pod->get_id(),
+						] );
+
+						// Flush the pod cache.
+						$this->api->cache_flush_pods();
+
+						// Save the pod with the new name.
+						$this->api->save_pod( [
+							'id'       => $pod->get_id(),
+							'old_name' => '_temp_' . $primary_pod_name . '_' . $pod->get_id(),
+							'name'     => $primary_pod_name . '_' . $pod->get_id(),
+							'label'    => $pod->get_label() . ' (' . $pod->get_id() . ')',
+						], false );
+
+						$pod->flush();
+					}
+
+					$resolved_pods[] = sprintf(
+						'%1$s (%2$s: %3$s | %4$s: %5$s | %6$s: %7$d)',
+						$pod->get_label(),
+						__( 'Old Name', 'pods' ),
+						$primary_pod_name,
+						__( 'New Name', 'pods' ),
+						$primary_pod_name . '_' . $pod->get_id(),
+						__( 'ID', 'pods' ),
+						$pod->get_id()
+					);
+				} catch ( Throwable $exception ) {
+					$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $pod->get_name() . ' - #' . $pod->get_id() . ')';
+				}
+			}
+		}
+
+		return $resolved_pods;
+	}
+
+	/**
 	 * Repair Groups and Fields for a Pod.
 	 *
 	 * @since 2.9.4

@@ -143,7 +143,6 @@ class PodsField_OEmbed extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
 		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
 		$width  = (int) pods_v( static::$type . '_width', $options );
@@ -156,9 +155,7 @@ class PodsField_OEmbed extends PodsField {
 			$args['height'] = $height;
 		}
 
-		$value = wp_oembed_get( $value, $args );
-
-		return $value;
+		return wp_oembed_get( $value, $args );
 	}
 
 	/**
@@ -273,7 +270,7 @@ class PodsField_OEmbed extends PodsField {
 		}
 
 		// Strip HTML
-		$value = strip_tags( $value );
+		$value = wp_strip_all_tags( $value );
 
 		// Strip shortcodes
 		$value = strip_shortcodes( $value );
@@ -479,13 +476,18 @@ class PodsField_OEmbed extends PodsField {
 
 		if ( ! empty( $params['_nonce_pods_oembed'] ) && ! empty( $params['pods_field_oembed_value'] ) && wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) ) {
 			$name    = '';
+			$value   = '';
 			$options = array();
 
 			if ( ! empty( $params['pods_field_oembed_name'] ) ) {
-				$name = $params['pods_field_oembed_value'];
-				$name = $this->strip_html( $name );
-				$name = $this->strip_shortcodes( $name );
-				$name = $this->trim_whitespace( $name );
+				$name = $params['pods_field_oembed_name'];
+			}
+
+			if ( ! empty( $params['pods_field_oembed_value'] ) ) {
+				$value = $params['pods_field_oembed_value'];
+				$value = $this->strip_html( $value );
+				$value = $this->strip_shortcodes( $value );
+				$value = $this->trim_whitespace( $value );
 			}
 
 			if ( ! empty( $params['pods_field_oembed_options'] ) ) {

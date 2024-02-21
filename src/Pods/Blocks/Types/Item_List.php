@@ -205,7 +205,7 @@ class Item_List extends Base {
 		 */
 		$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
 
-		return [
+		$fields = [
 			[
 				'name'        => 'name',
 				'label'       => __( 'Pod Name', 'pods' ),
@@ -213,6 +213,17 @@ class Item_List extends Base {
 				'data'        => [ $this, 'callback_get_all_pods' ],
 				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
+			],
+			[
+				'name'    => 'access_rights_help',
+				'label'   => __( 'Access Rights', 'pods' ),
+				'type'    => 'html',
+				'default' => '',
+				'html_content' => sprintf(
+					// translators: %s is the Read Documentation link.
+					esc_html__( 'Read about how access rights control what can be displayed to other users: %s', 'pods' ),
+					'<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'pods' ) . '</a>'
+				),
 			],
 			[
 				'name'        => 'template',
@@ -342,6 +353,13 @@ class Item_List extends Base {
 				'description' => __( 'Set how long to cache the output for in seconds.', 'pods' ),
 			],
 		];
+
+		if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+			unset( $fields['orderby'] );
+			unset( $fields['where'] );
+		}
+
+		return $fields;
 	}
 
 	/**
@@ -356,6 +374,11 @@ class Item_List extends Base {
 	 * @return string The block content to render.
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
+		// If the feature is disabled then return early.
+		if ( ! pods_can_use_dynamic_feature( 'display' ) ) {
+			return '';
+		}
+
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
@@ -380,7 +403,8 @@ class Item_List extends Base {
 			$attributes['name'] = $block->context['postType'];
 		}
 
-		$provided_post_id = absint( pods_v( '_post_id', $attributes, pods_v( 'post_id', 'get', 0, true ), true ) );
+		$provided_post_id = $this->in_editor_mode( $attributes ) ? pods_v( 'post_id', 'get', 0, true ) : get_the_ID();
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, $provided_post_id, true ) );
 
 		if ( empty( $attributes['name'] ) ) {
 			if (

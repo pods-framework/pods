@@ -51,38 +51,43 @@ class Form extends Base {
 			'transforms'      => [
 				'from' => [
 					[
-						'type'       => 'shortcode',
-						'tag'        => 'pods-form',
-						'attributes' => [
-							'name'  => [
+						'type'          => 'shortcode',
+						'tag'           => 'pods-form',
+						'attributes'    => [
+							'name'             => [
 								'type'      => 'object',
 								'source'    => 'shortcode',
 								'attribute' => 'name',
 							],
-							'slug'  => [
+							'slug'             => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'slug',
 							],
-							'fields' => [
+							'fields'           => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'fields',
 							],
-							'label'  => [
+							'label'            => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'label',
 							],
-							'thank_you' => [
+							'thank_you'        => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'thank_you',
 							],
-							'form_output_type'  => [
+							'form_output_type' => [
 								'type'      => 'object',
 								'source'    => 'shortcode',
 								'attribute' => 'form_output_type',
+							],
+							'form_key'         => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'form_key',
 							],
 						],
 						'isMatchConfig' => [
@@ -93,38 +98,43 @@ class Form extends Base {
 						],
 					],
 					[
-						'type'       => 'shortcode',
-						'tag'        => 'pods',
-						'attributes' => [
-							'name'  => [
+						'type'          => 'shortcode',
+						'tag'           => 'pods',
+						'attributes'    => [
+							'name'             => [
 								'type'      => 'object',
 								'source'    => 'shortcode',
 								'attribute' => 'name',
 							],
-							'slug'  => [
+							'slug'             => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'slug',
 							],
-							'fields' => [
+							'fields'           => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'fields',
 							],
-							'label'  => [
+							'label'            => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'label',
 							],
-							'thank_you' => [
+							'thank_you'        => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'thank_you',
 							],
-							'form_output_type'  => [
+							'form_output_type' => [
 								'type'      => 'object',
 								'source'    => 'shortcode',
 								'attribute' => 'form_output_type',
+							],
+							'form_key'         => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'form_key',
 							],
 						],
 						'isMatchConfig' => [
@@ -155,6 +165,17 @@ class Form extends Base {
 				'data'        => [ $this, 'callback_get_all_pods' ],
 				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
+			],
+			[
+				'name'    => 'access_rights_help',
+				'label'   => __( 'Access Rights', 'pods' ),
+				'type'    => 'html',
+				'default' => '',
+				'html_content' => sprintf(
+					// translators: %s is the Read Documentation link.
+					esc_html__( 'Read about how access rights control what can be displayed to other users: %s', 'pods' ),
+					'<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'pods' ) . '</a>'
+				),
 			],
 			[
 				'name'        => 'slug',
@@ -193,6 +214,23 @@ class Form extends Base {
 				'default'     => 'div',
 				'description' => __( 'Choose how you want your form HTML to be set up. This allows you flexibility to build and style your forms with any CSS customizations you would like. Some output types are naturally laid out better in certain themes.', 'pods' ),
 			],
+			[
+				'name'        => 'form_key',
+				'label'       => __( 'Form Access Key', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'Give this form a unique slug to reference in our user access checks. When you use the "pods_user_can_access_object" filter, you can selectively allow access through PHP if the user does not normally have access through WordPress itself.', 'pods' ),
+			],
+			[
+				'name'    => 'access_rights_form_key_help',
+				'label'   => __( 'Access Rights', 'pods' ),
+				'type'    => 'html',
+				'default' => '',
+				'html_content' => sprintf(
+					// translators: %s is the Read Documentation link.
+					esc_html__( 'Find out more about how to customize access rights for this form: %s', 'pods' ),
+					'<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'pods' ) . '</a>'
+				),
+			],
 		];
 	}
 
@@ -208,6 +246,11 @@ class Form extends Base {
 	 * @return string The block content to render.
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
+		// If the feature is disabled then return early.
+		if ( ! pods_can_use_dynamic_feature( 'form' ) ) {
+			return '';
+		}
+
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 

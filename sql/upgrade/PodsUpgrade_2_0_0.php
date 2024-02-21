@@ -740,7 +740,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		$old_roles = get_option( 'pods_roles' );
 
 		if ( ! is_array( $old_roles ) && ! empty( $old_roles ) ) {
-			$old_roles = @unserialize( $old_roles );
+			$old_roles = pods_maybe_safely_unserialize( $old_roles );
 		}
 
 		if ( ! is_array( $old_roles ) ) {

@@ -41,8 +41,9 @@ class EachTest extends Pods_UnitTestCase {
 		$api = pods_api();
 
 		$this->pod_id = $api->save_pod( [
-			'type' => 'post_type',
-			'name' => $this->pod_name,
+			'type'   => 'post_type',
+			'name'   => $this->pod_name,
+			'public' => 1,
 		] );
 
 		$params = [

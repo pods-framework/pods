@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @var string                $list_type
  * @var \Pods\Whatsit\Field[] $display_fields

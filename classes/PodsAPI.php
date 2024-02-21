@@ -955,6 +955,7 @@ class PodsAPI {
 					'label' => 'Password',
 					'type'  => 'password',
 					'alias' => [],
+					'hide_in_default_form' => true,
 				],
 				'post_name'             => [
 					'name'  => 'post_name',
@@ -10512,7 +10513,7 @@ class PodsAPI {
 
 			// Check for bad serialized array.
 			if ( is_string( $post_status ) ) {
-				$post_status = maybe_unserialize( $post_status );
+				$post_status = pods_maybe_safely_unserialize( $post_status );
 
 				if ( is_string( $post_status ) ) {
 					$post_status = explode( ',', $post_status );
@@ -11394,11 +11395,20 @@ class PodsAPI {
 		$id       = pods_v_sanitized( '_pods_id', $form_params );
 		$uri      = pods_v_sanitized( '_pods_uri', $form_params );
 		$form     = pods_v_sanitized( '_pods_form', $form_params );
+		$form_key = pods_v_sanitized( '_pods_form_key', $form_params );
 		$location = pods_v_sanitized( '_pods_location', $form_params );
+
+		$obj = null;
 
 		if ( is_object( $obj ) ) {
 			$pod = $obj->pod;
 			$id  = $obj->id();
+		} elseif ( $pod ) {
+			$obj = pods_get_instance( $pod, $id, true );
+
+			if ( ! $obj || is_wp_error( $obj ) || ! $obj->is_valid() ) {
+				$obj = null;
+			}
 		}
 
 		if ( ! empty( $fields ) ) {
@@ -11441,6 +11451,48 @@ class PodsAPI {
 
 		foreach ( $fields as $field ) {
 			$data[ $field ] = pods_v( 'pods_field_' . $field, $form_params, '' );
+		}
+
+		// Check if the user should have access to shortcodes/blocks.
+		if (
+			$obj
+			&& 'post_type' === $obj->pod_data->get_type()
+			&& ! empty( $data['post_content'] )
+		) {
+			$restrict_content = ! current_user_can( 'edit_posts', $id ?: null );
+
+			/**
+			 * Allow filtering whether the post content needs to be restricted to have shortcodes/blocks removed.
+			 *
+			 * @since 3.1.0
+			 *
+			 * @param bool        $restrict_content Whether the post content needs to be restricted to have shortcodes/blocks removed.
+			 * @param string      $object_type      The object type.
+			 * @param string|null $object_name      The object name (if different from the object type like post_type, taxonomy, and setting have).
+			 * @param string|int  $id               The item ID (if editing).
+			 * @param string|null $form_key         The form key for context.
+			 */
+			$restrict_content = (bool) apply_filters(
+				'pods_api_process_form_restrict_content',
+				$restrict_content,
+				$obj->pod_data->get_type(),
+				$obj->pod_data->get_name(),
+				$id,
+				$form_key
+			);
+
+			if ( $restrict_content ) {
+				// Strip shortcodes.
+				$data['post_content'] = strip_shortcodes( $data['post_content'] );
+
+				// Allow minimal blocks.
+				$data['post_content'] = excerpt_remove_blocks( $data['post_content'] );
+
+				// Clean up the content where missing blocks might be.
+				$data['post_content'] = str_replace( "\n\n\n", "\n", $data['post_content'] );
+			}
+
+			$data['post_content'] = trim( $data['post_content'] );
 		}
 
 		$params = array(

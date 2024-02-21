@@ -503,12 +503,14 @@ function frontier_do_subtemplate( $atts, $content ) {
 					$target_id = $entry['term_id'];
 				}
 
-				$out .= pods_shortcode(
+				$out .= pods_shortcode_run_safely(
 					array(
 						'name'  => $field['pick_val'],
 						'slug'  => $target_id,
 						'index' => $key,
-					), $template
+					),
+					$template,
+					false
 				);
 
 			}//end foreach

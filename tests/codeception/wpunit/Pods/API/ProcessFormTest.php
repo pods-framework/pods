@@ -103,7 +103,7 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 <!-- wp:group {"layout":{"type":"constrained"}} -->
 <div class="wp-block-group"><!-- wp:separator -->
-<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<hr class="wp-block-separator has-alpha-channel-opacity" />
 <!-- /wp:separator --></div>
 <!-- /wp:group -->
 

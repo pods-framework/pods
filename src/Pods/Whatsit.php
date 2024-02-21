@@ -122,7 +122,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return Whatsit|array|null
 	 */
 	public static function from_serialized( $serialized, $to_args = false ) {
-		$object = pods_maybe_safely_unserialize( $serialized );
+		$object = maybe_unserialize( $serialized );
 
 		if ( $object instanceof self ) {
 			if ( $to_args ) {

@@ -13,7 +13,6 @@ add_filter( 'pods_templates_post_template', 'frontier_end_template', 25, 4 );
 add_filter( 'pods_templates_do_template', 'frontier_do_shortcode', 25, 1 );
 
 // template shortcode handlers
-add_shortcode( 'pod_sub_template', 'frontier_do_subtemplate' );
 add_shortcode( 'pod_once_template', 'frontier_template_once_blocks' );
 add_shortcode( 'pod_after_template', 'frontier_template_blocks' );
 add_shortcode( 'pod_before_template', 'frontier_template_blocks' );
@@ -696,6 +695,10 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 		'after'  => 'pod_after_template',
 		'if'     => 'pod_if_field',
 	);
+
+	if ( ! shortcode_exists( 'pod_sub_template' ) ) {
+		add_shortcode( 'pod_sub_template', 'frontier_do_subtemplate' );
+	}
 
 	$commands = array_merge( $commands, get_option( 'pods_frontier_extra_commands', array() ) );
 

@@ -710,10 +710,10 @@ function pods_is_type_public( array $args, string $context = 'shortcode' ): bool
 
 				// Post type not found.
 				if ( ! $post_type_object ) {
-					return false;
+					$is_public = false;
+				} else {
+					$is_public = $post_type_object->public && $post_type_object->publicly_queryable;
 				}
-
-				$is_public = $post_type_object->public && $post_type_object->publicly_queryable;
 			}
 		} elseif ( $is_taxonomy ) {
 			// If no object name is provided, we cannot check if it is public.
@@ -724,10 +724,10 @@ function pods_is_type_public( array $args, string $context = 'shortcode' ): bool
 
 				// Post type not found.
 				if ( ! $taxonomy_object ) {
-					return false;
+					$is_public = false;
+				} else {
+					$is_public = $taxonomy_object->public && $taxonomy_object->publicly_queryable;
 				}
-
-				$is_public = $taxonomy_object->public && $taxonomy_object->publicly_queryable;
 			}
 		} elseif ( 'user' === $info['object_type'] ) {
 			// Users are not public for shortcodes.
@@ -909,6 +909,12 @@ function pods_can_use_dynamic_features( ?Pod $pod = null ): bool {
 		return PODS_DYNAMIC_FEATURES_ALLOW;
 	}
 
+	$can_use_dynamic_features = apply_filters( 'pods_access_can_use_dynamic_features', null, $pod );
+
+	if ( is_bool( $can_use_dynamic_features ) ) {
+		return $can_use_dynamic_features;
+	}
+
 	// Check if all dynamic features are disabled.
 	$dynamic_features_allow = pods_get_setting( 'dynamic_features_allow', '1' );
 	$dynamic_features_allow = filter_var( $dynamic_features_allow, FILTER_VALIDATE_BOOLEAN );
@@ -945,13 +951,19 @@ function pods_can_use_dynamic_feature( string $type ): bool {
 		return false;
 	}
 
+	if ( empty( $type ) ) {
+		return false;
+	}
+
 	// Handle the constants.
 	if ( 'view' === $type && defined( 'PODS_SHORTCODE_ALLOW_VIEWS' ) && ! PODS_SHORTCODE_ALLOW_VIEWS ) {
 		return false;
 	}
 
-	if ( empty( $type ) ) {
-		return false;
+	$can_use_dynamic_feature = apply_filters( 'pods_access_can_use_dynamic_feature', null, $type );
+
+	if ( is_bool( $can_use_dynamic_feature ) ) {
+		return $can_use_dynamic_feature;
 	}
 
 	$dynamic_features_enabled = (array) pods_get_setting( 'dynamic_features_enabled', [
@@ -1002,86 +1014,89 @@ function pods_can_use_dynamic_feature_unrestricted( array $args, string $type, ?
 		return false;
 	}
 
-	if (
-		defined( 'PODS_DYNAMIC_FEATURES_RESTRICT' )
-		&& ! PODS_DYNAMIC_FEATURES_RESTRICT
-	) {
-		$can_use_unrestricted = true;
-	} else {
+	if ( defined( 'PODS_DYNAMIC_FEATURES_RESTRICT' ) && ! PODS_DYNAMIC_FEATURES_RESTRICT ) {
+		return true;
+	}
+
+	$can_use_dynamic_features_unrestricted = apply_filters( 'pods_access_can_use_dynamic_features_unrestricted', null, $args, $type, $mode );
+
+	if ( is_bool( $can_use_dynamic_features_unrestricted ) ) {
+		return $can_use_dynamic_features_unrestricted;
+	}
+
+	$can_use_unrestricted = false;
+
+	$args['build_pod'] = true;
+
+	$info = pods_info_from_args( $args );
+
+	if ( ! $info['pod'] ) {
 		$can_use_unrestricted = false;
+	} else {
+		$is_public_content_type = pods_is_type_public( $info );
 
-		$args['build_pod'] = true;
+		$default_restricted_dynamic_features = [
+			'form',
+		];
 
-		$info = pods_info_from_args( $args );
+		if ( ! $is_public_content_type ) {
+			$default_restricted_dynamic_features[] = 'display';
+		}
 
-		if ( ! $info['pod'] ) {
-			$can_use_unrestricted = false;
-		} else {
-			$is_public_content_type = pods_is_type_public( $info );
+		$default_restricted_dynamic_features_forms = [
+			'edit',
+		];
 
-			$default_restricted_dynamic_features = [
-				'form',
-			];
+		if ( ! $is_public_content_type ) {
+			$default_restricted_dynamic_features_forms[] = 'add';
+		}
 
-			if ( ! $is_public_content_type ) {
-				$default_restricted_dynamic_features[] = 'display';
-			}
+		// Check if all dynamic features are unrestricted.
+		$restrict_dynamic_features = $info['pod']->get_arg( 'restrict_dynamic_features', '1' );
+		$restrict_dynamic_features = filter_var( $restrict_dynamic_features, FILTER_VALIDATE_BOOLEAN );
 
-			$default_restricted_dynamic_features_forms = [
-				'edit',
-			];
+		if ( ! $restrict_dynamic_features ) {
+			$can_use_unrestricted = true;
+		} elseif ( ! empty( $type ) ) {
+			if ( defined( 'PODS_DYNAMIC_FEATURES_RESTRICTED' ) && false !== PODS_DYNAMIC_FEATURES_RESTRICTED ) {
+				$constant_restricted_dynamic_features = PODS_DYNAMIC_FEATURES_RESTRICTED;
 
-			if ( ! $is_public_content_type ) {
-				$default_restricted_dynamic_features_forms[] = 'add';
-			}
-
-			// Check if all dynamic features are unrestricted.
-			$restrict_dynamic_features = $info['pod']->get_arg( 'restrict_dynamic_features', '1' );
-			$restrict_dynamic_features = filter_var( $restrict_dynamic_features, FILTER_VALIDATE_BOOLEAN );
-
-			if ( ! $restrict_dynamic_features ) {
-				$can_use_unrestricted = true;
-			} elseif ( ! empty( $type ) ) {
-				if ( defined( 'PODS_DYNAMIC_FEATURES_RESTRICTED' ) && false !== PODS_DYNAMIC_FEATURES_RESTRICTED ) {
-					$constant_restricted_dynamic_features = PODS_DYNAMIC_FEATURES_RESTRICTED;
-
-					if ( ! is_array( $constant_restricted_dynamic_features ) ) {
-						$constant_restricted_dynamic_features = explode( ',', $constant_restricted_dynamic_features );
-					}
-
-					$restricted_dynamic_features = $constant_restricted_dynamic_features;
-				} else {
-					$restricted_dynamic_features = (array) $info['pod']->get_arg( 'restricted_dynamic_features', $default_restricted_dynamic_features );
+				if ( ! is_array( $constant_restricted_dynamic_features ) ) {
+					$constant_restricted_dynamic_features = explode( ',', $constant_restricted_dynamic_features );
 				}
 
-				$restricted_dynamic_features = array_filter( $restricted_dynamic_features );
+				$restricted_dynamic_features = $constant_restricted_dynamic_features;
+			} else {
+				$restricted_dynamic_features = (array) $info['pod']->get_arg( 'restricted_dynamic_features', $default_restricted_dynamic_features );
+			}
 
-				if ( empty( $restricted_dynamic_features ) ) {
+			$restricted_dynamic_features = array_filter( $restricted_dynamic_features );
+
+			if ( empty( $restricted_dynamic_features ) ) {
+				$can_use_unrestricted = true;
+			} else {
+				$can_use_unrestricted = ! in_array( $type, $restricted_dynamic_features, true );
+			}
+
+			if ( ! $can_use_unrestricted && 'form' === $type && $mode ) {
+				if ( defined( 'PODS_DYNAMIC_FEATURES_RESTRICTED_FORMS' ) && false !== PODS_DYNAMIC_FEATURES_RESTRICTED_FORMS ) {
+					$constant_restricted_dynamic_features_forms = PODS_DYNAMIC_FEATURES_RESTRICTED_FORMS;
+
+					if ( ! is_array( $constant_restricted_dynamic_features_forms ) ) {
+						$constant_restricted_dynamic_features_forms = explode( ',', $constant_restricted_dynamic_features_forms );
+					}
+
+					$restricted_dynamic_features_forms = $constant_restricted_dynamic_features_forms;
+				} else {
+					$restricted_dynamic_features_forms = (array) $info['pod']->get_arg( 'restricted_dynamic_features_forms', $default_restricted_dynamic_features_forms );
+				}
+
+				$restricted_dynamic_features_forms = array_filter( $restricted_dynamic_features_forms );
+
+				if ( empty( $restricted_dynamic_features_forms ) ) {
 					$can_use_unrestricted = true;
 				} else {
-					$can_use_unrestricted = ! in_array( $type, $restricted_dynamic_features, true );
-				}
-
-				if ( ! $can_use_unrestricted && 'form' === $type && $mode ) {
-					if ( defined( 'PODS_DYNAMIC_FEATURES_RESTRICTED_FORMS' ) && false !== PODS_DYNAMIC_FEATURES_RESTRICTED_FORMS ) {
-						$constant_restricted_dynamic_features_forms = PODS_DYNAMIC_FEATURES_RESTRICTED_FORMS;
-
-						if ( ! is_array( $constant_restricted_dynamic_features_forms ) ) {
-							$constant_restricted_dynamic_features_forms = explode( ',', $constant_restricted_dynamic_features_forms );
-						}
-
-						$restricted_dynamic_features_forms = $constant_restricted_dynamic_features_forms;
-					} else {
-						$restricted_dynamic_features_forms = (array) $info['pod']->get_arg( 'restricted_dynamic_features_forms', $default_restricted_dynamic_features_forms );
-					}
-
-					$restricted_dynamic_features_forms = array_filter( $restricted_dynamic_features_forms );
-
-					if ( empty( $restricted_dynamic_features_forms ) ) {
-						$can_use_unrestricted = true;
-					} else {
-						$can_use_unrestricted = ! in_array( $mode, $restricted_dynamic_features_forms, true );
-					}
+					$can_use_unrestricted = ! in_array( $mode, $restricted_dynamic_features_forms, true );
 				}
 			}
 		}

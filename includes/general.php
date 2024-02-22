@@ -1805,31 +1805,36 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			$access_type = $is_singular ? 'edit' : 'add';
 		}
 
-		if (
-			! pods_is_type_public( $info )
-			|| ! pods_can_use_dynamic_feature_unrestricted( $info, $is_form ? 'form' : 'display', $access_type )
-		) {
+		$is_type_public = pods_is_type_public( $info );
+		$can_use_dynamic_features_for_pod = pods_can_use_dynamic_features( $info['pod'] );
+		$can_use_unrestricted = pods_can_use_dynamic_feature_unrestricted( $info, $is_form ? 'form' : 'display', $access_type );
 
-			// Stop handling the display and return the access notice if they do not have access to the private content type.
-			if ( ! pods_current_user_can_access_object( $info, $access_type, 'shortcode' ) ) {
+		if (
+			! $can_use_dynamic_features_for_pod
+			|| (
+				! $is_type_public
+				&& ! $can_use_unrestricted
+			)
+		) {
+			if ( ! $is_type_public ) {
+				// Stop handling the display and return the access notice if they do not have access to the private content type.
+				if ( ! pods_current_user_can_access_object( $info, $access_type, 'shortcode' ) ) {
+					// Stop display and only return the notice.
+					return empty( $tags['field'] ) ? pods_get_access_user_notice( $info ) : '';
+				}
+
+				// Show the admin-specific notice that this content may not be visible to others since it is not public.
+				if ( empty( $tags['field'] ) && pods_is_admin() ) {
+					// Include the notice in the display output to let the admin know and continue the display.
+					$return .= pods_get_access_admin_notice( $info );
+				}
+			} elseif (
+				pods_access_bypass_post_with_password( $info )
+				|| pods_access_bypass_private_post( $info )
+			) {
 				// Stop display and only return the notice.
 				return empty( $tags['field'] ) ? pods_get_access_user_notice( $info ) : '';
 			}
-
-			// Show the admin-specific notice that this content may not be visible to others since it is not public.
-			if ( empty( $tags['field'] ) && pods_is_admin() ) {
-				// Include the notice in the display output to let the admin know and continue the display.
-				$return .= pods_get_access_admin_notice( $info );
-			}
-		} elseif (
-			$check_display_access_rights
-			&& (
-				pods_access_bypass_post_with_password( $info )
-				|| pods_access_bypass_private_post( $info )
-			)
-		) {
-			// Stop display and only return the notice.
-			return empty( $tags['field'] ) ? pods_get_access_user_notice( $info ) : '';
 		}
 	}
 

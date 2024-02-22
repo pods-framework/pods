@@ -1346,7 +1346,7 @@ function pods_shortcode( $tags, $content = null ) {
  *
  * @return string
  */
-function pods_shortcode_run_safely( array $tags, ?string $content = null, bool $check_display_access_rights = true ): string {
+function pods_shortcode_run_safely( $tags, ?string $content = null, bool $check_display_access_rights = true ): string {
 	pods_doing_shortcode( true );
 
 	$return_exception = static function() {

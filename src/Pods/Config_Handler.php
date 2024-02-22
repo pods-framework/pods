@@ -475,6 +475,10 @@ class Config_Handler {
 				continue;
 			}
 
+			if ( 0 === strpos( (string) $item_type, '@' ) ) {
+				continue;
+			}
+
 			$supported_item_types = [
 				$item_type,
 				// We support all item types for pods configs.

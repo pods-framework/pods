@@ -1,0 +1,84 @@
+name: Prepare Release Branch
+env:
+  PR_PREFIX: 'Pods '
+  PR_LABELS: 'Type: Release'
+  MILESTONE_PREFIX: 'Pods '
+  BRANCH_PREFIX: 'release/'
+  WPORG_PLUGIN_FILE: 'init.php'
+  WPORG_PLUGIN_VERSION_CONSTANT_NAME: 'PODS_VERSION'
+on:
+  workflow_dispatch:
+    inputs:
+      new_plugin_version:
+        description: 'New plugin version (without the "-a-1"), defaults to the next incremental version from package.json'
+        required: false
+      version_increment:
+        description: 'Version increment scheme (if incrementing the package.json version)'
+        required: true
+        type: choice
+        default: 'patch'
+        options:
+          - 'major'
+          - 'minor'
+          - 'patch'
+jobs:
+  prepare_release_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
+      - name: Maybe use the version number from inputs
+        if: ${{ github.event.inputs.new_plugin_version != null && github.event.inputs.new_plugin_version != '' }}
+        shell: bash
+        run: |
+          echo "PLUGIN_VERSION=${{ github.event.inputs.new_plugin_version }}" >> $GITHUB_ENV
+      - name: Maybe lookup the version number from package.json
+        id: version-lookup
+        if: ${{ github.event.inputs.new_plugin_version == null || github.event.inputs.new_plugin_version == '' }}
+        shell: bash
+        run: |
+          echo "CURRENT_VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+      - name: Maybe get the next version information
+        if: ${{ steps.version-lookup.outputs.CURRENT_VERSION != null && steps.version-lookup.outputs.CURRENT_VERSION != '' }}
+        uses: reecetech/version-increment@2023.10.2
+        id: version-increment
+        with:
+          scheme: semver
+          increment: ${{ github.event.inputs.version_increment }}
+      - name: Maybe store the next version
+        if: ${{ steps.version-increment.outputs.version != null && steps.version-increment.outputs.version != '' }}
+        shell: bash
+        run: |
+          echo "PLUGIN_VERSION=${{ steps.version-increment.outputs.version }}" >> $GITHUB_ENV
+      - name: What are we doing?
+        run: |
+          echo PLUGIN_VERSION: ${{ env.PLUGIN_VERSION }}
+      - name: Run wporg-replace
+        uses: sc0ttkclark/wporg-replace@v1.0.7
+        with:
+          plugin_version: '${{ env.PLUGIN_VERSION }}-a-1'
+          plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
+          plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
+          plugin_path: ${{ github.workspace }}
+      - name: Create Milestone
+        id: create-milestone
+        uses: WyriHaximus/github-action-create-milestone@v1.2.0
+        continue-on-error: true
+        with:
+          title: '${{ env.MILESTONE_PREFIX }}${{ env.PLUGIN_VERSION }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_BOT_PUSH }}
+      - name: Create Pull Request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v5.0.2
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
+          branch: '${{ env.BRANCH_PREFIX }}${{ env.PLUGIN_VERSION }}'
+          commit-message: 'Set version to ${{ env.PLUGIN_VERSION }}-a-1'
+          title: '${{ env.PR_PREFIX }}${{ env.PLUGIN_VERSION }}'
+          labels: ${{ env.PR_LABELS }}
+          assignees: ${{ github.actor }}
+          milestone: ${{ steps.create-milestone.outputs.number }}
+          draft: true

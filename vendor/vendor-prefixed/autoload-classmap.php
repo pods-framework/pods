@@ -5,6 +5,7 @@
 $strauss_src = dirname(__FILE__);
 
 return array(
+   'Pods__Prefixed__Parsedown' => $strauss_src . '/erusev/parsedown/Parsedown.php',
    'Pods\Prefixed\lucatume\DI52\Container' => $strauss_src . '/lucatume/di52/src/Container.php',
    'Pods\Prefixed\lucatume\DI52\App' => $strauss_src . '/lucatume/di52/src/App.php',
    'Pods\Prefixed\lucatume\DI52\ContainerException' => $strauss_src . '/lucatume/di52/src/ContainerException.php',

@@ -624,9 +624,16 @@ body[class*="settings_page_pods-"] {
 	}
 
 	.pods-admin_friends-callout_container {
-		max-width: 250px;
-		margin-left: 20px;
-		margin-top: 52px;
+		&.pods-admin_friends-callout_container-horizontal {
+			max-width: 100%;
+			margin: 20px 0 30px 0;
+		}
+
+		&.pods-admin_friends-callout_container-vertical {
+			max-width: 250px;
+			margin-left: 20px;
+			margin-top: 52px;
+		}
 	}
 }
 
@@ -709,6 +716,12 @@ body[class*="settings_page_pods-"] {
 	-webkit-box-align: center;
 		-ms-flex-align: center;
 			align-items: center;
+}
+
+.pods-admin_friends-callout_button-group-padded {
+	.pods-admin_friends-callout_button {
+		display: inline;
+	}
 }
 
 .pods-admin_friends-callout_button {

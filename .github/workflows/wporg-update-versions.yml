@@ -1,0 +1,72 @@
+name: WordPress.org Update Versions
+env:
+  WPORG_PLUGIN_FILE: 'init.php'
+  WPORG_PLUGIN_VERSION_CONSTANT_NAME: 'PODS_VERSION'
+  WPORG_MINIMUM_WP_VERSION_CONSTANT_NAME: 'PODS_WP_VERSION_MINIMUM'
+  WPORG_MINIMUM_PHP_VERSION_CONSTANT_NAME: 'PODS_PHP_VERSION_MINIMUM'
+  WPORG_MINIMUM_MYSQL_VERSION_CONSTANT_NAME: 'PODS_MYSQL_VERSION_MINIMUM'
+on:
+  workflow_dispatch:
+    inputs:
+      plugin_version:
+        description: 'Plugin version'
+        required: false
+      tested_wp_version:
+        description: 'Tested up to WP version'
+        required: false
+      minimum_wp_version:
+        description: 'Minimum WP version'
+        required: false
+      minimum_php_version:
+        description: 'Minimum PHP version'
+        required: false
+      minimum_mysql_version:
+        description: 'Minimum MySQL version'
+        required: false
+  pull_request:
+    paths:
+      - 'package.json'
+jobs:
+  wporg_replace:
+    runs-on: ubuntu-latest
+    steps:
+      - name: What are we doing?
+        run: |
+          echo plugin_version: ${{ github.event.inputs.plugin_version }}
+          echo tested_wp_version: ${{ github.event.inputs.tested_wp_version }}
+          echo minimum_wp_version: ${{ github.event.inputs.minimum_wp_version }}
+          echo minimum_php_version: ${{ github.event.inputs.minimum_php_version }}
+          echo minimum_mysql_version: ${{ github.event.inputs.minimum_mysql_version }}
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
+      - name: Check the version number from package.json
+        shell: bash
+        run: echo "PLUGIN_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+      - name: Run wporg-replace
+        uses: sc0ttkclark/wporg-replace@v1.0.7
+        with:
+          plugin_version: ${{ (github.event.inputs.plugin_version != '') && github.event.inputs.plugin_version || env.PLUGIN_VERSION }}
+          plugin_version_constant_name: ${{ env.WPORG_PLUGIN_VERSION_CONSTANT_NAME }}
+          tested_wp_version: ${{ github.event.inputs.tested_wp_version }}
+          minimum_wp_version: ${{ github.event.inputs.minimum_wp_version }}
+          minimum_wp_version_constant_name: ${{ env.WPORG_MINIMUM_WP_VERSION_CONSTANT_NAME }}
+          minimum_php_version: ${{ github.event.inputs.minimum_php_version }}
+          minimum_php_version_constant_name: ${{ env.WPORG_MINIMUM_PHP_VERSION_CONSTANT_NAME }}
+          minimum_mysql_version: ${{ github.event.inputs.minimum_mysql_version }}
+          minimum_mysql_version_constant_name: ${{ env.WPORG_MINIMUM_MYSQL_VERSION_CONSTANT_NAME }}
+          plugin_file: ${{ env.WPORG_PLUGIN_FILE }}
+          plugin_path: ${{ github.workspace }}
+      - name: Commit changes
+        id: auto-commit-action
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: ${{ env.WPORG_PLUGIN_FILE }} readme.txt package.json
+          commit_message: Update wporg version(s)
+      - name: "Run if changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        run: echo "Changes!"
+      - name: "Run if no changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+        run: echo "No Changes!"

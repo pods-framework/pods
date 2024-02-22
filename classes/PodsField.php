@@ -288,9 +288,7 @@ class PodsField {
 	 * @since 2.0.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-
+		return $this->maybe_sanitize_output( $value, $options );
 	}
 
 	/**
@@ -574,18 +572,18 @@ class PodsField {
 	 * @return array
 	 */
 	public function build_dfv_field_config( $args ) {
-		if ( $args->options instanceof Field ) {
-			$config = $args->options->export();
-
-			$config['repeatable']                  = $args->options->is_repeatable();
-			$config['repeatable_add_new_label']    = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
-			$config['repeatable_reorder']          = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
-			$config['repeatable_limit']            = $args->options->get_limit();
-			$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
-			$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
-		} else {
-			$config = (array) $args->options;
+		if ( ! $args->options instanceof Field ) {
+			$args->options = new Field( (array) $args->options );
 		}
+
+		$config = $args->options->export();
+
+		$config['repeatable']                  = $args->options->is_repeatable();
+		$config['repeatable_add_new_label']    = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
+		$config['repeatable_reorder']          = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
+		$config['repeatable_limit']            = $args->options->get_limit();
+		$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
+		$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
 
 		// Backcompat readonly argument handling.
 		if ( isset( $config['readonly'] ) ) {
@@ -920,11 +918,47 @@ class PodsField {
 					}
 				}
 
-				return $value;
+				return $this->maybe_sanitize_output( $value, $options );
 			}
 		}
 
-		return strip_tags( $value );
+		return wp_strip_all_tags( $value );
+	}
+
+	/**
+	 * Determine whether the field value needs to be sanitized and sanitize it.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param mixed            $value   The field value.
+	 * @param null|array|Field $options The field options.
+	 *
+	 * @return mixed The sanitized field value if it needs to be sanitized.
+	 */
+	public function maybe_sanitize_output( $value, $options = null ) {
+		// Maybe check for a sanitize output option.
+		$should_sanitize = null === $options || 1 === (int) pods_v( 'sanitize_output', $options, 1 );
+
+		/**
+		 * Allow filtering whether to sanitize the field value before output.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool             $should_sanitize Whether the field value should be sanitized.
+		 * @param mixed            $value           The field value.
+		 * @param null|array|Field $options         The field options.
+		 */
+		$should_sanitize = apply_filters( 'pods_field_maybe_sanitize_output', $should_sanitize, $value, $options );
+
+		if ( $should_sanitize ) {
+			if ( is_string( $value ) ) {
+				$value = wp_kses_post( $value );
+			} elseif ( is_array( $value ) || is_object( $value ) ) {
+				$value = wp_kses_post_deep( $value );
+			}
+		}
+
+		return $value;
 	}
 
 	/**
@@ -981,16 +1015,44 @@ class PodsField {
 			return $value;
 		}
 
+		$trim       = true;
+		$trim_p_brs = false;
+		$trim_lines = false;
+
 		if ( $options ) {
 			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 			// Check if we should trim the content.
-			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
-				return $value;
-			}
+			$trim = 1 === (int) pods_v( static::$type . '_trim', $options, 0 );
+
+			// Check if we should remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$trim_p_brs = 1 === (int) pods_v( static::$type . '_trim_p_brs', $options, 0 );
+
+			// Check if we should remove whitespace at the end of lines.
+			$trim_lines = 1 === (int) pods_v( static::$type . '_trim_lines', $options, 0 );
 		}
 
-		return trim( $value );
+		if ( $trim_p_brs ) {
+			// Remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$value = preg_replace( '/(<p[^>]*>\s*(\s|&nbsp;|<br\s*?\/?>)*\s*<\/?p>)/Umi', '', $value );
+
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim_lines ) {
+			// Trim whitespace at the end of lines.
+			$value = preg_replace( '/\h+$/m', '', $value );
+
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim ) {
+			$value = trim( $value );
+		}
+
+		return $value;
 	}
 
 	/**

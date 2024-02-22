@@ -20,9 +20,7 @@ import './conditional-logic.scss';
 const UNSUPPORTED_FIELD_TYPES = [
 	'boolean_group',
 	'conditional-logic',
-	'date',
-	'datetime',
-	'time',
+	'wysiwyg',
 	'heading',
 	'html',
 ];
@@ -45,7 +43,6 @@ const FIELD_TYPES_WITH_NO_BLANK_COMPARISONS = [
 const FIELD_TYPES_WITH_ONLY_EQUALITY_COMPARISONS = [
 	'file',
 	'avatar',
-	'oembed',
 	'pick',
 	'boolean',
 	'color',
@@ -68,7 +65,14 @@ const ConditionalLogic = ( {
 	} = fieldConfig;
 
 	const allAvailableFields = currentPodAllFields.filter( ( field ) => {
-		return ! UNSUPPORTED_FIELD_TYPES.includes( field.type ) && field.name !== affectedFieldName;
+		return (
+			! UNSUPPORTED_FIELD_TYPES.includes( field.type )
+			&& field.name !== affectedFieldName
+			&& (
+				'undefined' === typeof field?.repeatable
+				|| 0 === parseInt( field.repeatable )
+			)
+		);
 	} );
 
 	const [ conditions, setConditions ] = useState( {
@@ -235,6 +239,11 @@ const ConditionalLogic = ( {
 
 										// Don't render an option if it's an unsupported field type.
 										if ( UNSUPPORTED_FIELD_TYPES.includes( field.type ) ) {
+											return null;
+										}
+
+										// Don't render an option if it's repeatable.
+										if ( 'undefined' !== typeof field?.repeatable && 1 === parseInt( field.repeatable ) ) {
 											return null;
 										}
 

@@ -117,12 +117,26 @@ class Conditional_Logic {
 	 */
 	public static function maybe_setup_from_old_syntax( $object ): ?Conditional_Logic {
 		$old_syntax = [
-			'depends-on'       => (array) pods_v( 'depends-on', $object, [], true ),
-			'depends-on-any'   => (array) pods_v( 'depends-on-any', $object, [], true ),
-			'depends-on-multi' => (array) pods_v( 'depends-on-multi', $object, [], true ),
-			'excludes-on'      => (array) pods_v( 'excludes-on', $object, [], true ),
-			'wildcard-on'      => (array) pods_v( 'wildcard-on', $object, [], true ),
+			'depends-on'       => pods_v( 'depends-on', $object, [], true ),
+			'depends-on-any'   => pods_v( 'depends-on-any', $object, [], true ),
+			'depends-on-multi' => pods_v( 'depends-on-multi', $object, [], true ),
+			'excludes-on'      => pods_v( 'excludes-on', $object, [], true ),
+			'wildcard-on'      => pods_v( 'wildcard-on', $object, [], true ),
 		];
+
+		foreach ( $old_syntax as $old_syntax_key => $old_syntax_value ) {
+			if ( empty( $old_syntax_value ) ) {
+				$old_syntax_value = [];
+			} elseif ( ! is_array( $old_syntax_value ) ) {
+				$old_syntax_value = pods_maybe_safely_unserialize( $old_syntax_value );
+
+				if ( ! is_array( $old_syntax_value ) ) {
+					$old_syntax_value = [];
+				}
+			}
+
+			$old_syntax[ $old_syntax_key ] = $old_syntax_value;
+		}
 
 		$action = 'show';
 		$logic  = 'any';

@@ -615,7 +615,16 @@ class Post_Type extends Collection {
 		}
 
 		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
-			$posts = array_merge( $posts, parent::find( $args ) );
+			$other_configs = parent::find( $args );
+
+			// Merge the other configs into the posts array but don't overwrite them.
+			foreach ( $other_configs as $key => $config ) {
+				if ( is_int( $key ) ) {
+					$posts[] = $config;
+				} elseif ( ! isset( $posts[ $key ] ) ) {
+					$posts[ $key ] = $config;
+				}
+			}
 		}
 
 		if ( ! empty( $args['limit'] ) ) {
@@ -715,7 +724,7 @@ class Post_Type extends Collection {
 				continue;
 			}
 
-			$meta_value = array_map( 'maybe_unserialize', $meta_value );
+			$meta_value = array_map( 'pods_maybe_safely_unserialize', $meta_value );
 
 			if ( 1 === count( $meta_value ) ) {
 				$meta_value = reset( $meta_value );

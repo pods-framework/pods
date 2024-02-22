@@ -15,10 +15,23 @@
 
 .qtip-content {
 	position: relative;
-	padding: 5px 9px;
+	padding: 15px 19px;
 	overflow: hidden;
 	text-align: left;
 	word-wrap: break-word;
+}
+
+/* #7118 */
+#pods-wizard-box #pods-wizard-main .stuffbox .qtip-content h3,
+.qtip-content h3 {
+	color: inherit;
+	padding: 0;
+	margin: 6px 0 10px;
+	font-weight: bold;
+}
+
+.qtip-content a {
+	color: inherit;
 }
 
 .qtip-titlebar {
@@ -94,6 +107,10 @@
 	border-width: 1px;
 	border-style: solid;
 	border-color: #000;
+}
+
+.qtip-default p {
+    color: #fff;
 }
 
 .qtip-default .qtip-titlebar {

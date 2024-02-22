@@ -2,6 +2,7 @@
 
 namespace Pods\Whatsit;
 
+use Exception;
 use PodsForm;
 use Pods\Whatsit;
 
@@ -63,7 +64,11 @@ class Field extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null, $strict = false ) {
+	public function get_arg( $arg, $default = null, $strict = false, $raw = false ) {
+		if ( $raw ) {
+			return parent::get_arg( $arg, $default, $strict, $raw );
+		}
+
 		$arg = (string) $arg;
 
 		$special_args = [
@@ -432,13 +437,32 @@ class Field extends Whatsit {
 			return null;
 		}
 
-		$sister_id = $this->get_arg( 'sister_id' );
+		$sister_id    = $this->get_arg( 'sister_id' );
+		$sister_field = $this->get_arg( 'sister_field' );
 
-		if ( ! $sister_id ) {
-			return null;
+		$related_field = null;
+
+		$api = pods_api();
+
+		try {
+			if ( $sister_id ) {
+				$related_field = $api->load_field( [
+					'id' => $sister_id,
+				] );
+			} elseif ( $sister_field ) {
+				$related_object_name = $this->get_related_object_name();
+
+				if ( $related_object_name ) {
+					$related_field = $api->load_field( [
+						'name' => $sister_field,
+						'pod'  => $related_object_name,
+					] );
+				}
+			}
+		} catch ( Exception $exception ) {
+			// Do nothing.
 		}
 
-		$related_field = Store::get_instance()->get_object( $sister_id );
 
 		// Only return if it is a valid field.
 		if ( ! $related_field instanceof Field ) {

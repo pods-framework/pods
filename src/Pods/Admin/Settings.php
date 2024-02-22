@@ -191,12 +191,17 @@ class Settings {
 			'default'            => '0',
 			'readonly'           => $is_types_only_overridden,
 			'description'        => $is_types_only_overridden ? $is_types_only_disabled_text : '',
-			'pick_format'        => 'single',
+			'pick_format_type'   => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
 				'0' => __( 'Enable creating custom fields with Pods', 'pods' ),
 				'1' => __( 'Disable creating custom fields with Pods (for when using Pods only for content types)', 'pods' ),
 			],
+			'site_health_data' => [
+				'0' => __( 'Enable', 'pods' ),
+				'1' => __( 'Disable', 'pods' ),
+			],
+			'site_health_include_in_info' => true,
 		];
 
 		$fields['performance'] = [
@@ -212,13 +217,18 @@ class Settings {
 			'label'              => __( 'Watch changed fields for use in hooks', 'pods' ),
 			'help'               => __( 'By default, Pods does not watch changed fields when a post, term, user, or other Pods items are saved. Enabling this will allow you to use PHP hooks to reference the previous values of those fields after the save has happened.', 'pods' ),
 			'type'               => 'pick',
-			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
-			'pick_format'        => 'single',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<' ) ? '1' : '0',
+			'pick_format_type'   => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
 				'1' => __( 'Enable watching changed fields (may reduce performance with large processes)', 'pods' ),
 				'0' => __( 'Disable watching changed fields', 'pods' ),
 			],
+			'site_health_data' => [
+				'1' => __( 'Enable', 'pods' ),
+				'0' => __( 'Disable', 'pods' ),
+			],
+			'site_health_include_in_info' => true,
 		];
 
 		$fields['metadata_integration'] = [
@@ -226,14 +236,19 @@ class Settings {
 			'label'              => __( 'Watch WP Metadata calls', 'pods' ),
 			'help'               => __( 'By default, Pods will watch Metadata calls and send any values to table-based fields as well as index relationship IDs when they are saved. You can disable this if you do not use table-based Pods and you only want to query meta-based Pods or settings.', 'pods' ),
 			'type'               => 'pick',
-			'default'            => ! function_exists( 'wc_get_product' ) || version_compare( $first_pods_version, '2.9.14', '<' ) ? '1' : '0',
-			'pick_format'        => 'single',
+			'default'            => ( function_exists( 'wc_get_product' ) || version_compare( $first_pods_version, '2.9.14', '<' ) ) ? '1' : '0',
+			'pick_format_type'   => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
 				'1' => __( 'Enable watching WP Metadata calls (may reduce performance with large processes)', 'pods' ),
 				'0' => __( 'Disable watching WP Metadata calls', 'pods' ),
 			],
+			'site_health_data' => [
+				'1' => __( 'Enable', 'pods' ),
+				'0' => __( 'Disable', 'pods' ),
+			],
 			'dependency'         => true,
+			'site_health_include_in_info' => true,
 		];
 
 		$fields['metadata_override_get'] = [
@@ -241,14 +256,19 @@ class Settings {
 			'label'              => __( 'Override WP Metadata values', 'pods' ),
 			'help'               => __( 'By default, Pods will override Metadata values when calling functions like get_post_meta() so that it can provide more Relationship / File field context.', 'pods' ),
 			'type'               => 'pick',
-			'default'            => version_compare( $first_pods_version, '2.8.21', '<=' ) ? '1' : '0',
-			'pick_format'        => 'single',
+			'default'            => version_compare( $first_pods_version, '2.8.21', '<' ) ? '1' : '0',
+			'pick_format_type'   => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
 				'1' => __( 'Enable overriding WP Metadata values (may conflict with certain plugins and decrease performance with large processes)', 'pods' ),
 				'0' => __( 'Disable overriding WP Metadata values', 'pods' ),
 			],
-			'depends-on' => [ 'metadata_integration' => '1' ],
+			'site_health_data' => [
+				'1' => __( 'Enable', 'pods' ),
+				'0' => __( 'Disable', 'pods' ),
+			],
+			'depends-on'         => [ 'metadata_integration' => '1' ],
+			'site_health_include_in_info' => true,
 		];
 
 		$fields['media_modal_fields'] = [
@@ -256,20 +276,25 @@ class Settings {
 			'label'              => __( 'Show Pods fields in Media Library modals', 'pods' ),
 			'help'               => __( 'This feature is only used when you have extended the WordPress Media object with Pods', 'pods' ),
 			'type'               => 'pick',
-			'default'            => version_compare( $first_pods_version, '2.9.16', '<=' ) ? '1' : '0',
-			'pick_format'        => 'single',
+			'default'            => version_compare( $first_pods_version, '2.9.16', '<' ) ? '1' : '0',
+			'pick_format_type'   => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
 				'1' => __( 'Enable showing Pods fields in Media Library modals (may decrease performance with large numbers of items on admin screens with media grids)', 'pods' ),
 				'0' => __( 'Disable showing Pods fields in Media Library modals and only show them when in the full edit screen for an attachment', 'pods' ),
 			],
+			'site_health_data' => [
+				'0' => __( 'Enable', 'pods' ),
+				'1' => __( 'Disable', 'pods' ),
+			],
+			'site_health_include_in_info' => true,
 		];
 
 		$session_auto_start            = pods_session_auto_start( true );
 		$session_auto_start_overridden = null !== $session_auto_start;
 
-		$fields['sessions'] = [
-			'label' => __( 'Sessions', 'pods' ),
+		$fields['security'] = [
+			'label' => __( 'Security', 'pods' ),
 			'type'  => 'heading',
 		];
 
@@ -288,14 +313,26 @@ class Settings {
 			'default'            => '0',
 			'readonly'           => $session_auto_start_overridden,
 			'description'        => $session_auto_start_overridden ? $session_auto_start_disabled_text : '',
-			'pick_format'        => 'single',
+			'pick_format_type'   => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
 				'auto' => __( 'Auto-detect sessions (enable on first anonymous submission)', 'pods' ),
 				'1'    => __( 'Enable sessions (may decrease performance)', 'pods' ),
 				'0'    => __( 'Disable sessions', 'pods' ),
 			],
+			'site_health_data' => [
+				'auto' => __( 'Auto-detect', 'pods' ),
+				'1'    => __( 'Enable', 'pods' ),
+				'0'    => __( 'Disable', 'pods' ),
+			],
+			'site_health_include_in_info' => true,
 		];
+
+		$access_fields = pods_access_settings_config();
+
+		if ( $access_fields ) {
+			$fields = array_merge( $fields, $access_fields );
+		}
 
 		$pods_init = pods_init();
 
@@ -310,13 +347,15 @@ class Settings {
 		$fields['wisdom_opt_out'] = [
 			'name'               => 'wisdom_opt_out',
 			'label'              => __( 'Would you like to opt-out of tracking?', 'pods' ),
-			'description'        => __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment and your plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' ),
+			'description'        => __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment and your plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' )
+                . "\n\n"
+                . __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists.', 'pods' ),
 			'type'               => 'pick',
 			'default'            => $is_wisdom_opted_out ? '1' : '',
-			'pick_format'        => 'single',
+			'pick_format_type'   => 'single',
 			'pick_format_single' => 'radio',
 			'data'               => [
-				'' => __( 'Track usage on my site', 'pods' ),
+				''  => __( 'Track usage on my site', 'pods' ),
 				'1' => __( 'DO NOT track usage on my site', 'pods' ),
 			],
 		];

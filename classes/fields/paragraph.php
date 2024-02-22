@@ -42,103 +42,108 @@ class PodsField_Paragraph extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
-
-		$options = array(
-			'output_options'                     => array(
-				'label' => __( 'Output Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'boolean_group' => array(
-					static::$type . '_trim'      => array(
-						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
-						'default'    => 1,
-						'type'       => 'boolean',
-						'dependency' => true,
-					),
-					static::$type . '_allow_html'      => array(
+		$options = [
+			'output_options'                     => [
+				'label'         => __( 'Output Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_trim'             => [
+						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_lines'       => [
+						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_p_brs'       => [
+						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_extra_lines' => [
+						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_allow_html'       => [
 						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-					static::$type . '_oembed'          => array(
+					],
+					static::$type . '_oembed'           => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
 							'https://wordpress.org/support/article/embeds/',
-						),
-					),
-					static::$type . '_wptexturize'     => array(
+						],
+					],
+					static::$type . '_wptexturize'      => [
 						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'https://developer.wordpress.org/reference/functions/wptexturize/',
-						),
-					),
-					static::$type . '_convert_chars'   => array(
+						],
+					],
+					static::$type . '_convert_chars'    => [
 						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
 							'https://developer.wordpress.org/reference/functions/convert_chars/',
-						),
-					),
-					static::$type . '_wpautop'         => array(
+						],
+					],
+					static::$type . '_wpautop'          => [
 						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Changes double line-breaks in the text into HTML paragraphs', 'pods' ),
 							'https://developer.wordpress.org/reference/functions/wpautop/',
-						),
-					),
-					static::$type . '_allow_shortcode' => array(
+						],
+					],
+					static::$type . '_allow_shortcode'  => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-						'help'       => array(
+						'help'       => [
 							__( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
 							'https://codex.wordpress.org/Shortcode_API',
-						),
-					),
-				),
-			),
-			static::$type . '_allowed_html_tags' => array(
+						],
+					],
+				],
+			],
+			static::$type . '_allowed_html_tags' => [
 				'label'      => __( 'Allowed HTML Tags', 'pods' ),
-				'depends-on' => array( static::$type . '_allow_html' => true ),
+				'depends-on' => [ static::$type . '_allow_html' => true ],
 				'default'    => 'strong em a ul ol li b i',
 				'type'       => 'text',
 				'help'       => __( 'Format: strong em a ul ol li b i', 'pods' ),
-			),
-			static::$type . '_max_length'        => array(
+			],
+			static::$type . '_max_length'        => [
 				'label'   => __( 'Maximum Length', 'pods' ),
-				'default' => -1,
+				'default' => - 1,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			),
-			static::$type . '_placeholder'       => array(
+			],
+			static::$type . '_placeholder'       => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => array(
+				'help'    => [
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				),
-			),
-		);
-
-		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['boolean_group'][ static::$type . '_allow_markdown' ] = array(
-				'label'   => __( 'Allow Markdown Syntax', 'pods' ),
-				'default' => 0,
-				'type'    => 'boolean',
-			);
-		}
+				],
+			],
+		];
 
 		return $options;
 	}
@@ -164,6 +169,23 @@ class PodsField_Paragraph extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		$value = $this->strip_html( $value, $options );
+
+		/**
+		 * Allow filtering of the display value for the Paragraph field type before it's processed.
+		 *
+		 * NOTE: HTML has already been stripped at this point.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param mixed|null      $value   Current value.
+		 * @param string          $type    Field type.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 */
+		$value = apply_filters( 'pods_form_ui_field_paragraph_display_value_pre_process', $value, static::$type, $name, $options, $pod, $id );
+
 		$value = $this->strip_shortcodes( $value, $options );
 		$value = $this->trim_whitespace( $value, $options );
 
@@ -193,11 +215,19 @@ class PodsField_Paragraph extends PodsField {
 			$value = do_shortcode( $value );
 		}
 
-		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( static::$type . '_allow_markdown', $options ) ) {
-			$value = Markdown( $value );
-		}
-
-		return $value;
+		/**
+		 * Allow filtering of the display value for the Paragraph field type.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param mixed|null      $value   Current value.
+		 * @param string          $type    Field type.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 */
+		return apply_filters( 'pods_form_ui_field_paragraph_display_value', $value, static::$type, $name, $options, $pod, $id );
 	}
 
 	/**

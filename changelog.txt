@@ -2,6 +2,29 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.1 - February 21st, 2024 =
+
+*Security Release*
+
+While this release is meant to be as backwards compatible as possible, some aspects of security hardening may require manual intervention by site owners and their developers. There were no known reports and no known attempts to take advantage of the issues resolved by this release except where noted.
+
+Read more about [How access rights work with Pods](https://docs.pods.io/displaying-pods/access-rights-in-pods/) for more details including new filters/snippets that can provide limited access.
+
+* Security hardening: Introduced new access checks and additional fine-grained control over dynamic features across any place in Pods that allows embedding content or forms. This only applies to usage through Pods Blocks or Shortcodes. Using PHP will continue to expect you are handling this on your own unless you pass the appropriate arguments to the corresponding Pods methods. (@sc0ttkclark)
+* Security hardening: Prevent using the Pods Views Block / Shortcode to embed any files outside of the current theme. Props to the Nex Team / Wordfence for responsibly reporting this. (@sc0ttkclark)
+* Security hardening: Prevent output of `user_pass`, `user_activation_key`, and `post_password` through Pods dynamic features / PHP. These values will be set in Pods references to `****************` if they were not-empty so you can still do conditional checks as normal. While Scott was already aware of this in pre-planned security release work, additional props go to the Nex Team / Wordfence for responsibly reporting this too. (@sc0ttkclark)
+* Security hardening: Prevent more unsavory PHP display callbacks from being used with magic tags in addition to those already prevented. Props to the Nex Team / Wordfence for responsibly reporting this. (@sc0ttkclark)
+* Feature: Access rights > Access-related Admin notices and Errors can be hidden by admins in a new setting in Pods Admin > Settings > Security. (@sc0ttkclark)
+* Feature: Dynamic Features > Dynamic features (Pods Blocks and Shortcodes) can be disabled by admins in a new setting in Pods Admin > Settings > Security. (@sc0ttkclark)
+* Changed: Dynamic Features > New installs will now default to not allowing all SQL arguments to be used by dynamic features. Existing installs will default to only allowing simple SQL arguments. All SQL fragments are checked for disallowed usage like subqueries. This can be set in a new setting in Pods Admin > Settings > Security. (@sc0ttkclark)
+* Feature: Pods Display > The Display-related Pods Blocks and Shortcodes have additional checks that limit access to content based on the user viewing it. For Post Types that are non-public, they must have access to the `read` capability from that post type as a normal user. For displaying content from Users, they must have access to `list_users` capability to view that. [Read more about how access rights work with Pods](https://docs.pods.io/displaying-pods/access-rights-in-pods/) (@sc0ttkclark)
+* Feature: Pods Forms > The Pods Form Block and Form Shortcode have additional checks that limit access to creating/editing content based on the user submitting the form. For Post Types that are non-public, they must have access to the 'create' capability from that post type as a normal user. Forms that submit to the Users pod, now require that the submitter must have access to the `create_users` or `edit_users` capability to create or edit that user. [Read more about how access rights work with Pods](https://docs.pods.io/displaying-pods/access-rights-in-pods/) (@sc0ttkclark)
+* Feature: Pods Forms > The Pods Form Block and Form Shortcode now have a new option to identify the form with a custom key you choose that will get passed to various access-related filters so that developers can override access rights more easily. (@sc0ttkclark)
+* Feature: Pods Forms > When a user has access to create or edit content through a Pods form for a post type, the `post_content` field is cleaned based on the level of access they have to prevent inserting unintentional shortcodes or blocks. (@sc0ttkclark)
+* Feature: Markdown functionality has now been replaced by the [Parsedown library](https://github.com/erusev/parsedown) for better security and performance and it's uniquely prefixed so it prevents future conflicts with plugins using the same library. (@sc0ttkclark)
+* Changed: Pods Views > One of the breaking changes in this work is that the Pods Views Block / Shortcode dynamic feature is now disabled by default and must be enabled for new and existing installs. This can be done in a new setting in Pods Admin > Settings > Security. (@sc0ttkclark)
+* Changed: Display PHP callbacks > New installs will now default to only allowing specific callbacks to be used. This defaults the specific callbacks allowed to `esc_attr,esc_html` which can be further customized in Pods Admin > Settings > Security. (@sc0ttkclark)
+
 = 3.0.10 - December 11th, 2023 =
 
 * Fixed: The safe rendering handler for Pods Blocks now properly passes along context to all Pods Blocks so that they work within Query Loops again and other places they could take on context. (@sc0ttkclark)

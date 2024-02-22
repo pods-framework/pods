@@ -685,9 +685,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 					$user = pods_access_bleep_data( $user );
 
-					if ( isset( $user->{$var} ) ) {
-						$value = $user->{$var};
-					} elseif ( 'role' === $var ) {
+					if ( 'role' === $var ) {
 						$value = '';
 
 						if ( ! empty( $user->roles ) ) {
@@ -696,7 +694,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					} else {
 						$value = '';
 						if ( isset( $user->data->{$var} ) ) {
-							$value = $user->data->{$var};
+							$user_data = pods_access_bleep_data( $user->data );
+							$value = $user_data->{$var};
 						} elseif ( metadata_exists( 'user', $user->ID, $var ) ) {
 							$value = get_user_meta( $user->ID, $var );
 						} elseif ( isset( $user->{$var} ) ) {

@@ -2828,7 +2828,7 @@ class PodsAdmin {
 		}
 
 		$params = [
-			'id' => 1,
+			'id' => $id,
 			'public' => 1,
 		];
 

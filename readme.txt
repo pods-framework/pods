@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 3.1.2
+Stable tag: 3.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,6 +180,10 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.1.3 - February 27th, 2024 =
+
+* Fixed: Resolved an issue with CodeMirror 6.x fields in forms (this is separate from the version 5.x that the Pods Template editor uses). (@sc0ttkclark)
 
 = 3.1.2 - February 27th, 2024 =
 

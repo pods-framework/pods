@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.1.3 - February 27th, 2024 =
+
+* Fixed: Resolved an issue with CodeMirror 6.x fields in forms (this is separate from the version 5.x that the Pods Template editor uses). (@sc0ttkclark)
+
 = 3.1.2 - February 27th, 2024 =
 
 * Added: Now you can set Content Visibility when creating a new pod. (@sc0ttkclark)

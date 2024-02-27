@@ -181,7 +181,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.1.2 - February 28th, 2024 =
+= 3.1.2 - February 27th, 2024 =
 
 * Added: Now you can set Content Visibility when creating a new pod. (@sc0ttkclark)
 * Added: More help text to better explain things on the Access Rights Review screen for extended content types. (@sc0ttkclark)

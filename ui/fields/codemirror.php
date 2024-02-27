@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 pods_form_enqueue_script( 'pods-codemirror' );
+pods_form_enqueue_style( 'pods-codemirror' );
 pods_form_enqueue_style( 'pods-styles' );
 pods_form_enqueue_script( 'pods-codemirror-loadmode' );
 

@@ -786,16 +786,17 @@ class Pod extends Base {
 				'public' => [
 					'label'             => __( 'Public', 'pods' ),
 					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
-					'description'       => __( 'When a content type is public, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
+					'description'       => __( 'Whether a content type is intended for use publicly either via the admin interface or by front-end users. When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
 				'publicly_queryable'      => [
 					'label'             => __( 'Publicly Queryable', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'Whether queries can be performed on the front end for the content type as part of parse_request(). When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
 					'type'              => 'boolean',
-					'default'           => pods_v( 'public', $pod, true ),
+					'default'           => (bool) pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
 				],
 				'exclude_from_search'     => [
@@ -1214,16 +1215,17 @@ class Pod extends Base {
 				'public'                   => [
 					'label'             => __( 'Public', 'pods' ),
 					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
-					'description'       => __( 'When a content type is public, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
+					'description'       => __( 'Whether a content type is intended for use publicly either via the admin interface or by front-end users. When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
 				'publicly_queryable'      => [
 					'label'             => __( 'Publicly Queryable', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'Whether queries can be performed on the front end for the content type as part of parse_request(). When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
 					'type'              => 'boolean',
-					'default'           => pods_v( 'public', $pod, true ),
+					'default'           => (bool) pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
 				],
 				'hierarchical'             => [

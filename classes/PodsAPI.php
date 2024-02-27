@@ -1444,6 +1444,8 @@ class PodsAPI {
 	 * $params['create_label_plural'] string Plural Label (for Creating)
 	 * $params['create_label_singular'] string Singular Label (for Creating)
 	 * $params['create_storage'] string Storage Type (for Creating)
+	 * $params['create_public'] int Whether the pod will be public (for Creating Post Types and Taxonomies)
+	 * $params['create_publicly_queryable'] int Whether the pod will be publicly queryable (for Creating Post Types and Taxonomies)
 	 * $params['create_rest_api'] int Whether REST API will be enabled (for Creating Post Types and Taxonomies)
 	 * $params['extend_pod_type'] string Pod Type (for Extending)
 	 * $params['extend_post_type'] string Post Type (for Extending Post Types)
@@ -1460,11 +1462,13 @@ class PodsAPI {
 			'create_extend'   => 'create',
 			'create_pod_type' => 'post_type',
 
-			'create_name'           => '',
-			'create_label_singular' => '',
-			'create_label_plural'   => '',
-			'create_storage'        => 'meta',
-			'create_rest_api'       => 1,
+			'create_name'               => '',
+			'create_label_singular'     => '',
+			'create_label_plural'       => '',
+			'create_storage'            => 'meta',
+			'create_public'             => 1,
+			'create_publicly_queryable' => 0,
+			'create_rest_api'           => 1,
 
 			'create_setting_name'  => '',
 			'create_label_title'   => '',
@@ -1506,7 +1510,7 @@ class PodsAPI {
 			$pod_params['label']          = ( ! empty( $params->create_label_plural ) ? $params->create_label_plural : $label );
 			$pod_params['type']           = $params->create_pod_type;
 			$pod_params['label_singular'] = ( ! empty( $params->create_label_singular ) ? $params->create_label_singular : $pod_params['label'] );
-			$pod_params['public']         = 1;
+			$pod_params['public']         = 1 === (int) $params->create_public ? 1 : 0;
 			$pod_params['show_ui']        = 1;
 
 			// Auto-generate name if not provided
@@ -1519,9 +1523,10 @@ class PodsAPI {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
-				$pod_params['storage'] = pods_tableless() ? 'meta' : $params->create_storage;
-
-				$pod_params['rest_enable'] = 1 === (int) $params->create_rest_api ? 1 : 0;
+				$pod_params['storage']                = pods_tableless() ? 'meta' : $params->create_storage;
+				$pod_params['publicly_queryable']     = 1 === (int) $params->create_publicly_queryable ? 1 : 0;
+				$pod_params['dynamic_features_allow'] = 'inherit';
+				$pod_params['rest_enable']            = 1 === (int) $params->create_rest_api ? 1 : 0;
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
@@ -1532,11 +1537,11 @@ class PodsAPI {
 					$params->create_storage = $params->create_storage_taxonomy;
 				}
 
-				$pod_params['storage'] = pods_tableless() ? 'meta' : $params->create_storage;
-
-				$pod_params['hierarchical'] = 1;
-
-				$pod_params['rest_enable'] = 1 === (int) $params->create_rest_api ? 1 : 0;
+				$pod_params['storage']                = pods_tableless() ? 'meta' : $params->create_storage;
+				$pod_params['hierarchical']           = 1;
+				$pod_params['publicly_queryable']     = 1 === (int) $params->create_publicly_queryable ? 1 : 0;
+				$pod_params['dynamic_features_allow'] = 'inherit';
+				$pod_params['rest_enable']            = 1 === (int) $params->create_rest_api ? 1 : 0;
 			} elseif ( 'pod' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pod' ), $this );
@@ -1545,6 +1550,10 @@ class PodsAPI {
 				if ( pods_tableless() ) {
 					$pod_params['type']    = 'post_type';
 					$pod_params['storage'] = 'meta';
+				}
+
+				if ( $pod_params['public'] ) {
+					$pod_params['public'] = 1 === (int) $params->create_publicly_queryable ? 1 : 0;
 				}
 			} elseif ( 'settings' === $pod_params['type'] ) {
 				$pod_params['name']          = $params->create_setting_name;

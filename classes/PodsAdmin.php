@@ -2902,7 +2902,17 @@ class PodsAdmin {
 			return 'bulk' !== $mode ? $obj->error( __( 'Pod cannot be modified.', 'pods' ) ) : false;
 		}
 
-		pods_api()->save_pod( [ 'id' => $id, 'public' => 0 ] );
+		$params = [
+			'id' => $id,
+		];
+
+		if ( in_array( $pod->get_type(), [ 'post_type', 'taxonomy' ], true ) ) {
+			$params['publicly_queryable'] = 0;
+		} else {
+			$params['public'] = 0;
+		}
+
+		pods_api()->save_pod( $params );
 
 		foreach ( $obj->data as $key => $data_pod ) {
 			if ( (int) $id === (int) $data_pod['id'] ) {

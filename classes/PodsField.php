@@ -937,7 +937,7 @@ class PodsField {
 	 */
 	public function maybe_sanitize_output( $value, $options = null ) {
 		// Maybe check for a sanitize output option.
-		$should_sanitize = null === $options || 1 === (int) pods_v( 'sanitize_output', $options, 1 );
+		$should_sanitize = null === $options || 1 === (int) pods_v( static::$type . '_output', $options, 1 );
 
 		/**
 		 * Allow filtering whether to sanitize the field value before output.

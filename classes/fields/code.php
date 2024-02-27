@@ -45,13 +45,6 @@ class PodsField_Code extends PodsField {
 				'label'         => __( 'Output Options', 'pods' ),
 				'type'          => 'boolean_group',
 				'boolean_group' => [
-					'sanitize_output'                  => [
-						'label'      => __( 'Sanitize HTML', 'pods' ),
-						'default'    => 1,
-						'help'       => __( 'This sanitizes things like script tags and other content not normally allowed in WordPress content. Disable this only if you trust users who will have access to enter content into this field.', 'pods' ),
-						'type'       => 'boolean',
-						'dependency' => true,
-					],
 					static::$type . '_trim'             => [
 						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
 						'default' => 1,
@@ -71,6 +64,13 @@ class PodsField_Code extends PodsField {
 						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
+					],
+					static::$type . '_output'                  => [
+						'label'      => __( 'Sanitize HTML', 'pods' ),
+						'default'    => 1,
+						'help'       => __( 'This sanitizes things like script tags and other content not normally allowed in WordPress content. Disable this only if you trust users who will have access to enter content into this field.', 'pods' ),
+						'type'       => 'boolean',
+						'dependency' => true,
 					],
 					static::$type . '_allow_shortcode'  => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),

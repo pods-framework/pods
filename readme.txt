@@ -185,7 +185,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 * Added: Now you can set Content Visibility when creating a new pod. (@sc0ttkclark)
 * Added: More help text to better explain things on the Access Rights Review screen for extended content types. (@sc0ttkclark)
-* Added: New option to specify whether to Sanitize Output for a field in the Additional Field Options of Heading, Paragraph, Code, and Text fields. (@sc0ttkclark)
+* Added: New option to specify whether to Sanitize Output for a field in the Additional Field Options of Heading, Paragraph, WYSIWYG, Code, and Text fields. (@sc0ttkclark)
 * Added: Pod Reference metabox on the Pods Templates editor screen now has more help text and will now allow clicking to copy any magic tag to clipboard. (@sc0ttkclark)
 * Added: Better explain Public vs Publicly Queryable for Post Types and Taxonomies along with showing the current Content Visibility below. (@sc0ttkclark)
 * Changed: Updated CodeMirror to 5.65.16 so we can start moving towards CodeMirror 6 for the Pods Template editor. (@sc0ttkclark)

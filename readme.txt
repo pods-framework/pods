@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 3.1.1
+Stable tag: 3.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,6 +180,16 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.1.2 - February 27th, 2024 =
+
+* Added: Now you can set Content Visibility when creating a new pod. (@sc0ttkclark)
+* Added: More help text to better explain things on the Access Rights Review screen for extended content types. (@sc0ttkclark)
+* Added: New option to specify whether to Sanitize Output for a field in the Additional Field Options of Heading, Paragraph, WYSIWYG, Code, and Text fields. (@sc0ttkclark)
+* Added: Pod Reference metabox on the Pods Templates editor screen now has more help text and will now allow clicking to copy any magic tag to clipboard. (@sc0ttkclark)
+* Added: Better explain Public vs Publicly Queryable for Post Types and Taxonomies along with showing the current Content Visibility below. (@sc0ttkclark)
+* Changed: Updated CodeMirror to 5.65.16 so we can start moving towards CodeMirror 6 for the Pods Template editor. (@sc0ttkclark)
+* Fixed: Resolved issues with Access Rights Review screen when making content type public or private causing it not to be fully set (only public was set on, it left out publicly_queryable). (@sc0ttkclark)
 
 = 3.1.1 - February 22nd, 2024 =
 

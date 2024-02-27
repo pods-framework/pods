@@ -1030,11 +1030,11 @@ function pods_deprecated( $function, $version, $replacement = null ) {
  * @param null|string $url       Documentation URL.
  * @param null|string $container The HTML container path for where the inline help will live.
  *
- * @return void
+ * @return null|string The help output or null if echoing.
  *
  * @since 2.0.0
  */
-function pods_help( $text, $url = null, $container = null ) {
+function pods_help( $text, $url = null, $container = null, $return = false ) {
 	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
 		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/qtip/jquery.qtip.min.js', array( 'jquery' ), '3.0.3' );
 		wp_enqueue_script( 'jquery-qtip2' );
@@ -1079,7 +1079,11 @@ function pods_help( $text, $url = null, $container = null ) {
 	}
 
 	if ( 'help' === $text ) {
-		return;
+		if ( $return ) {
+			return '';
+		}
+
+		return null;
 	}
 
 	if ( $url && 0 < strlen( $url ) ) {
@@ -1088,7 +1092,15 @@ function pods_help( $text, $url = null, $container = null ) {
 
 	$text = wpautop( $text );
 
-	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
+	$output = '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
+
+	if ( $return ) {
+		return $output;
+	}
+
+	echo $output;
+
+	return null;
 }
 
 /**

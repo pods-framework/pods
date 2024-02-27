@@ -1494,9 +1494,11 @@ class PodsAdmin {
 			],
 			'public'                      => [
 				'label' => __( 'Content Privacy', 'pods' ),
+				'type'  => 'raw',
 			],
 			'dynamic_features_allow'      => [
 				'label' => __( 'Allow Dynamic Features', 'pods' ),
+				'type'  => 'raw',
 			],
 			'restricted_dynamic_features' => [
 				'label' => __( 'Restricted Dynamic Features', 'pods' ),
@@ -1592,19 +1594,16 @@ class PodsAdmin {
 							$file_source = str_replace( ABSPATH, '', $file_source );
 						}
 
-						ob_start();
-
-						pods_help(
+						$source .= ' ' . pods_help(
 							sprintf(
 								'<strong>%s:</strong> %s',
 								esc_html__( 'File source', 'pods' ),
 								esc_html( $file_source )
 							),
 							null,
-							'.pods-admin-container'
+							'.pods-admin-container',
+							true
 						);
-
-						$source .= ' ' . ob_get_clean();
 					}
 				} elseif ( 'collection' === $object_storage_type ) {
 					$code_source = $pod->get_arg( '_pods_code_source' );
@@ -1614,19 +1613,16 @@ class PodsAdmin {
 							$code_source = str_replace( ABSPATH, '', $code_source );
 						}
 
-						ob_start();
-
-						pods_help(
+						$source .= ' ' . pods_help(
 							sprintf(
 								'<strong>%s:</strong> %s',
 								esc_html__( 'Code source', 'pods' ),
 								esc_html( $code_source )
 							),
 							null,
-							'.pods-admin-container'
+							'.pods-admin-container',
+							true
 						);
-
-						$source .= ' ' . ob_get_clean();
 					}
 				}
 			}
@@ -1655,7 +1651,7 @@ class PodsAdmin {
 				$dynamic_features_allow_label .= ' - ' . ( $is_public ? $dynamic_features_allow_options['1'] : $dynamic_features_allow_options['0'] );
 			}
 
-			$pod = [
+			$pod_row = [
 				'id'                          => $pod['id'],
 				'label'                       => $pod['label'],
 				'name'                        => $pod['name'],
@@ -1676,20 +1672,35 @@ class PodsAdmin {
 				] ),
 			];
 
-			$other_view_groups['public']['views'][ (string) $pod['real_public'] ]['count'] ++;
+			if ( $pod->is_extended() ) {
+				$extended_help_text = pods_help(
+					__( 'This is an extended content type. The Content Privacy cannot be changed by Pods. You can choose to enable Dynamic Features separately anyway if it has "WP Default" used.', 'pods' ),
+					null,
+					'.pods-admin-container',
+					true
+				);
 
-			if ( empty( $pod['restricted_dynamic_features'] ) ) {
-				$pod['restricted_dynamic_features']      = __( 'Unrestricted', 'pods' );
-				$pod['real_restricted_dynamic_features'] = 'unrestricted';
-			} else {
-				foreach ( $pod['restricted_dynamic_features'] as $fk => $feature ) {
-					$pod['restricted_dynamic_features'][ $fk ] = pods_v( $feature, $restricted_dynamic_features_options, ucwords( $feature ) );
+				$pod_row['public'] .= $extended_help_text;
+
+				if ( 'inherit' === $dynamic_features_allow ) {
+					$pod_row['dynamic_features_allow'] .= $extended_help_text;
 				}
-
-				$pod['real_restricted_dynamic_features'] = 'restricted';
 			}
 
-			$other_view_groups['restricted_dynamic_features']['views'][ $pod['real_restricted_dynamic_features'] ]['count'] ++;
+			$other_view_groups['public']['views'][ (string) $pod_row['real_public'] ]['count'] ++;
+
+			if ( empty( $pod_row['restricted_dynamic_features'] ) ) {
+				$pod_row['restricted_dynamic_features']      = __( 'Unrestricted', 'pods' );
+				$pod_row['real_restricted_dynamic_features'] = 'unrestricted';
+			} else {
+				foreach ( $pod_row['restricted_dynamic_features'] as $fk => $feature ) {
+					$pod_row['restricted_dynamic_features'][ $fk ] = pods_v( $feature, $restricted_dynamic_features_options, ucwords( $feature ) );
+				}
+
+				$pod_row['real_restricted_dynamic_features'] = 'restricted';
+			}
+
+			$other_view_groups['restricted_dynamic_features']['views'][ $pod_row['real_restricted_dynamic_features'] ]['count'] ++;
 
 			// @codingStandardsIgnoreLine
 			if ( 'manage' !== pods_v( 'action' ) ) {
@@ -1699,18 +1710,18 @@ class PodsAdmin {
 				if (
 					(
 						$found_id
-						&& $pod['id'] === $found_id
+						&& $pod_row['id'] === $found_id
 					)
 					|| (
 						$found_name
-						&& $pod['name'] === $found_name
+						&& $pod_row['name'] === $found_name
 					)
 				) {
-					$row = $pod;
+					$row = $pod_row;
 				}
 			}
 
-			$pod_list[] = $pod;
+			$pod_list[] = $pod_row;
 		}//end foreach
 
 		if ( ! $has_source ) {
@@ -2816,7 +2827,16 @@ class PodsAdmin {
 			return 'bulk' !== $mode ? $obj->error( __( 'Pod cannot be modified.', 'pods' ) ) : false;
 		}
 
-		pods_api()->save_pod( [ 'id' => $id, 'public' => 1 ] );
+		$params = [
+			'id' => $id,
+			'public' => 1,
+		];
+
+		if ( in_array( $pod->get_type(), [ 'post_type', 'taxonomy' ], true ) ) {
+			$params['publicly_queryable'] = 1;
+		}
+
+		pods_api()->save_pod( $params );
 
 		foreach ( $obj->data as $key => $data_pod ) {
 			if ( (int) $id === (int) $data_pod['id'] ) {
@@ -2882,7 +2902,17 @@ class PodsAdmin {
 			return 'bulk' !== $mode ? $obj->error( __( 'Pod cannot be modified.', 'pods' ) ) : false;
 		}
 
-		pods_api()->save_pod( [ 'id' => $id, 'public' => 0 ] );
+		$params = [
+			'id' => $id,
+		];
+
+		if ( in_array( $pod->get_type(), [ 'post_type', 'taxonomy' ], true ) ) {
+			$params['publicly_queryable'] = 0;
+		} else {
+			$params['public'] = 0;
+		}
+
+		pods_api()->save_pod( $params );
 
 		foreach ( $obj->data as $key => $data_pod ) {
 			if ( (int) $id === (int) $data_pod['id'] ) {

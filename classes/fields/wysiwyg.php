@@ -98,6 +98,13 @@ class PodsField_WYSIWYG extends PodsField {
 						'default' => 0,
 						'type'    => 'boolean',
 					],
+					static::$type . '_output'                  => [
+						'label'      => __( 'Sanitize HTML', 'pods' ),
+						'default'    => 1,
+						'help'       => __( 'This sanitizes things like script tags and other content not normally allowed in WordPress content. Disable this only if you trust users who will have access to enter content into this field.', 'pods' ),
+						'type'       => 'boolean',
+						'dependency' => true,
+					],
 					static::$type . '_oembed'          => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,

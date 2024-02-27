@@ -2,6 +2,22 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.1.2 - February 27th, 2024 =
+
+* Added: Now you can set Content Visibility when creating a new pod. (@sc0ttkclark)
+* Added: More help text to better explain things on the Access Rights Review screen for extended content types. (@sc0ttkclark)
+* Added: New option to specify whether to Sanitize Output for a field in the Additional Field Options of Heading, Paragraph, WYSIWYG, Code, and Text fields. (@sc0ttkclark)
+* Added: Pod Reference metabox on the Pods Templates editor screen now has more help text and will now allow clicking to copy any magic tag to clipboard. (@sc0ttkclark)
+* Added: Better explain Public vs Publicly Queryable for Post Types and Taxonomies along with showing the current Content Visibility below. (@sc0ttkclark)
+* Changed: Updated CodeMirror to 5.65.16 so we can start moving towards CodeMirror 6 for the Pods Template editor. (@sc0ttkclark)
+* Fixed: Resolved issues with Access Rights Review screen when making content type public or private causing it not to be fully set (only public was set on, it left out publicly_queryable). (@sc0ttkclark)
+
+= 3.1.1 - February 22nd, 2024 =
+
+This is just a release to retrigger the zip generation on WordPress.org that missed a fix put into the initial 3.1 release tag in SVN.
+
+Pods 3.1 is a security focused release, see below for the changelog information.
+
 = 3.1 - February 21st, 2024 =
 
 *Security Release*

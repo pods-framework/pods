@@ -604,13 +604,15 @@ class PodsInit {
 
 		wp_register_script( 'pods-cleditor', PODS_URL . "ui/js/cleditor/jquery.cleditor{$suffix_min}.js", array( 'jquery' ), '1.4.5', true );
 
-		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/codemirror.js', array(), '4.8', true );
-		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/mode/show-hint.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
+		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/lib/codemirror.js', [], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/hint/show-hint.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_style( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/lib/codemirror.css', [], '5.65.16' );
+		wp_register_style( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/hint/show-hint.css', [ 'pods-codemirror' ], '5.65.16' );
 
 		// jQuery Timepicker.
 		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {

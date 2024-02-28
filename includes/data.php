@@ -3,6 +3,7 @@
  * @package Pods\Global\Functions\Data
  */
 
+use Pods\Whatsit;
 use Pods\Whatsit\Field;
 
 /**
@@ -2959,4 +2960,41 @@ function pods_kses_exclude_p( $content ) {
 			'p' => true,
 		]
 	);
+}
+
+/**
+ * Key the list of objects by name.
+ *
+ * @since 3.1.4
+ *
+ * @param array<int|string, Whatsit|stdClass|WP_Post> $objects The list of objects.
+ *
+ * @return array<string, Whatsit|stdClass|WP_Post> The list objects keyed by name.
+ */
+function pods_objects_keyed_by_name( $objects ) {
+	$new_list = [];
+
+	$objects = array_filter( $objects );
+
+	$names = wp_list_pluck( $objects, 'name' );
+
+	if ( count( $names ) === count( $objects ) ) {
+		$new_list = array_combine( $names, $objects );
+	} else {
+		foreach ( $objects as $object ) {
+			if ( $object instanceof Whatsit ) {
+				$name = $object->get_name();
+			} elseif ( $object instanceof WP_Post ) {
+				$name = $object->post_name;
+			} elseif ( is_object( $object ) && isset( $object->name ) ) {
+				$name = $object->name;
+			} else {
+				continue;
+			}
+
+			$new_list[ $name ] = $object;
+		}
+	}
+
+	return $new_list;
 }

@@ -44,20 +44,16 @@ const FieldSet = ( {
 				booleanGroup.forEach( ( subField ) => {
 					if (
 						'undefined' === typeof allPodValues[ subField.name ] &&
-						'' !== subField.default
+						null !== subField?.default
 					) {
-						// @todo can this be batched?
-						// setOptionValue( subField.name, subField.default );
-						allDefaultValues[ subField.name ] = subField.default;
+						allDefaultValues[ subField.name ] = subField?.default ?? '';
 					}
 				} );
 			} else if (
 				'undefined' === typeof allPodValues[ fieldName ] &&
-				'' !== field.default
+				null !== field?.default
 			) {
-				// @todo can this be batched?
-				// setOptionValue( fieldName, field.default );
-				allDefaultValues[ fieldName ] = field.default;
+				allDefaultValues[ fieldName ] = field?.default ?? '';
 			}
 		} );
 

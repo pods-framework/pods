@@ -610,8 +610,7 @@ class Post_Type extends Collection {
 				$posts = array_filter( $posts );
 			}
 
-			$names = wp_list_pluck( $posts, 'name' );
-			$posts = array_combine( $names, $posts );
+			$posts = pods_objects_keyed_by_name( $posts );
 		}
 
 		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {

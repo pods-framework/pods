@@ -2,6 +2,7 @@
 
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
+use Pods\WP\Revisions;
 
 /**
  * Class PodsRESTFields
@@ -155,6 +156,24 @@ class PodsRESTFields {
 
 		if ( ! empty( $rest_args ) ) {
 			register_rest_field( $object_type, $field->get_name(), $rest_args );
+
+			if ( ! $field->is_repeatable() ) {
+				// Use the Revisions logic since it's the same here.
+				$binding_supported_field_types = Revisions::get_revisionable_field_types();
+
+				if ( in_array( $field->get_type(), $binding_supported_field_types, true ) ) {
+					register_post_meta(
+						$object_type,
+						$field->get_name(),
+						[
+							'show_in_rest' => true,
+							'single'       => true,
+							'type'         => 'string',
+							'default'      => $field->get_arg( 'default', '' ),
+						]
+					);
+				}
+			}
 		}
 	}
 

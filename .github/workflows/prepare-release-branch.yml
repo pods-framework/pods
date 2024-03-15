@@ -13,7 +13,7 @@ on:
         description: 'New plugin version (without the "-a-1"), defaults to the next incremental version from package.json'
         required: false
       version_increment:
-        description: 'Version increment scheme (if incrementing the package.json version)'
+        description: 'OR Version increment scheme (if incrementing the package.json version; patch=x.x.x, minor=x.x, major=x.0)'
         required: true
         type: choice
         default: 'patch'

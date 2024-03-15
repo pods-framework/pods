@@ -2,6 +2,7 @@
 
 namespace Pods\Admin\Config;
 
+use Pods\WP\Revisions;
 use PodsForm;
 
 /**
@@ -417,7 +418,7 @@ class Field extends Base {
 			'roles_allowed'           => [
 				'name'             => 'roles_allowed',
 				'label'            => __( 'Role(s) Allowed', 'pods' ),
-				'help'             => __( 'help', 'pods' ),
+				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
 				'type'             => 'pick',
 				'pick_object'      => 'role',
 				'pick_format_type' => 'multi',
@@ -425,7 +426,6 @@ class Field extends Base {
 				'depends-on'       => [
 					'restrict_role' => true,
 				],
-				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 			'capability_allowed'      => [
 				'name'       => 'capability_allowed',
@@ -436,9 +436,28 @@ class Field extends Base {
 				'depends-on' => [
 					'restrict_capability' => true,
 				],
-				'help'       => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 		];
+
+		if ( 'meta' === $pod->get_storage() ) {
+			$options['advanced']['other_options'] = [
+				'name'  => 'other_options',
+				'label' => __( 'Other Options', 'pods' ),
+				'type'  => 'heading',
+			];
+
+			$options['advanced']['revisions_revision_field'] = [
+				'name'              => 'revisions_revision_field',
+				'label'             => __( 'Track field value changes in revisions', 'pods' ),
+				'help'              => __( 'Revisions allow comparing and restoring previous saved changes. This setting requires revisions to be enabled on the pod. Revisions for meta as of WordPress 6.5 does not have additional UI to show the custom field value differences in the Revisions UI but upon restoring a revision those covered meta field values will be restored too while leaving non-covered meta field values in place.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => __( 'Track field value changes for this field.', 'pods' ),
+				'depends-on'        => [
+					'type' => Revisions::get_revisionable_field_types(),
+				],
+			];
+		}
 
 		$options['conditional-logic'] = [
 			'enable_conditional_logic' => [

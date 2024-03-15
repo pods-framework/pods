@@ -4433,8 +4433,13 @@ class PodsAdmin {
 
 		$layout_non_input_field_types = PodsForm::layout_field_types() + PodsForm::non_input_field_types();
 
-		$options['rest'][ __( 'Read/Write', 'pods' ) ] = [
-			'rest_read'  => [
+		$options['rest'] = [
+			'rest_read_write'    => [
+				'name'  => 'rest_read_write',
+				'type'  => 'heading',
+				'label' => __( 'Read/Write', 'pods' ),
+			],
+			'rest_read'          => [
 				'label'       => __( 'Read via REST API', 'pods' ),
 				'help'        => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 				'type'        => 'boolean',
@@ -4443,7 +4448,7 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
-			'rest_write' => [
+			'rest_write'         => [
 				'label'       => __( 'Write via REST API', 'pods' ),
 				'help'        => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 				'type'        => 'boolean',
@@ -4452,9 +4457,14 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
-		];
-
-		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
+			'rest_field_options' => [
+				'name'       => 'rest_field_options',
+				'label'      => __( 'Relationship Field Options', 'pods' ),
+				'type'       => 'heading',
+				'depends-on' => [
+					'type' => 'pick',
+				],
+			],
 			'rest_pick_response' => [
 				'label'              => __( 'Response Type', 'pods' ),
 				'help'               => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
@@ -4500,14 +4510,6 @@ class PodsAdmin {
 				],
 				'excludes-on' => [
 					'type' => $layout_non_input_field_types,
-				],
-			],
-			'rest_pick_notice'   => [
-				'label'        => 'Relationship Options',
-				'type'         => 'html',
-				'html_content' => __( 'If you have a relationship field, you will see additional options to customize here.', 'pods' ),
-				'excludes-on'  => [
-					'type' => [ 'pick' ] + $layout_non_input_field_types,
 				],
 			],
 		];

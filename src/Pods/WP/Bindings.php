@@ -4,8 +4,6 @@ namespace Pods\WP;
 
 use Pods\Blocks\Types\Field;
 use WP_Block;
-use Pods\Whatsit\Pod;
-use PodsForm;
 
 /**
  * Bindings specific functionality.
@@ -93,7 +91,14 @@ class Bindings {
 			return '';
 		}
 
-		return $field_block->render( $source_args, '', $block_instance );
+		$value = $field_block->render( $source_args, '', $block_instance );
+
+		// Only support full HTML for the content attribute.
+		if ( 'content' !== $attribute_name ) {
+			$value = wp_strip_all_tags( $value );
+		}
+
+		return $value;
 	}
 
 }

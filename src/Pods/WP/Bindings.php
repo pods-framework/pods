@@ -40,7 +40,7 @@ class Bindings {
 			return;
 		}
 
-		register_block_bindings_source( 'pods/field', [
+		register_block_bindings_source( 'pods/bindings/field', [
 			'label'              => __( 'Pods Field', 'pods' ),
 			'get_value_callback' => [ $this, 'get_value' ],
 			'uses_context'       => [ 'postId', 'postType' ],
@@ -57,7 +57,7 @@ class Bindings {
 			return;
 		}
 
-		unregister_block_bindings_source( 'pods/field' );
+		unregister_block_bindings_source( 'pods/bindings/field' );
 	}
 
 	/**

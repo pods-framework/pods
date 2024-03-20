@@ -27,6 +27,7 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		$this->container->singleton( Tools\Repair::class, Tools\Repair::class );
 		$this->container->singleton( Tools\Reset::class, Tools\Reset::class );
 		$this->container->singleton( WP\Bindings::class, WP\Bindings::class );
+		$this->container->singleton( WP\Meta::class, WP\Meta::class );
 		$this->container->singleton( WP\Revisions::class, WP\Revisions::class );
 		$this->container->singleton( PodsMeta::class, PodsMeta::class );
 

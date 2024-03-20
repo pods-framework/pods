@@ -41,6 +41,13 @@ class Revisions {
 	 * @return array The list of revisioned meta keys.
 	 */
 	public function wp_post_revision_meta_keys( $revisioned_keys, $post_type ): array {
+		$meta = pods_container( Meta::class );
+
+		// Determine if we need to revision keys manually or if meta is already being registered.
+		if ( $meta->should_register_meta() ) {
+			return $revisioned_keys;
+		}
+
 		$api = pods_api();
 
 		$pod = $api->load_pod( [ 'name' => $post_type ] );

@@ -2,7 +2,7 @@
 
 namespace Pods\Admin\Config;
 
-use Pods\WP\Revisions;
+use Pods\WP\Meta;
 use PodsForm;
 
 /**
@@ -454,7 +454,7 @@ class Field extends Base {
 				'default'           => false,
 				'boolean_yes_label' => __( 'Track field value changes for this field.', 'pods' ),
 				'depends-on'        => [
-					'type' => Revisions::get_revisionable_field_types(),
+					'type' => PodsForm::revisionable_field_types(),
 				],
 			];
 		}

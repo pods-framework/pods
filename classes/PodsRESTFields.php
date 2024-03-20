@@ -40,6 +40,10 @@ class PodsRESTFields {
 		$this->set_pod( $pod );
 
 		if ( $this->pod ) {
+			if ( 'object' !== $this->pod->get_arg( 'rest_api_field_location', 'object', true ) ) {
+				return;
+			}
+
 			add_action( 'rest_api_init', [ $this, 'add_fields' ] );
 		}
 	}
@@ -155,25 +159,40 @@ class PodsRESTFields {
 		}
 
 		if ( ! empty( $rest_args ) ) {
-			register_rest_field( $object_type, $field->get_name(), $rest_args );
+			$disallowed_field_names = [
+				'id',
+				'date',
+				'date_gmt',
+				'guid',
+				'modified',
+				'modified_gmt',
+				'slug',
+				'status',
+				'type',
+				'link',
+				'title',
+				'content',
+				'excerpt',
+				'author',
+				'featured_media',
+				'comment_status',
+				'ping_status',
+				'sticky',
+				'template',
+				'format',
+				'meta',
+				'categories',
+				'tags',
+				'_links',
+			];
 
-			if ( ! $field->is_repeatable() ) {
-				// Use the Revisions logic since it's the same here.
-				$binding_supported_field_types = Revisions::get_revisionable_field_types();
+			$field_name = $field->get_name();
 
-				if ( in_array( $field->get_type(), $binding_supported_field_types, true ) ) {
-					register_post_meta(
-						$object_type,
-						$field->get_name(),
-						[
-							'show_in_rest' => true,
-							'single'       => true,
-							'type'         => 'string',
-							'default'      => $field->get_arg( 'default', '' ),
-						]
-					);
-				}
+			if ( in_array( $field_name, $disallowed_field_names, true ) ) {
+				return;
 			}
+
+			register_rest_field( $object_type, $field_name, $rest_args );
 		}
 	}
 

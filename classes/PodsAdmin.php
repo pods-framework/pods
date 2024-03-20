@@ -4351,7 +4351,7 @@ class PodsAdmin {
 	 * @since 0.1.0
 	 *
 	 * @param array $options Tab options.
-	 * @param array $pod     Pod options.
+	 * @param Pod   $pod     Pod options.
 	 *
 	 * @return array
 	 */
@@ -4411,7 +4411,28 @@ class PodsAdmin {
 					'value_and_render' => __( 'Both raw and rendered values {value: raw_value, rendered: rendered_value}', 'pods' ),
 				],
 			],
+			'rest_api_field_location'   => [
+				'label'              => __( 'Field Location', 'pods' ),
+				'help'               => __( 'Specify where you would like your values returned in the REST API responses. To show in the "meta" object of the response, you must have Custom Fields enabled in the Post Type Supports features.', 'pods' ),
+				'type'               => 'pick',
+				'pick_format_single' => 'dropdown',
+				'default'            => 'object',
+				'depends-on'         => [ 'rest_enable' => true ],
+				'data'               => [
+					'object' => __( 'Show as a custom object field (response.field_name)', 'pods' ),
+					'meta'   => __( 'Include in the meta object (response.meta.field_name)', 'pods' ),
+				],
+			],
 		];
+
+		if ( ! $pod->is_extended() ) {
+			unset( $options['rest_base'] );
+			unset( $options['rest_namespace'] );
+		}
+
+		if ( 'post_type' !== $pod->get_type() ) {
+			unset( $options['rest_api_field_location'] );
+		}
 
 		return $options;
 	}

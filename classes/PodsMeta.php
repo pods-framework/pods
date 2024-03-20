@@ -36,37 +36,37 @@ class PodsMeta {
 	public static $object_identifier = - 1;
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $advanced_content_types = array();
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $post_types = array();
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $taxonomies = array();
 
 	/**
-	 * @var array
+	 * @var array|Pod
 	 */
 	public static $media = array();
 
 	/**
-	 * @var array
+	 * @var array|Pod
 	 */
 	public static $user = array();
 
 	/**
-	 * @var array
+	 * @var array|Pod
 	 */
 	public static $comment = array();
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $settings = array();
 

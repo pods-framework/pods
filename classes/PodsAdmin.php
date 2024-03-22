@@ -1651,6 +1651,8 @@ class PodsAdmin {
 				$dynamic_features_allow_label .= ' - ' . ( $is_public ? $dynamic_features_allow_options['1'] : $dynamic_features_allow_options['0'] );
 			}
 
+			$restrict_dynamic_features = (int) $pod->get_arg( 'restrict_dynamic_features', '1' );
+
 			$pod_row = [
 				'id'                          => $pod['id'],
 				'label'                       => $pod['label'],
@@ -1666,11 +1668,19 @@ class PodsAdmin {
 				'real_public'                 => $is_public ? 1 : 0,
 				'dynamic_features_allow'      => $dynamic_features_allow_label,
 				'real_dynamic_features_allow' => $dynamic_features_allow,
-				'restricted_dynamic_features' => (array) $pod->get_arg( 'restricted_dynamic_features', [
+				'restricted_dynamic_features' => $pod->get_arg( 'restricted_dynamic_features' ),
+			];
+
+			if ( 0 === $restrict_dynamic_features ) {
+				$pod_row['restricted_dynamic_features'] = [];
+			}
+
+			if ( ! is_array( $pod_row['restricted_dynamic_features'] ) ) {
+				$pod_row['restricted_dynamic_features'] = [
 					'display',
 					'form',
-				] ),
-			];
+				];
+			}
 
 			if ( $pod->is_extended() ) {
 				$extended_help_text = pods_help(
@@ -2980,6 +2990,7 @@ class PodsAdmin {
 
 		pods_api()->save_pod( [
 			'id'                          => $id,
+			'restrict_dynamic_features'   => '1',
 			'restricted_dynamic_features' => [
 				'display',
 				'form',
@@ -2988,12 +2999,7 @@ class PodsAdmin {
 
 		foreach ( $obj->data as $key => $data_pod ) {
 			if ( (int) $id === (int) $data_pod['id'] ) {
-				$obj->data[ $key ]['restricted_dynamic_features'] = array_map(
-					static function ( $label ) {
-						return '🔒 ' . $label;
-					},
-					pods_access_get_restricted_dynamic_features_options()
-				);
+				$obj->data[ $key ]['restricted_dynamic_features'] = pods_access_get_restricted_dynamic_features_options();
 
 				$obj->data[ $key ]['real_restricted_dynamic_features'] = 'restricted';
 			}
@@ -3058,6 +3064,7 @@ class PodsAdmin {
 
 		pods_api()->save_pod( [
 			'id'                          => $id,
+			'restrict_dynamic_features'   => '0',
 			'restricted_dynamic_features' => [],
 		] );
 

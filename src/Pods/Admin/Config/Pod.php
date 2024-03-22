@@ -845,11 +845,11 @@ class Pod extends Base {
 					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'capability_type_extra'   => [
-					'label'             => __( 'Additional User Capabilities', 'pods' ),
-					'help'              => __( 'Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
+					'label'             => __( 'Full User Capabilities', 'pods' ),
+					'help'              => __( 'Enables full capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
-					'boolean_yes_label' => '',
+					'boolean_yes_label' => __( 'Enable editing and deleting of content in this Post Type', 'pods' ),
 				],
 				'disable_create_posts'    => [
 					'label'             => __( 'Disable Add New forms', 'pods' ),

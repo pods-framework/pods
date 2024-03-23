@@ -323,7 +323,7 @@ class Field extends Base {
 			'default_value'           => [
 				'name'            => 'default_value',
 				'label'           => __( 'Default Value', 'pods' ),
-				'help'            => __( 'This is the default value used when the Add New form is used.', 'pods' ),
+				'help'            => __( 'This is the default value used when the Add New form is used. For multiple-value fields, you can separate multiple default values with commas.', 'pods' ),
 				'description'     => __( 'This value is only used on Add New forms', 'pods' ),
 				'type'            => 'text',
 				'default'         => '',

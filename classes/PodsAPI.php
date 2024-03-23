@@ -5007,7 +5007,13 @@ class PodsAPI {
 					|| 'save' === $params->from
 					|| true === pods_permission( $fields[ $field ] )
 				) {
-					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+					$field_options = $field_data;
+
+					if ( is_array( $field_options ) ) {
+						$field_options = pods_v( 'options', $field_options, $field_options, true );
+					}
+
+					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$fields[ $field ]['value'] = $value;
@@ -5028,7 +5034,13 @@ class PodsAPI {
 						continue;
 					}
 
-					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+					$field_options = $field_data;
+
+					if ( is_array( $field_options ) ) {
+						$field_options = pods_v( 'options', $field_options, $field_options, true );
+					}
+
+					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$object_fields[ $field ]['value'] = $value;
@@ -5108,7 +5120,13 @@ class PodsAPI {
 					continue;
 				}
 
-				$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+				$field_options = $field_data;
+
+				if ( is_array( $field_options ) ) {
+					$field_options = pods_v( 'options', $field_options, $field_options, true );
+				}
+
+				$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 				if ( null !== $value && '' !== $value && false !== $value ) {
 					$fields[ $field ]['value'] = $value;

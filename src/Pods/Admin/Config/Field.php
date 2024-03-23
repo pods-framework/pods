@@ -342,12 +342,23 @@ class Field extends Base {
 					'type' => $layout_non_input_field_types,
 				],
 			],
+			'default_evaluate_tags'    => [
+				'name'              => 'default_evaluate_tags',
+				'label'             => __( 'Evaluate tags in default values', 'pods' ),
+				'help'              => __( 'Whether to evaluate tags like {@user.ID} in your default value. This does NOT evaluate tags passed dynamically via Parameter.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => __( 'Evaluate tags like {@user.ID} in the default value', 'pods' ),
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
+			],
 			'default_empty_fields'    => [
 				'name'              => 'default_empty_fields',
 				'label'             => __( 'Default Empty Fields in Forms', 'pods' ),
 				'help'              => __( 'On forms where the field value is empty you can enable Default Empty Fields to override the value with your chosen default value.', 'pods' ),
 				'type'              => 'boolean',
-				'default'           => '',
+				'default'           => false,
 				'boolean_yes_label' => __( 'Use the default value when this field is empty', 'pods' ),
 				'excludes-on'       => [
 					'type' => $layout_non_input_field_types,

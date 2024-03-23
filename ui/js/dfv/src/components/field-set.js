@@ -28,8 +28,6 @@ const FieldSet = ( {
 	// When the set first mounts, apply any defaults to replace any undefined values
 	// (NOT falsy values).
 	useEffect( () => {
-		const allDefaultValues = {};
-
 		fields.forEach( ( field ) => {
 			const {
 				type: fieldType,
@@ -46,18 +44,16 @@ const FieldSet = ( {
 						'undefined' === typeof allPodValues[ subField.name ] &&
 						null !== subField?.default
 					) {
-						allDefaultValues[ subField.name ] = subField?.default ?? '';
+						allPodValues[ subField.name ] = subField?.default ?? '';
 					}
 				} );
 			} else if (
 				'undefined' === typeof allPodValues[ fieldName ] &&
 				null !== field?.default
 			) {
-				allDefaultValues[ fieldName ] = field?.default ?? '';
+				allPodValues[ fieldName ] = field?.default ?? '';
 			}
 		} );
-
-		setOptionsValues( allDefaultValues );
 	}, [] );
 
 	return fields.map( ( field ) => {

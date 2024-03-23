@@ -341,6 +341,17 @@ class Field extends Base {
 					'type' => $layout_non_input_field_types,
 				],
 			],
+			'default_empty_fields'    => [
+				'name'              => 'default_empty_fields',
+				'label'             => __( 'Default Empty Fields in Forms', 'pods' ),
+				'help'              => __( 'On forms where the field value is empty you can enable Default Empty Fields to override the value with your chosen default value.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => '',
+				'boolean_yes_label' => __( 'Use the default value when this field is empty', 'pods' ),
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
+			],
 			'visibility'              => [
 				'name'  => 'visibility',
 				'label' => __( 'Visibility', 'pods' ),

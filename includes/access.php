@@ -849,8 +849,6 @@ function pods_access_bypass_post_with_password( array $args ): bool {
  * @return bool Whether a post should be bypassed because it is private and capabilities are not met.
  */
 function pods_access_bypass_private_post( array $args ): bool {
-	$args['build_pod'] = true;
-
 	$info = pods_info_from_args( $args );
 
 	if ( 'post_type' !== $info['object_type'] || ! $info['item_id'] ) {

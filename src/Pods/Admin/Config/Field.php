@@ -324,6 +324,7 @@ class Field extends Base {
 				'name'            => 'default_value',
 				'label'           => __( 'Default Value', 'pods' ),
 				'help'            => __( 'This is the default value used when the Add New form is used.', 'pods' ),
+				'description'     => __( 'This value is only used on Add New forms', 'pods' ),
 				'type'            => 'text',
 				'default'         => '',
 				'text_max_length' => - 1,
@@ -452,9 +453,12 @@ class Field extends Base {
 
 		if ( 'meta' === $pod->get_storage() ) {
 			$options['advanced']['other_options'] = [
-				'name'  => 'other_options',
-				'label' => __( 'Other Options', 'pods' ),
-				'type'  => 'heading',
+				'name'       => 'other_options',
+				'label'      => __( 'Other Options', 'pods' ),
+				'type'       => 'heading',
+				'depends-on' => [
+					'type' => PodsForm::revisionable_field_types(),
+				],
 			];
 
 			$options['advanced']['revisions_revision_field'] = [

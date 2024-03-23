@@ -4599,9 +4599,17 @@ class PodsAdmin {
 			'label'       => 'Pods',
 			'description' => __( 'Debug information for Pods installations.', 'pods' ),
 			'fields'      => [
-				'pods-version'               => [
+				'pods-version'                       => [
 					'label' => __( 'Pods Version', 'pods' ),
 					'value' => PODS_VERSION,
+				],
+				'pods-first-version'                 => [
+					'label' => __( 'Pods Version (First installed)', 'pods' ),
+					'value' => get_option( 'pods_framework_version_first', PODS_VERSION ),
+				],
+				'pods-last-version'                  => [
+					'label' => __( 'Pods Version (Last updated from)', 'pods' ),
+					'value' => get_option( 'pods_framework_version_last', PODS_VERSION ),
 				],
 				'pods-server-software'               => [
 					'label' => __( 'Server Software', 'pods' ),
@@ -4691,7 +4699,7 @@ class PodsAdmin {
 					'label' => __( 'Pods Relationship Table Enabled', 'pods' ),
 					'value' => ( pods_podsrel_enabled() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
-				'pods-relationship-table-status'              => [
+				'pods-relationship-table-status'     => [
 					'label' => __( 'Pods Relationship Table Count' ),
 					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
 				],

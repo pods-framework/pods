@@ -1,6 +1,7 @@
 # Export ignore handling
 
 # Directories
+/.git
 /.github
 /.wordpress-org
 /bin

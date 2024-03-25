@@ -8,14 +8,14 @@ use PodsForm;
 /**
  * Revisions specific functionality.
  *
- * @since 3.1.5
+ * @since 3.2.0
  */
 class Revisions {
 
 	/**
 	 * Add the class hooks.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function hook() {
 		add_filter( 'wp_post_revision_meta_keys', [ $this, 'wp_post_revision_meta_keys' ], 10, 2 );
@@ -24,7 +24,7 @@ class Revisions {
 	/**
 	 * Remove the class hooks.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function unhook() {
 		remove_filter( 'wp_post_revision_meta_keys', [ $this, 'wp_post_revision_meta_keys' ] );
@@ -33,7 +33,7 @@ class Revisions {
 	/**
 	 * Filter the available post revision meta keys to include the ones registered by Pods.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 *
 	 * @param array  $revisioned_keys The list of revisioned meta keys.
 	 * @param string $post_type       The post type.
@@ -83,7 +83,7 @@ class Revisions {
 	/**
 	 * Get the list of revisionable field types.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 *
 	 * @return array The list of revisionable field types.
 	 */

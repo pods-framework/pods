@@ -1966,7 +1966,7 @@ class PodsForm {
 	/**
 	 * Get the list of revisionable field types.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 *
 	 * @return array The list of revisionable field types.
 	 */
@@ -1999,7 +1999,7 @@ class PodsForm {
 		/**
 		 * Allow filtering of the list of field types that can be revisioned.
 		 *
-		 * @since 3.1.5
+		 * @since 3.2.0
 		 *
 		 * @param array $revisionable_field_types The listof field types that can be revisioned.
 		 */

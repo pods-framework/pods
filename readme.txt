@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 3.1.5
+Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,7 +182,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.1.5 - March 25th, 2024 =
+= 3.2.0 - March 25th, 2024 =
 
 * Feature: New support for Custom Field revisions in Pods that are Post Types that use Meta storage. You can optionally enable the feature per-pod or per-field. #7265 (@sc0ttkclark)
 * Feature: New support for WordPress `register_meta()` for all Pods fields on meta-based Pods. You can enable this feature in Pods Admin > Settings > "Register meta fields". (@sc0ttkclark)

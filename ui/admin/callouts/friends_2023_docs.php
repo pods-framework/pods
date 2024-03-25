@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $callout = 'friends_2023_docs';
 
-$donor_count    = 2062;
-$donor_goal     = 6500;
+$donor_count    = 2768;
+$donor_goal     = 7000;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 
 $feature_callout_link = '';
@@ -60,7 +60,7 @@ $callout_dismiss_link = add_query_arg( [
 		<p class="pods-admin_friends-callout_text">
 			🎉&nbsp;
 			<?php
-				esc_html_e( 'Pods 3.1 is out and we are spending the next release cycle entirely focused on Documentation, Tutorials, and Video content', 'pods' );
+				esc_html_e( 'Pods 3.2 is out and our goal is to spend 2024 focused on revamping our Documentation, Tutorials, and Video content', 'pods' );
 
 				/*printf(
 					'%1$s: %2$s',

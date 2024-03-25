@@ -8,14 +8,14 @@ use WP_Block;
 /**
  * Bindings specific functionality.
  *
- * @since 3.1.5
+ * @since 3.2.0
  */
 class Bindings {
 
 	/**
 	 * Add the class hooks.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function hook() {
 		$this->register_block_bindings();
@@ -24,7 +24,7 @@ class Bindings {
 	/**
 	 * Remove the class hooks.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function unhook() {
 		$this->unregister_block_bindings();
@@ -33,7 +33,7 @@ class Bindings {
 	/**
 	 * Register the block bindings.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function register_block_bindings() {
 		if ( ! function_exists( 'register_block_bindings_source' ) || ! pods_can_use_dynamic_feature( 'display' ) ) {
@@ -50,7 +50,7 @@ class Bindings {
 	/**
 	 * Unregister the block bindings.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function unregister_block_bindings() {
 		if ( ! function_exists( 'unregister_block_bindings_source' ) || ! pods_can_use_dynamic_feature( 'display' ) ) {
@@ -63,7 +63,7 @@ class Bindings {
 	/**
 	 * Get the bound value for a bound block.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 *
 	 * @param array    $source_args    List of source arguments from the block.
 	 * @param WP_Block $block_instance The block instance.

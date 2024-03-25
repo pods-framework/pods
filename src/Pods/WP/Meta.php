@@ -9,21 +9,21 @@ use PodsForm;
 /**
  * Meta specific functionality.
  *
- * @since 3.1.5
+ * @since 3.2.0
  */
 class Meta {
 
 	/**
 	 * The list of registered meta.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	private $registered_meta = [];
 
 	/**
 	 * Add the class hooks.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function hook() {
 		$this->register_meta();
@@ -32,7 +32,7 @@ class Meta {
 	/**
 	 * Remove the class hooks.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function unhook() {
 		$this->unregister_meta();
@@ -41,7 +41,7 @@ class Meta {
 	/**
 	 * Determine whether to register meta fields.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 *
 	 * @return bool Whether to register meta fields.
 	 */
@@ -51,7 +51,7 @@ class Meta {
 		/**
 		 * Allow filtering whether to register meta fields.
 		 *
-		 * @since 3.1.5
+		 * @since 3.2.0
 		 *
 		 * @param bool $should_register_meta Whether to register meta fields.
 		 */
@@ -61,7 +61,7 @@ class Meta {
 	/**
 	 * Register the meta fields only if needed.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function register_meta() {
 		if ( ! $this->should_register_meta() ) {
@@ -173,7 +173,7 @@ class Meta {
 	/**
 	 * Unregister the meta fields.
 	 *
-	 * @since 3.1.5
+	 * @since 3.2.0
 	 */
 	public function unregister_meta() {
 		foreach ( $this->registered_meta as $field ) {

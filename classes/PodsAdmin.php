@@ -4409,7 +4409,7 @@ class PodsAdmin {
 				'label'             => __( 'Field Mode', 'pods' ),
 				'help'              => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
 				'type'              => 'pick',
-				'pick_format_single' => 'dropdown',
+				'pick_format_single' => 'radio',
 				'default'           => 'value',
 				'depends-on'        => [ 'rest_enable' => true ],
 				'data'       => [
@@ -4422,7 +4422,7 @@ class PodsAdmin {
 				'label'              => __( 'Field Location', 'pods' ),
 				'help'               => __( 'Specify where you would like your values returned in the REST API responses. To show in the "meta" object of the response, you must have Custom Fields enabled in the Post Type Supports features.', 'pods' ),
 				'type'               => 'pick',
-				'pick_format_single' => 'dropdown',
+				'pick_format_single' => 'radio',
 				'default'            => 'object',
 				'depends-on'         => [ 'rest_enable' => true ],
 				'data'               => [

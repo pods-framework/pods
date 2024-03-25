@@ -462,7 +462,7 @@ class Field extends Base {
 			],
 		];
 
-		if ( 'meta' === $pod->get_storage() ) {
+		if ( 'post_type' === $pod->get_type() && 'meta' === $pod->get_storage() ) {
 			$options['advanced']['other_options'] = [
 				'name'       => 'other_options',
 				'label'      => __( 'Other Options', 'pods' ),

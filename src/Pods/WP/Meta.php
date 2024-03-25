@@ -75,7 +75,7 @@ class Meta {
 		];
 
 		foreach ( PodsMeta::$post_types as $pod ) {
-			if ( ! $pod instanceof Pod ) {
+			if ( ! $pod instanceof Pod || ! pods_can_use_dynamic_features( $pod ) ) {
 				continue;
 			}
 

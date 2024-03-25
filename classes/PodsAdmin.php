@@ -2019,7 +2019,7 @@ class PodsAdmin {
 				'access_rights'     => (
 					PodsInit::$version_last
 					&& version_compare( PodsInit::$version_last, '3.1.0-a-1', '<' )
-				) ? 1 : 0,
+				) ? 0 : 1,
 			];
 
 			update_option( 'pods_callouts', $callouts );

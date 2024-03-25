@@ -274,9 +274,14 @@
 	visibility: hidden;
 }
 
-.pods-ui {
+.pods-ui { 
 	.wp-list-table .toggle-row {
-    	display: none;
+		display: none;
+	}
+	
+	/* #7196 Improve tab support for /admin.php?page=pods pods table */
+	.wp-list-table tr:focus-within .row-actions {
+		position: static;
 	}
 
 	p div.pods-pick-values {

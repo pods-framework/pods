@@ -244,14 +244,13 @@ export const FieldListItem = ( props ) => {
 					</div>
 				</div>
 
-				<div
-					tabIndex={ 0 }
-					role="button"
-					className="pods-field pods-field_name"
-					onClick={ onEditFieldClick }
-					onKeyPress={ handleKeyPress }
-				>
-					{ name }
+				<div className="pods-field pods-field_name">
+					<button
+						onClick={ onEditFieldClick }
+						onKeyPress={ handleKeyPress }
+					>
+						{ name }
+					</button>
 				</div>
 
 				<div className="pods-field pods-field_type">
@@ -343,7 +342,7 @@ const ConnectedFieldListItem = compose( [
 	withSelect( ( select, ownProps ) => {
 		const {
 			field = {},
-			storeKey,
+			storeKey
 		} = ownProps;
 
 		const storeSelect = select( storeKey );
@@ -364,7 +363,7 @@ const ConnectedFieldListItem = compose( [
 				: field.pick_object;
 
 			if ( relatedObjects.hasOwnProperty( key ) ) {
-				relatedObject = relatedObjects[key];
+				relatedObject = relatedObjects[ key ];
 			}
 
 			if ( 'undefined' === typeof relatedObject && 'pod' === field.pick_object && field.pick_val ) {
@@ -379,7 +378,7 @@ const ConnectedFieldListItem = compose( [
 					// Attempt to overwrite the pick_object?
 					field.pick_object = objectFallback;
 
-					relatedObject = relatedObjects[key];
+					relatedObject = relatedObjects[ key ];
 
 					// Found a match, stop looking.
 					return false;

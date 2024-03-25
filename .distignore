@@ -28,8 +28,8 @@
 .gitignore
 .jshintrc
 .nvmrc
-.phpcs.compat.yml
-.phpcs.yml
+.phpcs.compat.xml
+.phpcs.xml
 .phpstorm.meta.php
 .scrutinizer.yml
 .travis.yml

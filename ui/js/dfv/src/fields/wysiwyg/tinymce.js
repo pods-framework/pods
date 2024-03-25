@@ -35,12 +35,14 @@ const TinyMCE = ( {
 	}, [ value ] );
 
 	useEffect( () => {
-		const { baseURL, suffix } = window.wpEditorL10n.tinymce;
+		const { baseURL, suffix } = window?.wpEditorL10n?.tinymce || { baseURL: '', suffix: '' };
 
-		window.tinymce.EditorManager.overrideDefaults( {
-			base_url: baseURL,
-			suffix,
-		} );
+		if ( '' !== baseURL || '' !== suffix ) {
+			window.tinymce.EditorManager.overrideDefaults({
+				base_url: baseURL,
+				suffix,
+			});
+		}
 
 		function onSetup( editor ) {
 			if ( ! didMount.current ) {

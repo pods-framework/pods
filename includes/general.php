@@ -653,6 +653,11 @@ function pods_is_admin( $capabilities = null ) {
  * @return bool Whether user has admin access.
  */
 function pods_is_user_admin( int $user_id, $capabilities = null ): bool {
+	// Invalid user.
+	if ( $user_id < 1 ) {
+		return false;
+	}
+
 	// Normalize the capability we are checking.
 	if ( empty( $capabilities ) ) {
 		$capabilities = [];
@@ -1025,11 +1030,11 @@ function pods_deprecated( $function, $version, $replacement = null ) {
  * @param null|string $url       Documentation URL.
  * @param null|string $container The HTML container path for where the inline help will live.
  *
- * @return void
+ * @return null|string The help output or null if echoing.
  *
  * @since 2.0.0
  */
-function pods_help( $text, $url = null, $container = null ) {
+function pods_help( $text, $url = null, $container = null, $return = false ) {
 	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
 		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/qtip/jquery.qtip.min.js', array( 'jquery' ), '3.0.3' );
 		wp_enqueue_script( 'jquery-qtip2' );
@@ -1074,7 +1079,11 @@ function pods_help( $text, $url = null, $container = null ) {
 	}
 
 	if ( 'help' === $text ) {
-		return;
+		if ( $return ) {
+			return '';
+		}
+
+		return null;
 	}
 
 	if ( $url && 0 < strlen( $url ) ) {
@@ -1083,7 +1092,15 @@ function pods_help( $text, $url = null, $container = null ) {
 
 	$text = wpautop( $text );
 
-	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
+	$output = '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
+
+	if ( $return ) {
+		return $output;
+	}
+
+	echo $output;
+
+	return null;
 }
 
 /**
@@ -1326,6 +1343,22 @@ function pods_doing_json() {
  * @return string
  */
 function pods_shortcode( $tags, $content = null ) {
+	return pods_shortcode_run_safely( $tags, $content );
+}
+
+/**
+ * Shortcode support for use anywhere that support WP Shortcodes.
+ * Will return error message on failure.
+ *
+ * @since 3.1.0
+ *
+ * @param array       $tags                        An associative array of shortcode properties.
+ * @param string|null $content                     A string that represents a template override.
+ * @param bool        $check_display_access_rights Whether to check access rights for the embedded content.
+ *
+ * @return string
+ */
+function pods_shortcode_run_safely( $tags, ?string $content = null, bool $check_display_access_rights = true ): string {
 	pods_doing_shortcode( true );
 
 	$return_exception = static function() {
@@ -1335,9 +1368,36 @@ function pods_shortcode( $tags, $content = null ) {
 	add_filter( 'pods_error_mode', $return_exception, 50 );
 	add_filter( 'pods_error_exception_fallback_enabled', '__return_false', 50 );
 
+	$blog_is_switched = false;
+
+	if ( defined( 'PODS_SHORTCODE_ALLOW_BLOG_SWITCHING' ) && PODS_SHORTCODE_ALLOW_BLOG_SWITCHING && is_multisite() ) {
+		if ( ! empty( $tags['blog_id'] ) && is_numeric( $tags['blog_id'] ) && (int) get_current_blog_id() !== (int) $tags['blog_id'] ) {
+			switch_to_blog( (int) $tags['blog_id'] );
+
+			$blog_is_switched = true;
+		}
+	}
+
 	try {
-		$return = pods_shortcode_run( $tags, $content );
-	} catch ( Exception $exception ) {
+		$return = pods_shortcode_run( $tags, $content, $blog_is_switched, $check_display_access_rights );
+	} catch ( Throwable $throwable ) {
+		/**
+		 * Allow filtering whether to throw errors for the shortcode.
+		 *
+		 * @since 3.0.9
+		 *
+		 * @param bool $throw_errors Whether to throw errors for the shortcode.
+		 */
+		$throw_errors = apply_filters( 'pods_shortcode_throw_errors', false );
+
+		if ( $throw_errors ) {
+			if ( $blog_is_switched ) {
+				restore_current_blog();
+			}
+
+			throw $throwable;
+		}
+
 		$return = '';
 
 		if ( pods_is_debug_display() ) {
@@ -1345,13 +1405,13 @@ function pods_shortcode( $tags, $content = null ) {
 				sprintf(
 					'<strong>%1$s:</strong> %2$s',
 					esc_html__( 'Pods Renderer Error', 'pods' ),
-					esc_html( $exception->getMessage() )
+					esc_html( $throwable->getMessage() )
 				),
 				'error',
 				true
 			);
 
-			$return .= '<pre style="overflow:scroll">' . esc_html( $exception->getTraceAsString() ) . '</pre>';
+			$return .= '<pre style="overflow:scroll">' . esc_html( $throwable->getTraceAsString() ) . '</pre>';
 		} elseif (
 			is_user_logged_in()
 			&& (
@@ -1366,12 +1426,16 @@ function pods_shortcode( $tags, $content = null ) {
 				sprintf(
 					'<strong>%1$s:</strong> %2$s',
 					esc_html__( 'Pods Renderer Error', 'pods' ),
-				esc_html__( 'There was a problem displaying this content, enable WP_DEBUG in wp-config.php to show more details.', 'pods' )
+					esc_html__( 'There was a problem displaying this content, enable WP_DEBUG in wp-config.php to show more details.', 'pods' )
 				),
 				'error',
 				true
 			);
 		}
+	}
+
+	if ( $blog_is_switched ) {
+		restore_current_blog();
 	}
 
 	remove_filter( 'pods_error_mode', $return_exception, 50 );
@@ -1436,13 +1500,21 @@ function pods_wrap_html( $html, $attributes = [] ) {
  *
  * @since 2.7.13
  *
- * @param array  $tags    An associative array of shortcode properties.
- * @param string $content A string that represents a template override.
+ * @param array       $tags                        An associative array of shortcode properties.
+ * @param string|null $content                     A string that represents a template override.
+ * @param bool        $blog_is_switched            Whether the blog is switched.
+ * @param bool        $check_display_access_rights Whether to check access rights for the embedded content.
  *
  * @return string
  */
-function pods_shortcode_run( $tags, $content = null ) {
+function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, $check_display_access_rights = true ) {
 	if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
+		if ( empty( $tags['field'] ) && pods_is_admin() ) {
+			return pods_get_access_admin_notice( [
+				'content' => esc_html__( 'Pods dynamic features are disabled.', 'pods' ),
+			] );
+		}
+
 		return '';
 	}
 
@@ -1463,6 +1535,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// Query related tags separated to use later.
 	$default_query_tags = array(
 		'use_current'         => false,
+		'bypass_detect_loop'  => false,
 		'name'                => null,
 		'id'                  => null,
 		'slug'                => null,
@@ -1496,6 +1569,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'helper'           => null,
 		'form'             => null,
 		'form_output_type' => 'div',
+		'form_key'         => null,
 		'fields'           => null,
 		'label'            => null,
 		'thank_you'        => null,
@@ -1511,13 +1585,28 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 	$defaults = array_merge( $default_other_tags, $default_query_tags );
 
+	$original_tags = $tags;
+
 	if ( ! empty( $tags ) ) {
 		$tags = array_merge( $defaults, $tags );
 	} else {
 		$tags = $defaults;
 	}
 
-	$tags = apply_filters( 'pods_shortcode', $tags );
+	// Bypass custom select if it might be aliasing or selecting data we don't want to work with.
+	if (
+		! empty( $tags['select'] )
+		&& is_string( $tags['select'] )
+		&& (
+			false !== stripos( $tags['select'], 'user_pass' )
+			|| false !== stripos( $tags['select'], 'user_activation_key' )
+			|| false !== stripos( $tags['select'], 'post_password' )
+		)
+	) {
+		$tags['select'] = null;
+	}
+
+	$tags = apply_filters( 'pods_shortcode', $tags, $content, $original_tags );
 
 	$tags['pagination']  = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
 	$tags['search']      = filter_var( $tags['search'], FILTER_VALIDATE_BOOLEAN );
@@ -1531,8 +1620,12 @@ function pods_shortcode_run( $tags, $content = null ) {
 	if ( $tags['view'] && 0 < strlen( (string) $tags['view'] ) ) {
 		$return = '';
 
-		if ( ( ! defined( 'PODS_SHORTCODE_ALLOW_VIEWS' ) || PODS_SHORTCODE_ALLOW_VIEWS ) && ! file_exists( $tags['view'] ) ) {
-			$return = pods_view( $tags['view'], null, (int) $tags['expires'], $tags['cache_mode'], true );
+		// Confirm the feature is enabled and the file is allowed.
+		if (
+			pods_can_use_dynamic_feature( 'view' )
+			&& PodsView::view_get_path( $tags['view'], true )
+		) {
+			$return = pods_view( $tags['view'], null, (int) $tags['expires'], $tags['cache_mode'], true, true );
 
 			if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 				$return = do_shortcode( $return );
@@ -1554,14 +1647,25 @@ function pods_shortcode_run( $tags, $content = null ) {
 		return apply_filters( 'pods_shortcode_output', $return, $tags, null, 'view' );
 	}
 
-	$blog_is_switched = false;
+	$is_form = ! empty( $tags['form'] );
 
-	if ( defined( 'PODS_SHORTCODE_ALLOW_BLOG_SWITCHING' ) && PODS_SHORTCODE_ALLOW_BLOG_SWITCHING && is_multisite() ) {
-		if ( ! empty( $tags['blog_id'] ) && is_numeric( $tags['blog_id'] ) && (int) get_current_blog_id() !== (int) $tags['blog_id'] ) {
-			switch_to_blog( (int) $tags['blog_id'] );
-
-			$blog_is_switched = true;
+	// If the feature is disabled then return early.
+	if ( $is_form && ! pods_can_use_dynamic_feature( 'form' ) ) {
+		if ( pods_is_admin() ) {
+			return pods_get_access_admin_notice( [
+				'content' => esc_html__( 'The Pods Form dynamic feature is disabled and this embed will not show.', 'pods' ),
+			] );
 		}
+
+		return '';
+	} elseif ( ! $is_form && ! pods_can_use_dynamic_feature( 'display' ) ) {
+		if ( empty( $tags['field'] ) && pods_is_admin() ) {
+			return pods_get_access_admin_notice( [
+				'content' => esc_html__( 'The Pods Display dynamic feature is disabled and this embed will not show.', 'pods' ),
+			] );
+		}
+
+		return '';
 	}
 
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
@@ -1577,7 +1681,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			 * @param bool  $detect_from_current  Whether to detect the pod name / item ID from the current post object.
 			 * @param array $shortcode_attributes The list of attributes used for the shortcode.
 			 */
-			$detect_from_current = apply_filters( 'pods_shortcode_detect_from_current_post', in_the_loop(), $tags );
+			$detect_from_current = apply_filters( 'pods_shortcode_detect_from_current_post', 1 === (int) $tags['bypass_detect_loop'] || in_the_loop(), $tags );
 
 			// Archives, Post type archives, singular posts.
 			if ( $detect_from_current ) {
@@ -1594,11 +1698,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 		}
 
 		if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
-			if ( $blog_is_switched ) {
-				restore_current_blog();
-			}
-
-			return '<p>' . esc_html__( 'Pods embed error: Please provide a Pod name', 'pods' ) . '</p>';
+			return pods_message(
+				sprintf(
+					'<strong>%1$s:</strong> %2$s',
+					esc_html__( 'Pods Embed Error', 'pods' ),
+					esc_html__( 'Please provide a Pod name.', 'pods' )
+				),
+				'error',
+				true
+			);
 		}
 	}
 
@@ -1615,11 +1723,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $content ) && empty( $tags['pods_page'] ) && empty( $tags['template'] ) && empty( $tags['field'] ) && empty( $tags['form'] ) ) {
-		if ( $blog_is_switched ) {
-			restore_current_blog();
-		}
-
-		return '<p>' . esc_html__( 'Pods embed error: Please provide either a template or field name', 'pods' ) . '</p>';
+		return pods_message(
+			sprintf(
+				'<strong>%1$s:</strong> %2$s',
+				esc_html__( 'Pods Embed Error', 'pods' ),
+				esc_html__( 'Please provide either a template or field name.', 'pods' )
+			),
+			'error',
+			true
+		);
 	}
 
 	if ( ! $tags['use_current'] && ! isset( $id ) ) {
@@ -1663,11 +1775,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $pod ) || ! $pod->valid() ) {
-		if ( $blog_is_switched ) {
-			restore_current_blog();
-		}
-
-		return '<p>' . esc_html__( 'Pods embed error: Pod not found', 'pods' ) . '</p>';
+		return pods_message(
+			sprintf(
+				'<strong>%1$s:</strong> %2$s',
+				esc_html__( 'Pods Embed Error', 'pods' ),
+				esc_html__( 'Pod not found.', 'pods' )
+			),
+			'error',
+			true
+		);
 	}
 
 	$found = 0;
@@ -1675,47 +1791,186 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
+	$return = '';
+
+	$info = pods_info_from_args( [
+		'item_id' => $is_singular ? $id : null,
+		'pods'    => $pod,
+	] );
+
+	// Determine if this is is a public content type.
+	if (
+		$check_display_access_rights
+	) {
+		// Check access rights for editor mode and preview of this embed.
+		if ( ! empty( $tags['_is_editor_mode'] ) || ! empty( $tags['_is_preview'] ) || is_preview() ) {
+			$check_post_id = ! empty( $tags['_preview_id'] ) ? (int) $tags['_preview_id'] : get_queried_object_id();
+
+			if ( ! current_user_can( 'publish_post', $check_post_id ) && ! pods_is_admin() ) {
+				// Stop display and only return the notice.
+				return empty( $tags['field'] ) ? pods_get_access_user_notice( $info, true, esc_html__( 'You do not have the capability to preview this Pods embed.', 'pods' ) ) : '';
+			}
+		}
+
+		$access_type = 'read';
+
+		if ( $is_form ) {
+			$access_type = $is_singular ? 'edit' : 'add';
+		}
+
+		$is_type_public = pods_is_type_public( $info );
+		$can_use_dynamic_features_for_pod = pods_can_use_dynamic_features( $info['pod'] );
+		$can_use_unrestricted = pods_can_use_dynamic_feature_unrestricted( $info, $is_form ? 'form' : 'display', $access_type );
+
+		if (
+			! $can_use_dynamic_features_for_pod
+			|| (
+				! $is_type_public
+				&& ! $can_use_unrestricted
+			)
+		) {
+			if ( ! $is_type_public ) {
+				// Stop handling the display and return the access notice if they do not have access to the private content type.
+				if ( ! pods_current_user_can_access_object( $info, $access_type, 'shortcode' ) ) {
+					// Stop display and only return the notice.
+					return empty( $tags['field'] ) ? pods_get_access_user_notice( $info ) : '';
+				}
+
+				// Show the admin-specific notice that this content may not be visible to others since it is not public.
+				if ( empty( $tags['field'] ) && pods_is_admin() ) {
+					// Include the notice in the display output to let the admin know and continue the display.
+					$return .= pods_get_access_admin_notice( $info );
+				}
+			} elseif (
+				pods_access_bypass_post_with_password( $info )
+				|| pods_access_bypass_private_post( $info )
+			) {
+				// Stop display and only return the notice.
+				return empty( $tags['field'] ) ? pods_get_access_user_notice( $info ) : '';
+			}
+		}
+	}
+
 	if ( ! $is_singular ) {
 		$params = array();
 
-		if ( ! defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || ! PODS_DISABLE_SHORTCODE_SQL ) {
-			$evaluate_tags_args = array(
-				'sanitize'        => true,
-				'fallback'        => '""',
-				'use_current_pod' => true,
-			);
+		$can_use_dynamic_feature_all_sql_clauses    = pods_can_use_dynamic_feature_sql_clauses( 'all' );
+		$can_use_dynamic_feature_simple_sql_clauses = pods_can_use_dynamic_feature_sql_clauses( 'simple' );
+		$shortcode_allow_evaluate_tags              = pods_shortcode_allow_evaluate_tags();
 
-			if ( $tags['orderby'] && 0 < strlen( (string) $tags['orderby'] ) ) {
-				$params['orderby'] = $tags['orderby'];
+		$evaluate_tags_args = array(
+			'sanitize'        => true,
+			'fallback'        => '""',
+			'use_current_pod' => true,
+		);
+
+		if ( $tags['select'] && 0 < strlen( (string) $tags['select'] ) ) {
+			if ( ! $can_use_dynamic_feature_simple_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['select'], 'SELECT', $info ) ) {
+				return pods_message(
+					sprintf(
+						'<strong>%1$s:</strong> %2$s',
+						esc_html__( 'Pods Embed Error', 'pods' ),
+						esc_html__( 'SELECT contains SQL that is not allowed.', 'pods' )
+					),
+					'error',
+					true
+				);
 			}
 
-			if ( $tags['where'] && 0 < strlen( (string) $tags['where'] ) ) {
-				$params['where'] = $tags['where'];
+			$params['select'] = $tags['select'];
+		}
 
-				if ( pods_shortcode_allow_evaluate_tags() ) {
-					$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
-				}
+		if ( $tags['join'] && 0 < strlen( (string) $tags['join'] ) ) {
+			if ( ! $can_use_dynamic_feature_all_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['join'], 'JOIN', $info ) ) {
+				return pods_message(
+					sprintf(
+						'<strong>%1$s:</strong> %2$s',
+						esc_html__( 'Pods Embed Error', 'pods' ),
+						esc_html__( 'JOIN contains SQL that is not allowed.', 'pods' )
+					),
+					'error',
+					true
+				);
 			}
 
-			if ( $tags['having'] && 0 < strlen( (string) $tags['having'] ) ) {
-				$params['having'] = $tags['having'];
+			$params['join'] = $tags['join'];
+		}
 
-				if ( pods_shortcode_allow_evaluate_tags() ) {
-					$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
-				}
+		if ( $tags['where'] && 0 < strlen( (string) $tags['where'] ) ) {
+			$tags['where'] = ltrim( $tags['where'], ')' );
+
+			if ( ! $can_use_dynamic_feature_simple_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['where'], 'WHERE', $info ) ) {
+				return pods_message(
+					sprintf(
+						'<strong>%1$s:</strong> %2$s',
+						esc_html__( 'Pods Embed Error', 'pods' ),
+						esc_html__( 'WHERE contains SQL that is not allowed.', 'pods' )
+					),
+					'error',
+					true
+				);
 			}
 
-			if ( $tags['groupby'] && 0 < strlen( (string) $tags['groupby'] ) ) {
-				$params['groupby'] = $tags['groupby'];
+			$params['where'] = $tags['where'];
+
+			if ( $shortcode_allow_evaluate_tags ) {
+				$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
+			}
+		}
+
+		if ( $tags['groupby'] && 0 < strlen( (string) $tags['groupby'] ) ) {
+			if ( ! $can_use_dynamic_feature_all_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['groupby'], 'GROUP BY', $info ) ) {
+				return pods_message(
+					sprintf(
+						'<strong>%1$s:</strong> %2$s',
+						esc_html__( 'Pods Embed Error', 'pods' ),
+						esc_html__( 'GROUP BY contains SQL that is not allowed.', 'pods' )
+					),
+					'error',
+					true
+				);
 			}
 
-			if ( $tags['select'] && 0 < strlen( (string) $tags['select'] ) ) {
-				$params['select'] = $tags['select'];
+			$params['groupby'] = $tags['groupby'];
+		}
+
+		if ( $tags['having'] && 0 < strlen( (string) $tags['having'] ) ) {
+			$tags['having'] = ltrim( $tags['having'], ')' );
+
+			if ( ! $can_use_dynamic_feature_all_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['having'], 'HAVING', $info ) ) {
+				return pods_message(
+					sprintf(
+						'<strong>%1$s:</strong> %2$s',
+						esc_html__( 'Pods Embed Error', 'pods' ),
+						esc_html__( 'HAVING contains SQL that is not allowed.', 'pods' )
+					),
+					'error',
+					true
+				);
 			}
-			if ( $tags['join'] && 0 < strlen( (string) $tags['join'] ) ) {
-				$params['join'] = $tags['join'];
+
+			$params['having'] = $tags['having'];
+
+			if ( $shortcode_allow_evaluate_tags ) {
+				$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
 			}
-		}//end if
+		}
+
+		if ( $tags['orderby'] && 0 < strlen( (string) $tags['orderby'] ) ) {
+			if ( ! $can_use_dynamic_feature_simple_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['orderby'], 'ORDER BY', $info ) ) {
+				return pods_message(
+					sprintf(
+						'<strong>%1$s:</strong> %2$s',
+						esc_html__( 'Pods Embed Error', 'pods' ),
+						esc_html__( 'ORDER BY contains SQL that is not allowed.', 'pods' )
+					),
+					'error',
+					true
+				);
+			}
+
+			$params['orderby'] = $tags['orderby'];
+		}
 
 		// Load filters and return HTML for later use.
 		if (
@@ -1777,39 +2032,34 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}//end if
 
 	// Handle form output.
-	if ( ! empty( $tags['form'] ) ) {
+	if ( $is_form ) {
 		if ( 'user' === $pod->pod ) {
-			if ( false !== strpos( $tags['fields'], '_capabilities' ) || false !== strpos( $tags['fields'], '_user_level' ) ) {
-				if ( $blog_is_switched ) {
-					restore_current_blog();
-				}
-
+			if (
+                    false !== strpos( $tags['fields'], '_capabilities' )
+                    || false !== strpos( $tags['fields'], '_capabilities' )
+                    || false !== strpos( $tags['fields'], 'role' )
+            ) {
 				// Further hardening of User-based forms
-				return '';
+				return pods_get_access_user_notice( $info, false, __( 'You cannot edit role or capabilities for users with Pods', 'pods' ) );
 			} elseif ( $is_singular && ( ! defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || ! PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
-				if ( $blog_is_switched ) {
-					restore_current_blog();
-				}
-
 				// Only explicitly allow user edit forms
-				return '';
+				return pods_get_access_user_notice( $info, false, __( 'Edit user profile forms have been disabled on this site.', 'pods' ) );
 			}
 		}
 
 		$form_params = [
-			'fields'      => $tags['fields'],
-			'label'       => $tags['label'],
-			'thank_you'   => $tags['thank_you'],
-			'output_type' => ! empty( $tags['form_output_type'] ) ? $tags['form_output_type'] : 'div',
+			'fields'       => $tags['fields'],
+			'label'        => $tags['label'],
+			'thank_you'    => $tags['thank_you'],
+			'output_type'  => ! empty( $tags['form_output_type'] ) ? $tags['form_output_type'] : 'div',
+			'form_key'     => $tags['form_key'],
+			// We already checked the access so we can bypass this.
+			'check_access' => false,
 		];
 
-		$return = $pod->form( $form_params );
+		$return .= $pod->form( $form_params );
 
 		$return = pods_wrap_html( $return, $tags );
-
-		if ( $blog_is_switched ) {
-			restore_current_blog();
-		}
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -1827,17 +2077,32 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// Handle field output.
 	if ( ! empty( $tags['field'] ) ) {
 		if ( $tags['template'] || $content ) {
-			$return  = '';
 			$related = $pod->field( $tags['field'], array( 'output' => 'find' ) );
 
 			if ( $related instanceof Pods && $related->valid() ) {
 				// Content is null by default.
-				$return .= $related->template( $tags['template'], $content );
+				$return_output = $related->template( $tags['template'], $content );
+
+				if ( null !== $return_output ) {
+					$return .= $return_output;
+				}
 			}
 		} elseif ( empty( $tags['helper'] ) ) {
-			$return = $pod->display( $tags['field'] );
+			$return_output = $pod->display( $tags['field'] );
+
+			if ( null !== $return_output ) {
+				$return .= $return_output;
+			} else {
+				$return = '';
+			}
 		} else {
-			$return = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
+			$return_output = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
+
+			if ( null !== $return_output ) {
+				$return .= $return_output;
+			} else {
+				$return = '';
+			}
 		}
 
 		// @todo $blog_is_switched >> Switch back before running other shortcodes?
@@ -1846,10 +2111,6 @@ function pods_shortcode_run( $tags, $content = null ) {
 		}
 
 		$return = pods_wrap_html( $return, $tags );
-
-		if ( $blog_is_switched ) {
-			restore_current_blog();
-		}
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -1869,14 +2130,18 @@ function pods_shortcode_run( $tags, $content = null ) {
 		$pods_page = Pods_Pages::exists( $tags['pods_page'] );
 
 		if ( empty( $pods_page ) ) {
-			if ( $blog_is_switched ) {
-				restore_current_blog();
-			}
-
-			return '<p>' . esc_html__( 'Pods embed error: Pods Page not found.', 'pods' ) . '</p>';
+			return pods_message(
+				sprintf(
+					'<strong>%1$s:</strong> %2$s',
+					esc_html__( 'Pods Embed Error', 'pods' ),
+					esc_html__( 'Pods Page not found.', 'pods' )
+				),
+				'error',
+				true
+			);
 		}
 
-		$return = Pods_Pages::content( true, $pods_page );
+		$return .= Pods_Pages::content( true, $pods_page );
 
 		// @todo $blog_is_switched >> Switch back before running other shortcodes?
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
@@ -1884,10 +2149,6 @@ function pods_shortcode_run( $tags, $content = null ) {
 		}
 
 		$return = pods_wrap_html( $return, $tags );
-
-		if ( $blog_is_switched ) {
-			restore_current_blog();
-		}
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -1940,7 +2201,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pagination;
 	}
 
-	$content = $pod->template( $tags['template'], $content );
+	$content = $pod->template( $tags['template'], $content, false, true );
 
 	if ( '' === trim( $content ) && ! empty( $tags['not_found'] ) ) {
 		$content = $pod->do_magic_tags( $tags['not_found'] );
@@ -1959,17 +2220,13 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $filters;
 	}
 
-	$return = ob_get_clean();
+	$return .= ob_get_clean();
 
 	if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 		$return = do_shortcode( $return );
 	}
 
 	$return = pods_wrap_html( $return, $tags );
-
-	if ( $blog_is_switched ) {
-		restore_current_blog();
-	}
 
 	/**
 	 * Allow customization of shortcode output based on shortcode attributes.
@@ -3126,6 +3383,8 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 		$object_collection->register_object( $field );
 	}
 
+	pods_static_cache_clear( 'get_blocks', \Pods\Blocks\API::class );
+
 	return true;
 }
 
@@ -3361,7 +3620,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 	$first_pods_version = get_option( 'pods_framework_version_first' );
 	$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
-	$metadata_integration = ! $is_types_only && 1 === (int) pods_get_setting( 'metadata_integration', 1 );
+	$metadata_integration = ! $is_types_only && 1 === (int) pods_get_setting( 'metadata_integration', ( function_exists( 'wc_get_product' ) || version_compare( $first_pods_version, '2.9.14', '<' ) ) ? '1' : '0' );
 	$watch_changed_fields = ! $is_types_only && 1 === (int) pods_get_setting( 'watch_changed_fields', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
 	$media_modal_fields   = ! $is_types_only && 1 === (int) pods_get_setting( 'media_modal_fields', version_compare( $first_pods_version, '2.9.16', '<=' ) ? 1 : 0 );
 
@@ -4038,10 +4297,19 @@ function pods_session_start() {
  */
 function pods_session_id() {
 	if ( false === pods_session_start() ) {
-		return '';
+		$session_id = '';
+	} else {
+		$session_id = @session_id();
 	}
 
-	return @session_id();
+	/**
+	 * Allow overriding the session ID used by Pods.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $session_id The session ID.
+	 */
+	return (string) apply_filters( 'pods_session_id', $session_id );
 }
 
 /**

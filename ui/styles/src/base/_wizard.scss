@@ -157,8 +157,8 @@
 				padding: 7px 10px;
 				font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
 			}
-			/* 
-				issue #7118 
+			/*
+				issue #7118
 				h3 color: inherit - improve color contract (accessibility)
 				 a color: inherit - improve color contract (accessibility)
 			*/
@@ -184,6 +184,11 @@
 						width: 30%;
 						max-width: 150px;
 						margin: 0 2%;
+
+						&.pods-checkbox-pick__option__label {
+							width: 100%;
+							max-width: 100%;
+						}
 					}
 
 					.pods-field-option {

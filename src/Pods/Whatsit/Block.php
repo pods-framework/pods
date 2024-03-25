@@ -374,10 +374,7 @@ class Block extends Pod {
 		}
 
 		$objects = array_map( [ $object_collection, 'get_object' ], $this->_fields );
-		$objects = array_filter( $objects );
 
-		$names = wp_list_pluck( $objects, 'name' );
-
-		return array_combine( $names, $objects );
+		return pods_objects_keyed_by_name( $objects );
 	}
 }

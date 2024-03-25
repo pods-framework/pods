@@ -36,37 +36,37 @@ class PodsMeta {
 	public static $object_identifier = - 1;
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $advanced_content_types = array();
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $post_types = array();
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $taxonomies = array();
 
 	/**
-	 * @var array
+	 * @var array|Pod
 	 */
 	public static $media = array();
 
 	/**
-	 * @var array
+	 * @var array|Pod
 	 */
 	public static $user = array();
 
 	/**
-	 * @var array
+	 * @var array|Pod
 	 */
 	public static $comment = array();
 
 	/**
-	 * @var array
+	 * @var array<string,Pod|array>
 	 */
 	public static $settings = array();
 
@@ -1021,6 +1021,10 @@ class PodsMeta {
 			}
 
 			if ( $has_custom_groups ) {
+				// Clean up the dynamic groups to prevent duplicate fields showing.
+				$this->groups_cleanup( $groups, self::$groups[ $type ][ $name ] );
+
+				// Now add our custom groups to those dynamic groups.
 				$groups = array_merge( $groups, self::$groups[ $type ][ $name ] );
 			}
 		} elseif ( $has_custom_groups ) {
@@ -1058,6 +1062,50 @@ class PodsMeta {
 		pods_static_cache_set( $cache_key, $groups, __CLASS__ . '/groups_get' );
 
 		return $groups;
+	}
+
+	/**
+	 * Clean up the groups to prevent duplicate fields from showing based on reference groups.
+	 *
+	 * @since 3.0.7
+	 *
+	 * @param array $groups           The groups to clean up.
+	 * @param array $reference_groups The groups to reference for fields that take precedence.
+	 */
+	public function groups_cleanup( array &$groups, array &$reference_groups ) {
+		$found_fields = [];
+
+		// Remove duplicates fields from reference groups.
+		foreach ( $reference_groups as $group_key => $reference_group ) {
+			$group_fields = wp_list_pluck( $reference_group['fields'], 'name' );
+
+			foreach ( $group_fields as $field_key => $field_name ) {
+				// Remove duplicate fields.
+				if ( isset( $found_fields[ $field_name ] ) ) {
+					unset( $reference_groups[ $group_key ]['fields'][ $field_key ] );
+
+					continue;
+				}
+
+				$found_fields[ $field_name ] = true;
+			}
+		}
+
+		// Remove duplicates fields from groups.
+		foreach ( $groups as $group_key => $group ) {
+			$group_fields = wp_list_pluck( $group['fields'], 'name' );
+
+			foreach ( $group_fields as $field_key => $field_name ) {
+				// Remove duplicate fields.
+				if ( isset( $found_fields[ $field_name ] ) ) {
+					unset( $groups[ $group_key ]['fields'][ $field_key ] );
+
+					continue;
+				}
+
+				$found_fields[ $field_name ] = true;
+			}
+		}
 	}
 
 	/**
@@ -3782,17 +3830,14 @@ class PodsMeta {
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
 			return $_null;
 		}
 
-		$first_pods_version = get_option( 'pods_framework_version_first' );
-		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
-
-		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get', version_compare( $first_pods_version, '2.8.21', '<=' ) ? 1 : 0 );
+		$metadata_override_get = (int) pods_get_setting( 'metadata_override_get' );
 
 		// Only continue if metadata is overridden.
 		if ( 0 === $metadata_override_get ) {
@@ -4037,7 +4082,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4158,7 +4203,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4281,7 +4326,7 @@ class PodsMeta {
 	 * @return bool|int|null
 	 */
 	public function update_meta_by_id( $object_type, $_null = null, $meta_id = 0, $meta_key = '', $meta_value = '' ) {
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4321,7 +4366,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {
@@ -4440,7 +4485,7 @@ class PodsMeta {
 	 * @return bool|int|null
 	 */
 	public function delete_meta_by_id( $object_type, $_null = null, $meta_id = 0 ) {
-		$metadata_integration = (int) pods_get_setting( 'metadata_integration', 1 );
+		$metadata_integration = (int) pods_get_setting( 'metadata_integration' );
 
 		// Only continue if metadata is integrated with.
 		if ( 0 === $metadata_integration ) {

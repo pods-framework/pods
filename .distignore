@@ -1,6 +1,7 @@
 # Export ignore handling
 
 # Directories
+/.git
 /.github
 /.wordpress-org
 /bin
@@ -27,6 +28,8 @@
 .gitignore
 .jshintrc
 .nvmrc
+.phpcs.compat.yml
+.phpcs.yml
 .phpstorm.meta.php
 .scrutinizer.yml
 .travis.yml
@@ -39,13 +42,13 @@ codeception.example.yml
 codeception.slic.yml
 CODEOWNERS
 composer.json
-CONTRIBUTING.md
+composer.lock
 Gruntfile.js
-jest-setup-wordpress-globals.js
 jest.config.json
 jest.config.js
-package-lock.json
+jest-setup-wordpress-globals.js
 package.json
+package-lock.json
 phpcs.xml
 phpcs.xml.dist
 phpunit.xml.dist

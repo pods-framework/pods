@@ -145,6 +145,8 @@ class API {
 		$blocks_config = (array) apply_filters( 'pods_blocks_api_config', $blocks_config );
 
 		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', $blocks_config );
+
+		wp_enqueue_style( 'pods-styles' );
 	}
 
 	/**
@@ -167,12 +169,24 @@ class API {
 		do_action( 'pods_blocks_api_pre_init' );
 
 		pods_container( 'pods.blocks.collection.pods' );
-		pods_container( 'pods.blocks.field' );
-		pods_container( 'pods.blocks.form' );
-		pods_container( 'pods.blocks.list' );
-		pods_container( 'pods.blocks.single' );
-		pods_container( 'pods.blocks.single-list-fields' );
-		pods_container( 'pods.blocks.view' );
+
+		// Check if the feature is enabled.
+		if ( pods_can_use_dynamic_feature( 'display' ) ) {
+			pods_container( 'pods.blocks.field' );
+			pods_container( 'pods.blocks.list' );
+			pods_container( 'pods.blocks.single' );
+			pods_container( 'pods.blocks.single-list-fields' );
+		}
+
+		// Check if the feature is enabled.
+		if ( pods_can_use_dynamic_feature( 'form' ) ) {
+			pods_container( 'pods.blocks.form' );
+		}
+
+		// Check if the feature is enabled.
+		if ( pods_can_use_dynamic_feature( 'view' ) ) {
+			pods_container( 'pods.blocks.view' );
+		}
 
 		/**
 		 * Allow custom blocks to be registered with Pods.
@@ -192,9 +206,9 @@ class API {
 	 * @return array List of registered blocks.
 	 */
 	public function get_blocks() {
-		static $blocks = [];
+		$blocks = pods_static_cache_get( __FUNCTION__, __CLASS__ );
 
-		if ( ! empty( $blocks ) ) {
+		if ( ! empty( $blocks ) && is_array( $blocks ) ) {
 			return $blocks;
 		}
 
@@ -225,6 +239,8 @@ class API {
 		$blocks = array_map( static function ( $block ) {
 			return $block->get_block_args();
 		}, $blocks );
+
+		pods_static_cache_set( __FUNCTION__, $blocks, __CLASS__ );
 
 		return $blocks;
 	}

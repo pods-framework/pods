@@ -29,7 +29,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
       - name: Run PHPCS inspection
-        uses: rtCamp/action-phpcs-code-review@v3
+        uses: rtCamp/action-phpcs-code-review@v3.0.1
         env:
           GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
           SKIP_FOLDERS: ".github,.wordpress-org,tests,vendor"

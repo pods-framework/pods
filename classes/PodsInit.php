@@ -393,9 +393,9 @@ class PodsInit {
 
 		add_filter( 'wisdom_notice_text_' . $plugin_slug, static function() {
 			return
-				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings.', 'pods' )
+				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings. Tracking is completely optional.', 'pods' )
 				. "\n\n"
-				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists. Tracking is completely optional.', 'pods' );
+				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists.', 'pods' );
 		} );
 
 		// Handle non-Pods pages, we don't want certain things happening.
@@ -604,13 +604,15 @@ class PodsInit {
 
 		wp_register_script( 'pods-cleditor', PODS_URL . "ui/js/cleditor/jquery.cleditor{$suffix_min}.js", array( 'jquery' ), '1.4.5', true );
 
-		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/codemirror.js', array(), '4.8', true );
-		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/mode/show-hint.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
+		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/lib/codemirror.js', [], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/hint/show-hint.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_style( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/lib/codemirror.css', [], '5.65.16' );
+		wp_register_style( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/hint/show-hint.css', [ 'pods-codemirror' ], '5.65.16' );
 
 		// jQuery Timepicker.
 		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
@@ -1167,6 +1169,7 @@ class PodsInit {
 					'revisions'       => (boolean) pods_v( 'supports_revisions', $post_type, false ),
 					'page-attributes' => (boolean) pods_v( 'supports_page_attributes', $post_type, false ),
 					'post-formats'    => (boolean) pods_v( 'supports_post_formats', $post_type, false ),
+					'quick-edit'      => (boolean) pods_v( 'supports_quick_edit', $post_type, true ),
 				);
 
 				// Custom Supported
@@ -1231,10 +1234,10 @@ class PodsInit {
 					$cpt_rewrite['slug'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $cpt_rewrite['slug'] );
 				}
 
-				$capability_type = pods_v( 'capability_type', $post_type, 'post' );
+				$capability_type = pods_v( 'capability_type', $post_type, 'post', true );
 
 				if ( 'custom' === $capability_type ) {
-					$capability_type = pods_v( 'capability_type_custom', $post_type, 'post' );
+					$capability_type = pods_v( 'capability_type_custom', $post_type, pods_v( 'name', $post_type, 'post', true ), true );
 				}
 
 				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );
@@ -1462,6 +1465,7 @@ class PodsInit {
 					'labels'                => $ct_labels,
 					'description'           => esc_html( pods_v( 'description', $taxonomy ) ),
 					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
+					'publicly_queryable'    => (boolean) pods_v( 'publicly_queryable', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_ui'               => (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_nav_menus'     => (boolean) pods_v( 'show_in_nav_menus', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
@@ -1812,6 +1816,50 @@ class PodsInit {
 	}
 
 	/**
+	 * Filter whether Quick Edit should be enabled for the given post type.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool   $enable    Whether to enable the Quick Edit functionality.
+	 * @param string $post_type The post type name.
+	 *
+	 * @return bool Whether to enable the Quick Edit functionality.
+	 */
+	public function quick_edit_enabled_for_post_type( bool $enable, string $post_type ) {
+		if ( ! $enable ) {
+			return $enable;
+		}
+
+		if ( ! isset( PodsMeta::$post_types[ $post_type ] ) ) {
+			return $enable;
+		}
+
+		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$post_types[ $post_type ], true );
+	}
+
+	/**
+	 * Filter whether Quick Edit should be enabled for the given taxonomy.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool   $enable   Whether to enable the Quick Edit functionality.
+	 * @param string $taxonomy The taxonomy name.
+	 *
+	 * @return bool Whether to enable the Quick Edit functionality.
+	 */
+	public function quick_edit_enabled_for_taxonomy( bool $enable, string $taxonomy ) {
+		if ( ! $enable ) {
+			return $enable;
+		}
+
+		if ( ! isset( PodsMeta::$taxonomies[ $taxonomy ] ) ) {
+			return $enable;
+		}
+
+		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$taxonomies[ $taxonomy ], true );
+	}
+
+	/**
 	 * Check if we need to flush WordPress rewrite rules
 	 * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
 	 */
@@ -1947,7 +1995,7 @@ class PodsInit {
 		if ( 'post_type' === $type ) {
 			$labels['menu_name']                = strip_tags( pods_v( 'menu_name', $labels, $label, true ) );
 			$labels['name_admin_bar']           = pods_v( 'name_admin_bar', $labels, $singular_label, true );
-			$labels['add_new']                  = pods_v( 'add_new', $labels, __( 'Add New', 'pods' ), true );
+			$labels['add_new']                  = pods_v( 'add_new', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
 			$labels['add_new_item']             = pods_v( 'add_new_item', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
 			$labels['new_item']                 = pods_v( 'new_item', $labels, sprintf( __( 'New %s', 'pods' ), $singular_label ), true );
 			$labels['edit']                     = pods_v( 'edit', $labels, __( 'Edit', 'pods' ), true );
@@ -2439,6 +2487,10 @@ class PodsInit {
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
 
+		// Support for quick edit in WP 6.4+.
+		add_filter( 'quick_edit_enabled_for_post_type', [ $this, 'quick_edit_enabled_for_post_type' ], 10, 2 );
+		add_filter( 'quick_edit_enabled_for_taxonomy', [ $this, 'quick_edit_enabled_for_taxonomy' ], 10, 2 );
+
 		require_once PODS_DIR . 'includes/compatibility.php';
 	}
 
@@ -2561,14 +2613,24 @@ class PodsInit {
 	 * Register widgets for Pods
 	 */
 	public function register_widgets() {
+		$widgets = [];
 
-		$widgets = array(
-			'PodsWidgetSingle',
-			'PodsWidgetList',
-			'PodsWidgetField',
-			'PodsWidgetForm',
-			'PodsWidgetView',
-		);
+		// Maybe register the display widgets.
+		if ( pods_can_use_dynamic_feature( 'display' ) ) {
+			$widgets[] = 'PodsWidgetSingle';
+			$widgets[] = 'PodsWidgetList';
+			$widgets[] = 'PodsWidgetField';
+		}
+
+		// Maybe register the form widget.
+		if ( pods_can_use_dynamic_feature( 'form' ) ) {
+			$widgets[] = 'PodsWidgetForm';
+		}
+
+		// Maybe register the view widget.
+		if ( pods_can_use_dynamic_feature( 'view' ) ) {
+			$widgets[] = 'PodsWidgetView';
+		}
 
 		foreach ( $widgets as $widget ) {
 			if ( ! file_exists( PODS_DIR . 'classes/widgets/' . $widget . '.php' ) ) {

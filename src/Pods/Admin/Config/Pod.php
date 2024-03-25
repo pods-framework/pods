@@ -25,6 +25,7 @@ class Pod extends Base {
 		$admin_ui    = false;
 		$connections = false;
 		$advanced    = false;
+		$access      = true;
 
 		$pod_type    = pods_v( 'type', $pod );
 		$is_extended = $pod->is_extended();
@@ -64,6 +65,10 @@ class Pod extends Base {
 
 		if ( $advanced ) {
 			$core_tabs['advanced'] = __( 'Advanced Options', 'pods' );
+		}
+
+		if ( $access ) {
+			$core_tabs['access-rights'] = __( 'Access Rights', 'pods' );
 		}
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
@@ -137,14 +142,14 @@ class Pod extends Base {
 					'label'           => __( 'Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod_name ) ) ),
 					'text_max_length' => 30,
 				],
 				'label_singular'                   => [
 					'label'           => __( 'Singular Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ) ),
+					'default'         => pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod_name ) ) ) ),
 					'text_max_length' => 30,
 				],
 				'placeholder_enter_title_here'     => [
@@ -156,17 +161,19 @@ class Pod extends Base {
 					'object_type' => [ 'post_type' ],
 				],
 				'label_add_new'                    => [
-					'label'       => __( 'Add New', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => [ 'post_type', 'pod' ],
-				],
-				'label_add_new_item'               => [
-					'label'               => __( 'Add new %s', 'pods' ),
+					'label'               => __( 'Add New %s (links)', 'pods' ),
 					'label_param'         => 'label_singular',
 					'label_param_default' => __( 'Item', 'pods' ),
-					'help'                => __( 'help', 'pods' ),
+					'help'                => __( 'This is the text used for the "Add New" links in the menu and when editing an existing item. This "add_new" text used to be separate from the newer "add_new_item" but as of WordPress 6.4 they are following the same default context instead of just "Add New" as the text.', 'pods' ),
+					'type'                => 'text',
+					'default'             => '',
+					'object_type'         => [ 'post_type', 'pod' ],
+				],
+				'label_add_new_item'               => [
+					'label'               => __( 'Add new %s (Add New screen title)', 'pods' ),
+					'label_param'         => 'label_singular',
+					'label_param_default' => __( 'Item', 'pods' ),
+					'help'                => __( 'This is the text used for the "Add New" screen title.', 'pods' ),
 					'type'                => 'text',
 					'default'             => '',
 				],
@@ -638,14 +645,14 @@ class Pod extends Base {
 					'label'           => __( 'Page Title', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
+					'default'         => str_replace( '_', ' ', $pod_name ),
 					'text_max_length' => 30,
 				],
 				'menu_name' => [
 					'label'           => __( 'Menu Name', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod_name ) ) ),
 					'text_max_length' => 30,
 				],
 			];
@@ -728,7 +735,7 @@ class Pod extends Base {
 				],
 			];
 
-			$post_type_name = pods_v( 'name', $pod, 'post_type', true );
+			$post_type_name = $pod_name ?: 'post_type';
 
 			/**
 			 * Allow filtering the default post status.
@@ -775,20 +782,39 @@ class Pod extends Base {
 				),
 			];
 
+			// translators: %s: The "Public" or "Private" content visibility text.
+			$content_considered_text = esc_html__( 'This content is considered: %s', 'pods' );
+
 			$options['advanced'] = [
-				'public'                  => [
+				'public' => [
 					'label'             => __( 'Public', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'Whether a content type is intended for use publicly either via the admin interface or by front-end users.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
 				'publicly_queryable'      => [
 					'label'             => __( 'Publicly Queryable', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'Whether queries can be performed on the front end for the content type as part of parse_request().', 'pods' ),
 					'type'              => 'boolean',
-					'default'           => pods_v( 'public', $pod, true ),
+					'default'           => (bool) pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
+				],
+				'public_access_rights_info_public' => [
+					'name'         => 'public_access_rights_info_public',
+					'label'        => __( 'Content Visibility', 'pods' ),
+					'type'         => 'html',
+					'html_content' => sprintf( $content_considered_text, '<strong>🌐 ' .  __( 'Public', 'pods' ) . '</strong>' ) . "\n\n" . __( 'When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
+					'depends-on'   => [ 'public' => true, 'publicly_queryable' => true ],
+				],
+				'public_access_rights_info_private' => [
+					'name'           => 'public_access_rights_info_private',
+					'label'          => __( 'Content Visibility', 'pods' ),
+					'type'           => 'html',
+					'html_content'   => sprintf( $content_considered_text, '<strong>🔒 ' .  __( 'Private', 'pods' ) . '</strong>' ) . "\n\n" . __( 'When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' ),
+					'depends-on-any' => [ 'public' => false, 'publicly_queryable' => false ],
 				],
 				'exclude_from_search'     => [
 					'label'             => __( 'Exclude from Search', 'pods' ),
@@ -812,18 +838,18 @@ class Pod extends Base {
 					'dependency'            => true,
 				],
 				'capability_type_custom'  => [
-					'label'      => __( 'Custom User Capability', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => [ 'capability_type' => 'custom' ],
+					'label'            => __( 'Custom User Capability', 'pods' ),
+					'help'             => __( 'help', 'pods' ),
+					'type'             => 'text',
+					'text_placeholder' => $pod_name,
+					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'capability_type_extra'   => [
-					'label'             => __( 'Additional User Capabilities', 'pods' ),
-					'help'              => __( 'Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
+					'label'             => __( 'Full User Capabilities', 'pods' ),
+					'help'              => __( 'Enables full capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
-					'boolean_yes_label' => '',
+					'boolean_yes_label' => __( 'Enable editing and deleting of content in this Post Type', 'pods' ),
 				],
 				'disable_create_posts'    => [
 					'label'             => __( 'Disable Add New forms', 'pods' ),
@@ -912,13 +938,6 @@ class Pod extends Base {
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
-				'can_export'              => [
-					'label'             => __( 'Exportable', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => true,
-					'boolean_yes_label' => '',
-				],
 				'default_status'          => [
 					'label'                 => __( 'Default Status', 'pods' ),
 					'help'                  => __( 'help', 'pods' ),
@@ -998,13 +1017,23 @@ class Pod extends Base {
 					'help'  => __( 'Comma-separated list of custom "supports" values to pass to register_post_type.', 'pods' ),
 				],
 				'revisions_to_keep_limit' => [
+					'label'       => __( 'Maximum revisions to keep per post', 'pods' ),
 					'name'        => 'revisions_to_keep_limit',
 					'type'        => 'number',
 					'default'     => '0',
-					'label'       => __( 'Maximum revisions to keep per post', 'pods' ),
 					'description' => __( 'The default "0" will fallback to the normal WordPress default.', 'pods' ),
 					'help'        => __( 'Enter -1 to keep ALL revisions. Enter any positive number to limit the number of revisions kept to that amount.', 'pods' ),
 					'depends-on'  => [ 'supports_revisions' => true ],
+				],
+				'revisions_revision_all_fields' => [
+					'name'              => 'revisions_revision_all_fields',
+					'label'             => __( 'Track all field value changes in revisions', 'pods' ),
+					'description'       => __( 'You can enable tracking specific fields by editing those individual fields. This setting overrides all individual field settings for revision tracking.', 'pods' ),
+					'help'              => __( 'Revisions for field values covers all field types excluding relationship, file, and layout field types. It also requires the Pod to use meta-based storage.', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => false,
+					'boolean_yes_label' => __( 'Track all field value changes for all fields added to this Pod.', 'pods' ),
+					'depends-on'        => [ 'supports_revisions' => true ],
 				],
 				'delete_with_user'        => [
 					'label'             => __( 'Allow posts to be deleted when author is deleted', 'pods' ),
@@ -1014,6 +1043,16 @@ class Pod extends Base {
 					'boolean_yes_label' => __( 'Include posts from this post type when deleting authors and choosing not to reassign posts to a new author.', 'pods' ),
 				],
 			];
+
+			// Add support for disabling Quick Edit in WP 6.4+.
+			if ( pods_version_check( 'wp', '6.4-beta-1' ) ) {
+				$options['advanced']['post_type_supports']['boolean_group']['supports_quick_edit'] = [
+					'name'    => 'supports_quick_edit',
+					'label'   => __( 'Quick Edit', 'pods' ),
+					'type'    => 'boolean',
+					'default' => 1,
+				];
+			}
 
 			/**
 			 * Allow filtering the list of supported features for the post type
@@ -1199,13 +1238,57 @@ class Pod extends Base {
 				],
 			];
 
+			// translators: %s: The "Public" or "Private" content visibility text.
+			$content_considered_text = esc_html__( 'This content is considered: %s', 'pods' );
+
 			$options['advanced'] = [
 				'public'                   => [
 					'label'             => __( 'Public', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'Whether a content type is intended for use publicly either via the admin interface or by front-end users.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
+				],
+				'publicly_queryable'      => [
+					'label'             => __( 'Publicly Queryable', 'pods' ),
+					'help'              => __( 'Regardless of this setting, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+					'description'       => __( 'Whether queries can be performed on the front end for the content type as part of parse_request().', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => (bool) pods_v( 'public', $pod, true ),
+					'boolean_yes_label' => '',
+				],
+				'public_access_rights_info_public' => [
+					'name'         => 'public_access_rights_info_public',
+					'label'        => __( 'Content Visibility', 'pods' ),
+					'type'         => 'html',
+					'html_content' =>
+						sprintf( $content_considered_text, '<strong>🌐 ' . __( 'Public', 'pods' ) . '</strong>' )
+						. "\n\n"
+						. __( 'When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' )
+						. sprintf(
+							'
+								<p><a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">%s</a> <span class="dashicon dashicons dashicons-external"></span></p>
+							',
+							__( 'Read more about how access rights work in Pods on our Documentation site', 'pods' )
+						),
+					'depends-on'   => [ 'public' => true, 'publicly_queryable' => true ],
+				],
+				'public_access_rights_info_private' => [
+					'name'           => 'public_access_rights_info_private',
+					'label'          => __( 'Content Visibility', 'pods' ),
+					'type'           => 'html',
+					'html_content'   =>
+						sprintf( $content_considered_text, '<strong>🔒 ' . __( 'Private', 'pods' ) . '</strong>' )
+						. "\n\n"
+						. __( 'When a content type is public and publicly queryable, it can be viewed by anyone when it is embedded through Dynamic Features, WordPress blocks, or through the REST API. Otherwise, a user will need to have the corresponding "read" capability for the content type.', 'pods' )
+						. sprintf(
+							'
+								<p><a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">%s</a> <span class="dashicon dashicons dashicons-external"></span></p>
+							',
+							__( 'Read more about how access rights work in Pods on our Documentation site', 'pods' )
+						),
+					'depends-on-any' => [ 'public' => false, 'publicly_queryable' => false ],
 				],
 				'hierarchical'             => [
 					'label'             => __( 'Hierarchical', 'pods' ),
@@ -1261,25 +1344,17 @@ class Pod extends Base {
 					'dependency'            => true,
 				],
 				'capability_type_custom'   => [
-					'label'      => __( 'Custom User Capability', 'pods' ),
-					'help'       => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
-					'type'       => 'text',
-					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => [ 'capability_type' => 'custom' ],
+					'label'            => __( 'Custom User Capability', 'pods' ),
+					'help'             => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
+					'type'             => 'text',
+					'text_placeholder' => $pod_name,
+					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],
 				'query_var'                => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
-					'boolean_yes_label' => '',
-				],
-				'query_var'                => [
-					'label'             => __( 'Query Var', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
 				'query_var_string'         => [
@@ -1321,6 +1396,16 @@ class Pod extends Base {
 					'excludes-on' => [ 'default_term_name' => '' ],
 				],
 			];
+
+			// Add support for disabling Quick Edit in WP 6.4+.
+			if ( pods_version_check( 'wp', '6.4-beta-1' ) ) {
+				$options['advanced']['supports_quick_edit'] = [
+					'name'    => 'supports_quick_edit',
+					'label'   => __( 'Enable Quick Edit', 'pods' ),
+					'type'    => 'boolean',
+					'default' => 1,
+				];
+			}
 
 			$related_objects = PodsForm::field_method( 'pick', 'related_objects', true );
 
@@ -1399,12 +1484,6 @@ class Pod extends Base {
 					'default'    => '',
 					'depends-on' => [ 'menu_location' => 'top' ],
 				],
-			];
-
-			// @todo fill this in
-			$options['advanced'] = [
-				'temporary' => 'This type has the fields hardcoded',
-				// :(
 			];
 		} elseif ( 'pod' === $pod_type ) {
 			$actions_enabled = [
@@ -1613,13 +1692,13 @@ class Pod extends Base {
 			];
 		}//end if
 
+		// Add access rights options.
+		$options['access-rights'] = pods_access_pod_options( $pod_type, $pod_name, $pod );
+
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
 			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink-config.json' ), true );
 		}
-
-		$pod_type = $pod['type'];
-		$pod_name = $pod['name'];
 
 		/**
 		 * Add admin fields to the Pods editor for a specific Pod.

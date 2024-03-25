@@ -1,4 +1,19 @@
-<div class="wrap pods-admin pods-admin--flex">
+<?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+	die( '-1' );
+}
+?>
+<div class="wrap pods-admin<?php echo PodsAdmin::$instance->has_horizontal_callout() ? '' : ' pods-admin--flex'; ?>">
+	<?php
+	/**
+	 * Allow additional output before the container area of the Pods settings screen.
+	 *
+	 * @since 3.1.0
+	 */
+	do_action( 'pods_admin_before_settings' );
+	?>
+
 	<div class="pods-admin__content-container">
 		<form action="" method="post" class="pods-submittable pods-form pods-form-settings">
 

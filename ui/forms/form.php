@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @var string      $form_type
  * @var PodsUI      $obj
@@ -6,6 +11,7 @@
  * @var null|string $thank_you
  * @var null|string $thank_you_alt
  * @var null|string $label
+ * @var string|null $form_key
  */
 
 use Pods\Static_Cache;
@@ -213,6 +219,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		echo PodsForm::field( '_pods_id', $item_id, 'hidden' );
 		echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' );
 		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
+		echo PodsForm::field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' );
 		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
 
 		pods_view( PODS_DIR . 'ui/forms/type/' . sanitize_title( $form_type ) . '.php', compact( array_keys( get_defined_vars() ) ) );

@@ -899,9 +899,10 @@ class PodsAPI {
 					'pick_data_storage' => 'object',
 					'pick_output'       => 'ids',
 					'options'           => [
-						'pick_format_type'   => 'single',
-						'pick_format_single' => 'autocomplete',
-						'default_value'      => '{@user.ID}',
+						'pick_format_type'      => 'single',
+						'pick_format_single'    => 'autocomplete',
+						'default_value'         => '{@user.ID}',
+						'default_evaluate_tags' => 1,
 					],
 				],
 				'post_date'             => [
@@ -955,6 +956,7 @@ class PodsAPI {
 					'label' => 'Password',
 					'type'  => 'password',
 					'alias' => [],
+					'hide_in_default_form' => true,
 				],
 				'post_name'             => [
 					'name'  => 'post_name',
@@ -1443,6 +1445,8 @@ class PodsAPI {
 	 * $params['create_label_plural'] string Plural Label (for Creating)
 	 * $params['create_label_singular'] string Singular Label (for Creating)
 	 * $params['create_storage'] string Storage Type (for Creating)
+	 * $params['create_public'] int Whether the pod will be public (for Creating Post Types and Taxonomies)
+	 * $params['create_publicly_queryable'] int Whether the pod will be publicly queryable (for Creating Post Types and Taxonomies)
 	 * $params['create_rest_api'] int Whether REST API will be enabled (for Creating Post Types and Taxonomies)
 	 * $params['extend_pod_type'] string Pod Type (for Extending)
 	 * $params['extend_post_type'] string Post Type (for Extending Post Types)
@@ -1459,11 +1463,13 @@ class PodsAPI {
 			'create_extend'   => 'create',
 			'create_pod_type' => 'post_type',
 
-			'create_name'           => '',
-			'create_label_singular' => '',
-			'create_label_plural'   => '',
-			'create_storage'        => 'meta',
-			'create_rest_api'       => 1,
+			'create_name'               => '',
+			'create_label_singular'     => '',
+			'create_label_plural'       => '',
+			'create_storage'            => 'meta',
+			'create_public'             => 1,
+			'create_publicly_queryable' => 0,
+			'create_rest_api'           => 1,
 
 			'create_setting_name'  => '',
 			'create_label_title'   => '',
@@ -1505,7 +1511,7 @@ class PodsAPI {
 			$pod_params['label']          = ( ! empty( $params->create_label_plural ) ? $params->create_label_plural : $label );
 			$pod_params['type']           = $params->create_pod_type;
 			$pod_params['label_singular'] = ( ! empty( $params->create_label_singular ) ? $params->create_label_singular : $pod_params['label'] );
-			$pod_params['public']         = 1;
+			$pod_params['public']         = 1 === (int) $params->create_public ? 1 : 0;
 			$pod_params['show_ui']        = 1;
 
 			// Auto-generate name if not provided
@@ -1518,9 +1524,10 @@ class PodsAPI {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
-				$pod_params['storage'] = pods_tableless() ? 'meta' : $params->create_storage;
-
-				$pod_params['rest_enable'] = 1 === (int) $params->create_rest_api ? 1 : 0;
+				$pod_params['storage']                = pods_tableless() ? 'meta' : $params->create_storage;
+				$pod_params['publicly_queryable']     = 1 === (int) $params->create_publicly_queryable ? 1 : 0;
+				$pod_params['dynamic_features_allow'] = 'inherit';
+				$pod_params['rest_enable']            = 1 === (int) $params->create_rest_api ? 1 : 0;
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
@@ -1531,11 +1538,11 @@ class PodsAPI {
 					$params->create_storage = $params->create_storage_taxonomy;
 				}
 
-				$pod_params['storage'] = pods_tableless() ? 'meta' : $params->create_storage;
-
-				$pod_params['hierarchical'] = 1;
-
-				$pod_params['rest_enable'] = 1 === (int) $params->create_rest_api ? 1 : 0;
+				$pod_params['storage']                = pods_tableless() ? 'meta' : $params->create_storage;
+				$pod_params['hierarchical']           = 1;
+				$pod_params['publicly_queryable']     = 1 === (int) $params->create_publicly_queryable ? 1 : 0;
+				$pod_params['dynamic_features_allow'] = 'inherit';
+				$pod_params['rest_enable']            = 1 === (int) $params->create_rest_api ? 1 : 0;
 			} elseif ( 'pod' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pod' ), $this );
@@ -1544,6 +1551,10 @@ class PodsAPI {
 				if ( pods_tableless() ) {
 					$pod_params['type']    = 'post_type';
 					$pod_params['storage'] = 'meta';
+				}
+
+				if ( $pod_params['public'] ) {
+					$pod_params['public'] = 1 === (int) $params->create_publicly_queryable ? 1 : 0;
 				}
 			} elseif ( 'settings' === $pod_params['type'] ) {
 				$pod_params['name']          = $params->create_setting_name;
@@ -2117,13 +2128,14 @@ class PodsAPI {
 							'datetime_time_format' => 'h_mm_ss_A',
 						],
 						'author'    => [
-							'name'               => 'author',
-							'label'              => 'Author',
-							'type'               => 'pick',
-							'pick_object'        => 'user',
-							'pick_format_type'   => 'single',
-							'pick_format_single' => 'autocomplete',
-							'default_value'      => '{@user.ID}',
+							'name'                  => 'author',
+							'label'                 => 'Author',
+							'type'                  => 'pick',
+							'pick_object'           => 'user',
+							'pick_format_type'      => 'single',
+							'pick_format_single'    => 'autocomplete',
+							'default_value'         => '{@user.ID}',
+							'default_evaluate_tags' => 1,
 						],
 						'permalink' => [
 							'name'        => 'permalink',
@@ -4844,10 +4856,22 @@ class PodsAPI {
 			return $ids;
 		}
 
+		// Get array of Pods
+		$pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ), false );
+
+		if ( false === $pod ) {
+			// Bypass if doing a normal object sync from PodsMeta.
+			if ( $params->podsmeta ) {
+				return;
+			}
+
+			return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
+		}
+
 		// Allow Helpers to know what's going on, are we adding or saving?
 		$is_new_item = false;
 
-		if ( empty( $params->id ) ) {
+		if ( empty( $params->id ) && 'settings' !== $pod['type'] ) {
 			$is_new_item = true;
 		}
 
@@ -4867,18 +4891,6 @@ class PodsAPI {
 
 		if ( isset( $params->allow_custom_fields ) && false !== $params->allow_custom_fields ) {
 			$allow_custom_fields = true;
-		}
-
-		// Get array of Pods
-		$pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ), false );
-
-		if ( false === $pod ) {
-			// Bypass if doing a normal object sync from PodsMeta.
-			if ( $params->podsmeta ) {
-				return;
-			}
-
-			return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
 		}
 
 		$params->pod    = $pod['name'];
@@ -4984,7 +4996,7 @@ class PodsAPI {
 		}
 
 		// Handle hidden fields
-		if ( empty( $params->id ) ) {
+		if ( empty( $params->id ) && 'settings' !== $pod['type'] ) {
 			foreach ( $fields as $field => $field_data ) {
 				if ( in_array( $field, $fields_active, true ) ) {
 					continue;
@@ -4995,7 +5007,13 @@ class PodsAPI {
 					|| 'save' === $params->from
 					|| true === pods_permission( $fields[ $field ] )
 				) {
-					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+					$field_options = $field_data;
+
+					if ( is_array( $field_options ) ) {
+						$field_options = pods_v( 'options', $field_options, $field_options, true );
+					}
+
+					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$fields[ $field ]['value'] = $value;
@@ -5016,7 +5034,13 @@ class PodsAPI {
 						continue;
 					}
 
-					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+					$field_options = $field_data;
+
+					if ( is_array( $field_options ) ) {
+						$field_options = pods_v( 'options', $field_options, $field_options, true );
+					}
+
+					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$object_fields[ $field ]['value'] = $value;
@@ -5096,7 +5120,13 @@ class PodsAPI {
 					continue;
 				}
 
-				$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+				$field_options = $field_data;
+
+				if ( is_array( $field_options ) ) {
+					$field_options = pods_v( 'options', $field_options, $field_options, true );
+				}
+
+				$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 				if ( null !== $value && '' !== $value && false !== $value ) {
 					$fields[ $field ]['value'] = $value;
@@ -5128,7 +5158,7 @@ class PodsAPI {
 				$hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 					extract( $hooked );
 				}
@@ -5138,7 +5168,7 @@ class PodsAPI {
 				$hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item, $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-					$hooked = array_intersect_key( $pieces, $hooked );
+					$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 					extract( $hooked );
 				}
@@ -5149,7 +5179,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}
@@ -5159,7 +5189,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}
@@ -5169,7 +5199,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ), $params->id );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}
@@ -5179,7 +5209,7 @@ class PodsAPI {
 					$hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ), $params->id );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
-						$hooked = array_intersect_key( $pieces, $hooked );
+						$hooked = array_intersect_key( $hooked, array_flip( $pieces ) );
 
 						extract( $hooked );
 					}
@@ -5464,7 +5494,11 @@ class PodsAPI {
 						|| $save_non_simple_to_table
 					)
 				) {
-					$value_data = $this->prepare_tableless_data_for_save( $pod, $field_data, $value, compact( $pieces ) );
+					try {
+						$value_data = $this->prepare_tableless_data_for_save( $pod, $field_data, $value, compact( $pieces ) );
+					} catch ( Throwable $throwable ) {
+						return pods_error( $throwable->getMessage(), $error_mode );
+					}
 				}
 
 				// Prepare all table / meta data.
@@ -5991,10 +6025,19 @@ class PodsAPI {
 					if ( empty( $v ) ) {
 						try {
 							$v = pods_attachment_import( $v );
-						} catch ( Exception $exception ) {
-							pods_debug_log( $exception );
+						} catch ( Throwable $throwable ) {
+							pods_debug_log( $throwable );
 
-							continue;
+							throw new Exception(
+								sprintf(
+									// translators: %1$s is the field label, %2$s is the file value.
+									__( 'Pods file field error for field "%1$s" - Unable to import file from: %2$s', 'pods' ),
+									esc_html( $field->get_label() ),
+									esc_html( $v )
+								),
+								500,
+								$throwable
+							);
 						}
 					}
 				} elseif ( $search_data ) {
@@ -6487,7 +6530,17 @@ class PodsAPI {
 		while ( $this->load_pod( array( 'name' => $check_name ), false ) ) {
 			$try ++;
 
-			$check_name = $pod['name'] . $try;
+			$check_name_limited = $pod['name'];
+
+			if ( 'post_type' === $pod['type'] ) {
+				// Max length for post types are 20 characters, so let's limit it to that minus the strlen of $try.
+				$check_name_limited = substr( $$check_name_limited, 0, 20 - strlen( (string) $try ) );
+			} elseif ( 'taxonomy' === $pod['type'] ) {
+				// Max length for taxonomies are 32 characters, so let's limit it to that minus the strlen of $try.
+				$check_name_limited = substr( $$check_name_limited, 0, 32 - strlen( (string) $try ) );
+			}
+
+			$check_name = $check_name_limited . $try;
 			$new_label  = $pod['label'] . $try;
 		}
 
@@ -10499,7 +10552,7 @@ class PodsAPI {
 
 			// Check for bad serialized array.
 			if ( is_string( $post_status ) ) {
-				$post_status = maybe_unserialize( $post_status );
+				$post_status = pods_maybe_safely_unserialize( $post_status );
 
 				if ( is_string( $post_status ) ) {
 					$post_status = explode( ',', $post_status );
@@ -11381,11 +11434,20 @@ class PodsAPI {
 		$id       = pods_v_sanitized( '_pods_id', $form_params );
 		$uri      = pods_v_sanitized( '_pods_uri', $form_params );
 		$form     = pods_v_sanitized( '_pods_form', $form_params );
+		$form_key = pods_v_sanitized( '_pods_form_key', $form_params );
 		$location = pods_v_sanitized( '_pods_location', $form_params );
+
+		$obj = null;
 
 		if ( is_object( $obj ) ) {
 			$pod = $obj->pod;
 			$id  = $obj->id();
+		} elseif ( $pod ) {
+			$obj = pods_get_instance( $pod, $id, true );
+
+			if ( ! $obj || is_wp_error( $obj ) || ! $obj->is_valid() ) {
+				$obj = null;
+			}
 		}
 
 		if ( ! empty( $fields ) ) {
@@ -11428,6 +11490,48 @@ class PodsAPI {
 
 		foreach ( $fields as $field ) {
 			$data[ $field ] = pods_v( 'pods_field_' . $field, $form_params, '' );
+		}
+
+		// Check if the user should have access to shortcodes/blocks.
+		if (
+			$obj
+			&& 'post_type' === $obj->pod_data->get_type()
+			&& ! empty( $data['post_content'] )
+		) {
+			$restrict_content = ! current_user_can( 'edit_posts', $id ?: null );
+
+			/**
+			 * Allow filtering whether the post content needs to be restricted to have shortcodes/blocks removed.
+			 *
+			 * @since 3.1.0
+			 *
+			 * @param bool        $restrict_content Whether the post content needs to be restricted to have shortcodes/blocks removed.
+			 * @param string      $object_type      The object type.
+			 * @param string|null $object_name      The object name (if different from the object type like post_type, taxonomy, and setting have).
+			 * @param string|int  $id               The item ID (if editing).
+			 * @param string|null $form_key         The form key for context.
+			 */
+			$restrict_content = (bool) apply_filters(
+				'pods_api_process_form_restrict_content',
+				$restrict_content,
+				$obj->pod_data->get_type(),
+				$obj->pod_data->get_name(),
+				$id,
+				$form_key
+			);
+
+			if ( $restrict_content ) {
+				// Strip shortcodes.
+				$data['post_content'] = strip_shortcodes( $data['post_content'] );
+
+				// Allow minimal blocks.
+				$data['post_content'] = excerpt_remove_blocks( $data['post_content'] );
+
+				// Clean up the content where missing blocks might be.
+				$data['post_content'] = str_replace( "\n\n\n", "\n", $data['post_content'] );
+			}
+
+			$data['post_content'] = trim( $data['post_content'] );
 		}
 
 		$params = array(
@@ -11490,6 +11594,7 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 
 		$name = (string) $name;

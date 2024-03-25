@@ -1,3 +1,9 @@
+<?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+?>
 <span class="pods-pagination-advanced <?php echo esc_attr( $params->class ); ?>">
 	<?php if ( 1 === $params->show_label ) { ?>
 		<span class="pods-pagination-label"><?php echo $params->label; ?></span>

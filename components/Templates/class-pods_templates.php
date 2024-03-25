@@ -124,8 +124,9 @@ class Pods_Templates_Frontier {
 			}
 			wp_enqueue_style( $this->plugin_slug . '-admin-styles', $this->get_url( 'assets/css/panel.css', __FILE__ ), array(), self::VERSION );
 			wp_enqueue_style( 'pods-codemirror' );
+			wp_enqueue_style( 'pods-codemirror-hints' );
 			wp_enqueue_script( $this->plugin_slug . '-admin-scripts', $this->get_url( 'assets/js/panel.js', __FILE__ ), array(), self::VERSION );
-			wp_enqueue_script( 'pods_codemirror' );
+			wp_enqueue_script( 'pods-codemirror' );
 			wp_enqueue_script( 'pods-codemirror-overlay' );
 			wp_enqueue_script( 'pods-codemirror-hints' );
 			wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
@@ -237,6 +238,8 @@ class Pods_Templates_Frontier {
 	 * @return null
 	 */
 	public function render_metaboxes_custom( $post, $args ) {
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-core' );
 
 		// include the metabox view
 		echo '<input type="hidden" name="pods_templates_metabox" id="pods_templates_metabox" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';

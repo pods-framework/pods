@@ -3,10 +3,45 @@
 }
 
 .pod-reference-wrapper {
-	max-height: 500px;
 	margin:     6px -12px 6px;
 	border-top: 1px solid #EEE;
-	overflow:   auto;
+	padding:    3px 14px;
+}
+
+.pod-reference-wrapper .pods-magic-tag-list {
+	max-height: 500px;
+	overflow: auto;
+}
+
+.pod-reference-wrapper dl dt {
+	margin: 0;
+}
+
+.pod-reference-wrapper dl dt {
+	font-weight: bold;
+	font-size: 1.05em;
+}
+
+.pod-reference-wrapper dl dt,
+.pod-reference-wrapper dl dd {
+	padding: 5px 0;
+	margin: 0;
+}
+
+.pod-reference-wrapper dl dd {
+	border-bottom: 1px solid #EEE;
+}
+
+.pod-reference-wrapper dl dd span:before {
+	content: '{@';
+}
+
+.pod-reference-wrapper dl dd span:after {
+	content: '}';
+}
+
+.pod-reference-wrapper dd.pods-magic-tag-option {
+	cursor: pointer;
 }
 
 .pod-reference-wrapper.loading {

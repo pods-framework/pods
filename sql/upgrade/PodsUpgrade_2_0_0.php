@@ -346,9 +346,10 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 						'type'        => 'pick',
 						'pick_object' => 'user',
 						'options'     => array(
-							'pick_format_type'   => 'single',
-							'pick_format_single' => 'autocomplete',
-							'default_value'      => '{@user.ID}',
+							'pick_format_type'      => 'single',
+							'pick_format_single'    => 'autocomplete',
+							'default_value'         => '{@user.ID}',
+							'default_evaluate_tags' => 1,
 						),
 						'weight'      => 3,
 					),
@@ -740,7 +741,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		$old_roles = get_option( 'pods_roles' );
 
 		if ( ! is_array( $old_roles ) && ! empty( $old_roles ) ) {
-			$old_roles = @unserialize( $old_roles );
+			$old_roles = pods_maybe_safely_unserialize( $old_roles );
 		}
 
 		if ( ! is_array( $old_roles ) ) {

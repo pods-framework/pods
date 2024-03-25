@@ -76,6 +76,7 @@ class PodsForm {
 	 *
 	 * @since 2.3.0
 	 */
+	#[\ReturnTypeWillChange]
 	private function __clone() {
 		// Hulk smash
 	}
@@ -281,9 +282,9 @@ class PodsForm {
 			 * @deprecated 2.7.0
 			 */
 			eval( '?>' . $helper['code'] );
-		} elseif ( method_exists( get_class(), 'field_' . $type ) ) {
+		} elseif ( method_exists( static::class, 'field_' . $type ) ) {
 			// @todo Move these custom field methods into real/faux field classes
-			echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
+			echo call_user_func( array( static::class, 'field_' . $type ), $name, $value, $options );
 		} elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
 			// Force non-repeatable field types to be non-repeatable even if option is set to 1.
 			if ( ! empty( $options['repeatable'] ) && ! in_array( $type, $repeatable_field_types, true ) ) {
@@ -1960,6 +1961,53 @@ class PodsForm {
 		}
 
 		return $field_types;
+	}
+
+	/**
+	 * Get the list of revisionable field types.
+	 *
+	 * @since 3.1.5
+	 *
+	 * @return array The list of revisionable field types.
+	 */
+	public static function revisionable_field_types(): array {
+		$revisionable_field_types = pods_static_cache_get( __FUNCTION__, __CLASS__ );
+
+		if ( ! is_array( $revisionable_field_types ) ) {
+			$revisionable_field_types = [];
+		}
+
+		if ( $revisionable_field_types ) {
+			return $revisionable_field_types;
+		}
+
+		$field_types           = static::field_types_list();
+		$tableless_field_types = static::tableless_field_types();
+		$layout_field_types    = static::layout_field_types();
+
+		foreach ( $field_types as $field_type ) {
+			if (
+				in_array( $field_type, $tableless_field_types, true )
+				|| in_array( $field_type, $layout_field_types, true )
+			) {
+				continue;
+			}
+
+			$revisionable_field_types[] = $field_type;
+		}
+
+		/**
+		 * Allow filtering of the list of field types that can be revisioned.
+		 *
+		 * @since 3.1.5
+		 *
+		 * @param array $revisionable_field_types The listof field types that can be revisioned.
+		 */
+		$revisionable_field_types = apply_filters( 'pods_form_revisionable_field_types', $revisionable_field_types );
+
+		pods_static_cache_set( __FUNCTION__, $revisionable_field_types, __CLASS__ );
+
+		return $revisionable_field_types;
 	}
 
 	/**

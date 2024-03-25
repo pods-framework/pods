@@ -70,28 +70,13 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		'mime_type',
 	];
 
-	if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
-		$fields[] = "{$prefix}post_thumbnail";
-		$fields[] = "{$prefix}post_thumbnail_url";
-
-		foreach ( $media_fields as $media_field ) {
-			$fields[] = "{$prefix}post_thumbnail.{$media_field}";
-		}
-
-		foreach ( $image_sizes as $image_size ) {
-			$fields[] = "{$prefix}post_thumbnail.{$image_size}";
-			$fields[] = "{$prefix}post_thumbnail_url.{$image_size}";
-		}
-	}
-
 	$pod_fields = $pod->fields();
 
 	foreach ( $pod_fields as $name => $field ) {
-		// Add base field name
-		$fields[] = $prefix . $name;
-
 		// Field type specific handling
 		if ( 'file' === $field['type'] && 'attachment' === pods_v( 'file_uploader', $field ) ) {
+			// Add base field name
+			$fields[] = $prefix . $name;
 			$fields[] = $prefix . $name . '._src';
 			$fields[] = $prefix . $name . '._img';
 
@@ -115,9 +100,30 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 				$pods_visited[ $linked_pod ][] = $name;
 				$recurse_queue[ $linked_pod ]  = "{$prefix}{$name}.";
 			}
-		}//end if
+		} else {
+			// Add base field name
+			$fields[] = $prefix . $name;
+		}
 	}//end foreach
+
+	sort($fields);
+
+	if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
+		$fields[] = "{$prefix}post_thumbnail";
+		$fields[] = "{$prefix}post_thumbnail_url";
+
+		foreach ( $media_fields as $media_field ) {
+			$fields[] = "{$prefix}post_thumbnail.{$media_field}";
+		}
+
+		foreach ( $image_sizes as $image_size ) {
+			$fields[] = "{$prefix}post_thumbnail.{$image_size}";
+			$fields[] = "{$prefix}post_thumbnail_url.{$image_size}";
+		}
+	}
+
 	foreach ( $recurse_queue as $recurse_name => $recurse_prefix ) {
+		$fields[] = trim( $recurse_prefix, '.' );
 		$fields = array_merge( $fields, pq_recurse_pod_fields( $recurse_name, $recurse_prefix, $pods_visited ) );
 	}
 

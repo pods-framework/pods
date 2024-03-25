@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods' ) ) {
+	die( '-1' );
+}
+
 $pods_meta = pods_meta();
 
 $ignore = [];
@@ -278,6 +283,22 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											'pick_format_single' => 'dropdown',
 											'depends-on'      => [
 												'create_pod_type' => 'settings',
+											],
+										] );
+										?>
+									</div>
+
+									<div class='pods-field__container'>
+										<?php
+										echo PodsForm::label( 'create_publicly_queryable', __( 'Content Privacy', 'pods' ), __( 'This option will make the content type publicly queryable.', 'pods' ) );
+										echo PodsForm::field( 'create_publicly_queryable', pods_v( 'create_publicly_queryable', 'post' ), 'boolean', [
+											'default'           => 0,
+											'boolean_yes_label' => __( 'Yes, make this content available for Dynamic Features in Pods and WordPress', 'pods' ),
+											'depends-on'        => [
+												'create_pod_type' => [
+													'post_type',
+													'taxonomy',
+												],
 											],
 										] );
 										?>

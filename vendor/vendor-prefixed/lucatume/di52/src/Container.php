@@ -5,7 +5,7 @@
  * @package lucatume\DI52
  *
  * @license GPL-3.0
- * Modified by Scott Kingsley Clark on 24-June-2023 using Strauss.
+ * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -51,7 +51,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * A list of bound and resolved singletons.
      *
-     * @var array<string,bool>
+     * @var array<string|class-string,bool>
      */
     protected $singletons = [];
     /**
@@ -186,11 +186,12 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Finds an entry of the container by its identifier and returns it.
      *
-     * @param string $offset Identifier of the entry to look for.
+     * @template T
      *
-     * @return mixed The entry for an id.
+     * @param string|class-string<T> $offset Identifier of the entry to look for.
      *
-     * @return mixed The value for the offset.
+     * @return T|mixed The value for the offset.
+     * @phpstan-return ($offset is class-string ? T : mixed)
      *
      * @throws ContainerException Error while retrieving the entry.
      * @throws NotFoundException  No entry was found for **this** identifier.
@@ -204,9 +205,12 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Finds an entry of the container by its identifier and returns it.
      *
-     * @param string $id A fully qualified class or interface name or an already built object.
+     * @template T
      *
-     * @return mixed The entry for an id.
+     * @param  string|class-string<T>  $id  A fully qualified class or interface name or an already built object.
+     *
+     * @return T|mixed The entry for an id.
+     * @phpstan-return ($id is class-string ? T : mixed)
      *
      * @throws ContainerException Error while retrieving the entry.
      */
@@ -252,9 +256,13 @@ class Container implements ArrayAccess, ContainerInterface
      * If the implementation has been bound as singleton using the `singleton` method
      * or the ArrayAccess API then the implementation will be resolved just on the first request.
      *
-     * @param string $id A fully qualified class or interface name or an already built object.
+     * @template T
      *
-     * @return mixed
+     * @param string|class-string<T> $id A fully qualified class or interface name or an already built object.
+     *
+     * @return T|mixed
+     * @phpstan-return ($id is class-string ? T : mixed)
+     *
      * @throws ContainerException If the target of the make is not bound and is not a valid,
      *                                              concrete, class name or there's any issue making the target.
      */
@@ -270,7 +278,7 @@ class Container implements ArrayAccess, ContainerInterface
      * `$container[$id]` returning true does not mean that `$container[$id]` will not throw an exception.
      * It does however mean that `$container[$id]` will not throw a `NotFoundExceptionInterface`.
      *
-     * @param string $offset An offset to check for.
+     * @param string|class-string $offset An offset to check for.
      *
      * @return boolean true on success or false on failure.
      */
@@ -287,7 +295,7 @@ class Container implements ArrayAccess, ContainerInterface
      * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
      * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
      *
-     * @param string $id Identifier of the entry to look for.
+     * @param string|class-string $id Identifier of the entry to look for.
      *
      * @return bool Whether the container contains a binding for an id or not.
      */
@@ -367,7 +375,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * A wrapper around the `class_exists` function to capture and handle possible fatal errors on PHP 7.0+.
      *
-     * @param string $class The class name to check.
+     * @param string|class-string $class The class name to check.
      *
      * @return bool Whether the class exists or not.
      *
@@ -401,7 +409,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Checks a class, interface or trait exists.
      *
-     * @param string $class The class, interface or trait to check.
+     * @param string|class-string $class The class, interface or trait to check.
      *
      * @return bool Whether the class, interface or trait exists or not.
      * @throws ReflectionException If the class should be checked for concreteness and it does not exist.
@@ -436,7 +444,7 @@ class Container implements ArrayAccess, ContainerInterface
      * If a provider overloads the `boot` method that method will be called when the `boot` method is called on the
      * container itself.
      *
-     * @param string $serviceProviderClass The fully-qualified Service Provider class name.
+     * @param class-string $serviceProviderClass The fully-qualified Service Provider class name.
      * @param string ...$alias             A list of aliases the provider should be registered with.
      * @return void This method does not return any value.
      * @throws ContainerException If the Service Provider is not correctly configured or there's an issue
@@ -512,13 +520,14 @@ class Container implements ArrayAccess, ContainerInterface
      *
      * Existing implementations are replaced.
      *
-     * @param string             $id                A class or interface fully qualified name or a string slug.
-     * @param mixed              $implementation    The implementation that should be bound to the alias(es); can be a
-     *                                              class name, an object or a closure.
-     * @param array<string>|null $afterBuildMethods An array of methods that should be called on the built
-     *                                              implementation after resolving it.
+     * @param  string|class-string  $id                 A class or interface fully qualified name or a string slug.
+     * @param  mixed                $implementation     The implementation that should be bound to the alias(es); can
+     *                                                  be a class name, an object or a closure.
+     * @param  string[]|null        $afterBuildMethods  An array of methods that should be called on the built
+     *                                                  implementation after resolving it.
      *
      * @return void The method does not return any value.
+     *
      * @throws ContainerException      If there's an issue while trying to bind the implementation.
      */
     public function bind($id, $implementation = null, array $afterBuildMethods = null)
@@ -555,15 +564,14 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Binds a class, interface or string slug to a chain of implementations decorating a base
      * object; the chain will be lazily resolved only on the first call.
-     *
      * The base decorated object must be the last element of the array.
      *
-     * @param string                        $id                The class, interface or slug the decorator chain should
-     *                                                         be bound to.
-     * @param array<string|object|callable> $decorators        An array of implementations that decorate an object.
-     * @param array<string>|null            $afterBuildMethods An array of methods that should be called on the
-     *                                                         instance after it has been built; the methods should not
-     *                                                         require any argument.
+     * @param  string|class-string            $id                 The class, interface or slug the decorator chain
+     *                                                            should be bound to.
+     * @param  array<string|object|callable>  $decorators         An array of implementations that decorate an object.
+     * @param  string[]|null                  $afterBuildMethods  An array of methods that should be called on the
+     *                                                            instance after it has been built; the methods should
+     *                                                            not require any argument.
      *
      * @return void This method does not return any value.
      * @throws ContainerException
@@ -603,17 +611,17 @@ class Container implements ArrayAccess, ContainerInterface
     }
 
     /**
-     * Binds a class, interface or string slug to to a chain of implementations decorating a
+     * Binds a class, interface or string slug to a chain of implementations decorating a
      * base object.
      *
      * The base decorated object must be the last element of the array.
      *
-     * @param string                        $id                The class, interface or slug the decorator chain should
-     *                                                         be bound to.
-     * @param array<string|object|callable> $decorators        An array of implementations that decorate an object.
-     * @param array<string>|null            $afterBuildMethods An array of methods that should be called on the
-     *                                                         instance after it has been built; the methods should not
-     *                                                         require any argument.
+     * @param  string|class-string            $id                 The class, interface or slug the decorator chain
+     *                                                            should be bound to.
+     * @param  array<string|object|callable>  $decorators         An array of implementations that decorate an object.
+     * @param  string[]|null                  $afterBuildMethods  An array of methods that should be called on the
+     *                                                            instance after it has been built; the methods should
+     *                                                            not require any argument.
      *
      * @return void This method does not return any value.
      * @throws ContainerException If there's any issue binding the decorators.
@@ -643,7 +651,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Starts the `when->needs->give` chain for a contextual binding.
      *
-     * @param string $class The fully qualified name of the requesting class.
+     * @param string|class-string $class The fully qualified name of the requesting class.
      *
      * Example:
      *
@@ -651,8 +659,8 @@ class Container implements ArrayAccess, ContainerInterface
      *      $container->singleton('LoggerInterface', 'FilesystemLogger');
      *      // But if the requesting class is `Worker` return another implementation
      *      $container->when('Worker')
-     *          ->needs('LoggerInterface)
-     *          ->give('RemoteLogger);
+     *          ->needs('LoggerInterface')
+     *          ->give('RemoteLogger');
      *
      * @return Container The container instance, to continue the when/needs/give chain.
      */
@@ -672,10 +680,10 @@ class Container implements ArrayAccess, ContainerInterface
      *      $container->singleton('LoggerInterface', 'FilesystemLogger');
      *      // But if the requesting class is `Worker` return another implementation.
      *      $container->when('Worker')
-     *          ->needs('LoggerInterface)
-     *          ->give('RemoteLogger);
+     *          ->needs('LoggerInterface')
+     *          ->give('RemoteLogger');
      *
-     * @param string $id The class or interface needed by the class.
+     * @param string|class-string $id The class or interface needed by the class.
      *
      * @return Container The container instance, to continue the when/needs/give chain.
      */
@@ -695,8 +703,8 @@ class Container implements ArrayAccess, ContainerInterface
      *      $container->singleton('LoggerInterface', 'FilesystemLogger');
      *      // but if the requesting class is `Worker` return another implementation
      *      $container->when('Worker')
-     *          ->needs('LoggerInterface)
-     *          ->give('RemoteLogger);
+     *          ->needs('LoggerInterface')
+     *          ->give('RemoteLogger');
      *
      * @param mixed $implementation The implementation specified
      *
@@ -715,13 +723,12 @@ class Container implements ArrayAccess, ContainerInterface
      * Returns a lambda function suitable to use as a callback; when called the function will build the implementation
      * bound to `$id` and return the value of a call to `$method` method with the call arguments.
      *
-     * @param string|object $id               A fully-qualified class name, a bound slug or an object o call the
-     *                                        callback on.
-     * @param string        $method           The method that should be called on the resolved implementation with the
-     *                                        specified array arguments.
+     * @param  string|class-string|object  $id      A fully-qualified class name, a bound slug or an object o call the
+     *                                              callback on.
+     * @param  string                      $method  The method that should be called on the resolved implementation
+     *                                              with the specified array arguments.
      *
-     * @return callable The callback function.
-     *
+     * @return callable|Closure The callback function.
      * @throws ContainerException If the id is not a bound implementation or valid class name.
      */
     public function callback($id, $method)
@@ -763,8 +770,8 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Whether a method of an id, possibly not a class, is static or not.
      *
-     * @param object|string $object A class name, instance or something that does not map to a class.
-     * @param string        $method The method to check.
+     * @param  object|string|class-string  $object  A class name, instance or something that does not map to a class.
+     * @param  string                      $method  The method to check.
      *
      * @return bool Whether a method of an id or class is static or not.
      */
@@ -786,17 +793,16 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Returns a callable object that will build an instance of the specified class using the
      * specified arguments when called.
-     *
      * The callable will be a closure on PHP 5.3+ or a lambda function on PHP 5.2.
      *
-     * @param string|mixed       $id                The fully qualified name of a class or an interface.
-     * @param array<mixed>       $buildArgs         An array of arguments that should be used to build the instance;
-     *                                              note that any argument will be resolved using the container itself
-     *                                              and bindings will apply.
-     * @param array<string>|null $afterBuildMethods An array of methods that should be called on the built
-     *                                              implementation after resolving it.
+     * @param  string|class-string|mixed  $id                 The fully qualified name of a class or an interface.
+     * @param  array<mixed>               $buildArgs          An array of arguments that should be used to build the
+     *                                                        instance; note that any argument will be resolved using
+     *                                                        the container itself and bindings will apply.
+     * @param  string[]|null              $afterBuildMethods  An array of methods that should be called on the built
+     *                                                        implementation after resolving it.
      *
-     * @return callable  A callable function that will return an instance of the specified class when
+     * @return callable|Closure  A callable function that will return an instance of the specified class when
      *                   called.
      */
     public function instance($id, array $buildArgs = [], array $afterBuildMethods = null)
@@ -825,7 +831,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * Returns the Service Provider instance registered.
      *
-     * @param string $providerId The Service Provider clas to return the instance for.
+     * @param string|class-string $providerId The Service Provider clas to return the instance for.
      *
      * @return ServiceProvider The service provider instance.
      *
@@ -835,13 +841,13 @@ class Container implements ArrayAccess, ContainerInterface
     public function getProvider($providerId)
     {
         if (!$this->resolver->isBound($providerId)) {
-            throw new NotFoundException("Service provider '{$providerId}' is not registered in the container.");
+            throw new NotFoundException("Service provider '$providerId' is not registered in the container.");
         }
 
         $provider = $this->get($providerId);
 
         if (! $provider instanceof ServiceProvider) {
-            throw new NotFoundException("Bound implementation for '{$providerId}' is not Service Provider.");
+            throw new NotFoundException("Bound implementation for '$providerId' is not Service Provider.");
         }
 
         return $provider;

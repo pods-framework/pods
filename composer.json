@@ -58,12 +58,13 @@
   ],
   "require": {
     "composer/installers": "2.2.*",
-    "lucatume/di52": "^3.3.0",
+    "erusev/parsedown": "^1.7.4",
+    "lucatume/di52": "^3.3.5",
     "mustangostang/spyc": "^0.6.3",
     "php": ">=7.2"
   },
   "require-dev": {
-    "automattic/vipwpcs": "^2.0",
+    "automattic/vipwpcs": "^3.0.0",
     "bvanhoekelen/performance": "^2.5.1",
     "codeception/codeception": "^4.0",
     "codeception/module-asserts": "^1.0",
@@ -76,17 +77,17 @@
     "codeception/util-universalframework": "^1.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
     "fzaninotto/faker": "^1.8",
-    "lucatume/codeception-snapshot-assertions": "^0.3.0",
+    "lucatume/codeception-snapshot-assertions": "^0.4.0",
     "lucatume/function-mocker": "^1.3.8",
     "lucatume/function-mocker-le": "^1.0.1",
-    "lucatume/wp-browser": "^3.1",
+    "lucatume/wp-browser": "3.2.3",
     "lucatume/wp-snaphot-assertions": "^1.1",
     "phpcompatibility/phpcompatibility-wp": "*",
     "phpunit/phpunit": "^6.5",
     "spatie/phpunit-snapshot-assertions": "^1.4.2",
-    "the-events-calendar/coding-standards": "dev-master",
+    "the-events-calendar/coding-standards": "dev-main",
     "wp-cli/wp-cli": "2.*",
-    "wp-coding-standards/wpcs": "^2.1"
+    "wp-coding-standards/wpcs": "^3.0.1"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
@@ -95,7 +96,7 @@
   },
   "scripts": {
     "strauss": [
-      "test -f ./bin/strauss.phar || curl -o bin/strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/download/0.14.0/strauss.phar",
+      "test -f ./bin/strauss.phar || curl -o bin/strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/latest/download/strauss.phar",
       "@php bin/strauss.phar"
     ],
     "post-install-cmd": [
@@ -114,6 +115,7 @@
       "constant_prefix": "PODS_PREFIXED_",
       "function_prefix": "pods_prefixed_",
       "packages": [
+        "erusev/parsedown",
         "lucatume/di52",
         "mustangostang/spyc"
       ],

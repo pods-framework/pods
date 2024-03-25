@@ -241,7 +241,7 @@ if ( version_compare( $old_version, '1.7.3', '<' ) ) {
 
 if ( version_compare( $old_version, '1.7.5', '<' ) ) {
 	if ( empty( $pods_roles ) && ! is_array( $pods_roles ) ) {
-		$pods_roles = @unserialize( get_option( 'pods_roles' ) );
+		$pods_roles = pods_maybe_safely_unserialize( get_option( 'pods_roles' ) );
 
 		if ( ! is_array( $pods_roles ) ) {
 			$pods_roles = array();

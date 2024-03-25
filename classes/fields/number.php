@@ -193,10 +193,7 @@ class PodsField_Number extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		$value = $this->format( $value, $name, $options, $pod, $id );
-
-		return $value;
+		return $this->format( $value, $name, $options, $pod, $id );
 	}
 
 	/**

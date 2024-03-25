@@ -315,9 +315,7 @@ class Collection extends Storage {
 			pods_static_cache_set( $cache_key, $objects, self::class . '/find_objects' );
 		}
 
-		$names = wp_list_pluck( $objects, 'name' );
-
-		return array_combine( $names, $objects );
+		return pods_objects_keyed_by_name( $objects );
 	}
 
 	/**

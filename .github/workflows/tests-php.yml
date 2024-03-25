@@ -97,7 +97,7 @@ jobs:
       - name: Set up pods
         run: |
           docker network prune -f
-          ${SLIC_BIN} use pods
+          ${SLIC_BIN} use ${GITHUB_REPOSITORY#*/}
           ${SLIC_BIN} composer set-version 2
           ${SLIC_BIN} composer install
       # ------------------------------------------------------------------------------

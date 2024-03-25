@@ -288,9 +288,7 @@ class PodsField {
 	 * @since 2.0.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-
+		return $this->maybe_sanitize_output( $value, $options );
 	}
 
 	/**
@@ -458,10 +456,24 @@ class PodsField {
 		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
-		$default_value = '';
+		$field_value = isset( $args->value ) ? $args->value : null;
 
-		if ( 'multi' === pods_v( $args->type . '_format_type' ) ) {
-			$default_value = [];
+		if ( empty( $field_value ) ) {
+			$default_value = '';
+
+			$is_multi = 'multi' === pods_v( $args->type . '_format_type', 'single' );
+
+			if ( $is_multi ) {
+				$default_value = [];
+			}
+
+			if ( null === $field_value || 1 === (int) pods_v( 'default_empty_fields', $options, 0 ) ) {
+				$field_value = PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id );
+
+				if ( $is_multi ) {
+					$field_value = explode( ',', $field_value );
+				}
+			}
 		}
 
 		// Build DFV field data.
@@ -476,7 +488,7 @@ class PodsField {
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id ),
+			'fieldValue'    => $field_value,
 		];
 
 		/**
@@ -920,11 +932,47 @@ class PodsField {
 					}
 				}
 
-				return $value;
+				return $this->maybe_sanitize_output( $value, $options );
 			}
 		}
 
-		return strip_tags( $value );
+		return wp_strip_all_tags( $value );
+	}
+
+	/**
+	 * Determine whether the field value needs to be sanitized and sanitize it.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param mixed            $value   The field value.
+	 * @param null|array|Field $options The field options.
+	 *
+	 * @return mixed The sanitized field value if it needs to be sanitized.
+	 */
+	public function maybe_sanitize_output( $value, $options = null ) {
+		// Maybe check for a sanitize output option.
+		$should_sanitize = null === $options || 1 === (int) pods_v( static::$type . '_sanitize_html', $options, 0 );
+
+		/**
+		 * Allow filtering whether to sanitize the field value before output.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool             $should_sanitize Whether the field value should be sanitized.
+		 * @param mixed            $value           The field value.
+		 * @param null|array|Field $options         The field options.
+		 */
+		$should_sanitize = apply_filters( 'pods_field_maybe_sanitize_output', $should_sanitize, $value, $options );
+
+		if ( $should_sanitize ) {
+			if ( is_string( $value ) ) {
+				$value = wp_kses_post( $value );
+			} elseif ( is_array( $value ) || is_object( $value ) ) {
+				$value = wp_kses_post_deep( $value );
+			}
+		}
+
+		return $value;
 	}
 
 	/**

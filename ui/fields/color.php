@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 wp_enqueue_style( 'wp-color-picker' );
 
 if ( ! is_admin() ) {

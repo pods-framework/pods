@@ -12,7 +12,6 @@
 [![WordPress Plugin Tested WP Version](https://img.shields.io/wordpress/plugin/tested/pods)](https://wordpress.org/plugins/pods/)
 
 [![Project Stats](https://www.openhub.net/p/pods-framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
-[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 

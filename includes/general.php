@@ -3383,6 +3383,8 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 		$object_collection->register_object( $field );
 	}
 
+	pods_static_cache_clear( 'get_blocks', \Pods\Blocks\API::class );
+
 	return true;
 }
 

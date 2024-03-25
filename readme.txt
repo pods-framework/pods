@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 3.1.4
+Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,6 +96,7 @@ You can enable some of our included components to extend your WordPress site eve
 
 = Plugins that integrate with Pods =
 
+* [Advanced Views Lite](https://pods.io/advanced-views-lite/) - Lets you build templates (views) and queries (cards) so that you can manage your content rendering with less code.
 * [Bricks Builder](https://bricksbuilder.io/)
 * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using premium [Admin Columns Pro](https://www.admincolumns.com/pods/) Pods integration
 * [Conductor](https://conductorplugin.com/)
@@ -113,7 +114,7 @@ You can enable some of our included components to extend your WordPress site eve
 = Extend Pods with Free Add-Ons =
 
 * [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/) - Integrates Pods with [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/)
-* [Pods Gravity Forms Add-On](https://wordpress.org/plugins/pods-gravity-forms/) - Integrates Pods with [Gravity Forms](https://www.gravityforms.com/)
+* [Pods Gravity Forms Add-On](https://wordpress.org/plugins/pods-gravity-forms/) - Integrates Pods with [Gravity Forms](https://pods.io/gravityforms/)
 * [Pods Alternative Cache Add-On](https://wordpress.org/plugins/pods-alternative-cache/) - Speed up Pods on servers with limited object caching capabilities
 * [Pods SEO Add-On](https://wordpress.org/plugins/pods-seo/) - Integrates Pods Advanced Content Types with Yoast SEO
 * [Pods AJAX Views Add-On](https://wordpress.org/plugins/pods-ajax-views/) - Adds new functions you can use to output template parts that load via AJAX after other page elements
@@ -180,6 +181,36 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.2.0 - March 25th, 2024 =
+
+* Feature: New support for Custom Field revisions in Pods that are Post Types that use Meta storage. You can optionally enable the feature per-pod or per-field. #7265 (@sc0ttkclark)
+* Feature: New support for WordPress `register_meta()` for all Pods fields on meta-based Pods. You can enable this feature in Pods Admin > Settings > "Register meta fields". (@sc0ttkclark)
+* Feature: New support for specifying where your Custom Fields show in REST API responses for Pods that support that. You can choose from Object (response.field_name) or Meta (response.meta.field_name). (@sc0ttkclark) 
+* Feature: New support for Custom Fields in the new [WordPress 6.5 Block Bindings API](https://make.wordpress.org/core/2024/03/06/new-feature-the-block-bindings-api/) for the `core/post-meta` source. To use your custom fields there, you will need to enable "Register meta fields" in your Pods Admin > Settings and set your Pod to show it's REST API fields in the "Meta" location instead of Object. (@sc0ttkclark)
+* Feature: New custom binding source support for the [WordPress 6.5 Block Bindings API](https://make.wordpress.org/core/2024/03/06/new-feature-the-block-bindings-api/). Specify your source as `pods/bindings-field` and then just pass the same arguments you would pass for a normal `[pods]` shortcode or block. This will bind that dynamic output to the block you are working with. (@sc0ttkclark)   
+* Feature: Now you can specify whether to default values for a Pods field when the field is empty. This works great for when you add a new field to a Pod and you want to edit an existing item that did not have a field value set. The default value will be used in that circumstance. (@sc0ttkclark)
+* Feature: Support for multiple default values when working with a multi-select field. Now you can just separate your values with a comma and they will be set as the default values. (@sc0ttkclark)
+* Feature: Now you can specify whether to evaluate magic tags for default values like `{@user.ID}`. (@sc0ttkclark)
+* Tweak: New option for Pods shortcodes when used in plugins like Elementor to bypass detecting the loop and to just use whatever ID/post type is available. Use the `bypass_detect_loop="1"` attribute. #7269 (@sc0ttkclark)
+* Tweak: Added first used and last installed Pods versions to the Site Health information to be more helpful with debugging. (@sc0ttkclark)
+* Tweak: Improved the field label/description for Additional User Capabilities field in the CPT settings. (@sc0ttkclark)
+* Fixed: Resolved an annoying issue when adding a new group or field where it would reset the Pod label to the name (slug) of the pod. (@sc0ttkclark)
+* Fixed: Updated logic for default value handling when using magic tags for internal field configs to ensure the magic tags get evaluated. (@sc0ttkclark) 
+* Fixed: Resolve issue with `pods_register_block_type()` not clearing the known blocks cache when registering them. #7167 (@sc0ttkclark)
+* Fixed: PHP fatal errors resolved with `array_combine()` usage from changes in WP 6.5. #7266 (@sc0ttkclark)
+* Fixed: Custom capability fallbacks when the option is empty now properly fallback to the default capability using that post type name. #7250 (@JoryHogeveen)
+* Fixed: PHP deprecated notice with `trim()`. (@sc0ttkclark)
+* Fixed: Resolved plupload browse button references to prevent JS console errors. (@sc0ttkclark)
+* Fixed: Resolved issue with `window.wpEditorL10n` calls to more safely check for it to prevent JS console errors. (@sc0ttkclark)
+* Fixed: Updated the implementation of the compatibility hooks for `set_transient` and `setted_transient` hooks have the proper args expected sent. (@sc0ttkclark)
+* Fixed: Empty REST API fields no longer show when the pod doesn't support REST API. (@sc0ttkclark)
+* Fixed: Restrict/unrestrict dynamic features logic now properly updates all of the associated Pod settings it needs to in the Access Rights Review screen. (@sc0ttkclark)
+* Fixed: Empty arrays now return correctly in Pod / Group / Field settings instead of using their defaults when empty. (@sc0ttkclark)
+* Fixed: Resolve potential issues with REST API in certain circumstances which would throw exceptions with the Pods REST API Messages object. (@sc0ttkclark)
+* Fixed: Resolve issues when duplicating pods where the new pod name is over the limit and prevents creating the new pod correctly. (@sc0ttkclark)
+* Fixed: Access Rights Review notice now only shows on existing installs updating from pre-3.1 instead of showing on new 3.1+ installs too. (@sc0ttkclark)
+* Fixed: Accessibility issues with tabbing resolved for Pods Admin > Edit Pods table and Pods Admin > Edit Pod fields list table when working with row actions. #7196 #7198 (@heybran, @sc0ttkclark)
 
 = 3.1.4 - February 28th, 2024 =
 

@@ -1535,6 +1535,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	// Query related tags separated to use later.
 	$default_query_tags = array(
 		'use_current'         => false,
+		'bypass_detect_loop'  => false,
 		'name'                => null,
 		'id'                  => null,
 		'slug'                => null,
@@ -1680,7 +1681,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			 * @param bool  $detect_from_current  Whether to detect the pod name / item ID from the current post object.
 			 * @param array $shortcode_attributes The list of attributes used for the shortcode.
 			 */
-			$detect_from_current = apply_filters( 'pods_shortcode_detect_from_current_post', in_the_loop(), $tags );
+			$detect_from_current = apply_filters( 'pods_shortcode_detect_from_current_post', 1 === (int) $tags['bypass_detect_loop'] || in_the_loop(), $tags );
 
 			// Archives, Post type archives, singular posts.
 			if ( $detect_from_current ) {
@@ -3381,6 +3382,8 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 
 		$object_collection->register_object( $field );
 	}
+
+	pods_static_cache_clear( 'get_blocks', \Pods\Blocks\API::class );
 
 	return true;
 }

@@ -271,6 +271,28 @@ class Settings {
 			'site_health_include_in_info' => true,
 		];
 
+		$fields['register_meta_integration'] = [
+			'name'               => 'register_meta_integration',
+			'label'              => __( 'Register meta fields', 'pods' ),
+			'help'               => [
+				__( 'If you register meta fields within WordPress using the register_meta() API then WordPress and other plugins can be aware of the details of that specific field configuration.', 'pods' ),
+				'https://developer.wordpress.org/reference/functions/register_meta/',
+			],
+			'type'               => 'pick',
+			'default'            => '0',
+			'pick_format_type'   => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'1' => __( 'Enable registering meta fields through the WP Meta API (may reduce performance on sites with many Pods and fields)', 'pods' ),
+				'0' => __( 'Disable registering meta fields through the WP Meta API', 'pods' ),
+			],
+			'site_health_data' => [
+				'1' => __( 'Enable', 'pods' ),
+				'0' => __( 'Disable', 'pods' ),
+			],
+			'site_health_include_in_info' => true,
+		];
+
 		$fields['media_modal_fields'] = [
 			'name'               => 'media_modal_fields',
 			'label'              => __( 'Show Pods fields in Media Library modals', 'pods' ),

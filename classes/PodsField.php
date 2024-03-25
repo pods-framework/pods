@@ -456,10 +456,24 @@ class PodsField {
 		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
-		$default_value = '';
+		$field_value = isset( $args->value ) ? $args->value : null;
 
-		if ( 'multi' === pods_v( $args->type . '_format_type' ) ) {
-			$default_value = [];
+		if ( empty( $field_value ) ) {
+			$default_value = '';
+
+			$is_multi = 'multi' === pods_v( $args->type . '_format_type', 'single' );
+
+			if ( $is_multi ) {
+				$default_value = [];
+			}
+
+			if ( null === $field_value || 1 === (int) pods_v( 'default_empty_fields', $options, 0 ) ) {
+				$field_value = PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id );
+
+				if ( $is_multi ) {
+					$field_value = explode( ',', $field_value );
+				}
+			}
 		}
 
 		// Build DFV field data.
@@ -474,7 +488,7 @@ class PodsField {
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id ),
+			'fieldValue'    => $field_value,
 		];
 
 		/**

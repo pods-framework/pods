@@ -19,7 +19,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 	initialize() {
 		// Set the browse button argument for plupload... it's required
-		this.fieldConfig.plupload_init.browse_button = this.browseButton;
+		this.fieldConfig.plupload_init.browse_button = this.browseButton[0];
 
 		this.plupload = new plupload.Uploader( this.fieldConfig.plupload_init );
 		this.plupload.init();
@@ -61,10 +61,10 @@ export const Plupload = PodsFileUploader.extend( {
 					files = [];
 				}
 
-				const plupload = this.plupload;
+				const pluploadInstance = this.plupload;
 
 				filesToRemove.forEach( function( file ) {
-					plupload.removeFile( file );
+					pluploadInstance.removeFile( file );
 				} );
 			}
 		}

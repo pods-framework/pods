@@ -2,6 +2,7 @@
 
 namespace Pods\Admin\Config;
 
+use Pods\WP\Meta;
 use PodsForm;
 
 /**
@@ -322,7 +323,8 @@ class Field extends Base {
 			'default_value'           => [
 				'name'            => 'default_value',
 				'label'           => __( 'Default Value', 'pods' ),
-				'help'            => __( 'This is the default value used when the Add New form is used.', 'pods' ),
+				'help'            => __( 'This is the default value used when the Add New form is used. For multiple-value fields, you can separate multiple default values with commas.', 'pods' ),
+				'description'     => __( 'This value is only used on Add New forms', 'pods' ),
 				'type'            => 'text',
 				'default'         => '',
 				'text_max_length' => - 1,
@@ -337,6 +339,28 @@ class Field extends Base {
 				'type'        => 'text',
 				'default'     => '',
 				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
+			],
+			'default_evaluate_tags'    => [
+				'name'              => 'default_evaluate_tags',
+				'label'             => __( 'Evaluate tags in default values', 'pods' ),
+				'help'              => __( 'Whether to evaluate tags like {@user.ID} in your default value. This does NOT evaluate tags passed dynamically via Parameter.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => __( 'Evaluate tags like {@user.ID} in the default value', 'pods' ),
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
+			],
+			'default_empty_fields'    => [
+				'name'              => 'default_empty_fields',
+				'label'             => __( 'Default Empty Fields in Forms', 'pods' ),
+				'help'              => __( 'On forms where the field value is empty you can enable Default Empty Fields to override the value with your chosen default value.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => __( 'Use the default value when this field is empty', 'pods' ),
+				'excludes-on'       => [
 					'type' => $layout_non_input_field_types,
 				],
 			],
@@ -417,7 +441,7 @@ class Field extends Base {
 			'roles_allowed'           => [
 				'name'             => 'roles_allowed',
 				'label'            => __( 'Role(s) Allowed', 'pods' ),
-				'help'             => __( 'help', 'pods' ),
+				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
 				'type'             => 'pick',
 				'pick_object'      => 'role',
 				'pick_format_type' => 'multi',
@@ -425,7 +449,6 @@ class Field extends Base {
 				'depends-on'       => [
 					'restrict_role' => true,
 				],
-				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 			'capability_allowed'      => [
 				'name'       => 'capability_allowed',
@@ -436,9 +459,31 @@ class Field extends Base {
 				'depends-on' => [
 					'restrict_capability' => true,
 				],
-				'help'       => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 		];
+
+		if ( 'post_type' === $pod->get_type() && 'meta' === $pod->get_storage() ) {
+			$options['advanced']['other_options'] = [
+				'name'       => 'other_options',
+				'label'      => __( 'Other Options', 'pods' ),
+				'type'       => 'heading',
+				'depends-on' => [
+					'type' => PodsForm::revisionable_field_types(),
+				],
+			];
+
+			$options['advanced']['revisions_revision_field'] = [
+				'name'              => 'revisions_revision_field',
+				'label'             => __( 'Track field value changes in revisions', 'pods' ),
+				'help'              => __( 'Revisions allow comparing and restoring previous saved changes. This setting requires revisions to be enabled on the pod. Revisions for meta as of WordPress 6.5 does not have additional UI to show the custom field value differences in the Revisions UI but upon restoring a revision those covered meta field values will be restored too while leaving non-covered meta field values in place.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => __( 'Track field value changes for this field.', 'pods' ),
+				'depends-on'        => [
+					'type' => PodsForm::revisionable_field_types(),
+				],
+			];
+		}
 
 		$options['conditional-logic'] = [
 			'enable_conditional_logic' => [

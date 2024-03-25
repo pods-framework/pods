@@ -604,8 +604,8 @@ class PodsView {
 			self::add_cached_key( $cache_mode, $key, $group, $original_key );
 
 			if ( $result ) {
-				do_action( "set_transient_{$key}" );
-				do_action( 'setted_transient', $key );
+				do_action( "set_transient_{$key}", $value, $expires );
+				do_action( 'setted_transient', $key, $value, $expires );
 			}
 		} elseif ( 'static-cache' === $cache_mode ) {
 			$static_cache = pods_container( Static_Cache::class );

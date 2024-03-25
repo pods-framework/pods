@@ -1234,10 +1234,10 @@ class PodsInit {
 					$cpt_rewrite['slug'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $cpt_rewrite['slug'] );
 				}
 
-				$capability_type = pods_v( 'capability_type', $post_type, 'post' );
+				$capability_type = pods_v( 'capability_type', $post_type, 'post', true );
 
 				if ( 'custom' === $capability_type ) {
-					$capability_type = pods_v( 'capability_type_custom', $post_type, 'post' );
+					$capability_type = pods_v( 'capability_type_custom', $post_type, pods_v( 'name', $post_type, 'post', true ), true );
 				}
 
 				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );

@@ -899,9 +899,10 @@ class PodsAPI {
 					'pick_data_storage' => 'object',
 					'pick_output'       => 'ids',
 					'options'           => [
-						'pick_format_type'   => 'single',
-						'pick_format_single' => 'autocomplete',
-						'default_value'      => '{@user.ID}',
+						'pick_format_type'      => 'single',
+						'pick_format_single'    => 'autocomplete',
+						'default_value'         => '{@user.ID}',
+						'default_evaluate_tags' => 1,
 					],
 				],
 				'post_date'             => [
@@ -2127,13 +2128,14 @@ class PodsAPI {
 							'datetime_time_format' => 'h_mm_ss_A',
 						],
 						'author'    => [
-							'name'               => 'author',
-							'label'              => 'Author',
-							'type'               => 'pick',
-							'pick_object'        => 'user',
-							'pick_format_type'   => 'single',
-							'pick_format_single' => 'autocomplete',
-							'default_value'      => '{@user.ID}',
+							'name'                  => 'author',
+							'label'                 => 'Author',
+							'type'                  => 'pick',
+							'pick_object'           => 'user',
+							'pick_format_type'      => 'single',
+							'pick_format_single'    => 'autocomplete',
+							'default_value'         => '{@user.ID}',
+							'default_evaluate_tags' => 1,
 						],
 						'permalink' => [
 							'name'        => 'permalink',
@@ -5005,7 +5007,13 @@ class PodsAPI {
 					|| 'save' === $params->from
 					|| true === pods_permission( $fields[ $field ] )
 				) {
-					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+					$field_options = $field_data;
+
+					if ( is_array( $field_options ) ) {
+						$field_options = pods_v( 'options', $field_options, $field_options, true );
+					}
+
+					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$fields[ $field ]['value'] = $value;
@@ -5026,7 +5034,13 @@ class PodsAPI {
 						continue;
 					}
 
-					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+					$field_options = $field_data;
+
+					if ( is_array( $field_options ) ) {
+						$field_options = pods_v( 'options', $field_options, $field_options, true );
+					}
+
+					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$object_fields[ $field ]['value'] = $value;
@@ -5106,7 +5120,13 @@ class PodsAPI {
 					continue;
 				}
 
-				$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
+				$field_options = $field_data;
+
+				if ( is_array( $field_options ) ) {
+					$field_options = pods_v( 'options', $field_options, $field_options, true );
+				}
+
+				$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, $field_options, $pod, $params->id );
 
 				if ( null !== $value && '' !== $value && false !== $value ) {
 					$fields[ $field ]['value'] = $value;
@@ -6510,7 +6530,17 @@ class PodsAPI {
 		while ( $this->load_pod( array( 'name' => $check_name ), false ) ) {
 			$try ++;
 
-			$check_name = $pod['name'] . $try;
+			$check_name_limited = $pod['name'];
+
+			if ( 'post_type' === $pod['type'] ) {
+				// Max length for post types are 20 characters, so let's limit it to that minus the strlen of $try.
+				$check_name_limited = substr( $$check_name_limited, 0, 20 - strlen( (string) $try ) );
+			} elseif ( 'taxonomy' === $pod['type'] ) {
+				// Max length for taxonomies are 32 characters, so let's limit it to that minus the strlen of $try.
+				$check_name_limited = substr( $$check_name_limited, 0, 32 - strlen( (string) $try ) );
+			}
+
+			$check_name = $check_name_limited . $try;
 			$new_label  = $pod['label'] . $try;
 		}
 

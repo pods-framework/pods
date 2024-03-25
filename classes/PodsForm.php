@@ -1964,6 +1964,53 @@ class PodsForm {
 	}
 
 	/**
+	 * Get the list of revisionable field types.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return array The list of revisionable field types.
+	 */
+	public static function revisionable_field_types(): array {
+		$revisionable_field_types = pods_static_cache_get( __FUNCTION__, __CLASS__ );
+
+		if ( ! is_array( $revisionable_field_types ) ) {
+			$revisionable_field_types = [];
+		}
+
+		if ( $revisionable_field_types ) {
+			return $revisionable_field_types;
+		}
+
+		$field_types           = static::field_types_list();
+		$tableless_field_types = static::tableless_field_types();
+		$layout_field_types    = static::layout_field_types();
+
+		foreach ( $field_types as $field_type ) {
+			if (
+				in_array( $field_type, $tableless_field_types, true )
+				|| in_array( $field_type, $layout_field_types, true )
+			) {
+				continue;
+			}
+
+			$revisionable_field_types[] = $field_type;
+		}
+
+		/**
+		 * Allow filtering of the list of field types that can be revisioned.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $revisionable_field_types The listof field types that can be revisioned.
+		 */
+		$revisionable_field_types = apply_filters( 'pods_form_revisionable_field_types', $revisionable_field_types );
+
+		pods_static_cache_set( __FUNCTION__, $revisionable_field_types, __CLASS__ );
+
+		return $revisionable_field_types;
+	}
+
+	/**
 	 * Get the list of simple tableless objects.
 	 *
 	 * @since 2.3.0

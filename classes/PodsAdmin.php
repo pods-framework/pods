@@ -1651,6 +1651,8 @@ class PodsAdmin {
 				$dynamic_features_allow_label .= ' - ' . ( $is_public ? $dynamic_features_allow_options['1'] : $dynamic_features_allow_options['0'] );
 			}
 
+			$restrict_dynamic_features = (int) $pod->get_arg( 'restrict_dynamic_features', '1' );
+
 			$pod_row = [
 				'id'                          => $pod['id'],
 				'label'                       => $pod['label'],
@@ -1666,11 +1668,19 @@ class PodsAdmin {
 				'real_public'                 => $is_public ? 1 : 0,
 				'dynamic_features_allow'      => $dynamic_features_allow_label,
 				'real_dynamic_features_allow' => $dynamic_features_allow,
-				'restricted_dynamic_features' => (array) $pod->get_arg( 'restricted_dynamic_features', [
+				'restricted_dynamic_features' => $pod->get_arg( 'restricted_dynamic_features' ),
+			];
+
+			if ( 0 === $restrict_dynamic_features ) {
+				$pod_row['restricted_dynamic_features'] = [];
+			}
+
+			if ( ! is_array( $pod_row['restricted_dynamic_features'] ) ) {
+				$pod_row['restricted_dynamic_features'] = [
 					'display',
 					'form',
-				] ),
-			];
+				];
+			}
 
 			if ( $pod->is_extended() ) {
 				$extended_help_text = pods_help(
@@ -2009,7 +2019,7 @@ class PodsAdmin {
 				'access_rights'     => (
 					PodsInit::$version_last
 					&& version_compare( PodsInit::$version_last, '3.1.0-a-1', '<' )
-				) ? 1 : 0,
+				) ? 0 : 1,
 			];
 
 			update_option( 'pods_callouts', $callouts );
@@ -2980,6 +2990,7 @@ class PodsAdmin {
 
 		pods_api()->save_pod( [
 			'id'                          => $id,
+			'restrict_dynamic_features'   => '1',
 			'restricted_dynamic_features' => [
 				'display',
 				'form',
@@ -2988,12 +2999,7 @@ class PodsAdmin {
 
 		foreach ( $obj->data as $key => $data_pod ) {
 			if ( (int) $id === (int) $data_pod['id'] ) {
-				$obj->data[ $key ]['restricted_dynamic_features'] = array_map(
-					static function ( $label ) {
-						return '🔒 ' . $label;
-					},
-					pods_access_get_restricted_dynamic_features_options()
-				);
+				$obj->data[ $key ]['restricted_dynamic_features'] = pods_access_get_restricted_dynamic_features_options();
 
 				$obj->data[ $key ]['real_restricted_dynamic_features'] = 'restricted';
 			}
@@ -3058,6 +3064,7 @@ class PodsAdmin {
 
 		pods_api()->save_pod( [
 			'id'                          => $id,
+			'restrict_dynamic_features'   => '0',
 			'restricted_dynamic_features' => [],
 		] );
 
@@ -4351,7 +4358,7 @@ class PodsAdmin {
 	 * @since 0.1.0
 	 *
 	 * @param array $options Tab options.
-	 * @param array $pod     Pod options.
+	 * @param Pod   $pod     Pod options.
 	 *
 	 * @return array
 	 */
@@ -4402,7 +4409,7 @@ class PodsAdmin {
 				'label'             => __( 'Field Mode', 'pods' ),
 				'help'              => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
 				'type'              => 'pick',
-				'pick_format_single' => 'dropdown',
+				'pick_format_single' => 'radio',
 				'default'           => 'value',
 				'depends-on'        => [ 'rest_enable' => true ],
 				'data'       => [
@@ -4411,7 +4418,28 @@ class PodsAdmin {
 					'value_and_render' => __( 'Both raw and rendered values {value: raw_value, rendered: rendered_value}', 'pods' ),
 				],
 			],
+			'rest_api_field_location'   => [
+				'label'              => __( 'Field Location', 'pods' ),
+				'help'               => __( 'Specify where you would like your values returned in the REST API responses. To show in the "meta" object of the response, you must have Custom Fields enabled in the Post Type Supports features.', 'pods' ),
+				'type'               => 'pick',
+				'pick_format_single' => 'radio',
+				'default'            => 'object',
+				'depends-on'         => [ 'rest_enable' => true ],
+				'data'               => [
+					'object' => __( 'Show as a custom object field (response.field_name)', 'pods' ),
+					'meta'   => __( 'Include in the meta object (response.meta.field_name)', 'pods' ),
+				],
+			],
 		];
+
+		if ( ! $pod->is_extended() ) {
+			unset( $options['rest_base'] );
+			unset( $options['rest_namespace'] );
+		}
+
+		if ( 'post_type' !== $pod->get_type() ) {
+			unset( $options['rest_api_field_location'] );
+		}
 
 		return $options;
 	}
@@ -4433,8 +4461,13 @@ class PodsAdmin {
 
 		$layout_non_input_field_types = PodsForm::layout_field_types() + PodsForm::non_input_field_types();
 
-		$options['rest'][ __( 'Read/Write', 'pods' ) ] = [
-			'rest_read'  => [
+		$options['rest'] = [
+			'rest_read_write'    => [
+				'name'  => 'rest_read_write',
+				'type'  => 'heading',
+				'label' => __( 'Read/Write', 'pods' ),
+			],
+			'rest_read'          => [
 				'label'       => __( 'Read via REST API', 'pods' ),
 				'help'        => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 				'type'        => 'boolean',
@@ -4443,7 +4476,7 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
-			'rest_write' => [
+			'rest_write'         => [
 				'label'       => __( 'Write via REST API', 'pods' ),
 				'help'        => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 				'type'        => 'boolean',
@@ -4452,9 +4485,14 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
-		];
-
-		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
+			'rest_field_options' => [
+				'name'       => 'rest_field_options',
+				'label'      => __( 'Relationship Field Options', 'pods' ),
+				'type'       => 'heading',
+				'depends-on' => [
+					'type' => 'pick',
+				],
+			],
 			'rest_pick_response' => [
 				'label'              => __( 'Response Type', 'pods' ),
 				'help'               => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
@@ -4500,14 +4538,6 @@ class PodsAdmin {
 				],
 				'excludes-on' => [
 					'type' => $layout_non_input_field_types,
-				],
-			],
-			'rest_pick_notice'   => [
-				'label'        => 'Relationship Options',
-				'type'         => 'html',
-				'html_content' => __( 'If you have a relationship field, you will see additional options to customize here.', 'pods' ),
-				'excludes-on'  => [
-					'type' => [ 'pick' ] + $layout_non_input_field_types,
 				],
 			],
 		];
@@ -4569,9 +4599,17 @@ class PodsAdmin {
 			'label'       => 'Pods',
 			'description' => __( 'Debug information for Pods installations.', 'pods' ),
 			'fields'      => [
-				'pods-version'               => [
+				'pods-version'                       => [
 					'label' => __( 'Pods Version', 'pods' ),
 					'value' => PODS_VERSION,
+				],
+				'pods-first-version'                 => [
+					'label' => __( 'Pods Version (First installed)', 'pods' ),
+					'value' => get_option( 'pods_framework_version_first', PODS_VERSION ),
+				],
+				'pods-last-version'                  => [
+					'label' => __( 'Pods Version (Last updated from)', 'pods' ),
+					'value' => get_option( 'pods_framework_version_last', PODS_VERSION ),
 				],
 				'pods-server-software'               => [
 					'label' => __( 'Server Software', 'pods' ),
@@ -4661,7 +4699,7 @@ class PodsAdmin {
 					'label' => __( 'Pods Relationship Table Enabled', 'pods' ),
 					'value' => ( pods_podsrel_enabled() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
-				'pods-relationship-table-status'              => [
+				'pods-relationship-table-status'     => [
 					'label' => __( 'Pods Relationship Table Count' ),
 					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
 				],

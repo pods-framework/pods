@@ -864,7 +864,18 @@ function pods_access_bypass_private_post( array $args ): bool {
 	$bypass_private_post = false;
 
 	if ( ! is_post_publicly_viewable( $post ) ) {
-		$bypass_private_post = ! pods_current_user_can_access_object( $info, 'read' );
+		$can_use_unrestricted = false;
+
+		// Check Pod dynamic features if the status is public.
+		if ( is_post_status_viewable( $post->post_status ) ) {
+			$can_use_unrestricted = pods_can_use_dynamic_feature_unrestricted( $info, 'display', 'read' );
+		}
+
+		if ( $can_use_unrestricted ) {
+			$bypass_private_post = false;
+		} else {
+			$bypass_private_post = ! pods_current_user_can_access_object( $info, 'read' );
+		}
 	}
 
 	/**

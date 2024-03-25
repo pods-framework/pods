@@ -206,9 +206,9 @@ class API {
 	 * @return array List of registered blocks.
 	 */
 	public function get_blocks() {
-		static $blocks = [];
+		$blocks = pods_static_cache_get( __FUNCTION__, __CLASS__ );
 
-		if ( ! empty( $blocks ) ) {
+		if ( ! empty( $blocks ) && is_array( $blocks ) ) {
 			return $blocks;
 		}
 
@@ -239,6 +239,8 @@ class API {
 		$blocks = array_map( static function ( $block ) {
 			return $block->get_block_args();
 		}, $blocks );
+
+		pods_static_cache_set( __FUNCTION__, $blocks, __CLASS__ );
 
 		return $blocks;
 	}

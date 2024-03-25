@@ -3890,70 +3890,6 @@ class PodsUI {
 					?>
 				</tr>
 				</thead>
-				<?php
-				if ( 6 < $this->total_found ) {
-					?>
-					<tfoot>
-					<tr>
-						<?php
-						if ( ! empty( $this->actions_bulk ) ) {
-							?>
-							<th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
-							<?php
-						}
-
-						if ( ! empty( $fields ) ) {
-							foreach ( $fields as $field => $attributes ) {
-								$dir = 'ASC';
-								if ( $field == $this->orderby ) {
-									$current_sort = 'desc';
-									if ( 'ASC' === $this->orderby_dir ) {
-										$dir          = 'DESC';
-										$current_sort = 'asc';
-									}
-								}
-
-								$width = '';
-
-								if ( isset( $attributes['width'] ) && ! empty( $attributes['width'] ) ) {
-									$width = ' style="width: ' . esc_attr( $attributes['width'] ) . '"';
-								}
-
-								if ( $this->is_field_sortable( $attributes ) ) {
-									?>
-									<th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?> sortable <?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>>
-										<a href="
-										<?php
-										echo esc_url_raw(
-											pods_query_arg(
-												array(
-													$this->num_prefix . 'orderby' . $this->num     => $field,
-													$this->num_prefix . 'orderby_dir' . $this->num => $dir,
-												), array(
-													$this->num_prefix . 'limit' . $this->num,
-													$this->num_prefix . 'search' . $this->num,
-													$this->num_prefix . 'pg' . $this->num,
-													'page',
-												), $this->exclusion()
-											)
-										);
-										?>
-										"><span><?php esc_html_e( $attributes['label'] ); ?></span><span class="sorting-indicator"></span></a>
-									</th>
-									<?php
-								} else {
-									?>
-									<th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?>"<?php echo $width; ?>><?php esc_html_e( $attributes['label'] ); ?></th>
-									<?php
-								}//end if
-							}//end foreach
-						}//end if
-						?>
-					</tr>
-					</tfoot>
-					<?php
-				}//end if
-				?>
 				<tbody id="the-list"<?php echo ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] ) ? ' class="reorderable"' : ''; ?>>
 				<?php
 				if ( ! empty( $this->data ) && is_array( $this->data ) ) {
@@ -4370,6 +4306,70 @@ class PodsUI {
 				}//end if
 				?>
 				</tbody>
+				<?php
+				if ( 6 < $this->total_found ) {
+					?>
+					<tfoot>
+					<tr>
+						<?php
+						if ( ! empty( $this->actions_bulk ) ) {
+							?>
+							<th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
+							<?php
+						}
+
+						if ( ! empty( $fields ) ) {
+							foreach ( $fields as $field => $attributes ) {
+								$dir = 'ASC';
+								if ( $field == $this->orderby ) {
+									$current_sort = 'desc';
+									if ( 'ASC' === $this->orderby_dir ) {
+										$dir          = 'DESC';
+										$current_sort = 'asc';
+									}
+								}
+
+								$width = '';
+
+								if ( isset( $attributes['width'] ) && ! empty( $attributes['width'] ) ) {
+									$width = ' style="width: ' . esc_attr( $attributes['width'] ) . '"';
+								}
+
+								if ( $this->is_field_sortable( $attributes ) ) {
+									?>
+									<th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?> sortable <?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>>
+										<a href="
+										<?php
+										echo esc_url_raw(
+											pods_query_arg(
+												array(
+													$this->num_prefix . 'orderby' . $this->num     => $field,
+													$this->num_prefix . 'orderby_dir' . $this->num => $dir,
+												), array(
+												$this->num_prefix . 'limit' . $this->num,
+												$this->num_prefix . 'search' . $this->num,
+												$this->num_prefix . 'pg' . $this->num,
+												'page',
+											), $this->exclusion()
+											)
+										);
+										?>
+										"><span><?php esc_html_e( $attributes['label'] ); ?></span><span class="sorting-indicator"></span></a>
+									</th>
+									<?php
+								} else {
+									?>
+									<th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?>"<?php echo $width; ?>><?php esc_html_e( $attributes['label'] ); ?></th>
+									<?php
+								}//end if
+							}//end foreach
+						}//end if
+						?>
+					</tr>
+					</tfoot>
+					<?php
+				}//end if
+				?>
 			</table>
 			<?php
 			if ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] ) {

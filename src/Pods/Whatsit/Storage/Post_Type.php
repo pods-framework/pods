@@ -730,7 +730,7 @@ class Post_Type extends Collection {
 			}
 
 			// Skip empties.
-			if ( in_array( $meta_value, [ '', [] ], true ) ) {
+			if ( in_array( $meta_value, [ '', null ], true ) ) {
 				continue;
 			}
 

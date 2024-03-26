@@ -1703,11 +1703,11 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$item = array(
-			'id'        => html_entity_decode( esc_html( $item_id ) ),
-			'icon'      => esc_attr( $icon ),
-			'name'      => wp_strip_all_tags( html_entity_decode( $item_title ) ),
-			'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
-			'link'      => html_entity_decode( esc_url( $link ) ),
+			'id'        => null !== $item_id ? html_entity_decode( esc_html( $item_id ) ) : '',
+			'icon'      => null !== $icon ? esc_attr( $icon ) : '',
+			'name'      => null !== $item_title ? wp_strip_all_tags( html_entity_decode( $item_title ) ) : '',
+			'edit_link' => null !== $edit_link ? html_entity_decode( esc_url( $edit_link ) ) : '',
+			'link'      => null !== $link ? html_entity_decode( esc_url( $link ) ) : '',
 			'selected'  => $selected,
 		);
 

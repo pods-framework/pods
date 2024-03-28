@@ -118,7 +118,7 @@
     "react-datetime": "^3.1.1",
     "react-quill": "^2.0.0-beta.4",
     "react-select": "^5.4.0",
-    "sanitize-html": "^2.7.0",
+    "sanitize-html": "^2.12.1",
     "uuid": "^8.3.2",
     "wporg-replace-helper": "^1.0.0"
   }

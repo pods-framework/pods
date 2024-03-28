@@ -3292,6 +3292,15 @@ class PodsUI {
 						foreach ( $filters as $filter ) {
 							$value = pods_v( 'filter_' . $filter );
 
+							// Only support the first item of the array.
+							if ( is_array( $value ) ) {
+								if ( empty( $value ) ) {
+									$value = null;
+								} else {
+									$value = current( $value );
+								}
+							}
+
 							if ( isset( $this->pod->fields[ $filter ] ) ) {
 								$filter_field = $this->pod->fields[ $filter ];
 
@@ -3407,6 +3416,12 @@ class PodsUI {
 	public function filters_popup() {
 
 		$filters = $this->filters;
+
+		$pod = null;
+
+		if ( $this->pod ) {
+			$pod = $this->pod;
+		}
 		?>
 		<div id="pods-ui-posts-filter-popup" class="pods-hidden">
 			<form action="" method="get" class="pods-ui-posts-filter-popup">
@@ -3512,7 +3527,7 @@ class PodsUI {
 										'<span',
 										'</span>',
 									),
-									PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field )
+									PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field, $pod )
 								);
 								?>
 
@@ -3528,7 +3543,7 @@ class PodsUI {
 											'<span',
 											'</span>',
 										),
-										PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field )
+										PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field, $pod )
 									);
 									?>
 							</span>
@@ -3544,7 +3559,7 @@ class PodsUI {
 								$filter_field['default_value'] = '';
 
 								$filter_field['pick_format_type']   = 'single';
-								$filter_field['pick_format_single'] = 'dropdown';
+								$filter_field['pick_format_single'] = 'autocomplete';
 								$filter_field['pick_allow_add_new'] = 0;
 
 								$filter_field['input_helper'] = pods_v( 'ui_input_helper', pods_v( $filter, $this->fields['search'] ?: $this->fields['manage'], array(), true ), '', true );
@@ -3571,7 +3586,7 @@ class PodsUI {
 										'<span',
 										'</span>',
 									),
-									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
+									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options, $pod )
 								);
 								?>
 							</span>
@@ -3620,7 +3635,7 @@ class PodsUI {
 										'<span',
 										'</span>',
 									),
-									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
+									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options, $pod )
 								);
 								?>
 							</span>
@@ -3659,7 +3674,7 @@ class PodsUI {
 										'<span',
 										'</span>',
 									),
-									PodsForm::field( 'filter_' . $filter, $value, 'text', $options )
+									PodsForm::field( 'filter_' . $filter, $value, 'text', $options, $pod )
 								);
 								?>
 							</span>

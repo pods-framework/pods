@@ -2017,7 +2017,7 @@ function pods_access_settings_config(): array {
 		'default'            => 'esc_attr,esc_html',
 		'depends-on'         => [
 			'dynamic_features_allow'   => '1',
-			'display_callbacks'        => 'allowed',
+			'display_callbacks'        => 'customized',
 		],
 		'depends-on-multi'     => [
 			'dynamic_features_enabled' => 'display',

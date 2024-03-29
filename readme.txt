@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 3.2.0
+Stable tag: 3.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,6 +181,13 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.2.1 - March 29th, 2024 =
+
+* Performance: The Advanced Filters popup now uses Autocomplete for relationship fields to improve performance for large itemsets. FYI filters are a feature in the Manage Content UI for Advanced Content Types only. (@sc0ttkclark)
+* Fixed: Conditional logic for display callbacks 'allowed' field now showing when choosing the Customized option. (@sc0ttkclark) 
+* Fixed: PHP 8.1 compatibility fix for null values passed to esc_* functions in WP. (@sc0ttkclark)
+* Fixed: PHP 8.1 compatibility fix for html_entity_decode. (@sc0ttkclark)
 
 = 3.2.0 - March 25th, 2024 =
 

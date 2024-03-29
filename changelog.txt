@@ -2,6 +2,13 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.2.1 - March 29th, 2024 =
+
+* Performance: The Advanced Filters popup now uses Autocomplete for relationship fields to improve performance for large itemsets. FYI filters are a feature in the Manage Content UI for Advanced Content Types only. (@sc0ttkclark)
+* Fixed: Conditional logic for display callbacks 'allowed' field now showing when choosing the Customized option. (@sc0ttkclark) 
+* Fixed: PHP 8.1 compatibility fix for null values passed to esc_* functions in WP. (@sc0ttkclark)
+* Fixed: PHP 8.1 compatibility fix for html_entity_decode. (@sc0ttkclark)
+
 = 3.2.0 - March 25th, 2024 =
 
 * Feature: New support for Custom Field revisions in Pods that are Post Types that use Meta storage. You can optionally enable the feature per-pod or per-field. #7265 (@sc0ttkclark)

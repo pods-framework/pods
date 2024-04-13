@@ -38,6 +38,7 @@ $RECYCLE.BIN/
 /vendor/*
 !/vendor/vendor-prefixed/
 npm-debug.log
+pnpm-lock.yaml
 
 # Source maps should just be built locally
 ui/js/pods-ui-ready.min.js.map

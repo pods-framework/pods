@@ -5,7 +5,7 @@
  * @package Pods\Prefixed\lucatume\DI52\Builders
  *
  * @license GPL-3.0
- * Modified by Scott Kingsley Clark on 24-June-2023 using Strauss.
+ * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -210,7 +210,7 @@ class Parameter
         }
 
         try {
-            if (function_exists('enum_exists') && enum_exists($this->type)) {
+            if (function_exists('enum_exists') && enum_exists((string) $this->type)) {
                 return false;
             }
         } catch (ParseError $e) {

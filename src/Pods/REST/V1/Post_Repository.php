@@ -31,7 +31,7 @@ class Post_Repository {
 	 *
 	 * @param Messages_Interface|null $messages The messages object.
 	 */
-	public function __construct( Messages_Interface $messages = null ) {
+	public function __construct( ?Messages_Interface $messages = null ) {
 		$this->types_get_map = [
 			'_pods_pod'   => [ $this, 'get_pod_data' ],
 			'_pods_group' => [ $this, 'get_group_data' ],

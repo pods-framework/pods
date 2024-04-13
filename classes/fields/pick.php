@@ -1703,11 +1703,11 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$item = array(
-			'id'        => html_entity_decode( esc_html( $item_id ) ),
-			'icon'      => esc_attr( $icon ),
-			'name'      => wp_strip_all_tags( html_entity_decode( $item_title ) ),
-			'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
-			'link'      => html_entity_decode( esc_url( $link ) ),
+			'id'        => null !== $item_id ? html_entity_decode( esc_html( $item_id ), ENT_COMPAT ) : '',
+			'icon'      => null !== $icon ? esc_attr( $icon ) : '',
+			'name'      => null !== $item_title ? wp_strip_all_tags( html_entity_decode( $item_title, ENT_COMPAT ) ) : '',
+			'edit_link' => null !== $edit_link ? html_entity_decode( esc_url( $edit_link ), ENT_COMPAT ) : '',
+			'link'      => null !== $link ? html_entity_decode( esc_url( $link ), ENT_COMPAT ) : '',
 			'selected'  => $selected,
 		);
 
@@ -2731,8 +2731,8 @@ class PodsField_Pick extends PodsField {
 						} else {
 							$display_field = "`t`.`{$display_field_name}`";
 						}
-					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ] ) ) {
-						$display_field_name = $table_info['object_fields'][ $display ];
+					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ]['name'] ) ) {
+						$display_field_name = $table_info['object_fields'][ $display ]['name'];
 
 						$display_field = "`t`.`{$display_field_name}`";
 					}//end if

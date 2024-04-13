@@ -1,13 +1,20 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
- * @var array   $fields
- * @var boolean $fields_only
- * @var Pods    $pod
- * @var array   $params
- * @var string  $label
- * @var string  $thank_you
- * @var string  $output_type
+ * @var array       $fields
+ * @var boolean     $fields_only
+ * @var Pods        $pod
+ * @var array       $params
+ * @var string      $label
+ * @var string      $thank_you
+ * @var string      $output_type
+ * @var string|null $form_key
  */
+
 pods_form_enqueue_style( 'pods-form' );
 pods_form_enqueue_script( 'pods' );
 
@@ -110,6 +117,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		<?php echo PodsForm::field( '_pods_id', $id, 'hidden' ); ?>
 		<?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
 		<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
+		<?php echo PodsForm::field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' ); ?>
 		<?php echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' ); ?>
 		<?php endif; ?>
 

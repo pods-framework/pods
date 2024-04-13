@@ -393,9 +393,9 @@ class PodsInit {
 
 		add_filter( 'wisdom_notice_text_' . $plugin_slug, static function() {
 			return
-				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings.', 'pods' )
+				__( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site to make improvements to the plugin and provide better support when you reach out. We won\'t record any sensitive data -- we will only gather information regarding the WordPress environment, your site admin email address, and plugin settings. Tracking is completely optional.', 'pods' )
 				. "\n\n"
-				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists. Tracking is completely optional.', 'pods' );
+				. __( 'Any information collected is not shared with third-parties and you will not be signed up for mailing lists.', 'pods' );
 		} );
 
 		// Handle non-Pods pages, we don't want certain things happening.
@@ -604,13 +604,15 @@ class PodsInit {
 
 		wp_register_script( 'pods-cleditor', PODS_URL . "ui/js/cleditor/jquery.cleditor{$suffix_min}.js", array( 'jquery' ), '1.4.5', true );
 
-		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/codemirror.js', array(), '4.8', true );
-		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/mode/show-hint.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
-		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
+		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/lib/codemirror.js', [], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/hint/show-hint.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', [ 'pods-codemirror' ], '5.65.16', true );
+		wp_register_style( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/lib/codemirror.css', [], '5.65.16' );
+		wp_register_style( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/hint/show-hint.css', [ 'pods-codemirror' ], '5.65.16' );
 
 		// jQuery Timepicker.
 		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
@@ -1232,10 +1234,10 @@ class PodsInit {
 					$cpt_rewrite['slug'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $cpt_rewrite['slug'] );
 				}
 
-				$capability_type = pods_v( 'capability_type', $post_type, 'post' );
+				$capability_type = pods_v( 'capability_type', $post_type, 'post', true );
 
 				if ( 'custom' === $capability_type ) {
-					$capability_type = pods_v( 'capability_type_custom', $post_type, 'post' );
+					$capability_type = pods_v( 'capability_type_custom', $post_type, pods_v( 'name', $post_type, 'post', true ), true );
 				}
 
 				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );
@@ -1463,6 +1465,7 @@ class PodsInit {
 					'labels'                => $ct_labels,
 					'description'           => esc_html( pods_v( 'description', $taxonomy ) ),
 					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
+					'publicly_queryable'    => (boolean) pods_v( 'publicly_queryable', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_ui'               => (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_nav_menus'     => (boolean) pods_v( 'show_in_nav_menus', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
@@ -2610,14 +2613,24 @@ class PodsInit {
 	 * Register widgets for Pods
 	 */
 	public function register_widgets() {
+		$widgets = [];
 
-		$widgets = array(
-			'PodsWidgetSingle',
-			'PodsWidgetList',
-			'PodsWidgetField',
-			'PodsWidgetForm',
-			'PodsWidgetView',
-		);
+		// Maybe register the display widgets.
+		if ( pods_can_use_dynamic_feature( 'display' ) ) {
+			$widgets[] = 'PodsWidgetSingle';
+			$widgets[] = 'PodsWidgetList';
+			$widgets[] = 'PodsWidgetField';
+		}
+
+		// Maybe register the form widget.
+		if ( pods_can_use_dynamic_feature( 'form' ) ) {
+			$widgets[] = 'PodsWidgetForm';
+		}
+
+		// Maybe register the view widget.
+		if ( pods_can_use_dynamic_feature( 'view' ) ) {
+			$widgets[] = 'PodsWidgetView';
+		}
 
 		foreach ( $widgets as $widget ) {
 			if ( ! file_exists( PODS_DIR . 'classes/widgets/' . $widget . '.php' ) ) {

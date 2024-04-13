@@ -128,7 +128,7 @@ class Conditional_Logic {
 			if ( empty( $old_syntax_value ) ) {
 				$old_syntax_value = [];
 			} elseif ( ! is_array( $old_syntax_value ) ) {
-				$old_syntax_value = maybe_unserialize( $old_syntax_value );
+				$old_syntax_value = pods_maybe_safely_unserialize( $old_syntax_value );
 
 				if ( ! is_array( $old_syntax_value ) ) {
 					$old_syntax_value = [];

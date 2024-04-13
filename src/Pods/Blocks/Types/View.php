@@ -139,6 +139,11 @@ class View extends Base {
 	 * @return string The block content to render.
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
+		// If the feature is disabled then return early.
+		if ( ! pods_can_use_dynamic_feature( 'view' ) ) {
+			return '';
+		}
+
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 

@@ -12,7 +12,6 @@
 [![WordPress Plugin Tested WP Version](https://img.shields.io/wordpress/plugin/tested/pods)](https://wordpress.org/plugins/pods/)
 
 [![Project Stats](https://www.openhub.net/p/pods-framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
-[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 
@@ -39,16 +38,16 @@ If you find an issue that you believe to be a *bug*, [let us know](https://githu
 
 ### Recommended
 
-* WordPress 5.2+
-* PHP 7.3+
+* WordPress 6.5+
+* PHP 8.1+
 * MySQL 5.6+ or MariaDB 10.1+
 
 ### Minimum
 
 If you have restrictions on your server or site, these are the minimum versions that Pods will be supported to run on. Running the following minimum versions does bring with it their own risks including security and exposure to additional bugs that may have been resolved by the recommended versions above. 
 
-* WordPress 4.9+
-* PHP 5.6+
+* WordPress 6.0+
+* PHP 7.2+
 * MySQL 5.5+
 
 ## Contributions Welcome

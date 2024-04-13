@@ -102,6 +102,17 @@ class Field extends Base {
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
 			[
+				'name'    => 'access_rights_help',
+				'label'   => __( 'Access Rights', 'pods' ),
+				'type'    => 'html',
+				'default' => '',
+				'html_content' => sprintf(
+					// translators: %s is the Read Documentation link.
+					esc_html__( 'Read about how access rights control what can be displayed to other users: %s', 'pods' ),
+					'<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'pods' ) . '</a>'
+				),
+			],
+			[
 				'name'        => 'slug',
 				'label'       => __( 'Slug or ID', 'pods' ),
 				'type'        => 'text',
@@ -128,6 +139,11 @@ class Field extends Base {
 	 * @return string The block content to render.
 	 */
 	public function render( $attributes = [], $content = '', $block = null ) {
+		// If the feature is disabled then return early.
+		if ( ! pods_can_use_dynamic_feature( 'display' ) ) {
+			return '';
+		}
+
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
@@ -154,7 +170,8 @@ class Field extends Base {
 			$attributes['use_current'] = false;
 		}
 
-		$provided_post_id = absint( pods_v( '_post_id', $attributes, pods_v( 'post_id', 'get', 0, true ), true ) );
+		$provided_post_id = $this->in_editor_mode( $attributes ) ? pods_v( 'post_id', 'get', 0, true ) : get_the_ID();
+		$provided_post_id = absint( pods_v( '_post_id', $attributes, $provided_post_id, true ) );
 
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
 			// Detect post type / ID from context.

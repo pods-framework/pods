@@ -2,6 +2,11 @@
 
 use Pods\Whatsit\Field;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+	die( '-1' );
+}
+
 wp_enqueue_script( 'pods' );
 pods_form_enqueue_style( 'pods-form' );
 
@@ -73,7 +78,11 @@ if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-s
 
 			// Sanitize value if needed.
 			if ( is_callable( $sanitize_callback ) ) {
-				$value = $sanitize_callback( $value );
+				if ( is_array( $value ) ) {
+					$value = array_map( $sanitize_callback, $value );
+				} else {
+					$value = $sanitize_callback( $value );
+				}
 			}
 
 			$settings_to_save[ $field['name'] ] = $value;

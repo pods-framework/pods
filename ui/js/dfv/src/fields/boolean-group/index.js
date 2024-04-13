@@ -40,12 +40,20 @@ const BooleanGroup = ( {
 			{ booleanGroup.map( ( subField ) => {
 				const { name } = subField;
 
+				var subFieldValue = values[ name ];
+
+				if ('undefined' === typeof subFieldValue && null !== subField?.default ) {
+					setOptionValue( name, subField.default );
+
+					allPodValues[ name ] = subField.default;
+				}
+
 				return (
 					<BooleanGroupSubfield
 						subfieldConfig={ {
 							...subField,
 						} }
-						checked={ toBool( values[ name ] ) }
+						checked={ toBool( subFieldValue ) }
 						toggleChange={ toggleChange( name ) }
 						allPodValues={ allPodValues }
 						allPodFieldsMap={ allPodFieldsMap }

@@ -5,6 +5,18 @@
 	border: 1px solid $color--light-grey;
 	background-color: #fff;
 	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
+
+	&:focus-within .pods-field-group_buttons {
+		opacity: 1;
+	}
+
+	> [role="button"]:focus-visible {
+		outline: 1px solid $color--wp-blue-light;
+	}
+
+	.pods-field-group_handle:focus-visible span {
+		outline: 1px solid $color--wp-blue-light;
+	}
 }
 
 .pods-field-group-wrapper--unsaved  {

@@ -610,8 +610,7 @@ class Post_Type extends Collection {
 				$posts = array_filter( $posts );
 			}
 
-			$names = wp_list_pluck( $posts, 'name' );
-			$posts = array_combine( $names, $posts );
+			$posts = pods_objects_keyed_by_name( $posts );
 		}
 
 		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
@@ -724,14 +723,14 @@ class Post_Type extends Collection {
 				continue;
 			}
 
-			$meta_value = array_map( 'maybe_unserialize', $meta_value );
+			$meta_value = array_map( 'pods_maybe_safely_unserialize', $meta_value );
 
 			if ( 1 === count( $meta_value ) ) {
 				$meta_value = reset( $meta_value );
 			}
 
 			// Skip empties.
-			if ( in_array( $meta_value, [ '', [] ], true ) ) {
+			if ( in_array( $meta_value, [ '', null ], true ) ) {
 				continue;
 			}
 

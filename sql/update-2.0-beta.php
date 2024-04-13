@@ -31,6 +31,7 @@ if ( version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {
 			update_post_meta( $author->ID, 'pick_format_type', 'single' );
 			update_post_meta( $author->ID, 'pick_format_single', 'autocomplete' );
 			update_post_meta( $author->ID, 'default_value', '{@user.ID}' );
+			update_post_meta( $author->ID, 'default_evaluate_tags', '1' );
 		}
 	}
 

@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 wp_enqueue_script( 'jquery-ui-slider' );
 pods_form_enqueue_style( 'pods-styles' );
 

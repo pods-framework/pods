@@ -1,4 +1,7 @@
 /*global PodsMn */
+
+import { FileUploadCollection } from 'dfv/src/fields/file/file-upload-model';
+
 /**
  *
  * @param {Object} options
@@ -6,6 +9,7 @@
  * @param {Object} options.browseButton   Existing and attached DOM node
  * @param {Object} options.uiRegion       Marionette.Region object
  * @param {Object} options.fieldConfig
+ * @param {FileUploadCollection} options.fileCollection
  *
  * @param {string} options.fieldConfig.file_modal_title
  * @param {string} options.fieldConfig.file_modal_add_button
@@ -25,6 +29,7 @@ export const PodsFileUploader = PodsMn.Object.extend( {
 		this.browseButton = options.browseButton;
 		this.uiRegion = options.uiRegion;
 		this.fieldConfig = options.fieldConfig;
+		this.fileCollection = options.fileCollection;
 
 		PodsMn.Object.call( this, options );
 	},

@@ -3,16 +3,19 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - '.github/workflows/auto-build.yml'
       - 'ui/js/blocks/src/**'
       - 'ui/js/dfv/src/**'
       - 'ui/styles/src/**'
-      - 'package.json'
       - 'webpack.*.js'
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_BOT_PUSH }}
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -32,9 +35,7 @@ jobs:
         run: npm install
       - name: Maybe build Pods Blocks JS API, Pods DFV, and styles assets
         run: npm run build-production
-      - name: Maybe update version number
-        run: npm run version_number
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css readme.txt init.php
+          file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css
           commit_message: Auto rebuild assets

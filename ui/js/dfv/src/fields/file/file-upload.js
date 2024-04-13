@@ -126,6 +126,7 @@ export const File = PodsDFVFieldLayout.extend( {
 				browseButton: this.getRegion( 'form' ).getEl( '.pods-dfv-list-add' ).get(),
 				uiRegion: this.getRegion( 'uiRegion' ),
 				fieldConfig,
+				fileCollection: this.collection,
 			} );
 
 			return this.uploader;

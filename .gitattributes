@@ -10,6 +10,7 @@ tests/_support/_generated/* linguist-generated=true
 # Export ignore handling
 
 # Directories
+/.git export-ignore
 /.github export-ignore
 /.wordpress-org export-ignore
 /bin export-ignore

@@ -1,4 +1,19 @@
-<div class="wrap pods-admin pods-admin--flex">
+<?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+?>
+<div class="wrap pods-admin<?php echo PodsAdmin::$instance->has_horizontal_callout() ? '' : ' pods-admin--flex'; ?>">
+	<?php
+	/**
+	 * Allow additional output before the container area of the Pods help screen.
+	 *
+	 * @since 3.1.0
+	 */
+	do_action( 'pods_admin_before_help' );
+	?>
+
 	<div class="pods-admin-container pods-admin__content-container">
 		<div id="icon-pods" class="icon32"><br /></div>
 		<h2><?php _e( 'Get help with Pods', 'pods' ); ?></h2>
@@ -294,7 +309,7 @@
 			[
 				'label'       => 'List Tables Add-On',
 				'description' => __( 'A new block and shortcode to list/filter content from Pods in a table format', 'pods' ),
-				'icon'        => 'https://pods-pro.skc.dev/wp-content/uploads/edd/2021/05/List-Tables-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/List-Tables-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),
@@ -313,7 +328,7 @@
 			[
 				'label'       => 'Page Builder Toolkit Add-On',
 				'description' => __( 'Integrates Pods with Beaver Builder, Beaver Themer, Divi Theme, Elementor, GenerateBlocks, and Oxygen Builder', 'pods' ),
-				'icon'        => 'https://pods-pro.skc.dev/wp-content/uploads/edd/2020/10/page-builder-toolkit@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/page-builder-toolkit@4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),
@@ -332,7 +347,7 @@
 			[
 				'label'       => 'Advanced Relationships Storage Add-On',
 				'description' => __( 'Advanced options for relationship storage', 'pods' ),
-				'icon'        => 'https://pods-pro.skc.dev/wp-content/uploads/edd/2020/10/advanced-relationship-storage@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-relationship-storage@4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),
@@ -351,7 +366,7 @@
 			[
 				'label'       => 'TablePress Integration Add-On',
 				'description' => __( 'Integrates Pods with TablePress', 'pods' ),
-				'icon'        => 'https://pods-pro.skc.dev/wp-content/uploads/edd/2020/10/tablepress-integration@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/tablepress-integration@4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),
@@ -370,7 +385,7 @@
 			[
 				'label'       => 'Advanced Permalinks Add-On',
 				'description' => __( 'Advanced permalink structures and taxonomy landing pages', 'pods' ),
-				'icon'        => 'https://pods-pro.skc.dev/wp-content/uploads/edd/2020/10/advanced-permalinks@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-permalinks@4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),

@@ -215,6 +215,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'admin-ui',
 							'connections',
 							'advanced',
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -243,6 +244,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'admin-ui',
 							'connections',
 							'advanced',
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -268,6 +270,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -293,6 +296,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -321,6 +325,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'admin-ui',
 							'connections',
 							'advanced',
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -349,6 +354,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'admin-ui',
 							'connections',
 							'advanced',
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -374,6 +380,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -399,6 +406,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -423,6 +431,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'rest-api',
 						],
 					],
@@ -446,6 +455,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'rest-api',
 						],
 					],
@@ -469,6 +479,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 						],
 					],
@@ -492,6 +503,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 						],
 					],
@@ -515,6 +527,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -539,6 +552,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'access-rights',
 							'pods-pfat',
 							'rest-api',
 						],
@@ -564,6 +578,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'access-rights',
 						],
 					],
 					'group' => [
@@ -588,6 +603,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'labels',
 							'admin-ui',
 							'advanced',
+							'access-rights',
 						],
 					],
 					'group' => [

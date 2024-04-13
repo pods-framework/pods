@@ -65,6 +65,13 @@ class PodsField_Code extends PodsField {
 						'default' => 0,
 						'type'    => 'boolean',
 					],
+					static::$type . '_sanitize_html'    => [
+						'label'      => __( 'Sanitize HTML', 'pods' ),
+						'default'    => 1,
+						'help'       => __( 'This sanitizes things like script tags and other content not normally allowed in WordPress content. Disable this only if you trust users who will have access to enter content into this field.', 'pods' ),
+						'type'       => 'boolean',
+						'dependency' => true,
+					],
 					static::$type . '_allow_shortcode'  => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
@@ -102,12 +109,11 @@ class PodsField_Code extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
 		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
 			$value = do_shortcode( $value );
 		}
 
-		return $value;
+		return $this->maybe_sanitize_output( $value, $options );
 	}
 
 	/**

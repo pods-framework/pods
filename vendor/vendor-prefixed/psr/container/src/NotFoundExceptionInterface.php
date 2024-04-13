@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by Scott Kingsley Clark on 24-June-2023 using Strauss.
+ * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 

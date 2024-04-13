@@ -502,9 +502,10 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'type'        => 'pick',
 				'pick_object' => 'user',
 				'options'     => [
-					'pick_format_type'   => 'single',
-					'pick_format_single' => 'autocomplete',
-					'default_value'      => '{@user.ID}',
+					'pick_format_type'      => 'single',
+					'pick_format_single'    => 'autocomplete',
+					'default_value'         => '{@user.ID}',
+					'default_evaluate_tags' => 1,
 				],
 				'weight'      => 3,
 			],

@@ -40,11 +40,13 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		$this->container->singleton( 'pods.rest-v1.main', Main::class );
 		$this->container->singleton( 'pods.rest-v1.messages', Messages::class );
 		$this->container->singleton( 'pods.rest-v1.validator', Base_Validator::class );
-		$this->container->singleton( 'pods.rest-v1.repository', Post_Repository::class );
 
-		$messages        = pods_container( 'pods.rest-v1.messages' );
+		$messages  = pods_container( 'pods.rest-v1.messages' );
+		$validator = pods_container( 'pods.rest-v1.validator' );
+
+		$this->container->singleton( 'pods.rest-v1.repository', new Post_Repository( $messages ) );
+
 		$post_repository = pods_container( 'pods.rest-v1.repository' );
-		$validator       = pods_container( 'pods.rest-v1.validator' );
 
 		$endpoints = $this->get_endpoints();
 

@@ -26,6 +26,9 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		$this->container->singleton( Theme\WP_Query_Integration::class, Theme\WP_Query_Integration::class );
 		$this->container->singleton( Tools\Repair::class, Tools\Repair::class );
 		$this->container->singleton( Tools\Reset::class, Tools\Reset::class );
+		$this->container->singleton( WP\Bindings::class, WP\Bindings::class );
+		$this->container->singleton( WP\Meta::class, WP\Meta::class );
+		$this->container->singleton( WP\Revisions::class, WP\Revisions::class );
 		$this->container->singleton( PodsMeta::class, PodsMeta::class );
 
 		$this->hooks();
@@ -38,5 +41,7 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	 */
 	protected function hooks() {
 		add_action( 'init', $this->container->callback( Theme\WP_Query_Integration::class, 'hook' ), 20 );
+		add_action( 'init', $this->container->callback( WP\Bindings::class, 'hook' ), 20 );
+		add_action( 'init', $this->container->callback( WP\Revisions::class, 'hook' ), 20 );
 	}
 }

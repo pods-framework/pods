@@ -3,6 +3,7 @@
  * @package Pods\Global\Functions\Data
  */
 
+use Pods\Whatsit;
 use Pods\Whatsit\Field;
 
 /**
@@ -660,6 +661,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			case 'globals':
 				if ( isset( $GLOBALS[ $var ] ) ) {
 					$output = $GLOBALS[ $var ];
+
+					$output = pods_access_bleep_data( $output );
 				}
 				break;
 			case 'cookie':
@@ -681,9 +684,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
 
-					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
-						$value = '';
-					} elseif ( isset( $user->{$var} ) ) {
+					$user = pods_access_bleep_data( $user );
+
+					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {
 						$value = '';
@@ -1295,18 +1298,18 @@ function pods_cast( $value, $cast_from = null ) {
 }
 
 /**
- * Create a slug from an input string
- *
- * @param string $orig   Original string.
- * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
- *
- * @return string Sanitized slug
+ * Create a sanitized slug from a value.
  *
  * @since 1.8.9
+ *
+ * @param string $value  The value to create the slug from.
+ * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
+ *
+ * @return string The sanitized slug.
  */
-function pods_create_slug( $orig, $strict = true ) {
-	$str = remove_accents( $orig );
-	$str = preg_replace( '/([_ \\/])/', '-', trim( $orig ) );
+function pods_create_slug( $value, $strict = true ) {
+	$str = remove_accents( $value );
+	$str = preg_replace( '/([_ \\/])/', '-', trim( $str ) );
 
 	if ( $strict ) {
 		$str = preg_replace( '/([^0-9a-z\-])/', '', strtolower( $str ) );
@@ -1316,9 +1319,17 @@ function pods_create_slug( $orig, $strict = true ) {
 
 	$str = preg_replace( '/(\-){2,}/', '-', $str );
 	$str = trim( $str, '-' );
-	$str = apply_filters( 'pods_create_slug', $str, $orig );
 
-	return $str;
+	/**
+	 * Allow filtering the sanitized slug.
+	 *
+	 * @since 1.8.9
+	 *
+	 * @param string $str    The sanitized slug.
+	 * @param string $value  The value to create the slug from.
+	 * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
+	 */
+	return (string) apply_filters( 'pods_create_slug', $str, $value );
 }
 
 /**
@@ -2010,15 +2021,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		return $value;
 	}
 
-	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
-	if ( isset( $value['user_pass'] ) ) {
-		unset( $value['user_pass'] );
-
-		// Since we know this is a single select, just pass display name through as the fallback.
-		if ( isset( $value['display_name'] ) ) {
-			$value = array( $value['display_name'] );
-		}
-	}
+	$value = pods_access_bleep_data( $value );
 
 	$original_value = $value;
 
@@ -2957,4 +2960,41 @@ function pods_kses_exclude_p( $content ) {
 			'p' => true,
 		]
 	);
+}
+
+/**
+ * Key the list of objects by name.
+ *
+ * @since 3.1.4
+ *
+ * @param array<int|string, Whatsit|stdClass|WP_Post> $objects The list of objects.
+ *
+ * @return array<string, Whatsit|stdClass|WP_Post> The list objects keyed by name.
+ */
+function pods_objects_keyed_by_name( $objects ) {
+	$new_list = [];
+
+	$objects = array_filter( $objects );
+
+	$names = wp_list_pluck( $objects, 'name' );
+
+	if ( count( $names ) === count( $objects ) ) {
+		$new_list = array_combine( $names, $objects );
+	} else {
+		foreach ( $objects as $object ) {
+			if ( $object instanceof Whatsit ) {
+				$name = $object->get_name();
+			} elseif ( $object instanceof WP_Post ) {
+				$name = $object->post_name;
+			} elseif ( is_object( $object ) && isset( $object->name ) ) {
+				$name = $object->name;
+			} else {
+				continue;
+			}
+
+			$new_list[ $name ] = $object;
+		}
+	}
+
+	return $new_list;
 }

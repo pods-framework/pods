@@ -1,12 +1,15 @@
 /**
  * External dependencies
  */
+import React from "react";
 import Select from 'react-select';
+import sanitizeHtml from "sanitize-html";
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { removep, autop } from '@wordpress/autop';
 
 import {
 	RichText,
@@ -32,6 +35,7 @@ import { useInstanceId } from '@wordpress/compose';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import CheckboxControlExtended from '../../components/CheckboxControlExtended';
 import NumberControl from '../../components/NumberControl';
+import {richText} from "../../config/html";
 
 /**
  * Creates the handler for the 'onChange' prop for a field.
@@ -298,6 +302,30 @@ const RenderedField = ( {
 					onChangeComplete={ ( value ) => changeHandler( value.hex ) }
 					disableAlpha
 				/>
+			);
+		}
+		case 'html': {
+			const {
+				html_content: content,
+				html_wpautop: htmlWPAutoP = true,
+			} = fieldOptions;
+
+			let safeHTML = sanitizeHtml( content, richText );
+
+			if ( htmlWPAutoP ) {
+				safeHTML = autop( safeHTML );
+			} else {
+				safeHTML = removep( safeHTML );
+			}
+
+			return (
+				<div
+					className={ `pods-form-ui-html pods-form-ui-html-${ name }` }
+					dangerouslySetInnerHTML={ {
+						__html: safeHTML,
+					} }
+				>
+				</div>
 			);
 		}
 		default:

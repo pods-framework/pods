@@ -51,7 +51,7 @@ function pods( $type = null, $id = null, $strict = null ) {
  * @param bool   $strict (optional) If set to true, returns false instead of a Pods object, if the Pod itself doesn't
  *                       exist. Note: If you want to check if the Pods Item itself doesn't exist, use exists().
  *
- * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
+ * @return bool|\Pods|WP_Error returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
  *
  * @link  https://docs.pods.io/code/pods/
  */
@@ -259,14 +259,15 @@ function pods_i18n() {
  * @param string     $cache_mode (optional) Specify the caching method to use for the view, available options include
  *                               cache, transient, or site-transient
  * @param bool       $return     (optional) Whether to return the view or not, defaults to false and will echo it
+ * @param bool       $limited    (optional) Whether to limit the view to only the theme directory, defaults to false
  *
  * @return string|bool The view output
  *
  * @since 2.0.0
  * @link  https://docs.pods.io/code/pods-view/
  */
-function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
-	$view = PodsView::view( $view, $data, $expires, $cache_mode );
+function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false, $limited = false ) {
+	$view = PodsView::view( $view, $data, $expires, $cache_mode, $limited );
 
 	if ( $return ) {
 		return $view;

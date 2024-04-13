@@ -73,6 +73,13 @@ class PodsField_Paragraph extends PodsField {
 						'type'       => 'boolean',
 						'dependency' => true,
 					],
+					static::$type . '_sanitize_html'    => [
+						'label'      => __( 'Sanitize HTML', 'pods' ),
+						'default'    => 1,
+						'help'       => __( 'This sanitizes things like script tags and other content not normally allowed in WordPress content. Disable this only if you trust users who will have access to enter content into this field.', 'pods' ),
+						'type'       => 'boolean',
+						'dependency' => true,
+					],
 					static::$type . '_oembed'           => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
@@ -145,14 +152,6 @@ class PodsField_Paragraph extends PodsField {
 			],
 		];
 
-		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['boolean_group'][ static::$type . '_allow_markdown' ] = [
-				'label'   => __( 'Allow Markdown Syntax', 'pods' ),
-				'default' => 0,
-				'type'    => 'boolean',
-			];
-		}
-
 		return $options;
 	}
 
@@ -177,6 +176,23 @@ class PodsField_Paragraph extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		$value = $this->strip_html( $value, $options );
+
+		/**
+		 * Allow filtering of the display value for the Paragraph field type before it's processed.
+		 *
+		 * NOTE: HTML has already been stripped at this point.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param mixed|null      $value   Current value.
+		 * @param string          $type    Field type.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 */
+		$value = apply_filters( 'pods_form_ui_field_paragraph_display_value_pre_process', $value, static::$type, $name, $options, $pod, $id );
+
 		$value = $this->strip_shortcodes( $value, $options );
 		$value = $this->trim_whitespace( $value, $options );
 
@@ -206,11 +222,19 @@ class PodsField_Paragraph extends PodsField {
 			$value = do_shortcode( $value );
 		}
 
-		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( static::$type . '_allow_markdown', $options ) ) {
-			$value = Markdown( $value );
-		}
-
-		return $value;
+		/**
+		 * Allow filtering of the display value for the Paragraph field type.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param mixed|null      $value   Current value.
+		 * @param string          $type    Field type.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 */
+		return apply_filters( 'pods_form_ui_field_paragraph_display_value', $value, static::$type, $name, $options, $pod, $id );
 	}
 
 	/**

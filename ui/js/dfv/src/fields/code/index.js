@@ -4,6 +4,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { basicSetup, EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
+import { css } from '@codemirror/lang-css';
+import { html } from '@codemirror/lang-html';
+import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
 import { php } from '@codemirror/lang-php';
 import PropTypes from 'prop-types';
 
@@ -66,7 +70,11 @@ const Code = ( {
 				// Basic setup for CodeMirror.
 				// @see https://codemirror.net/6/docs/ref/#basic-setup
 				basicSetup,
-				// Set the language to PHP.
+				// Set the languages.
+				css(),
+				html(),
+				javascript(),
+				json(),
 				php(),
 				// Set the tab size to 4.
 				( new Compartment ).of( EditorState.tabSize.of( 4 ) ),

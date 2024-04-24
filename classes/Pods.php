@@ -4052,6 +4052,15 @@ class Pods implements Iterator {
 		$fields_only = $params['fields_only'];
 		$output_type = $params['output_type'];
 
+		// Sanitize thank_you for security.
+		if ( ! empty( $thank_you ) ) {
+			// Additional sanitization.
+			$thank_you = sanitize_text_field( $thank_you );
+
+			// Fallback to '' so that the logic below can kick in if the thank you URL was not safe.
+			$thank_you = pods_enforce_safe_url( $thank_you, '' );
+		}
+
 		if ( empty( $output_type ) ) {
 			$output_type = 'div';
 		}

@@ -2856,3 +2856,24 @@ function pods_get_item_object( $item_id, $object_type ) {
 
 	return null;
 }
+
+/**
+ * Enforce a URL as safe and fallback to another URL if it is not safe.
+ *
+ * @since 2.9.19.3
+ *
+ * @param string      $url          The URL to enforce as safe.
+ * @param string|null $fallback_url The fallback URL to use if the URL is not valid.
+ *
+ * @return string The safe URL or the fallback URL if that was not valid.
+ */
+function pods_enforce_safe_url( string $url, ?string $fallback_url = null ) {
+	$url = wp_sanitize_redirect( $url );
+
+	if ( null === $fallback_url ) {
+		$fallback_url = pods_current_url();
+	}
+
+	return wp_validate_redirect( $url, $fallback_url );
+}
+

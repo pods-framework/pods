@@ -86,7 +86,7 @@ $field_prefix = '';
 
 <?php if ( ! $fields_only ) : ?>
 <?php $field_prefix = 'pods_field_'; ?>
-<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod_name ); ?> pods-submittable-ajax" data-location="<?php echo esc_attr( $thank_you ); ?>">
+<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod_name ); ?> pods-submittable-ajax" data-location="<?php echo esc_attr( pods_enforce_safe_url( $thank_you ) ); ?>">
 	<div class="pods-submittable-fields">
 		<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
 		<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>

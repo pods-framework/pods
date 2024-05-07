@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.2
-Stable tag: 3.0.10.1
+Stable tag: 3.0.10.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,6 +180,18 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.0.10.3 - May 8th, 2024 =
+
+*Security Release*
+
+* Security hardening: Enforce safe URLs for Pods form submission confirmation page URLs. Props to the wesley (wcraft) / Wordfence for responsibly reporting this. (@sc0ttkclark) 
+
+= 3.0.10.2 - February 21st, 2024 =
+
+*Security Release*
+
+Resolved issue with release deployment, see previous version for more details about the release.
 
 = 3.0.10.1 - February 21st, 2024 =
 

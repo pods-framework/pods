@@ -4112,6 +4112,15 @@ class Pods implements Iterator {
 		$thank_you   = $params['thank_you'];
 		$fields_only = $params['fields_only'];
 
+		// Sanitize thank_you for security.
+		if ( ! empty( $thank_you ) ) {
+			// Additional sanitization.
+			$thank_you = sanitize_text_field( $thank_you );
+
+			// Fallback to '' so that the logic below can kick in if the thank you URL was not safe.
+			$thank_you = pods_enforce_safe_url( $thank_you, '' );
+		}
+
 		PodsForm::$form_counter ++;
 
 		ob_start();

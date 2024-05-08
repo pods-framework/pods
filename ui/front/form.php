@@ -102,7 +102,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 	action=""
 	method="post"
 	class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod_name ); ?> pods-submittable-ajax"
-	data-location="<?php echo esc_attr( $thank_you ); ?>"
+	data-location="<?php echo esc_attr( pods_enforce_safe_url( $thank_you ) ); ?>"
 	id="pods-form-<?php echo esc_attr( $pod_name . '-' . $counter ); ?>"
 	data-pods-pod-name="<?php echo esc_attr( $pod_name ); ?>"
 	data-pods-item-id="<?php echo esc_attr( $id ); ?>"

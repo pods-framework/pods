@@ -2786,31 +2786,33 @@ class PodsField_Pick extends PodsField {
 					$params['page'] = $page;
 
 					if ( 'admin_ajax_relationship' === $context ) {
+						$query_sanitized_like = pods_sanitize_like( $data_params['query'] );
+
 						$lookup_where = array(
-							$search_data->field_index => "`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'",
+							$search_data->field_index => "`t`.`{$search_data->field_index}` LIKE '%{$query_sanitized_like}%'",
 						);
 
 						if ( $display_field_name !== $search_data->field_index ) {
-							$lookup_where[ $display_field_name ] = "{$display_field} LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
+							$lookup_where[ $display_field_name ] = "{$display_field} LIKE '%{$query_sanitized_like}%'";
 						}
 
 						// @todo Hook into WPML for each table
 						if ( $wpdb->users === $search_data->table ) {
-							$lookup_where['display_name'] = "`t`.`display_name` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['user_login']   = "`t`.`user_login` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['user_email']   = "`t`.`user_email` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
+							$lookup_where['display_name'] = "`t`.`display_name` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['user_login']   = "`t`.`user_login` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['user_email']   = "`t`.`user_email` LIKE '%{$query_sanitized_like}%'";
 						} elseif ( $wpdb->posts === $search_data->table ) {
-							$lookup_where['post_title']   = "`t`.`post_title` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['post_name']    = "`t`.`post_name` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['post_content'] = "`t`.`post_content` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['post_excerpt'] = "`t`.`post_excerpt` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
+							$lookup_where['post_title']   = "`t`.`post_title` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['post_name']    = "`t`.`post_name` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['post_content'] = "`t`.`post_content` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['post_excerpt'] = "`t`.`post_excerpt` LIKE '%{$query_sanitized_like}%'";
 						} elseif ( $wpdb->terms === $search_data->table ) {
-							$lookup_where['name'] = "`t`.`name` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['slug'] = "`t`.`slug` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
+							$lookup_where['name'] = "`t`.`name` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['slug'] = "`t`.`slug` LIKE '%{$query_sanitized_like}%'";
 						} elseif ( $wpdb->comments === $search_data->table ) {
-							$lookup_where['comment_content']      = "`t`.`comment_content` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['comment_author']       = "`t`.`comment_author` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
-							$lookup_where['comment_author_email'] = "`t`.`comment_author_email` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
+							$lookup_where['comment_content']      = "`t`.`comment_content` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['comment_author']       = "`t`.`comment_author` LIKE '%{$query_sanitized_like}%'";
+							$lookup_where['comment_author_email'] = "`t`.`comment_author_email` LIKE '%{$query_sanitized_like}%'";
 						}
 
 						$lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $data_params['query'], $name, $value, $options, $pod, $id, $object_params, $search_data );
@@ -2820,7 +2822,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						$orderby   = array();
-						$orderby[] = "( {$display_field} LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%' ) DESC";
+						$orderby[] = "( {$display_field} LIKE '%{$query_sanitized_like}%' ) DESC";
 
 						$pick_orderby = pods_v( static::$type . '_orderby', $options, null, true );
 

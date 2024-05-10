@@ -1263,7 +1263,9 @@ class PodsData {
 						$db_field_name = $attributes['real_name'];
 					}
 
-					$filter_clause = "{$db_field_name} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
+					$search_query_sanitized = pods_sanitize_like( $params->search_query );
+
+					$filter_clause = "{$db_field_name} LIKE '%{$search_query_sanitized}%'";
 
 					if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
 						$having[] = $filter_clause;
@@ -1325,10 +1327,13 @@ class PodsData {
 								continue;
 							}
 
+							$filter_v_sanitized = pods_sanitize( $filter_v );
+							$filter_v_sanitized_like = pods_sanitize_like( $filter_v );
+
 							if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
-								$having[] = "( {$filterfield} = '" . pods_sanitize( $filter_v ) . "'" . " OR {$filterfield} LIKE '%\"" . pods_sanitize_like( $filter_v ) . "\"%' )";
+								$having[] = "( {$filterfield} = '{$filter_v_sanitized}' OR {$filterfield} LIKE '%\"{$filter_v_sanitized_like}\"%' )";
 							} else {
-								$where[] = "( {$filterfield} = '" . pods_sanitize( $filter_v ) . "'" . " OR {$filterfield} LIKE '%\"" . pods_sanitize_like( $filter_v ) . "\"%' )";
+								$where[] = "( {$filterfield} = '{$filter_v_sanitized}' OR {$filterfield} LIKE '%\"{$filter_v_sanitized_like}\"%' )";
 							}
 						} else {
 							$filter_v = (int) $filter_v;
@@ -1403,10 +1408,12 @@ class PodsData {
 						continue;
 					}
 
+					$filter_value_sanitized = pods_sanitize_like( $filter_value );
+
 					if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
-						$having[] = "{$filterfield} LIKE '%" . pods_sanitize_like( $filter_value ) . "%'";
+						$having[] = "{$filterfield} LIKE '%{$filter_value_sanitized}%'";
 					} else {
-						$where[] = "{$filterfield} LIKE '%" . pods_sanitize_like( $filter_value ) . "%'";
+						$where[] = "{$filterfield} LIKE '%{$filter_value_sanitized}%'";
 					}
 				}//end if
 
@@ -2282,9 +2289,11 @@ class PodsData {
 					$this->row['option_id'] = $this->id;
 				}
 			} else {
+				$id_int = (int) $id;
+
 				$params = array(
 					'table'   => $this->table,
-					'where'   => "`t`.`{$this->field_id}` = " . (int) $id,
+					'where'   => "`t`.`{$this->field_id}` = {$id_int}",
 					'orderby' => "`t`.`{$this->field_id}` DESC",
 					'page'    => 1,
 					'limit'   => 1,
@@ -3089,7 +3098,9 @@ class PodsData {
 			'NOT LIKE',
 		], true ) ) {
 			if ( $field_sanitize ) {
-				$field_query = "{$field_cast} {$field_compare} '%" . pods_sanitize_like( $field_value ) . "%'";
+				$field_value_sanitized = pods_sanitize_like( $field_value );
+
+				$field_query = "{$field_cast} {$field_compare} '%{$field_value_sanitized}%'";
 			} else {
 				$field_query = "{$field_cast} {$field_compare} '{$field_value}'";
 			}

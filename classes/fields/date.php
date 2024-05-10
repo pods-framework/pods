@@ -156,7 +156,7 @@ class PodsField_Date extends PodsField_DateTime {
 	 */
 	public function schema( $options = null ) {
 
-		$schema = 'DATE NOT NULL default "0000-00-00"';
+		$schema = 'DATE NOT NULL default \'0000-00-00\'';
 
 		return $schema;
 	}

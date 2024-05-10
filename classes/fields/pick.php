@@ -2872,7 +2872,9 @@ class PodsField_Pick extends PodsField {
 								continue;
 							}
 
-							$where[] = $wpdb->prefix . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
+							$role_sanitized_like = pods_sanitize_like( $role );
+
+							$where[] = "{$wpdb->prefix}capabilities.meta_value LIKE '%\"{$role_sanitized_like}\"%'";
 						}
 
 						if ( ! empty( $where ) ) {

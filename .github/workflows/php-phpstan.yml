@@ -17,8 +17,14 @@ jobs:
         ]
     runs-on: ubuntu-20.04
     steps:
+      # ------------------------------------------------------------------------------
+      # Checkout the repository
+      # ------------------------------------------------------------------------------
       - name: Checkout the repository
         uses: actions/checkout@v4
+      # ------------------------------------------------------------------------------
+      # Get the changed files in a space separated list.
+      # ------------------------------------------------------------------------------
       - name: Get all changed files and use a space separator in the output
         id: changed-files
         uses: tj-actions/changed-files@v44
@@ -45,4 +51,4 @@ jobs:
       # Run phpstan
       # ------------------------------------------------------------------------------
       - name: Run phpstan
-        run: ./vendor/bin/phpstan analyse --error-format=table -c phpstan.neon ${{ steps.changed-files.outputs.all_changed_files }}
+        run: ./vendor/bin/phpstan analyse --error-format=table -c ${{ steps.changed-files.outputs.all_changed_files }}

@@ -651,15 +651,17 @@ class PodsData {
 		$cache_key = false;
 		$results   = false;
 
+		$instance = $this;
+
 		/**
 		 * Filter select parameters before the query
 		 *
-		 * @param array|object    $params
-		 * @param PodsData|object $this The current PodsData class instance.
+		 * @param array    $params
+		 * @param PodsData $instance The current PodsData class instance.
 		 *
 		 * @since unknown
 		 */
-		$params = apply_filters( 'pods_data_pre_select_params', $params, $this );
+		$params = apply_filters( 'pods_data_pre_select_params', $params, $instance );
 
 		// Debug purposes.
 		if ( 1 === (int) pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
@@ -706,13 +708,13 @@ class PodsData {
 		/**
 		 * Filter results of Pods Query
 		 *
-		 * @param array           $results
-		 * @param array|object    $params
-		 * @param PodsData|object $this The current PodsData class instance.
+		 * @param array    $results
+		 * @param array    $params
+		 * @param PodsData $instance The current PodsData class instance.
 		 *
 		 * @since unknown
 		 */
-		$results = apply_filters( 'pods_data_select', $results, $params, $this );
+		$results = apply_filters( 'pods_data_select', $results, $params, $instance );
 
 		// Clean up data we don't want to work with.
 		if (
@@ -751,11 +753,11 @@ class PodsData {
 		 *
 		 * @param boolean  $auto_calculate_total_found Whether to auto calculate total_found.
 		 * @param array    $params                     Select parameters.
-		 * @param PodsData $this                       The current PodsData instance.
+		 * @param PodsData $instance                   The current PodsData instance.
 		 *
 		 * @since 2.7.11
 		 */
-		if ( apply_filters( 'pods_data_auto_calculate_total_found', false, $params, $this ) ) {
+		if ( apply_filters( 'pods_data_auto_calculate_total_found', false, $params, $instance ) ) {
 			// Run the calculation logic.
 			$this->calculate_totals();
 		}
@@ -1652,7 +1654,7 @@ class PodsData {
 				} elseif ( false !== stripos( $sql, ' GROUP BY ' ) ) {
 					$sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
 				} elseif ( false !== stripos( $sql, ' ORDER BY ' ) ) {
-					$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
+					$sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
 				} else {
 					$sql .= ' %%JOIN%% ';
 				}
@@ -1661,7 +1663,7 @@ class PodsData {
 				if ( false !== stripos( $sql, ' GROUP BY ' ) ) {
 					$sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
 				} elseif ( false !== stripos( $sql, ' ORDER BY ' ) ) {
-					$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
+					$sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
 				} else {
 					$sql .= ' %%WHERE%% ';
 				}
@@ -1670,14 +1672,14 @@ class PodsData {
 				if ( false !== stripos( $sql, ' HAVING ' ) ) {
 					$sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' %%GROUPBY%% HAVING ', $sql );
 				} elseif ( false !== stripos( $sql, ' ORDER BY ' ) ) {
-					$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%GROUPBY%% ORDER BY ', $sql );
+					$sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' %%GROUPBY%% ORDER BY ', $sql );
 				} else {
 					$sql .= ' %%GROUPBY%% ';
 				}
 			}
 			if ( false === stripos( $sql, '%%HAVING%%' ) ) {
 				if ( false !== stripos( $sql, ' ORDER BY ' ) ) {
-					$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%HAVING%% ORDER BY ', $sql );
+					$sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' %%HAVING%% ORDER BY ', $sql );
 				} else {
 					$sql .= ' %%HAVING%% ';
 				}
@@ -2169,7 +2171,7 @@ class PodsData {
 					}
 				}
 
-				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
+				if ( empty( $this->row ) ) {
 					$this->row = false;
 				} else {
 					$current_row_id = (int) $this->row['ID'];
@@ -2236,7 +2238,7 @@ class PodsData {
 					$this->row = get_user_by( 'slug', $id );
 				}
 
-				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
+				if ( empty( $this->row ) ) {
 					$this->row = false;
 				} else {
 					// Get other vars.
@@ -2261,7 +2263,7 @@ class PodsData {
 				$this->row = get_comment( $id, ARRAY_A );
 
 				// No slug handling here.
-				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
+				if ( empty( $this->row ) ) {
 					$this->row = false;
 				} else {
 					$current_row_id = (int) $this->row['comment_ID'];

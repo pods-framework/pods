@@ -1327,7 +1327,7 @@ class PodsData {
 								continue;
 							}
 
-							$filter_v_sanitized = pods_sanitize( $filter_v );
+							$filter_v_sanitized      = pods_sanitize( $filter_v );
 							$filter_v_sanitized_like = pods_sanitize_like( $filter_v );
 
 							if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {

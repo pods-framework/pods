@@ -193,7 +193,7 @@ const SettingsModal = ( {
 		};
 
 		// Generate a slug if needed.
-		if ( 'label' === optionName && 'undefined' === typeof selectedOptions.name ) {
+		if ( 'label' === optionName && ( 'undefined' === typeof selectedOptions.name || '' === selectedOptions.name.trim() ) ) {
 			newOptions.name = sanitizeSlug( value );
 		}
 

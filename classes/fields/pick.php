@@ -1250,7 +1250,7 @@ class PodsField_Pick extends PodsField {
 		 *
 		 * @param boolean $show_on_front
 		 * @param array $config
-		 * @param array $args
+		 * @param object $args
 		 *
 		 * @since 2.7.0
 		 */
@@ -1261,7 +1261,7 @@ class PodsField_Pick extends PodsField {
 		 *
 		 * @param boolean $allow_nested_modals
 		 * @param array $config
-		 * @param array $args
+		 * @param object $args
 		 *
 		 * @since 2.7.0
 		 */
@@ -1378,7 +1378,7 @@ class PodsField_Pick extends PodsField {
 		 *
 		 * @param array $iframe
 		 * @param array $config
-		 * @param array $args
+		 * @param object $args
 		 *
 		 * @since 2.7.0
 		 */
@@ -4193,7 +4193,7 @@ class PodsField_Pick extends PodsField {
 
 		$user = get_userdata( $user_id );
 
-		if ( ! $user || is_wp_error( $user ) ) {
+		if ( ! $user ) {
 			return $location;
 		}
 

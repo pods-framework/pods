@@ -51,4 +51,4 @@ jobs:
       # Run phpstan
       # ------------------------------------------------------------------------------
       - name: Run phpstan
-        run: ./vendor/bin/phpstan analyse --error-format=table -c ${{ steps.changed-files.outputs.all_changed_files }}
+        run: ./vendor/bin/phpstan analyse --error-format=table -c phpstan.neon ${{ steps.changed-files.outputs.all_changed_files }}

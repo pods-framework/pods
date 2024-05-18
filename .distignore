@@ -51,6 +51,7 @@ package.json
 package-lock.json
 phpcs.xml
 phpcs.xml.dist
+phpstan.neon
 phpunit.xml.dist
 README.md
 rollup.config.js

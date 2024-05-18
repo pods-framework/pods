@@ -1,0 +1,46 @@
+name: 'PHPStan Tests'
+on:
+  pull_request:
+    paths:
+      - 'src/**.php'
+      - '*.php'
+jobs:
+  phpstan:
+    strategy:
+      matrix:
+        phpVersion: [
+          "7.4",
+          "8.0",
+          "8.1",
+          "8.2",
+          "8.3"
+        ]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1000
+          submodules: recursive
+      # ------------------------------------------------------------------------------
+      # Set up PHP and run phpstan
+      # ------------------------------------------------------------------------------
+      - name: Configure PHP environment to run phpstan
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.phpVersion }}
+      # ------------------------------------------------------------------------------
+      # Override composer php version
+      # ------------------------------------------------------------------------------
+      - name: Set php version ${{ matrix.phpVersion }} in composer
+        run: composer config platform.php ${{ matrix.phpVersion }}
+      # ------------------------------------------------------------------------------
+      # Install dependencies - ignoring php requirements
+      # ------------------------------------------------------------------------------
+      - name: Install dependencies
+        run: composer i --ignore-platform-req=php+
+      # ------------------------------------------------------------------------------
+      # Run phpstan
+      # ------------------------------------------------------------------------------
+      - name: Run phpstan
+        run: ./vendor/bin/phpstan analyse --error-format=table

@@ -12,24 +12,5 @@ on:
       - 'composer.json'
       - '.github/workflows/php-compatibility.yml'
 jobs:
-  phpcompatibility:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-      - name: Run PHPCS inspection
-        uses: rtCamp/action-phpcs-code-review@v3
-        env:
-          GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
-          PHPCS_STANDARD_FILE_NAME: .phpcs.compat.xml
+  phpcs-compatibility:
+    uses: pods-framework/.github/.github/workflows/php-compatibility.yml@main

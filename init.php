@@ -43,7 +43,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version.
-	define( 'PODS_VERSION', '3.2.2-a-1' );
+	define( 'PODS_VERSION', '3.2.2-a-2' );
 
 	// Current database version, this is the last version the database changed.
 	define( 'PODS_DB_VERSION', '2.3.5' );

@@ -1199,6 +1199,14 @@ class Pod extends Base {
 				'boolean_yes_label' => '',
 			];
 
+			$options['admin-ui']['show_admin_column_filter'] = [
+				'label'             => __( 'Show Taxonomy filter on Post Types', 'pods' ),
+				'help'              => __( 'Whether to add a filter at the top of the list table on the associated post types manage screens', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => '',
+			];
+
 			// Integration for Single Value Taxonomy UI
 			if ( function_exists( 'tax_single_value_meta_box' ) ) {
 				$options['admin-ui']['single_value'] = [

@@ -11,3 +11,4 @@ parameters:
     - ui/forms
     - ui/front
     - init.php
+    - vendor/vendor-prefixed

@@ -809,17 +809,15 @@ class PodsAdmin {
 	 * Add media button for Pods shortcode
 	 *
 	 * @param string $context Media button context.
-	 *
-	 * @return string
 	 */
 	public function media_button( $context = null ) {
 		if ( ! empty( $_GET['action'] ) && 'elementor' === $_GET['action'] ) {
-			return '';
+			return;
 		}
 
 		// If shortcodes are disabled don't show the button
 		if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
-			return '';
+			return;
 		}
 
 		/**
@@ -831,7 +829,7 @@ class PodsAdmin {
 		 * @since 2.3.19
 		 */
 		if ( ! apply_filters( 'pods_admin_media_button', true, $context ) ) {
-			return '';
+			return;
 		}
 
 		$current_page = basename( $_SERVER['PHP_SELF'] );
@@ -846,7 +844,7 @@ class PodsAdmin {
 				'post.php',
 			), true
 		) ) {
-			return '';
+			return;
 		}
 
 		add_action( 'admin_footer', array( $this, 'mce_popup' ) );
@@ -2047,7 +2045,7 @@ class PodsAdmin {
 		 *
 		 * @since 2.7.17
 		 *
-		 * @param array List of callouts to enable.
+		 * @param array $callouts List of callouts to enable.
 		 */
 		$callouts = apply_filters( 'pods_admin_callouts', $callouts );
 
@@ -3775,13 +3773,9 @@ class PodsAdmin {
 	 * Toggle a component on or off
 	 *
 	 * @param PodsUI $ui PodsUI object.
-	 *
-	 * @return bool
 	 */
 	public function admin_components_toggle( $ui ) {
-
-		// @codingStandardsIgnoreLine
-		$component = $_GET['id'];
+		$component = pods_v( 'id' );
 
 		if ( ! empty( PodsInit::$components->components[ $component ]['PluginDependency'] ) ) {
 			$dependency = explode( '|', PodsInit::$components->components[ $component ]['PluginDependency'] );

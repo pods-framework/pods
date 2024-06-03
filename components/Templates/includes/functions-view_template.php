@@ -547,6 +547,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 			// Relationship to something that is extended by Pods
 			$entries = $pod->field( array( 'name' => $field_name, 'output' => 'pod' ) );
 			foreach ( $entries as $key => $entry ) {
+				if ( ! is_object( $entry ) ) {
+					continue;
+				}
+
 				$subatts = array(
 					'id' => $entry->id,
 					'pod' => $entry->pod,

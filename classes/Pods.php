@@ -642,7 +642,7 @@ class Pods implements Iterator {
 			 *
 			 * @param string       $output How to output related fields. Default is 'arrays'. Options: ids|names|objects|arrays|pods|find
 			 * @param array|object $row    Current row being outputted.
-			 * @param array        $params Params array passed to field().
+			 * @param object       $params Params array passed to field().
 			 * @param Pods         $obj    Current Pods object.
 			 */
 			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->data->row, $params, $this );
@@ -658,11 +658,9 @@ class Pods implements Iterator {
 
 		// Support old $orderby variable.
 		if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
-			// @codingStandardsIgnoreStart
-			if ( ! class_exists( 'Deprecated_Pod' ) || Deprecated_Pod::$deprecated_notice ) {
+			if ( pods_is_debug_display() ) {
 				pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
 			}
-			// @codingStandardsIgnoreEnd
 
 			$params->orderby = $params->single;
 			$params->single  = false;
@@ -965,7 +963,7 @@ class Pods implements Iterator {
 					 * @param array|string|null $value      Value retrieved.
 					 * @param array             $field_data Current field object.
 					 * @param array|object      $row        Current row being outputted.
-					 * @param array             $params     Params array passed to field().
+					 * @param object            $params     Params array passed to field().
 					 * @param Pods              $obj        Current Pods object.
 					 */
 					$v = apply_filters( "pods_pods_field_{$field_type}", null, $field_data, $this->row(), $params, $this );
@@ -1815,7 +1813,7 @@ class Pods implements Iterator {
 		 *
 		 * @param array|string|null $value  Value to be returned.
 		 * @param array|object      $row    Current row being outputted.
-		 * @param array             $params Params array passed to field().
+		 * @param object            $params Params array passed to field().
 		 * @param Pods              $obj    Current Pods object.
 		 */
 		$value = apply_filters( 'pods_pods_field', $value, $this->row(), $params, $this );
@@ -4755,7 +4753,6 @@ class Pods implements Iterator {
 			return call_user_func_array( array( $this, 'find' ), $arguments );
 		}
 
-		// @codingStandardsIgnoreStart
 		if ( ! $this->deprecated ) {
 			require_once PODS_DIR . 'deprecated/classes/Pods.php';
 
@@ -4770,7 +4767,6 @@ class Pods implements Iterator {
 		} elseif ( ! $pod_class_exists || Deprecated_Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
 		}
-		// @codingStandardsIgnoreEnd
 
 		return null;
 	}

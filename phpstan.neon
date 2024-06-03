@@ -4,6 +4,7 @@ parameters:
     - classes
     - includes
     - components
+    - deprecated
     - sql
     - src
     - ui/admin

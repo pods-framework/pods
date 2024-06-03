@@ -844,9 +844,18 @@ class Pods implements Iterator {
 		$is_relationship_field_and_not_simple = (
 			! $is_traversal
 			&& $field_data
-			&& ! $field_data instanceof Object_Field
+			&& (
+				! $field_data instanceof Object_Field
+				|| 'comments' === $field_data->get_name()
+			)
 			&& $is_relationship_field
 			&& ! $is_simple_relationship_field
+		);
+
+		$is_object_expanded_relationship_field = (
+			$is_relationship_field
+			&&  $field_data instanceof Object_Field
+			&& 'comments' === $field_data->get_name()
 		);
 
 		// If a relationship is returned from the table as an ID but the parameter is not traversal, we need to run traversal logic.
@@ -903,7 +912,14 @@ class Pods implements Iterator {
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
 
-			if ( 'object_field' === $field_source && ! $is_traversal ) {
+			if (
+				'object_field' === $field_source
+				&& ! $is_traversal
+				&& (
+					! $is_object_expanded_relationship_field
+					|| 'arrays' === $params->output
+				)
+			) {
 				$object_field_found = true;
 
 				if ( isset( $this->data->row[ $first_field ] ) ) {

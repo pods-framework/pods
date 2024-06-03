@@ -880,6 +880,7 @@ class PodsAdmin {
 
 		$pods = $api->load_pods( array( 'fields' => false ) );
 
+		$id   = pods_v( 'id' );
 		$view = pods_v( 'view', 'get', 'all', true );
 
 		// @codingStandardsIgnoreLine
@@ -1391,6 +1392,17 @@ class PodsAdmin {
 						$source_types[ $source_type ],
 						$number_found
 					);
+				}
+			}
+		}
+
+		// Maybe auto-map the slugs to ID.
+		if ( $id && ! is_numeric( $id ) ) {
+			foreach ( $ui['data'] as $check_pod ) {
+				if ( $check_pod['name'] === $id && $check_pod['id'] && is_numeric( $check_pod['id'] ) ) {
+					pods_redirect( pods_query_arg( [ 'id' => (int) $check_pod['id'] ] ) );
+
+					break;
 				}
 			}
 		}

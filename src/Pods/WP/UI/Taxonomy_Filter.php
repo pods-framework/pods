@@ -57,7 +57,7 @@ class Taxonomy_Filter {
 				'name' => $taxonomy->name,
 			] );
 
-			if ( ! $this->should_use_filter( $pod ) ) {
+			if ( ! $pod || ! $this->should_use_filter( $pod ) ) {
 				continue;
 			}
 
@@ -124,7 +124,7 @@ class Taxonomy_Filter {
 				'name' => $taxonomy->name,
 			] );
 
-			if ( ! $this->should_use_filter( $pod ) ) {
+			if ( ! $pod || ! $this->should_use_filter( $pod ) ) {
 				continue;
 			}
 

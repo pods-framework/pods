@@ -450,10 +450,9 @@ class Pods implements Iterator {
 		 * @since unknown
 		 *
 		 * @param array|\Pods\Whatsit\Field|mixed $field_data The data to be returned for the field / option.
-		 * @param array|\Pods\Whatsit\Field       $field      The field information.
 		 * @param string|null                     $field_name The specific field that data is being return for, if set when method is called or null.
 		 * @param string|null                     $option     Value of option param when method was called. Can be used to get a list of available items from a relationship field.
-		 * @param Pods|object                     $this       The current Pods class instance.
+		 * @param Pods|object                     $obj        The current Pods class instance.
 		 */
 		return apply_filters( 'pods_pods_fields', $field_data, $field_name, $option, $this );
 
@@ -644,7 +643,7 @@ class Pods implements Iterator {
 			 * @param string       $output How to output related fields. Default is 'arrays'. Options: ids|names|objects|arrays|pods|find
 			 * @param array|object $row    Current row being outputted.
 			 * @param array        $params Params array passed to field().
-			 * @param Pods         $this   Current Pods object.
+			 * @param Pods         $obj    Current Pods object.
 			 */
 			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->data->row, $params, $this );
 		}
@@ -659,9 +658,11 @@ class Pods implements Iterator {
 
 		// Support old $orderby variable.
 		if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
+			// @codingStandardsIgnoreStart
 			if ( ! class_exists( 'Deprecated_Pod' ) || Deprecated_Pod::$deprecated_notice ) {
 				pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
 			}
+			// @codingStandardsIgnoreEnd
 
 			$params->orderby = $params->single;
 			$params->single  = false;
@@ -965,7 +966,7 @@ class Pods implements Iterator {
 					 * @param array             $field_data Current field object.
 					 * @param array|object      $row        Current row being outputted.
 					 * @param array             $params     Params array passed to field().
-					 * @param object|Pods       $this       Current Pods object.
+					 * @param Pods              $obj        Current Pods object.
 					 */
 					$v = apply_filters( "pods_pods_field_{$field_type}", null, $field_data, $this->row(), $params, $this );
 
@@ -1026,8 +1027,8 @@ class Pods implements Iterator {
 						 *
 						 * @param int    $id            The object ID.
 						 * @param string $metadata_type The object metadata type.
-						 * @param array  $params        Field params
-						 * @param \Pods  $pod           Pods object.
+						 * @param object $params        Field params.
+						 * @param Pods   $obj           Pods object.
 						 */
 						$id = apply_filters( 'pods_pods_field_get_metadata_object_id', $this->id(), $metadata_type, $params, $this );
 
@@ -1815,7 +1816,7 @@ class Pods implements Iterator {
 		 * @param array|string|null $value  Value to be returned.
 		 * @param array|object      $row    Current row being outputted.
 		 * @param array             $params Params array passed to field().
-		 * @param object|Pods       $this   Current Pods object.
+		 * @param Pods              $obj    Current Pods object.
 		 */
 		$value = apply_filters( 'pods_pods_field', $value, $this->row(), $params, $this );
 
@@ -2552,8 +2553,8 @@ class Pods implements Iterator {
 		 *
 		 * @since unknown
 		 *
-		 * @param int|string|null $id   Item ID being fetched or null.
-		 * @param object|Pods     $this Current Pods object.
+		 * @param int|string|null $id  Item ID being fetched or null.
+		 * @param Pods            $obj Current Pods object.
 		 */
 		do_action( 'pods_pods_fetch', $id, $this );
 
@@ -2585,8 +2586,8 @@ class Pods implements Iterator {
 		 *
 		 * @since unknown
 		 *
-		 * @param int|string|null The ID of the row being reset to or null if being reset to the beginning.
-		 * @param object|Pods $this Current Pods object.
+		 * @param int|string|null $row The ID of the row being reset to or null if being reset to the beginning.
+		 * @param Pods            $obj Current Pods object.
 		 */
 		do_action( 'pods_pods_reset', $row, $this );
 
@@ -2641,7 +2642,7 @@ class Pods implements Iterator {
 		 *
 		 * @since unknown
 		 *
-		 * @param object|Pods $this Current Pods object.
+		 * @param Pods $obj Current Pods object.
 		 */
 		do_action( 'pods_pods_total_found', $this );
 
@@ -3541,9 +3542,9 @@ class Pods implements Iterator {
 		 *
 		 * @since unknown
 		 *
-		 * @param string      $output Filter output.
-		 * @param array       $params Params array passed to filters().
-		 * @param object|Pods $this   Current Pods object.
+		 * @param string $output Filter output.
+		 * @param array  $params Params array passed to filters().
+		 * @param Pods   $obj    Current Pods object.
 		 */
 		return apply_filters( 'pods_pods_filters', $output, $params, $this );
 	}
@@ -4297,10 +4298,11 @@ class Pods implements Iterator {
 		/**
 		 * Filter the magic tag output for a value.
 		 *
-		 * @param string $value      Magic tag output for value.
-		 * @param string $field_name Magic tag field name.
-		 * @param string $before     Before content.
-		 * @param string $after      After content.
+		 * @param string $value       Magic tag output for value.
+		 * @param string $field_name  Magic tag field name.
+		 * @param string $helper_name The helper name.
+		 * @param string $before      Before content.
+		 * @param string $after       After content.
 		 */
 		$value = apply_filters( 'pods_do_magic_tags', $value, $field_name, $helper_name, $before, $after );
 
@@ -4753,6 +4755,7 @@ class Pods implements Iterator {
 			return call_user_func_array( array( $this, 'find' ), $arguments );
 		}
 
+		// @codingStandardsIgnoreStart
 		if ( ! $this->deprecated ) {
 			require_once PODS_DIR . 'deprecated/classes/Pods.php';
 
@@ -4767,6 +4770,7 @@ class Pods implements Iterator {
 		} elseif ( ! $pod_class_exists || Deprecated_Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
 		}
+		// @codingStandardsIgnoreEnd
 
 		return null;
 	}

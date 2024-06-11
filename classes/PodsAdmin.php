@@ -4405,12 +4405,30 @@ class PodsAdmin {
 				'depends-on' => [ 'rest_enable' => true ],
 				'dependency' => true,
 			],
+			'read_all_access'   => [
+				'label'             => __( 'Read All Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be returned for everyone who has access to that endpoint/object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to read all field values via REST', 'pods' ),
+				'depends-on'        => [
+					'read_all' => true,
+				],
+			],
 			'write_all'   => [
 				'label'             => __( 'Allow All Fields To Be Updated', 'pods' ),
 				'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
 				'type'              => 'boolean',
 				'default'           => pods_v( 'name', $pod ),
 				'depends-on'        => [ 'rest_enable' => true, 'read_all' => true ],
+			],
+			'write_all_access'   => [
+				'label'             => __( 'Write All Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be written by everyone who has access to edit that object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to write to all field values via REST', 'pods' ),
+				'depends-on'        => [
+					'write_all' => true,
+				],
 			],
 			'rest_api_field_mode'   => [
 				'label'             => __( 'Field Mode', 'pods' ),
@@ -4483,12 +4501,36 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
+			'rest_read_access'   => [
+				'label'             => __( 'Read Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be returned for everyone who has access to that endpoint/object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to read this field value via REST', 'pods' ),
+				'depends-on'        => [
+					'rest_read' => true,
+				],
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
+			],
 			'rest_write'         => [
 				'label'       => __( 'Write via REST API', 'pods' ),
 				'help'        => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 				'type'        => 'boolean',
 				'default'     => '',
 				'excludes-on' => [
+					'type' => $layout_non_input_field_types,
+				],
+			],
+			'rest_write_access'   => [
+				'label'             => __( 'Write Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be written by everyone who has access to edit that object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to write to this field value via REST', 'pods' ),
+				'depends-on'        => [
+					'rest_write' => true,
+				],
+				'excludes-on'       => [
 					'type' => $layout_non_input_field_types,
 				],
 			],

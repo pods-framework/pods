@@ -4421,7 +4421,7 @@ class PodsAdmin {
 				'default'           => pods_v( 'name', $pod ),
 				'depends-on'        => [ 'rest_enable' => true, 'read_all' => true ],
 			],
-			'write_all_access'   => [
+			/*'write_all_access'   => [
 				'label'             => __( 'Write All Access', 'pods' ),
 				'help'              => __( 'By default the REST API will allow the fields to be written by everyone who has access to edit that object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
 				'type'              => 'boolean',
@@ -4429,7 +4429,7 @@ class PodsAdmin {
 				'depends-on'        => [
 					'write_all' => true,
 				],
-			],
+			],*/
 			'rest_api_field_mode'   => [
 				'label'             => __( 'Field Mode', 'pods' ),
 				'help'              => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
@@ -4522,7 +4522,7 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
-			'rest_write_access'   => [
+			/*'rest_write_access'   => [
 				'label'             => __( 'Write Access', 'pods' ),
 				'help'              => __( 'By default the REST API will allow the fields to be written by everyone who has access to edit that object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
 				'type'              => 'boolean',
@@ -4533,7 +4533,7 @@ class PodsAdmin {
 				'excludes-on'       => [
 					'type' => $layout_non_input_field_types,
 				],
-			],
+			],*/
 			'rest_field_options' => [
 				'name'       => 'rest_field_options',
 				'label'      => __( 'Relationship Field Options', 'pods' ),

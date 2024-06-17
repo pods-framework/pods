@@ -32,7 +32,7 @@
     "webpack-production": "webpack --config webpack.prod.js --progress"
   },
   "engines": {
-    "node": ">=16.13.2",
+    "node": ">=16.16.0",
     "npm": ">=8.1.2"
   },
   "engineStrict": true,

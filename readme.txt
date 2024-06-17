@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 3.2.2-a-3
+Stable tag: 3.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,6 +181,21 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.2.2 - June 17th, 2024 =
+
+* Feature: You cna now turn on Taxonomy filters for a Custom Taxonomy so that you see a dropdown filter on the list of posts for any associated post types. (@sc0ttkclark)
+* Added: Pods Templates > Support for comments on post types using Pods Templates using `[each comments]` and `[if comments]`. (@sc0ttkclark)
+* Added: REST API > Add support for determining whether to require person to be logged in to read values for custom fields (default: login not required). (@sc0ttkclark)
+* Added: Automatically redirect to the proper edit URL when going to the Pods Admin > Edit Pods page for a specific pod but `id=XX` is the slug. (@sc0ttkclark)
+* Tweak: Accessibility > Make it easier to copy and paste field names for the Edit Pod screen with a new copy icon you can click. #7291 #7237 (@heybran, @sc0ttkclark)
+* Tweak: Responsive UI > Improved appearance for the Edit Pod screen for smaller screens. (@sc0ttkclark)
+* Fixed: Security hardening > Sanitize HTML before passing into Pods field inputs for paragraph/code/wysiwyg field types to cover additional cases where something could make it past the sanitization process on save. (@sc0ttkclark)
+* Fixed: Accessibility > Add label for color fields in the Pods Blocks API so it shows the label and not just the color input itself. #7306 #7305 (@pdclark)
+* Fixed: Group and field names now generate in the UI as expected. (@sc0ttkclark)
+* Fixed: Compatibility > Date, Date/Time, and Time default values now use single quotes to ensure maximum compatibiltiy with various SQL engines. (@sc0ttkclark)
+* Fixed: Compatibility > More PHP compatibility issues with `trim()` related function usage resolved. (@sc0ttkclark)
+* Fixed: Code quality > Various phpstan/phpcs issues resolved. (@sc0ttkclark)
 
 = 3.2.1.1 - May 8th, 2024 =
 

@@ -2,7 +2,7 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
-= 3.2.2 - June 17th, 2024 =
+= 3.2.2 - June 18th, 2024 =
 
 * Feature: You cna now turn on Taxonomy filters for a Custom Taxonomy so that you see a dropdown filter on the list of posts for any associated post types. (@sc0ttkclark)
 * Added: Pods Templates > Support for comments on post types using Pods Templates using `[each comments]` and `[if comments]`. (@sc0ttkclark)

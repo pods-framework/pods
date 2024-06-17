@@ -9,14 +9,14 @@ use WP_Taxonomy;
 /**
  * Bindings specific functionality.
  *
- * @since TBD
+ * @since 3.2.2
  */
 class Taxonomy_Filter {
 
 	/**
 	 * Add the class hooks.
 	 *
-	 * @since TBD
+	 * @since 3.2.2
 	 */
 	public function hook(): void {
 		add_action( 'restrict_manage_posts', [ $this, 'render_filters' ], 10, 2 );
@@ -26,7 +26,7 @@ class Taxonomy_Filter {
 	/**
 	 * Remove the class hooks.
 	 *
-	 * @since TBD
+	 * @since 3.2.2
 	 */
 	public function unhook(): void {
 		remove_action( 'restrict_manage_posts', [ $this, 'render_filters' ] );
@@ -36,7 +36,7 @@ class Taxonomy_Filter {
 	/**
 	 * Render the filters for any associated taxonomies.
 	 *
-	 * @since TBD
+	 * @since 3.2.2
 	 *
 	 * @param string $post_type  The post type slug.
 	 * @param string $which      The location of the extra table nav markup:
@@ -68,7 +68,7 @@ class Taxonomy_Filter {
 	/**
 	 * Render the filters for any associated taxonomies.
 	 *
-	 * @since TBD
+	 * @since 3.2.2
 	 *
 	 * @param WP_Taxonomy $taxonomy The taxonomy object.
 	 */
@@ -98,7 +98,7 @@ class Taxonomy_Filter {
 	/**
 	 * Filter the query based on the taxonomy filters.
 	 *
-	 * @since TBD
+	 * @since 3.2.2
 	 *
 	 * @param WP_Query $query The query object.
 	 */
@@ -135,7 +135,7 @@ class Taxonomy_Filter {
 	/**
 	 * Filter the query based on the taxonomy filters.
 	 *
-	 * @since TBD
+	 * @since 3.2.2
 	 *
 	 * @param WP_Query    $query    The query object.
 	 * @param WP_Taxonomy $taxonomy The taxonomy object.

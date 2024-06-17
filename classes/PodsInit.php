@@ -1818,7 +1818,7 @@ class PodsInit {
 	/**
 	 * Filter whether Quick Edit should be enabled for the given post type.
 	 *
-	 * @since TBD
+	 * @since 3.0.9
 	 *
 	 * @param bool   $enable    Whether to enable the Quick Edit functionality.
 	 * @param string $post_type The post type name.
@@ -1840,7 +1840,7 @@ class PodsInit {
 	/**
 	 * Filter whether Quick Edit should be enabled for the given taxonomy.
 	 *
-	 * @since TBD
+	 * @since 3.0.9
 	 *
 	 * @param bool   $enable   Whether to enable the Quick Edit functionality.
 	 * @param string $taxonomy The taxonomy name.

@@ -245,6 +245,7 @@ class PodsField_Paragraph extends PodsField {
 		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
+		$value = $this->maybe_sanitize_output( $value, $options );
 		$value = $this->normalize_value_for_input( $value, $options, "\n" );
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {

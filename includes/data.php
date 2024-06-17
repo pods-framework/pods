@@ -270,36 +270,49 @@ function pods_unslash( $input ) {
  * @since 1.2.0
  */
 function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
-	$output = array();
-
 	if ( is_object( $input ) ) {
 		$input = get_object_vars( $input );
 
+		$output = [];
+
 		foreach ( $input as $key => $val ) {
-			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+			$key = is_int( $key ) ? $key : pods_sanitize( $key );
+
+			$output[ $key ] = pods_trim( $val, $charlist, $lr );
 		}
 
-		$output = (object) $output;
-	} elseif ( is_array( $input ) ) {
+		return (object) $output;
+	}
+
+	if ( is_array( $input ) ) {
+		$output = [];
+
 		foreach ( $input as $key => $val ) {
-			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+			$key = is_int( $key ) ? $key : pods_sanitize( $key );
+
+			$output[ $key ] = pods_trim( $val, $charlist, $lr );
 		}
+
+		return $output;
+	}
+
+	$args = [
+		(string) $input,
+	];
+
+	if ( null !== $charlist ) {
+		$args[] = $charlist;
+	}
+
+	if ( 'l' === $lr ) {
+		$function = 'ltrim';
+	} elseif ( 'r' === $lr ) {
+		$function = 'rtrim';
 	} else {
-		$args = array( $input );
-		if ( null !== $charlist ) {
-			$args[] = $charlist;
-		}
-		if ( 'l' === $lr ) {
-			$function = 'ltrim';
-		} elseif ( 'r' === $lr ) {
-			$function = 'rtrim';
-		} else {
-			$function = 'trim';
-		}
-		$output = call_user_func_array( $function, $args );
-	}//end if
+		$function = 'trim';
+	}
 
-	return $output;
+	return call_user_func_array( $function, $args );
 }
 
 /**

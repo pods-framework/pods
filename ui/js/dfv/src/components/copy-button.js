@@ -26,7 +26,9 @@ const CopyButton = ( { label, textToCopy, onClick } ) => {
 			onClick={ handleClick }
 		>
 			{ copied ? (
-				<span>{ __( 'Copied', 'pods' ) }</span>
+				<span>
+					({ __( 'Copied name', 'pods' ) })
+				</span>
 			) : (
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

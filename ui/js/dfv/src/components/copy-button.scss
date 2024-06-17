@@ -5,4 +5,8 @@
         width: 12px;
         height: 12px;
     }
+
+	@media screen and (max-width: 850px) {
+		display: none;
+	}
 }

@@ -190,8 +190,23 @@
 	flex: 0 0 calc(25% - 1em);
 	padding-bottom: 1em;
 	padding-right: 1em;
-	overflow-wrap: break-word;
 	width: calc(25% - 1em);
+}
+
+.pods-field_name,
+.pods-field_wrapper-label_name {
+	overflow-wrap: anywhere;
+}
+
+.pods-field_type,
+.pods-field_wrapper-label_type,
+.pods-field_label,
+.pods-field_wrapper-label {
+	overflow-wrap: break-word;
+
+	@media screen and (max-width: 850px) {
+		overflow-wrap: anywhere;
+	}
 }
 
 .pods-field_wrapper-label-items {
@@ -209,7 +224,11 @@
 .pods-field_wrapper-items {
 	border: 1px solid $color--light-grey;
 	margin: 1em 0;
-	// overflow: hidden;
+
+	@media screen and (max-width: 850px) {
+		border-left: none;
+		border-right: none;
+	}
 }
 
 .pods-field_wrapper:nth-child(even) {

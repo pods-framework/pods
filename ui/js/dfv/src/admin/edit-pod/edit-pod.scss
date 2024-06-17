@@ -19,6 +19,11 @@
 	display: block;
 	max-width: 45em;
 	width: 65%;
+
+	@media screen and (max-width: 850px) {
+		max-width: 100%;
+		width: 100%;
+	}
 }
 
 .pods-edit-pod-manage-field .pods-dfv-container-wysiwyg,

@@ -1120,10 +1120,10 @@ class PodsField {
 	 *
 	 * @param array $properties Properties to export.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public static function __set_state( $properties ) {
-
+		return new PodsField();
 	}
 
 }

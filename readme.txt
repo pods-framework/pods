@@ -193,7 +193,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Security hardening > Sanitize HTML before passing into Pods field inputs for paragraph/code/wysiwyg field types to cover additional cases where something could make it past the sanitization process on save. (@sc0ttkclark)
 * Fixed: Accessibility > Add label for color fields in the Pods Blocks API so it shows the label and not just the color input itself. #7306 #7305 (@pdclark)
 * Fixed: Group and field names now generate in the UI as expected. (@sc0ttkclark)
-* Fixed: Compatibility > Date, Date/Time, and Time default values now use single quotes to ensure maximum compatibiltiy with various SQL engines. (@sc0ttkclark)
+* Fixed: Compatibility > Date, Date/Time, and Time default values now use single quotes to ensure maximum compatibility with various SQL engines. (@sc0ttkclark)
 * Fixed: Compatibility > More PHP compatibility issues with `trim()` related function usage resolved. (@sc0ttkclark)
 * Fixed: Code quality > Various phpstan/phpcs issues resolved. (@sc0ttkclark)
 

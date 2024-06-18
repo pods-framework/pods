@@ -909,7 +909,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				 * @param  object $params  Additional arguments for pods_v().
 				 * @param  string $type    The type of var given.
 				 */
-				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $paams, $type );
+				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params, $type );
 
 				/**
 				 * Filter to handle custom variable types.

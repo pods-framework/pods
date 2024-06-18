@@ -296,12 +296,24 @@ const RenderedField = ( {
 			);
 		}
 		case 'ColorPicker': {
+			const {
+				label,
+			} = fieldOptions;
+			const instanceId = useInstanceId( ColorPicker );
+			const id = `inspector-color-control-${ instanceId }`;
+
 			return (
-				<ColorPicker
-					color={ fieldValue }
-					onChangeComplete={ ( value ) => changeHandler( value.hex ) }
-					disableAlpha
-				/>
+				<BaseControl
+					label={ label }
+					id={ id }
+					key={ name }
+				>
+					<ColorPicker
+						color={ fieldValue }
+						onChangeComplete={ ( value ) => changeHandler( value.hex ) }
+						disableAlpha
+					/>
+				</BaseControl>
 			);
 		}
 		case 'html': {

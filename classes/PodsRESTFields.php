@@ -216,11 +216,15 @@ class PodsRESTFields {
 			return false;
 		}
 
-		$all_fields_access = filter_var( $pod->get_arg( $mode . '_all', false ), FILTER_VALIDATE_BOOLEAN );
+		$pod_mode_arg        = 'rest_' . $mode . '_all';
+		$pod_mode_access_arg = 'rest_' . $mode . '_all_access';
 
-		// Check for access on all fields.
-		if ( $all_fields_access ) {
-			return true;
+		$all_fields_can_use_mode = filter_var( $pod->get_arg( $pod_mode_arg, false ), FILTER_VALIDATE_BOOLEAN );
+		$all_fields_access       = filter_var( $pod->get_arg( $pod_mode_access_arg, false ), FILTER_VALIDATE_BOOLEAN );
+
+		// Check if user must be logged in to access all fields and override whether they can use it.
+		if ( $all_fields_can_use_mode && $all_fields_access ) {
+			$all_fields_can_use_mode = is_user_logged_in();
 		}
 
 		// Maybe get the Field object from the Pod.
@@ -230,13 +234,30 @@ class PodsRESTFields {
 
 		// Check if we have a valid $field.
 		if ( ! $field instanceof Field ) {
-			return false;
+			return $all_fields_can_use_mode;
 		}
 
 		// Field arguments are prefixed with `rest`;
-		$mode_arg = 'rest_' . $mode;
+		$mode_arg        = 'rest_' . $mode;
+		$mode_access_arg = 'rest_' . $mode . '_access';
 
-		return filter_var( $field->get_arg( $mode_arg, false ), FILTER_VALIDATE_BOOLEAN );
+		$can_use_mode_value     = $field->get_arg( $mode_arg );
+		$can_use_mode_has_value = null !== $can_use_mode_value;
+
+		// Check if we have a value for this mode on the field itself.
+		if ( ! $can_use_mode_has_value ) {
+			return $all_fields_can_use_mode;
+		}
+
+		$can_use_mode = filter_var( $can_use_mode_value, FILTER_VALIDATE_BOOLEAN );
+		$access       = filter_var( $field->get_arg( $mode_access_arg, false ), FILTER_VALIDATE_BOOLEAN );
+
+		// Check if user must be logged in to access field and override whether they can use it.
+		if ( $can_use_mode && $access ) {
+			$can_use_mode = is_user_logged_in();
+		}
+
+		return $can_use_mode;
 	}
 
 }

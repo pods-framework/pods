@@ -1,9 +1,8 @@
 <?php
 
-use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
-use Pods\Whatsit\Value_Field;
+use Pods\API\Whatsit\Value_Field;
 use Pod as Pod_Deprecated;
 
 /**
@@ -898,7 +897,7 @@ class PodsField {
 	 * @param string|array $value   Field value.
 	 * @param array|null   $options Field options.
 	 *
-	 * @return string
+	 * @return string|array The field value with HTML stripped (if the field supports it).
 	 */
 	public function strip_html( $value, $options = null ) {
 		if ( is_array( $value ) ) {
@@ -1121,10 +1120,10 @@ class PodsField {
 	 *
 	 * @param array $properties Properties to export.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public static function __set_state( $properties ) {
-
+		return new PodsField();
 	}
 
 }

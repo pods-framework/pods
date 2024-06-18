@@ -270,36 +270,49 @@ function pods_unslash( $input ) {
  * @since 1.2.0
  */
 function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
-	$output = array();
-
 	if ( is_object( $input ) ) {
 		$input = get_object_vars( $input );
 
+		$output = [];
+
 		foreach ( $input as $key => $val ) {
-			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+			$key = is_int( $key ) ? $key : pods_sanitize( $key );
+
+			$output[ $key ] = pods_trim( $val, $charlist, $lr );
 		}
 
-		$output = (object) $output;
-	} elseif ( is_array( $input ) ) {
+		return (object) $output;
+	}
+
+	if ( is_array( $input ) ) {
+		$output = [];
+
 		foreach ( $input as $key => $val ) {
-			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+			$key = is_int( $key ) ? $key : pods_sanitize( $key );
+
+			$output[ $key ] = pods_trim( $val, $charlist, $lr );
 		}
+
+		return $output;
+	}
+
+	$args = [
+		(string) $input,
+	];
+
+	if ( null !== $charlist ) {
+		$args[] = $charlist;
+	}
+
+	if ( 'l' === $lr ) {
+		$function = 'ltrim';
+	} elseif ( 'r' === $lr ) {
+		$function = 'rtrim';
 	} else {
-		$args = array( $input );
-		if ( null !== $charlist ) {
-			$args[] = $charlist;
-		}
-		if ( 'l' === $lr ) {
-			$function = 'ltrim';
-		} elseif ( 'r' === $lr ) {
-			$function = 'rtrim';
-		} else {
-			$function = 'trim';
-		}
-		$output = call_user_func_array( $function, $args );
-	}//end if
+		$function = 'trim';
+	}
 
-	return $output;
+	return call_user_func_array( $function, $args );
 }
 
 /**
@@ -413,8 +426,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			 *
 			 * @param array  $disallowed_types The list of disallowed variable types for the source.
 			 * @param string $source           The source calling pods_v().
+			 * @param object $params           Additional arguments for pods_v().
 			 */
-			$disallowed_types = apply_filters( "pods_v_disallowed_types_for_source_{$params->source}", $disallowed_types, $params->source );
+			$disallowed_types = apply_filters( "pods_v_disallowed_types_for_source_{$params->source}", $disallowed_types, $params->source, $params );
 
 			if ( isset( $disallowed_types[ $type ] ) ) {
 				return $default;
@@ -867,25 +881,49 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					$post_id = $var;
 				}
 
-				// Add other translation plugin specific code here
 				/**
 				 * Filter to override post_id
 				 *
 				 * Generally used with language translation plugins in order to return the post id of a
 				 * translated post
 				 *
-				 * @param  int   $post_id The post ID of current post
-				 * @param  mixed $default The default value to set if variable doesn't exist
-				 * @param  mixed $var     The variable name, can also be a modifier for specific types
-				 * @param  bool  $strict  Only allow values (must not be empty)
-				 * @param  array $params  Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
-				 *
 				 * @since 2.6.6
+				 *
+				 * @param  int    $post_id The post ID of current post
+				 * @param  mixed  $default The default value to set if variable doesn't exist
+				 * @param  mixed  $var     The variable name, can also be a modifier for specific types
+				 * @param  bool   $strict  Only allow values (must not be empty)
+				 * @param  object $params  Additional arguments for pods_v().
 				 */
 				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
 				break;
 			default:
-				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params );
+				/**
+				 * Filter to handle custom variable types.
+				 *
+				 * @since 2.6.6
+				 *
+				 * @param  mixed  $default The default value to set if variable doesn't exist.
+				 * @param  mixed  $var     The variable name, can also be a modifier for specific types.
+				 * @param  bool   $strict  Only allow values (must not be empty).
+				 * @param  object $params  Additional arguments for pods_v().
+				 * @param  string $type    The type of var given.
+				 */
+				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params, $type );
+
+				/**
+				 * Filter to handle custom variable types.
+				 *
+				 * @since 3.2.2
+				 *
+				 * @param  mixed  $output  The output for the custom variable type.
+				 * @param  mixed  $default The default value to set if variable doesn't exist.
+				 * @param  mixed  $var     The variable name, can also be a modifier for specific types.
+				 * @param  bool   $strict  Only allow values (must not be empty).
+				 * @param  object $params  Additional arguments for pods_v().
+				 * @param  string $type    The type of var given.
+				 */
+				$output = apply_filters( 'pods_v_custom', $output, $default, $var, $strict, $params, $type );
 		}//end switch
 	}//end if
 
@@ -1329,7 +1367,7 @@ function pods_create_slug( $value, $strict = true ) {
 	 * @param string $value  The value to create the slug from.
 	 * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
 	 */
-	return (string) apply_filters( 'pods_create_slug', $str, $value );
+	return (string) apply_filters( 'pods_create_slug', $str, $value, $strict );
 }
 
 /**
@@ -2046,9 +2084,9 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	 *
 	 * @since 2.7.17
 	 *
-	 * @param string|null $and The "and" content used, return null to disable.
-	 * @param string $value    The value input into pods_serial_comma.
-	 * @param object $params   The list of the setup parameters for pods_serial_comma.
+	 * @param string|null $and    The "and" content used, return null to disable.
+	 * @param array       $value  The value input into pods_serial_comma.
+	 * @param object      $params The list of the setup parameters for pods_serial_comma.
 	 */
 	$params->and = apply_filters( 'pods_serial_comma_and', $params->and, $value, $params );
 
@@ -2058,7 +2096,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	 * @since 2.7.17
 	 *
 	 * @param string $separator The "separator" content used (default ", ").
-	 * @param string $value     The value input into pods_serial_comma.
+	 * @param array  $value     The value input into pods_serial_comma.
 	 * @param object $params    The list of the setup parameters for pods_serial_comma.
 	 */
 	$params->separator = apply_filters( 'pods_serial_comma_separator', $params->separator, $value, $params );
@@ -2125,10 +2163,10 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			 *
 			 * @since unknown
 			 *
-			 * @param string $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
-			 * @param string $value          The formatted value.
-			 * @param string $original_value The original value input into pods_serial_comma.
-			 * @param object $params         The list of the setup parameters for pods_serial_comma.
+			 * @param string       $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
+			 * @param string       $value          The formatted string value.
+			 * @param string|array $original_value The original value input into pods_serial_comma.
+			 * @param object       $params         The list of the setup parameters for pods_serial_comma.
 			 */
 			$serial_comma = apply_filters( 'pods_serial_comma', $params->separator, $value, $original_value, $params );
 
@@ -2151,11 +2189,18 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		$value = $last;
 	}//end if
 
-	$value = trim( $value, $params->separator . ' ' );
+	$value = trim( (string) $value, $params->separator . ' ' );
 
-	$value = apply_filters( 'pods_serial_comma_value', $value, $original_value, $params );
-
-	return (string) $value;
+	/**
+	 * Allow filtering the final serial comma value string.
+	 *
+	 * @since unknown
+	 *
+	 * @param string       $value          The formatted value.
+	 * @param string|array $original_value The original value input into pods_serial_comma.
+	 * @param object       $params         The list of the setup parameters for pods_serial_comma.
+	 */
+	return (string) apply_filters( 'pods_serial_comma_value', $value, $original_value, $params );
 }
 
 /**

@@ -1199,6 +1199,14 @@ class Pod extends Base {
 				'boolean_yes_label' => '',
 			];
 
+			$options['admin-ui']['show_admin_column_filter'] = [
+				'label'             => __( 'Show Taxonomy filter on Post Types', 'pods' ),
+				'help'              => __( 'Whether to add a filter at the top of the list table on the associated post types manage screens', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => '',
+			];
+
 			// Integration for Single Value Taxonomy UI
 			if ( function_exists( 'tax_single_value_meta_box' ) ) {
 				$options['admin-ui']['single_value'] = [
@@ -1615,15 +1623,42 @@ class Pod extends Base {
 					$options['admin-ui']['ui_fields_manage']['default'][] = 'modified';
 				}
 
-				foreach ( $pod['fields'] as $field ) {
-					$type = '';
+				$field_types = PodsForm::field_types();
 
-					if ( isset( $field_types[ $field['type'] ] ) ) {
-						$type = ' <small>(' . $field_types[ $field['type'] ]['label'] . ')</small>';
+				foreach ( $pod['fields'] as $field ) {
+					$field_label = $field['label'];
+
+					if ( 1 === (int) pods_v( 'pods_debug_ui' ) ) {
+						$extra_info = [];
+
+						$extra_info[] = sprintf(
+							'%s: %s',
+							__( 'ID', 'pods' ),
+							$field['id']
+						);
+
+						$extra_info[] = sprintf(
+							'%s: %s',
+							__( 'Name', 'pods' ),
+							$field['name']
+						);
+
+						if ( isset( $field_types[ $field['type'] ] ) ) {
+							$extra_info[] = sprintf(
+								'%s: %s',
+								__( 'Type', 'pods' ),
+								$field_types[ $field['type'] ]['label']
+							);
+						}
+
+						$field_label .= sprintf(
+							' <small>[%s]</small>',
+							implode( '; ', $extra_info )
+						);
 					}
 
-					$options['admin-ui']['ui_fields_manage']['data'][ $field['name'] ] = $field['label'] . $type;
-					$options['admin-ui']['ui_filters']['data'][ $field['name'] ]       = $field['label'] . $type;
+					$options['admin-ui']['ui_fields_manage']['data'][ $field['name'] ] = $field_label;
+					$options['admin-ui']['ui_filters']['data'][ $field['name'] ]       = $field_label;
 				}
 
 				$options['admin-ui']['ui_fields_manage']['data']['id'] = 'ID';

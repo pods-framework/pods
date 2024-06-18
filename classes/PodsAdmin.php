@@ -809,17 +809,15 @@ class PodsAdmin {
 	 * Add media button for Pods shortcode
 	 *
 	 * @param string $context Media button context.
-	 *
-	 * @return string
 	 */
 	public function media_button( $context = null ) {
 		if ( ! empty( $_GET['action'] ) && 'elementor' === $_GET['action'] ) {
-			return '';
+			return;
 		}
 
 		// If shortcodes are disabled don't show the button
 		if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
-			return '';
+			return;
 		}
 
 		/**
@@ -831,7 +829,7 @@ class PodsAdmin {
 		 * @since 2.3.19
 		 */
 		if ( ! apply_filters( 'pods_admin_media_button', true, $context ) ) {
-			return '';
+			return;
 		}
 
 		$current_page = basename( $_SERVER['PHP_SELF'] );
@@ -846,7 +844,7 @@ class PodsAdmin {
 				'post.php',
 			), true
 		) ) {
-			return '';
+			return;
 		}
 
 		add_action( 'admin_footer', array( $this, 'mce_popup' ) );
@@ -880,7 +878,9 @@ class PodsAdmin {
 
 		$pods = $api->load_pods( array( 'fields' => false ) );
 
-		$view = pods_v( 'view', 'get', 'all', true );
+		$id     = pods_v( 'id' );
+		$action = pods_v( 'action' );
+		$view   = pods_v( 'view', 'get', 'all', true );
 
 		// @codingStandardsIgnoreLine
 		if ( empty( $pods ) && ! isset( $_GET['action'] ) ) {
@@ -1391,6 +1391,17 @@ class PodsAdmin {
 						$source_types[ $source_type ],
 						$number_found
 					);
+				}
+			}
+		}
+
+		// Maybe auto-map the slugs to ID when editing.
+		if ( 'edit' === $action && $id && ! is_numeric( $id ) ) {
+			foreach ( $ui['data'] as $check_pod ) {
+				if ( $check_pod['name'] === $id && $check_pod['id'] && is_numeric( $check_pod['id'] ) ) {
+					pods_redirect( pods_query_arg( [ 'id' => (int) $check_pod['id'] ] ) );
+
+					break;
 				}
 			}
 		}
@@ -2034,7 +2045,7 @@ class PodsAdmin {
 		 *
 		 * @since 2.7.17
 		 *
-		 * @param array List of callouts to enable.
+		 * @param array $callouts List of callouts to enable.
 		 */
 		$callouts = apply_filters( 'pods_admin_callouts', $callouts );
 
@@ -3762,13 +3773,9 @@ class PodsAdmin {
 	 * Toggle a component on or off
 	 *
 	 * @param PodsUI $ui PodsUI object.
-	 *
-	 * @return bool
 	 */
 	public function admin_components_toggle( $ui ) {
-
-		// @codingStandardsIgnoreLine
-		$component = $_GET['id'];
+		$component = pods_v( 'id' );
 
 		if ( ! empty( PodsInit::$components->components[ $component ]['PluginDependency'] ) ) {
 			$dependency = explode( '|', PodsInit::$components->components[ $component ]['PluginDependency'] );
@@ -4398,6 +4405,15 @@ class PodsAdmin {
 				'depends-on' => [ 'rest_enable' => true ],
 				'dependency' => true,
 			],
+			'read_all_access'   => [
+				'label'             => __( 'Read All Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be returned for everyone who has access to that endpoint/object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to read all field values via REST', 'pods' ),
+				'depends-on'        => [
+					'read_all' => true,
+				],
+			],
 			'write_all'   => [
 				'label'             => __( 'Allow All Fields To Be Updated', 'pods' ),
 				'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
@@ -4405,6 +4421,15 @@ class PodsAdmin {
 				'default'           => pods_v( 'name', $pod ),
 				'depends-on'        => [ 'rest_enable' => true, 'read_all' => true ],
 			],
+			/*'write_all_access'   => [
+				'label'             => __( 'Write All Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be written by everyone who has access to edit that object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to write to all field values via REST', 'pods' ),
+				'depends-on'        => [
+					'write_all' => true,
+				],
+			],*/
 			'rest_api_field_mode'   => [
 				'label'             => __( 'Field Mode', 'pods' ),
 				'help'              => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
@@ -4476,6 +4501,18 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
+			'rest_read_access'   => [
+				'label'             => __( 'Read Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be returned for everyone who has access to that endpoint/object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to read this field value via REST', 'pods' ),
+				'depends-on'        => [
+					'rest_read' => true,
+				],
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
+			],
 			'rest_write'         => [
 				'label'       => __( 'Write via REST API', 'pods' ),
 				'help'        => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
@@ -4485,6 +4522,18 @@ class PodsAdmin {
 					'type' => $layout_non_input_field_types,
 				],
 			],
+			/*'rest_write_access'   => [
+				'label'             => __( 'Write Access', 'pods' ),
+				'help'              => __( 'By default the REST API will allow the fields to be written by everyone who has access to edit that object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
+				'type'              => 'boolean',
+				'boolean_yes_label' => __( 'Require being logged in to write to this field value via REST', 'pods' ),
+				'depends-on'        => [
+					'rest_write' => true,
+				],
+				'excludes-on'       => [
+					'type' => $layout_non_input_field_types,
+				],
+			],*/
 			'rest_field_options' => [
 				'name'       => 'rest_field_options',
 				'label'      => __( 'Relationship Field Options', 'pods' ),

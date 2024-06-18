@@ -272,6 +272,7 @@ class PodsField_WYSIWYG extends PodsField {
 			$options['repeatable'] = 0;
 		}
 
+		$value = $this->maybe_sanitize_output( $value, $options );
 		$value = $this->normalize_value_for_input( $value, $options, "\n" );
 
 		// Normalize the line breaks for React.

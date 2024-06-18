@@ -9,6 +9,10 @@
 	overflow: visible !important; // TODO: this is being overridden by old 2.x styles
 	display: flex;
 	flex-flow: column nowrap;
+
+	@media screen and (max-width: 850px) {
+		margin: 0;
+	}
 }
 
 .pods-field-list__empty {
@@ -26,4 +30,8 @@
 
 .pods-field-group_add_field_link {
 	align-self: flex-end;
+
+	@media screen and (max-width: 850px) {
+		margin: 0 1em 1em;
+	}
 }

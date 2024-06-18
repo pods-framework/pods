@@ -1,13 +1,14 @@
 @import '../edit-pod-variables';
 
 .components-modal__frame.pods-settings-modal {
-	height: 90vh;
-	width: 90vw;
+	height: 80vh;
+	width: 80vw;
 	max-width: 950px;
 
-	@media screen and (min-width: 851px) {
-		height: 80vh;
-		width: 80vw;
+	@media screen and (max-width: 850px) {
+		height: 100%;
+		width: 100%;
+		margin-top: 0;
 	}
 }
 
@@ -120,6 +121,10 @@
 
 	@media screen and (min-width: 851px) {
 		flex: 1 1 auto;
+	}
+
+	@media screen and (max-width: 850px) {
+		overflow-y: scroll;
 	}
 
     .pods-field-option {

@@ -1,6 +1,6 @@
 {
   "name": "pods",
-  "version": "3.2.1.1",
+  "version": "3.2.2",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
   "homepage": "https://pods.io/",
@@ -32,7 +32,7 @@
     "webpack-production": "webpack --config webpack.prod.js --progress"
   },
   "engines": {
-    "node": ">=16.13.2",
+    "node": ">=16.16.0",
     "npm": ">=8.1.2"
   },
   "engineStrict": true,

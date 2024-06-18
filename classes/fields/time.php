@@ -152,7 +152,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 */
 	public function schema( $options = null ) {
 
-		$schema = 'TIME NOT NULL default "00:00:00"';
+		$schema = 'TIME NOT NULL default \'00:00:00\'';
 
 		return $schema;
 	}

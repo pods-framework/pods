@@ -19,7 +19,7 @@
 
 .pods-field_wrapper--overlay {
 	background: white;
-	box-shadow:  0 0 0 3px rgba(63, 63, 68, 0.05),
+	box-shadow: 0 0 0 3px rgba(63, 63, 68, 0.05),
 		-1px 0 4px 0 rgba(34, 33, 81, 0.01),
 		0px 4px 4px 0 rgba(34, 33, 81, 0.25);
 	z-index: 999;
@@ -37,7 +37,9 @@
 	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
 
 	&:hover .pods-field_controls-container,
-	&:focus-within .pods-field_controls-container {
+	&:focus-within .pods-field_controls-container,
+	&:hover .pods-field_copy-button,
+	&:focus-within .pods-field_copy-button {
 		opacity: 1;
 	}
 }
@@ -132,6 +134,7 @@
 	background: none;
 	border: none;
 	cursor: pointer;
+	padding-inline: 0;
 }
 
 .pods-field_label__link {
@@ -145,6 +148,14 @@
 .pods-field_name {
 	cursor: pointer;
 	user-select: none;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+
+	&:hover .pods-field_copy-button {
+		opacity: 1;
+		;
+	}
 }
 
 .pods-field-group_name:hover > .pods-field-group_name__id {
@@ -179,8 +190,23 @@
 	flex: 0 0 calc(25% - 1em);
 	padding-bottom: 1em;
 	padding-right: 1em;
-	overflow-wrap: break-word;
 	width: calc(25% - 1em);
+}
+
+.pods-field_name,
+.pods-field_wrapper-label_name {
+	overflow-wrap: anywhere;
+}
+
+.pods-field_type,
+.pods-field_wrapper-label_type,
+.pods-field_label,
+.pods-field_wrapper-label {
+	overflow-wrap: break-word;
+
+	@media screen and (max-width: 850px) {
+		overflow-wrap: anywhere;
+	}
 }
 
 .pods-field_wrapper-label-items {
@@ -198,7 +224,11 @@
 .pods-field_wrapper-items {
 	border: 1px solid $color--light-grey;
 	margin: 1em 0;
-	// overflow: hidden;
+
+	@media screen and (max-width: 850px) {
+		border-left: none;
+		border-right: none;
+	}
 }
 
 .pods-field_wrapper:nth-child(even) {

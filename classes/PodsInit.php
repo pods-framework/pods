@@ -581,7 +581,7 @@ class PodsInit {
 		 *
 		 * @since 2.7.23
 		 *
-		 * @param bool $suffix_min Minimized script suffix.
+		 * @param string $suffix_min Minimized script suffix.
 		 */
 		do_action( 'pods_before_enqueue_scripts', $suffix_min );
 
@@ -844,7 +844,7 @@ class PodsInit {
 		 *
 		 * @since 2.7.23
 		 *
-		 * @param bool $suffix_min Minimized script suffix.
+		 * @param string $suffix_min Minimized script suffix.
 		 */
 		do_action( 'pods_after_enqueue_scripts', $suffix_min );
 	}
@@ -2339,22 +2339,6 @@ class PodsInit {
 					// translators: %s: Pod page label.
 					__( 'Cannot delete pod page "%s"', 'pods' ),
 					$page['name']
-				), 'error' );
-			}
-		}
-
-		$helpers = $api->load_helpers();
-
-		foreach ( $helpers as $helper ) {
-			try {
-				$api->delete_helper( array( 'name' => $helper['name'] ) );
-			} catch ( Exception $exception ) {
-				pods_debug_log( $exception );
-
-				pods_message( sprintf(
-					// translators: %s: Pod helper label.
-					__( 'Cannot delete pod helper "%s"', 'pods' ),
-					$helper['name']
 				), 'error' );
 			}
 		}

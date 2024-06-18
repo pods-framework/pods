@@ -909,7 +909,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				 * @param  object $params  Additional arguments for pods_v().
 				 * @param  string $type    The type of var given.
 				 */
-				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params );
+				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $paams, $type );
 
 				/**
 				 * Filter to handle custom variable types.
@@ -923,7 +923,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				 * @param  object $params  Additional arguments for pods_v().
 				 * @param  string $type    The type of var given.
 				 */
-				$output = apply_filters( 'pods_v_custom', $output, $default, $var, $strict, $params );
+				$output = apply_filters( 'pods_v_custom', $output, $default, $var, $strict, $params, $type );
 		}//end switch
 	}//end if
 
@@ -2163,10 +2163,10 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			 *
 			 * @since unknown
 			 *
-			 * @param string $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
-			 * @param array  $value          The formatted value.
-			 * @param string $original_value The original value input into pods_serial_comma.
-			 * @param object $params         The list of the setup parameters for pods_serial_comma.
+			 * @param string       $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
+			 * @param string       $value          The formatted string value.
+			 * @param string|array $original_value The original value input into pods_serial_comma.
+			 * @param object       $params         The list of the setup parameters for pods_serial_comma.
 			 */
 			$serial_comma = apply_filters( 'pods_serial_comma', $params->separator, $value, $original_value, $params );
 
@@ -2196,9 +2196,9 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	 *
 	 * @since unknown
 	 *
-	 * @param string $value          The formatted value.
-	 * @param string $original_value The original value input into pods_serial_comma.
-	 * @param object $params         The list of the setup parameters for pods_serial_comma.
+	 * @param string       $value          The formatted value.
+	 * @param string|array $original_value The original value input into pods_serial_comma.
+	 * @param object       $params         The list of the setup parameters for pods_serial_comma.
 	 */
 	return (string) apply_filters( 'pods_serial_comma_value', $value, $original_value, $params );
 }

@@ -64,7 +64,7 @@ jobs:
           plugin_path: ${{ github.workspace }}
       - name: Create Milestone
         id: create-milestone
-        uses: WyriHaximus/github-action-create-milestone@v1.2.0
+        uses: WyriHaximus/github-action-create-milestone@v1.1.1
         continue-on-error: true
         with:
           title: '${{ env.MILESTONE_PREFIX }}${{ env.PLUGIN_VERSION }}'

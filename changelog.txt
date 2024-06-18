@@ -4,7 +4,7 @@ Our GitHub has the full list of all prior releases of Pods: https://github.com/p
 
 = 3.2.2 - June 18th, 2024 =
 
-* Feature: You cna now turn on Taxonomy filters for a Custom Taxonomy so that you see a dropdown filter on the list of posts for any associated post types. (@sc0ttkclark)
+* Feature: You can now turn on Taxonomy filters for a Custom Taxonomy so that you see a dropdown filter on the list of posts for any associated post types. (@sc0ttkclark)
 * Added: Pods Templates > Support for comments on post types using Pods Templates using `[each comments]` and `[if comments]`. (@sc0ttkclark)
 * Added: REST API > Add support for determining whether to require person to be logged in to read values for custom fields (default: login not required). (@sc0ttkclark)
 * Added: Automatically redirect to the proper edit URL when going to the Pods Admin > Edit Pods page for a specific pod but `id=XX` is the slug. (@sc0ttkclark)

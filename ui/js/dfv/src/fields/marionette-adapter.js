@@ -98,10 +98,13 @@ class MarionetteAdapter extends React.Component {
 	}
 
 	render() {
-		const { className } = this.props;
-
+		const { className, fieldConfig } = this.props;
+		const allowSingleFile = Number( fieldConfig?.file_limit ) === 1;
+		// Add an extra class so we're able to hide the `Add file` button,
+		// when an image or video is already being added into the field.
+		const wrapperClasses = `pods-marionette-adapter-wrapper ${ allowSingleFile ? 'pods-marionette-adapter-wrapper-single-file' : '' }`;
 		return (
-			<div className="pods-marionette-adapter-wrapper">
+			<div className={ wrapperClasses }>
 				<div
 					className={ className }
 					ref={ ( element ) => this.element = element }

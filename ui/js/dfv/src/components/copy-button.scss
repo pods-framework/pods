@@ -1,9 +1,11 @@
 .pods-field_copy-button {
     opacity: 0;
+    padding: 1px;
+    display: inline-flex;
 
     svg {
-        width: 12px;
-        height: 12px;
+      width: 12px;
+      height: 12px;
     }
 
 	@media screen and (max-width: 850px) {

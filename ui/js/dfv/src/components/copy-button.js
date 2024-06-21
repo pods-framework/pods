@@ -4,6 +4,26 @@ import { __ } from '@wordpress/i18n';
 
 import './copy-button.scss';
 
+const copyToClipboard = async ( text ) => {
+	try {
+		// @link https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText
+		// clipboard.writeText only works in secure context (https).
+		await navigator.clipboard.writeText( text );
+	} catch {
+		// Fallback for older browsers, or in unsecure contexts (http).
+		const input = document.createElement( 'input' );
+		input.style.position = 'fixed';
+		input.style.left = '-9999px';
+		input.style.top = '-9999px';
+		document.body.appendChild( input );
+		input.value = text;
+		input.select();
+		document.execCommand( 'copy' );
+		document.body.removeChild( input );
+		Promise.resolve();
+	}
+};
+
 // https://lucide.dev/icons/copy
 const CopyButton = ( { label, textToCopy, onClick } ) => {
 	const [ copied, setCopied ] = useState( false );
@@ -11,7 +31,7 @@ const CopyButton = ( { label, textToCopy, onClick } ) => {
 		if ( onClick ) {
 			onClick();
 		} else {
-			await navigator.clipboard.writeText( textToCopy );
+			await copyToClipboard( textToCopy );
 		}
 		setCopied( true );
 		const timeout = setTimeout( () => {
@@ -27,7 +47,7 @@ const CopyButton = ( { label, textToCopy, onClick } ) => {
 		>
 			{ copied ? (
 				<span>
-					({ __( 'Copied name', 'pods' ) })
+					({ __( 'Copied', 'pods' ) })
 				</span>
 			) : (
 				<svg

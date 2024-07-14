@@ -149,8 +149,8 @@ class Meta {
 							'object_subtype'    => $pod_name,
 							'type'              => 'string',
 							'description'       => $field['label'],
-							'default'           => $field->get_arg( 'default' ),
-							'single'            => $field_is_repeatable,
+							'default'           => $field->get_arg( 'default', '' ),
+							'single'            => ! $field_is_repeatable,
 							'show_in_rest'      => $field_has_rest,
 							'revisions_enabled' => $field_has_revisions,
 						]

@@ -2037,7 +2037,7 @@ class PodsField_Pick extends PodsField {
 					/**
 					 * Allow filtering the list of term IDs that will be synced for a field.
 					 *
-					 * @since TBD
+					 * @since 3.2.4
 					 *
 					 * @param array  $term_ids_to_sync The list of term IDs to sync.
 					 * @param Field  $field            The field object.

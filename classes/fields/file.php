@@ -154,6 +154,13 @@ class PodsField_File extends PodsField {
 				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
+			static::$type . '_attachment_current_post_only'         => array(
+				'label'      => __( 'Restrict Media Library to Current Post ID', 'pods' ),
+				'help'       => __( 'The media library will be restricted to only showing attachments that are attached to the current post ID if this field is on a Pod that is a Post Type.', 'pods' ),
+				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+			),
 			static::$type . '_upload_dir'             => array(
 				'label'      => __( 'Upload Directory', 'pods' ),
 				'default'    => 'wp',
@@ -383,6 +390,26 @@ class PodsField_File extends PodsField {
 
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
+
+		$pod_data = null;
+
+		if ( $pod instanceof Pods ) {
+			$pod_data = $pod->pod_data;
+		} elseif ( $pod instanceof Pod ) {
+			$pod_data = $pod;
+		} elseif ( is_array( $pod ) ) {
+			$pod_data = $pod;
+		}
+
+		// Get pod type.
+		$pod_type = $pod_data ? $pod_data['type'] : null;
+
+		$args->options['file_post_id'] = null;
+
+		// Maybe set post_id based on current post context.
+		if ( 'post_type' === $pod_type && ! empty( $options[ static::$type . '_attachment_current_post_only' ] ) ) {
+			$args->options['file_post_id'] = $id;
+		}
 
 		/**
 		 * Access Checking

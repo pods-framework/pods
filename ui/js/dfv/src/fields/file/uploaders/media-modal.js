@@ -28,6 +28,7 @@ export const MediaModal = PodsFileUploader.extend( {
 			multiple: ( 1 !== parseInt( this.fieldConfig.file_limit, 10 ) ),
 			library: {
 				type: this.fieldConfig.limit_types,
+				uploadedTo: this.fieldConfig?.file_post_id,
 			},
 			// Customize the submit button.
 			button: {
@@ -80,7 +81,7 @@ export const MediaModal = PodsFileUploader.extend( {
 				name: attachment.attributes.title,
 				edit_link: attachment.attributes.editLink,
 				link: attachment.attributes.link,
-				download: attachment.attributes.url
+				download: attachment.attributes.url,
 			} );
 		} );
 

@@ -2034,8 +2034,20 @@ class PodsField_Pick extends PodsField {
 				$taxonomy_name = $options->get_related_object_name();
 
 				if ( isset( $taxonomies_available[ $taxonomy_name ] ) ) {
+					/**
+					 * Allow filtering the list of term IDs that will be synced for a field.
+					 *
+					 * @since TBD
+					 *
+					 * @param array  $term_ids_to_sync The list of term IDs to sync.
+					 * @param Field  $field            The field object.
+					 * @param int    $id               The post ID.
+					 * @param string $taxonomy_name    The taxonomy name being synced.
+					 */
+					$term_ids_to_sync = apply_filters( 'pods_field_pick_save_sync_taxonomy_term_ids', $value_ids, $options, $id, $taxonomy_name );
+
 					// Update the taxonomy terms for the current post.
-					wp_set_post_terms( $id, $value_ids, $taxonomy_name );
+					wp_set_post_terms( $id, $term_ids_to_sync, $taxonomy_name );
 				}
 			}
 		}

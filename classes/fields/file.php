@@ -189,7 +189,7 @@ class PodsField_File extends PodsField {
 				 *
 				 * @since 2.7.28
 				 *
-				 * @param string @default_directory The custom upload directory to use by default for new fields.
+				 * @param string $default_directory The custom upload directory to use by default for new fields.
 				 */
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_upload_dir_custom", '' ),
 				'type'        => 'text',
@@ -1281,10 +1281,10 @@ class PodsField_File extends PodsField {
 					 *
 					 * @since 2.7.28
 					 *
-					 * @param Pods  $context_pod The Pods object of the associated pod for the post type.
-					 * @param array $params      The POSTed parameters for the request.
-					 * @param array $field       The field configuration associated to the upload field.
-					 * @param array $pod         The pod configuration associated to the upload field.
+					 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
+					 * @param object $params      The POSTed parameters for the request.
+					 * @param array  $field       The field configuration associated to the upload field.
+					 * @param array  $pod         The pod configuration associated to the upload field.
 					 */
 					$context_pod = apply_filters( 'pods_upload_dir_custom_context_pod', $context_pod, $params, $field, $pod );
 
@@ -1296,7 +1296,7 @@ class PodsField_File extends PodsField {
 					 * @since 2.7.28
 					 *
 					 * @param string $custom_dir  The directory to use for the uploaded file.
-					 * @param array  $params      The POSTed parameters for the request.
+					 * @param object $params      The POSTed parameters for the request.
 					 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
 					 * @param array  $field       The field configuration associated to the upload field.
 					 * @param array  $pod         The pod configuration associated to the upload field.

@@ -321,6 +321,12 @@ class PodsField_File extends PodsField {
 				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
+			static::$type . '_auto_set_featured_image' => array(
+				'label'      => __( 'Automatically set first image as Featured Image for the Current Post', 'pods' ),
+				'help'       => __( 'On save, the first image of this field will update the featured image for the current post if this field is on a Pod that is a Post Type.', 'pods' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+			),
 		);
 
 		return $options;
@@ -707,6 +713,21 @@ class PodsField_File extends PodsField {
 
 		$value = array_unique( array_filter( $value ), SORT_REGULAR );
 
+		$pod_data = null;
+
+		if ( $pod instanceof Pods ) {
+			$pod_data = $pod->pod_data;
+		} elseif ( $pod instanceof Pod ) {
+			$pod_data = $pod;
+		} elseif ( is_array( $pod ) ) {
+			$pod_data = $pod;
+		}
+
+		// Get pod type.
+		$pod_type = $pod_data ? $pod_data['type'] : null;
+
+		$first_attachment_id = null;
+
 		// Handle File title saving.
 		foreach ( $value as $attachment_id ) {
 			$title = false;
@@ -736,6 +757,10 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
+			if ( null === $first_attachment_id ) {
+				$first_attachment_id = $attachment_id;
+			}
+
 			// Update the title if set.
 			if (
 				false !== $title
@@ -746,7 +771,7 @@ class PodsField_File extends PodsField {
 			}
 
 			// Update attachment parent if it's not set yet and we're updating a post.
-			if ( ! empty( $params->id ) && ! empty( $pod['type'] ) && 'post_type' === $pod['type'] ) {
+			if ( 'post_type' === $pod_type && ! empty( $params->id ) ) {
 				$attachment = get_post( $attachment_id );
 
 				if ( isset( $attachment->post_parent ) && 0 === (int) $attachment->post_parent ) {
@@ -767,6 +792,10 @@ class PodsField_File extends PodsField {
 			}
 		}//end foreach
 
+		// Set the first image as the featured image if the option is set.
+		if ( 'post_type' === $pod_type && ! empty( $options[ static::$type . '_auto_set_featured_image' ] ) && ! empty( $first_attachment_id ) ) {
+			set_post_thumbnail( $id, $first_attachment_id );
+		}
 	}
 
 	/**

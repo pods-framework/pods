@@ -154,6 +154,13 @@ class PodsField_File extends PodsField {
 				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
+			static::$type . '_attachment_current_post_only'         => array(
+				'label'      => __( 'Restrict Media Library to Current Post ID', 'pods' ),
+				'help'       => __( 'The media library will be restricted to only showing attachments that are attached to the current post ID if this field is on a Pod that is a Post Type.', 'pods' ),
+				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+			),
 			static::$type . '_upload_dir'             => array(
 				'label'      => __( 'Upload Directory', 'pods' ),
 				'default'    => 'wp',
@@ -182,7 +189,7 @@ class PodsField_File extends PodsField {
 				 *
 				 * @since 2.7.28
 				 *
-				 * @param string @default_directory The custom upload directory to use by default for new fields.
+				 * @param string $default_directory The custom upload directory to use by default for new fields.
 				 */
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_upload_dir_custom", '' ),
 				'type'        => 'text',
@@ -314,6 +321,12 @@ class PodsField_File extends PodsField {
 				'pick_format_single' => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
+			static::$type . '_auto_set_featured_image' => array(
+				'label'      => __( 'Automatically set first image as Featured Image for the Current Post', 'pods' ),
+				'help'       => __( 'On save, the first image of this field will update the featured image for the current post if this field is on a Pod that is a Post Type.', 'pods' ),
+				'default'    => 0,
+				'type'       => 'boolean',
+			),
 		);
 
 		return $options;
@@ -383,6 +396,26 @@ class PodsField_File extends PodsField {
 
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
+
+		$pod_data = null;
+
+		if ( $pod instanceof Pods ) {
+			$pod_data = $pod->pod_data;
+		} elseif ( $pod instanceof Pod ) {
+			$pod_data = $pod;
+		} elseif ( is_array( $pod ) ) {
+			$pod_data = $pod;
+		}
+
+		// Get pod type.
+		$pod_type = $pod_data ? $pod_data['type'] : null;
+
+		$args->options['file_post_id'] = null;
+
+		// Maybe set post_id based on current post context.
+		if ( 'post_type' === $pod_type && ! empty( $options[ static::$type . '_attachment_current_post_only' ] ) ) {
+			$args->options['file_post_id'] = $id;
+		}
 
 		/**
 		 * Access Checking
@@ -680,6 +713,21 @@ class PodsField_File extends PodsField {
 
 		$value = array_unique( array_filter( $value ), SORT_REGULAR );
 
+		$pod_data = null;
+
+		if ( $pod instanceof Pods ) {
+			$pod_data = $pod->pod_data;
+		} elseif ( $pod instanceof Pod ) {
+			$pod_data = $pod;
+		} elseif ( is_array( $pod ) ) {
+			$pod_data = $pod;
+		}
+
+		// Get pod type.
+		$pod_type = $pod_data ? $pod_data['type'] : null;
+
+		$first_attachment_id = null;
+
 		// Handle File title saving.
 		foreach ( $value as $attachment_id ) {
 			$title = false;
@@ -709,6 +757,10 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
+			if ( null === $first_attachment_id ) {
+				$first_attachment_id = $attachment_id;
+			}
+
 			// Update the title if set.
 			if (
 				false !== $title
@@ -719,7 +771,7 @@ class PodsField_File extends PodsField {
 			}
 
 			// Update attachment parent if it's not set yet and we're updating a post.
-			if ( ! empty( $params->id ) && ! empty( $pod['type'] ) && 'post_type' === $pod['type'] ) {
+			if ( 'post_type' === $pod_type && ! empty( $params->id ) ) {
 				$attachment = get_post( $attachment_id );
 
 				if ( isset( $attachment->post_parent ) && 0 === (int) $attachment->post_parent ) {
@@ -740,6 +792,10 @@ class PodsField_File extends PodsField {
 			}
 		}//end foreach
 
+		// Set the first image as the featured image if the option is set.
+		if ( 'post_type' === $pod_type && ! empty( $options[ static::$type . '_auto_set_featured_image' ] ) && ! empty( $first_attachment_id ) ) {
+			set_post_thumbnail( $id, $first_attachment_id );
+		}
 	}
 
 	/**
@@ -1225,10 +1281,10 @@ class PodsField_File extends PodsField {
 					 *
 					 * @since 2.7.28
 					 *
-					 * @param Pods  $context_pod The Pods object of the associated pod for the post type.
-					 * @param array $params      The POSTed parameters for the request.
-					 * @param array $field       The field configuration associated to the upload field.
-					 * @param array $pod         The pod configuration associated to the upload field.
+					 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
+					 * @param object $params      The POSTed parameters for the request.
+					 * @param array  $field       The field configuration associated to the upload field.
+					 * @param array  $pod         The pod configuration associated to the upload field.
 					 */
 					$context_pod = apply_filters( 'pods_upload_dir_custom_context_pod', $context_pod, $params, $field, $pod );
 
@@ -1240,7 +1296,7 @@ class PodsField_File extends PodsField {
 					 * @since 2.7.28
 					 *
 					 * @param string $custom_dir  The directory to use for the uploaded file.
-					 * @param array  $params      The POSTed parameters for the request.
+					 * @param object $params      The POSTed parameters for the request.
 					 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
 					 * @param array  $field       The field configuration associated to the upload field.
 					 * @param array  $pod         The pod configuration associated to the upload field.

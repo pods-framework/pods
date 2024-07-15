@@ -3,9 +3,9 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.2
-Stable tag: 3.2.2
+Stable tag: 3.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,6 +182,21 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.2.4 - July 15th, 2024 =
+
+* Feature: Allow restricting media library for File fields to only showing attachments associated to the current post ID. (@sc0ttkclark)
+* Feature: Allow File field to automatically use the first file saved as the featured image for the post. (@sc0ttkclark)
+* Feature: Add support for Post Types that have associated Taxonomies to have a Relationship field which will automatically sync to the corresponding taxonomy on save. (@sc0ttkclark)
+* Fixed: Register meta handling now properly loads when enabled. (@sc0ttkclark)
+* Fixed: Remove always visible scrollbar from Settings modal panel container since it does not scroll. (@sc0ttkclark)
+* Fixed: REST API Show All Fields setting for a Pod now works as expected again. (@sc0ttkclark)
+
+= 3.2.3 - July 15th, 2024 =
+
+The Pods 3.2.3 release turned into Pods 3.2.4 after an failed attempt at hijacking our plugin on WordPress.org was accidentally documented by online security vulnerability databases as successful.
+
+To be safe and sure that those who are using Pods do not mistake Pods 3.2.3 as a vulnerable release, we will instead release the next version as Pods 3.2.4.
+
 = 3.2.2 - June 18th, 2024 =
 
 * Feature: You can now turn on Taxonomy filters for a Custom Taxonomy so that you see a dropdown filter on the list of posts for any associated post types. (@sc0ttkclark)
@@ -201,12 +216,12 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 *Security Release*
 
-* Security hardening: Enforce safe URLs for Pods form submission confirmation page URLs. Props to the wesley (wcraft) / Wordfence for responsibly reporting this. (@sc0ttkclark) 
+* Security hardening: Enforce safe URLs for Pods form submission confirmation page URLs. Props to the wesley (wcraft) / Wordfence for responsibly reporting this. (@sc0ttkclark)
 
 = 3.2.1 - March 29th, 2024 =
 
 * Performance: The Advanced Filters popup now uses Autocomplete for relationship fields to improve performance for large itemsets. FYI filters are a feature in the Manage Content UI for Advanced Content Types only. (@sc0ttkclark)
-* Fixed: Conditional logic for display callbacks 'allowed' field now showing when choosing the Customized option. (@sc0ttkclark) 
+* Fixed: Conditional logic for display callbacks 'allowed' field now showing when choosing the Customized option. (@sc0ttkclark)
 * Fixed: PHP 8.1 compatibility fix for null values passed to esc_* functions in WP. (@sc0ttkclark)
 * Fixed: PHP 8.1 compatibility fix for html_entity_decode. (@sc0ttkclark)
 
@@ -214,9 +229,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 * Feature: New support for Custom Field revisions in Pods that are Post Types that use Meta storage. You can optionally enable the feature per-pod or per-field. #7265 (@sc0ttkclark)
 * Feature: New support for WordPress `register_meta()` for all Pods fields on meta-based Pods. You can enable this feature in Pods Admin > Settings > "Register meta fields". (@sc0ttkclark)
-* Feature: New support for specifying where your Custom Fields show in REST API responses for Pods that support that. You can choose from Object (response.field_name) or Meta (response.meta.field_name). (@sc0ttkclark) 
+* Feature: New support for specifying where your Custom Fields show in REST API responses for Pods that support that. You can choose from Object (response.field_name) or Meta (response.meta.field_name). (@sc0ttkclark)
 * Feature: New support for Custom Fields in the new [WordPress 6.5 Block Bindings API](https://make.wordpress.org/core/2024/03/06/new-feature-the-block-bindings-api/) for the `core/post-meta` source. To use your custom fields there, you will need to enable "Register meta fields" in your Pods Admin > Settings and set your Pod to show it's REST API fields in the "Meta" location instead of Object. (@sc0ttkclark)
-* Feature: New custom binding source support for the [WordPress 6.5 Block Bindings API](https://make.wordpress.org/core/2024/03/06/new-feature-the-block-bindings-api/). Specify your source as `pods/bindings-field` and then just pass the same arguments you would pass for a normal `[pods]` shortcode or block. This will bind that dynamic output to the block you are working with. (@sc0ttkclark)   
+* Feature: New custom binding source support for the [WordPress 6.5 Block Bindings API](https://make.wordpress.org/core/2024/03/06/new-feature-the-block-bindings-api/). Specify your source as `pods/bindings-field` and then just pass the same arguments you would pass for a normal `[pods]` shortcode or block. This will bind that dynamic output to the block you are working with. (@sc0ttkclark)
 * Feature: Now you can specify whether to default values for a Pods field when the field is empty. This works great for when you add a new field to a Pod and you want to edit an existing item that did not have a field value set. The default value will be used in that circumstance. (@sc0ttkclark)
 * Feature: Support for multiple default values when working with a multi-select field. Now you can just separate your values with a comma and they will be set as the default values. (@sc0ttkclark)
 * Feature: Now you can specify whether to evaluate magic tags for default values like `{@user.ID}`. (@sc0ttkclark)
@@ -224,7 +239,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Tweak: Added first used and last installed Pods versions to the Site Health information to be more helpful with debugging. (@sc0ttkclark)
 * Tweak: Improved the field label/description for Additional User Capabilities field in the CPT settings. (@sc0ttkclark)
 * Fixed: Resolved an annoying issue when adding a new group or field where it would reset the Pod label to the name (slug) of the pod. (@sc0ttkclark)
-* Fixed: Updated logic for default value handling when using magic tags for internal field configs to ensure the magic tags get evaluated. (@sc0ttkclark) 
+* Fixed: Updated logic for default value handling when using magic tags for internal field configs to ensure the magic tags get evaluated. (@sc0ttkclark)
 * Fixed: Resolve issue with `pods_register_block_type()` not clearing the known blocks cache when registering them. #7167 (@sc0ttkclark)
 * Fixed: PHP fatal errors resolved with `array_combine()` usage from changes in WP 6.5. #7266 (@sc0ttkclark)
 * Fixed: Custom capability fallbacks when the option is empty now properly fallback to the default capability using that post type name. #7250 (@JoryHogeveen)

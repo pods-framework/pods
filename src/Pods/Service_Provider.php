@@ -50,6 +50,7 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		add_action( 'init', $this->container->callback( Theme\WP_Query_Integration::class, 'hook' ), 20 );
 
 		add_action( 'init', $this->container->callback( WP\Bindings::class, 'hook' ), 20 );
+		add_action( 'init', $this->container->callback( WP\Meta::class, 'hook' ), 20 );
 		add_action( 'init', $this->container->callback( WP\Revisions::class, 'hook' ), 20 );
 
 		add_action( 'init', $this->container->callback( WP\UI\Taxonomy_Filter::class, 'hook' ), 20 );

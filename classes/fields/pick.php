@@ -441,6 +441,15 @@ class PodsField_Pick extends PodsField {
 				'default'     => '',
 				'type'        => 'text',
 			],
+			static::$type . '_sync_taxonomy' => [
+				'label'       => __( 'Sync associated taxonomy with this relationship', 'pods' ),
+				'help'        => __( 'This will automatically sync the associated taxonomy terms with the value of this relationship if this field is on a Pod that is a Post Type. If the associated taxonomy terms are different, they will be overridden on save.', 'pods' ),
+				'wildcard-on' => [
+					static::$type . '_object' => [
+						'^taxonomy-.*$',
+					],
+				],
+			]
 		];
 
 		$post_type_pick_objects = array();
@@ -2013,6 +2022,22 @@ class PodsField_Pick extends PodsField {
 		// Remove this ID from the related IDs.
 		if ( ! empty( $remove_ids ) ) {
 			self::$api->delete_relationships( $remove_ids, $id, $related_pod, $related_field );
+		}
+
+		// Handle syncing of taxonomy terms.
+		if ( ! empty( $pod['type'] ) && 'post_type' === $pod['type'] && ! empty( $options[ static::$type . '_sync_taxonomy' ] ) ) {
+			// Check if post type has the same attached taxonomy.
+			$taxonomies_available = get_object_taxonomies( $pod['name'] );
+			$taxonomies_available = array_flip( $taxonomies_available );
+
+			if ( $options instanceof Field || $options instanceof Value_Field ) {
+				$taxonomy_name = $options->get_related_object_name();
+
+				if ( isset( $taxonomies_available[ $taxonomy_name ] ) ) {
+					// Update the taxonomy terms for the current post.
+					wp_set_post_terms( $id, $value_ids, $taxonomy_name );
+				}
+			}
 		}
 
 		if ( ! $no_conflict ) {

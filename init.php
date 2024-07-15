@@ -10,7 +10,7 @@
  * Plugin Name:       Pods - Custom Content Types and Fields
  * Plugin URI:        https://pods.io/
  * Description:       Pods is a framework for creating, managing, and deploying customized content types and fields
- * Version:           3.2.3-a-1
+ * Version:           3.2.4-a-1
  * Author:            Pods Framework Team
  * Author URI:        https://pods.io/about/
  * Text Domain:       pods

@@ -216,11 +216,10 @@ class PodsRESTFields {
 			return false;
 		}
 
-		$pod_mode_arg        = 'rest_' . $mode . '_all';
-		$pod_mode_access_arg = 'rest_' . $mode . '_all_access';
+		$pod_mode_arg = $mode . '_all';
 
 		$all_fields_can_use_mode = filter_var( $pod->get_arg( $pod_mode_arg, false ), FILTER_VALIDATE_BOOLEAN );
-		$all_fields_access       = filter_var( $pod->get_arg( $pod_mode_access_arg, false ), FILTER_VALIDATE_BOOLEAN );
+		$all_fields_access       = 'read' === $mode && filter_var( $pod->get_arg( 'read_all_access', false ), FILTER_VALIDATE_BOOLEAN );
 
 		// Check if user must be logged in to access all fields and override whether they can use it.
 		if ( $all_fields_can_use_mode && $all_fields_access ) {

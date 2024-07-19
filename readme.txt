@@ -182,6 +182,11 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.2.5 - July 19th, 2024 =
+
+* Fixed: Resolve issue with WordPress 6.6 compatibility that caused Pods Admin > Edit Pod and Pods forms to stop working properly on some sites. (@sc0ttkclark, @swissspidy)
+* Fixed: Resolve PHP deprecated notices with null being passed into certain htmlspecialchars related functions. (@sc0ttkclark)
+
 = 3.2.4 - July 15th, 2024 =
 
 * Feature: Allow restricting media library for File fields to only showing attachments associated to the current post ID. (@sc0ttkclark)

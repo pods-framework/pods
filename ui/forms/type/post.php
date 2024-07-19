@@ -317,7 +317,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 						<div id="titlediv">
 							<div id="titlewrap">
 								<h3><?php echo esc_html( $pod->index() ); ?></h3>
-								<input type="hidden" name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" autocomplete="off"<?php echo $extra; ?> />
+								<input type="hidden" name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" autocomplete="off"<?php echo $extra; ?> />
 							</div>
 							<!-- /#titlewrap -->
 						</div>
@@ -341,7 +341,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 							?>
 							<div id="titlewrap">
 								<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ); ?></label>
-								<input type="text" name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" autocomplete="off"<?php echo $extra; ?> />
+								<input type="text" name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" autocomplete="off"<?php echo $extra; ?> />
 								<?php
 								/**
 								 * Action that runs after the title field of the editor for an Advanced Content Type

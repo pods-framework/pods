@@ -2065,7 +2065,7 @@ class PodsInit {
 				// Remove HTML tags and strip script/style tag contents.
 				wp_strip_all_tags(
 					// Decode potential entities at the first level to so HTML tags can be removed.
-					htmlspecialchars_decode( $label )
+					htmlspecialchars_decode( (string) $label )
 				)
 			);
 		}, $labels );

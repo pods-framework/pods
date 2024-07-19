@@ -13,6 +13,6 @@ on:
       - '.github/workflows/php-compatibility.yml'
 jobs:
   phpcs-compatibility:
-    uses: pods-framework/.github/.github/workflows/php-compatibility.yml@main
-    secrets:
-      GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+    - uses: pods-framework/.github/.github/workflows/php-compatibility.yml@main
+      env:
+        GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}

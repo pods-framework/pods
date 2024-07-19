@@ -307,8 +307,9 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 					/**
 					 * Filter that lets you make the title field readonly
 					 *
-					 * @param Pods   $pod Current Pods object.
-					 * @param PodsUI $obj Current PodsUI object.
+					 * @param bool   $readonly Whether the title field is readonly.
+					 * @param Pods   $pod      Current Pods object.
+					 * @param PodsUI $obj      Current PodsUI object.
 					 *
 					 * @since 2.5.0
 					 */

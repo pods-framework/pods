@@ -15,7 +15,7 @@ module.exports = {
 		"@babel/transform-runtime",
 		"babel-plugin-transform-html-import-to-string",
 		"@babel/plugin-transform-strict-mode",
-		"@babel/plugin-proposal-optional-chaining"
+		"@babel/plugin-transform-optional-chaining"
 	],
 	"env": {
 		"development": {

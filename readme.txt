@@ -182,6 +182,11 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.2.6 - July 21st, 2024 =
+
+* Fixed: Resolve issue with WordPress 6.5 and earlier compatibility by adding polyfill for `react-jsx-runtime` dependency that WP 6.6 related tooling now requires. (@sc0ttkclark)
+* Fixed: Resolve `register_meta` issue where it wasn't checking if post type supported revisions before setting meta key as revisionable. (@sc0ttkclark)
+
 = 3.2.5 - July 19th, 2024 =
 
 * Fixed: Resolve issue with WordPress 6.6 compatibility that caused Pods Admin > Edit Pod and Pods forms to stop working properly on some sites. (@sc0ttkclark, @swissspidy)

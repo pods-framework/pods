@@ -688,6 +688,17 @@ class PodsInit {
 			);
 		}
 
+		// WordPress pre-6.6 compatibility for react-jsx-runtime.
+		if ( ! wp_script_is( 'react-jsx-runtime', 'registered' ) ) {
+			wp_register_script(
+				'react-jsx-runtime',
+				PODS_URL . 'ui/js/react-jsx-runtime.js',
+				[ 'react' ],
+				'18.3.0',
+				true
+			);
+		}
+
 		// Marionette dependencies for DFV/MV fields.
 		wp_register_script(
 			'pods-backbone-radio',

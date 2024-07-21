@@ -153,10 +153,6 @@ class PodsRESTFieldsTest extends Pods_UnitTestCase {
 	}
 
 	public function tearDown(): void {
-		remove_all_filters( 'rest_insert_' . $this->pod_name );
-		remove_all_filters( 'rest_insert_' . $this->full_read_pod_name );
-		remove_all_filters( 'rest_insert_' . $this->full_write_pod_name );
-
 		$this->pod_id            = null;
 		$this->pod               = null;
 		$this->full_read_pod_id  = null;
@@ -226,7 +222,7 @@ class PodsRESTFieldsTest extends Pods_UnitTestCase {
 
 		$sut->add_fields();
 
-		$this->assertEquals( 1, has_filter( 'rest_insert_' . $this->pod_name, [ 'PodsRESTHandlers', 'save_handler' ] ) );
+		$this->assertEquals( 10, has_filter( 'rest_insert_' . $this->pod_name, [ 'PodsRESTHandlers', 'save_handler' ] ) );
 	}
 
 	public function test_register() {

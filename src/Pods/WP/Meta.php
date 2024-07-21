@@ -117,7 +117,7 @@ class Meta {
 
 				$pod_has_revisions = (
 					'post_type' === $pod_type
-                     && post_type_supports( $pod_name, 'revisions' )
+					&& post_type_supports( $pod_name, 'revisions' )
 				);
 
 				foreach ( $fields as $field ) {
@@ -151,12 +151,12 @@ class Meta {
 					);
 
 					$meta_args = [
-						'object_subtype'    => $pod_name,
-						'type'              => 'string',
-						'description'       => $field['label'],
-						'default'           => $field->get_arg( 'default', '' ),
-						'single'            => ! $field_is_repeatable,
-						'show_in_rest'      => $field_has_rest,
+						'object_subtype' => $pod_name,
+						'type'           => 'string',
+						'description'    => $field['label'],
+						'default'        => $field->get_arg( 'default', '' ),
+						'single'         => ! $field_is_repeatable,
+						'show_in_rest'   => $field_has_rest,
 					];
 
 					if ( $field_has_revisions ) {

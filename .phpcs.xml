@@ -45,5 +45,8 @@
 	<rule ref="Squiz.PHP">
 		<exclude name="Squiz.PHP.CommentedOutCode.Found"/>
 		<exclude name="Squiz.PHP.GlobalKeyword.NotAllowed"/>
+		<exclude name="Squiz.PHP.DisallowBooleanStatement.Found"/>
+		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedComparison"/>
+		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedBool"/>
 	</rule>
 </ruleset>

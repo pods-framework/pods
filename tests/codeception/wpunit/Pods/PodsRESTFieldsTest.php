@@ -255,6 +255,28 @@ class PodsRESTFieldsTest extends Pods_UnitTestCase {
 		);
 	}
 
+	public function test_field_allowed_to_extend_read_requires_access_while_logged_out() {
+		$this->assertFalse(
+			PodsRESTFields::field_allowed_to_extend(
+				$this->pod->get_field( 'read_access_rest_number' ),
+				$this->pod,
+				'read'
+			)
+		);
+	}
+
+	public function test_field_allowed_to_extend_read_requires_access_with_logged_in_user() {
+		wp_set_current_user( 1 );
+
+		$this->assertTrue(
+			PodsRESTFields::field_allowed_to_extend(
+				$this->pod->get_field( 'read_access_rest_number' ),
+				$this->pod,
+				'read'
+			)
+		);
+	}
+
 	public function test_field_allowed_to_extend_read_with_field_without_rest() {
 		$this->assertFalse(
 			PodsRESTFields::field_allowed_to_extend(

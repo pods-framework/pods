@@ -153,8 +153,16 @@ class PodsRESTFieldsTest extends Pods_UnitTestCase {
 	}
 
 	public function tearDown(): void {
-		$this->pod_id = null;
-		$this->pod    = null;
+		remove_all_filters( 'rest_insert_' . $this->pod_name );
+		remove_all_filters( 'rest_insert_' . $this->full_read_pod_name );
+		remove_all_filters( 'rest_insert_' . $this->full_write_pod_name );
+
+		$this->pod_id            = null;
+		$this->pod               = null;
+		$this->full_read_pod_id  = null;
+		$this->full_read_pod     = null;
+		$this->full_write_pod_id = null;
+		$this->full_write_pod    = null;
 
 		// Reset current user.
 		global $current_user;
@@ -174,7 +182,9 @@ class PodsRESTFieldsTest extends Pods_UnitTestCase {
 
 	public function test_set_pod() {
 		$test_pod = new Pod( [
-			'name' => 'test_basic',
+			'name'        => 'test_basic',
+			'type'        => 'post_type',
+			'rest_enable' => 1,
 		] );
 
 		$sut = $this->sut();
@@ -184,12 +194,39 @@ class PodsRESTFieldsTest extends Pods_UnitTestCase {
 		$this->assertEquals($test_pod, $sut->get_pod());
 	}
 
+	public function test_set_pod_for_unsupported_type() {
+		$test_pod = new Pod( [
+			'name'        => 'test_basic',
+			'type'        => 'unsupported',
+			'rest_enable' => 1,
+		] );
+
+		$sut = $this->sut();
+
+		$sut->set_pod( $test_pod );
+
+		$this->assertNull( $sut->get_pod() );
+	}
+
+	public function test_set_pod_for_non_rest_pod() {
+		$test_pod = new Pod( [
+			'name' => 'test_basic',
+			'type' => 'post_type',
+		] );
+
+		$sut = $this->sut();
+
+		$sut->set_pod( $test_pod );
+
+		$this->assertNull( $sut->get_pod() );
+	}
+
 	public function test_add_fields() {
 		$sut = $this->sut();
 
 		$sut->add_fields();
 
-		$this->assertTrue( has_filter( 'rest_insert_' . $this->pod_name, [ 'PodsRESTHandlers', 'save_handler' ] ) );
+		$this->assertEquals( 1, has_filter( 'rest_insert_' . $this->pod_name, [ 'PodsRESTHandlers', 'save_handler' ] ) );
 	}
 
 	public function test_register() {

@@ -60,11 +60,11 @@ class PodsRESTFields {
 	}
 
 	/**
-	 * Set the Pod object
+	 * Set the Pod object.
 	 *
 	 * @since 2.5.6
 	 *
-	 * @param string|object|Pods|Pod $pod Pods object
+	 * @param string|object|Pods|Pod $pod The Pod object which will be normalized and stored.
 	 */
 	public function set_pod( $pod ) {
 		$this->pod = null;

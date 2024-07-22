@@ -115,6 +115,11 @@ class Meta {
 					&& filter_var( $pod->get_arg( 'read_all', false ), FILTER_VALIDATE_BOOLEAN )
 				);
 
+				$pod_has_revisions = (
+					'post_type' === $pod_type
+					&& post_type_supports( $pod_name, 'revisions' )
+				);
+
 				foreach ( $fields as $field ) {
 					$field_is_repeatable = $field->is_repeatable();
 
@@ -134,26 +139,34 @@ class Meta {
 
 					// Revision field config.
 					$field_has_revisions = (
-						$all_fields_have_revisions
-						|| (
-							'post_type' === $pod_type
-							&& 'meta' === $pod_storage
-							&& filter_var( $pod->get_arg( 'revisions_revision_field', false ), FILTER_VALIDATE_BOOLEAN )
+						$pod_has_revisions
+						&& (
+							$all_fields_have_revisions
+							|| (
+								'post_type' === $pod_type
+								&& 'meta' === $pod_storage
+								&& filter_var( $pod->get_arg( 'revisions_revision_field', false ), FILTER_VALIDATE_BOOLEAN )
+							)
 						)
 					);
+
+					$meta_args = [
+						'object_subtype' => $pod_name,
+						'type'           => 'string',
+						'description'    => $field['label'],
+						'default'        => $field->get_arg( 'default', '' ),
+						'single'         => ! $field_is_repeatable,
+						'show_in_rest'   => $field_has_rest,
+					];
+
+					if ( $field_has_revisions ) {
+						$meta_args['revisions_enabled'] = true;
+					}
 
 					register_meta(
 						$type,
 						$field['name'],
-						[
-							'object_subtype'    => $pod_name,
-							'type'              => 'string',
-							'description'       => $field['label'],
-							'default'           => $field->get_arg( 'default', '' ),
-							'single'            => ! $field_is_repeatable,
-							'show_in_rest'      => $field_has_rest,
-							'revisions_enabled' => $field_has_revisions,
-						]
+						$meta_args
 					);
 
 					if ( ! isset( $this->registered_meta[ $type ] ) ) {

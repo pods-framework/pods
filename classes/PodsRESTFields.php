@@ -23,7 +23,7 @@ class PodsRESTFields {
 	 *
 	 * @var null|Pod
 	 */
-	protected $pod;
+	protected $pod = null;
 
 	/**
 	 * Constructor for class
@@ -49,15 +49,24 @@ class PodsRESTFields {
 	}
 
 	/**
-	 * Set the Pods object
+	 * Get the Pod object.
 	 *
-	 * @since  2.5.6
+	 * @since 3.2.6
 	 *
-	 * @access protected
-	 *
-	 * @param string|Pods $pod Pods object or name of Pods object
+	 * @return Pod|null The Pod object.
 	 */
-	private function set_pod( $pod ) {
+	public function get_pod(): ?Pod {
+		return $this->pod;
+	}
+
+	/**
+	 * Set the Pod object.
+	 *
+	 * @since 2.5.6
+	 *
+	 * @param string|object|Pods|Pod $pod The Pod object which will be normalized and stored.
+	 */
+	public function set_pod( $pod ) {
 		$this->pod = null;
 
 		// Normalize the $pod object.
@@ -127,11 +136,9 @@ class PodsRESTFields {
 	 *
 	 * @since  2.5.6
 	 *
-	 * @access protected
-	 *
 	 * @param Field $field The field object.
 	 */
-	protected function register( $field ) {
+	public function register( $field ) {
 		$rest_read  = self::field_allowed_to_extend( $field, $this->pod, 'read' );
 		$rest_write = self::field_allowed_to_extend( $field, $this->pod, 'write' );
 
@@ -249,7 +256,7 @@ class PodsRESTFields {
 		}
 
 		$can_use_mode = filter_var( $can_use_mode_value, FILTER_VALIDATE_BOOLEAN );
-		$access       = filter_var( $field->get_arg( $mode_access_arg, false ), FILTER_VALIDATE_BOOLEAN );
+		$access       = 'read' === $mode && filter_var( $field->get_arg( $mode_access_arg, false ), FILTER_VALIDATE_BOOLEAN );
 
 		// Check if user must be logged in to access field and override whether they can use it.
 		if ( $can_use_mode && $access ) {

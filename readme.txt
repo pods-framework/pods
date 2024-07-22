@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.2
-Stable tag: 3.2.6-a-1
+Stable tag: 3.2.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,7 +182,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.2.6 - July 21st, 2024 =
+= 3.2.6 - July 22nd, 2024 =
 
 * Fixed: Resolve issue with WordPress 6.5 and earlier compatibility by adding polyfill for `react-jsx-runtime` dependency that WP 6.6 related tooling now requires. (@sc0ttkclark)
 * Fixed: Resolve `register_meta` issue where it wasn't checking if post type supported revisions before setting meta key as revisionable. (@sc0ttkclark)

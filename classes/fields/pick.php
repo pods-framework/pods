@@ -449,6 +449,8 @@ class PodsField_Pick extends PodsField {
 						'^taxonomy-.*$',
 					],
 				],
+				'type'           => 'boolean',
+				'default'        => 0,
 			]
 		];
 
@@ -1924,25 +1926,26 @@ class PodsField_Pick extends PodsField {
 			}
 		} elseif ( $options instanceof Field || $options instanceof Value_Field ) {
 			$related_field = $options->get_bidirectional_field();
-
-			if ( ! $related_field ) {
-				return;
-			}
-
-			$related_pod        = $related_field->get_parent_object();
-			$related_pick_limit = $related_field->get_limit();
-
-			if ( null === $current_ids ) {
-				$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
-			}
-
-			// Get ids to remove.
-			if ( null === $remove_ids ) {
-				$remove_ids = array_diff( $current_ids, $value_ids );
+			
+			if ( $related_field ) {
+				$related_pod        = $related_field->get_parent_object();
+				$related_pick_limit = $related_field->get_limit();
+	
+				if ( null === $current_ids ) {
+					$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
+				}
+	
+				// Get ids to remove.
+				if ( null === $remove_ids ) {
+					$remove_ids = array_diff( $current_ids, $value_ids );
+				}
 			}
 		}
 
-		if ( empty( $related_field ) || empty( $related_pod ) ) {
+		if (
+			( empty( $related_field ) || empty( $related_pod ) )
+			&& empty( $options[ static::$type . '_sync_taxonomy' ] )
+		) {
 			return;
 		}
 

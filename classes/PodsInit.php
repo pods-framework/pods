@@ -1799,7 +1799,7 @@ class PodsInit {
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
-				new PodsRESTFields( $pod['name'] );
+				new PodsRESTFields( $pod );
 			}
 		}
 
@@ -1809,7 +1809,7 @@ class PodsInit {
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
-				new PodsRESTFields( $pod['name'] );
+				new PodsRESTFields( $pod );
 			}
 		}
 

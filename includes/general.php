@@ -549,6 +549,23 @@ function pods_debug_log( $debug ) {
 		return;
 	}
 
+	if ( pods_is_debug_logging_enabled() ) {
+		$debug_backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		// 0 = This function
+		// 1 = The place this function was called.
+		$function = $debug_backtrace[1]['function'] ?? '';
+
+		if ( ! empty( $debug_backtrace[1]['class'] ) ) {
+			$function = $debug_backtrace[1]['class'] . '::' . $function;
+		}
+
+		// Debug backtrace will set the line for the call on the next trace up the chain.
+		$line = $debug_backtrace[0]['line']; // Yes, this should be a 0 instead of a 1 here.
+
+		pods_debug_log_data( $debug, 'general', $function, $line );
+	}
+
 	if ( in_array( strtolower( (string) WP_DEBUG_LOG ), array( 'true', '1' ), true ) ) {
 		$log_path = WP_CONTENT_DIR . '/debug.log';
 	} elseif ( is_string( WP_DEBUG_LOG ) ) {
@@ -4837,4 +4854,56 @@ function pods_container_register_service_provider( $provider_class ) {
 	$container = Container_DI52::init();
 
 	$container->register( $provider_class );
+}
+
+/**
+ * Maybe log data to the Pods debug log.
+ *
+ * @since TBD
+ *
+ * @param mixed  $debug    The debug data to track.
+ * @param string $context  The context where the debug came from.
+ * @param string $function The function/method name where the debug was called.
+ * @param int    $line     The line number where the debug was called.
+ *
+ * @return void
+ */
+function pods_debug_log_data( $debug, string $context, string $function, int $line ): void {
+	if ( ! pods_is_debug_logging_enabled() ) {
+		return;
+	}
+
+	/**
+	 * Log data to the Pods debug log.
+	 *
+	 * @since TBD
+	 *
+	 * @param mixed  $debug    The debug data to track.
+	 * @param string $context  The context where the debug came from.
+	 * @param string $function The function/method name where the debug was called.
+	 * @param int    $line     The line number where the debug was called.
+	 */
+	do_action( 'pods_debug_data', $debug, $context, $function, $line );
+}
+
+/**
+ * Determine whether Pods debug logging is enabled.
+ *
+ * @since TBD
+ *
+ * @return bool Whether Pods debug logging is enabled.
+ */
+function pods_is_debug_logging_enabled(): bool {
+	if ( defined( 'PODS_DEBUG_LOGGING' ) ) {
+		return (bool) PODS_DEBUG_LOGGING;
+	}
+
+	/**
+	 * Allow filtering whether debug logging is enabled.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool $is_debug_logging_enabled Whether debug logging is enabled.
+	 */
+	return (bool) apply_filters( 'pods_is_debug_logging_enabled', pods_is_debug_display() );
 }

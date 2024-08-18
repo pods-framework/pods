@@ -522,7 +522,10 @@ class PodsComponents {
 		}//end if
 
 		if ( 1 === (int) pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+			pods_debug( __METHOD__ . ':' . __LINE__ );
 			pods_debug( $components );
+		} else {
+			pods_debug_log_data( $components, 'components', __METHOD__, __LINE__ );
 		}
 
 		$this->components = $components;

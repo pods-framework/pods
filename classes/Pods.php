@@ -22,7 +22,7 @@ use Pod as Deprecated_Pod;
  * @property null|string $search      Whether search is enabled.
  * @property null|string $search_var  The query variable used for search.
  * @property null|string $search_mode The search mode to use.
- * @property null|string $params      The last find() params.
+ * @property null|array  $params      The last find() params.
  * @property null|string $sql         The last find() SQL query.
  */
 class Pods implements Iterator {
@@ -1348,6 +1348,14 @@ class Pods implements Iterator {
 								}
 
 								$item_data = array();
+
+								// Debug purposes
+								if ( 1 == pods_v( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+									pods_debug( __METHOD__ . ':' . __LINE__ );
+									pods_debug( $sql );
+								} else {
+									pods_debug_log_data( $sql, 'related-find-params', __METHOD__, __LINE__ );
+								}
 
 								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {

@@ -2409,7 +2409,10 @@ class PodsUI {
 
 		// Debug purposes
 		if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+			pods_debug( __METHOD__ . ':' . __LINE__ );
 			pods_debug( $find_params );
+		} else {
+			pods_debug_log_data( $find_params, 'pods-ui-find-params', __METHOD__, __LINE__ );
 		}
 
 		return $find_params;

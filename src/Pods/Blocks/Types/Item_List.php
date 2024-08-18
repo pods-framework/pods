@@ -206,7 +206,7 @@ class Item_List extends Base {
 		$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
 
 		$fields = [
-			[
+			'name' => [
 				'name'        => 'name',
 				'label'       => __( 'Pod Name', 'pods' ),
 				'type'        => 'pick',
@@ -214,7 +214,7 @@ class Item_List extends Base {
 				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
-			[
+			'access_rights_help' => [
 				'name'    => 'access_rights_help',
 				'label'   => __( 'Access Rights', 'pods' ),
 				'type'    => 'html',
@@ -225,7 +225,7 @@ class Item_List extends Base {
 					'<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'pods' ) . '</a>'
 				),
 			],
-			[
+			'template' => [
 				'name'        => 'template',
 				'label'       => __( 'Template', 'pods' ),
 				'type'        => 'pick',
@@ -233,57 +233,57 @@ class Item_List extends Base {
 				'default'     => '',
 				'description' => __( 'You can choose a previously saved Pods Template here. We recommend saving your Pods Templates with our Templates component so you can enjoy the full editing experience.', 'pods' ),
 			],
-			[
+			'template_custom' => [
 				'name'        => 'template_custom',
 				'label'       => __( 'Custom Template', 'pods' ),
 				'type'        => 'paragraph',
 				'description' => __( 'You can specify a custom template to use, it accepts HTML and magic tags. Any content here will override whatever Template you may have chosen above.', 'pods' ),
 			],
-			[
+			'content_before' => [
 				'name'        => 'content_before',
 				'label'       => __( 'Content Before List', 'pods' ),
 				'type'        => 'paragraph',
 				'description' => __( 'This content will appear before the list of templated items. A useful way to use this option is if you have a template that uses "li" HTML tags, you can use the "ul" HTML tag to start an unordered list. This will only be shown if items were found.', 'pods' ),
 			],
-			[
+			'content_after' => [
 				'name'        => 'content_after',
 				'label'       => __( 'Content After List', 'pods' ),
 				'type'        => 'paragraph',
 				'description' => __( 'This content will appear after the list of templated items. A useful way to use this option is if you have a template that uses "li" HTML tags, you can use the "/ul" HTML tag to end an unordered list. This will only be shown if items were found.', 'pods' ),
 			],
-			[
+			'not_found' => [
 				'name'        => 'not_found',
 				'label'       => __( 'Not Found Content', 'pods' ),
 				'type'        => 'paragraph',
 				'default'     => __( 'No content was found.', 'pods' ),
 				'description' => __( 'If there are no items shown, this content will be shown in the block\'s place.', 'pods' ),
 			],
-			[
+			'limit' => [
 				'name'        => 'limit',
 				'label'       => __( 'Limit', 'pods' ),
 				'type'        => 'number',
 				'default'     => 15,
 				'description' => __( 'Specify the number of items to show but keep in mind that the more items you show the longer it may take for the page to load. You should avoid using "-1" here unless you know what you\'re doing. If your pod has many items, it could stop the page from loading and cause errors. Default number of items to show is to show 15 items. See also: find()', 'pods' ),
 			],
-			[
+			'orderby' => [
 				'name'        => 'orderby',
 				'label'       => __( 'Order By', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'You can specify what field to order by here. That could be t.post_title ASC or you may want to use a custom field like my_field.meta_value ASC. The normal MySQL syntax works here, so you can sort ascending with ASC or descending with DESC. See also: find()', 'pods' ),
 			],
-			[
+			'where' => [
 				'name'        => 'where',
 				'label'       => __( 'Where', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'You can specify what field to restrict the item list by here. That could be t.post_title LIKE "%repairs%" or you may want to reference a custom field like  my_field.meta_value = "123". For a list of all things available for you to query, follow the find() Notation Options. See also: find()', 'pods' ),
 			],
-			[
+			'pagination' => [
 				'name'        => 'pagination',
 				'label'       => __( 'Enable Pagination', 'pods' ),
 				'type'        => 'boolean',
 				'description' => __( 'Whether to show pagination for the list of items. This will only show if there is more than one page of items found.', 'pods' ),
 			],
-			[
+			'pagination_location' => [
 				'name'        => 'pagination_location',
 				'label'       => __( 'Pagination Location', 'pods' ),
 				'type'        => 'pick',
@@ -295,7 +295,7 @@ class Item_List extends Base {
 				'default'     => 'after',
 				'description' => __( 'The location to show the pagination.', 'pods' ),
 			],
-			[
+			'pagination_type' => [
 				'name'        => 'pagination_type',
 				'label'       => __( 'Pagination Type', 'pods' ),
 				'type'        => 'pick',
@@ -308,25 +308,25 @@ class Item_List extends Base {
 				'default'     => 'advanced',
 				'description' => __( 'Choose which kind of pagination to display.', 'pods' ),
 			],
-			[
+			'filters_enable' => [
 				'name'        => 'filters_enable',
 				'label'       => __( 'Enable Filters', 'pods' ),
 				'type'        => 'boolean',
 				'description' => __( 'Whether to show filters for the list of items.', 'pods' ),
 			],
-			[
+			'filters' => [
 				'name'        => 'filters',
 				'label'       => __( 'Filter Fields', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'Comma-separated list of fields you want to allow filtering by. Default is to just show a text field to search with.', 'pods' ),
 			],
-			[
+			'filters_label' => [
 				'name'        => 'filters_label',
 				'label'       => __( 'Custom Filters Label', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'The label to show for the filters. Default is "Search".', 'pods' ),
 			],
-			[
+			'filters_location' => [
 				'name'        => 'filters_location',
 				'label'       => __( 'Filters Location', 'pods' ),
 				'type'        => 'pick',
@@ -337,7 +337,7 @@ class Item_List extends Base {
 				'default'     => 'before',
 				'description' => __( 'The location to show the filters.', 'pods' ),
 			],
-			[
+			'cache_mode' => [
 				'name'        => 'cache_mode',
 				'label'       => __( 'Cache Mode', 'pods' ),
 				'type'        => 'pick',
@@ -345,7 +345,7 @@ class Item_List extends Base {
 				'default'     => $default_cache_mode,
 				'description' => __( 'The mode to cache the output with.', 'pods' ),
 			],
-			[
+			'expires' => [
 				'name'        => 'expires',
 				'label'       => __( 'Expires', 'pods' ),
 				'type'        => 'number',
@@ -359,7 +359,7 @@ class Item_List extends Base {
 			unset( $fields['where'] );
 		}
 
-		return $fields;
+		return array_values( $fields );
 	}
 
 	/**

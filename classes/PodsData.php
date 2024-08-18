@@ -765,7 +765,7 @@ class PodsData {
 		 * Filter results of Pods Query
 		 *
 		 * @param array    $results
-		 * @param array    $params
+		 * @param object   $params
 		 * @param PodsData $instance The current PodsData class instance.
 		 *
 		 * @since unknown

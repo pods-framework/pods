@@ -2646,7 +2646,7 @@ class PodsUI {
 		 * @param array  $custom_container_classes List of custom classes to use.
 		 * @param PodsUI $obj                      PodsUI instance.
 		 */
-		$custom_container_classes = apply_filters( 'pods_ui_manage_custom_container_classes', array(), $obj );
+		$custom_container_classes = apply_filters( 'pods_ui_manage_custom_container_classes', array(), $this );
 
 		if ( is_admin() ) {
 			array_unshift( $custom_container_classes, 'wrap' );

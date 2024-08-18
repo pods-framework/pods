@@ -10570,7 +10570,8 @@ class PodsAPI {
 			 * @param array            $post_status List of post statuses. Default is 'publish' or field setting (if available).
 			 * @param string           $post_type   Post type of current object.
 			 * @param array            $info        Array of information about the object.
-			 * @param string           $object      Type of object.
+			 * @param string           $object_type Type of object.
+			 * @param string           $object      Object name if provided.
 			 * @param string|null      $name        Name of pod to load.
 			 * @param array|Pod|null   $pod         The pod config (if found).
 			 * @param array|Field|null $field       The field config (if found).

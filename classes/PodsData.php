@@ -639,24 +639,30 @@ class PodsData {
 	/**
 	 * Select items, eventually building dynamic query
 	 *
-	 * @param array $params
+	 * @param array|object $params
 	 *
 	 * @return array|bool|mixed
 	 * @since 2.0.0
 	 */
 	public function select( $params ) {
 
+		if ( is_array( $params ) ) {
+			$params = (object) $params;
+		}
+
 		global $wpdb;
 
-		$cache_key = false;
-		$results   = false;
+		$cache_key  = false;
+		$cache_mode = 'cache';
+		$expires    = 0;
+		$results    = false;
 
 		$instance = $this;
 
 		/**
 		 * Filter select parameters before the query
 		 *
-		 * @param array    $params
+		 * @param object   $params
 		 * @param PodsData $instance The current PodsData class instance.
 		 *
 		 * @since unknown
@@ -673,14 +679,51 @@ class PodsData {
 
 		$debug_sql = ( 1 === (int) pods_v( 'pods_debug_sql', 'get', 0 ) || 1 === (int) pods_v( 'pods_debug_sql_all', 'get', 0 ) ) && pods_is_admin( array( 'pods' ) );
 
-		// Get from cache if enabled.
-		if ( null !== pods_v( 'expires', $params, null, true ) ) {
-			$cache_key = md5( (string) $this->pod . serialize( $params ) );
+		$total_found_cached = false;
 
-			$results = pods_view_get( $cache_key, pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
+		// Get from cache if enabled.
+		if ( ! $debug_sql && null !== pods_v( 'expires', $params, null, true ) ) {
+			$cache_key  = md5( (string) $this->pod . serialize( $params ) );
+			$cache_mode = pods_v( 'cache_mode', $params, 'cache', true );
+			$expires    = (int) pods_v( 'expires', $params, 0 );
+
+			$results = pods_view_get( $cache_key, $cache_mode, 'pods_data_select' );
+			$stats   = pods_view_get( $cache_key, $cache_mode, 'pods_data_select_stats' );
 
 			if ( empty( $results ) ) {
 				$results = false;
+			} elseif ( ! empty( $stats ) ) {
+				$this->total_found = $stats->total_found ?? null;
+				$this->limit       = (int) ( $stats->limit ?? 15 );
+				$this->page        = (int) ( $stats->page ?? 1 );
+				$this->offset      = (int) ( $stats->offset ?? 0 );
+
+				if ( null !== $this->total_found ) {
+					$this->total_found_calculated = true;
+
+					$total_found_cached = true;
+				}
+			} else {
+				$params->calc_rows = false;
+
+				// Attempt to calculate total found.
+				$this->sql = $this->build( $params );
+
+				if ( $this->total_sql ) {
+					$this->calculate_totals();
+
+					// Cache if enabled.
+					if ( false !== $cache_key && $this->total_found_calculated ) {
+						$stats = (object) [
+							'total_found' => $this->total_found,
+							'limit'       => $this->limit,
+							'page'        => $this->page,
+							'offset'      => $this->offset,
+						];
+
+						pods_view_set( $cache_key, $stats, $expires, $cache_mode, 'pods_data_select_stats' );
+					}
+				}
 			}
 		}
 
@@ -710,7 +753,7 @@ class PodsData {
 
 			// Cache if enabled.
 			if ( false !== $cache_key ) {
-				pods_view_set( $cache_key, $results, (int) pods_v( 'expires', $params, 0, false ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
+				pods_view_set( $cache_key, $results, $expires, $cache_mode, 'pods_data_select' );
 			}
 		}//end if
 
@@ -749,7 +792,9 @@ class PodsData {
 		$this->row_number = - 1;
 		$this->row        = null;
 
-		$this->total_found_calculated = false;
+		if ( ! $total_found_cached ) {
+			$this->total_found_calculated = false;
+		}
 
 		$this->total = 0;
 
@@ -778,6 +823,10 @@ class PodsData {
 	 * Calculate total found.
 	 */
 	public function calculate_totals() {
+
+		if ( $this->total_found_calculated ) {
+			return;
+		}
 
 		/**
 		 * @var $wpdb wpdb

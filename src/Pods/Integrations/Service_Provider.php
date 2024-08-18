@@ -24,9 +24,10 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	public function register() {
 
 		$this->integrations = [
-			'polylang' => Polylang::class,
-			'wpml'     => WPML::class,
-			'enfold'   => Enfold::class,
+			'polylang'      => Polylang::class,
+			'wpml'          => WPML::class,
+			'enfold'        => Enfold::class,
+			'query-monitor' => Query_Monitor::class,
 		];
 
 		foreach ( $this->integrations as $integration ) {
@@ -46,7 +47,6 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	 * @since 2.8.0
 	 */
 	protected function hooks() {
-
 		add_filter( 'pods_admin_config_pod_fields_post_type_supported_features', $this->container->callback( 'pods.integration.genesis', 'add_post_type_supports' ) );
 		add_filter( 'pods_admin_config_pod_fields_post_type_supported_features', $this->container->callback( 'pods.integration.yarpp', 'add_post_type_supports' ) );
 		add_filter( 'pods_admin_config_pod_fields_post_type_supported_features', $this->container->callback( 'pods.integration.jetpack', 'add_post_type_supports' ) );
@@ -64,7 +64,6 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	 * @since 2.8.0
 	 */
 	public function plugins_loaded() {
-
 		/**
 		 * Filter what integration classes should run on the plugins_loaded hook.
 		 *
@@ -73,6 +72,7 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		 * @param \Pods\Integration[] $integrations The list of integrations to run on plugins_loaded hook.
 		 */
 		$integrations = apply_filters( 'pods_integrations_on_plugins_loaded', $this->integrations );
+
 		foreach ( $integrations as $class ) {
 			if ( is_string( $class ) ) {
 				$class = $this->container->make( $class );

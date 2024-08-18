@@ -2485,9 +2485,6 @@ class PodsInit {
 		// Compatibility with WP 5.4 privacy export.
 		add_filter( 'wp_privacy_additional_user_profile_data', array( $this, 'filter_wp_privacy_additional_user_profile_data' ), 10, 3 );
 
-		// Compatibility for Query Monitor conditionals
-		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
-
 		// Support for quick edit in WP 6.4+.
 		add_filter( 'quick_edit_enabled_for_post_type', [ $this, 'quick_edit_enabled_for_post_type' ], 10, 2 );
 		add_filter( 'quick_edit_enabled_for_taxonomy', [ $this, 'quick_edit_enabled_for_taxonomy' ], 10, 2 );
@@ -2731,23 +2728,5 @@ class PodsInit {
 		}
 
 		return $additional_user_profile_data;
-	}
-
-	/**
-	 * Add Pods conditional functions to Query Monitor.
-	 *
-	 * @param  array $conditionals
-	 * @return array
-	 */
-	public function filter_query_monitor_conditionals( $conditionals ) {
-		$conditionals[] = 'pods_developer';
-		$conditionals[] = 'pods_tableless';
-		$conditionals[] = 'pods_light';
-		$conditionals[] = 'pods_strict';
-		$conditionals[] = 'pods_allow_deprecated';
-		$conditionals[] = 'pods_api_cache';
-		$conditionals[] = 'pods_shortcode_allow_evaluate_tags';
-		$conditionals[] = 'pods_session_auto_start';
-		return $conditionals;
 	}
 }

@@ -14,5 +14,5 @@ parameters:
     - init.php
     - vendor/vendor-prefixed
   excludePaths:
-    - src/Integrations
+    - src/Pods/Integrations
     - tests

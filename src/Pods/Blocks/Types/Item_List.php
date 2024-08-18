@@ -382,6 +382,8 @@ class Item_List extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
+		$attributes['context'] = 'item-list';
+
 		if ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
 			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(

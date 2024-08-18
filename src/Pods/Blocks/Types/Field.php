@@ -147,6 +147,8 @@ class Field extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
+		$attributes['context'] = 'field';
+
 		if ( empty( $attributes['field'] ) ) {
 			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(

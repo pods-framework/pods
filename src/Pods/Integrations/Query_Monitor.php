@@ -44,6 +44,9 @@ class Query_Monitor extends Integration {
 	public function post_hook() {
 		QM_Collectors::add( new Collectors\Constants() );
 		QM_Collectors::add( new Collectors\Debug() );
+
+		wp_register_style( 'pods-query-monitor', PODS_URL . 'ui/styles/dist/pods-query-monitor.css', [ 'query-monitor' ], PODS_VERSION );
+		wp_enqueue_style( 'pods-query-monitor' );
 	}
 
 	/**

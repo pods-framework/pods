@@ -30,7 +30,7 @@ class Constants extends QM_Output_Html {
 	 * {@inheritDoc}
 	 */
 	public function name(): string {
-		return __( 'Pods Constants', 'pods' );
+		return __( 'Pods', 'pods' );
 	}
 
 	/**

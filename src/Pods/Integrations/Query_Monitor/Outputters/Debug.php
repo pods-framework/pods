@@ -3,6 +3,7 @@
 namespace Pods\Integrations\Query_Monitor\Outputters;
 
 use QM_Collector;
+use QM_Collectors;
 use QM_Output_Html;
 
 // Exit if accessed directly.
@@ -24,6 +25,7 @@ class Debug extends QM_Output_Html {
 		parent::__construct( $collector );
 
 		add_filter( 'qm/output/menus', [ $this, 'admin_menu' ], 999 );
+		add_filter( 'qm/output/panel_menus', [ $this, 'panel_menu' ], 20 );
 	}
 
 	/**
@@ -48,8 +50,10 @@ class Debug extends QM_Output_Html {
 		sort( $contexts );
 
 		$debug_log_types  = [
-			'yes' => __( 'Log is JSON', 'pods' ),
-			'no'  => __( 'Log is not JSON', 'pods' ),
+			'is-json'  => __( 'Log is JSON', 'pods' ),
+			'not-json' => __( 'Log is not JSON', 'pods' ),
+			'is-sql'   => __( 'Log is SQL query', 'pods' ),
+			'not-sql'  => __( 'Log is not SQL query', 'pods' ),
 		];
 		?>
 		<thead>
@@ -64,7 +68,7 @@ class Debug extends QM_Output_Html {
 				<?php echo $this->build_filter( 'context', $contexts, __( 'Context', 'pods' ) ); ?>
 			</th>
 			<th scope='col' class='qm-filterable-column'>
-				<?php echo $this->build_filter( 'debug-log-is-json', $debug_log_types, __( 'Debug Log', 'pods' ) ); ?>
+				<?php echo $this->build_filter( 'debug-log-type', $debug_log_types, __( 'Debug Log', 'pods' ) ); ?>
 			</th>
 		</tr>
 		</thead>
@@ -93,12 +97,33 @@ class Debug extends QM_Output_Html {
 					}
 				}
 
+				$context = $debug['context'];
+
+				$sql_contexts = [
+					'sql-select',
+					'sql-query',
+				];
+
 				$has_toggle = $has_json || $is_long;
 
+				$log_type = [];
+
+				if ( $has_json ) {
+					$log_type[] = 'is-json';
+				} else {
+					$log_type[] = 'not-json';
+				}
+
+				if ( in_array( $context, $sql_contexts, true ) ) {
+					$log_type[] = 'is-sql';
+				} else {
+					$log_type[] = 'not-sql';
+				}
+
 				$row_attr = [
-					'data-qm-function'          => $debug['function'],
-					'data-qm-context'           => $debug['context'],
-					'data-qm-debug-log-is-json' => $has_json ? 'yes' : 'no',
+					'data-qm-function'       => $debug['function'],
+					'data-qm-context'        => $debug['context'],
+					'data-qm-debug-log-type' => implode( ' ', $log_type ),
 				];
 
 				$attr = '';
@@ -115,7 +140,7 @@ class Debug extends QM_Output_Html {
 						<?php echo esc_html( $debug['line'] ); ?>
 					</td>
 					<td class="qm-nowrap qm-ltr">
-						<code><?php echo esc_html( $debug['context'] ); ?></code>
+						<code><?php echo esc_html( $context ); ?></code>
 					</td>
 					<td class="qm-wrap qm-ltr<?php echo $has_toggle ? ' qm-has-toggle' : ''; ?>">
 						<?php
@@ -170,5 +195,31 @@ class Debug extends QM_Output_Html {
 		</tfoot>
 		<?php
 		$this->after_tabular_output();
+	}
+
+	/**
+	 * Register the panel menu for this outputter.
+	 *
+	 * @since TBD
+	 *
+	 * @param array<string, mixed[]> $menus The panel menus.
+	 *
+	 * @return array<string, mixed[]> The updated panel menus.
+	 */
+	public function panel_menu( array $menus ) {
+		$id = $this->collector->id();
+
+		if ( isset( $menus[ $id ] ) ) {
+			/** @var \Pods\Integrations\Query_Monitor\Collectors\Constants|null $constants */
+			$constants = QM_Collectors::get( 'pods-constants' );
+
+			if ( $constants ) {
+				$menus[ $constants->id() ]['children'][] = $menus[ $id ];
+			}
+
+			unset( $menus[ $id ] );
+		}
+
+		return $menus;
 	}
 }

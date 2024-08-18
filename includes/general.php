@@ -1536,13 +1536,15 @@ function pods_shortcode_detect_context( array $attributes ) : ?string {
 		$context = 'related-item-list';
 	} else {
 		$template_custom = $attributes['template_custom'] ?? '';
-		$field = $attributes['field'] ?? $attributes['col'] ?? '';
+		$field           = $attributes['field'] ?? $attributes['col'] ?? '';
+		$slug            = $attributes['slug'] ?? '';
+		$id              = $attributes['id'] ?? '';
 
 		if ( false !== strpos( $template_custom, '{@_all_fields' ) ) {
 			$context = 'item-single-list-fields';
 		} elseif ( '' !== $field ) {
 			$context = 'field';
-		} elseif ( $attributes['slug'] ?? null || $attributes['id'] ?? null ) {
+		} elseif ( ! empty( $slug ) || ! empty( $id ) ) {
 			$context = 'item-single';
 		} else {
 			$context = 'item-list';

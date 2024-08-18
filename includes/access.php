@@ -1188,7 +1188,7 @@ function pods_get_access_admin_notice( array $args, bool $force_message = false 
 				</span>
 			</p>
 		',
-		esc_html__( 'The content below is not public and may not be available to everyone else.', 'pods' ),
+		esc_html__( 'The content type or the content below is not public and may not be available to everyone else.', 'pods' ),
 		esc_url( 'https://docs.pods.io/displaying-pods/access-rights-in-pods/' ),
 		esc_html__( 'How access rights work with Pods (Documentation)', 'pods' ),
 		esc_url( admin_url( 'admin.php?page=pods-settings#heading-security' ) ),

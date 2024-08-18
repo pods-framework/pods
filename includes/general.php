@@ -1513,6 +1513,75 @@ function pods_wrap_html( $html, $attributes = [] ) {
 }
 
 /**
+ * Detect the shortcode context from the shortcode attributes.
+ *
+ * @since TBD
+ *
+ * @param array $attributes The list of shortcode attributes.
+ *
+ * @return string|null The context or null if no context detected.
+ */
+function pods_shortcode_detect_context( array $attributes ) : ?string {
+	$context = $attributes['context'] ?? null;
+
+	if ( $context ) {
+		return $context;
+	}
+
+	if ( $attributes['view'] ?? null ) {
+		$context = 'view';
+	} elseif ( $attributes['form'] ?? null ) {
+		$context = 'form';
+	} elseif ( $attributes['related_field'] ?? null ) {
+		$context = 'related-item-list';
+	} else {
+		$template_custom = $attributes['template_custom'] ?? '';
+		$field = $attributes['field'] ?? $attributes['col'] ?? '';
+
+		if ( false !== strpos( $template_custom, '{@_all_fields' ) ) {
+			$context = 'item-single-list-fields';
+		} elseif ( '' !== $field ) {
+			$context = 'field';
+		} elseif ( $attributes['slug'] ?? null || $attributes['id'] ?? null ) {
+			$context = 'item-single';
+		} else {
+			$context = 'item-list';
+		}
+	}
+
+	return $context;
+}
+
+/**
+ * Get the query var affix to use in shortcodes.
+ *
+ * @since TBD
+ *
+ * @param array $attributes The list of shortcode attributes.
+ *
+ * @return string The query var affix to use in shortcodes.
+ */
+function pods_shortcode_query_var_affix( array $attributes ): string {
+	$affix_counter = (int) pods_static_cache_get( 'affix_counter', __FUNCTION__ );
+
+	if ( 0 === $affix_counter ) {
+		$affix_counter = 1;
+	}
+
+	$query_var_affix = $attributes['query_var_affix'];
+
+	if ( null === $query_var_affix ) {
+		$query_var_affix = 1 < $affix_counter ? '_' . $affix_counter : '';
+
+		$affix_counter ++;
+
+		pods_static_cache_set( 'affix_counter', $affix_counter, __FUNCTION__ );
+	}
+
+	return $query_var_affix;
+}
+
+/**
  * Shortcode support for use anywhere that support WP Shortcodes.
  *
  * @since 2.7.13
@@ -1533,6 +1602,30 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		}
 
 		return '';
+	}
+
+	$context = pods_shortcode_detect_context( $tags );
+
+	$supported_contexts = [
+		'field',
+		'form',
+		'item-list',
+		'item-single',
+		'item-single-list-fields',
+		'related-item-list',
+		'view',
+	];
+
+	if ( ! in_array( $context, $supported_contexts, true ) ) {
+		return pods_message(
+			sprintf(
+				'<strong>%1$s:</strong> %2$s',
+				esc_html__( 'Pods Embed Error', 'pods' ),
+				esc_html( sprintf( __( 'Unsupported context: %s.', 'pods' ), $context ?? 'unknown' ) )
+			),
+			'error',
+			true
+		);
 	}
 
 	// For enforcing pagination parameters when not displaying pagination
@@ -1558,7 +1651,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		'slug'                => null,
 		'select'              => null,
 		'join'                => null,
-		'order'               => null,
+		'order'               => null, // deprecated
 		'orderby'             => null,
 		'limit'               => null,
 		'where'               => null,
@@ -1575,11 +1668,15 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		'pagination_label'    => null,
 		'pagination_type'     => null,
 		'pagination_location' => 'after',
+		'search_var'          => null,
+		'page_var'            => null,
+		'query_var_affix'     => null,
 	);
 
 	$default_other_tags = [
 		'blog_id'          => null,
 		'field'            => null,
+		'related_field'    => null,
 		'link_field'       => null,
 		'col'              => null, // deprecated
 		'template'         => null,
@@ -1635,7 +1732,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	}
 
 	// Allow views only if not targeting a file path (must be within theme)
-	if ( $tags['view'] && 0 < strlen( (string) $tags['view'] ) ) {
+	if ( 'view' === $context ) {
 		$return = '';
 
 		// Confirm the feature is enabled and the file is allowed.
@@ -1665,7 +1762,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		return apply_filters( 'pods_shortcode_output', $return, $tags, null, 'view' );
 	}
 
-	$is_form = ! empty( $tags['form'] );
+	$is_form = 'form' === $context;
 
 	// If the feature is disabled then return early.
 	if ( $is_form && ! pods_can_use_dynamic_feature( 'form' ) ) {
@@ -1867,6 +1964,28 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 				return empty( $tags['field'] ) ? pods_get_access_user_notice( $info ) : '';
 			}
 		}
+	}
+
+	$related_field = null;
+
+	$is_related_item_list = 'related-item-list' === $context;
+
+	if ( $is_related_item_list ) {
+		$related_field = $pod->pod_data->get_field( $tags['related_field'] );
+
+		if ( ! $related_field ) {
+			return pods_message(
+				sprintf(
+					'<strong>%1$s:</strong> %2$s',
+					esc_html__( 'Pods Embed Error', 'pods' ),
+					esc_html( sprintf( __( 'Related field not found: %s.', 'pods' ), $tags['related_field'] ) )
+				),
+				'error',
+				true
+			);
+		}
+
+		$is_singular = false;
 	}
 
 	if ( ! $is_singular ) {
@@ -2164,6 +2283,31 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			$return = do_shortcode( $return );
 		}
 
+		// Maybe link the field if there's not HTML that would prevent that.
+		if (
+			$link_field
+			&& false === strpos( $return, '<div' )
+			&& false === strpos( $return, '<p' )
+			&& false === strpos( $return, '<a' )
+		) {
+			$link_field_value = $pod->field( $link_field );
+
+			if ( is_array( $link_field_value ) ) {
+				if ( 0 < count( $link_field_value ) ) {
+					$link_field_value = reset( $link_field_value );
+				} else {
+					$link_field_value = null;
+				}
+			}
+
+			if (
+				false !== strpos( $link_field_value, '://' )
+				&& false === strpos( $link_field_value, ' ' )
+			) {
+				$return = sprintf( '<a href="%s">%s</a>', esc_url( $link_field_value ), $return );
+			}
+		}
+
 		$return = pods_wrap_html( $return, $tags );
 
 		/**
@@ -2232,10 +2376,11 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		)
 		&& true === $tags['pagination']
 	) {
-		$pagination_params = array(
-			'label' => pods_v( 'pagination_label', $tags, null ),
-			'type'  => pods_v( 'pagination_type', $tags, null ),
-		);
+		$pagination_params = [
+			'label'       => pods_v( 'pagination_label', $tags, null ),
+			'type'        => pods_v( 'pagination_type', $tags, null ),
+			'total_found' => $found,
+		];
 
 		// Remove empty params.
 		$pagination_params = array_filter( $pagination_params );

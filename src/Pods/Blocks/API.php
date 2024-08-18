@@ -179,6 +179,7 @@ class API {
 		if ( pods_can_use_dynamic_feature( 'display' ) ) {
 			pods_container( 'pods.blocks.field' );
 			pods_container( 'pods.blocks.list' );
+			pods_container( 'pods.blocks.related-list' );
 			pods_container( 'pods.blocks.single' );
 			pods_container( 'pods.blocks.single-list-fields' );
 		}

@@ -761,14 +761,12 @@ function pods_is_type_public( array $args, string $context = 'shortcode' ): bool
 	 *      @type Pod|null        $pod         The Pod object (if built or provided).
 	 * }
 	 * @param string|null $context     The context we are checking from (shortcode or null).
-	 * @param Pod|null    $pod         The Pod object if set.
 	 */
 	return (bool) apply_filters(
 		'pods_is_type_public',
 		$is_public,
 		$info,
-		$context,
-		$pod
+		$context
 	);
 }
 

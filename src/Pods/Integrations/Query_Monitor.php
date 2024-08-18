@@ -26,10 +26,10 @@ class Query_Monitor extends Integration {
 			'pods_is_debug_logging_enabled' => [
 				'__return_true',
 			],
-			'qm/outputter/html' => [
+			'qm/outputter/html'             => [
 				[ __CLASS__, 'register_outputters' ],
 			],
-			'query_monitor_conditionals' => [
+			'query_monitor_conditionals'    => [
 				[ __CLASS__, 'filter_query_monitor_conditionals' ],
 			],
 		],

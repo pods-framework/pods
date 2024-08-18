@@ -11,9 +11,6 @@ use Pods\Integration;
  */
 class Enfold extends Integration {
 
-	/**
-	 * @inheritdoc
-	 */
 	protected $hooks = [
 		'action' => [],
 		'filter' => [
@@ -21,9 +18,6 @@ class Enfold extends Integration {
 		],
 	];
 
-	/**
-	 * @inheritDoc
-	 */
 	public static function is_active() {
 		global $avia_config;
 

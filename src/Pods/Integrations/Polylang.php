@@ -11,9 +11,6 @@ use Pods\Integration;
  */
 class Polylang extends Integration {
 
-	/**
-	 * @inheritdoc
-	 */
 	protected $hooks = [
 		'action' => [
 			'pods_meta_init' => [ 'pods_meta_init' ],
@@ -31,9 +28,6 @@ class Polylang extends Integration {
 		],
 	];
 
-	/**
-	 * @inheritDoc
-	 */
 	public static function is_active() {
 		return function_exists( 'PLL' ) || ! empty( $GLOBALS['polylang'] );
 	}

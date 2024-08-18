@@ -14,9 +14,6 @@ use QM_Collectors;
  */
 class Query_Monitor extends Integration {
 
-	/**
-	 * @inheritdoc
-	 */
 	protected $hooks = [
 		'action' => [
 			'pods_debug_data' => [
@@ -38,9 +35,6 @@ class Query_Monitor extends Integration {
 		],
 	];
 
-	/**
-	 * @inheritDoc
-	 */
 	public function post_hook() {
 		QM_Collectors::add( new Collectors\Constants() );
 		QM_Collectors::add( new Collectors\Debug() );
@@ -49,9 +43,6 @@ class Query_Monitor extends Integration {
 		wp_enqueue_style( 'pods-query-monitor' );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public static function is_active(): bool {
 		return (
 			class_exists( 'QM_Activation' )

@@ -16,9 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Debug extends QM_DataCollector {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public $id = 'pods-debug';
 
 	/**
@@ -30,9 +27,6 @@ class Debug extends QM_DataCollector {
 	 */
 	protected static $custom_data = [];
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function process() {
 		$this->data['debug_data'] = self::get_debug_data();
 	}

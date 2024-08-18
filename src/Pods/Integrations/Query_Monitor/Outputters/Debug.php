@@ -18,9 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Debug extends QM_Output_Html {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function __construct( QM_Collector $collector ) {
 		parent::__construct( $collector );
 
@@ -28,16 +25,10 @@ class Debug extends QM_Output_Html {
 		add_filter( 'qm/output/panel_menus', [ $this, 'panel_menu' ], 20 );
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function name(): string {
 		return __( 'Pods Debug Log', 'pods' );
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function output(): void {
 		$data = $this->collector->get_data();
 

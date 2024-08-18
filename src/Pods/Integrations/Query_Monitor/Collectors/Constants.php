@@ -16,14 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Constants extends QM_DataCollector {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public $id = 'pods-constants';
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function process() {
 		$defined_constants = [];
 		$undefined_constants = [];

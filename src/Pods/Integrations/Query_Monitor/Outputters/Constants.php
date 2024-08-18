@@ -17,25 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Constants extends QM_Output_Html {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function __construct( QM_Collector $collector ) {
 		parent::__construct( $collector );
 
 		add_filter( 'qm/output/menus', [ $this, 'admin_menu' ], 999 );
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function name(): string {
 		return __( 'Pods', 'pods' );
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function output(): void {
 		$data = $this->collector->get_data();
 

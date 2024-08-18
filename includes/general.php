@@ -693,7 +693,7 @@ function pods_is_user_admin( int $user_id, $capabilities = null ): bool {
 	// Check if the user exists.
 	$user = get_userdata( $user_id );
 
-	if ( ! $user || is_wp_error( $user ) ) {
+	if ( ! $user instanceof WP_User ) {
 		return false;
 	}
 
@@ -4055,7 +4055,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 	 * @param string      $object_type The object type.
 	 * @param string|null $object      The object name.
 	 */
-	return (array) apply_filters( 'pods_meta_hook_list', $hooks, $object_type );
+	return (array) apply_filters( 'pods_meta_hook_list', $hooks, $object_type, $object );
 }
 
 /**
@@ -4977,7 +4977,7 @@ function pods_is_types_only( $check_constant_only = false, $content_type = null 
 	 * @param bool        $is_types_only Whether Pods is being used for content types only.
 	 * @param null|string $content_type The content type context we are in.
 	 */
-	return (bool) apply_filters( 'pods_is_types_only', $is_types_only );
+	return (bool) apply_filters( 'pods_is_types_only', $is_types_only, $content_type );
 }
 
 /**

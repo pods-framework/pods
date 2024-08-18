@@ -13,3 +13,6 @@ parameters:
     - ui/front
     - init.php
     - vendor/vendor-prefixed
+  excludePaths:
+    - src/Integrations
+    - tests

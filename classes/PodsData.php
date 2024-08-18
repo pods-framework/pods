@@ -757,6 +757,10 @@ class PodsData {
 			}
 		}//end if
 
+		if ( is_object( $results ) ) {
+			$results = get_object_vars( $results );
+		}
+
 		/**
 		 * Filter results of Pods Query
 		 *
@@ -766,7 +770,7 @@ class PodsData {
 		 *
 		 * @since unknown
 		 */
-		$results = apply_filters( 'pods_data_select', $results, $params, $instance );
+		$results = (array) apply_filters( 'pods_data_select', $results, $params, $instance );
 
 		// Clean up data we don't want to work with.
 		if (
@@ -806,7 +810,7 @@ class PodsData {
 		 * Filters whether the total_found should be calculated right away or not.
 		 *
 		 * @param boolean  $auto_calculate_total_found Whether to auto calculate total_found.
-		 * @param array    $params                     Select parameters.
+		 * @param object   $params                     Select parameters.
 		 * @param PodsData $instance                   The current PodsData instance.
 		 *
 		 * @since 2.7.11

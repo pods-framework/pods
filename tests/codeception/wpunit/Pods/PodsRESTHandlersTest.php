@@ -174,7 +174,7 @@ class PodsRESTHandlersTest extends Pods_UnitTestCase {
 	protected function save_test_item( $pod_name ) {
 		$api = pods_api();
 
-		$api->save_pod_item( [
+		return $api->save_pod_item( [
 			'pod'                     => $pod_name,
 			'post_title'              => 'Test item for ' . $pod_name,
 			'post_status'             => 'publish',

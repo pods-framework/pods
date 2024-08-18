@@ -57,6 +57,13 @@ class PodsUI {
 	public $id = 0;
 
 	/**
+	 * The inserted item ID.
+	 *
+	 * @var int
+	 */
+	public $insert_id = 0;
+
+	/**
 	 * The prefix used for all URL parameters used by PodsUI.
 	 *
 	 * @since 2.7.28
@@ -2401,7 +2408,7 @@ class PodsUI {
 		 *
 		 * @param array  $find_params Parameters used with Pods::find()
 		 * @param string $action      Current action
-		 * @param PodsUI $this        PodsUI instance
+		 * @param PodsUI $obj         PodsUI instance
 		 *
 		 * @since 2.6.8
 		 */
@@ -2637,9 +2644,9 @@ class PodsUI {
 		 * @since 2.6.8
 		 *
 		 * @param array  $custom_container_classes List of custom classes to use.
-		 * @param PodsUI $this                     PodsUI instance.
+		 * @param PodsUI $obj                      PodsUI instance.
 		 */
-		$custom_container_classes = apply_filters( 'pods_ui_manage_custom_container_classes', array() );
+		$custom_container_classes = apply_filters( 'pods_ui_manage_custom_container_classes', array(), $obj );
 
 		if ( is_admin() ) {
 			array_unshift( $custom_container_classes, 'wrap' );

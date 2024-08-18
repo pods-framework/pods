@@ -176,7 +176,7 @@ function pods_user_can_access_object( array $args, ?int $user_id, string $access
 	// Check if the user exists.
 	$user = get_userdata( $user_id );
 
-	if ( ! $user || is_wp_error( $user ) ) {
+	if ( ! $user instanceof WP_User ) {
 		// If the user does not exist and it was not anonymous, do not allow access to an invalid user.
 		if ( 0 < $user_id ) {
 			return false;
@@ -767,7 +767,8 @@ function pods_is_type_public( array $args, string $context = 'shortcode' ): bool
 		'pods_is_type_public',
 		$is_public,
 		$info,
-		$context
+		$context,
+		$pod
 	);
 }
 

@@ -129,7 +129,7 @@ class PodsRESTHandlers {
 					 * @param array                  $field_data  The field data
 					 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
 					 * @param int                    $id          Current item ID
-					 * @param object|WP_REST_Request Current      request object.
+					 * @param object|WP_REST_Request $request     Current request object.
 					 */
 					$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
 

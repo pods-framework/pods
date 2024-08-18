@@ -11341,6 +11341,8 @@ class PodsAPI {
 			} else {
 				// Do normal cache clear.
 				pods_cache_clear( true );
+
+				wp_cache_flush();
 			}
 
 			if ( $flush_rewrites ) {

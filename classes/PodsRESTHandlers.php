@@ -35,12 +35,14 @@ class PodsRESTHandlers {
 			self::$pods = pods_get_instance( $pod_name, $id, true );
 		}
 
-		if ( self::$pods && (int) self::$pods->id !== (int) $id ) {
-			self::$pods->fetch( $id );
-		}
+		if ( self::$pods ) {
+			if ( (int) self::$pods->id !== (int) $id ) {
+				self::$pods->fetch( $id );
+			}
 
-		if ( ! self::$pods->exists() ) {
-			return false;
+			if ( ! self::$pods->exists() ) {
+				return false;
+			}
 		}
 
 		return self::$pods;

@@ -1580,7 +1580,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	$default_other_tags = [
 		'blog_id'          => null,
 		'field'            => null,
-		'col'              => null,
+		'link_field'       => null,
+		'col'              => null, // deprecated
 		'template'         => null,
 		'pods_page'        => null,
 		'helper'           => null,
@@ -1989,22 +1990,6 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			$params['orderby'] = $tags['orderby'];
 		}
 
-		// Load filters and return HTML for later use.
-		if (
-			true === (bool) $tags['filters_enable']
-			|| (
-				! empty( $tags['filters'] )
-				&& null === $tags['filters_enable']
-			)
-		) {
-			$filters_params = [
-				'fields' => (string) $tags['filters'],
-				'label'  => (string) $tags['filters_label'],
-			];
-
-			$filters = $pod->filters( $filters_params );
-		}
-
 		// Forms require params set
 		if ( ! empty( $params ) || empty( $tags['form'] ) ) {
 			if ( ! empty( $tags['limit'] ) ) {
@@ -2015,6 +2000,20 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 
 			$params['pagination'] = $tags['pagination'];
 
+			if ( $params['search'] || $params['pagination'] ) {
+				$tags['query_var_affix'] = pods_shortcode_query_var_affix( $tags );
+
+				if ( $params['search'] ) {
+					$params['search_var'] = $pod->search_var = $tags['search_var'] ?? 'search' . $tags['query_var_affix'];
+					$params['search']     = pods_v( $params['search_var'], 'get', '' );
+				}
+
+				if ( $params['pagination'] ) {
+					$params['page_var'] = $pod->page_var = $tags['page_var'] ?? 'pg' . $tags['query_var_affix'];
+					$params['page']     = max( (int) pods_v( $params['page_var'], 'get', 1 ), 1 );
+				}
+			}
+
 			// If we aren't displaying pagination, we need to enforce page/offset
 			if ( ! $params['pagination'] ) {
 				$params['page']   = $page;
@@ -2024,12 +2023,12 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 				$params['pagination'] = true;
 			} else {
 				// If we are displaying pagination, allow page/offset override only if *set*
-				if ( isset( $tags['page'] ) ) {
+				if ( ! empty( $tags['page'] ) ) {
 					$params['page'] = (int) $tags['page'];
 					$params['page'] = max( $params['page'], 1 );
 				}
 
-				if ( isset( $tags['offset'] ) ) {
+				if ( ! empty( $tags['offset'] ) ) {
 					$params['offset'] = (int) $tags['offset'];
 					$params['offset'] = max( $params['offset'], 0 );
 				}
@@ -2042,7 +2041,44 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 
 			$params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
 
-			$pod->find( $params );
+			if ( $is_related_item_list ) {
+				// Override the Pods object.
+				$pod = $pod->field( [
+					'name'   => $tags['related_field'],
+					'output' => 'find',
+					'params' => $params,
+				] );
+
+				if ( ! $pod instanceof Pods ) {
+					return pods_message(
+						sprintf(
+							'<strong>%1$s:</strong> %2$s',
+							esc_html__( 'Pods Embed Error', 'pods' ),
+							esc_html__( 'Related field is not compatible with this block. You may need to extend it with Pods first.', 'pods' )
+						),
+						'error',
+						true
+					);
+				}
+			} else {
+				$pod->find( $params );
+			}
+
+			// Load filters and return HTML for later use.
+			if (
+				true === (bool) $tags['filters_enable']
+				|| (
+					! empty( $tags['filters'] )
+					&& null === $tags['filters_enable']
+				)
+			) {
+				$filters_params = [
+					'fields' => (string) $tags['filters'],
+					'label'  => (string) $tags['filters_label'],
+				];
+
+				$filters = $pod->filters( $filters_params );
+			}
 
 			$found = $pod->total_found();
 		}//end if
@@ -2052,9 +2088,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	if ( $is_form ) {
 		if ( 'user' === $pod->pod ) {
 			if (
-                    false !== strpos( $tags['fields'], '_capabilities' )
-                    || false !== strpos( $tags['fields'], '_capabilities' )
-                    || false !== strpos( $tags['fields'], 'role' )
+				false !== strpos( $tags['fields'], '_capabilities' )
+				|| false !== strpos( $tags['fields'], 'role' )
             ) {
 				// Further hardening of User-based forms
 				return pods_get_access_user_notice( $info, false, __( 'You cannot edit role or capabilities for users with Pods', 'pods' ) );
@@ -2093,6 +2128,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 
 	// Handle field output.
 	if ( ! empty( $tags['field'] ) ) {
+		$link_field = $tags['link_field'] ?? null;
+
 		if ( $tags['template'] || $content ) {
 			$related = $pod->field( $tags['field'], array( 'output' => 'find' ) );
 

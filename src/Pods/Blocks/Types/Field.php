@@ -71,6 +71,11 @@ class Field extends Base {
 								'source'    => 'shortcode',
 								'attribute' => 'field',
 							],
+							'link_field' => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'link_field',
+							],
 						],
 						'isMatchConfig' => [
 							[
@@ -123,6 +128,12 @@ class Field extends Base {
 				'label'       => __( 'Field Name', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'This is the field name you want to display.', 'pods' ),
+			],
+			[
+				'name'        => 'link_field',
+				'label'       => __( 'Link Field Name (optional)', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'You can specify a field to link the output to. Like "permalink" or "related_field.permalink".', 'pods' ),
 			],
 		];
 	}
@@ -198,6 +209,15 @@ class Field extends Base {
 			unset( $attributes['use_current'] );
 		}
 
-		return pods_shortcode( $attributes );
+		$content = pods_shortcode( $attributes );
+
+		if (
+			false === strpos( $content, '<div' )
+			&& false === strpos( $content, '<p' )
+		) {
+			$content = wpautop( $content );
+		}
+
+		return $content;
 	}
 }

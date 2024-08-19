@@ -277,6 +277,7 @@ class Related_Item_List extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
+		$attributes['source']  = __METHOD__;
 		$attributes['context'] = 'related-item-list';
 
 		if ( empty( $attributes['related_field'] ) ) {

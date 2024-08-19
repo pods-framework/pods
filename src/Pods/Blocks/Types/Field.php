@@ -158,6 +158,7 @@ class Field extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
+		$attributes['source']  = __METHOD__;
 		$attributes['context'] = 'field';
 
 		if ( empty( $attributes['field'] ) ) {

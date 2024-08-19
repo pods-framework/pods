@@ -745,6 +745,8 @@ class PodsData {
 		}
 
 		if ( empty( $results ) ) {
+			pods_debug_log_data( $params, 'sql-select-params', __METHOD__, __LINE__ );
+
 			// Build.
 			$this->sql = $this->build( $params );
 
@@ -767,6 +769,8 @@ class PodsData {
 
 			// Get Data.
 			$results = pods_query( $this->sql, $this );
+
+			pods_debug_log_data( $results, 'sql-select-results', __METHOD__, __LINE__ );
 
 			// Cache if enabled.
 			if ( false !== $cache_key ) {

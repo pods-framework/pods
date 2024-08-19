@@ -1356,12 +1356,12 @@ class Pods implements Iterator {
 									pods_debug( $sql );
 								}
 
-								pods_debug_log_data( $sql, 'related-find-params', __METHOD__, __LINE__ );
-
 								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {
 										$this->alt_data = pods_data();
 									}
+
+									pods_debug_log_data( [ 'field_name' => $params->name, 'sql' => $sql ], 'related-field-params', __METHOD__, __LINE__ );
 
 									$item_data = $this->alt_data->select( $sql );
 								} else {
@@ -1372,6 +1372,8 @@ class Pods implements Iterator {
 
 										$sql['orderby'] = 'FIELD( `t`.`' . $table['field_id'] . '`, ' . $order_ids . ' )';
 									}
+
+									pods_debug_log_data( [ 'field_name' => $params->name, 'sql' => $sql ], 'related-field-params', __METHOD__, __LINE__ );
 
 									$related_obj->find( $sql );
 
@@ -3537,7 +3539,7 @@ class Pods implements Iterator {
 		$search = trim( $params['search'] );
 
 		if ( '' === $search ) {
-			$search = pods_v_sanitized( $pod->search_var, 'get', '' );
+			$search = sanitize_text_field( pods_v( $pod->search_var, 'get', '' ) );
 		}
 
 		ob_start();

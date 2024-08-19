@@ -16,11 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	foreach ( $fields as $name => $field ) {
 		if ( in_array( $field['type'], array( 'pick', 'taxonomy' ), true ) && 'pick-custom' !== $field['pick_object'] && ! empty( $field['pick_object'] ) ) {
-			$field['pick_format_type']   = 'single';
-			$field['pick_format_single'] = 'dropdown';
-			$field['pick_select_text']   = '-- ' . $field['label'] . ' --';
+			$field['pick_format_type']             = 'single';
+			$field['pick_format_single']           = 'dropdown';
+			$field['pick_select_text']             = '-- ' . $field['label'] . ' --';
+			$field['pick_show_select_text']        = 1;
+			$field['pick_select_text_always_show'] = 1;
 
-			$filter = pods_var_raw( $pod->filter_var . '_' . $name, 'get', '' );
+			$filter = sanitize_text_field( pods_v( $pod->filter_var . '_' . $name, 'get', '' ) );
 
 			// @todo Support other field types.
 			$field['type'] = 'pick';

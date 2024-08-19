@@ -2211,7 +2211,7 @@ class PodsField_Pick extends PodsField {
 		 * @param array|null      $pod                             Pod information.
 		 * @param int|string|null $id                              Current item ID.
 		 */
-		$always_show_default_select_text = (bool) apply_filters( 'pods_field_pick_always_show_default_select_text', false, $data, $name, $value, $options, $pod, $id );
+		$always_show_default_select_text = (bool) apply_filters( 'pods_field_pick_always_show_default_select_text', (bool) pods_v( static::$type . '_select_text_always_show', $options, false ), $data, $name, $value, $options, $pod, $id );
 
 		if (
 			'single' === pods_v( static::$type . '_format_type', $options, 'single' )

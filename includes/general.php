@@ -1681,6 +1681,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		'link_field'       => null,
 		'col'              => null, // deprecated
 		'template'         => null,
+		'template_custom'  => $content,
 		'pods_page'        => null,
 		'helper'           => null,
 		'form'             => null,
@@ -1709,6 +1710,10 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		$tags = $defaults;
 	}
 
+	if ( ! empty( $tags['template_custom'] ) ) {
+		$content = $tags['template_custom'];
+	}
+
 	// Bypass custom select if it might be aliasing or selecting data we don't want to work with.
 	if (
 		! empty( $tags['select'] )
@@ -1727,6 +1732,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	$tags['pagination']  = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
 	$tags['search']      = filter_var( $tags['search'], FILTER_VALIDATE_BOOLEAN );
 	$tags['use_current'] = filter_var( $tags['use_current'], FILTER_VALIDATE_BOOLEAN );
+
+	pods_debug_log_data( pods_array_filter_null_and_empty_string( $tags ), 'shortcode-args', __METHOD__, __LINE__ );
 
 	if ( empty( $content ) ) {
 		$content = null;
@@ -1749,6 +1756,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 
 			$return = pods_wrap_html( $return, $tags );
 		}
+
+		pods_debug_log_data( pods_array_filter_null_and_empty_string( $tags ), 'shortcode-final-args', __METHOD__, __LINE__ );
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -2174,6 +2183,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			$params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
 
 			if ( $is_related_item_list ) {
+				pods_debug_log_data( [ 'field_name' => $tags['related_field'], 'sql' => $params ], 'shortcode-field-params', __METHOD__, __LINE__ );
+
 				// Override the Pods object.
 				$pod = $pod->field( [
 					'name'   => $tags['related_field'],
@@ -2193,6 +2204,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 					);
 				}
 			} else {
+				pods_debug_log_data( [ 'field_name' => $tags['related_field'], 'sql' => $params ], 'shortcode-find-params', __METHOD__, __LINE__ );
+
 				$pod->find( $params );
 			}
 
@@ -2244,6 +2257,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		$return .= $pod->form( $form_params );
 
 		$return = pods_wrap_html( $return, $tags );
+
+		pods_debug_log_data( pods_array_filter_null_and_empty_string( $tags ), 'shortcode-final-args', __METHOD__, __LINE__ );
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -2323,6 +2338,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 
 		$return = pods_wrap_html( $return, $tags );
 
+		pods_debug_log_data( pods_array_filter_null_and_empty_string( $tags ), 'shortcode-final-args', __METHOD__, __LINE__ );
+
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
 		 *
@@ -2360,6 +2377,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		}
 
 		$return = pods_wrap_html( $return, $tags );
+
+		pods_debug_log_data( pods_array_filter_null_and_empty_string( $tags ), 'shortcode-final-args', __METHOD__, __LINE__ );
 
 		/**
 		 * Allow customization of shortcode output based on shortcode attributes.
@@ -2439,6 +2458,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	}
 
 	$return = pods_wrap_html( $return, $tags );
+
+	pods_debug_log_data( pods_array_filter_null_and_empty_string( $tags ), 'shortcode-final-args', __METHOD__, __LINE__ );
 
 	/**
 	 * Allow customization of shortcode output based on shortcode attributes.
@@ -5078,7 +5099,7 @@ function pods_debug_log_data( $debug, string $context, string $function, int $li
 	 * @param string $function The function/method name where the debug was called.
 	 * @param int    $line     The line number where the debug was called.
 	 */
-	do_action( 'pods_debug_data', $debug, $context, $function, $line );
+	do_action( 'pods_debug_log_data', $debug, $context, $function, $line );
 }
 
 /**

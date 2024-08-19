@@ -16,7 +16,7 @@ class Query_Monitor extends Integration {
 
 	protected $hooks = [
 		'action' => [
-			'pods_debug_data'    => [
+			'pods_debug_log_data'    => [
 				[ Collectors\Debug::class, 'track_debug_data' ],
 				10,
 				4,

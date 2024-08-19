@@ -412,7 +412,7 @@ class PodsView {
 		$pods_nocache = pods_v( 'pods_nocache' );
 		$nocache      = array();
 
-		if ( null !== $pods_nocache && pods_is_admin() ) {
+		if ( null !== $pods_nocache && 'static-cache' !== $cache_mode && pods_is_admin() ) {
 			if ( is_string( $pods_nocache ) && 1 < strlen( $pods_nocache ) ) {
 				$nocache = explode( ',', $pods_nocache );
 				$nocache = array_flip( $nocache );

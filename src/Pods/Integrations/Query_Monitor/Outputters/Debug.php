@@ -61,6 +61,9 @@ class Debug extends QM_Output_Html {
 			<th scope='col' class='qm-filterable-column'>
 				<?php echo $this->build_filter( 'debug-log-type', $debug_log_types, __( 'Debug Log', 'pods' ) ); ?>
 			</th>
+			<th scope='col'>
+				<?php esc_html_e( 'Trace', 'pods' ); ?>
+			</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -156,13 +159,33 @@ class Debug extends QM_Output_Html {
 						}
 						?>
 					</td>
+					<td class="qm-row-caller qm-row-stack qm-nowrap qm-ltr qm-has-toggle">
+						<?php
+						$stack = [];
+
+						$filtered_trace = $debug['trace']->get_filtered_trace();
+						array_shift( $filtered_trace );
+
+						foreach ( $filtered_trace as $frame ) {
+							$stack[] = self::output_filename( $frame['display'], $frame['calling_file'], $frame['calling_line'] );
+						}
+
+						echo self::build_toggler();
+						echo '<div class="qm-inverse-toggled"><ol>';
+						echo '<li>' . reset( $stack ) . '&nbsp;&hellip;</li>';
+						echo '</ol></div>';
+						echo '<div class="qm-toggled"><ol>';
+						echo '<li>' . implode( '</li><li>', $stack ) . '</li>';
+						echo '</ol></div>';
+						?>
+					</td>
 				</tr>
 				<?php
 			}
 		} else {
 			?>
 			<tr>
-				<td colspan="4" style="text-align:center !important;"><em>none</em></td>
+				<td colspan="5" style="text-align:center !important;"><em>none</em></td>
 			</tr>
 			<?php
 		}
@@ -173,7 +196,7 @@ class Debug extends QM_Output_Html {
 				<?php
 				$total_debug_logs = count( $data['debug_data'] );
 				?>
-				<td colspan="4">
+				<td colspan="5">
 					<?php
 					echo sprintf(
 						'%s %s',

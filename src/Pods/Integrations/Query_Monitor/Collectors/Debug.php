@@ -2,6 +2,7 @@
 
 namespace Pods\Integrations\Query_Monitor\Collectors;
 
+use QM_Backtrace;
 use QM_DataCollector;
 
 // Exit if accessed directly.
@@ -42,7 +43,16 @@ class Debug extends QM_DataCollector {
 	 * @param int    $line     The line number where the debug was called.
 	 */
 	public static function track_debug_data( $debug, string $context, string $function, int $line ): void {
-		self::$custom_data[] = compact( 'debug', 'context', 'function', 'line' );
+		$trace = new QM_Backtrace( [
+			'ignore_hook' => [
+				current_filter() => true,
+			],
+			'ignore_func' => [
+				'pods_debug_log_data' => true,
+			],
+		] );
+
+		self::$custom_data[] = compact( 'debug', 'context', 'function', 'line', 'trace' );
 	}
 
 	/**

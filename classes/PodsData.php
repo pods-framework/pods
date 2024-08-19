@@ -154,6 +154,11 @@ class PodsData {
 	public $search_var = 'search';
 
 	/**
+	 * @var string
+	 */
+	public $filter_var = 'filter';
+
+	/**
 	 * int | text | text_like
 	 *
 	 * @var string
@@ -681,8 +686,20 @@ class PodsData {
 
 		$total_found_cached = false;
 
+		$is_search = pods_v( $this->search_var );
+
+		// Disable caching for searches.
+		if ( null !== $is_search ) {
+			$params->expires = 0;
+			$params->cache_mode = null;
+		}
+
 		// Get from cache if enabled.
-		if ( ! $debug_sql && null !== pods_v( 'expires', $params, null, true ) ) {
+		if (
+			! $debug_sql
+			&& null === $is_search
+			&& null !== pods_v( 'expires', $params, null, true )
+		) {
 			$cache_key  = md5( (string) $this->pod . serialize( $params ) );
 			$cache_mode = pods_v( 'cache_mode', $params, 'cache', true );
 			$expires    = (int) pods_v( 'expires', $params, 0 );
@@ -1382,7 +1399,7 @@ class PodsData {
 				$filterfield = self::get_db_field( $db_field_params );
 
 				if ( 'pick' === $attributes['type'] ) {
-					$filter_value = pods_v( 'filter_' . $field );
+					$filter_value = pods_v( $this->filter_var . '_' . $field );
 
 					if ( ! is_array( $filter_value ) ) {
 						$filter_value = (array) $filter_value;
@@ -1430,8 +1447,8 @@ class PodsData {
 						'datetime',
 					), true
 				) ) {
-					$start_value = pods_v( 'filter_' . $field . '_start', 'get', false );
-					$end_value   = pods_v( 'filter_' . $field . '_end', 'get', false );
+					$start_value = pods_v( $this->filter_var . '_' . $field . '_start', 'get', false );
+					$end_value   = pods_v( $this->filter_var . '_' . $field . '_end', 'get', false );
 
 					if ( empty( $start_value ) && empty( $end_value ) ) {
 						continue;
@@ -1469,7 +1486,7 @@ class PodsData {
 						}
 					}
 				} else {
-					$filter_value = (string) pods_v( 'filter_' . $field, 'get', '' );
+					$filter_value = (string) pods_v( $this->filter_var . '_' . $field, 'get', '' );
 
 					if ( '' === $filter_value ) {
 						continue;
@@ -3255,11 +3272,11 @@ class PodsData {
 				$field = $data;
 			}
 
-			if ( ! isset( $_GET[ 'filter_' . $field ] ) ) {
+			if ( ! isset( $_GET[ $this->filter_var . '_' . $field ] ) ) {
 				continue;
 			}
 
-			$field_value = pods_v( 'filter_' . $field, 'get', false, true );
+			$field_value = pods_v( $this->filter_var . '_' . $field, 'get', false, true );
 
 			if ( ! empty( $field_value ) || ( is_string( $field_value ) && 0 < strlen( $field_value ) ) ) {
 				$feed[ 'traverse_' . $field ] = array( $field );
@@ -3558,17 +3575,17 @@ class PodsData {
 		$rel_alias = 'rel_' . $field_joined;
 
 		if ( pods_v( 'search', $traverse_recurse['params'], false ) && empty( $traverse_recurse['params']->filters ) ) {
-			if ( 0 < strlen( (string) pods_v( 'filter_' . $field_joined ) ) ) {
-				$val = absint( pods_v( 'filter_' . $field_joined ) );
+			if ( 0 < strlen( (string) pods_v( $this->filter_var . '_' . $field_joined ) ) ) {
+				$val = absint( pods_v( $this->filter_var . '_' . $field_joined ) );
 
 				$search = "`{$field_joined}`.`{$table_info[ 'field_id' ]}` = {$val}";
 
 				if ( 'text' === $this->search_mode ) {
-					$val = pods_v_sanitized( 'filter_' . $field_joined );
+					$val = pods_v_sanitized( $this->filter_var . '_' . $field_joined );
 
 					$search = "`{$field_joined}`.`{$traverse[ 'name' ]}` = '{$val}'";
 				} elseif ( 'text_like' === $this->search_mode ) {
-					$val = pods_sanitize( pods_sanitize_like( pods_v( 'filter_' . $field_joined ) ) );
+					$val = pods_sanitize( pods_sanitize_like( pods_v( $this->filter_var . '_' . $field_joined ) ) );
 
 					$search = "`{$field_joined}`.`{$traverse[ 'name' ]}` LIKE '%{$val}%'";
 				}

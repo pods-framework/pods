@@ -1670,6 +1670,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		'pagination_location' => 'after',
 		'search_var'          => null,
 		'page_var'            => null,
+		'filter_var'          => null,
 		'query_var_affix'     => null,
 	);
 
@@ -2124,12 +2125,15 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 
 				if ( $params['search'] ) {
 					$params['search_var'] = $pod->search_var = $tags['search_var'] ?? 'search' . $tags['query_var_affix'];
-					$params['search']     = pods_v( $params['search_var'], 'get', '' );
+					$params['filter_var'] = $pod->filter_var = $tags['filter_var'] ?? 'filter' . $tags['query_var_affix'];
+
+					$params['search'] = pods_v( $params['search_var'], 'get', '' );
 				}
 
 				if ( $params['pagination'] ) {
 					$params['page_var'] = $pod->page_var = $tags['page_var'] ?? 'pg' . $tags['query_var_affix'];
-					$params['page']     = max( (int) pods_v( $params['page_var'], 'get', 1 ), 1 );
+
+					$params['page'] = max( (int) pods_v( $params['page_var'], 'get', 1 ), 1 );
 				}
 			}
 

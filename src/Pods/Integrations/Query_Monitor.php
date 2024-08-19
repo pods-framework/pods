@@ -16,10 +16,13 @@ class Query_Monitor extends Integration {
 
 	protected $hooks = [
 		'action' => [
-			'pods_debug_data' => [
+			'pods_debug_data'    => [
 				[ Collectors\Debug::class, 'track_debug_data' ],
 				10,
 				4,
+			],
+			'wp_enqueue_scripts' => [
+				[ __CLASS__, 'enqueue_assets' ],
 			],
 		],
 		'filter' => [
@@ -38,7 +41,14 @@ class Query_Monitor extends Integration {
 	public function post_hook() {
 		QM_Collectors::add( new Collectors\Constants() );
 		QM_Collectors::add( new Collectors\Debug() );
+	}
 
+	/**
+	 * Handle enqueuing assets.
+	 *
+	 * @since TBD
+	 */
+	public static function enqueue_assets(): void {
 		wp_register_style( 'pods-query-monitor', PODS_URL . 'ui/styles/dist/pods-query-monitor.css', [ 'query-monitor' ], PODS_VERSION );
 		wp_enqueue_style( 'pods-query-monitor' );
 	}

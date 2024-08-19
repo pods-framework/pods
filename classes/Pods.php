@@ -3721,6 +3721,8 @@ class Pods implements Iterator {
 			if ( ! empty( $code ) ) {
 				// Only detail templates need $this->id.
 				if ( empty( $this->id ) ) {
+					$this->reset();
+
 					while ( $this->fetch() ) {
 						$info['item_id'] = $this->id();
 

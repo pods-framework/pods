@@ -542,6 +542,8 @@ class Pods_Templates extends PodsComponent {
 			return '';
 		}
 
+		/** @var Pods $obj */
+
 		$template = array(
 			'id'      => 0,
 			'name'    => $template_name,
@@ -611,6 +613,8 @@ class Pods_Templates extends PodsComponent {
 		if ( ! empty( $code ) ) {
 			// Only detail templates need $this->id
 			if ( empty( $obj->id ) ) {
+				$obj->reset();
+
 				while ( $obj->fetch() ) {
 					$info['item_id'] = $obj->id();
 

@@ -1030,9 +1030,9 @@ class PodsInit {
 
 		if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( [ __METHOD__, compact( 'existing_post_types_cached', 'existing_taxonomies_cached' ) ] );
-		} else {
-			pods_debug_log_data( compact( 'existing_post_types_cached', 'existing_taxonomies_cached' ), 'register-existing', __METHOD__, __LINE__ );
 		}
+
+		pods_debug_log_data( compact( 'existing_post_types_cached', 'existing_taxonomies_cached' ), 'register-existing', __METHOD__, __LINE__ );
 
 		return compact( 'existing_post_types_cached', 'existing_taxonomies_cached' );
 	}
@@ -1650,9 +1650,9 @@ class PodsInit {
 
 			if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				pods_debug( [ __METHOD__ . '/register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ] );
-			} else {
-				pods_debug_log_data( compact( 'taxonomy', 'ct_post_types', 'options' ), 'register-taxonomy', __METHOD__, __LINE__ );
 			}
+
+			pods_debug_log_data( compact( 'taxonomy', 'ct_post_types', 'options' ), 'register-taxonomy', __METHOD__, __LINE__ );
 
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				echo '<h3>' . esc_html( $taxonomy ) . '</h3>';
@@ -1705,9 +1705,9 @@ class PodsInit {
 
 			if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				pods_debug( [ __METHOD__ . '/register_post_type', compact( 'post_type', 'options' ) ] );
-			} else {
-				pods_debug_log_data( compact( 'post_type', 'options' ), 'register-post-type', __METHOD__, __LINE__ );
 			}
+
+			pods_debug_log_data( compact( 'post_type', 'options' ), 'register-post-type', __METHOD__, __LINE__ );
 
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				echo '<h3>' . esc_html( $post_type ) . '</h3>';

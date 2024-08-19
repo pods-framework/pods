@@ -58,14 +58,12 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 	if ( 1 === (int) pods_v( 'pods_debug_sql_all' ) && is_user_logged_in() && pods_is_admin( array( 'pods' ) ) ) {
 		$debug_sql = $sql;
 
-		echo '<textarea cols="100" rows="24">';
-
 		if ( is_array( $debug_sql ) ) {
 			$debug_sql = print_r( $debug_sql, true );
 		}
 
+		echo '<textarea cols="100" rows="24">';
 		echo esc_textarea( $debug_sql );
-
 		echo '</textarea>';
 	}
 

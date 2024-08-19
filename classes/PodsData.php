@@ -673,9 +673,9 @@ class PodsData {
 		if ( 1 === (int) pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( __METHOD__ . ':' . __LINE__ );
 			pods_debug( $params );
-		} else {
-			pods_debug_log_data( $params, 'find-params', __METHOD__, __LINE__ );
 		}
+
+		pods_debug_log_data( $params, 'find-params', __METHOD__, __LINE__ );
 
 		$debug_sql = ( 1 === (int) pods_v( 'pods_debug_sql', 'get', 0 ) || 1 === (int) pods_v( 'pods_debug_sql_all', 'get', 0 ) ) && pods_is_admin( array( 'pods' ) );
 
@@ -740,9 +740,9 @@ class PodsData {
 				} else {
 					echo '<textarea cols="100" rows="24">' . esc_textarea( $this->get_sql() ) . '</textarea>';
 				}
-			} else {
-				pods_debug_log_data( $this->get_sql(), 'sql-select', __METHOD__, __LINE__ );
 			}
+
+			pods_debug_log_data( $this->get_sql(), 'sql-select', __METHOD__, __LINE__ );
 
 			if ( empty( $this->sql ) ) {
 				return array();
@@ -1143,9 +1143,9 @@ class PodsData {
 		if ( 1 === (int) pods_v( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( __METHOD__ . ':' . __LINE__ );
 			pods_debug( $params );
-		} else {
-			pods_debug_log_data( $params, 'find-params', __METHOD__, __LINE__ );
 		}
+
+		pods_debug_log_data( $params, 'find-params', __METHOD__, __LINE__ );
 
 		$params->field_table_alias = 't';
 
@@ -2519,8 +2519,6 @@ class PodsData {
 			var_dump( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 11 ) );
 			echo '</pre>';
 			$error = ob_get_clean() . $error;
-		} else {
-			pods_debug_log_data( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 11 ), 'sql-error', __METHOD__, __LINE__ );
 		}
 
 		$params = (object) array(
@@ -2557,13 +2555,10 @@ class PodsData {
 			if ( 1 === (int) pods_v( 'pods_debug_sql_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				pods_debug( __METHOD__ . ':' . __LINE__ );
 				echo '<textarea cols="100" rows="24">' . esc_textarea( pods_data()->get_sql( $params->sql ) ) . '</textarea>';
-			} else {
-				pods_debug_log_data( pods_data()->get_sql( $params->sql ), 'sql-query', __METHOD__, __LINE__ );
 			}
-
-		} else {
-			pods_debug_log_data( pods_data()->get_sql( $params->sql ), 'sql-query', __METHOD__, __LINE__ );
 		}
+
+		pods_debug_log_data( pods_data()->get_sql( $params->sql ), 'sql-query', __METHOD__, __LINE__ );
 
 		$params->sql = trim( $params->sql );
 
@@ -2589,6 +2584,8 @@ class PodsData {
 		$result = apply_filters( 'pods_data_query_result', $result, $params );
 
 		if ( false === $result && ! empty( $params->error ) && ! empty( $wpdb->last_error ) ) {
+			pods_debug_log_data( "{$params->error}; SQL: {$params->sql}; Response: {$wpdb->last_error}", 'sql-error', __METHOD__, __LINE__ );
+
 			return pods_error( "{$params->error}; SQL: {$params->sql}; Response: {$wpdb->last_error}", $params->display_errors );
 		}
 
@@ -2598,8 +2595,12 @@ class PodsData {
 			$result = (array) $wpdb->last_result;
 
 			if ( ! empty( $result ) && ! empty( $params->results_error ) ) {
+				pods_debug_log_data( "{$params->results_error}; SQL: {$params->sql}", 'sql-results-error', __METHOD__, __LINE__ );
+
 				return pods_error( $params->results_error, $params->display_errors );
 			} elseif ( empty( $result ) && ! empty( $params->no_results_error ) ) {
+				pods_debug_log_data( "{$params->no_results_error}; SQL: {$params->sql}", 'sql-results-error', __METHOD__, __LINE__ );
+
 				return pods_error( $params->no_results_error, $params->display_errors );
 			}
 		}

@@ -4418,7 +4418,7 @@ class PodsAdmin {
 				'label'             => __( 'Allow All Fields To Be Updated', 'pods' ),
 				'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
 				'type'              => 'boolean',
-				'default'           => pods_v( 'name', $pod ),
+				'default'           => '',
 				'depends-on'        => [ 'rest_enable' => true, 'read_all' => true ],
 			],
 			/*'write_all_access'   => [

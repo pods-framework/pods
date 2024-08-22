@@ -4415,11 +4415,11 @@ class PodsAdmin {
 				],
 			],
 			'write_all'   => [
-				'label'             => __( 'Allow All Fields To Be Updated', 'pods' ),
-				'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
-				'type'              => 'boolean',
-				'default'           => '',
-				'depends-on'        => [ 'rest_enable' => true, 'read_all' => true ],
+				'label'      => __( 'Allow All Fields To Be Updated', 'pods' ),
+				'help'       => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				'type'       => 'boolean',
+				'default'    => '',
+				'depends-on' => [ 'rest_enable' => true, 'read_all' => true ],
 			],
 			/*'write_all_access'   => [
 				'label'             => __( 'Write All Access', 'pods' ),

@@ -27,6 +27,7 @@ class PodsRESTFields {
 
 	/**
 	 * The user ID for the authenticated user.
+	 *
 	 * @var int
 	 */
 	private static $rest_user_id;

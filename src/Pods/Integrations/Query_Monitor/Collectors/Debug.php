@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Debug
  *
- * @since TBD
+ * @since 3.2.7
  */
 class Debug extends QM_DataCollector {
 
@@ -22,7 +22,7 @@ class Debug extends QM_DataCollector {
 	/**
 	 * The data to be tracked.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @var array
 	 */
@@ -35,7 +35,7 @@ class Debug extends QM_DataCollector {
 	/**
 	 * Track debug data.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @param mixed  $debug    The debug data to track.
 	 * @param string $context  The context where the debug came from.
@@ -58,7 +58,7 @@ class Debug extends QM_DataCollector {
 	/**
 	 * Get all of the debug data tracked.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @return array All of the debug data tracked.
 	 */
@@ -69,7 +69,7 @@ class Debug extends QM_DataCollector {
 	/**
 	 * Reset all of the debug data tracked.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 */
 	public static function reset_debug_data(): void {
 		self::$custom_data = [];

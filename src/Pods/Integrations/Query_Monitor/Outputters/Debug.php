@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Debug
  *
- * @since TBD
+ * @since 3.2.7
  */
 class Debug extends QM_Output_Html {
 
@@ -214,7 +214,7 @@ class Debug extends QM_Output_Html {
 	/**
 	 * Register the panel menu for this outputter.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @param array<string, mixed[]> $menus The panel menus.
 	 *

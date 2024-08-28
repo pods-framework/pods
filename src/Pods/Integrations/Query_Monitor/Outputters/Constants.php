@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Constants
  *
- * @since TBD
+ * @since 3.2.7
  */
 class Constants extends QM_Output_Html {
 

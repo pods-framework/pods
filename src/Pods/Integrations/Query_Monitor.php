@@ -10,7 +10,7 @@ use QM_Collectors;
 /**
  * Class Query_Monitor
  *
- * @since TBD
+ * @since 3.2.7
  */
 class Query_Monitor extends Integration {
 
@@ -46,7 +46,7 @@ class Query_Monitor extends Integration {
 	/**
 	 * Handle enqueuing assets.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 */
 	public static function enqueue_assets(): void {
 		wp_register_style( 'pods-query-monitor', PODS_URL . 'ui/styles/dist/pods-query-monitor.css', [ 'query-monitor' ], PODS_VERSION );
@@ -64,7 +64,7 @@ class Query_Monitor extends Integration {
 	/**
 	 * Register the custom Pods outputters.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @param array $outputters The array of outputter instances.
 	 *
@@ -80,7 +80,7 @@ class Query_Monitor extends Integration {
 	/**
 	 * Add Pods conditional functions to Query Monitor.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @param array $conditionals The conditional functions for Query Monitor.
 	 *

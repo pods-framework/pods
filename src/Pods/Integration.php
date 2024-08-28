@@ -72,7 +72,7 @@ abstract class Integration {
 	/**
 	 * Do any post-hook related functionality.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 */
 	public function post_hook() {}
 
@@ -98,7 +98,7 @@ abstract class Integration {
 	/**
 	 * Do any post-unhook related functionality.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 */
 	public function post_unhook() {}
 

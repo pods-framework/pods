@@ -2646,7 +2646,7 @@ function pods_is_falsey( $value ) {
 /**
  * Filter out the nulls from the array of data.
  *
- * @since TBD
+ * @since 3.2.7
  *
  * @param array $data The array of data to filter.
  *
@@ -2664,7 +2664,7 @@ function pods_array_filter_null( array $data ): array {
 /**
  * Filter out the nulls and empty strings from the array of data.
  *
- * @since TBD
+ * @since 3.2.7
  *
  * @param array $data The array of data to filter.
  *

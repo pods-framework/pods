@@ -1513,7 +1513,7 @@ function pods_wrap_html( $html, $attributes = [] ) {
 /**
  * Detect the shortcode context from the shortcode attributes.
  *
- * @since TBD
+ * @since 3.2.7
  *
  * @param array $attributes The list of shortcode attributes.
  *
@@ -1555,7 +1555,7 @@ function pods_shortcode_detect_context( array $attributes ) : ?string {
 /**
  * Get the query var affix to use in shortcodes.
  *
- * @since TBD
+ * @since 3.2.7
  *
  * @param array $attributes The list of shortcode attributes.
  *
@@ -5076,7 +5076,7 @@ function pods_container_register_service_provider( $provider_class ) {
 /**
  * Maybe log data to the Pods debug log.
  *
- * @since TBD
+ * @since 3.2.7
  *
  * @param mixed  $debug    The debug data to track.
  * @param string $context  The context where the debug came from.
@@ -5093,7 +5093,7 @@ function pods_debug_log_data( $debug, string $context, string $function, int $li
 	/**
 	 * Log data to the Pods debug log.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @param mixed  $debug    The debug data to track.
 	 * @param string $context  The context where the debug came from.
@@ -5106,7 +5106,7 @@ function pods_debug_log_data( $debug, string $context, string $function, int $li
 /**
  * Determine whether Pods debug logging is enabled.
  *
- * @since TBD
+ * @since 3.2.7
  *
  * @return bool Whether Pods debug logging is enabled.
  */
@@ -5118,7 +5118,7 @@ function pods_is_debug_logging_enabled(): bool {
 	/**
 	 * Allow filtering whether debug logging is enabled.
 	 *
-	 * @since TBD
+	 * @since 3.2.7
 	 *
 	 * @param bool $is_debug_logging_enabled Whether debug logging is enabled.
 	 */

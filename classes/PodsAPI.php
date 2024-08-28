@@ -7954,19 +7954,6 @@ class PodsAPI {
 			// Plugin hook
 			$this->do_hook( 'pre_delete_pod_item', $params, $pod );
 			$this->do_hook( "pre_delete_pod_item_{$params->pod}", $params, $pod );
-
-			// Call any pre-save helpers (if not bypassed)
-			if ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) {
-				if ( ! empty( $pod ) ) {
-					$helpers = array( 'pre_delete_helpers', 'post_delete_helpers' );
-
-					foreach ( $helpers as $helper ) {
-						if ( isset( $pod[ $helper ] ) && ! empty( $pod[ $helper ] ) ) {
-							${$helper} = explode( ',', $pod[ $helper ] );
-						}
-					}
-				}
-			}
 		}
 
 		// Delete object from relationship fields

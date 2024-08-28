@@ -709,25 +709,34 @@ class Pods_Templates extends PodsComponent {
 			$obj =& self::$obj;
 		}
 
-		if ( empty( $obj ) || ! is_object( $obj ) ) {
+		if ( empty( $obj ) || ! is_object( $obj ) || ! is_string( $code ) ) {
 			return '';
 		}
 
-		if ( false !== strpos( $code, '<?' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
-			pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
+		$out = '';
 
-			$code = str_replace( '$this->', '$obj->', $code );
+		if ( false !== strpos( $code, '<?' ) ) {
+			// @todo Remove this code in Pods 3.3 and completely ignore any $code that starts with <? in the string.
+			_doing_it_wrong( 'Pods Templates', 'Pod Template PHP code is no longer actively supported and will be completely removed in Pods 3.3', '3.0' );
 
-			ob_start();
+			if ( ! PODS_DISABLE_EVAL ) {
+				pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
 
-			eval( "?>$code" );
+				$code = str_replace( '$this->', '$obj->', $code );
 
-			$out = ob_get_clean();
+				ob_start();
+
+				eval( "?>$code" );
+
+				$out = (string) ob_get_clean();
+			}
 		} else {
 			$out = $code;
 		}
 
-		$out = $obj->do_magic_tags( $out );
+		if ( '' !== trim( $out ) ) {
+			$out = $obj->do_magic_tags( $out );
+		}
 
 		// Prevent blank whitespace from being output if nothing came through.
 		if ( '' === trim( $out ) ) {

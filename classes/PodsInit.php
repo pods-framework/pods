@@ -246,12 +246,18 @@ class PodsInit {
 	 * Load the plugin textdomain and set default constants
 	 */
 	public function plugins_loaded() {
+		// Set some default constants.
+
 		if ( ! defined( 'PODS_LIGHT' ) ) {
 			define( 'PODS_LIGHT', false );
 		}
 
 		if ( ! defined( 'PODS_TABLELESS' ) ) {
 			define( 'PODS_TABLELESS', false );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_EVAL' ) ) {
+			define( 'PODS_DISABLE_EVAL', true );
 		}
 
 		if ( ! defined( 'PODS_TEXTDOMAIN' ) || PODS_TEXTDOMAIN ) {

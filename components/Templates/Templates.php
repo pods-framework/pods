@@ -420,7 +420,7 @@ class Pods_Templates extends PodsComponent {
 	 * @param $text
 	 * @param $post
 	 *
-	 * @return string|void
+	 * @return string
 	 */
 	public function set_title_text( $text, $post ) {
 		return __( 'Enter template name here', 'pods' );

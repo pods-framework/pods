@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Whatsit\Field;
+use Pods\API\Whatsit\Value_Field;
 
 /**
  * @package Pods

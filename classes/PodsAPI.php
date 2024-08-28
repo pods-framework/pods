@@ -8333,7 +8333,7 @@ class PodsAPI {
 	 *
 	 * @param bool                     $strict       Makes sure the pod exists, throws an error if it doesn't work.
 	 *
-	 * @return Pods\Whatsit\Pod|false Pod object or false if not found.
+	 * @return Pods\Whatsit\Pod|false|WP_Error Pod object or false if not found.
 	 *
 	 * @throws Exception
 	 * @since 1.7.9

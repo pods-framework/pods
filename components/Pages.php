@@ -632,7 +632,7 @@ class Pods_Pages extends PodsComponent {
 	 * @param $text
 	 * @param $post
 	 *
-	 * @return string|void
+	 * @return string
 	 */
 	public function set_title_text( $text, $post ) {
 		return __( 'Enter URL here', 'pods' );
@@ -991,7 +991,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @param bool $pods_page
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public static function content( $return = false, $pods_page = false ) {
 
@@ -1060,6 +1060,8 @@ class Pods_Pages extends PodsComponent {
 		}
 
 		echo $content;
+
+		return '';
 	}
 
 	/**
@@ -1084,8 +1086,8 @@ class Pods_Pages extends PodsComponent {
 			if ( $permission ) {
 				$content = false;
 
-				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( (string) pods_var( 'pod', self::$exists['options'] ) ) ) {
-					$slug = pods_var_raw( 'pod_slug', self::$exists['options'], null, null, true );
+				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( (string) pods_v( 'pod', self::$exists['options'] ) ) ) {
+					$slug = pods_v( 'pod_slug', self::$exists['options'], null, null, true );
 
 					$has_slug = 0 < strlen( $slug );
 
@@ -1094,7 +1096,7 @@ class Pods_Pages extends PodsComponent {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
-					$pods = pods_get_instance( pods_var( 'pod', self::$exists['options'] ), $slug );
+					$pods = pods_get_instance( pods_v_sanitized( 'pod', self::$exists['options'] ), $slug );
 
 					// Auto 404 handling if item doesn't exist
 					if ( $has_slug && ( empty( $slug ) || ! $pods->exists() ) && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {

@@ -1052,10 +1052,9 @@ class PodsMeta {
 		 *
 		 * @since 2.6.6
 		 *
+		 * @param array  $groups Array of groups
 		 * @param string $type   The type of Pod
 		 * @param string $name   Name of the Pod
-		 *
-		 * @param array  $groups Array of groups
 		 */
 		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
 
@@ -2345,7 +2344,7 @@ class PodsMeta {
 		if ( ! $no_conflict ) {
 			$user = get_user_by( 'login', $user_login );
 
-			if ( $user && ! is_wp_error( $user ) ) {
+			if ( $user instanceof WP_User ) {
 				$pod = 'user';
 				$id  = $user->ID;
 
@@ -4324,10 +4323,6 @@ class PodsMeta {
 			}
 
 			$pod->data->row[ $meta_key ] = $meta_value;
-
-			if ( isset( $meta_cache[ '_pods_' . $key ] ) && $field_object && in_array( $field_object['type'], $tableless_field_types, true ) ) {
-				unset( $meta_cache[ '_pods_' . $key ] );
-			}
 		}
 
 		$pod->save( $meta_key, $meta_value, $object_id, array(
@@ -4594,11 +4589,9 @@ class PodsMeta {
 
 	/**
 	 * @param $id
-	 *
-	 * @return bool
 	 */
 	public function delete_user( $id ) {
-		return $this->delete_object( 'user', $id );
+		$this->delete_object( 'user', $id );
 	}
 
 	/**
@@ -4607,17 +4600,14 @@ class PodsMeta {
 	 * @return bool
 	 */
 	public function delete_comment( $id ) {
-		return $this->delete_object( 'comment', $id );
+		$this->delete_object( 'comment', $id );
 	}
 
 	/**
 	 * @param $id
-	 *
-	 * @return bool
 	 */
 	public function delete_media( $id ) {
-
-		return $this->delete_object( 'media', $id );
+		$this->delete_object( 'media', $id );
 	}
 
 	/**

@@ -225,7 +225,14 @@ class PodsRESTFields {
 
 		$pod_mode_arg = $mode . '_all';
 
-		$all_fields_can_use_mode = filter_var( $pod->get_arg( $pod_mode_arg, false ), FILTER_VALIDATE_BOOLEAN );
+		$pod_mode = $pod->get_arg( $pod_mode_arg, false );
+
+		// Backcompat for a previous bug in Pods < 3.2.7 where the default value was the pod name instead of '0'.
+		if ( $pod_mode === $pod->get_name() ) {
+			$pod_mode = 0;
+		}
+
+		$all_fields_can_use_mode = filter_var( $pod_mode, FILTER_VALIDATE_BOOLEAN );
 		$all_fields_access       = 'read' === $mode && filter_var( $pod->get_arg( 'read_all_access', false ), FILTER_VALIDATE_BOOLEAN );
 
 		// Check if user must be logged in to access all fields and override whether they can use it.

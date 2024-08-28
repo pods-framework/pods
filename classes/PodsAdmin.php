@@ -4375,21 +4375,21 @@ class PodsAdmin {
 		}
 
 		$options['rest-api'] = [
-			'rest_enable' => [
+			'rest_enable'             => [
 				'label'      => __( 'Enable', 'pods' ),
 				'help'       => __( 'Add REST API support for this Pod.', 'pods' ),
 				'type'       => 'boolean',
 				'default'    => '',
 				'dependency' => true,
 			],
-			'rest_base'   => [
+			'rest_base'               => [
 				'label'      => __( 'REST Base (if any)', 'pods' ),
 				'help'       => __( 'This will form the url for the route. Default / empty value here will use the pod name.', 'pods' ),
 				'type'       => 'text',
 				'default'    => '',
 				'depends-on' => [ 'rest_enable' => true ],
 			],
-			'rest_namespace'   => [
+			'rest_namespace'          => [
 				'label'       => __( 'REST API namespace', 'pods' ),
 				'help'        => __( 'This will change the namespace URL of the REST API route to a different one from the default one that all normal route endpoints use.', 'pods' ),
 				'type'        => 'text',
@@ -4397,7 +4397,7 @@ class PodsAdmin {
 				'placeholder' => 'wp/v2',
 				'depends-on'  => [ 'rest_enable' => true ],
 			],
-			'read_all'    => [
+			'read_all'                => [
 				'label'      => __( 'Show All Fields (read-only)', 'pods' ),
 				'help'       => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
 				'type'       => 'boolean',
@@ -4405,7 +4405,7 @@ class PodsAdmin {
 				'depends-on' => [ 'rest_enable' => true ],
 				'dependency' => true,
 			],
-			'read_all_access'   => [
+			'read_all_access'         => [
 				'label'             => __( 'Read All Access', 'pods' ),
 				'help'              => __( 'By default the REST API will allow the fields to be returned for everyone who has access to that endpoint/object. You can also restrict the access of your field based on whether the person is logged in.', 'pods' ),
 				'type'              => 'boolean',
@@ -4414,12 +4414,12 @@ class PodsAdmin {
 					'read_all' => true,
 				],
 			],
-			'write_all'   => [
-				'label'             => __( 'Allow All Fields To Be Updated', 'pods' ),
-				'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
-				'type'              => 'boolean',
-				'default'           => pods_v( 'name', $pod ),
-				'depends-on'        => [ 'rest_enable' => true, 'read_all' => true ],
+			'write_all'               => [
+				'label'      => __( 'Allow All Fields To Be Updated', 'pods' ),
+				'help'       => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				'type'       => 'boolean',
+				'default'    => '',
+				'depends-on' => [ 'rest_enable' => true, 'read_all' => true ],
 			],
 			/*'write_all_access'   => [
 				'label'             => __( 'Write All Access', 'pods' ),
@@ -4430,20 +4430,20 @@ class PodsAdmin {
 					'write_all' => true,
 				],
 			],*/
-			'rest_api_field_mode'   => [
-				'label'             => __( 'Field Mode', 'pods' ),
-				'help'              => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
-				'type'              => 'pick',
+			'rest_api_field_mode'     => [
+				'label'              => __( 'Field Mode', 'pods' ),
+				'help'               => __( 'Specify how you would like your values returned in the REST API responses. If you choose to show Both raw and rendered values then an object will be returned for each field that contains the value and rendered properties.', 'pods' ),
+				'type'               => 'pick',
 				'pick_format_single' => 'radio',
-				'default'           => 'value',
-				'depends-on'        => [ 'rest_enable' => true ],
-				'data'       => [
+				'default'            => 'value',
+				'depends-on'         => [ 'rest_enable' => true ],
+				'data'               => [
 					'value'            => __( 'Raw values', 'pods' ),
 					'render'           => __( 'Rendered values', 'pods' ),
 					'value_and_render' => __( 'Both raw and rendered values {value: raw_value, rendered: rendered_value}', 'pods' ),
 				],
 			],
-			'rest_api_field_location'   => [
+			'rest_api_field_location' => [
 				'label'              => __( 'Field Location', 'pods' ),
 				'help'               => __( 'Specify where you would like your values returned in the REST API responses. To show in the "meta" object of the response, you must have Custom Fields enabled in the Post Type Supports features.', 'pods' ),
 				'type'               => 'pick',

@@ -3422,6 +3422,8 @@ class Pods implements Iterator {
 			$pagination = 'advanced';
 		}
 
+		$wrap_pagination = (bool) $params->wrap_pagination;
+
 		ob_start();
 
 		pods_view( PODS_DIR . 'ui/front/pagination/' . $pagination . '.php', compact( array_keys( get_defined_vars() ) ) );

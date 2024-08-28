@@ -136,6 +136,9 @@ class Item_Single_List_Fields extends Item_Single {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
+		$attributes['source']  = __METHOD__;
+		$attributes['context'] = 'item-single-list-fields';
+
 		if ( empty( $attributes['display_output_type'] ) ) {
 			$attributes['display_output_type'] = 'ul';
 		}

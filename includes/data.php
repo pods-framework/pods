@@ -2644,6 +2644,42 @@ function pods_is_falsey( $value ) {
 }
 
 /**
+ * Filter out the nulls from the array of data.
+ *
+ * @since 3.2.7
+ *
+ * @param array $data The array of data to filter.
+ *
+ * @return array The array with nulls filtered out.
+ */
+function pods_array_filter_null( array $data ): array {
+	return array_filter(
+		$data,
+		static function( $value ) {
+			return null !== $value;
+		}
+	);
+}
+
+/**
+ * Filter out the nulls and empty strings from the array of data.
+ *
+ * @since 3.2.7
+ *
+ * @param array $data The array of data to filter.
+ *
+ * @return array The array with nulls and empty strings filtered out.
+ */
+function pods_array_filter_null_and_empty_string( array $data ): array {
+	return array_filter(
+		$data,
+		static function( $value ) {
+			return null !== $value && '' !== $value;
+		}
+	);
+}
+
+/**
  * Make replacements to a string using key=>value pairs.
  *
  * @since 2.8.11

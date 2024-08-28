@@ -147,6 +147,9 @@ class View extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
+		$attributes['source']  = __METHOD__;
+		$attributes['context'] = 'view';
+
 		if ( empty( $attributes['view'] ) ) {
 			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(

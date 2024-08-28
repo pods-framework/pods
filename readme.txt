@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.2
-Stable tag: 3.2.6
+Stable tag: 3.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,6 +181,24 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.2.7 - August 28th, 2024 =
+
+* Feature: New Pods Related Item List block that works like a Pods Item List block but uses the Pods Single Item block context where you specify a relationship field name to reference. (@sc0ttkclark)
+* Feature: You can now link field value output from Pods Field Value block to any website field or just use `permalink` to link to the current item of the field. Works with single select relationship field as the link reference. (@sc0ttkclark)
+* Feature: Add support for having multiple filters/pagination on the same page when using Pods shortcodes/blocks. (@sc0ttkclark)
+* Feature: When a relationship field is using Taxonomy syncing, you can not choose to hide the Taxonomy UI from the Block Editor and Classic Editor. (@sc0ttkclark)
+* Feature: New support for Query Monitor now shows Pods debug logs in a QM panel. (@sc0ttkclark)
+* Tweak: Toggle add file button on single file field depending on whether a file is provided yet. #7315 (@heybran)
+* Tweak: Added a `<p>` wrapper for the span-based pagination. (@sc0ttkclark)
+* Removed: PHP support for Pod Templates and Pod Pages has been finally turned off by default (`PODS_DISABLE_EVAL` constant set to `false` can be used to re-enable it). It will be completely removed in Pods 3.3 after being deprecated in Pods 2.3. (@sc0ttkclark) 
+* Fixed: Improve REST authentication method to support other auth forms when registering fields. #7340 #7341 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Fix invalid default value for REST API `write_all` option. #7339 (@JoryHogeveen)
+* Fixed: Resolve issue with Taxonomy syncing for relationship fields. #7336 #7334 (@pdclark, @sc0ttkclark)
+* Fixed: Add fallback for clipboard.writeText. #7314 (@heybran)
+* Fixed: Reset items loop before running the fetch loop in `Pods::template()` and the Templates component. (@sc0ttkclark)
+* Fixed: Resolve issues with cached queries in PodsData not having the correct corresponding total found for pagination. (@sc0ttkclark)
+* Fixed: More phpstan/phpcs fixes across the codebase. (@sc0ttkclark)
 
 = 3.2.6 - July 22nd, 2024 =
 

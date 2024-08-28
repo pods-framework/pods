@@ -176,7 +176,7 @@ function pods_user_can_access_object( array $args, ?int $user_id, string $access
 	// Check if the user exists.
 	$user = get_userdata( $user_id );
 
-	if ( ! $user || is_wp_error( $user ) ) {
+	if ( ! $user instanceof WP_User ) {
 		// If the user does not exist and it was not anonymous, do not allow access to an invalid user.
 		if ( 0 < $user_id ) {
 			return false;
@@ -761,7 +761,6 @@ function pods_is_type_public( array $args, string $context = 'shortcode' ): bool
 	 *      @type Pod|null        $pod         The Pod object (if built or provided).
 	 * }
 	 * @param string|null $context     The context we are checking from (shortcode or null).
-	 * @param Pod|null    $pod         The Pod object if set.
 	 */
 	return (bool) apply_filters(
 		'pods_is_type_public',
@@ -1188,7 +1187,7 @@ function pods_get_access_admin_notice( array $args, bool $force_message = false 
 				</span>
 			</p>
 		',
-		esc_html__( 'The content below is not public and may not be available to everyone else.', 'pods' ),
+		esc_html__( 'The content type or the content below is not public and may not be available to everyone else.', 'pods' ),
 		esc_url( 'https://docs.pods.io/displaying-pods/access-rights-in-pods/' ),
 		esc_html__( 'How access rights work with Pods (Documentation)', 'pods' ),
 		esc_url( admin_url( 'admin.php?page=pods-settings#heading-security' ) ),

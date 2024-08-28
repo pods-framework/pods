@@ -388,3 +388,7 @@ div.open span.pods-quick-add {
 .pods-ui-field .pods-dfv-list-add {
 	margin-bottom: 10px;
 }
+
+.pods-marionette-adapter-wrapper-single-file:has(.pinkynail) .pods-dfv-list-add {
+  display: none;
+}

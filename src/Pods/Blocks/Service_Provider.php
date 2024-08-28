@@ -8,6 +8,7 @@ use Pods\Blocks\Types\Form;
 use Pods\Blocks\Types\Item_List;
 use Pods\Blocks\Types\Item_Single;
 use Pods\Blocks\Types\Item_Single_List_Fields;
+use Pods\Blocks\Types\Related_Item_List;
 use Pods\Blocks\Types\View;
 
 /**
@@ -27,9 +28,12 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	public function register() {
 		$this->container->singleton( 'pods.blocks', API::class );
 		$this->container->singleton( 'pods.blocks.collection.pods', Pods::class, [ 'register_with_pods' ] );
+
+		// To add new blocks, also update \Pods\Blocks\API::setup_core_blocks() to call the block.
 		$this->container->singleton( 'pods.blocks.field', Field::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.form', Form::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.list', Item_List::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks.related-list', Related_Item_List::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.single', Item_Single::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.single-list-fields', Item_Single_List_Fields::class, [ 'register_with_pods' ] );
 		$this->container->singleton( 'pods.blocks.view', View::class, [ 'register_with_pods' ] );

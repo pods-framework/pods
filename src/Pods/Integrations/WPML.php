@@ -11,9 +11,6 @@ use Pods\Integration;
  */
 class WPML extends Integration {
 
-	/**
-	 * @inheritdoc
-	 */
 	protected $hooks = [
 		'action' => [
 			'wpml_language_has_switched' => [ 'wpml_language_has_switched' ],
@@ -29,9 +26,6 @@ class WPML extends Integration {
 		],
 	];
 
-	/**
-	 * @inheritDoc
-	 */
 	public static function is_active() {
 		return defined( 'ICL_SITEPRESS_VERSION' ) || ! empty( $GLOBALS['sitepress'] );
 	}

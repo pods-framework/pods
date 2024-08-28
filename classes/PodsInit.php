@@ -246,12 +246,18 @@ class PodsInit {
 	 * Load the plugin textdomain and set default constants
 	 */
 	public function plugins_loaded() {
+		// Set some default constants.
+
 		if ( ! defined( 'PODS_LIGHT' ) ) {
 			define( 'PODS_LIGHT', false );
 		}
 
 		if ( ! defined( 'PODS_TABLELESS' ) ) {
 			define( 'PODS_TABLELESS', false );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_EVAL' ) ) {
+			define( 'PODS_DISABLE_EVAL', true );
 		}
 
 		if ( ! defined( 'PODS_TEXTDOMAIN' ) || PODS_TEXTDOMAIN ) {
@@ -1032,6 +1038,8 @@ class PodsInit {
 			pods_debug( [ __METHOD__, compact( 'existing_post_types_cached', 'existing_taxonomies_cached' ) ] );
 		}
 
+		pods_debug_log_data( compact( 'existing_post_types_cached', 'existing_taxonomies_cached' ), 'register-existing', __METHOD__, __LINE__ );
+
 		return compact( 'existing_post_types_cached', 'existing_taxonomies_cached' );
 	}
 
@@ -1650,6 +1658,8 @@ class PodsInit {
 				pods_debug( [ __METHOD__ . '/register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ] );
 			}
 
+			pods_debug_log_data( compact( 'taxonomy', 'ct_post_types', 'options' ), 'register-taxonomy', __METHOD__, __LINE__ );
+
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				echo '<h3>' . esc_html( $taxonomy ) . '</h3>';
 				echo '<textarea rows="15" style="width:100%">' . esc_textarea( 'register_taxonomy( ' . var_export( $taxonomy, true ) . ', ' . var_export( $ct_post_types, true ) . ', ' . var_export( $options, true ) . ' );' ) . '</textarea>';
@@ -1702,6 +1712,8 @@ class PodsInit {
 			if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				pods_debug( [ __METHOD__ . '/register_post_type', compact( 'post_type', 'options' ) ] );
 			}
+
+			pods_debug_log_data( compact( 'post_type', 'options' ), 'register-post-type', __METHOD__, __LINE__ );
 
 			if ( 1 === (int) pods_v( 'pods_debug_register_export', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				echo '<h3>' . esc_html( $post_type ) . '</h3>';
@@ -1793,7 +1805,7 @@ class PodsInit {
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
-				new PodsRESTFields( $pod['name'] );
+				new PodsRESTFields( $pod );
 			}
 		}
 
@@ -1803,7 +1815,7 @@ class PodsInit {
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
-				new PodsRESTFields( $pod['name'] );
+				new PodsRESTFields( $pod );
 			}
 		}
 
@@ -2479,9 +2491,6 @@ class PodsInit {
 		// Compatibility with WP 5.4 privacy export.
 		add_filter( 'wp_privacy_additional_user_profile_data', array( $this, 'filter_wp_privacy_additional_user_profile_data' ), 10, 3 );
 
-		// Compatibility for Query Monitor conditionals
-		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
-
 		// Support for quick edit in WP 6.4+.
 		add_filter( 'quick_edit_enabled_for_post_type', [ $this, 'quick_edit_enabled_for_post_type' ], 10, 2 );
 		add_filter( 'quick_edit_enabled_for_taxonomy', [ $this, 'quick_edit_enabled_for_taxonomy' ], 10, 2 );
@@ -2725,23 +2734,5 @@ class PodsInit {
 		}
 
 		return $additional_user_profile_data;
-	}
-
-	/**
-	 * Add Pods conditional functions to Query Monitor.
-	 *
-	 * @param  array $conditionals
-	 * @return array
-	 */
-	public function filter_query_monitor_conditionals( $conditionals ) {
-		$conditionals[] = 'pods_developer';
-		$conditionals[] = 'pods_tableless';
-		$conditionals[] = 'pods_light';
-		$conditionals[] = 'pods_strict';
-		$conditionals[] = 'pods_allow_deprecated';
-		$conditionals[] = 'pods_api_cache';
-		$conditionals[] = 'pods_shortcode_allow_evaluate_tags';
-		$conditionals[] = 'pods_session_auto_start';
-		return $conditionals;
 	}
 }

@@ -1749,12 +1749,8 @@ class PodsAPI {
 					$pod = null;
 				}
 
-				if ( $fail_on_load ) {
-					if ( is_wp_error( $pod ) ) {
-						return $pod;
-					} elseif ( empty( $pod ) ) {
-						return pods_error( __( 'Pod not found', 'pods' ), $this );
-					}
+				if ( $fail_on_load && ! $pod instanceof Pod ) {
+					return pods_error( __( 'Pod not found', 'pods' ), $this );
 				}
 			}
 		}
@@ -3285,7 +3281,7 @@ class PodsAPI {
 			if ( $load_params ) {
 				$field_obj = $this->load_field( $load_params );
 
-				if ( $fail_on_load && ( empty( $field_obj ) || is_wp_error( $field_obj ) ) ) {
+				if ( $fail_on_load && ! $field_obj instanceof Field ) {
 					return $field_obj;
 				}
 			}
@@ -4830,11 +4826,12 @@ class PodsAPI {
 		 *
 		 * Use for globally setting field change tracking.
 		 *
-		 * @param bool
+		 * @param bool   $track_changed_fields Whether to track changed fields or not.
+		 * @param object $params               The parameters passed to save_pod_item.
 		 *
 		 * @since 2.3.19
 		 */
-		$track_changed_fields = apply_filters( "pods_api_save_pod_item_track_changed_fields_{$pod_name}", (boolean) $params->track_changed_fields, $params );
+		$track_changed_fields = (bool) apply_filters( "pods_api_save_pod_item_track_changed_fields_{$pod_name}", (bool) $params->track_changed_fields, $params );
 
 		$changed_fields = array();
 
@@ -5083,10 +5080,10 @@ class PodsAPI {
 					 *
 					 * @since 3.0
 					 *
-					 * @param bool   $is_visible   Whether the field is visible from conditional logic.
-					 * @param Field  $field        The field object.
-					 * @param array  $field_values The field values referenced.
-					 * @param object $params       The save_pod_item parameters.
+					 * @param bool              $is_visible   Whether the field is visible from conditional logic.
+					 * @param Field|Value_Field $field        The field object.
+					 * @param array             $field_values The field values referenced.
+					 * @param object            $params       The save_pod_item parameters.
 					 */
 					$is_visible = (bool) apply_filters(
 						'pods_api_save_pod_item_conditional_logic_field_is_visible',
@@ -6192,9 +6189,9 @@ class PodsAPI {
 			return [];
 		}
 
-		$changed_pods_cache   = pods_static_cache_get( 'changed_pods_cache', __CLASS__ ) ?: [];
-		$old_fields_cache     = pods_static_cache_get( 'old_fields_cache', __CLASS__ ) ?: [];
-		$changed_fields_cache = pods_static_cache_get( 'changed_fields_cache', __CLASS__ ) ?: [];
+		$changed_pods_cache   = (array) ( pods_static_cache_get( 'changed_pods_cache', __CLASS__ ) ?: [] );
+		$old_fields_cache     = (array) ( pods_static_cache_get( 'old_fields_cache', __CLASS__ ) ?: [] );
+		$changed_fields_cache = (array) ( pods_static_cache_get( 'changed_fields_cache', __CLASS__ ) ?: [] );
 
 		$cache_key = $pod . '|' . $id;
 
@@ -6202,7 +6199,7 @@ class PodsAPI {
 			'depth' => 1,
 		);
 
-		if ( in_array( $mode, array( 'set', 'reset' ), true ) ) {
+		if ( in_array( $mode, [ 'set', 'reset' ], true ) ) {
 			if ( isset( $changed_fields_cache[ $cache_key ] ) ) {
 				unset( $changed_fields_cache[ $cache_key ] );
 			}
@@ -7957,19 +7954,6 @@ class PodsAPI {
 			// Plugin hook
 			$this->do_hook( 'pre_delete_pod_item', $params, $pod );
 			$this->do_hook( "pre_delete_pod_item_{$params->pod}", $params, $pod );
-
-			// Call any pre-save helpers (if not bypassed)
-			if ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) {
-				if ( ! empty( $pod ) ) {
-					$helpers = array( 'pre_delete_helpers', 'post_delete_helpers' );
-
-					foreach ( $helpers as $helper ) {
-						if ( isset( $pod[ $helper ] ) && ! empty( $pod[ $helper ] ) ) {
-							${$helper} = explode( ',', $pod[ $helper ] );
-						}
-					}
-				}
-			}
 		}
 
 		// Delete object from relationship fields
@@ -8349,7 +8333,7 @@ class PodsAPI {
 	 *
 	 * @param bool                     $strict       Makes sure the pod exists, throws an error if it doesn't work.
 	 *
-	 * @return Pods\Whatsit\Pod|false Pod object or false if not found.
+	 * @return Pods\Whatsit\Pod|false|WP_Error Pod object or false if not found.
 	 *
 	 * @throws Exception
 	 * @since 1.7.9
@@ -9785,7 +9769,7 @@ class PodsAPI {
 
 			$related = get_comments( $comment_args );
 
-			if ( ! is_wp_error( $related ) ) {
+			if ( $related ) {
 				$related_ids = $related;
 			}
 		} elseif (
@@ -10456,13 +10440,13 @@ class PodsAPI {
 			/**
 			 * Allow filtering the table information for an object.
 			 *
-			 * @param array       $info        The table information.
-			 * @param string      $object_type The object type.
-			 * @param string      $object      The object name.
-			 * @param string      $name        The pod name.
-			 * @param array|Pod   $pod         The pod config (if found).
-			 * @param array|Field $field       The field config (if found).
-			 * @param self        $obj         The PodsAPI object.
+			 * @param array            $info        The table information.
+			 * @param string           $object_type The object type.
+			 * @param string           $object      The object name.
+			 * @param string|null      $name        The pod name.
+			 * @param array|Pod|null   $pod         The pod config (if found).
+			 * @param array|Field|null $field       The field config (if found).
+			 * @param self             $obj         The PodsAPI object.
 			 */
 			return apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
 		} else {
@@ -10570,13 +10554,14 @@ class PodsAPI {
 			 *
 			 * Use to change "default" post status from publish to any other status or statuses.
 			 *
-			 * @param  array  $post_status List of post statuses. Default is 'publish' or field setting (if available).
-			 * @param  string $post_type   Post type of current object.
-			 * @param  array  $info        Array of information about the object.
-			 * @param  string $object      Type of object.
-			 * @param  string $name        Name of pod to load.
-			 * @param  array  $pod         Array with Pod information. Result of PodsAPI::load_pod().
-			 * @param  array  $field       Array with field information.
+			 * @param array            $post_status List of post statuses. Default is 'publish' or field setting (if available).
+			 * @param string           $post_type   Post type of current object.
+			 * @param array            $info        Array of information about the object.
+			 * @param string           $object_type Type of object.
+			 * @param string           $object      Object name if provided.
+			 * @param string|null      $name        Name of pod to load.
+			 * @param array|Pod|null   $pod         The pod config (if found).
+			 * @param array|Field|null $field       The field config (if found).
 			 *
 			 * @since unknown
 			 */
@@ -10993,10 +10978,6 @@ class PodsAPI {
 		 */
 		global $wpdb;
 
-		if ( null === $format && null !== $this->format ) {
-			$format = $this->format;
-		}
-
 		if ( 'csv' === $format && ! is_array( $import_data ) ) {
 			$data = pods_migrate( 'sv', ',' )->parse( $import_data );
 
@@ -11016,8 +10997,6 @@ class PodsAPI {
 
 		if ( ! empty( $this->pod_data ) ) {
 			$pod = $this->pod_data;
-		} elseif ( ! empty( $this->pod ) ) {
-			$pod = $this->load_pod( [ 'name' => $this->pod ], false );
 		}
 
 		if ( false === $pod ) {
@@ -11183,8 +11162,6 @@ class PodsAPI {
 		if ( empty( $pod ) ) {
 			if ( ! empty( $this->pod_data ) ) {
 				$pod = $this->pod_data;
-			} elseif ( ! empty( $this->pod ) ) {
-				$pod = $this->load_pod( [ 'name' => $this->pod ], false );
 			}
 		}
 
@@ -11341,6 +11318,8 @@ class PodsAPI {
 			} else {
 				// Do normal cache clear.
 				pods_cache_clear( true );
+
+				wp_cache_flush();
 			}
 
 			if ( $flush_rewrites ) {
@@ -11681,7 +11660,7 @@ class PodsAPI {
 			$post = get_post( $post );
 		}
 
-		if ( ! $post || is_wp_error( $post ) ) {
+		if ( ! $post instanceof WP_Post ) {
 			return false;
 		}
 

@@ -103,6 +103,28 @@ class PodsRESTFields {
 	}
 
 	/**
+	 * Validates if a current user or application is logged in.
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_authenticated(): bool {
+		$is_rest_authenticated = (bool) pods_static_cache_get( __FUNCTION__, __CLASS__ );
+
+		if ( $is_rest_authenticated ) {
+			return true;
+		}
+
+		$is_rest_authenticated = (
+			is_user_logged_in()
+			|| wp_validate_application_password( get_current_user_id() )
+		);
+
+		pods_static_cache_set( __FUNCTION__, (int) $is_rest_authenticated, __CLASS__ );
+
+		return $is_rest_authenticated;
+	}
+
+	/**
 	 * Add fields, based on options to REST read/write requests
 	 *
 	 * @since  2.5.6
@@ -225,12 +247,19 @@ class PodsRESTFields {
 
 		$pod_mode_arg = $mode . '_all';
 
-		$all_fields_can_use_mode = filter_var( $pod->get_arg( $pod_mode_arg, false ), FILTER_VALIDATE_BOOLEAN );
+		$pod_mode = $pod->get_arg( $pod_mode_arg, false );
+
+		// Backcompat for a previous bug in Pods < 3.2.7 where the default value was the pod name instead of '0'.
+		if ( $pod_mode === $pod->get_name() ) {
+			$pod_mode = 0;
+		}
+
+		$all_fields_can_use_mode = filter_var( $pod_mode, FILTER_VALIDATE_BOOLEAN );
 		$all_fields_access       = 'read' === $mode && filter_var( $pod->get_arg( 'read_all_access', false ), FILTER_VALIDATE_BOOLEAN );
 
 		// Check if user must be logged in to access all fields and override whether they can use it.
 		if ( $all_fields_can_use_mode && $all_fields_access ) {
-			$all_fields_can_use_mode = is_user_logged_in();
+			$all_fields_can_use_mode = self::is_rest_authenticated();
 		}
 
 		// Maybe get the Field object from the Pod.
@@ -260,7 +289,7 @@ class PodsRESTFields {
 
 		// Check if user must be logged in to access field and override whether they can use it.
 		if ( $can_use_mode && $access ) {
-			$can_use_mode = is_user_logged_in();
+			$can_use_mode = self::is_rest_authenticated();
 		}
 
 		return $can_use_mode;

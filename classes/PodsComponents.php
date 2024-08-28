@@ -521,8 +521,13 @@ class PodsComponents {
 			pods_transient_set( 'pods_components', $components, WEEK_IN_SECONDS );
 		}//end if
 
-		if ( 1 === (int) pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-			pods_debug( $components );
+		if ( is_admin() ) {
+			if ( 1 === (int) pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( [ 'pods' ] ) ) {
+				pods_debug( __METHOD__ . ':' . __LINE__ );
+				pods_debug( $components );
+			}
+
+			pods_debug_log_data( $components, 'components', __METHOD__, __LINE__ );
 		}
 
 		$this->components = $components;

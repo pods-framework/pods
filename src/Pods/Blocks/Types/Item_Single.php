@@ -224,6 +224,9 @@ class Item_Single extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'pods_trim', $attributes );
 
+		$attributes['source']  = __METHOD__;
+		$attributes['context'] = 'item-single';
+
 		if (
 			empty( $attributes['template'] )
 			&& empty( $attributes['template_custom'] )

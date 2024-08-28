@@ -17,29 +17,35 @@ class PodsRESTHandlers {
 	 *
 	 * @var Pods
 	 */
-	private static $pod;
+	private static $pods = false;
 
 	/**
-	 * Get Pod object
+	 * Get the Pods object.
 	 *
 	 * @since 2.5.6
 	 *
-	 * @param $pod_name
-	 * @param $id
+	 * @param string     $pod_name The pod name.
+	 * @param string|int $id       The item ID.
 	 *
-	 * @return bool|Pods
+	 * @return bool|Pods The Pods object or false if not found.
 	 */
-	protected static function get_pod( $pod_name, $id ) {
+	public static function get_pods_object( $pod_name, $id ) {
 
-		if ( ! self::$pod || self::$pod->pod !== $pod_name ) {
-			self::$pod = pods_get_instance( $pod_name, $id, true );
+		if ( ! self::$pods || self::$pods->pod !== $pod_name ) {
+			self::$pods = pods_get_instance( $pod_name, $id, true );
 		}
 
-		if ( self::$pod && (int) self::$pod->id !== (int) $id ) {
-			self::$pod->fetch( $id );
+		if ( self::$pods ) {
+			if ( (int) self::$pods->id !== (int) $id ) {
+				self::$pods->fetch( $id );
+			}
+
+			if ( ! self::$pods->exists() ) {
+				return false;
+			}
 		}
 
-		return self::$pod;
+		return self::$pods;
 
 	}
 
@@ -81,15 +87,15 @@ class PodsRESTHandlers {
 		}
 
 		/**
-		 * Filter the pod name
+		 * Filter the pod name for the REST API handler.
 		 *
 		 * @since 2.6.7
 		 *
-		 * @param array           $pod_name    Pod name
-		 * @param Pods            $object      Rest object
-		 * @param string          $field_name  Name of the field
-		 * @param WP_REST_Request $request     Current request
-		 * @param string          $object_type Rest Object type
+		 * @param array           $pod_name    The Pod name.
+		 * @param array           $object      The REST object.
+		 * @param string          $field_name  The name of the field.
+		 * @param WP_REST_Request $request     The current request.
+		 * @param string          $object_type The REST object type.
 		 */
 		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type );
 
@@ -99,7 +105,7 @@ class PodsRESTHandlers {
 			$id = pods_v( 'ID', $object );
 		}
 
-		$pod = self::get_pod( $pod_name, $id );
+		$pod = self::get_pods_object( $pod_name, $id );
 
 		$value = false;
 
@@ -125,7 +131,7 @@ class PodsRESTHandlers {
 					 * @param array                  $field_data  The field data
 					 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
 					 * @param int                    $id          Current item ID
-					 * @param object|WP_REST_Request Current      request object.
+					 * @param object|WP_REST_Request $request     Current request object.
 					 */
 					$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
 
@@ -267,7 +273,7 @@ class PodsRESTHandlers {
 			$pod_name = 'media';
 		}
 
-		$pod = self::get_pod( $pod_name, $id );
+		$pod = self::get_pods_object( $pod_name, $id );
 
 		global $wp_rest_additional_fields;
 

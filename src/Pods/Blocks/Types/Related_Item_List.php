@@ -7,33 +7,33 @@ use WP_Block;
 /**
  * Item List block functionality class.
  *
- * @since 2.8.0
+ * @since 3.2.7
  */
-class Item_List extends Base {
+class Related_Item_List extends Base {
 
 	/**
 	 * Which is the name/slug of this block
 	 *
-	 * @since 2.8.0
+	 * @since 3.2.7
 	 *
 	 * @return string
 	 */
 	public function slug() {
-		return 'pods-block-list';
+		return 'pods-block-related-list';
 	}
 
 	/**
 	 * Get block configuration to register with Pods.
 	 *
-	 * @since 2.8.0
+	 * @since 3.2.7
 	 *
 	 * @return array Block configuration.
 	 */
 	public function block() {
 		return [
 			'internal'        => true,
-			'label'           => __( 'Pods Item List', 'pods' ),
-			'description'     => __( 'List multiple Pod items.', 'pods' ),
+			'label'           => __( 'Pods Related Item List', 'pods' ),
+			'description'     => __( 'List multiple related Pod items.', 'pods' ),
 			'namespace'       => 'pods',
 			'category'        => 'pods',
 			'icon'            => 'pods',
@@ -41,130 +41,13 @@ class Item_List extends Base {
 			'render_callback' => [ $this, 'safe_render' ],
 			'keywords'        => [
 				'pods',
+				'related',
 				'item',
 				'list',
 			],
 			'uses_context'    => [
 				'postType',
-			],
-			'transforms'      => [
-				'from' => [
-					[
-						'type'       => 'shortcode',
-						'tag'        => 'pods',
-						'attributes' => [
-							'name'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'name',
-							],
-							'template'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'template',
-							],
-							'template_custom'  => [
-								// Pull this from content or the attribute.
-								'type'      => 'content',
-								'source'    => 'shortcode',
-								'attribute' => 'template_custom',
-							],
-							'content_before'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'content_before',
-							],
-							'content_after'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'content_after',
-							],
-							'not_found'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'not_found',
-							],
-							'limit'  => [
-								'type'      => 'integer',
-								'source'    => 'shortcode',
-								'attribute' => 'limit',
-							],
-							'orderby'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'orderby',
-							],
-							'where'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'where',
-							],
-							'pagination'  => [
-								'type'      => 'boolean',
-								'source'    => 'shortcode',
-								'attribute' => 'pagination',
-							],
-							'pagination_location'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'pagination_location',
-							],
-							'pagination_type'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'pagination_type',
-							],
-							'filters_enable'  => [
-								'type'      => 'boolean',
-								'source'    => 'shortcode',
-								'attribute' => 'filters_enable',
-							],
-							'filters'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'filters',
-							],
-							'filters_label'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'filters_label',
-							],
-							'filters_location'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'filters_location',
-							],
-							'cache_mode'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'cache_mode',
-							],
-							'expires'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'expires',
-							],
-						],
-						'isMatchConfig' => [
-							[
-								'name'     => 'slug',
-								'excluded' => true,
-							],
-							[
-								'name'     => 'field',
-								'excluded' => true,
-							],
-							[
-								'name'     => 'form',
-								'excluded' => true,
-							],
-							[
-								'name'     => 'view',
-								'excluded' => true,
-							],
-						],
-					],
-				],
+				'postId',
 			],
 		];
 	}
@@ -172,7 +55,7 @@ class Item_List extends Base {
 	/**
 	 * Get list of Field configurations to register with Pods for the block.
 	 *
-	 * @since 2.8.0
+	 * @since 3.2.7
 	 *
 	 * @return array List of Field configurations.
 	 */
@@ -199,7 +82,7 @@ class Item_List extends Base {
 		/**
 		 * Allow filtering of the default cache mode used for the Pods shortcode.
 		 *
-		 * @since 2.8.0
+		 * @since 3.2.7
 		 *
 		 * @param string $default_cache_mode Default cache mode.
 		 */
@@ -224,6 +107,18 @@ class Item_List extends Base {
 					esc_html__( 'Read about how access rights control what can be displayed to other users: %s', 'pods' ),
 					'<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'pods' ) . '</a>'
 				),
+			],
+			'slug' => [
+				'name'        => 'slug',
+				'label'       => __( 'Slug or ID', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'Defaults to using the current pod item.', 'pods' ),
+			],
+			'related_field' => [
+				'name'        => 'related_field',
+				'label'       => __( 'Related Field Name', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'This is the related field name you want to display.', 'pods' ),
 			],
 			'template' => [
 				'name'        => 'template',
@@ -365,7 +260,7 @@ class Item_List extends Base {
 	/**
 	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it.
 	 *
-	 * @since 2.8.0
+	 * @since 3.2.7
 	 *
 	 * @param array         $attributes The block attributes.
 	 * @param string        $content    The block default content.
@@ -383,12 +278,23 @@ class Item_List extends Base {
 		$attributes = array_map( 'pods_trim', $attributes );
 
 		$attributes['source']  = __METHOD__;
-		$attributes['context'] = 'item-list';
+		$attributes['context'] = 'related-item-list';
+
+		if ( empty( $attributes['related_field'] ) ) {
+			if ( $this->in_editor_mode( $attributes ) ) {
+				return $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Related Item List', 'pods' ),
+					esc_html__( 'Please specify a "Related Field Name" under "More Settings" to configure this block.', 'pods' )
+				);
+			}
+
+			return '';
+		}
 
 		if ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
 			if ( $this->in_editor_mode( $attributes ) ) {
 				return $this->render_placeholder(
-					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Item List', 'pods' ),
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Related Item List', 'pods' ),
 					esc_html__( 'Please specify a "Template" or "Custom Template" under "More Settings" to configure this block.', 'pods' )
 				);
 			}
@@ -401,25 +307,37 @@ class Item_List extends Base {
 			return '';
 		}
 
-		// Detect post type / ID from context.
-		if ( empty( $attributes['name'] ) && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
-			$attributes['name'] = $block->context['postType'];
+		// Use current if no pod name / slug provided.
+		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) ) {
+			$attributes['use_current'] = true;
+		} elseif ( ! isset( $attributes['use_current'] ) ) {
+			$attributes['use_current'] = false;
 		}
 
 		$provided_post_id = $this->in_editor_mode( $attributes ) ? pods_v( 'post_id', 'get', 0, true ) : get_the_ID();
 		$provided_post_id = absint( pods_v( '_post_id', $attributes, $provided_post_id, true ) );
 
-		if ( empty( $attributes['name'] ) ) {
-			if (
-				0 !== $provided_post_id
-				&& $this->in_editor_mode( $attributes )
-			) {
-				$attributes['slug'] = $provided_post_id;
+		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			// Detect post type / ID from context.
+			$attributes['name'] = $block->context['postType'];
 
-				$attributes['name'] = get_post_type( $attributes['slug'] );
-			} else {
-				$attributes['name'] = get_post_type();
+			if ( ! empty( $block->context['postId'] ) ) {
+				$attributes['slug'] = $block->context['postId'];
+
+				unset( $attributes['use_current'] );
 			}
+		} elseif (
+			$attributes['use_current']
+			&& 0 !== $provided_post_id
+			&& $this->in_editor_mode( $attributes )
+		) {
+			$attributes['slug'] = $provided_post_id;
+
+			if ( empty( $attributes['name'] ) ) {
+				$attributes['name'] = get_post_type( $attributes['slug'] );
+			}
+
+			unset( $attributes['use_current'] );
 		}
 
 		if ( empty( $attributes['filters'] ) ) {

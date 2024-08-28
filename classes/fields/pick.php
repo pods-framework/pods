@@ -449,7 +449,23 @@ class PodsField_Pick extends PodsField {
 						'^taxonomy-.*$',
 					],
 				],
-			]
+				'type'           => 'boolean',
+				'default'        => 0,
+			],
+			static::$type . '_sync_taxonomy_hide_taxonomy_ui' => [
+				'label'       => __( 'Hide the associated taxonomy UI from the Editor', 'pods' ),
+				'help'        => __( 'This will hide the taxonomy meta box from the Classic Editor and disable the taxonomy panel in the Block Editor.', 'pods' ),
+				'depends-on'  => [
+					static::$type . '_sync_taxonomy' => true,
+				],
+				'wildcard-on' => [
+					static::$type . '_object' => [
+						'^taxonomy-.*$',
+					],
+				],
+				'type'           => 'boolean',
+				'default'        => 0,
+			],
 		];
 
 		$post_type_pick_objects = array();
@@ -1925,24 +1941,28 @@ class PodsField_Pick extends PodsField {
 		} elseif ( $options instanceof Field || $options instanceof Value_Field ) {
 			$related_field = $options->get_bidirectional_field();
 
-			if ( ! $related_field ) {
-				return;
-			}
+			if ( $related_field ) {
+				$related_pod        = $related_field->get_parent_object();
+				$related_pick_limit = $related_field->get_limit();
 
-			$related_pod        = $related_field->get_parent_object();
-			$related_pick_limit = $related_field->get_limit();
+				if ( null === $current_ids ) {
+					$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
+				}
 
-			if ( null === $current_ids ) {
-				$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
-			}
-
-			// Get ids to remove.
-			if ( null === $remove_ids ) {
-				$remove_ids = array_diff( $current_ids, $value_ids );
+				// Get ids to remove.
+				if ( null === $remove_ids ) {
+					$remove_ids = array_diff( $current_ids, $value_ids );
+				}
 			}
 		}
 
-		if ( empty( $related_field ) || empty( $related_pod ) ) {
+		if (
+			(
+				empty( $related_field )
+				|| empty( $related_pod )
+			)
+			&& empty( $options[ static::$type . '_sync_taxonomy' ] )
+		) {
 			return;
 		}
 
@@ -2211,7 +2231,7 @@ class PodsField_Pick extends PodsField {
 		 * @param array|null      $pod                             Pod information.
 		 * @param int|string|null $id                              Current item ID.
 		 */
-		$always_show_default_select_text = (bool) apply_filters( 'pods_field_pick_always_show_default_select_text', false, $data, $name, $value, $options, $pod, $id );
+		$always_show_default_select_text = (bool) apply_filters( 'pods_field_pick_always_show_default_select_text', (bool) pods_v( static::$type . '_select_text_always_show', $options, false ), $data, $name, $value, $options, $pod, $id );
 
 		if (
 			'single' === pods_v( static::$type . '_format_type', $options, 'single' )

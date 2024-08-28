@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Whatsit\Field;
+use Pods\API\Whatsit\Value_Field;
 
 /**
  * @package Pods
@@ -273,15 +274,6 @@ class PodsForm {
 			 * @deprecated 2.7.0
 			 */
 			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
-		} elseif ( ! empty( $helper ) && 0 < strlen( (string) pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
-			/**
-			 * Input helpers are deprecated and not guaranteed to work properly.
-			 *
-			 * They will be entirely removed in Pods 3.0.
-			 *
-			 * @deprecated 2.7.0
-			 */
-			eval( '?>' . $helper['code'] );
 		} elseif ( method_exists( static::class, 'field_' . $type ) ) {
 			// @todo Move these custom field methods into real/faux field classes
 			echo call_user_func( array( static::class, 'field_' . $type ), $name, $value, $options );
@@ -1510,7 +1502,8 @@ class PodsForm {
 			 *
 			 * @since unknown
 			 *
-			 * @param string $file The file path to include for the field type.
+			 * @param string $file       The file path to include for the field type.
+			 * @param string $field_type The field type.
 			 */
 			$file = apply_filters( 'pods_form_field_include', $file, $field_type );
 

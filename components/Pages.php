@@ -632,7 +632,7 @@ class Pods_Pages extends PodsComponent {
 	 * @param $text
 	 * @param $post
 	 *
-	 * @return string|void
+	 * @return string
 	 */
 	public function set_title_text( $text, $post ) {
 		return __( 'Enter URL here', 'pods' );
@@ -991,7 +991,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @param bool $pods_page
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public static function content( $return = false, $pods_page = false ) {
 
@@ -1026,11 +1026,17 @@ class Pods_Pages extends PodsComponent {
 
 			do_action( 'pods_content_pre', $pods_page, $content );
 
-			if ( 0 < strlen( $content ) ) {
-				if ( false !== strpos( $content, '<?' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
-					pods_deprecated( 'Pod Page PHP code has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
+			if ( $content && 0 < strlen( $content ) ) {
+				// @todo Remove this code in Pods 3.3 and completely ignore any $code that starts with <? in the string.
+				if ( false !== strpos( $content, '<?' ) ) {
+					_doing_it_wrong( 'Pods Pages', 'Pod Page Precode PHP code is no longer actively supported and will be completely removed in Pods 3.3', '3.0' );
 
-					eval( "?>$content" );
+					// Only use $content if eval is enabled.
+					if ( ! PODS_DISABLE_EVAL ) {
+						pods_deprecated( 'Pod Page PHP code has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
+
+						eval( "?>$content" );
+					}
 				} elseif ( is_object( $pods ) && ! empty( $pods->id ) ) {
 					echo $pods->do_magic_tags( $content );
 				} else {
@@ -1054,6 +1060,8 @@ class Pods_Pages extends PodsComponent {
 		}
 
 		echo $content;
+
+		return '';
 	}
 
 	/**
@@ -1078,8 +1086,8 @@ class Pods_Pages extends PodsComponent {
 			if ( $permission ) {
 				$content = false;
 
-				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( (string) pods_var( 'pod', self::$exists['options'] ) ) ) {
-					$slug = pods_var_raw( 'pod_slug', self::$exists['options'], null, null, true );
+				if ( ! is_object( $pods ) && 404 != $pods && 0 < strlen( (string) pods_v( 'pod', self::$exists['options'] ) ) ) {
+					$slug = pods_v( 'pod_slug', self::$exists['options'], null, null, true );
 
 					$has_slug = 0 < strlen( $slug );
 
@@ -1088,7 +1096,7 @@ class Pods_Pages extends PodsComponent {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
-					$pods = pods_get_instance( pods_var( 'pod', self::$exists['options'] ), $slug );
+					$pods = pods_get_instance( pods_v_sanitized( 'pod', self::$exists['options'] ), $slug );
 
 					// Auto 404 handling if item doesn't exist
 					if ( $has_slug && ( empty( $slug ) || ! $pods->exists() ) && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
@@ -1097,13 +1105,18 @@ class Pods_Pages extends PodsComponent {
 				}
 
 				if ( 0 < strlen( trim( self::$exists['precode'] ) ) ) {
-					$content = self::$exists['precode'];
+					$content = trim( self::$exists['precode'] );
 				}
 
-				if ( false !== $content && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
-					pods_deprecated( 'Pod Page Precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
+				// @todo Remove this code in Pods 3.3.
+				if ( $content && 0 < strlen( $content ) ) {
+					_doing_it_wrong( 'Pods Pages', 'Pod Page Precode PHP code is no longer actively supported and will be completely removed in Pods 3.3', '3.0' );
 
-					eval( "?>$content" );
+					if ( ! PODS_DISABLE_EVAL ) {
+						pods_deprecated( 'Pod Page Precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
+
+						eval( "?>$content" );
+					}
 				}
 
 				do_action( 'pods_page_precode', self::$exists, $pods, $content );

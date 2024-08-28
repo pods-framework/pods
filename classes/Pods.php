@@ -22,7 +22,8 @@ use Pod as Deprecated_Pod;
  * @property null|string $search      Whether search is enabled.
  * @property null|string $search_var  The query variable used for search.
  * @property null|string $search_mode The search mode to use.
- * @property null|string $params      The last find() params.
+ * @property null|string $filter_var  The query variable used for filters.
+ * @property null|array  $params      The last find() params.
  * @property null|string $sql         The last find() SQL query.
  */
 class Pods implements Iterator {
@@ -1349,10 +1350,18 @@ class Pods implements Iterator {
 
 								$item_data = array();
 
+								// Debug purposes
+								if ( 1 == pods_v( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+									pods_debug( __METHOD__ . ':' . __LINE__ );
+									pods_debug( $sql );
+								}
+
 								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {
 										$this->alt_data = pods_data();
 									}
+
+									pods_debug_log_data( [ 'field_name' => $params->name, 'sql' => $sql ], 'related-field-params', __METHOD__, __LINE__ );
 
 									$item_data = $this->alt_data->select( $sql );
 								} else {
@@ -1363,6 +1372,8 @@ class Pods implements Iterator {
 
 										$sql['orderby'] = 'FIELD( `t`.`' . $table['field_id'] . '`, ' . $order_ids . ' )';
 									}
+
+									pods_debug_log_data( [ 'field_name' => $params->name, 'sql' => $sql ], 'related-field-params', __METHOD__, __LINE__ );
 
 									$related_obj->find( $sql );
 
@@ -2391,6 +2402,7 @@ class Pods implements Iterator {
 			'search_across_picks' => false,
 			'search_across_files' => false,
 			// Advanced parameters.
+			'filter_var'          => $this->filter_var,
 			'filters'             => $this->filters,
 			'sql'                 => $sql,
 			// Caching parameters.
@@ -2428,6 +2440,7 @@ class Pods implements Iterator {
 		$this->pagination = (boolean) $params->pagination;
 		$this->search     = (boolean) $params->search;
 		$this->search_var = $params->search_var;
+		$this->filter_var = $params->filter_var;
 		$params->join     = (array) $params->join;
 
 		if ( empty( $params->search_query ) ) {
@@ -3367,28 +3380,29 @@ class Pods implements Iterator {
 			$append = '&';
 		}
 
-		$defaults = array(
-			'type'        => 'advanced',
-			'label'       => __( 'Go to page:', 'pods' ),
-			'show_label'  => true,
-			'first_text'  => __( '&laquo; First', 'pods' ),
-			'prev_text'   => __( '&lsaquo; Previous', 'pods' ),
-			'next_text'   => __( 'Next &rsaquo;', 'pods' ),
-			'last_text'   => __( 'Last &raquo;', 'pods' ),
-			'prev_next'   => true,
-			'first_last'  => true,
-			'limit'       => (int) $this->limit,
-			'offset'      => (int) $this->offset,
-			'page'        => max( 1, (int) $this->page ),
-			'mid_size'    => 2,
-			'end_size'    => 1,
-			'total_found' => $this->total_found(),
-			'page_var'    => $this->page_var,
-			'base'        => "{$url}{$append}%_%",
-			'format'      => "{$this->page_var}=%#%",
-			'class'       => '',
-			'link_class'  => '',
-		);
+		$defaults = [
+			'type'            => 'advanced',
+			'label'           => __( 'Go to page:', 'pods' ),
+			'show_label'      => true,
+			'first_text'      => __( '&laquo; First', 'pods' ),
+			'prev_text'       => __( '&lsaquo; Previous', 'pods' ),
+			'next_text'       => __( 'Next &rsaquo;', 'pods' ),
+			'last_text'       => __( 'Last &raquo;', 'pods' ),
+			'prev_next'       => true,
+			'first_last'      => true,
+			'limit'           => (int) $this->limit,
+			'offset'          => (int) $this->offset,
+			'page'            => max( 1, (int) $this->page ),
+			'mid_size'        => 2,
+			'end_size'        => 1,
+			'total_found'     => $this->total_found(),
+			'page_var'        => $this->page_var,
+			'base'            => "{$url}{$append}%_%",
+			'format'          => "{$this->page_var}=%#%",
+			'class'           => '',
+			'link_class'      => '',
+			'wrap_pagination' => false,
+		];
 
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( $params );
@@ -3407,6 +3421,8 @@ class Pods implements Iterator {
 		if ( ! in_array( $params->type, array( 'simple', 'advanced', 'paginate', 'list' ), true ) ) {
 			$pagination = 'advanced';
 		}
+
+		$wrap_pagination = (bool) $params->wrap_pagination;
 
 		ob_start();
 
@@ -3526,7 +3542,7 @@ class Pods implements Iterator {
 		$search = trim( $params['search'] );
 
 		if ( '' === $search ) {
-			$search = pods_v_sanitized( $pod->search_var, 'get', '' );
+			$search = sanitize_text_field( pods_v( $pod->search_var, 'get', '' ) );
 		}
 
 		ob_start();
@@ -3708,6 +3724,8 @@ class Pods implements Iterator {
 			if ( ! empty( $code ) ) {
 				// Only detail templates need $this->id.
 				if ( empty( $this->id ) ) {
+					$this->reset();
+
 					while ( $this->fetch() ) {
 						$info['item_id'] = $this->id();
 
@@ -4630,6 +4648,7 @@ class Pods implements Iterator {
 			'page_var',
 			'search',
 			'search_var',
+			'filter_var',
 			'search_mode',
 			'api',
 			'row_number',
@@ -4695,6 +4714,7 @@ class Pods implements Iterator {
 			'page_var'    => 'string',
 			'search'      => 'boolean',
 			'search_var'  => 'string',
+			'filter_var'  => 'string',
 			'search_mode' => 'string',
 			'id'          => 'int',
 		);

@@ -4596,8 +4596,6 @@ class PodsMeta {
 
 	/**
 	 * @param $id
-	 *
-	 * @return bool
 	 */
 	public function delete_comment( $id ) {
 		$this->delete_object( 'comment', $id );

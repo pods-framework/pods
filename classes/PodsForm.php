@@ -1502,7 +1502,8 @@ class PodsForm {
 			 *
 			 * @since unknown
 			 *
-			 * @param string $file The file path to include for the field type.
+			 * @param string $file       The file path to include for the field type.
+			 * @param string $field_type The field type.
 			 */
 			$file = apply_filters( 'pods_form_field_include', $file, $field_type );
 

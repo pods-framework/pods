@@ -1167,6 +1167,32 @@ class PodsMeta {
 		if ( $pods_field_found ) {
 			// Only add the classes to forms that actually have pods fields
 			add_action( 'post_edit_form_tag', array( $this, 'add_class_submittable' ) );
+
+			$pod = pods( $post_type, null, true );
+
+			if ( $pod ) {
+				// Check if we need to disable any specific taxonomies.
+				$taxonomy_sync_fields = $pod->pod_data->get_fields( [
+					'type' => 'pick',
+					'args' => [
+						'pick_object'                         => 'taxonomy',
+						'pick_sync_taxonomy'                  => 1,
+						'pick_sync_taxonomy_hide_taxonomy_ui' => 1,
+					],
+				] );
+
+				foreach ( $taxonomy_sync_fields as $taxonomy_sync_field ) {
+					$taxonomy_name = $taxonomy_sync_field->get_related_object_name();
+
+					if ( $taxonomy_name ) {
+						if ( is_taxonomy_hierarchical( $taxonomy_name ) ) {
+							remove_meta_box( "{$taxonomy_name}div", $post_type, 'side' );
+						} else {
+							remove_meta_box( "tagsdiv-{$taxonomy_name}", $post_type, 'side' );
+						}
+					}
+				}
+			}
 		}
 	}
 

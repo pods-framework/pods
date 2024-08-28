@@ -160,6 +160,8 @@ class PodsRESTFieldsTest extends Pods_UnitTestCase {
 		$this->full_write_pod_id = null;
 		$this->full_write_pod    = null;
 
+		pods_static_cache_clear();
+
 		// Reset current user.
 		global $current_user;
 

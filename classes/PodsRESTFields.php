@@ -26,13 +26,6 @@ class PodsRESTFields {
 	protected $pod = null;
 
 	/**
-	 * The user ID for the authenticated user.
-	 *
-	 * @var int
-	 */
-	private static $rest_user_id;
-
-	/**
 	 * Constructor for class
 	 *
 	 * @since 2.5.6
@@ -115,13 +108,20 @@ class PodsRESTFields {
 	 * @return bool
 	 */
 	public static function is_rest_authenticated(): bool {
-		if ( isset( self::$rest_user_id ) ) {
-			return ! empty( self::$rest_user_id );
+		$is_rest_authenticated = (bool) pods_static_cache_get( __FUNCTION__, __CLASS__ );
+
+		if ( $is_rest_authenticated ) {
+			return true;
 		}
 
-		self::$rest_user_id = wp_validate_application_password( get_current_user_id() );
+		$is_rest_authenticated = (
+			is_user_logged_in()
+			|| wp_validate_application_password( get_current_user_id() )
+		);
 
-		return ! empty( self::$rest_user_id );
+		pods_static_cache_set( __FUNCTION__, (int) $is_rest_authenticated, __CLASS__ );
+
+		return $is_rest_authenticated;
 	}
 
 	/**

@@ -3380,28 +3380,29 @@ class Pods implements Iterator {
 			$append = '&';
 		}
 
-		$defaults = array(
-			'type'        => 'advanced',
-			'label'       => __( 'Go to page:', 'pods' ),
-			'show_label'  => true,
-			'first_text'  => __( '&laquo; First', 'pods' ),
-			'prev_text'   => __( '&lsaquo; Previous', 'pods' ),
-			'next_text'   => __( 'Next &rsaquo;', 'pods' ),
-			'last_text'   => __( 'Last &raquo;', 'pods' ),
-			'prev_next'   => true,
-			'first_last'  => true,
-			'limit'       => (int) $this->limit,
-			'offset'      => (int) $this->offset,
-			'page'        => max( 1, (int) $this->page ),
-			'mid_size'    => 2,
-			'end_size'    => 1,
-			'total_found' => $this->total_found(),
-			'page_var'    => $this->page_var,
-			'base'        => "{$url}{$append}%_%",
-			'format'      => "{$this->page_var}=%#%",
-			'class'       => '',
-			'link_class'  => '',
-		);
+		$defaults = [
+			'type'            => 'advanced',
+			'label'           => __( 'Go to page:', 'pods' ),
+			'show_label'      => true,
+			'first_text'      => __( '&laquo; First', 'pods' ),
+			'prev_text'       => __( '&lsaquo; Previous', 'pods' ),
+			'next_text'       => __( 'Next &rsaquo;', 'pods' ),
+			'last_text'       => __( 'Last &raquo;', 'pods' ),
+			'prev_next'       => true,
+			'first_last'      => true,
+			'limit'           => (int) $this->limit,
+			'offset'          => (int) $this->offset,
+			'page'            => max( 1, (int) $this->page ),
+			'mid_size'        => 2,
+			'end_size'        => 1,
+			'total_found'     => $this->total_found(),
+			'page_var'        => $this->page_var,
+			'base'            => "{$url}{$append}%_%",
+			'format'          => "{$this->page_var}=%#%",
+			'class'           => '',
+			'link_class'      => '',
+			'wrap_pagination' => false,
+		];
 
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( $params );

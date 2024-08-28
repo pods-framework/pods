@@ -4,7 +4,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 ?>
+
+<?php if ( $wrap_pagination ) : ?>
 <p class="pods-pagination">
+<?php endif; ?>
+
 	<span class="pods-pagination-paginate <?php echo esc_attr( $params->class ); ?>">
 		<?php
 		$args = [
@@ -22,4 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		echo paginate_links( $args );
 		?>
 	</span>
+
+<?php if ( $wrap_pagination ) : ?>
 </p>
+<?php endif; ?>

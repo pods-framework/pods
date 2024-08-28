@@ -2409,9 +2409,10 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		&& true === $tags['pagination']
 	) {
 		$pagination_params = [
-			'label'       => pods_v( 'pagination_label', $tags, null ),
-			'type'        => pods_v( 'pagination_type', $tags, null ),
-			'total_found' => $found,
+			'label'           => pods_v( 'pagination_label', $tags, null ),
+			'type'            => pods_v( 'pagination_type', $tags, null ),
+			'total_found'     => $found,
+			'wrap_pagination' => true,
 		];
 
 		// Remove empty params.

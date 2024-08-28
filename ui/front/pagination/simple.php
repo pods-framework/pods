@@ -4,7 +4,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 ?>
-<p class='pods-pagination'>
+
+<?php if ( $wrap_pagination ) : ?>
+<p class="pods-pagination">
+<?php endif; ?>
+
 	<span class="pods-pagination-simple <?php echo esc_attr( $params->class ); ?>">
 		<?php
 
@@ -32,4 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 
 	</span>
+
+<?php if ( $wrap_pagination ) : ?>
 </p>
+<?php endif; ?>

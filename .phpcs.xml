@@ -43,7 +43,10 @@
 	</rule>
 
 	<rule ref="Generic">
-		<exclude name="Generic.Files.LineLength.TooLong"/>
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Generic.Files.LineLength"/>
+		<exclude name="Generic.Formatting.NoSpaceAfterCast"/>
+		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
 	</rule>
 
 	<rule ref="Squiz.PHP">

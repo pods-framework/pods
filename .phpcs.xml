@@ -49,12 +49,4 @@
 		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedComparison"/>
 		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedBool"/>
 	</rule>
-
-	<rule ref="PEAR.Functions.FunctionCallSignature">
-		<properties>
-			<property name="requiredSpacesAfterOpen" value="0"/>
-			<property name="requiredSpacesBeforeClose" value="0"/>
-			<property name="allowMultipleArguments" value="false"/>
-		</properties>
-	</rule>
 </ruleset>

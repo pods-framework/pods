@@ -2186,11 +2186,13 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 				pods_debug_log_data( [ 'field_name' => $tags['related_field'], 'sql' => $params ], 'shortcode-field-params', __METHOD__, __LINE__ );
 
 				// Override the Pods object.
-				$pod_check = $pod->field( [
-					'name'   => $tags['related_field'],
-					'output' => 'find',
-					'params' => $params,
-				] );
+				$pod_check = $pod->field(
+					[
+						'name'   => $tags['related_field'],
+						'output' => 'find',
+						'params' => $params,
+					]
+				);
 
 				if ( ! $pod_check instanceof Pods ) {
 					$related_field = $pod->pod_data->get_field( $tags['related_field'] );

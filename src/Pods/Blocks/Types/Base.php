@@ -270,4 +270,38 @@ abstract class Base extends Blocks_Abstract {
 
 		return false;
 	}
+
+	/**
+	 * Determine whether to apply wpautop to the block content output.
+	 *
+	 * @since TBD
+	 *
+	 * @param string|mixed $content    The content to determine whether to autop.
+	 * @param array        $attributes The Pods render attributes that will be used.
+	 *
+	 * @return bool Whether to apply wpautop to the block content output.
+	 */
+	public function should_autop( $content, array $attributes = [] ): bool {
+		$should_autop = (
+			is_string( $content )
+			&& false === strpos( $content, '<div' )
+			&& false === strpos( $content, '<ul' )
+			&& false === strpos( $content, '<ol' )
+			&& false === strpos( $content, '<h' )
+			&& false === strpos( $content, '<p' )
+		);
+
+		/**
+		 * Allow filtering whether to apply wpautop to the block content output.
+		 *
+		 * This is used for things like Field block render or List block render of the no items found message.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool         $should_autop Whether to apply wpautop to the block content output.
+		 * @param string|mixed $content      The content to determine whether to autop.
+		 * @param array        $attributes   The Pods render attributes that will be used.
+		 */
+		return (bool) apply_filters( 'pods_blocks_should_autop', $should_autop, $content, $attributes );
+	}
 }

@@ -212,10 +212,7 @@ class Field extends Base {
 
 		$content = pods_shortcode( $attributes );
 
-		if (
-			false === strpos( $content, '<div' )
-			&& false === strpos( $content, '<p' )
-		) {
+		if ( $this->should_autop( $content, $attributes ) ) {
 			$content = wpautop( $content );
 		}
 

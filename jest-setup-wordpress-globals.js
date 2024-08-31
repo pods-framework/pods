@@ -7,6 +7,9 @@ import Backbone from 'backbone';
 import * as Mn from 'backbone.marionette';
 import underscore from 'underscore';
 
+import Enzyme from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
 import {
 	combineReducers,
 	registerStore,
@@ -37,3 +40,5 @@ global.Backbone.Marionette = Mn;
 
 // @see PodsInit.php
 global.PodsMn = global.Backbone.noConflict();
+
+Enzyme.configure({ adapter: new Adapter() });

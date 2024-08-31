@@ -42,13 +42,6 @@
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
 	</rule>
 
-	<rule ref="Generic">
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
-		<exclude name="Generic.Files.LineLength"/>
-		<exclude name="Generic.Formatting.NoSpaceAfterCast"/>
-		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
-	</rule>
-
 	<rule ref="Squiz.PHP">
 		<exclude name="Squiz.PHP.CommentedOutCode.Found"/>
 		<exclude name="Squiz.PHP.GlobalKeyword.NotAllowed"/>

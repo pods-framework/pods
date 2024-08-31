@@ -91,7 +91,7 @@
     "spatie/phpunit-snapshot-assertions": "^1.4.2",
     "szepeviktor/phpstan-wordpress": "*",
     "wp-cli/wp-cli": "2.*",
-    "wp-coding-standards/wpcs": "^3.0.1"
+    "wp-coding-standards/wpcs": "^3.1.0"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

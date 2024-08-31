@@ -49,4 +49,7 @@
 		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedComparison"/>
 		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedBool"/>
 	</rule>
+
+	<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
+	<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine"/>
 </ruleset>

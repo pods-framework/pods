@@ -42,6 +42,10 @@
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
 	</rule>
 
+	<rule ref="PEAR">
+		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
+	</rule>
+
 	<rule ref="Squiz.PHP">
 		<exclude name="Squiz.PHP.CommentedOutCode.Found"/>
 		<exclude name="Squiz.PHP.GlobalKeyword.NotAllowed"/>

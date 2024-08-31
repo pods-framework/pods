@@ -229,7 +229,7 @@ abstract class Base extends Blocks_Abstract {
 	 */
 	public function should_preload_block( $attributes = [], $block = null ) {
 		/**
-		 * Allow filtering whether to preload the block.
+		 * Allow filtering whether to preload the Pods block.
 		 *
 		 * @since 2.8.8
 		 *
@@ -238,7 +238,7 @@ abstract class Base extends Blocks_Abstract {
 		 * @param WP_Block|null $block                The WP_Block object or null if not provided.
 		 * @param Base          $block_type           The block type object (not WP_Block).
 		 */
-		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $this );
+		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $attributes, $block, $this );
 	}
 
 	/**

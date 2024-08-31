@@ -36,4 +36,4 @@ global.Backbone = Backbone;
 global.Backbone.Marionette = Mn;
 
 // @see PodsInit.php
-global.PodsMn = global.Backbone.Marionette.noConflict();
+global.PodsMn = global.Backbone.noConflict();

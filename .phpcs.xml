@@ -42,16 +42,8 @@
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
 	</rule>
 
-	<rule ref="PEAR">
-		<exclude name="PEAR.ControlStructures.MultiLineCondition.SpacingAfterOpenBrace"/>
-		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
-	</rule>
-
 	<rule ref="Generic">
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found"/>
 		<exclude name="Generic.Files.LineLength.TooLong"/>
-		<exclude name="Generic.Formatting.NoSpaceAfterCast.SpaceFound"/>
-		<exclude name="Generic.WhiteSpace.DisallowTabIndent.TabsUsed"/>
 	</rule>
 
 	<rule ref="Squiz.PHP">

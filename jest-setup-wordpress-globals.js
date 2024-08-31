@@ -8,7 +8,7 @@ import * as Mn from 'backbone.marionette';
 import underscore from 'underscore';
 
 import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 
 import {
 	combineReducers,

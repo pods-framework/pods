@@ -46,6 +46,11 @@
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
 	</rule>
 
+	<rule ref="Generic">
+		<exclude name="Generic.WhiteSpace.DisallowTabIndent.TabsUsed"/>
+		<exclude name="Generic.Files.LineLength.TooLong"/>
+	</rule>
+
 	<rule ref="Squiz.PHP">
 		<exclude name="Squiz.PHP.CommentedOutCode.Found"/>
 		<exclude name="Squiz.PHP.GlobalKeyword.NotAllowed"/>

@@ -72,6 +72,7 @@
     "css-loader": "^6.7.1",
     "deep-freeze": "0.0.1",
     "enzyme-matchers": "^7.1.2",
+    "enzyme-adapter-react-16": "^1.15.8",
     "eslint": "^8.14.0",
     "eslint-plugin-jest": "^28.6.0",
     "eslint-plugin-jsdoc": "^48.7.0",

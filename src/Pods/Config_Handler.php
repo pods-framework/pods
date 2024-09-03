@@ -36,7 +36,6 @@ class Config_Handler {
 		'fields'    => 'fields',
 		'templates' => 'templates',
 		'pages'     => 'pages',
-		'helpers'   => 'helpers',
 	];
 
 	/**
@@ -284,7 +283,13 @@ class Config_Handler {
 					$theme_support = true;
 				}
 
-				$path = sprintf( '%s.%s', $config_item_type, $config_type );
+				$path_type = $config_item_type;
+
+				if ( 'pods' !== $path_type ) {
+					$path_type = 'pods-' . $path_type;
+				}
+
+				$path = sprintf( '%s.%s', $path_type, $config_type );
 
 				$file_configs[] = [
 					'type'          => $config_type,

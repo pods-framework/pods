@@ -646,10 +646,10 @@ class Pods_Templates extends PodsComponent {
 			}
 		} elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
 			$default_templates = array(
-				'pods/templates/' . $template_name,
-				'pods/' . $template_name,
-				'pods-' . $template_name,
-				$template_name,
+				'pods/templates/' . $template_name . '.php',
+				'pods/' . $template_name . '.php',
+				'pods-' . $template_name . '.php',
+				$template_name . '.php',
 			);
 
 			$default_templates = apply_filters( 'pods_template_default_templates', $default_templates );

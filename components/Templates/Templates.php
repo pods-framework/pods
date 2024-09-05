@@ -652,7 +652,17 @@ class Pods_Templates extends PodsComponent {
 				$template_name . '.php',
 			);
 
-			$default_templates = apply_filters( 'pods_template_default_templates', $default_templates );
+			/**
+			 * Allow filtering the list of default theme templates to check for a template.
+			 *
+			 * @since unknown
+			 *
+			 * @param string[] $default_templates The list of default theme templates to check for a template.
+			 * @param string   $template_name     The template name.
+			 * @param array    $template          The template information.
+			 * @param Pods     $obj               The Pods object.
+			 */
+			$default_templates = apply_filters( 'pods_template_default_templates', $default_templates, $template_name, $template, $obj );
 
 			if ( empty( $obj->id ) ) {
 				while ( $obj->fetch() ) {

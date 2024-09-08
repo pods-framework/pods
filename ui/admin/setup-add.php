@@ -133,13 +133,11 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 							</p>
 						</div>
 						<div id="pods-wizard-options">
-							<h3><?php esc_html_e( 'Add New Pod Wizard', 'pods' ); ?></h3>
-
 							<div class="pods-wizard-options-list">
 								<div class="pods-wizard-option">
 									<a href="#pods-wizard-create" data-opt="create">
 										<div>
-											<h2><?php esc_html_e( 'Create New', 'pods' ); ?></h2>
+											<h2><?php esc_html_e( 'Create a new Content Type', 'pods' ); ?></h2>
 											<p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
 										</div>
 										<span>&#10095;</span>
@@ -149,28 +147,39 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 								<div class="pods-wizard-option">
 									<a href="#pods-wizard-extend" data-opt="extend">
 										<div>
-											<h2><?php esc_html_e( 'Extend Existing', 'pods' ); ?></h2>
+											<h2><?php esc_html_e( 'Extend an existing Content Type', 'pods' ); ?></h2>
 											<p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
 										</div>
 										<span>&#10095;</span>
 									</a>
+
 									<?php if ( ! empty( $quick_actions ) ) : ?>
-									<h2 class="one-click-actions-heading"><?php esc_html_e( 'One-Click Quick Actions', 'pods' ); ?></h2>
-									<ul class="one-click-actions">
-										<?php foreach ( $quick_actions as $quick_action_key => $quick_action ) : ?>
-											<li class="one-click-action">
-												<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ); ?>"
-													data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
-													data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
-													data-type="<?php echo esc_attr( $quick_action['type'] ); ?>"
-													class="pods-wizard-quick-action"
-													id="pods-wizard-quick-action-<?php echo esc_attr( $quick_action_key ); ?>"
-												>
-													<?php echo esc_html( $quick_action['label'] ); ?>
-												</a>
-											</li>
-										<?php endforeach; ?>
-									</ul>
+										<div
+											id='pods-wizard-quick-actions'<?php echo( $submit_from_linked ? ' class="hidden"' : '' ); ?>>
+											<h2 class="pods-wizard-one-click-actions-heading"><?php esc_html_e( 'One-Click Quick Extend', 'pods' ); ?></h2>
+											<ul class="pods-wizard-one-click-actions">
+												<?php foreach ( $quick_actions as $quick_action_key => $quick_action ) : ?>
+													<li class="pods-wizard-one-click-action">
+														<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ); ?>"
+															data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
+															data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
+															data-type="<?php echo esc_attr( $quick_action['type'] ); ?>"
+															class="pods-wizard-quick-action"
+															id="pods-wizard-quick-action-<?php echo esc_attr( $quick_action_key ); ?>"
+														>
+															<?php echo esc_html( $quick_action['label'] ); ?>
+														</a>
+													</li>
+												<?php endforeach; ?>
+											</ul>
+										</div>
+
+										<div
+											id='pods-wizard-quick-actions-saving-in-progress'<?php echo( ! $submit_from_linked ? ' class="hidden"' : '' ); ?>>
+											<p><span class="pods-dfv-field__loading-indicator"
+													 role="progressbar"></span> <?php esc_html_e( 'Creating your Extended Pod', 'pods' ); ?>
+											</p>
+										</div>
 									<?php endif; ?>
 								</div>
 							</div>

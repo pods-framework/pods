@@ -164,6 +164,9 @@ $button-container-outline-color: #4f94d4;
 			text-decoration: underline;
 			padding-left: 15px;
 		}
+		#pods-wizard-panel-2 {
+			padding-bottom: 15px;
+		}
 		.pods-wizard-option-content {
 			display: none;
 
@@ -178,7 +181,7 @@ $button-container-outline-color: #4f94d4;
 		}
 		.stuffbox {
 			margin: 15px 15px 0 15px;
-			padding: 0 10px 10px 10px;
+			padding: 10px;
 			h3 {
 				font-size: 15px;
 				font-weight: normal;

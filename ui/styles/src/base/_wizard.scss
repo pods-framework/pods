@@ -1,6 +1,26 @@
-$button-bg: #80a82c;
-$button-bg-hover: #446534;
-$button-outline-color: #4f94d4;
+// Primary buttons.
+$button-primary-text-color: #ffffff;
+$button-primary-border-color: #2271b1;
+$button-primary-background-color: #2271b1;
+
+// :hover
+$button-primary-border-color-hover: #2271b1;
+$button-primary-background-color-hover: #135e96;
+
+// Secondary buttons.
+$button-secondary-text-color: $button-primary-background-color;
+$button-secondary-border-color: $button-primary-background-color;
+$button-secondary-background-color: #f6f7f7;
+
+// :hover
+$button-secondary-text-color-hover: #0a4b78;
+$button-secondary-border-color-hover: #0a4b78;
+$button-secondary-background-color-hover: #f0f0f1;
+
+// Container.
+$button-container-background-color-hover: #e7e7e7;
+$button-container-outline-color: #4f94d4;
+
 
 // Upgrade wizard specific styles
 #pods-wizard-box {
@@ -58,6 +78,9 @@ $button-outline-color: #4f94d4;
 				}
 				&:last-child.pods-wizard-menu-current i {
 					border-left-color: #bbddbd;
+				}
+				&.pods-wizard-menu-complete i {
+					display: none;
 				}
 				span {
 					display: inline-block;
@@ -161,7 +184,6 @@ $button-outline-color: #4f94d4;
 				font-weight: normal;
 				line-height: 1;
 				padding: 7px 10px;
-				font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
 			}
 			/*
 				issue #7118
@@ -381,7 +403,7 @@ $button-outline-color: #4f94d4;
 						display: grid;
 						grid-template-columns: auto auto;
 						align-items: center;
-						gap: .5em;
+						gap: 1em;
 						h3 {
 							color: #fff;
 						}
@@ -397,24 +419,26 @@ $button-outline-color: #4f94d4;
 						grid-template-columns: 1fr 1fr;
 						padding: 1em 20px;
 						margin: 0;
-						gap: 0.5em;
+						gap: 1em;
 						.pods-wizard-one-click-action {
 							margin-bottom: 0;
 							a {
-								background-color: $button-bg;
+								background-color: $button-secondary-background-color;
 								padding: 1.2em 0.5em;
 								border-radius: 0.25em;
-								color: white;
+								color: $button-secondary-text-color;
 								display: block;
-								font-weight: 500;
 								font-size: medium;
+								border: 1px solid $button-secondary-border-color;
 
 								&:hover {
-									background-color: $button-bg-hover;
+									color: $button-secondary-text-color-hover;
+									background-color: $button-secondary-background-color-hover;
+									border-color: $button-secondary-border-color-hover;
 								}
 
 								&:focus {
-									outline: 2px solid $button-outline-color;
+									outline: 2px solid $button-container-outline-color;
     								outline-offset: 3px;
 								}
 							}
@@ -434,6 +458,7 @@ $button-outline-color: #4f94d4;
 						@include multi-border-radius(8px, 8px, 8px, 8px);
 						box-sizing: border-box;
 						h2 {
+							color: inherit;
 							font-size: 1.5em;
 							margin-top: 0;
 							text-decoration: underline;
@@ -446,9 +471,9 @@ $button-outline-color: #4f94d4;
 							line-height: 17px;
 						}
 						span {
-							color: #fff;
+							color: $button-primary-text-color;
 							font-size: 4em;
-							background-color: #80a82ce3;
+							background-color: $button-primary-background-color;
 							height: 100%;
 							display: flex;
 							align-items: center;
@@ -458,15 +483,15 @@ $button-outline-color: #4f94d4;
 							border-bottom-right-radius: 8px;
 						}
 						&:hover {
-							background-color: #bbddbd;
+							background-color: $button-container-background-color-hover;
 
 							span {
-								background-color: #446534;
+								background-color: $button-primary-background-color-hover;
 								padding-left: 0.5rem;
 							}
 						}
 						&:focus {
-							outline: 2px auto $button-outline-color;
+							outline: 2px auto $button-container-outline-color;
 							outline-offset: 4px;
 						}
 						&.pods-wizard-option-active {
@@ -482,7 +507,6 @@ $button-outline-color: #4f94d4;
 								left: 0;
 								text-align: center;
 								color: #fff;
-								font: 13px/30px bold Garamond, Georgia;
 								@include multi-border-radius(0, 0, 8px, 8px);
 							}
 						}
@@ -503,13 +527,13 @@ $button-outline-color: #4f94d4;
 								left: 0;
 								width: 100%;
 								height: 2px;
-								background-color: #80a82ce3;
+								background-color: $button-primary-background-color;
 								z-index: 2;
 							}
 						}
 
 						&:hover {
-							background-color: #bbddbd;
+							background-color: $button-container-background-color-hover;
 						}
 					}
 
@@ -616,5 +640,10 @@ $button-outline-color: #4f94d4;
 		#pods-wizard-actions {
 			display: none;
 		}
+	}
+
+	#pods-wizard-quick-actions-saving-in-progress {
+		padding: 50px;
+		text-align: center;
 	}
 }

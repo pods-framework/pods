@@ -114,11 +114,11 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 				<div id="pods-wizard-heading">
 					<ul>
 						<li class="pods-wizard-menu-current" data-step="1">
-							<i></i> <span>1</span> <?php esc_html_e( 'Create or Extend', 'pods' ); ?>
+							<i></i> <span>1</span> <?php esc_html_e( 'Step 1: Create or Extend', 'pods' ); ?>
 							<em></em>
 						</li>
 						<li data-step="2">
-							<i></i> <span>2</span> <?php esc_html_e( 'Configure', 'pods' ); ?>
+							<i></i> <span>2</span> <?php esc_html_e( 'Step 2: Configure', 'pods' ); ?>
 							<em></em>
 						</li>
 					</ul>
@@ -154,8 +154,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</a>
 
 									<?php if ( ! empty( $quick_actions ) ) : ?>
-										<div
-											id='pods-wizard-quick-actions'<?php echo( $submit_from_linked ? ' class="hidden"' : '' ); ?>>
+										<div id="pods-wizard-quick-actions"
+											<?php echo( $submit_from_linked ? 'class="hidden"' : '' ); ?>>
 											<h2 class="pods-wizard-one-click-actions-heading"><?php esc_html_e( 'One-Click Extend', 'pods' ); ?></h2>
 											<ul class="pods-wizard-one-click-actions">
 												<?php foreach ( $quick_actions as $quick_action_key => $quick_action ) : ?>
@@ -172,13 +172,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 													</li>
 												<?php endforeach; ?>
 											</ul>
-										</div>
-
-										<div
-											id='pods-wizard-quick-actions-saving-in-progress'<?php echo( ! $submit_from_linked ? ' class="hidden"' : '' ); ?>>
-											<p><span class="pods-dfv-field__loading-indicator"
-													 role="progressbar"></span> <?php esc_html_e( 'Creating your Extended Pod', 'pods' ); ?>
-											</p>
 										</div>
 									<?php endif; ?>
 								</div>
@@ -574,6 +567,14 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 								</div>
 							</div>
 						</div>
+
+						<div id="pods-wizard-quick-actions-saving-in-progress"
+							<?php echo( ! $submit_from_linked ? 'class="hidden"' : '' ); ?>>
+							<p>
+								<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
+								<?php esc_html_e( 'Setting up your Extended Pod', 'pods' ); ?>
+							</p>
+						</div>
 					</div>
 
 					<div id="pods-wizard-actions" class="pods-wizard-button-interface">
@@ -606,7 +607,9 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 		alert( 'Error: ' + err_msg );
 		if ( window.console ) console.log( err_msg );
 
-		jQuery( '#pods-wizard-quick-actions-saving-in-progress' ).hide();
+		jQuery( '#pods-wizard-quick-actions-saving-in-progress' ).addClass('hidden').hide();
+		jQuery( '#pods-wizard-start' ).click();
+		jQuery( '#pods-wizard-next' ).removeClass('hidden').show();
 	};
 
 	var pods_admin_option_select_callback = function ( $opt ) {
@@ -638,6 +641,10 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 				jQuery( '#pods-form-ui-' + createExtend + '-pod-type' ).val( objectType );
 				jQuery( '#pods-form-ui-' + createExtend + '-' + objectType.replace( '_', '-' ) ).val( objectName );
 
+				jQuery( '#pods-wizard-heading li' ).removeClass().addClass('pods-wizard-menu-complete');
+				jQuery( '#pods-wizard-next' ).addClass('hidden').hide();
+				jQuery( '#pods-wizard-quick-actions-saving-in-progress' ).removeClass('hidden').show();
+
 				$action.closest( 'form' ).submit();
 			} );
 
@@ -645,9 +652,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 				jQuery( '#pods-wizard-quick-action-<?php echo esc_attr( $submit_from_linked ); ?>' ).click();
 
 				$quick_actions.off( 'click' );
-
-				jQuery( '#pods-wizard-quick-actions' ).hide();
-				jQuery( '#pods-wizard-quick-actions-saving-in-progress' ).show();
 			<?php endif; ?>
 		}
 	} );

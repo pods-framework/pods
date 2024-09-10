@@ -2983,6 +2983,7 @@ class PodsMeta {
 				'post_format'                  => true,
 				'wp_theme'                     => true,
 				'wp_template_part_area'        => true,
+				'wp_pattern_category'          => true,
 				// Disable Beaver Builder taxonomies.
 				'fl-builder-template-category' => true,
 				'fl-builder-template-type'     => true,

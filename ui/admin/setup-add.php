@@ -144,7 +144,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</a>
 								</div>
 
-								<div class="pods-wizard-option">
+								<div class="pods-wizard-option<?php echo ( ! empty( $quick_actions ) ? ' pods-wizard-option-with-secondary' : '' ); ?>">
 									<a href="#pods-wizard-extend" data-opt="extend">
 										<div>
 											<h2><?php esc_html_e( 'Extend an existing Content Type', 'pods' ); ?></h2>
@@ -155,7 +155,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 									<?php if ( ! empty( $quick_actions ) ) : ?>
 										<div id="pods-wizard-quick-actions"
-											<?php echo( $submit_from_linked ? 'class="hidden"' : '' ); ?>>
+											<?php echo ( $submit_from_linked ? 'class="hidden"' : '' ); ?>>
 											<h2 class="pods-wizard-one-click-actions-heading"><?php esc_html_e( 'One-Click Extend', 'pods' ); ?></h2>
 											<ul class="pods-wizard-one-click-actions">
 												<?php foreach ( $quick_actions as $quick_action_key => $quick_action ) : ?>

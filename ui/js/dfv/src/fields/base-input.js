@@ -17,6 +17,7 @@ const BaseInput = ( {
 	value,
 	setHasBlurred,
 	className,
+	sluggable = '',
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
@@ -52,6 +53,7 @@ const BaseInput = ( {
 				}
 			} }
 			autoComplete={ autoCompleteValue }
+			data-sluggable={ sluggable || '' }
 		/>
 	);
 };

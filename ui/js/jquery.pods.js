@@ -566,14 +566,23 @@
                 if ( $slug.length ) {
 	                $slug.on( 'change', function () {
 	                    // Strip HTML/code.
-	                    var slug = $( this ).val().replace( /<( ?:. )*?>/g, '' ),
-		                    name = $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' );
+	                    var slug = $( this ).val().replace( /<(?:.)*?>/g, '' ),
+							nameRaw = $( this ).prop( 'name' ),
+		                    name = nameRaw.replace( '[', '\\[' ).replace( ']', '\\]' );
 
                         if ( slug.length ) {
+							slug = slug.replace( /_+/g, '_' );
+							slug = slug.replace( /\-+/g, '-' );
 
                             var slug_lower           = slug.toLowerCase(),
-	                            slug_sanitized       = slug.replace( /([^0-9a-zA-Z\_\- ])/g, '' ),
-	                            slug_sanitized_lower = slug_sanitized.toLowerCase();
+	                            slug_sanitized       = slug.replace( /([^0-9a-zA-Z\_\- ])/g, '' );
+
+							slug_sanitized = slug_sanitized.replace( /([_\- ]+)$/g, '' );
+							slug_sanitized = slug_sanitized.replace( /\s+/g, '_' );
+							slug_sanitized = slug_sanitized.replace( /-+/g, '-' );
+							slug_sanitized = slug_sanitized.replace( /_+/g, '_' );
+
+							var slug_sanitized_lower = slug_sanitized.toLowerCase();
 
                             slug = slug.charAt( 0 ).toUpperCase() + slug.slice( 1 );
 
@@ -598,7 +607,11 @@
 		                            case 'textarea':
 			                            // Update fields.
 			                            if ( '' === $this.val() ) {
-				                            $this.val( val );
+											$this.val(val);
+
+											if ( 'undefined' !== typeof window.PodsDFVAPI ) {
+												window.PodsDFVAPI.setFieldValue($this.prop('name'), val);
+											}
 			                            }
 		                            	break;
 		                            default:

@@ -14,6 +14,7 @@ const Slug = ( props ) => {
 	const {
 		slug_placeholder: placeholder = fieldConfig.placeholder,
 		slug_separator: separator,
+		slug_sluggable: sluggable,
 	} = fieldConfig;
 
 	// Intercept the setValue call to force the slug formatting.
@@ -27,6 +28,7 @@ const Slug = ( props ) => {
 			type="text"
 			placeholder={ placeholder }
 			setValue={ forceSlugFormatting }
+			sluggable={ sluggable }
 		/>
 	);
 };

@@ -9,18 +9,18 @@
 			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 			<?php echo PodsForm::field( 'import_export', 'export', 'hidden' ); ?>
 
-			<h2 class="italicized"><?php _e( 'Migrate: Packages', 'pods' ); ?></h2>
+			<h2 class="italicized"><?php esc_html_e( 'Migrate: Packages', 'pods' ); ?></h2>
 
 			<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-			<div id="pods-wizard-box" class="pods-wizard-steps-2" data-step-process="1">
+			<div id="pods-wizard-box" class="pods-wizard-steps-2 pods-wizard-hide-first" data-step-process="1">
 				<div id="pods-wizard-heading">
 					<ul>
 						<li class="pods-wizard-menu-current" data-step="1">
-							<i></i> <span>1</span> <?php _e( 'Choose', 'pods' ); ?> <em></em>
+							<i></i> <span>1</span> <?php esc_html_e( 'Step 1: Choose', 'pods' ); ?> <em></em>
 						</li>
 						<li data-step="2">
-							<i></i> <span>2</span> <?php _e( 'Import / Export', 'pods' ); ?> <em></em>
+							<i></i> <span>2</span> <?php esc_html_e( 'Step 2: Import / Export Package', 'pods' ); ?> <em></em>
 						</li>
 					</ul>
 				</div>
@@ -43,42 +43,47 @@
 
 					<div id="pods-wizard-panel-1" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
-							<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+							<p><?php esc_html_e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+							<p><?php esc_html_e( 'A Pods package is stored in JSON format and can be copied or downloaded for import on another site with Pods installed.', 'pods' ); ?></p>
 						</div>
 
 						<div id="pods-wizard-options">
-							<div class="pods-wizard-option">
-								<a href="#pods-wizard-import" data-opt="import">
-									<h2><?php _e( 'Import', 'pods' ); ?></h2>
-
-									<p><?php _e( 'Import a package of Pods, Groups, Fields, and other settings from another site.', 'pods' ); ?></p>
-								</a>
-
-								<p><br /></p>
-							</div>
-
-							<?php
-							if ( $export ) {
-								?>
+							<div class="pods-wizard-options-list">
 								<div class="pods-wizard-option">
-									<a href="#pods-wizard-export" data-opt="export">
-										<h2><?php _e( 'Export', 'pods' ); ?></h2>
+									<a href="#pods-wizard-import" data-opt="import">
+										<div>
+											<h2><?php esc_html_e( 'Import Package', 'pods' ); ?></h2>
 
-										<p><?php _e( 'Choose which Pods, Groups, Fields, and other settings to export into a package.', 'pods' ); ?></p>
+											<p><?php esc_html_e( 'Import a package of Pods, Groups, Fields, and other settings from another site.', 'pods' ); ?></p>
+										</div>
+										<span>&#10095;</span>
 									</a>
-
-									<p><br /></p>
 								</div>
+
 								<?php
-							}
-							?>
+								if ( $export ) {
+									?>
+									<div class="pods-wizard-option">
+										<a href="#pods-wizard-export" data-opt="export">
+											<div>
+												<h2><?php esc_html_e( 'Export Package', 'pods' ); ?></h2>
+
+												<p><?php esc_html_e( 'Choose which Pods, Groups, Fields, and other settings to export into a package.', 'pods' ); ?></p>
+											</div>
+											<span>&#10095;</span>
+										</a>
+									</div>
+									<?php
+								}
+								?>
+							</div>
 						</div>
 					</div>
 
 					<div id="pods-wizard-panel-2" class="pods-wizard-panel">
 						<div class="pods-wizard-option-content" id="pods-wizard-import">
 							<div class="pods-wizard-content">
-								<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+								<p><?php esc_html_e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
 							</div>
 
 							<div class="stuffbox">
@@ -114,16 +119,16 @@
 
 						<div class="pods-wizard-option-content" id="pods-wizard-export">
 							<div class="pods-wizard-content">
-								<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+								<p><?php esc_html_e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
 
 								<p>
-									<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="all"><?php _e( 'Toggle everything on / off', 'pods' ); ?></a>
+									<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="all"><?php esc_html_e( 'Toggle everything on / off', 'pods' ); ?></a>
 								</p>
 							</div>
 
 							<div class="stuffbox pods-package-import-group">
 								<h3>
-									<label for="link_name"><?php _e( 'Choose whether to export Settings', 'pods' ); ?></label>
+									<label for="link_name"><?php esc_html_e( 'Choose whether to export Settings', 'pods' ); ?></label>
 								</h3>
 
 								<div class="inside pods-manage-field pods-dependency">
@@ -169,14 +174,14 @@
 								?>
 								<div class="stuffbox pods-package-import-group">
 									<h3>
-										<label for="link_name"><?php _e( 'Choose which Pods to export', 'pods' ); ?></label>
+										<label for="link_name"><?php esc_html_e( 'Choose which Pods to export', 'pods' ); ?></label>
 									</h3>
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 												<p>
-													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
 												</p>
 
 												<ul>
@@ -215,14 +220,14 @@
 								?>
 								<div class="stuffbox pods-package-import-group">
 									<h3>
-										<label for="link_name"><?php _e( 'Choose which Pod Templates to export', 'pods' ); ?></label>
+										<label for="link_name"><?php esc_html_e( 'Choose which Pod Templates to export', 'pods' ); ?></label>
 									</h3>
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 												<p>
-													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
 												</p>
 
 												<ul>
@@ -261,14 +266,14 @@
 								?>
 								<div class="stuffbox pods-package-import-group">
 									<h3>
-										<label for="link_name"><?php _e( 'Choose which Pod Pages to export', 'pods' ); ?></label>
+										<label for="link_name"><?php esc_html_e( 'Choose which Pod Pages to export', 'pods' ); ?></label>
 									</h3>
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 												<p>
-													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
 												</p>
 
 												<ul>
@@ -307,14 +312,14 @@
 								?>
 								<div class="stuffbox pods-package-import-group">
 									<h3>
-										<label for="link_name"><?php _e( 'Choose which Pod Helpers to export', 'pods' ); ?></label>
+										<label for="link_name"><?php esc_html_e( 'Choose which Pod Helpers to export', 'pods' ); ?></label>
 									</h3>
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 												<p>
-													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
 												</p>
 
 												<ul>
@@ -354,7 +359,7 @@
 						<span id="import-export"></span>
 
 						<div class="stuffbox hidden" id="pods-import-results">
-							<h3><?php _e( 'Imported Package', 'pods' ); ?></h3>
+							<h3><?php esc_html_e( 'Imported Package', 'pods' ); ?></h3>
 
 							<div class="inside pods-manage-field pods-dependency">
 								<div class="pods-wizard-results"></div>
@@ -362,7 +367,7 @@
 						</div>
 
 						<div class="stuffbox hidden" id="pods-export-results">
-							<h3><?php _e( 'Exported Package', 'pods' ); ?></h3>
+							<h3><?php esc_html_e( 'Exported Package', 'pods' ); ?></h3>
 
 							<div class="inside pods-manage-field pods-dependency">
 								<p>

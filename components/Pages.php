@@ -745,10 +745,21 @@ class Pods_Pages extends PodsComponent {
 
 		// objects will be automatically sanitized
 		if ( $revisions ) {
-			add_action( 'pre_post_update', 'wp_save_post_revision' );
+			add_action( 'pre_post_update', [ $this, 'save_post_revision_for_post' ] );
 		}
 
 		return true;
+	}
+
+	/**
+	 * Save post revision for a post without a return.
+	 *
+	 * @since TBD
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function save_post_revision_for_post( $post_id ) {
+		wp_save_post_revision( $post_id );
 	}
 
 	/**
@@ -976,12 +987,21 @@ class Pods_Pages extends PodsComponent {
 					add_action( 'wp', array( $this, 'silence_404' ), 1 );
 
 					// Genesis theme integration.
-					add_action( 'genesis_loop', 'pods_content', 11 );
+					add_action( 'genesis_loop', [ $this, 'pods_page_content' ], 11 );
 				}
 			}
 
 			self::$checked = true;
 		}//end if
+	}
+
+	/**
+	 * Output Pdos Page content without return.
+	 *
+	 * @since TBD
+	 */
+	public function pods_page_content() {
+		pods_content();
 	}
 
 	/**

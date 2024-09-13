@@ -15,7 +15,7 @@
 			if ( isset( $_GET['do'] ) ) {
 				$action = __( 'saved', 'pods' );
 
-				if ( 'create' == pods_var( 'do', 'get', 'save' ) ) {
+				if ( 'create' == pods_v( 'do', 'get', 'save' ) ) {
 					$action = __( 'created', 'pods' );
 				}
 
@@ -89,7 +89,7 @@
 													foreach ( $capabilities as $capability ) {
 														$checked = false;
 
-														if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) ) {
+														if ( true === (boolean) pods_v( $capability, $role_capabilities, false ) ) {
 															$checked = true;
 														}
 
@@ -99,7 +99,7 @@
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
 															<?php
-															echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+															echo PodsForm::field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
 																'boolean_yes_label' => $capability,
 																'disable_dfv'       => true,
 															] );

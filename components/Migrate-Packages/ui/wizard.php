@@ -32,11 +32,10 @@
 					$pods          = $api->load_pods( array( 'fields' => false ) );
 					$pod_templates = $api->load_templates();
 					$pod_pages     = $api->load_pages();
-					$pod_helpers   = $api->load_helpers();
 
 					$export = true;
 
-					if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( $pod_helpers ) ) {
+					if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) ) {
 						$export = false;
 					}
 					?>
@@ -306,53 +305,7 @@
 								<?php
 							}//end if
 
-							if ( ! empty( $pod_helpers ) ) {
-								$data      = $pod_helpers;
-								$data_name = 'helpers';
-								?>
-								<div class="stuffbox pods-package-import-group">
-									<h3>
-										<label for="link_name"><?php esc_html_e( 'Choose which Pod Helpers to export', 'pods' ); ?></label>
-									</h3>
-
-									<div class="inside pods-manage-field pods-dependency">
-										<div class="pods-field-option-group">
-											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
-												<p>
-													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
-												</p>
-
-												<ul>
-													<?php
-													$zebra = false;
-
-													foreach ( $data as $item ) {
-														$checked = true;
-
-														$class = ( $zebra ? 'even' : 'odd' );
-
-														$zebra = ( ! $zebra );
-														?>
-														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-															<?php
-															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
-																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
-																'disable_dfv'       => true,
-															] );
-															?>
-														</li>
-														<?php
-													}
-													?>
-												</ul>
-											</div>
-										</div>
-									</div>
-								</div>
-								<?php
-							}//end if
-
-							do_action( 'pods_packages_export_options', $pods, $pod_templates, $pod_pages, $pod_helpers );
+							do_action( 'pods_packages_export_options', $pods, $pod_templates, $pod_pages, [] );
 							?>
 						</div>
 

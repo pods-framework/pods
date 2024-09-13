@@ -439,7 +439,7 @@ class Pods_Roles extends PodsComponent {
 		$capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
 
 		// Gravity Forms.
-		if ( is_callable( 'GFCommon::all_caps' ) ) {
+		if ( class_exists( 'GFCommon' ) && is_callable( 'GFCommon::all_caps' ) ) {
 			$capabilities = array_merge( $capabilities, GFCommon::all_caps() );
 		}
 

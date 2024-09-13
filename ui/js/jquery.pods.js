@@ -566,9 +566,9 @@
                 if ( $slug.length ) {
 	                $slug.on( 'change', function () {
 	                    // Strip HTML/code.
-	                    var slug = $( this ).val().replace( /<(?:.)*?>/g, '' ),
+	                    var slug = $( this ).val().replace( /<(?:.)*?>/g, '' ).replace( /['"]/g, '' ).replace( /<!--|--!?>/g, '' ).replace( /<|>/g, '' ),
 							nameRaw = $( this ).prop( 'name' ),
-		                    name = nameRaw.replace( '[', '\\[' ).replace( ']', '\\]' );
+		                    name = nameRaw.replace( /\[/g, '\\[' ).replace( /\]/g, '\\]' );
 
                         if ( slug.length ) {
 							slug = slug.replace( /_+/g, '_' );

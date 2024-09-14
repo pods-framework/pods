@@ -62,8 +62,8 @@
 							<p><?php esc_html_e( 'Choose below which Custom Post Types and Taxonomies you want to import into Pods', 'pods' ); ?></p>
 
 							<p>
-								<a href='#toggle' class='button pods-wizard-toggle-all'
-								   data-toggle='all'><?php esc_html_e( 'Toggle everything on / off', 'pods' ); ?></a>
+								<a href="#toggle" class="button pods-wizard-toggle-all"
+									data-toggle="all"><?php esc_html_e( 'Toggle everything on / off', 'pods' ); ?></a>
 							</p>
 						</div>
 
@@ -82,8 +82,8 @@
 
 										<div class="pods-pick-values pods-pick-checkbox">
 											<p>
-												<a href='#toggle' class='button pods-wizard-toggle-all'
-												   data-toggle="post_type"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
+												<a href="#toggle" class="button pods-wizard-toggle-all"
+													data-toggle="post_type"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
 											</p>
 
 											<ul>
@@ -133,8 +133,8 @@
 
 										<div class="pods-pick-values pods-pick-checkbox">
 											<p>
-												<a href='#toggle' class='button pods-wizard-toggle-all'
-												   data-toggle="taxonomy"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
+												<a href="#toggle" class="button pods-wizard-toggle-all"
+													data-toggle="taxonomy"><?php esc_html_e( 'Toggle all on / off', 'pods' ); ?></a>
 											</p>
 
 											<ul>

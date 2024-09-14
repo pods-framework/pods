@@ -129,7 +129,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 							<p>
 								<?php esc_html_e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
 								<br /><br />
-								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://docs.pods.io/creating-editing-pods/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
+								<?php echo wp_kses_post( __( 'Not sure what content type you should use? Check out our <a href="https://docs.pods.io/creating-editing-pods/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ) ); ?>
 							</p>
 						</div>
 						<div id="pods-wizard-options">
@@ -138,29 +138,29 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									<a href="#pods-wizard-create" data-opt="create">
 										<div>
 											<h2><?php esc_html_e( 'Create a new Content Type', 'pods' ); ?></h2>
-											<p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
+											<p><?php echo wp_kses_post( __( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ) ); ?></p>
 										</div>
 										<span>&#10095;</span>
 									</a>
 								</div>
 
-								<div class="pods-wizard-option<?php echo ( ! empty( $quick_actions ) ? ' pods-wizard-option-with-secondary' : '' ); ?>">
+								<div class="pods-wizard-option<?php echo ! empty( $quick_actions ) ? ' pods-wizard-option-with-secondary' : ''; ?>">
 									<a href="#pods-wizard-extend" data-opt="extend">
 										<div>
 											<h2><?php esc_html_e( 'Extend an existing Content Type', 'pods' ); ?></h2>
-											<p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
+											<p><?php echo wp_kses_post( __( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ) ); ?></p>
 										</div>
 										<span>&#10095;</span>
 									</a>
 
 									<?php if ( ! empty( $quick_actions ) ) : ?>
 										<div id="pods-wizard-quick-actions"
-											<?php echo ( $submit_from_linked ? 'class="hidden"' : '' ); ?>>
+											<?php echo $submit_from_linked ? 'class="hidden"' : ''; ?>>
 											<h2 class="pods-wizard-one-click-actions-heading"><?php esc_html_e( 'One-Click Extend', 'pods' ); ?></h2>
 											<ul class="pods-wizard-one-click-actions">
 												<?php foreach ( $quick_actions as $quick_action_key => $quick_action ) : ?>
 													<li class="pods-wizard-one-click-action">
-														<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ); ?>"
+														<a href="#<?php echo esc_attr( sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ) ); ?>"
 															data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
 															data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
 															data-type="<?php echo esc_attr( $quick_action['type'] ); ?>"
@@ -569,7 +569,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 						</div>
 
 						<div id="pods-wizard-quick-actions-saving-in-progress"
-							<?php echo( ! $submit_from_linked ? 'class="hidden"' : '' ); ?>>
+							<?php echo ! $submit_from_linked ? 'class="hidden"' : ''; ?>>
 							<p>
 								<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
 								<?php esc_html_e( 'Setting up your Extended Pod', 'pods' ); ?>

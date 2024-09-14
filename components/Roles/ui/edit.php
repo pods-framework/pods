@@ -89,7 +89,7 @@
 													foreach ( $capabilities as $capability ) {
 														$checked = false;
 
-														if ( true === (boolean) pods_v( $capability, $role_capabilities, false ) ) {
+														if ( true === (bool) pods_v( $capability, $role_capabilities, false ) ) {
 															$checked = true;
 														}
 

@@ -272,12 +272,12 @@ class Pods_Roles extends PodsComponent {
 		$role_name  = sanitize_title( sanitize_text_field( pods_v( 'role_name', $params ) ) );
 		$role_label = sanitize_text_field( pods_v( 'role_label', $params ) );
 
-		$params->capabilities = (array) pods_v( 'capabilities', $params, array() );
+		$params->capabilities = (array) pods_v( 'capabilities', $params, [] );
 
-		$params->custom_capabilities = (array) pods_v( 'custom_capabilities', $params, array() );
+		$params->custom_capabilities = (array) pods_v( 'custom_capabilities', $params, [] );
 		$params->custom_capabilities = array_filter( array_unique( array_map( 'sanitize_text_field', $params->custom_capabilities ) ) );
 
-		$capabilities = array();
+		$capabilities = [];
 
 		foreach ( $params->capabilities as $capability => $x ) {
 			if ( empty( $capability ) || true !== (boolean) $x ) {

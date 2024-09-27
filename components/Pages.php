@@ -173,7 +173,7 @@ class Pods_Pages extends PodsComponent {
 				$page_templates[ $page_template . ' - ' . $file ] = $file;
 			}
 
-			$page_templates[ __( '-- Select a Page Template --', 'pods' ) ] = '';
+			$page_templates[ __( '-- Select a WP Page Template --', 'pods' ) ] = '';
 
 			$page_templates[ __( 'Custom (uses only Pod Page content)', 'pods' ) ] = '_custom';
 
@@ -653,6 +653,73 @@ class Pods_Pages extends PodsComponent {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
 		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+
+		$page_code = get_the_content();
+		$pre_code = get_post_meta( get_the_ID(), 'precode', true );
+
+		$has_php = false !== strpos( $page_code, '<?' );
+		$has_precode = ! empty( $pre_code );
+
+		if ( $has_php ) {
+			pods_deprecated( 'Pod Page PHP code has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
+
+			if ( PODS_DISABLE_EVAL ) {
+				pods_message(
+					sprintf(
+						'<p><strong>%1$s:</strong> %2$s</p><p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a></p>',
+						__( 'Pod Page Error', 'pods' ),
+						__( 'This Pod Page contains PHP code that will not run due to security restrictions in Pods. To enable PHP code, you must configure your website to allow PHP by setting the constant PODS_DISABLE_EVAL to false.', 'pods' ),
+						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+						__( 'Switch to file-based Pod Pages', 'pods' )
+					),
+					'error',
+					false,
+					false
+				);
+			} else {
+				pods_message(
+					sprintf(
+						'<p><strong>%1$s:</strong> %2$s</p><p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a></p>',
+						__( 'Pod Page Warning', 'pods' ),
+						__( 'This Pod Page contains PHP code that will no longer run in Pods 3.3+.', 'pods' ),
+						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+						__( 'Switch to file-based Pod Pages', 'pods' )
+					),
+					'warning'
+				);
+			}
+		}
+
+		if ( $has_precode ) {
+			pods_deprecated( 'Pod Page PHP precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
+
+			if ( PODS_DISABLE_EVAL ) {
+				pods_message(
+					sprintf(
+						'<p><strong>%1$s:</strong> %2$s</p><p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a></p>',
+						__( 'Pod Page Error', 'pods' ),
+						__( 'This Pod Page contains PHP precode that will not run due to security restrictions in Pods. To enable PHP code, you must configure your website to allow PHP by setting the constant PODS_DISABLE_EVAL to false.', 'pods' ),
+						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+						__( 'Switch to file-based Pod Pages', 'pods' )
+					),
+					'error',
+					false,
+					false
+				);
+			} else {
+				pods_message(
+					sprintf(
+						'<p><strong>%1$s:</strong> %2$s</p><p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a></p>',
+						__( 'Pod Page Warning', 'pods' ),
+						__( 'This Pod Page contains PHP precode that will no longer run in Pods 3.3+.', 'pods' ),
+						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+						__( 'Switch to file-based Pod Pages', 'pods' )
+					),
+					'warning'
+				);
+			}
+		}
+
 	}
 
 	/**

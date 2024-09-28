@@ -201,6 +201,22 @@ class Pods_Pages extends PodsComponent {
 				'type'  => 'text',
 			],
 			[
+				'name'         => 'code_php_notice',
+				'type'         => 'html',
+				'html_content' => sprintf(
+					'<p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
+					__( 'PHP detected, this feature is deprecated', 'pods' ),
+					'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+					__( 'Switch to file-based Pod Pages', 'pods' )
+				),
+				'wildcard-on'  => [
+					'code' => [
+						'\?>',
+						'<\?',
+					],
+				],
+			],
+			[
 				'name'          => 'code',
 				'label'         => __( 'Page Code', 'pods' ),
 				'type'          => 'code',
@@ -211,6 +227,19 @@ class Pods_Pages extends PodsComponent {
 					'attributes' => [
 						'for' => 'content',
 					],
+				],
+			],
+			[
+				'name'         => 'precode_notice',
+				'type'         => 'html',
+				'html_content' => sprintf(
+					'<p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
+					__( 'Precode detected, this feature is deprecated', 'pods' ),
+					'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+					__( 'Switch to file-based Pod Pages', 'pods' )
+				),
+				'excludes-on'  => [
+					'precode' => '',
 				],
 			],
 			[
@@ -226,7 +255,7 @@ class Pods_Pages extends PodsComponent {
 				'type'                  => 'pick',
 				'pick_object'           => 'custom-simple',
 				'pick_format_type'      => 'single',
-				'pick_format_single' => 'dropdown',
+				'pick_format_single'    => 'dropdown',
 				'data'                  => $page_templates,
 				'override_object_field' => true,
 			],
@@ -691,14 +720,14 @@ class Pods_Pages extends PodsComponent {
 		}
 
 		if ( $has_precode ) {
-			pods_deprecated( 'Pod Page PHP precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
+			pods_deprecated( 'Pod Page precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
 
 			if ( PODS_DISABLE_EVAL ) {
 				pods_message(
 					sprintf(
 						'<p><strong>%1$s:</strong> %2$s</p><p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a></p>',
 						__( 'Pod Page Error', 'pods' ),
-						__( 'This Pod Page contains PHP precode that will not run due to security restrictions in Pods. To enable PHP code, you must configure your website to allow PHP by setting the constant PODS_DISABLE_EVAL to false.', 'pods' ),
+						__( 'This Pod Page contains precode (deprecated) that will not run due to security restrictions in Pods. To enable PHP code, you must configure your website to allow PHP by setting the constant PODS_DISABLE_EVAL to false.', 'pods' ),
 						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
 						__( 'Switch to file-based Pod Pages', 'pods' )
 					),
@@ -711,7 +740,7 @@ class Pods_Pages extends PodsComponent {
 					sprintf(
 						'<p><strong>%1$s:</strong> %2$s</p><p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a></p>',
 						__( 'Pod Page Warning', 'pods' ),
-						__( 'This Pod Page contains PHP precode that will no longer run in Pods 3.3+.', 'pods' ),
+						__( 'This Pod Page contains precode which is deprecated -- it will no longer run in Pods 3.3+.', 'pods' ),
 						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
 						__( 'Switch to file-based Pod Pages', 'pods' )
 					),

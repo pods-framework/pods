@@ -29,6 +29,7 @@
 	?>
 <?php else : ?>
 	<p><?php esc_html_e( 'Selecting a Pod will allow you to see the list of available magic tags that can be used in your template code.', 'pods' ); ?></p>
-	<p><strong><?php esc_html_e( 'Example', 'pods' ); ?>: <code>{@field_name}</code></p>
+	<p><strong><?php esc_html_e( 'Example', 'pods' ); ?>:</strong> <code>{@field_name}</code></p>
+	<p><?php esc_html_e( 'Save your Pod Template to have the reference update here.', 'pods' ); ?></p>
 <?php
 endif;

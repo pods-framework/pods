@@ -22,7 +22,16 @@ if ( isset( $content ) ) {
 }
 ?>
 <?php if ( $has_php ) : ?>
-	<?php pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' ); ?>
+	<?php
+	pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
+
+	printf(
+		'<div class="pods-ui-notice-admin pods-ui-notice-warning"><p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p></div>',
+		__( 'PHP detected, this feature is deprecated', 'pods' ),
+		'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+		__( 'Switch to file-based Pod Pages', 'pods' )
+	);
+	?>
 
 	<?php if ( PODS_DISABLE_EVAL ) : ?>
 		<?php

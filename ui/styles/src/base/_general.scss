@@ -28,6 +28,31 @@
 	}
 }
 
+.pods-ui-notice-admin {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left-width: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+	margin: 5px 0 15px;
+	padding: 1px 12px;
+
+	&.pods-ui-notice-error {
+		border-left-color: #d63638;
+	}
+
+	&.pods-ui-notice-warning {
+		border-left-color: #dba617;
+	}
+
+	&.pods-ui-notice-success {
+		border-left-color: #00a32a;
+	}
+
+	p {
+		margin: .5em 0;
+		padding: 2px;
+	}
+}
 
 .pods-form-front-success {
 	color: #4F8A10;

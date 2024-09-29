@@ -204,7 +204,7 @@ class Pods_Pages extends PodsComponent {
 				'name'         => 'code_php_notice',
 				'type'         => 'html',
 				'html_content' => sprintf(
-					'<p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
+					'<div class="pods-ui-notice-admin pods-ui-notice-warning"><p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p></div>',
 					__( 'PHP detected, this feature is deprecated', 'pods' ),
 					'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
 					__( 'Switch to file-based Pod Pages', 'pods' )
@@ -233,7 +233,7 @@ class Pods_Pages extends PodsComponent {
 				'name'         => 'precode_notice',
 				'type'         => 'html',
 				'html_content' => sprintf(
-					'<p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
+					'<div class="pods-ui-notice-admin pods-ui-notice-warning"><p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p></div>',
 					__( 'Precode detected, this feature is deprecated', 'pods' ),
 					'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
 					__( 'Switch to file-based Pod Pages', 'pods' )

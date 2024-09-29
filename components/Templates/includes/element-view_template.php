@@ -28,8 +28,8 @@ if ( isset( $content ) ) {
 	printf(
 		'<div class="pods-ui-notice-admin pods-ui-notice-warning"><p>⚠️&nbsp;&nbsp;%1s - <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p></div>',
 		esc_html__( 'PHP detected, this feature is deprecated', 'pods' ),
-		'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
-		esc_html__( 'Switch to file-based Pod Pages', 'pods' )
+		'https://docs.pods.io/displaying-pods/pod-template-hierarchy-for-themes/',
+		esc_html__( 'Switch to file-based Pod Templates', 'pods' )
 	);
 	?>
 

@@ -232,6 +232,8 @@ class Pods_Migrate_PHP extends PodsComponent {
 <?php
 /**
  * Pod Template: {$object->get_label()}
+ *
+ * @var Pods \$obj
  */
 ?>
 
@@ -280,18 +282,16 @@ PHPTEMPLATE;
 
 		$this->setup_file_path( $file_path );
 
-		$precode = $object->get_arg( 'precode' );
+		$precode = (string) $object->get_arg( 'precode' );
 
 		if ( false !== strpos( $precode, '<?' ) && false === strpos( $precode, '?>' ) ) {
 			$precode .= "\n?>";
 		}
 
-		$contents = <<<PHPTEMPLATE
-<?php
-/**
- * Pod Page Template: {$object->get_label()}
- */
-?>
+		$precode_template = '';
+
+		if ( ! empty( $precode ) ) {
+			$precode_template = <<<PHPTEMPLATE
 
 <?php
 /*
@@ -300,10 +300,19 @@ PHPTEMPLATE;
 ?>
 {$precode}
 
+PHPTEMPLATE;
+		}
+
+		$contents = <<<PHPTEMPLATE
 <?php
-/*
- * PHP code goes below.
+/**
+ * Pod Page Template: {$object->get_label()}
+ *
+ * @var Pods \$pods
  */
+
+{$precode_template}
+
 ?>
 {$object->get_description()}
 PHPTEMPLATE;

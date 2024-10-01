@@ -228,16 +228,27 @@ class Pods_Migrate_PHP extends PodsComponent {
 
 		$this->setup_file_path( $file_path );
 
+		$template_code = $object->get_description();
+
+		$extra_headers = '';
+
+		if ( false !== strpos( $template_code, '{@' ) ) {
+			$extra_headers = <<<PHPTEMPLATE
+ * Magic Tags: Enabled
+PHPTEMPLATE;
+
+		}
+
 		$contents = <<<PHPTEMPLATE
 <?php
 /**
- * Pod Template: {$object->get_label()}
+ * Pod Template: {$object->get_label()}{$extra_headers}
  *
  * @var Pods \$obj
  */
 ?>
 
-{$object->get_description()}
+{$template_code}
 PHPTEMPLATE;
 
 		if ( ! $wp_filesystem->put_contents( $file_path, $contents, FS_CHMOD_FILE ) ) {
@@ -306,7 +317,7 @@ PHPTEMPLATE;
 		$contents = <<<PHPTEMPLATE
 <?php
 /**
- * Pod Page Template: {$object->get_label()}
+ * Pod Page URI: {$object->get_label()}
  *
  * @var Pods \$pods
  */

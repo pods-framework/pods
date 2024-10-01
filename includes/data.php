@@ -2580,11 +2580,12 @@ function pods_is_truthy( $value ) {
 
 	// This is the list of strings we will support as truthy.
 	$supported_strings = [
-		'1'    => true,
-		'true' => true,
-		'on'   => true,
-		'yes'  => true,
-		'y'    => true,
+		'1'       => true,
+		'true'    => true,
+		'on'      => true,
+		'yes'     => true,
+		'y'       => true,
+		'enabled' => true,
 	];
 
 	return isset( $supported_strings[ $value ] );

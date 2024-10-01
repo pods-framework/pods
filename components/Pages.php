@@ -1047,6 +1047,42 @@ class Pods_Pages extends PodsComponent {
 	}
 
 	/**
+	 * Convert a Page object to a Pod Page data array.
+	 *
+	 * @since TBD
+	 *
+	 * @param Page $object The Pod Page object.
+	 *
+	 * @return array The Pod Page data array.
+	 */
+	public static function object_to_page( Page $object ): array {
+		$id = $object->get_id();
+
+		return [
+			'id'            => $object->get_name(),
+			'uri'           => $object->get_arg( 'uri' ),
+			'code'          => $object->get_description(),
+			'phpcode'       => $object->get_description(),
+			// phpcode is deprecated
+			'precode'       => get_post_meta( $id, 'precode', true ),
+			'page_template' => get_post_meta( $id, 'page_template', true ),
+			'title'         => get_post_meta( $id, 'page_title', true ),
+			'options'       => [
+				'admin_only'              => (boolean) get_post_meta( $id, 'admin_only', true ),
+				'restrict_role'           => (boolean) get_post_meta( $id, 'restrict_role', true ),
+				'restrict_capability'     => (boolean) get_post_meta( $id, 'restrict_capability', true ),
+				'roles_allowed'           => get_post_meta( $id, 'roles_allowed', true ),
+				'capability_allowed'      => get_post_meta( $id, 'capability_allowed', true ),
+				'restrict_redirect'       => (boolean) get_post_meta( $id, 'restrict_redirect', true ),
+				'restrict_redirect_login' => (boolean) get_post_meta( $id, 'restrict_redirect_login', true ),
+				'restrict_redirect_url'   => get_post_meta( $id, 'restrict_redirect_url', true ),
+				'pod'                     => get_post_meta( $id, 'pod', true ),
+				'pod_slug'                => get_post_meta( $id, 'pod_slug', true ),
+			],
+		];
+	}
+
+	/**
 	 * Check if a Pod Page exists
 	 */
 	public function page_check() {
@@ -1449,7 +1485,7 @@ class Pods_Pages extends PodsComponent {
 				if ( $template !== $located_template ) {
 					$template = $located_template;
 				} else {
-					$default_templates = $this->get_default_templates();
+					$default_templates = self::get_templates_for_pod_page( self::$exists );
 
 					$template = locate_template( $default_templates );
 
@@ -1573,7 +1609,7 @@ class Pods_Pages extends PodsComponent {
 				if ( $template !== $located_template ) {
 					$template = $located_template;
 				} else {
-					$default_templates = $this->get_default_templates();
+					$default_templates = self::get_templates_for_pod_page( self::$exists );
 
 					$template = locate_template( $default_templates, true );
 
@@ -1600,15 +1636,23 @@ class Pods_Pages extends PodsComponent {
 	}
 
 	/**
-	 * Get the list of default templates.
+	 * Get templates for pod page.
 	 *
-	 * @return array The list of default templates.
+	 * @since TBD
+	 *
+	 * @param array|Page $pod_page The pod page data.
+	 *
+	 * @return array The list of templates for the pod page.
 	 */
-	public function get_default_templates(): array {
+	public static function get_templates_for_pod_page( $pod_page ): array {
+		if ( $pod_page instanceof Page ) {
+			$pod_page = self::object_to_page( $pod_page );
+		}
+
 		$default_templates = [];
 
-		if ( empty( self::$exists ) ) {
-			$uri = explode( '?', self::$exists['uri'] );
+		if ( ! empty( $pod_page ) ) {
+			$uri = explode( '?', $pod_page['uri'] );
 			$uri = explode( '#', $uri[0] );
 			$uri = $uri[0];
 
@@ -1635,7 +1679,7 @@ class Pods_Pages extends PodsComponent {
 		 * @param array $default_templates The list of default templates.
 		 * @param array $pod_page          The current Pod Page data.
 		 */
-		return (array) apply_filters( 'pods_page_default_templates', $default_templates, self::$exists );
+		return (array) apply_filters( 'pods_page_default_templates', $default_templates, $pod_page );
 	}
 }
 

@@ -656,24 +656,7 @@ class Pods_Templates extends PodsComponent {
 				}
 			}
 		} elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
-			$default_templates = array(
-				'pods/templates/' . $template_name . '.php',
-				'pods/' . $template_name . '.php',
-				'pods-' . $template_name . '.php',
-				$template_name . '.php',
-			);
-
-			/**
-			 * Allow filtering the list of default theme templates to check for a template.
-			 *
-			 * @since unknown
-			 *
-			 * @param string[] $default_templates The list of default theme templates to check for a template.
-			 * @param string   $template_name     The template name.
-			 * @param array    $template          The template information.
-			 * @param Pods     $obj               The Pods object.
-			 */
-			$default_templates = apply_filters( 'pods_template_default_templates', $default_templates, $template_name, $template, $obj );
+			$default_templates = self::get_templates_for_pod_template( $template, $obj );
 
 			if ( empty( $obj->id ) ) {
 				while ( $obj->fetch() ) {
@@ -713,6 +696,39 @@ class Pods_Templates extends PodsComponent {
 		$out = apply_filters( "pods_templates_post_template_{$slug}", $out, $code, $template, $obj );
 
 		return $out;
+	}
+
+	/**
+	 * Get templates for pod page.
+	 *
+	 * @since TBD
+	 *
+	 * @param array|Template $template The pod template data.
+	 * @param Pods|null      $obj      The Pods object.
+	 *
+	 * @return array The list of templates for the pod template.
+	 */
+	public static function get_templates_for_pod_template( $template, $obj = null ): array {
+		$template_name = trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template->get_name() ), ' /-' );
+
+		$default_templates = array(
+			'pods/templates/' . $template_name . '.php',
+			'pods/' . $template_name . '.php',
+			'pods-' . $template_name . '.php',
+			$template_name . '.php',
+		);
+
+		/**
+		 * Allow filtering the list of default theme templates to check for a template.
+		 *
+		 * @since unknown
+		 *
+		 * @param string[]       $default_templates The list of default theme templates to check for a template.
+		 * @param string         $template_name     The template name.
+		 * @param array|Template $template          The template information.
+		 * @param Pods           $obj               The Pods object.
+		 */
+		return (array) apply_filters( 'pods_template_default_templates', $default_templates, $template_name, $template, $obj );
 	}
 
 	/**

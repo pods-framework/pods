@@ -103,6 +103,8 @@ class Pods_Migrate_PHP extends PodsComponent {
 	public function ajax_migrate( $params ) {
 		WP_Filesystem();
 
+		$cleanup = 1 === (int) pods_v( 'cleanup', $params, 0 );
+
 		$pod_templates = [];
 		$pod_pages     = [];
 
@@ -126,11 +128,11 @@ class Pods_Migrate_PHP extends PodsComponent {
 		$pod_pages_file_paths     = [];
 
 		foreach ( $pod_templates as $object_id ) {
-			$pod_templates_file_paths[] = $this->migrate_template( $object_id );
+			$pod_templates_file_paths[] = $this->migrate_template( $object_id, $cleanup );
 		}
 
 		foreach ( $pod_pages as $object_id ) {
-			$pod_pages_file_paths[] = $this->migrate_page( $object_id );
+			$pod_pages_file_paths[] = $this->migrate_page( $object_id, $cleanup );
 		}
 
 		$content = '<div class="pods-wizard-content">' . "\n";
@@ -157,6 +159,12 @@ class Pods_Migrate_PHP extends PodsComponent {
 			}
 
 			$content .= '</ul>' . "\n";
+		}
+
+		if ( $cleanup ) {
+			$content .= '<p>' . esc_html__( 'The Pod Page(s) and/or Pod Template(s) were cleaned up and will now load directly from the theme files.', 'pods' ) . '</p>' . "\n";
+		} else {
+			$content .= '<p>' . esc_html__( 'The Pod Page(s) and/or Pod Template(s) were not modified. You will need to empty the content on them before they will load from the theme files.', 'pods' ) . '</p>' . "\n";
 		}
 
 		return $content;
@@ -193,7 +201,7 @@ class Pods_Migrate_PHP extends PodsComponent {
 		}
 	}
 
-	private function migrate_template( $object_id ) {
+	private function migrate_template( $object_id, bool $cleanup ) {
 		/**
 		 * @var $wp_filesystem WP_Filesystem_Base
 		 */
@@ -235,10 +243,17 @@ PHPTEMPLATE;
 			pods_error( sprintf( esc_html__( 'Unable to write to the file: %s', 'pods' ), $file_path ) );
 		}
 
+		if ( $cleanup ) {
+			$api->save_template( [
+				'id'   => $object->get_id(),
+				'code' => '',
+			] );
+		}
+
 		return str_replace( ABSPATH, '', $file_path );
 	}
 
-	private function migrate_page( $object_id ) {
+	private function migrate_page( $object_id, bool $cleanup ) {
 		/**
 		 * @var $wp_filesystem WP_Filesystem_Base
 		 */
@@ -296,6 +311,15 @@ PHPTEMPLATE;
 		if ( ! $wp_filesystem->put_contents( $file_path, $contents, FS_CHMOD_FILE ) ) {
 			// translators: %s is the file path.
 			pods_error( sprintf( esc_html__( 'Unable to write to the file: %s', 'pods' ), $file_path ) );
+		}
+
+		if ( $cleanup ) {
+			$api->save_page( [
+				'id'      => $object->get_id(),
+				'name'    => $object->get_label(),
+				'code'    => '',
+				'precode' => '',
+			] );
 		}
 
 		return str_replace( ABSPATH, '', $file_path );

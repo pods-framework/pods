@@ -402,6 +402,11 @@ $button-container-outline-color: #4f94d4;
 				}
 				.pods-wizard-option {
 					vertical-align: top;
+
+					div {
+						padding-right: 10px;
+					}
+
 					.pods-wizard-one-click-actions-wrap {
 						display: grid;
 						grid-template-columns: auto auto;

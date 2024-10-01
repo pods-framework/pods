@@ -7,6 +7,7 @@
 			<?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
 			<?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
 			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+			<?php echo PodsForm::field( 'cleanup', 0, 'hidden', array( 'attributes' => array( 'id' => 'pods_cleanup' ) ) ); ?>
 
 			<h2 class="italicized"><?php esc_html_e( 'Migrate: Pod Page and Pod Template PHP into File-based templates', 'pods' ); ?></h2>
 
@@ -34,11 +35,22 @@
 						<div id="pods-wizard-options">
 							<div class="pods-wizard-options-list">
 								<div class="pods-wizard-option">
-									<a href="#pods-wizard" data-opt="0">
+									<a href="#pods-wizard-run" data-opt="0">
 										<div>
 											<h2><?php esc_html_e( 'Migrate PHP to files', 'pods' ); ?></h2>
 
-											<p><?php esc_html_e( 'This will migrate Pod Pages and Pod Templates that have PHP in them into theme files.', 'pods' ); ?></p>
+											<p><?php esc_html_e( 'This will migrate Pod Pages and Pod Templates that have PHP in them into files in your theme folder.', 'pods' ); ?></p>
+										</div>
+										<span>&#10095;</span>
+									</a>
+								</div>
+								<div class="pods-wizard-option">
+									<a href="#pods-wizard-run-clean" data-opt="1">
+										<div>
+											<h2><?php esc_html_e( 'Migrate PHP to files and clear the content in the DB', 'pods' ); ?></h2>
+
+											<p><?php esc_html_e( 'This will migrate Pod Pages and Pod Templates that have PHP in them into files in your theme folder, and then clear the content in the DB for those.', 'pods' ); ?></p>
+											<p><?php esc_html_e( 'Please be sure to backup your database before you run this tool.', 'pods' ); ?></p>
 										</div>
 										<span>&#10095;</span>
 									</a>
@@ -151,22 +163,22 @@
 								</div>
 							</div>
 						<?php endif; ?>
-					</div>
 
-					<span id="pods-wizard-result"></span>
+						<span id="pods-wizard-result"></span>
 
-					<div class="stuffbox hidden" id="pods-wizard-results">
-						<h3><?php esc_html_e( 'Migration Results', 'pods' ); ?></h3>
+						<div class="stuffbox hidden" id="pods-wizard-results">
+							<h3><?php esc_html_e( 'Migration Results', 'pods' ); ?></h3>
 
-						<div class="inside pods-manage-field pods-dependency">
-							<div class="pods-wizard-results"></div>
+							<div class="inside pods-manage-field pods-dependency">
+								<div class="pods-wizard-results"></div>
+							</div>
 						</div>
 					</div>
 
 					<div id="pods-wizard-actions" class="pods-wizard-button-interface">
 						<div id="pods-wizard-toolbar">
 							<button id="pods-wizard-start" class="button button-secondary"><?php esc_html_e( 'Start Over', 'pods' ); ?></button>
-							<button id="pods-wizard-next" class="button button-primary hidden" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Continue', 'pods' ); ?></button>
+							<button id="pods-wizard-next" class="button button-primary" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Continue', 'pods' ); ?></button>
 						</div>
 						<div id="pods-wizard-finished">
 
@@ -188,6 +200,10 @@
 		}
 
 		return true;
+	};
+
+	var pods_admin_option_select_callback = function ( $opt ) {
+		jQuery( '#pods_cleanup' ).val( $opt.data( 'opt' ) );
 	};
 
 	var pods_admin_submit_callback = function ( id ) {

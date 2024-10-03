@@ -755,7 +755,7 @@ class Pods_Templates extends PodsComponent {
 	}
 
 	/**
-	 * Get templates for pod page.
+	 * Get the list of template header information for each of the template files.
 	 *
 	 * @since TBD
 	 *

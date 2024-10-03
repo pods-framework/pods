@@ -282,18 +282,21 @@ PHPTEMPLATE;
 			pods_error( sprintf( esc_html__( 'Unable to find the Pod Page by ID: %s', 'pods' ), $object_id ) );
 		}
 
-		$files = Pods_Pages::get_templates_for_pod_page( $object );
+		$files             = Pods_Pages::get_templates_for_pod_page( $object );
+		$files_for_content = Pods_Pages::get_templates_for_pod_page_content( $object );
 
 		if ( count( $files ) < 2 ) {
 			// translators: %s is the file paths found.
 			pods_error( sprintf( esc_html__( 'Unable to detect the file path: %s', 'pods' ), json_encode( $files, JSON_PRETTY_PRINT ) ) );
 		}
 
-		$file_path = trailingslashit( get_stylesheet_directory() ) . array_shift( $files );
+		$file_path             = trailingslashit( get_stylesheet_directory() ) . array_shift( $files );
+		$file_path_for_content = trailingslashit( get_stylesheet_directory() ) . array_shift( $files_for_content );
 
 		$this->setup_file_path( $file_path );
 
-		$precode = (string) $object->get_arg( 'precode' );
+		$precode       = (string) $object->get_arg( 'precode' );
+		$page_template = (string) $object->get_arg( 'page_template' );
 
 		if ( false !== strpos( $precode, '<?' ) && false === strpos( $precode, '?>' ) ) {
 			$precode .= "\n?>";
@@ -302,31 +305,90 @@ PHPTEMPLATE;
 		$precode_template = '';
 
 		if ( ! empty( $precode ) ) {
-			$precode_template = <<<PHPTEMPLATE
-
-<?php
+			$precode_template = "\n" . <<<PHPTEMPLATE
 /*
  * Precode goes below.
  */
 ?>
 {$precode}
+PHPTEMPLATE . "\n";
+		}
 
+		$template_code = trim( $object->get_description() );
+
+		$has_page_template = ! empty( $page_template );
+
+		$precode_has_end_tag = false !== strpos( $precode, '?>' );
+
+		if ( false === strpos( $template_code, '<?' ) ) {
+			$template_code = "?>\n" . $template_code . ( ! $has_page_template ? '' : "\n<?php" );
+		} elseif ( ( ! $has_page_template || ! $precode_has_end_tag ) && 0 === strpos( $template_code, '<?php' ) ) {
+			$template_code = substr( $template_code, strlen( '<?php' ) );
+		} elseif ( ( ! $has_page_template || ! $precode_has_end_tag ) && 0 === strpos( $template_code, '<?' ) ) {
+			$template_code = substr( $template_code, strlen( '<?' ) );
+		}
+
+		$extra_headers = '';
+		$extra_notes   = '';
+
+		if ( ! $has_page_template ) {
+			$start_tag = '';
+
+			if ( $precode_has_end_tag ) {
+				$start_tag = "\n<?php\n";
+			}
+
+			$template_code = $start_tag . <<<PHPTEMPLATE
+get_header();
+
+// Pod Page content goes here.
+{$template_code}
+
+get_sidebar();
+get_footer();
+PHPTEMPLATE;
+		} else {
+			// Set the code and save it for the content path.
+			$this->setup_file_path( $file_path_for_content );
+
+			if ( '_custom' !== $page_template && 'blank' !== $page_template ) {
+				$extra_notes .= "\n" . <<<PHPTEMPLATE
+ *
+ * @see {$page_template} for the template where this will get called from.
+PHPTEMPLATE;
+			}
+
+			// Set the file path we will write to as the one for the content specific template.
+			$file_path = $file_path_for_content;
+			$extra_notes .= "\n" . <<<PHPTEMPLATE
+ *
+ * This template is only used for pods_content() calls.
+PHPTEMPLATE;
+		}
+
+		if ( false !== strpos( $template_code, '{@' ) ) {
+			$extra_headers = "\n" . <<<PHPTEMPLATE
+ * Magic Tags: Enabled
 PHPTEMPLATE;
 		}
 
 		$contents = <<<PHPTEMPLATE
 <?php
 /**
- * Pod Page URI: {$object->get_label()}
+ * Pod Page URI: {$object->get_label()}{$extra_headers}{$extra_notes}
  *
  * @var Pods \$pods
  */
 
 {$precode_template}
 
-?>
-{$object->get_description()}
+{$template_code}
 PHPTEMPLATE;
+
+		// Clean up the PHP tags that open and close too often.
+		$contents = preg_replace( '/\?>\s*<\?php(\s*)/Umi', '$1', $contents );
+		$contents = preg_replace( '/\?>\s*<\?(\s*)/Umi', '$1', $contents );
+		$contents = preg_replace( '/\n{3,}/', "\n\n", $contents );
 
 		if ( ! $wp_filesystem->put_contents( $file_path, $contents, FS_CHMOD_FILE ) ) {
 			// translators: %s is the file path.

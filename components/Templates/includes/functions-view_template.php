@@ -681,14 +681,15 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 /**
  * processes template code within an each command from the base template
  *
- * @param array  $code     The code to filter.
- * @param string $template The template to be processed.
- * @param Pods   $pod      The Pods object.
+ * @param string|null $code     The code to filter.
+ * @param string      $template The template to be processed.
+ * @param Pods        $pod      The Pods object.
  *
  * @return null
  * @since 2.4.0
  */
 function frontier_prefilter_template( $code, $template, $pod ) {
+	$code = (string) $code;
 
 	global $frontier_once_tags;
 

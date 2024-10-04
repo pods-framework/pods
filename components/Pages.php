@@ -1093,8 +1093,9 @@ class Pods_Pages extends PodsComponent {
 		$id = $object->get_id();
 
 		return [
-			'id'            => $object->get_name(),
-			'uri'           => $object->get_arg( 'uri' ),
+			'id'            => $id,
+			'name'          => $object->get_name(),
+			'uri'           => $object->get_label(),
 			'code'          => $object->get_description(),
 			'phpcode'       => $object->get_description(),
 			// phpcode is deprecated
@@ -1558,7 +1559,7 @@ class Pods_Pages extends PodsComponent {
 						 */
 						do_action( 'pods_page_loaded_template', $template, self::$exists );
 
-						load_template( $template );
+						pods_template_part( $template, compact( 'pods' ) );
 					} else {
 						$template = false;
 
@@ -1692,7 +1693,7 @@ class Pods_Pages extends PodsComponent {
 						 */
 						do_action( 'pods_page_loaded_template', $template, self::$exists );
 
-						load_template( $template );
+						pods_template_part( $template, compact( 'pods' ) );
 					} else {
 						$template = false;
 

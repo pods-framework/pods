@@ -553,6 +553,8 @@ class Pods_Templates extends PodsComponent {
 			return '';
 		}
 
+		$has_code_override = ! empty( $code );
+
 		/** @var Pods $obj */
 
 		$template = array(
@@ -623,7 +625,18 @@ class Pods_Templates extends PodsComponent {
 
 		ob_start();
 
-		if ( ! empty( $code ) ) {
+		// @todo If the template exists, uses that, otherwise use the $code.
+
+		$template_file = null;
+
+		if ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
+			$default_templates   = self::get_templates_for_pod_template( $template, $obj );
+			$template_files_info = self::get_template_files_info( $default_templates );
+
+			$template_file = array_key_first( $template_files_info );
+		}
+
+		if ( $has_code_override || ( ! $template_file && ! empty( $code ) ) ) {
 			// Only detail templates need $this->id
 			if ( empty( $obj->id ) ) {
 				$obj->reset();
@@ -657,58 +670,51 @@ class Pods_Templates extends PodsComponent {
 					echo self::do_template( $code, $obj, true );
 				}
 			}
-		} elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
-			$default_templates   = self::get_templates_for_pod_template( $template, $obj );
-			$template_files_info = self::get_template_files_info( $default_templates );
+		} elseif ( $template_file ) {
+			if ( $template_files_info[ $template_file ]['MagicTags'] ) {
+				$process_magic_tags = true;
+			}
 
-			$template_file = array_key_first( $template_files_info );
-
-			if ( $template_file ) {
-				if ( $template_files_info[ $template_file ]['MagicTags'] ) {
-					$process_magic_tags = true;
-				}
-
-				if ( empty( $obj->id ) ) {
-					while ( $obj->fetch() ) {
-						$info['item_id'] = $obj->id();
-
-						// Ensure the post is not password protected.
-						if (
-							$check_access
-							&& (
-								pods_access_bypass_post_with_password( $info )
-								|| pods_access_bypass_private_post( $info )
-							)
-						) {
-							continue;
-						}
-
-						$template_output = pods_template_part( $template_file, compact( array_keys( get_defined_vars() ) ), true );
-
-						if ( $process_magic_tags ) {
-							$template_output = self::do_template( $template_output, $obj );
-						}
-
-						echo $template_output;
-					}
-				} else {
+			if ( empty( $obj->id ) ) {
+				while ( $obj->fetch() ) {
 					$info['item_id'] = $obj->id();
 
+					// Ensure the post is not password protected.
 					if (
-						! $check_access
-						|| (
-							! pods_access_bypass_post_with_password( $info )
-							&& ! pods_access_bypass_private_post( $info )
+						$check_access
+						&& (
+							pods_access_bypass_post_with_password( $info )
+							|| pods_access_bypass_private_post( $info )
 						)
 					) {
-						$template_output = pods_template_part( $template_file, compact( array_keys( get_defined_vars() ) ), true );
-
-						if ( $process_magic_tags ) {
-							$template_output = self::do_template( $template_output, $obj );
-						}
-
-						echo $template_output;
+						continue;
 					}
+
+					$template_output = pods_template_part( $template_file, compact( array_keys( get_defined_vars() ) ), true );
+
+					if ( $process_magic_tags ) {
+						$template_output = self::do_template( $template_output, $obj );
+					}
+
+					echo $template_output;
+				}
+			} else {
+				$info['item_id'] = $obj->id();
+
+				if (
+					! $check_access
+					|| (
+						! pods_access_bypass_post_with_password( $info )
+						&& ! pods_access_bypass_private_post( $info )
+					)
+				) {
+					$template_output = pods_template_part( $template_file, compact( array_keys( get_defined_vars() ) ), true );
+
+					if ( $process_magic_tags ) {
+						$template_output = self::do_template( $template_output, $obj );
+					}
+
+					echo $template_output;
 				}
 			}
 		}//end if

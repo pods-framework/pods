@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var bool $force_callouts Whether to force the callouts.
  */
 
-$callout = 'friends_2023_docs';
+$callout = 'friends_2024_docs';
 
-$donor_count    = 2768;
+$donor_count    = 2747;
 $donor_goal     = 7000;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 
@@ -60,7 +60,7 @@ $callout_dismiss_link = add_query_arg( [
 		<p class="pods-admin_friends-callout_text">
 			🎉&nbsp;
 			<?php
-				esc_html_e( 'Pods 3.2 is out and our goal is to spend 2024 focused on revamping our Documentation, Tutorials, and Video content', 'pods' );
+				esc_html_e( 'Our goal is to be able to focus on revamping our Documentation, Tutorials, and Video content', 'pods' );
 
 				/*printf(
 					'%1$s: %2$s',

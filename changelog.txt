@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.2.7.1 - October 9th, 2024 =
+
+* Security: Lock down heading field to only specific allowed HTML tags and preventing it from being used to insert malicious scripts. Props to the CleanTalk / Dmitrii Ignatyev for responsibly reporting this. (@sc0ttkclark)
+
 = 3.2.7 - August 28th, 2024 =
 
 * Feature: New Pods Related Item List block that works like a Pods Item List block but uses the Pods Single Item block context where you specify a relationship field name to reference. (@sc0ttkclark)

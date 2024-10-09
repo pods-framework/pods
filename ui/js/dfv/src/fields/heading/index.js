@@ -9,7 +9,7 @@ import './heading.scss';
 const Heading = ( props ) => {
 	const {
 		fieldConfig: {
-			heading_tag: headingTag = 'h3',
+			heading_tag: headingTag = 'h2',
 			helpText,
 			label,
 			name,

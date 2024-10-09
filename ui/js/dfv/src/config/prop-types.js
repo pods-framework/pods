@@ -158,6 +158,7 @@ export const FIELD_PROP_TYPE = {
 	slug_placeholder: PropTypes.string,
 	slug_separator: PropTypes.string,
 	slug_fallback: PropTypes.string,
+	slug_sluggable: PropTypes.string,
 	object_storage_type: PropTypes.string,
 	type: PropTypes.string.isRequired,
 	unique: PropTypes.string,

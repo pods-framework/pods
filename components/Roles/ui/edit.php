@@ -9,23 +9,23 @@
 			<?php echo PodsForm::field( 'id', $id, 'hidden' ); ?>
 			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 
-			<h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
+			<h2 class="italicized"><?php esc_html_e( 'Roles & Capabilities: Edit Role', 'pods' ); ?></h2>
 
 			<?php
 			if ( isset( $_GET['do'] ) ) {
 				$action = __( 'saved', 'pods' );
 
-				if ( 'create' == pods_var( 'do', 'get', 'save' ) ) {
+				if ( 'create' == pods_v( 'do', 'get', 'save' ) ) {
 					$action = __( 'created', 'pods' );
 				}
 
 				$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
-				echo $obj->message( $message );
+				echo $obj->message( wp_kses_post( $message ) );
 			}
 			?>
 
-			<p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
+			<p><?php esc_html_e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
 
 			<div id="poststuff" class="poststuff">
 				<div id="post-body" class="metabox-holder columns-2">
@@ -35,7 +35,7 @@
 							<!-- BEGIN PUBLISH DIV -->
 							<div id="submitdiv" class="postbox">
 								<div class="handlediv" title="Click to toggle"><br /></div>
-								<h3 class="hndle"><span><?php _e( 'Manage', 'pods' ); ?></span></h3>
+								<h3 class="hndle"><span><?php esc_html_e( 'Manage', 'pods' ); ?></span></h3>
 
 								<div class="inside">
 									<div class="submitbox" id="submitpost">
@@ -43,7 +43,7 @@
 											<div id="major-publishing-actions">
 												<div id="publishing-action">
 													<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-													<input type="submit" name="publish" id="publish" class="button-primary" value="<?php _e( 'Save', 'pods' ); ?>" accesskey="p" />
+													<input type="submit" name="publish" id="publish" class="button-primary" value="<?php esc_html_e( 'Save', 'pods' ); ?>" accesskey="p" />
 												</div>
 												<!-- /#publishing-action -->
 
@@ -70,8 +70,8 @@
 									<div class="handlediv" title="Click to toggle"><br /></div>
 									<h3 class="hndle">
 										<span>
-											<?php _e( 'Assign the Capabilities for', 'pods' ); ?>
-											<strong><?php echo $role_label; ?></strong>
+											<?php esc_html_e( 'Assign the Capabilities for', 'pods' ); ?>
+											<strong><?php echo esc_html( $role_label ); ?></strong>
 										</span>
 									</h3>
 
@@ -79,7 +79,7 @@
 										<div class="pods-field-option-group">
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 												<p>
-													<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+													<a href="#toggle" class="button" id="toggle-all"><?php esc_html_e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
 												</p>
 
 												<ul>
@@ -89,7 +89,7 @@
 													foreach ( $capabilities as $capability ) {
 														$checked = false;
 
-														if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) ) {
+														if ( true === (bool) pods_v( $capability, $role_capabilities, false ) ) {
 															$checked = true;
 														}
 
@@ -99,7 +99,7 @@
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
 															<?php
-															echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+															echo PodsForm::field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
 																'boolean_yes_label' => $capability,
 																'disable_dfv'       => true,
 															] );
@@ -138,7 +138,7 @@
 												</ul>
 
 												<p>
-													<a href="#add-capability" id="add-capability" class="button"><?php _e( 'Add Another Custom Capability', 'pods' ); ?></a>
+													<a href="#add-capability" id="add-capability" class="button"><?php esc_html_e( 'Add Another Custom Capability', 'pods' ); ?></a>
 												</p>
 											</div>
 										</div>

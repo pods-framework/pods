@@ -112,8 +112,8 @@ class Pods_Roles extends PodsComponent {
 			'pagination'       => false,
 		);
 
-		if ( isset( $roles[ pods_var( 'id', 'get', - 1 ) ] ) ) {
-			$ui['row'] = $roles[ pods_var( 'id', 'get', - 1 ) ];
+		if ( isset( $roles[ pods_v( 'id', 'get', - 1 ) ] ) ) {
+			$ui['row'] = $roles[ pods_v( 'id', 'get', - 1 ) ];
 		}
 
 		if ( ! pods_is_admin( array( 'pods_roles_add' ) ) ) {
@@ -234,7 +234,7 @@ class Pods_Roles extends PodsComponent {
 
 			$roles[ $key ] = array(
 				'id'           => $key,
-				'label'        => $wp_roles->role_names[ $key ],
+				'label'        => wp_strip_all_tags( $wp_roles->role_names[ $key ] ),
 				'name'         => $key,
 				'capabilities' => count( (array) $role->capabilities ),
 				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count ),
@@ -269,15 +269,15 @@ class Pods_Roles extends PodsComponent {
 
 		global $wp_roles;
 
-		$role_name  = pods_var_raw( 'role_name', $params );
-		$role_label = pods_var_raw( 'role_label', $params );
+		$role_name  = sanitize_title( sanitize_text_field( pods_v( 'role_name', $params ) ) );
+		$role_label = sanitize_text_field( pods_v( 'role_label', $params ) );
 
-		$params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+		$params->capabilities = (array) pods_v( 'capabilities', $params, [] );
 
-		$params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
-		$params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
+		$params->custom_capabilities = (array) pods_v( 'custom_capabilities', $params, [] );
+		$params->custom_capabilities = array_filter( array_unique( array_map( 'sanitize_text_field', $params->custom_capabilities ) ) );
 
-		$capabilities = array();
+		$capabilities = [];
 
 		foreach ( $params->capabilities as $capability => $x ) {
 			if ( empty( $capability ) || true !== (boolean) $x ) {
@@ -303,6 +303,10 @@ class Pods_Roles extends PodsComponent {
 			return pods_error( __( 'Role label is required', 'pods' ) );
 		}
 
+		if ( wp_roles()->is_role( $role_name ) ) {
+			return pods_error( __( 'This role already exists', 'pods' ) );
+		}
+
 		return add_role( $role_name, $role_label, $capabilities ) instanceof WP_Role;
 	}
 
@@ -321,9 +325,9 @@ class Pods_Roles extends PodsComponent {
 
 		$capabilities = $this->get_capabilities();
 
-		$params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+		$params->capabilities = (array) pods_v( 'capabilities', $params, array() );
 
-		$params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
+		$params->custom_capabilities = (array) pods_v( 'custom_capabilities', $params, array() );
 		$params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
 
 		if ( ! isset( $params->id ) || empty( $params->id ) || ! isset( $wp_roles->role_objects[ $params->id ] ) ) {
@@ -435,7 +439,7 @@ class Pods_Roles extends PodsComponent {
 		$capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
 
 		// Gravity Forms.
-		if ( is_callable( 'GFCommon::all_caps' ) ) {
+		if ( class_exists( 'GFCommon' ) && is_callable( 'GFCommon::all_caps' ) ) {
 			$capabilities = array_merge( $capabilities, GFCommon::all_caps() );
 		}
 

@@ -749,6 +749,7 @@ class Pod extends Base {
 				'post_type_built_in_taxonomies' => [
 					'name'          => 'post_type_built_in_taxonomies',
 					'label'         => __( 'Enable Connections to Taxonomy', 'pods' ),
+					'description'   => __( 'For taxonomies to show in the block editor, each taxonomy must also have REST API enabled.', 'pods' ),
 					'help'          => __( 'You can enable the ability to select terms from these Taxonomies on any post for this Post Type. Once connected, posts from this Custom Post Type will appear in the Taxonomy archive page of the associated Taxonomies selected. Only Categories and Tag need to be specifically selected to be shown on Taxonomy archives on their own.', 'pods' ),
 					'type'          => 'boolean_group',
 					'boolean_group' => [],

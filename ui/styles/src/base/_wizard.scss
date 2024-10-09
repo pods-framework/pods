@@ -1,22 +1,46 @@
+// Primary buttons.
+$button-primary-text-color: #ffffff;
+$button-primary-border-color: #2271b1;
+$button-primary-background-color: #2271b1;
+
+// :hover
+$button-primary-border-color-hover: #2271b1;
+$button-primary-background-color-hover: #135e96;
+
+// Secondary buttons.
+$button-secondary-text-color: $button-primary-background-color;
+$button-secondary-border-color: $button-primary-background-color;
+$button-secondary-background-color: #f6f7f7;
+
+// :hover
+$button-secondary-text-color-hover: #0a4b78;
+$button-secondary-border-color-hover: #0a4b78;
+$button-secondary-background-color-hover: #f0f0f1;
+
+// Container.
+$button-container-background-color-hover: #e7e7e7;
+$button-container-outline-color: #4f94d4;
+
+
 // Upgrade wizard specific styles
 #pods-wizard-box {
 	width: $width + 2;
 	color: #555555;
-	margin: 20px;
+	margin: 20px 20px 20px 0;
 	&.pods-wizard-steps-1 #pods-wizard-heading ul li {
-		width: $width;
+		min-width: $width;
 	}
 	&.pods-wizard-steps-2 #pods-wizard-heading ul li {
-		width: calc($width / 2);
+		min-width: 50%;
 	}
 	&.pods-wizard-steps-3 #pods-wizard-heading ul li {
-		width: calc($width / 3);
+		min-width: calc($width / 3);
 	}
 	&.pods-wizard-steps-4 #pods-wizard-heading ul li {
-		width: calc($width / 4);
+		min-width: calc($width / 4);
 	}
 	&.pods-wizard-steps-5 #pods-wizard-heading ul li {
-		width: calc($width / 5);
+		min-width: calc($width / 5);
 	}
 	#pods-wizard-heading {
 		ul {
@@ -26,23 +50,37 @@
 				list-style:none;
 				display: block;
 				float: left;
-				height: 30px;
-				padding-top: 5px;
+				/* #7161 */
+				height: 37px;
+				padding-top: 6px;
+				box-sizing: border-box;
 				color: #ababab;
 				margin-bottom: 0;
-				font: 18px 'Garamond, Georgia';
+				font-size: 18px;
 				position: relative;
-				border-top: 1px solid $grey-border;
-				border-bottom: 1px solid $grey-border;
 				@include vertical-gradient(#f9f9f9, #ededed);
 				i {
-					display: block;
-					width: 11px;
-					height: 35px;
 					position: absolute;
 					top: 0;
-					left: 0;
-					background: url(#{$ImagesPath}/arrow_next.png);
+				}
+				&:last-child i {
+					/*
+						#7161
+						Replace png arrow with CSS only arrow.
+						So for step 1 and step 2, we just need to update border color,
+						doing this we can remove the need of two PNG arrow iamges.
+					*/
+					border: solid transparent;
+					border-color: rgba(194, 225, 245, 0);
+					border-left-color: #6e6e6e;
+					border-width: 18.5px;
+					border-left-width: 12px;
+				}
+				&:last-child.pods-wizard-menu-current i {
+					border-left-color: #bbddbd;
+				}
+				&.pods-wizard-menu-complete i {
+					display: none;
 				}
 				span {
 					display: inline-block;
@@ -60,30 +98,19 @@
 				}
 				&.pods-wizard-menu-current {
 					color: #fff;
-					border-bottom: 1px solid #6e6e6e;
-					border-top: 1px solid #808080;
 					text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-					@include vertical-gradient(#808080, #6e6e6e);
+					background: #6e6e6e;
 					span {
 						text-shadow: none;
 						background: #fff;
 						color: #6f6f6f;
 						@include box-shadow(1px, 1px, 2px, 0.2);
 					}
-					&+ li > i {
-						background: url(#{$ImagesPath}/arrow_current.png);
-					}
 				}
 				&.pods-wizard-menu-complete {
 					color: $green-dark;
 					border-bottom: 1px solid #bbddbd;
-					@include vertical-gradient(#d4f4d6, #bbddbd);
-					&+ li > i {
-						background: url(#{$ImagesPath}/arrow_complete.png);
-					}
-					&+ li.pods-wizard-menu-complete > i {
-						background: url(#{$ImagesPath}/arrow_complete_previous.png);
-					}
+					background: #bbddbd;
 					span {
 						background: $green-dark;
 						color: $green-mid;
@@ -137,6 +164,9 @@
 			text-decoration: underline;
 			padding-left: 15px;
 		}
+		#pods-wizard-panel-2 {
+			padding-bottom: 15px;
+		}
 		.pods-wizard-option-content {
 			display: none;
 
@@ -151,13 +181,12 @@
 		}
 		.stuffbox {
 			margin: 15px 15px 0 15px;
-			padding: 0 10px 10px 10px;
+			padding: 10px;
 			h3 {
 				font-size: 15px;
 				font-weight: normal;
 				line-height: 1;
-				padding: 7px 10px;
-				font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+				padding: 0 10px;
 			}
 			/*
 				issue #7118
@@ -240,7 +269,7 @@
 			display: none;
 			border-left: 1px solid $grey-border;
 			border-right: 1px solid $grey-border;
-			padding-bottom: 25px;
+
 			&:first-child {
 				display: block;
 			}
@@ -251,7 +280,6 @@
 			}
 			.pods-wizard-content {
 				padding: 20px;
-				margin-bottom: 25px;
 				background: #fff;
 				&.pods-wizard-grey {
 					background: #f9f9f9;
@@ -357,53 +385,122 @@
 			}
 			#pods-wizard-options {
 				text-align: center;
+				background-color: #fff;
+				padding: 0 20px 20px 20px;
+				h3 {
+					margin-block-start: 0;
+					text-align: left;
+				}
 				.pods-wizard-options-list {
-					display: flex;
-					justify-content: space-evenly;
+					display: grid;
+					gap: 1em;
 
 					.pods-wizard-option {
-						&:first-child {
-							margin-right: 0 !important;
-						}
+						background: #f0f0f1;
+						border-radius: 8px;
 					}
 				}
 				.pods-wizard-option {
-					width: 290px;
-					display: inline-block;
 					vertical-align: top;
-					&:first-child {
-						margin-right: 40px;
+
+					div {
+						padding-right: 10px;
 					}
-					a {
+
+					.pods-wizard-one-click-actions-wrap {
+						display: grid;
+						grid-template-columns: auto auto;
+						align-items: center;
+						gap: 1em;
+						h3 {
+							color: #fff;
+						}
+					}
+					.pods-wizard-one-click-actions-heading {
+						margin-bottom: .3em;
+						padding-left: 20px;
+						text-align: left;
+						font-size: 1.5em;
+					}
+					.pods-wizard-one-click-actions {
+						display: grid;
+						grid-template-columns: 1fr 1fr;
+						padding: 1em 20px;
+						margin: 0;
+						gap: 1em;
+						.pods-wizard-one-click-action {
+							margin-bottom: 0;
+							a {
+								background-color: $button-secondary-background-color;
+								padding: 1.2em 0.5em;
+								border-radius: 0.25em;
+								color: $button-secondary-text-color;
+								display: block;
+								font-size: medium;
+								border: 1px solid $button-secondary-border-color;
+
+								&:hover {
+									color: $button-secondary-text-color-hover;
+									background-color: $button-secondary-background-color-hover;
+									border-color: $button-secondary-border-color-hover;
+								}
+
+								&:focus {
+									outline: 2px solid $button-container-outline-color;
+    								outline-offset: 3px;
+								}
+							}
+						}
+					}
+
+					a:not(.pods-wizard-one-click-action > a) {
+						display: grid;
+						grid-template-columns: 1fr 5em;
+						align-items: center;
 						min-height: 140px;
-						padding: 10px 0;
-						display: block;
-						background: #f9f9f9;
+						height: 100%;
 						position: relative;
 						text-decoration: none;
+						text-align: left;
+						padding-left: 20px;
 						@include multi-border-radius(8px, 8px, 8px, 8px);
-						@include box-shadow(0px, 0px, 4px, 0.3);
+						box-sizing: border-box;
 						h2 {
-							color: #21759B;
-							font-weight: bold;
+							color: inherit;
 							font-size: 1.5em;
-							padding-right: 0;
+							margin-top: 0;
+							text-decoration: underline;
 						}
 						p {
 							font-style: normal;
 							font-size: 14px;
-							color: #555555;
-							margin: 7px;
+							color: #555;
+							margin: 7px 0;
 							line-height: 17px;
 						}
+						span {
+							color: $button-primary-text-color;
+							font-size: 4em;
+							background-color: $button-primary-background-color;
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							transition: padding 0.2s ease;
+							border-top-right-radius: 8px;
+							border-bottom-right-radius: 8px;
+						}
 						&:hover {
-							background: #feffe0;
-							h2 {
-								color: #D54E21;
+							background-color: $button-container-background-color-hover;
+
+							span {
+								background-color: $button-primary-background-color-hover;
+								padding-left: 0.5rem;
 							}
 						}
-						span {
-							display: none;
+						&:focus {
+							outline: 2px auto $button-container-outline-color;
+							outline-offset: 4px;
 						}
 						&.pods-wizard-option-active {
 							background: #feffe0;
@@ -418,16 +515,36 @@
 								left: 0;
 								text-align: center;
 								color: #fff;
-								font: 13px/30px bold Garamond, Georgia;
 								@include multi-border-radius(0, 0, 8px, 8px);
 							}
 						}
-						&:visited {
-							p {
-								color: #555555;
+					}
+
+					&.pods-wizard-option-with-secondary a:not(.pods-wizard-one-click-action > a) {
+						height: unset;
+						border-bottom-left-radius: 0;
+						border-bottom-right-radius: 0;
+						border-bottom: 2px solid #e0e0e0;
+						span {
+							position: relative;
+							border-bottom-right-radius: 0;
+							&::after {
+								content: '';
+								position: absolute;
+								top: 100%;
+								left: 0;
+								width: 100%;
+								height: 2px;
+								background-color: $button-primary-background-color;
+								z-index: 2;
 							}
 						}
+
+						&:hover {
+							background-color: $button-container-background-color-hover;
+						}
 					}
+
 					p {
 						font-size: 12px;
 						line-height: 17px;
@@ -531,5 +648,15 @@
 		#pods-wizard-actions {
 			display: none;
 		}
+	}
+	&:not(.pods-wizard-hide-first) {
+		.pods-wizard-panel {
+			padding-bottom: 15px !important;
+		}
+	}
+
+	#pods-wizard-quick-actions-saving-in-progress {
+		padding: 50px;
+		text-align: center;
 	}
 }

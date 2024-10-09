@@ -11,18 +11,20 @@ const elements = {
   h4: 'h4',
   h5: 'h5',
   h6: 'h6',
+  p: 'p',
+  div: 'div',
 };
 
 function HeadingTag( { type, children, ...props } ) {
   return React.createElement(
-    elements[type] || elements.h3,
+    elements[type] || elements.h2,
     props,
     children
   );
 }
 
 HeadingTag.defaultProps = {
-  type: 'h3',
+  type: 'h2',
 };
 
 export default HeadingTag;

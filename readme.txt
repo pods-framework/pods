@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.2
-Stable tag: 3.2.7.1-a-1
+Stable tag: 3.2.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,7 +96,7 @@ You can enable some of our included components to extend your WordPress site eve
 
 = Plugins that integrate with Pods =
 
-* [Advanced Views Lite](https://pods.io/advanced-views-lite/) - Lets you build templates (views) and queries (cards) so that you can manage your content rendering with less code.
+* [Advanced Views Lite](https://wplake.org/advanced-views-lite/?ref=5) - Lets you build templates (views) and queries (cards) so that you can manage your content rendering with less code. (Disclaimer: We have an affiliate link to them to help support our project)
 * [Bricks Builder](https://bricksbuilder.io/)
 * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using premium [Admin Columns Pro](https://www.admincolumns.com/pods/) Pods integration
 * [Conductor](https://conductorplugin.com/)
@@ -114,7 +114,7 @@ You can enable some of our included components to extend your WordPress site eve
 = Extend Pods with Free Add-Ons =
 
 * [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/) - Integrates Pods with [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/)
-* [Pods Gravity Forms Add-On](https://wordpress.org/plugins/pods-gravity-forms/) - Integrates Pods with [Gravity Forms](https://pods.io/gravityforms/)
+* [Pods Gravity Forms Add-On](https://wordpress.org/plugins/pods-gravity-forms/) - Integrates Pods with [Gravity Forms](https://www.gravityforms.com/)
 * [Pods Alternative Cache Add-On](https://wordpress.org/plugins/pods-alternative-cache/) - Speed up Pods on servers with limited object caching capabilities
 * [Pods SEO Add-On](https://wordpress.org/plugins/pods-seo/) - Integrates Pods Advanced Content Types with Yoast SEO
 * [Pods AJAX Views Add-On](https://wordpress.org/plugins/pods-ajax-views/) - Adds new functions you can use to output template parts that load via AJAX after other page elements
@@ -181,6 +181,10 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.2.7.1 - October 9th, 2024 =
+
+* Security: Lock down heading field to only specific allowed HTML tags and preventing it from being used to insert malicious scripts. Props to the CleanTalk / Dmitrii Ignatyev for responsibly reporting this. (@sc0ttkclark)
 
 = 3.2.7 - August 28th, 2024 =
 

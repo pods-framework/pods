@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <tr valign="top" class="pods-field__container pods-field-option <?php echo esc_attr( $row_classes ); ?>"
 	style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
 	<?php if ( 'heading' === $field['type'] ) : ?>
-		<?php $heading_tag = pods_v( $field['type'] . '_tag', $field, isset( $heading_tag ) ? $heading_tag : 'h2', true ); ?>
+		<?php $heading_tag = PodsField_Heading::get_heading_tag( $field, 'h2' ); ?>
 		<td colspan="2">
 			<<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>
 				class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>"

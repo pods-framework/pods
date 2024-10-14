@@ -241,7 +241,7 @@ export const FieldWrapper = ( props ) => {
 								allPodValues={ passAllPodValues ? allPodValues : undefined }
 								allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
 								setOptionValue={ setOptionValue }
-								isValid={ !! validationMessages.length }
+								isValid={ ! validationMessages.length }
 								addValidationRules={ addValidationRules }
 								setHasBlurred={ () => setHasBlurred( true ) }
 								fieldConfig={ field }
@@ -275,7 +275,7 @@ export const FieldWrapper = ( props ) => {
 							allPodValues={ allPodValues }
 							allPodFieldsMap={ allPodFieldsMap }
 							setValue={ setValue }
-							isValid={ !! validationMessages.length }
+							isValid={ ! validationMessages.length }
 							addValidationRules={ addValidationRules }
 							setHasBlurred={ () => setHasBlurred( true ) }
 							fieldConfig={ processedFieldConfig }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isEqual, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -36,6 +36,7 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './field-wrapper.scss';
 import RepeatableFieldList from './repeatable-field-list';
+import useBlockEditor from '../../hooks/useBlockEditor';
 
 export const FieldWrapper = ( props ) => {
 	const {
@@ -191,6 +192,21 @@ export const FieldWrapper = ( props ) => {
 		],
 		value
 	);
+
+	// Handle Block Editor save lock.
+	const blockEditor = useBlockEditor();
+	useEffect( () => {
+		if ( ! meetsConditionalLogic || ! validationMessages.length ) {
+			blockEditor.unlockPostSaving( 'pods-field-' + name );
+		} else {
+			blockEditor.lockPostSaving( 'pods-field-' + name, validationMessages, () => setHasBlurred( true ) );
+		}
+
+		// Unlock in unmount.
+		return () => {
+			blockEditor.unlockPostSaving( 'pods-field-' + name );
+		};
+	}, [ validationMessages ] );
 
 	// Don't render a field that hasn't had its dependencies met.
 	if ( ! meetsConditionalLogic ) {

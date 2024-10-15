@@ -58,18 +58,18 @@ const useBlockEditor = () => {
 			//wp.hooks.addFilter( 'editor.__unstablePreSavePost', 'editor', filter );
 
 			const pbe = window.PodsBlockEditor;
-			pbe.messages[ name ] = messages;
-			pbe.callbacks[ name ] = callback;
-
-			return false;
+			if ( messages.length ) {
+				pbe.messages[ name ] = messages;
+				pbe.callbacks[ name ] = callback;
+			}
 		},
 		unlockPostSaving: ( name ) => {
 			// @todo Use hook instead of savePost override once stable.
 			//wp.hooks.removeFilter( 'editor.__unstablePreSavePost', 'editor', filter );
 
 			delete window.PodsBlockEditor.messages[ name ];
+			delete window.PodsBlockEditor.callbacks[ name ];
 			editorDispatch?.unlockPostSaving( name );
-			return false;
 		},
 	};
 };

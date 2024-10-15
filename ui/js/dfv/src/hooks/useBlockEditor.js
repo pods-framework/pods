@@ -5,7 +5,7 @@ const useBlockEditor = () => {
 	const notices = wp.data?.dispatch( 'core/notices' );
 
 	// @todo Use hook instead of savePost override once stable.
-	if ( ! window.PodsBlockEditor ) {
+	if ( ! window.PodsBlockEditor && editorDispatch && editorDispatch.hasOwnProperty( 'savePost' ) ) {
 		// First init.
 		window.PodsBlockEditor = {
 			// Store original.

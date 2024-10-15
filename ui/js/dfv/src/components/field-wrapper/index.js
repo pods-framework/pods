@@ -197,14 +197,14 @@ export const FieldWrapper = ( props ) => {
 	const blockEditor = useBlockEditor();
 	useEffect( () => {
 		if ( ! meetsConditionalLogic || ! validationMessages.length ) {
-			blockEditor.unlockPostSaving( 'pods-field-' + name );
+			blockEditor.unlockPostSaving( `pods-field-${ name }` );
 		} else {
-			blockEditor.lockPostSaving( 'pods-field-' + name, validationMessages, () => setHasBlurred( true ) );
+			blockEditor.lockPostSaving( `pods-field-${ name }`, validationMessages, () => setHasBlurred( true ) );
 		}
 
-		// Unlock in unmount.
+		// Unlock on unmount.
 		return () => {
-			blockEditor.unlockPostSaving( 'pods-field-' + name );
+			blockEditor.unlockPostSaving( `pods-field-${ name }` );
 		};
 	}, [ validationMessages ] );
 

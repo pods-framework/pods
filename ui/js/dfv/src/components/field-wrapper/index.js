@@ -206,7 +206,7 @@ export const FieldWrapper = ( props ) => {
 		return () => {
 			blockEditor.unlockPostSaving( `pods-field-${ name }` );
 		};
-	}, [ validationMessages ] );
+	}, [ validationMessages, meetsConditionalLogic ] );
 
 	// Don't render a field that hasn't had its dependencies met.
 	if ( ! meetsConditionalLogic ) {

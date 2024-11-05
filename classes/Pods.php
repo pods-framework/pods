@@ -4329,7 +4329,7 @@ class Pods implements Iterator {
 			) );
 		}
 
-		if ( null !== $value && false !== $value ) {
+		if ( $value || is_numeric( $value ) ) {
 			return $before . $value . $after;
 		}
 

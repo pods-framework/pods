@@ -375,7 +375,7 @@ class Wisdom_Tracker {
 			include ABSPATH . '/wp-admin/includes/plugin.php';
 		}
 		// Retrieve current plugin information
-		$plugin = get_plugin_data( $this->plugin_file );
+		$plugin = get_plugin_data( $this->plugin_file, true, false );
 
 		return $plugin;
 	}

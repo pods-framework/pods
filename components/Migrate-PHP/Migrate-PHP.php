@@ -112,6 +112,8 @@ class Pods_Migrate_PHP extends PodsComponent {
 			'pod_pages'     => $pod_pages,
 		] = $this->get_objects_that_need_migration();
 
+		$has_objects_to_migrate = ! empty( $pod_templates ) || ! empty( $pod_pages );
+
 		// ajax_migrate
 		pods_view( __DIR__ . '/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
 	}

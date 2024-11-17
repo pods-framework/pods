@@ -30,33 +30,39 @@
 					<div id="pods-wizard-panel-1" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
 							<p><?php esc_html_e( 'PHP in Pods is deprecated and will no longer be supported. You can use this tool to migrate your Pod Pages and Pod Templates into files within your current theme.', 'pods' ); ?></p>
+
+							<?php if ( ! $has_objects_to_migrate ) : ?>
+								<p>✅ <?php esc_html_e( 'No Pod Pages or Pod Templates have been found that contain PHP.', 'pods' ); ?></p>
+							<?php endif; ?>
 						</div>
 
-						<div id="pods-wizard-options">
-							<div class="pods-wizard-options-list">
-								<div class="pods-wizard-option">
-									<a href="#pods-wizard-run" data-opt="0">
-										<div>
-											<h2><?php esc_html_e( 'Migrate PHP to files', 'pods' ); ?></h2>
+						<?php if ( $has_objects_to_migrate ) : ?>
+							<div id="pods-wizard-options">
+								<div class="pods-wizard-options-list">
+									<div class="pods-wizard-option">
+										<a href="#pods-wizard-run" data-opt="0">
+											<div>
+												<h2><?php esc_html_e( 'Migrate PHP to files', 'pods' ); ?></h2>
 
-											<p><?php esc_html_e( 'This will migrate Pod Pages and Pod Templates that have PHP in them into files in your theme folder.', 'pods' ); ?></p>
-										</div>
-										<span>&#10095;</span>
-									</a>
-								</div>
-								<div class="pods-wizard-option">
-									<a href="#pods-wizard-run-clean" data-opt="1">
-										<div>
-											<h2><?php esc_html_e( 'Migrate PHP to files and clear the content in the DB', 'pods' ); ?></h2>
+												<p><?php esc_html_e( 'This will migrate Pod Pages and Pod Templates that have PHP in them into files in your theme folder.', 'pods' ); ?></p>
+											</div>
+											<span>&#10095;</span>
+										</a>
+									</div>
+									<div class="pods-wizard-option">
+										<a href="#pods-wizard-run-clean" data-opt="1">
+											<div>
+												<h2><?php esc_html_e( 'Migrate PHP to files and clear the content in the DB', 'pods' ); ?></h2>
 
-											<p><?php esc_html_e( 'This will migrate Pod Pages and Pod Templates that have PHP in them into files in your theme folder, and then clear the content in the DB for those.', 'pods' ); ?></p>
-											<p><?php esc_html_e( 'Please be sure to backup your database before you run this tool.', 'pods' ); ?></p>
-										</div>
-										<span>&#10095;</span>
-									</a>
+												<p><?php esc_html_e( 'This will migrate Pod Pages and Pod Templates that have PHP in them into files in your theme folder, and then clear the content in the DB for those.', 'pods' ); ?></p>
+												<p><?php esc_html_e( 'Please be sure to backup your database before you run this tool.', 'pods' ); ?></p>
+											</div>
+											<span>&#10095;</span>
+										</a>
+									</div>
 								</div>
 							</div>
-						</div>
+						<?php endif; ?>
 					</div>
 					<div id="pods-wizard-panel-2" class="pods-wizard-panel pods-wizard-option-content">
 						<div class="pods-wizard-content">

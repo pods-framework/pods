@@ -738,7 +738,8 @@ class Pods_Templates extends PodsComponent {
 	 * @return array The list of templates for the pod template.
 	 */
 	public static function get_templates_for_pod_template( $template, $obj = null ): array {
-		$template_name = trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template->get_name() ), ' /-' );
+		$template_name = $template instanceof Template ? $template->get_name() : ( $template['slug'] ?? $template['name'] );
+		$template_name = trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' );
 
 		$default_templates = array(
 			'pods/templates/' . $template_name . '.php',

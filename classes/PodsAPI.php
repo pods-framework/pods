@@ -4017,7 +4017,9 @@ class PodsAPI {
 
 					pods_query( '
 						UPDATE `@wp_podsrel`
-						SET `related_field_id` = 0
+						SET
+							`related_pod_id` = 0,
+							`related_field_id` = 0
 						WHERE `field_id` = %d
 					', array(
 						$old_sister_id,
@@ -4028,14 +4030,33 @@ class PodsAPI {
 			update_post_meta( $sister_id, 'sister_id', $params->id );
 
 			if ( true === $db && pods_podsrel_enabled( $field, 'save' ) ) {
-				pods_query( '
-					UPDATE `@wp_podsrel`
-					SET `related_field_id` = %d
-					WHERE `field_id` = %d
-				', array(
-					$params->id,
-					$sister_id,
-				) );
+				$sister_field = $this->load_field( [ 'id' => $sister_id ] );
+
+				if ( $sister_field ) {
+					pods_query( '
+						UPDATE `@wp_podsrel`
+						SET
+							`related_pod_id` = %d,
+							`related_field_id` = %d
+						WHERE `field_id` = %d
+					', [
+						$pod['id'],
+						$params->id,
+						$sister_id,
+					] );
+
+					pods_query( '
+						UPDATE `@wp_podsrel`
+						SET
+							`related_pod_id` = %d,
+							`related_field_id` = %d
+						WHERE `field_id` = %d
+					', [
+						$sister_field->get_parent_id(),
+						$sister_id,
+						$params->id,
+					] );
+				}
 			}
 		} elseif ( 0 < $old_sister_id ) {
 			delete_post_meta( $old_sister_id, 'sister_id' );

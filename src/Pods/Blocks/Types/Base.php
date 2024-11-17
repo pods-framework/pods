@@ -274,7 +274,7 @@ abstract class Base extends Blocks_Abstract {
 	/**
 	 * Determine whether to apply wpautop to the block content output.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param string|mixed $content    The content to determine whether to autop.
 	 * @param array        $attributes The Pods render attributes that will be used.
@@ -296,7 +296,7 @@ abstract class Base extends Blocks_Abstract {
 		 *
 		 * This is used for things like Field block render or List block render of the no items found message.
 		 *
-		 * @since TBD
+		 * @since 3.2.8
 		 *
 		 * @param bool         $should_autop Whether to apply wpautop to the block content output.
 		 * @param string|mixed $content      The content to determine whether to autop.

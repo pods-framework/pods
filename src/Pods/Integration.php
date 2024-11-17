@@ -58,7 +58,7 @@ abstract class Integration {
 				}
 
 				if ( ! is_callable( $params[0]) ) {
-					_doing_it_wrong( 'hook', 'Pods Integration should have a callable for the first hook parameter', 'TBD' );
+					_doing_it_wrong( 'hook', 'Pods Integration should have a callable for the first hook parameter', '2.8.0' );
 				}
 
 				array_unshift( $params, $hook );

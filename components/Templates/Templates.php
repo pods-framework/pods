@@ -519,7 +519,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Save post revision for a post without a return.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param int $post_id The post ID.
 	 */
@@ -730,7 +730,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Get templates for pod page.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param array|Template $template The pod template data.
 	 * @param Pods|null      $obj      The Pods object.
@@ -763,7 +763,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Get the list of template header information for each of the template files.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param array<int,string> $template_files The list of template files.
 	 *

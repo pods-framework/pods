@@ -884,7 +884,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Save post revision for a post without a return.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param int $post_id The post ID.
 	 */
@@ -1083,7 +1083,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Convert a Page object to a Pod Page data array.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param Page $object The Pod Page object.
 	 *
@@ -1165,7 +1165,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Output Pdos Page content without return.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 */
 	public function pods_page_content() {
 		pods_content();
@@ -1552,7 +1552,7 @@ class Pods_Pages extends PodsComponent {
 						/**
 						 * Allow determining whether a Pod Page template was loaded.
 						 *
-						 * @since TBD
+						 * @since 3.2.8
 						 *
 						 * @param string $template The template file that was loaded.
 						 * @param array  $pod_page The Pods Page data.
@@ -1686,7 +1686,7 @@ class Pods_Pages extends PodsComponent {
 						/**
 						 * Allow determining whether a Pod Page template was loaded.
 						 *
-						 * @since TBD
+						 * @since 3.2.8
 						 *
 						 * @param string $template The template file that was loaded.
 						 * @param array  $pod_page The Pods Page data.
@@ -1717,7 +1717,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Get templates for pod page.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param array|Page $pod_page The pod page data.
 	 *
@@ -1764,7 +1764,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Get templates for pod page content.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param array|Page $pod_page The pod page data.
 	 *
@@ -1807,7 +1807,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Get the list of template header information for each of the template files.
 	 *
-	 * @since TBD
+	 * @since 3.2.8
 	 *
 	 * @param array<int,string> $template_files The list of template files.
 	 *

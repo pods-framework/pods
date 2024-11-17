@@ -185,11 +185,19 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 = 3.2.8 - November 17th, 2024 =
 
 * Feature: Migrate the PHP in your Pod Templates and Pod Pages directly into your current theme with a new Pods Admin > Tools > Migrate PHP tool. We recommend you use a child theme that you control. PHP warnings now appear on the Pod Template and Pod Page editor screens to prompt you to run the migration. (@sc0ttkclark)
-* Feature: Updated the design of the various guided screens inside of the Pods Admin to make it easier to read and click through on small screens. (@sc0ttkclark, @heybran)
+* Feature: Updated the design and user experience of the various guided screens inside of the Pods Admin to make it easier to read and click through on small screens. (@sc0ttkclark, @heybran)
 * REMINDER: PHP support for Pod Templates and Pod Pages been turned off by default in Pods 3.2.7+ (`PODS_DISABLE_EVAL` constant set to `false` can be used to re-enable it). It will be completely removed in Pods 3.3 after being deprecated back in Pods 2.3. (@sc0ttkclark)
+* Enhanced: Pod Page template part handling for PHP template files now passes the `$pods` variable. (@sc0ttkclark)
+* Enhanced: Added support for parsing magic tags in Pod Template files in the theme when you set the PHP header comment `Magic Tags: Enabled`. (@sc0ttkclark)
 * Fixed: No longer calling 
 * Fixed: Resolve issue with empty strings showing when using magic tags before/after functionality. (@JoryHogeveen)
 * Fixed: Ignore more internal WP post types and taxonomies plus others from other plugins.
+* Fixed: Move load_plugin_textdomain usage into init and make it optional with the constant `PODS_LOAD_TEXTDOMAIN` set to `true`. It is no longer needed for WordPress.org plugins but may be needed in the future for testing. (@sc0ttkclark)
+* Fixed: When getting plugin data, don't make it translatable. (@sc0ttkclark)
+* Fixed: When saving bidirectional relationship, attempt to save hook up existing related items data in the `wp_podsrel` table with the bidirectional connection. (@sc0ttkclark)
+* Fixed: Resolve PHP notices with site debug information. (@sc0ttkclark)
+* Fixed: Resolve PHP warnings with empty template code. (@sc0ttkclark)
+* Fixed: More improvements to Pod Page and Pod Template file loading from themes. (@sc0ttkclark)
 * Fixed: SCSS migrated from `@import` to `@use` for compatibility with the latest versions of our SCSS scripting. (@sc0ttkclark)
 
 = 3.2.7.1 - October 9th, 2024 =

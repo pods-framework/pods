@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.2
-Stable tag: 3.2.8
+Stable tag: 3.2.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,6 +182,11 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.2.8.1 - November 22nd, 2024 =
+
+* Security: Resolve stored XSS issue with the File Upload field Add Button Text option. Props to the CleanTalk / Dmitrii Ignatyev for responsibly reporting this (their second report, they are doing good work!). (@sc0ttkclark)
+* Security: Harden the use of values within id and class HTML attributes in Pods form elements. (@sc0ttkclark)
+
 = 3.2.8 - November 17th, 2024 =
 
 REMINDER: PHP support for Pod Templates and Pod Pages been turned off by default in Pods 3.2.7+ (`PODS_DISABLE_EVAL` constant set to `false` can be used to re-enable it). It will be completely removed in Pods 3.3 after being deprecated back in Pods 2.3. (@sc0ttkclark)
@@ -190,8 +195,8 @@ REMINDER: PHP support for Pod Templates and Pod Pages been turned off by default
 * Feature: Updated the design and user experience of the various guided screens inside of the Pods Admin to make it easier to read and click through on small screens. (@sc0ttkclark, @heybran)
 * Enhanced: Pod Page template part handling for PHP template files now passes the `$pods` variable. (@sc0ttkclark)
 * Enhanced: Added support for parsing magic tags in Pod Template files in the theme when you set the PHP header comment `Magic Tags: Enabled`. (@sc0ttkclark)
-* Enhanced: Run wpautop on Pods Item List and Pods Related Item List blocks for the "not found" content if they are not already formatted. (@sc0ttkclark)  
-* Fixed: Only running wpautop for block the Pods Field block content if it does not contain div, ul, ol, heading, or p HTML tags. (@sc0ttkclark)  
+* Enhanced: Run wpautop on Pods Item List and Pods Related Item List blocks for the "not found" content if they are not already formatted. (@sc0ttkclark)
+* Fixed: Only running wpautop for block the Pods Field block content if it does not contain div, ul, ol, heading, or p HTML tags. (@sc0ttkclark)
 * Fixed: Resolve issue with empty strings showing when using magic tags before/after functionality. (@JoryHogeveen)
 * Fixed: Ignore more internal WP post types and taxonomies plus others from other plugins.
 * Fixed: Move load_plugin_textdomain usage into init and make it optional with the constant `PODS_LOAD_TEXTDOMAIN` set to `true`. It is no longer needed for WordPress.org plugins but may be needed in the future for testing. (@sc0ttkclark)
@@ -216,7 +221,7 @@ REMINDER: PHP support for Pod Templates and Pod Pages been turned off by default
 * Feature: New support for Query Monitor now shows Pods debug logs in a QM panel. (@sc0ttkclark)
 * Tweak: Toggle add file button on single file field depending on whether a file is provided yet. #7315 (@heybran)
 * Tweak: Added a `<p>` wrapper for the span-based pagination. (@sc0ttkclark)
-* Removed: PHP support for Pod Templates and Pod Pages has been finally turned off by default (`PODS_DISABLE_EVAL` constant set to `false` can be used to re-enable it). It will be completely removed in Pods 3.3 after being deprecated back in Pods 2.3. (@sc0ttkclark) 
+* Removed: PHP support for Pod Templates and Pod Pages has been finally turned off by default (`PODS_DISABLE_EVAL` constant set to `false` can be used to re-enable it). It will be completely removed in Pods 3.3 after being deprecated back in Pods 2.3. (@sc0ttkclark)
 * Fixed: Improve REST authentication method to support other auth forms when registering fields. #7340 #7341 (@JoryHogeveen, @sc0ttkclark)
 * Fixed: Fix invalid default value for REST API `write_all` option. #7339 (@JoryHogeveen)
 * Fixed: Resolve issue with Taxonomy syncing for relationship fields. #7336 #7334 (@pdclark, @sc0ttkclark)

@@ -87,7 +87,7 @@ if ( 0 < $data_count ) {
 			<?php
 			if ( isset( $attributes['readonly'] ) && isset( $attributes['checked'] ) && 'CHECKED' === $attributes['checked'] ) {
 				?>
-				<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $attributes['value'] ); ?>" />
+				<input type="hidden" name="<?php echo esc_attr( pods_js_name( $name ) ); ?>" value="<?php echo esc_attr( $attributes['value'] ); ?>" />
 				<?php
 			}
 

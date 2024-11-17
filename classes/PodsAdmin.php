@@ -757,6 +757,15 @@ class PodsAdmin {
 
 		$pod = pods_get_instance( $pod_name );
 
+		if ( empty( $pod->pod_data ) ) {
+			printf(
+				'<div class="wrap"><p>%s</p></div>',
+				esc_html__( 'This content type is not configured correctly. There could be an issue in your configuration storagae. Please contact support.', 'pods' )
+			);
+
+			return;
+		}
+
 		if ( 'custom' !== pods_v( 'ui_style', $pod->pod_data['options'], 'settings', true ) ) {
 			$actions_disabled = array(
 				'manage'    => 'manage',

@@ -490,6 +490,12 @@ class PodsForm {
 				continue;
 			}
 
+			if ( 'class' === $attribute ) {
+				$value = pods_enforce_safe_class( $value );
+			} elseif ( 'id' === $attribute ) {
+				$value = pods_enforce_safe_id( $value );
+			}
+
 			echo ' ' . esc_attr( (string) $attribute ) . '="' . esc_attr( (string) $value ) . '"';
 		}
 	}

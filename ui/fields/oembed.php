@@ -26,7 +26,7 @@ if ( 1 === $show_preview ) {
 	$oembed_height = ( isset( $options['oembed_height'] ) ) ? (int) $options['oembed_height'] : 0;
 	?>
 	<p class="howto">
-		<?php _e( 'Preview', 'pods' ); ?>
+		<?php esc_html_e( 'Preview', 'pods' ); ?>
 	</p>
 	<input type="hidden" id="<?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_preview_nonce" name="_nonce_pods_oembed" value="<?php echo wp_create_nonce( 'pods_field_oembed_preview' ); ?>" />
 	<div id="<?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_preview" class="pods-oembed-preview">

@@ -478,10 +478,10 @@ class PodsField {
 		// Build DFV field data.
 		$data = [
 			'htmlAttr'      => [
-				'id'         => $attributes['id'],
-				'class'      => $attributes['class'],
-				'name'       => $attributes['name'],
-				'name_clean' => $attributes['data-name-clean'],
+				'id'         => pods_enforce_safe_id( $attributes['id'] ),
+				'class'      => pods_enforce_safe_class( $attributes['class'] ),
+				'name'       => pods_enforce_safe_id( $attributes['name'] ),
+				'name_clean' => pods_enforce_safe_id( $attributes['data-name-clean'] ),
 			],
 			'fieldType'     => $args->type,
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),

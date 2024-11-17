@@ -52,25 +52,25 @@ $class_attributes = array( 'class' => $attributes['class'] );
 
 	<div<?php PodsForm::attributes( $class_attributes, $name, $form_field_type, $options ); ?>>
 		<div class="pods-link-options">
-			<p class="howto"><?php _e( 'Enter the destination URL' ); ?></p>
+			<p class="howto"><?php esc_html( 'Enter the destination URL' ); ?></p>
 			<p>
 			<div class="alignleft">
-				<label><span><?php _e( 'URL' ); ?></span><input<?php PodsForm::attributes( $url_attributes, $url_name, $form_field_type, $options ); ?> /></label>
+				<label><span><?php esc_html( 'URL' ); ?></span><input<?php PodsForm::attributes( $url_attributes, $url_name, $form_field_type, $options ); ?> /></label>
 			</div>
 			<div class="alignleft">
-				<label><span><?php _e( 'Link Text' ); ?></span><input<?php PodsForm::attributes( $text_attributes, $text_name, $form_field_type, $options ); ?> /></label>
+				<label><span><?php esc_html( 'Link Text' ); ?></span><input<?php PodsForm::attributes( $text_attributes, $text_name, $form_field_type, $options ); ?> /></label>
 			</div>
 			<div class="link-target">
 				<label>
 					<div>&nbsp;</div>
-					<input<?php PodsForm::attributes( $target_attributes, $target_name, $form_field_type, $options ); ?> /> <?php _e( 'Open link in a new tab' ); ?>
+					<input<?php PodsForm::attributes( $target_attributes, $target_name, $form_field_type, $options ); ?> /> <?php esc_html_e( 'Open link in a new tab' ); ?>
 				</label>
 			</div>
 			</p>		<br clear="both">
 
 			<?php if ( 1 == pods_v( 'link_select_existing', $options, 1 ) ) { ?>
 				<div class="howto link-existing-content" style="display: none;">
-					<a href="#" class="podsLinkPopup"><?php _e( 'Or link to existing content' ); ?></a>
+					<a href="#" class="podsLinkPopup"><?php esc_html_e( 'Or link to existing content' ); ?></a>
 					<textarea id="pods-link-editor-hidden" disabled="disabled" style="display: none;"></textarea>
 				</div>
 			<?php } ?>

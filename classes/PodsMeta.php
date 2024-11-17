@@ -2949,6 +2949,16 @@ class PodsMeta {
 				'wp_navigation'        => true,
 				'wp_template'          => true,
 				'wp_template_part'     => true,
+				'wp_font_face'         => true,
+				'wp_font_family'       => true,
+				// Disable ACF post types.
+				'acf-taxonomy'         => true,
+				'acf-post-type'        => true,
+				'acf-field-group'      => true,
+				'acf-field'            => true,
+				// Disable Advanced views.
+				'acf_views'            => true,
+				'acf_cards'            => true,
 				// Disable Beaver Builder post types.
 				'fl-theme-layout'      => true,
 				'fl-builder-template'  => true,
@@ -2973,6 +2983,7 @@ class PodsMeta {
 				'post_format'                  => true,
 				'wp_theme'                     => true,
 				'wp_template_part_area'        => true,
+				'wp_pattern_category'          => true,
 				// Disable Beaver Builder taxonomies.
 				'fl-builder-template-category' => true,
 				'fl-builder-template-type'     => true,

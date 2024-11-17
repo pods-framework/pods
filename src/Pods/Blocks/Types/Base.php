@@ -229,7 +229,7 @@ abstract class Base extends Blocks_Abstract {
 	 */
 	public function should_preload_block( $attributes = [], $block = null ) {
 		/**
-		 * Allow filtering whether to preload the block.
+		 * Allow filtering whether to preload the Pods block.
 		 *
 		 * @since 2.8.8
 		 *
@@ -238,7 +238,7 @@ abstract class Base extends Blocks_Abstract {
 		 * @param WP_Block|null $block                The WP_Block object or null if not provided.
 		 * @param Base          $block_type           The block type object (not WP_Block).
 		 */
-		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $this );
+		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $attributes, $block, $this );
 	}
 
 	/**
@@ -269,5 +269,39 @@ abstract class Base extends Blocks_Abstract {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Determine whether to apply wpautop to the block content output.
+	 *
+	 * @since TBD
+	 *
+	 * @param string|mixed $content    The content to determine whether to autop.
+	 * @param array        $attributes The Pods render attributes that will be used.
+	 *
+	 * @return bool Whether to apply wpautop to the block content output.
+	 */
+	public function should_autop( $content, array $attributes = [] ): bool {
+		$should_autop = (
+			is_string( $content )
+			&& false === strpos( $content, '<div' )
+			&& false === strpos( $content, '<ul' )
+			&& false === strpos( $content, '<ol' )
+			&& false === strpos( $content, '<h' )
+			&& false === strpos( $content, '<p' )
+		);
+
+		/**
+		 * Allow filtering whether to apply wpautop to the block content output.
+		 *
+		 * This is used for things like Field block render or List block render of the no items found message.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool         $should_autop Whether to apply wpautop to the block content output.
+		 * @param string|mixed $content      The content to determine whether to autop.
+		 * @param array        $attributes   The Pods render attributes that will be used.
+		 */
+		return (bool) apply_filters( 'pods_blocks_should_autop', $should_autop, $content, $attributes );
 	}
 }

@@ -16,7 +16,7 @@
 	<arg name="colors"/>
 	<arg name="report" value="full,summary"/>
 
-	<rule ref="TribalScents"/>
+	<rule ref="StellarWP"/>
 	<rule ref="WordPress-VIP-Go"/>
 	<rule ref="WordPress">
 		<exclude name="WordPress.Files.FileName"/>

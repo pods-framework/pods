@@ -20,6 +20,7 @@ class Legacy_Object extends Whatsit {
 		$old_mapping = [
 			'name' => 'label',
 			'slug' => 'name',
+			'uri'  => 'name',
 			'code' => 'description',
 		];
 
@@ -49,6 +50,7 @@ class Legacy_Object extends Whatsit {
 		$old_mapping = [
 			'name' => 'label',
 			'slug' => 'name',
+			'uri'  => 'name',
 			'code' => 'description',
 		];
 

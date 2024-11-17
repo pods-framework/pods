@@ -14,12 +14,16 @@ import ConnectedFieldWrapper from 'dfv/src/components/connected-field-wrapper';
  * Pods config
  */
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import useBlockEditor from '../hooks/useBlockEditor';
 
 const App = ( {
 	storeKey,
 } ) => {
 	const fieldsData = PodsDFVAPI._fieldDataByStoreKeyPrefix[ storeKey ];
 	const allPodFieldsMap = new Map( fieldsData.map( ( field ) => [ field.name, field ] ) );
+
+	// Initialize Pods Block Editor overrides if available.
+	useBlockEditor();
 
 	const fieldComponents = fieldsData.map( ( fieldData = {} ) => {
 		const {

@@ -16,11 +16,11 @@
 				<div id="pods-wizard-heading">
 					<ul>
 						<li class="pods-wizard-menu-current" data-step="1">
-							<i></i> <span>1</span> <?php _e( 'Naming', 'pods' ); ?>
+							<i></i> <span>1</span> <?php esc_html_e( 'Step 1: Naming', 'pods' ); ?>
 							<em></em>
 						</li>
 						<li data-step="2">
-							<i></i> <span>2</span> <?php _e( 'Capabilities', 'pods' ); ?>
+							<i></i> <span>2</span> <?php esc_html_e( 'Step 2: Capabilities', 'pods' ); ?>
 							<em></em>
 						</li>
 					</ul>
@@ -28,50 +28,48 @@
 				<div id="pods-wizard-main">
 					<div id="pods-wizard-panel-1" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
-							<p><?php _e( 'Roles allow you to specify which capabilities a user should be able to do within WordPress.', 'pods' ); ?></p>
+							<p><?php esc_html_e( 'Roles allow you to specify which capabilities a user should be able to do within WordPress.', 'pods' ); ?></p>
 						</div>
 
 						<div class="stuffbox">
-							<h3><label for="link_name"><?php _e( 'Name your new Role', 'pods' ); ?></label></h3>
+							<h3><label for="link_name"><?php esc_html_e( 'Name your new Role', 'pods' ); ?></label></h3>
 
 							<div class="inside pods-manage-field">
-								<div class="pods-field-option">
+								<div class="pods-field__container">
 									<?php
 									echo PodsForm::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
-									echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', [
-										'class'       => 'pods-validate pods-validate-required',
-										'disable_dfv' => true,
+									echo PodsForm::field( 'role_label', pods_v( 'role_label', 'post' ), 'text', [
+										'class' => 'pods-validate pods-validate-required',
 									] );
 									?>
 								</div>
 
-								<div class="pods-field-option">
+								<div class="pods-field__container">
 									<?php
 									echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-									echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', [
-										'attributes'  => [ 'data-sluggable' => 'role_label' ],
-										'class'       => 'pods-validate pods-validate-required pods-slugged-lower',
-										'disable_dfv' => true,
+									echo PodsForm::field( 'role_name', pods_v( 'role_name', 'post' ), 'slug', [
+										'slug_sluggable' => 'role_label',
+										'class'          => 'pods-validate pods-validate-required pods-slugged-lower pods-slugged-sanitize-title',
 									] );
 									?>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div id="pods-wizard-panel-2" class="pods-wizard-panel">
+					<div id="pods-wizard-panel-2" class="pods-wizard-panel pods-wizard-option-content">
 						<div class="pods-wizard-content">
-							<p><?php _e( 'Choose below which Capabilities you would like this new user role to have.', 'pods' ); ?></p>
+							<p><?php esc_html_e( 'Choose below which Capabilities you would like this new user role to have.', 'pods' ); ?></p>
 						</div>
 
 						<div class="stuffbox">
-							<h3><label for="link_name"><?php _e( 'Assign the Capabilities for', 'pods' ); ?>
+							<h3><label for="link_name"><?php esc_html_e( 'Assign the Capabilities for', 'pods' ); ?>
 									<strong class="pods-slugged" data-sluggable="role_label"></strong></label></h3>
 
 							<div class="inside pods-manage-field pods-dependency">
 								<div class="pods-field-option-group">
 									<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 										<p>
-											<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+											<a href="#toggle" class="button" id="toggle-all"><?php esc_html_e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
 										</p>
 
 										<ul>
@@ -90,7 +88,7 @@
 												$zebra = ( ! $zebra );
 												?>
 												<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-													<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+													<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
 														'boolean_yes_label' => $capability,
 														'disable_dfv'       => true,
 													] ); ?>
@@ -138,8 +136,8 @@
 
 					<div id="pods-wizard-actions" class="pods-wizard-button-interface">
 						<div id="pods-wizard-toolbar">
-							<button id="pods-wizard-start" class="button button-secondary hidden"><?php _e( 'Start Over', 'pods' ); ?></button>
-							<button id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></button>
+							<button id="pods-wizard-start" class="button button-secondary hidden"><?php esc_html_e( 'Start Over', 'pods' ); ?></button>
+							<button id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Next Step', 'pods' ); ?></button>
 						</div>
 						<div id="pods-wizard-finished">
 

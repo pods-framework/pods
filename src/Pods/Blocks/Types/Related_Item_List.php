@@ -344,6 +344,10 @@ class Related_Item_List extends Base {
 			$attributes['filters'] = false;
 		}
 
+		if ( ! empty( $attributes['not_found'] ) && $this->should_autop( $attributes['not_found'] ) ) {
+			$attributes['not_found'] = wpautop( $attributes['not_found'], $attributes );
+		}
+
 		$content = pods_shortcode( $attributes, $attributes['template_custom'] );
 
 		if ( '' !== $content ) {

@@ -36,7 +36,6 @@ class Config_Handler {
 		'fields'    => 'fields',
 		'templates' => 'templates',
 		'pages'     => 'pages',
-		'helpers'   => 'helpers',
 	];
 
 	/**
@@ -284,7 +283,13 @@ class Config_Handler {
 					$theme_support = true;
 				}
 
-				$path = sprintf( '%s.%s', $config_item_type, $config_type );
+				$path_type = $config_item_type;
+
+				if ( 'pods' !== $path_type ) {
+					$path_type = 'pods-' . $path_type;
+				}
+
+				$path = sprintf( '%s.%s', $path_type, $config_type );
 
 				$file_configs[] = [
 					'type'          => $config_type,
@@ -319,7 +324,7 @@ class Config_Handler {
 		 *
 		 * @since 2.9.0
 		 *
-		 * @param Config $pods_config Pods config object.
+		 * @param Config_Handler $pods_config Pods config object.
 		 *
 		 */
 		do_action( 'pods_config_pre_load_configs', $this );
@@ -764,18 +769,18 @@ class Config_Handler {
 			$this->custom_configs[ $item_type ] = [];
 		}
 
+		/** @var array $item */
 		foreach ( $items as $item ) {
 			/**
 			 * Pre-process the item to be saved for a custom item type.
 			 *
 			 * @since 2.9.0
 			 *
+			 * @param array  $item      Item to pre-process.
 			 * @param string $item_type Item type.
 			 * @param string $file_path The config file path to use.
-			 *
-			 * @param array  $item      Item to pre-process.
 			 */
-			$item = apply_filters( 'pods_config_register_custom_item', $item, $item_type, $file_path );
+			$item = (array) apply_filters( 'pods_config_register_custom_item', $item, $item_type, $file_path );
 
 			// Check if the item name exists.
 			if ( empty( $item['name'] ) ) {

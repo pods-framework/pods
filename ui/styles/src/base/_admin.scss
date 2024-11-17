@@ -401,6 +401,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 
 .pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean label {
 	padding: 5px 0;
+	overflow-wrap: break-word;
 }
 
 .pods-manage-field .pods-pick-values li.pods-zebra-odd {
@@ -575,6 +576,7 @@ body[class*="settings_page_pods-"] {
 		line-height: 22px;
 		font-size: 14px;
 		margin-left: 34px;
+		overflow-wrap: break-word;
 	}
 
 	.pods-manage-field .pods-pick-values li.pods-zebra-odd,

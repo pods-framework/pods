@@ -4817,7 +4817,16 @@ class PodsAdmin {
 					$value = $setting_field['site_health_data'][ $value ];
 				} elseif ( $has_value && isset( $setting_field['data'] ) && isset( $setting_field['data'][ $value ] ) ) {
 					$value = $setting_field['data'][ $value ];
-				} elseif ( 'boolean' === $setting_field['data'] || '1' === $value || '0' === $value ) {
+				} elseif (
+					(
+						isset( $setting_field['data'] )
+						&& 'boolean' === $setting_field['data']
+					)
+					&& (
+						'1' === $value
+						|| '0' === $value
+					)
+				) {
 					$value = '1' === $value ? __( 'Yes', 'pods' ) : __( 'No', 'pods' );
 				}
 			}

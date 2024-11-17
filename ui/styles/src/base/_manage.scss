@@ -1,3 +1,5 @@
+@use "../helpers/asset-paths";
+
 form.pods-manage {
 
 	ol.form-fields {
@@ -220,7 +222,7 @@ form.pods-manage {
 	}
 
 	.pods-date input.pods-date-field.hasDatepicker {
-		background: #fff url(#{$ImagesPath}/calendar16.png) no-repeat 5px 5px;
+		background: #fff url(#{asset-paths.$ImagesPath}/calendar16.png) no-repeat 5px 5px;
 		cursor: pointer;
 		padding-left: 25px !important;
 		padding-top: 6px !important;

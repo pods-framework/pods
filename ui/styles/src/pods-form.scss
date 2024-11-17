@@ -1,8 +1,8 @@
-@import "helpers/asset-paths";
-@import "helpers/dashicons";
+@use "helpers/asset-paths";
+@use "helpers/dashicons";
 
-@import "overrides/jquery-qtip";
+@use "overrides/jquery-qtip";
 
-@import "base/form";
-@import "base/general";
-@import "base/dfv-list";
+@use "base/form";
+@use "base/general";
+@use "base/dfv-list";

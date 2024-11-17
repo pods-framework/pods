@@ -1,4 +1,4 @@
-@import '../edit-pod-variables';
+@use '../edit-pod-variables';
 
 .pods-field_controls-container {
 	opacity: 0;
@@ -20,7 +20,7 @@
 }
 
 .pods-field-list__empty--dropping {
-	background: $color--light-grey;
+	background: edit-pod-variables.$color--light-grey;
 }
 
 .pods-field-list__empty-message {

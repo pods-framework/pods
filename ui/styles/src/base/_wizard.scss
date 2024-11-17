@@ -1,3 +1,8 @@
+@use "../helpers/asset-paths";
+@use "../helpers/breakpoints";
+@use "../helpers/colors";
+@use "../helpers/mixins";
+
 // Primary buttons.
 $button-primary-text-color: #ffffff;
 $button-primary-border-color: #2271b1;
@@ -24,23 +29,23 @@ $button-container-outline-color: #4f94d4;
 
 // Upgrade wizard specific styles
 #pods-wizard-box {
-	width: $width + 2;
+	width: breakpoints.$width + 2;
 	color: #555555;
 	margin: 20px 20px 20px 0;
 	&.pods-wizard-steps-1 #pods-wizard-heading ul li {
-		min-width: $width;
+		min-width: breakpoints.$width;
 	}
 	&.pods-wizard-steps-2 #pods-wizard-heading ul li {
 		min-width: 50%;
 	}
 	&.pods-wizard-steps-3 #pods-wizard-heading ul li {
-		min-width: calc($width / 3);
+		min-width: calc(breakpoints.$width / 3);
 	}
 	&.pods-wizard-steps-4 #pods-wizard-heading ul li {
-		min-width: calc($width / 4);
+		min-width: calc(breakpoints.$width / 4);
 	}
 	&.pods-wizard-steps-5 #pods-wizard-heading ul li {
-		min-width: calc($width / 5);
+		min-width: calc(breakpoints.$width / 5);
 	}
 	#pods-wizard-heading {
 		ul {
@@ -58,7 +63,7 @@ $button-container-outline-color: #4f94d4;
 				margin-bottom: 0;
 				font-size: 18px;
 				position: relative;
-				@include vertical-gradient(#f9f9f9, #ededed);
+				@include mixins.vertical-gradient(#f9f9f9, #ededed);
 				i {
 					position: absolute;
 					top: 0;
@@ -94,7 +99,7 @@ $button-container-outline-color: #4f94d4;
 					box-shadow: none;
 					font-size: 20px;
 					font-weight: bold;
-					@include multi-border-radius(30px, 30px, 30px, 30px);
+					@include mixins.multi-border-radius(30px, 30px, 30px, 30px);
 				}
 				&.pods-wizard-menu-current {
 					color: #fff;
@@ -104,22 +109,22 @@ $button-container-outline-color: #4f94d4;
 						text-shadow: none;
 						background: #fff;
 						color: #6f6f6f;
-						@include box-shadow(1px, 1px, 2px, 0.2);
+						@include mixins.box-shadow(1px, 1px, 2px, 0.2);
 					}
 				}
 				&.pods-wizard-menu-complete {
-					color: $green-dark;
+					color: colors.$green-dark;
 					border-bottom: 1px solid #bbddbd;
 					background: #bbddbd;
 					span {
-						background: $green-dark;
-						color: $green-mid;
+						background: colors.$green-dark;
+						color: colors.$green-mid;
 					}
 					em {
 						display: block;
 						top: 10px;
 						right: 5px;
-						background: url(#{$ImagesPath}/tick.png) no-repeat right center;
+						background: url(#{asset-paths.$ImagesPath}/tick.png) no-repeat right center;
 						width: 17px;
 						height: 17px;
 						position: absolute;
@@ -135,13 +140,13 @@ $button-container-outline-color: #4f94d4;
 						background: none;
 					}
 					& {
-						border-left: 1px solid $grey-border;
-						@include multi-border-radius(8px, 0, 0, 0);
+						border-left: 1px solid colors.$grey-border;
+						@include mixins.multi-border-radius(8px, 0, 0, 0);
 					}
 				}
 				&:last-child {
-					border-right: 1px solid $grey-border;
-					@include multi-border-radius(0, 8px, 0, 0);
+					border-right: 1px solid colors.$grey-border;
+					@include mixins.multi-border-radius(0, 8px, 0, 0);
 				}
 			}
 		}
@@ -267,8 +272,8 @@ $button-container-outline-color: #4f94d4;
 		}
 		.pods-wizard-panel {
 			display: none;
-			border-left: 1px solid $grey-border;
-			border-right: 1px solid $grey-border;
+			border-left: 1px solid colors.$grey-border;
+			border-right: 1px solid colors.$grey-border;
 
 			&:first-child {
 				display: block;
@@ -342,7 +347,7 @@ $button-container-outline-color: #4f94d4;
 							display: inline-block;
 							width: 17px;
 							height: 17px;
-							background: url(#{$ImagesPath}/tick.png);
+							background: url(#{asset-paths.$ImagesPath}/tick.png);
 						}
 					}
 					&.pods-wizard-table-warning td {
@@ -463,7 +468,7 @@ $button-container-outline-color: #4f94d4;
 						text-decoration: none;
 						text-align: left;
 						padding-left: 20px;
-						@include multi-border-radius(8px, 8px, 8px, 8px);
+						@include mixins.multi-border-radius(8px, 8px, 8px, 8px);
 						box-sizing: border-box;
 						h2 {
 							color: inherit;
@@ -515,7 +520,7 @@ $button-container-outline-color: #4f94d4;
 								left: 0;
 								text-align: center;
 								color: #fff;
-								@include multi-border-radius(0, 0, 8px, 8px);
+								@include mixins.multi-border-radius(0, 0, 8px, 8px);
 							}
 						}
 					}
@@ -560,11 +565,11 @@ $button-container-outline-color: #4f94d4;
 	}
 	#pods-wizard-actions {
 		height: 35px;
-		border: 1px solid $grey-border;
+		border: 1px solid colors.$grey-border;
 		position: relative;
 		clear: both;
-		@include multi-border-radius(0, 0, 8px, 8px);
-		@include vertical-gradient(#ededed, #f9f9f9);
+		@include mixins.multi-border-radius(0, 0, 8px, 8px);
+		@include mixins.vertical-gradient(#ededed, #f9f9f9);
 
 		&.pods-wizard-button-interface {
 			height: 45px;
@@ -607,8 +612,8 @@ $button-container-outline-color: #4f94d4;
 			&.button-primary {
 				right: 0;
 				color: #fff;
-				@include vertical-gradient(#278ab8, #22789f);
-				@include multi-border-radius(0, 0, 8px, 0);
+				@include mixins.vertical-gradient(#278ab8, #22789f);
+				@include mixins.multi-border-radius(0, 0, 8px, 0);
 				&:hover {
 					background: #22789f;
 				}
@@ -616,8 +621,8 @@ $button-container-outline-color: #4f94d4;
 			&.button-secondary {
 				left: 0;
 				color: #7b7b7b;
-				@include vertical-gradient(#dfdfdf, #b2b2b2);
-				@include multi-border-radius(0, 0, 0, 8px);
+				@include mixins.vertical-gradient(#dfdfdf, #b2b2b2);
+				@include mixins.multi-border-radius(0, 0, 0, 8px);
 				&:hover {
 					background: #b2b2b2;
 				}
@@ -633,8 +638,8 @@ $button-container-outline-color: #4f94d4;
 			color: #fff;
 			font-weight: bold;
 			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-			@include vertical-gradient(#808080, #6e6e6e);
-			@include multi-border-radius(0, 0, 8px, 8px);
+			@include mixins.vertical-gradient(#808080, #6e6e6e);
+			@include mixins.multi-border-radius(0, 0, 8px, 8px);
 		}
 		#pods-wizard-next.finished {
 			width: 150px;
@@ -642,8 +647,8 @@ $button-container-outline-color: #4f94d4;
 	}
 	&.pods-wizard-hide-first {
 		#pods-wizard-main {
-			border-bottom: 1px solid $grey-border;
-			@include multi-border-radius(0, 0, 8px, 8px);
+			border-bottom: 1px solid colors.$grey-border;
+			@include mixins.multi-border-radius(0, 0, 8px, 8px);
 		}
 		#pods-wizard-actions {
 			display: none;

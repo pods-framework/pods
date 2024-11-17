@@ -1,34 +1,35 @@
-@import "helpers/asset-paths";
-@import "helpers/breakpoints";
-@import "helpers/colors";
-@import "helpers/mixins";
-@import "helpers/dashicons";
+@use "sass:meta";
+@use "helpers/asset-paths";
+@use "helpers/breakpoints";
+@use "helpers/colors";
+@use "helpers/mixins";
+@use "helpers/dashicons";
 
-@import "base/loading";
-@import "base/admin";
-@import "base/advanced";
-@import "base/block-placeholders";
-@import "base/dfv-list";
-@import "base/general";
-@import "base/manage";
-@import "base/meta-boxes";
-@import "base/modal-relationships";
-@import "base/ui-list-table";
+@use "base/loading";
+@use "base/admin";
+@use "base/advanced";
+@use "base/block-placeholders";
+@use "base/dfv-list";
+@use "base/general";
+@use "base/manage";
+@use "base/meta-boxes";
+@use "base/modal-relationships";
+@use "base/ui-list-table";
 
 .pods-compat-container {
-	@import "overrides/codemirror";
-	@import "overrides/jquery-ui-timepicker";
-	@import "libs/jquery-ui-custom";
+	@include meta.load-css("overrides/codemirror");
+	@include meta.load-css("overrides/jquery-ui-timepicker");
+	@include meta.load-css("libs/jquery-ui-custom");
 }
 
 .pods-submittable,
 .pods-admin-container {
-	@import "libs/jquery-qtip";
+	@include meta.load-css("libs/jquery-qtip");
 }
 
 .pods-submittable {
-	@import "overrides/jquery-cleditor";
-	@import "overrides/select-woo";
+	@include meta.load-css("overrides/jquery-cleditor");
+	@include meta.load-css("overrides/select-woo");
 }
 
-@import "overrides/jquery-qtip";
+@include meta.load-css("overrides/jquery-qtip");

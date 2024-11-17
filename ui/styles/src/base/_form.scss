@@ -1,3 +1,5 @@
+@use "../helpers/asset-paths";
+
 #post-body {
 	border: none;
 	background: none;
@@ -104,7 +106,7 @@ textarea.pods-form-ui-field-type-paragraph {
 
 /* Date */
 .pods-date input.pods-date-field.hasDatepicker {
-	background: #fff url(#{$ImagesPath}/calendar16.png) no-repeat 5px 5px;
+	background: #fff url(#{asset-paths.$ImagesPath}/calendar16.png) no-repeat 5px 5px;
 	cursor: pointer;
 	padding-left: 25px !important;
 	padding-top: 6px !important;
@@ -323,7 +325,7 @@ p.pods-add-file {
 	border: 1px solid;
 	margin: 10px 0;
 	padding: 15px 10px 15px 50px;
-	background: #DFF2BF url(#{$ImagesPath}/green-check.png) no-repeat 10px center;
+	background: #DFF2BF url(#{asset-paths.$ImagesPath}/green-check.png) no-repeat 10px center;
 }
 
 .pods-form-ui-row-type-hidden {

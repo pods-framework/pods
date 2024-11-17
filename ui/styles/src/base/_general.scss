@@ -1,3 +1,5 @@
+@use "../helpers/asset-paths";
+
 .pods-ui-notice-front {
 	border: 1px solid;
 	margin: 10px 0;
@@ -10,7 +12,7 @@
 
 	&.pods-ui-notice-success {
 		color: #4F8A10;
-		background: #DFF2BF url(#{$ImagesPath}/green-check.png) no-repeat 10px center;
+		background: #DFF2BF url(#{asset-paths.$ImagesPath}/green-check.png) no-repeat 10px center;
 	}
 
 	p {
@@ -59,5 +61,5 @@
 	border: 1px solid;
 	margin: 10px 0;
 	padding: 15px 10px 15px 50px;
-	background: #DFF2BF url(#{$ImagesPath}/green-check.png) no-repeat 10px center;
+	background: #DFF2BF url(#{asset-paths.$ImagesPath}/green-check.png) no-repeat 10px center;
 }

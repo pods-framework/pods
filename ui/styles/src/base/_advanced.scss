@@ -1,3 +1,5 @@
+@use "../helpers/asset-paths";
+
 .dialogWithDropShadow {
 	-webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -16,11 +18,11 @@
 }
 
 .pods-parts-icon-edit {
-	background: url(#{$ImagesPath}/page_white_edit.png) left center no-repeat;
+	background: url(#{asset-paths.$ImagesPath}/page_white_edit.png) left center no-repeat;
 }
 
 .pods-parts-icon-add {
-	background: url(#{$ImagesPath}/bullet_add.png) left center no-repeat;
+	background: url(#{asset-paths.$ImagesPath}/bullet_add.png) left center no-repeat;
 }
 
 #pods-parts-left {

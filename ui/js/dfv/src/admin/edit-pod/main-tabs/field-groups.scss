@@ -1,4 +1,4 @@
-@import '../edit-pod-variables';
+@use '../edit-pod-variables';
 
 .opacity-ghost {
 	transition: all .8s ease;
@@ -44,7 +44,7 @@
 
 .pods-button-group_add-new {
 	text-align: center;
-	border: 2px dashed $color--light-grey;
+	border: 2px dashed edit-pod-variables.$color--light-grey;
 	background: none;
 	width: 100%;
 	padding: .7em 1em;
@@ -53,7 +53,7 @@
 
 .pods-button-group_add-new:focus,
 .pods-button-group_add-new:hover {
-	background-color: $color--light-grey;
+	background-color: edit-pod-variables.$color--light-grey;
 	cursor: pointer;
 }
 

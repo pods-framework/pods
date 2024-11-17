@@ -1,8 +1,8 @@
-@import '../edit-pod-variables';
+@use '../edit-pod-variables';
 
 .pods-field-group-wrapper {
 	margin-bottom: 10px;
-	border: 1px solid $color--light-grey;
+	border: 1px solid edit-pod-variables.$color--light-grey;
 	background-color: #fff;
 	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
 
@@ -11,11 +11,11 @@
 	}
 
 	> [role="button"]:focus-visible {
-		outline: 1px solid $color--wp-blue-light;
+		outline: 1px solid edit-pod-variables.$color--wp-blue-light;
 	}
 
 	.pods-field-group_handle:focus-visible span {
-		outline: 1px solid $color--wp-blue-light;
+		outline: 1px solid edit-pod-variables.$color--wp-blue-light;
 	}
 }
 
@@ -29,11 +29,11 @@
 }
 
 .pods-field-group-wrapper--errored  {
-	border-left: 5px $color--red solid;
+	border-left: 5px edit-pod-variables.$color--red solid;
 }
 
 .pods-field-group_name__error {
-	color: $color--red;
+	color: edit-pod-variables.$color--red;
 	display: inline-block;
 	padding-left: 0.5em;
 }
@@ -51,7 +51,7 @@
 }
 
 .pods-field-group_buttons {
-	color: $color--light-grey;
+	color: edit-pod-variables.$color--light-grey;
 	opacity: 0;
 
 	.pods-field-group-wrapper:hover & {
@@ -62,7 +62,7 @@
 .pods-field-group_button {
 	background: transparent;
 	border: none;
-	color: $color--wp-blue;
+	color: edit-pod-variables.$color--wp-blue;
 	cursor: pointer;
 	height: auto;
 	margin: 0.25em 0;
@@ -72,7 +72,7 @@
 
 	&:hover,
 	&:focus {
-		color: $color--wp-blue-light;
+		color: edit-pod-variables.$color--wp-blue-light;
 	}
 }
 
@@ -87,10 +87,10 @@
 }
 
 .pods-field-group_delete {
-    color: $color--red;
+    color: edit-pod-variables.$color--red;
 
     &:hover,
     &:hover:not(:disabled) {
-        color: $color--red-dark;
+        color: edit-pod-variables.$color--red-dark;
     }
 }

@@ -1,10 +1,10 @@
-@import '../admin/edit-pod/edit-pod-variables';
+@use '../admin/edit-pod/edit-pod-variables';
 
 .pods-help-tooltip__icon {
 	cursor: pointer;
 
 	&:focus {
-		outline: 1px solid $color--wp-blue;
+		outline: 1px solid edit-pod-variables.$color--wp-blue;
 		outline-offset: 1px;
 	}
 

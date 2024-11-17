@@ -1,8 +1,8 @@
-@import './edit-pod-variables';
+@use 'edit-pod-variables';
 
 #misc-publishing-actions {
 	svg.dashicon {
-		color: $color--grey;
+		color: edit-pod-variables.$color--grey;
 		vertical-align: middle;
 		margin-right: 0.25em;
 	}
@@ -11,7 +11,7 @@
 #major-publishing-actions {
 	.editor-post-trash {
 		margin-left: 0;
-		color: $color--red;
+		color: edit-pod-variables.$color--red;
 	}
 }
 

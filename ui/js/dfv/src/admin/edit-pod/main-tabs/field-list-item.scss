@@ -1,16 +1,16 @@
-@import '../edit-pod-variables';
+@use '../edit-pod-variables';
 
 .pods-field_outer-wrapper {
 	background: white;
 
 	&:nth-child(odd) {
-		background-color: $color--zebra-grey;
+		background-color: edit-pod-variables.$color--zebra-grey;
 		transition: 200ms ease background-color;
 	}
 }
 
 .pods-field_wrapper--dragging {
-	background: $color--super-light-grey;
+	background: edit-pod-variables.$color--super-light-grey;
 
 	.pods-field_wrapper .pods-field_controls-container {
 		opacity: 0;
@@ -54,7 +54,7 @@
 }
 
 .pods-field_wrapper--errored {
-	border-left: 5px $color--red solid;
+	border-left: 5px edit-pod-variables.$color--red solid;
 }
 
 .pods-field_handle {
@@ -222,7 +222,7 @@
 }
 
 .pods-field_wrapper-items {
-	border: 1px solid $color--light-grey;
+	border: 1px solid edit-pod-variables.$color--light-grey;
 	margin: 1em 0;
 
 	@media screen and (max-width: 850px) {
@@ -232,11 +232,11 @@
 }
 
 .pods-field_wrapper:nth-child(even) {
-	background-color: $color--super-light-grey;
+	background-color: edit-pod-variables.$color--super-light-grey;
 }
 
 .pods-field_controls-container {
-	color: $color--light-grey;
+	color: edit-pod-variables.$color--light-grey;
 	margin-left: -0.5em;
 	padding-top: 0.25em;
 }
@@ -244,7 +244,7 @@
 .pods-field_button {
 	background: transparent;
 	border: none;
-	color: $color--wp-blue;
+	color: edit-pod-variables.$color--wp-blue;
 	cursor: pointer;
 	font-size: 0.95em;
 	height: auto;
@@ -253,15 +253,15 @@
 
 	&:hover,
 	&:focus {
-		color: $color--wp-blue-light;
+		color: edit-pod-variables.$color--wp-blue-light;
 	}
 }
 
 .pods-field_button.pods-field_delete {
-	color: $color--red;
+	color: edit-pod-variables.$color--red;
 
 	&:hover {
-		color: $color--red-dark;
+		color: edit-pod-variables.$color--red-dark;
 	}
 
 	&::after {

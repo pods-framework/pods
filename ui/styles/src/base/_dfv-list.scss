@@ -1,3 +1,5 @@
+@use "../helpers/dashicons";
+
 ul.pods-dfv-list ul {
 	list-style: none;
 	margin: 0;
@@ -113,23 +115,23 @@ ul.pods-dfv-list li.pods-dfv-list-remove a:before {
 }
 
 ul.pods-dfv-list li.pods-dfv-list-handle span:before {
-	@include Dashicons-Sort;
+	@include dashicons.Dashicons-Sort;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-edit a:before {
-	@include Dashicons-Edit;
+	@include dashicons.Dashicons-Edit;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-link a:before {
-	@include Dashicons-External;
+	@include dashicons.Dashicons-External;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-download a:before {
-	@include Dashicons-Download;
+	@include dashicons.Dashicons-Download;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-remove a:before {
-	@include Dashicons-No;
+	@include dashicons.Dashicons-No;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-handle span,
@@ -238,7 +240,7 @@ ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
 }
 
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle span:before {
-	@include Dashicons-Move;
+	@include dashicons.Dashicons-Move;
 }
 
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon img {

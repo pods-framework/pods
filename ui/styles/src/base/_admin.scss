@@ -1,3 +1,5 @@
+@use "../helpers/asset-paths";
+
 .toplevel_page_pods #wpcontent {
 	background: #f1f1f1;
 }
@@ -26,7 +28,7 @@
 }
 
 .icon32#icon-pods {
-	background: url(#{$ImagesPath}/icon32.png) no-repeat;
+	background: url(#{asset-paths.$ImagesPath}/icon32.png) no-repeat;
 }
 
 .pods-admin .waiting {

@@ -1,4 +1,4 @@
-@import '../edit-pod-variables';
+@use '../edit-pod-variables';
 
 .components-modal__frame.pods-settings-modal {
 	height: 80vh;
@@ -45,7 +45,7 @@
     width: 100%;
 
 	@media screen and (min-width: 851px) {
-		border-top: 1px solid $color--super-light-grey;
+		border-top: 1px solid edit-pod-variables.$color--super-light-grey;
 		padding-top: 12px;
 		margin-left: -24px;
 		margin-right: -24px;
@@ -70,7 +70,7 @@
 	min-width: 200px;
 
 	@media screen and (min-width: 851px) {
-        border-right: 1px solid $color--super-light-grey;
+        border-right: 1px solid edit-pod-variables.$color--super-light-grey;
 		flex-flow: column nowrap;
         margin-bottom: 0;
         margin-right: 2em;
@@ -98,17 +98,17 @@
 	}
 
 	&:focus {
-		outline: 1px solid $color--wp-blue;
+		outline: 1px solid edit-pod-variables.$color--wp-blue;
 		outline-offset: -1px;
 	}
 
     &.pods-settings-modal__tab-item--active {
-        color: $color--wp-blue;
-        border-bottom: 5px solid $color--wp-blue;
+        color: edit-pod-variables.$color--wp-blue;
+        border-bottom: 5px solid edit-pod-variables.$color--wp-blue;
 
 		@media screen and (min-width: 851px) {
 			border-bottom: none;
-			border-right: 5px solid $color--wp-blue;
+			border-right: 5px solid edit-pod-variables.$color--wp-blue;
 		}
     }
 }
@@ -129,8 +129,8 @@
 }
 
 .pod-field-group_settings-error-message {
-	border: 1px solid $color--light-grey;
-	border-left: 4px solid $color--red;
+	border: 1px solid edit-pod-variables.$color--light-grey;
+	border-left: 4px solid edit-pod-variables.$color--red;
     margin: -12px 0 12px;
 	padding: 12px;
 	position: relative;
@@ -166,7 +166,7 @@
 	.pods-settings-modal__tabs {
 		@media screen and (min-width: 851px) {
 			border-right: 0;
-			border-left: 1px solid $color--super-light-grey;
+			border-left: 1px solid edit-pod-variables.$color--super-light-grey;
 			margin-right: 0;
 			margin-left: 2em;
 		}

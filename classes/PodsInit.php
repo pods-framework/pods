@@ -260,10 +260,6 @@ class PodsInit {
 			define( 'PODS_DISABLE_EVAL', true );
 		}
 
-		if ( ! defined( 'PODS_TEXTDOMAIN' ) || PODS_TEXTDOMAIN ) {
-			load_plugin_textdomain( 'pods' );
-		}
-
 		if ( ! defined( 'PODS_STATS_TRACKING' ) || PODS_STATS_TRACKING ) {
 			$this->stats_tracking( PODS_FILE, 'pods' );
 		}
@@ -565,6 +561,10 @@ class PodsInit {
 
 		if ( method_exists( $avatar, 'get_avatar_data' ) ) {
 			add_filter( 'get_avatar_data', array( $avatar, 'get_avatar_data' ), 10, 2 );
+		}
+
+		if ( defined( 'PODS_TEXTDOMAIN' ) && PODS_TEXTDOMAIN ) {
+			load_plugin_textdomain( 'pods' );
 		}
 	}
 

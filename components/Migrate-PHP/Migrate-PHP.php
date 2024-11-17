@@ -38,22 +38,17 @@ class Pods_Migrate_PHP extends PodsComponent {
 
 	/**
 	 * Enqueue styles
-	 *
-	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 		wp_enqueue_style( 'pods-wizard' );
 	}
 
 	/**
-	 * Show the Admin
+	 * Get the list of objects that need migration.
 	 *
-	 * @param $options
-	 * @param $component
+	 * @return array{pod_templates:Template[],pod_pages:Page[]} The list of objects that need migration.
 	 */
-	public function admin( $options, $component ) {
-		$method = 'migrate';
-
+	public function get_objects_that_need_migration(): array {
 		$pod_templates = [];
 		$pod_pages     = [];
 
@@ -91,6 +86,32 @@ class Pods_Migrate_PHP extends PodsComponent {
 			);
 		}
 
+		// Rekey the objects by ID.
+		$pod_templates = array_combine( array_map( static function( $object ) {
+			return $object->get_id();
+		}, $pod_templates ), $pod_templates );
+
+		$pod_pages = array_combine( array_map( static function( $object ) {
+			return $object->get_id();
+		}, $pod_pages ), $pod_pages );
+
+		return compact( 'pod_templates', 'pod_pages' );
+	}
+
+	/**
+	 * Show the Admin
+	 *
+	 * @param $options
+	 * @param $component
+	 */
+	public function admin( $options, $component ) {
+		$method = 'migrate';
+
+		[
+			'pod_templates' => $pod_templates,
+			'pod_pages'     => $pod_pages,
+		] = $this->get_objects_that_need_migration();
+
 		// ajax_migrate
 		pods_view( __DIR__ . '/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
 	}
@@ -103,68 +124,93 @@ class Pods_Migrate_PHP extends PodsComponent {
 	public function ajax_migrate( $params ) {
 		WP_Filesystem();
 
+		[
+			'pod_templates' => $pod_templates_available_to_migrate,
+			'pod_pages'     => $pod_pages_available_to_migrate,
+		] = $this->get_objects_that_need_migration();
+
+		$objects_can_be_migrated = ! empty( $pod_templates_available_to_migrate ) || ! empty( $pod_pages_available_to_migrate );
+
 		$cleanup = 1 === (int) pods_v( 'cleanup', $params, 0 );
 
 		$pod_templates = [];
 		$pod_pages     = [];
 
-		if ( isset( $params->templates ) && ! empty( $params->templates ) ) {
-			foreach ( $params->templates as $object_id => $checked ) {
-				if ( true === (boolean) $checked ) {
-					$pod_templates[] = $object_id;
-				}
+		$pod_templates_selected = (array) pods_v( 'templates', $params, [] );
+		$pod_templates_selected = array_filter( $pod_templates_selected );
+
+		$pod_pages_selected = (array) pods_v( 'pages', $params, [] );
+		$pod_pages_selected = array_filter( $pod_pages_selected );
+
+		$has_objects_to_migrate = ! empty( $pod_templates_selected ) || ! empty( $pod_pages_selected );
+
+		foreach ( $pod_templates_selected as $object_id => $checked ) {
+			if ( true === (boolean) $checked && isset( $pod_templates_available_to_migrate[ (int) $object_id ] ) ) {
+				$pod_templates[] = $object_id;
 			}
 		}
 
-		if ( isset( $params->pages ) && ! empty( $params->pages ) ) {
-			foreach ( $params->pages as $object_id => $checked ) {
-				if ( true === (boolean) $checked ) {
-					$pod_pages[] = $object_id;
-				}
+		foreach ( $pod_pages_selected as $object_id => $checked ) {
+			if ( true === (boolean) $checked && isset( $pod_pages_available_to_migrate[ (int) $object_id ] ) ) {
+				$pod_pages[] = $object_id;
 			}
 		}
 
 		$pod_templates_file_paths = [];
 		$pod_pages_file_paths     = [];
 
+		$migrated = false;
+
 		foreach ( $pod_templates as $object_id ) {
+			$migrated = true;
+
 			$pod_templates_file_paths[] = $this->migrate_template( $object_id, $cleanup );
 		}
 
 		foreach ( $pod_pages as $object_id ) {
+			$migrated = true;
+
 			$pod_pages_file_paths[] = $this->migrate_page( $object_id, $cleanup );
 		}
 
 		$content = '<div class="pods-wizard-content">' . "\n";
 
-		$content .= '<p>' . esc_html__( 'Migration Complete! The following paths were saved:', 'pods' ) . '</p>' . "\n";
-
-		if ( ! empty( $pod_templates_file_paths ) ) {
-			$content .= '<h4>' . esc_html__( 'Pod Templates saved', 'pods' ) . '</h4>' . "\n";
-			$content .= '<ul class="normal">' . "\n";
-
-			foreach ( $pod_templates_file_paths as $file_path ) {
-				$content .= '<li>' . esc_html( $file_path ) . '</li>' . "\n";
-			}
-
-			$content .= '</ul>' . "\n";
-		}
-
-		if ( ! empty( $pod_pages_file_paths ) ) {
-			$content .= '<h4>' . esc_html__( 'Pod Pages saved', 'pods' ) . '</h4>' . "\n";
-			$content .= '<ul class="normal">' . "\n";
-
-			foreach ( $pod_pages_file_paths as $file_path ) {
-				$content .= '<li>' . esc_html( $file_path ) . '</li>' . "\n";
-			}
-
-			$content .= '</ul>' . "\n";
-		}
-
-		if ( $cleanup ) {
-			$content .= '<p>' . esc_html__( 'The Pod Page(s) and/or Pod Template(s) were cleaned up and will now load directly from the theme files.', 'pods' ) . '</p>' . "\n";
+		if ( ! $has_objects_to_migrate ) {
+			$content .= '<p>' . esc_html__( 'No Pod Templates or Pod Pages were selected.', 'pods' ) . '</p>' . "\n";
+		} elseif ( ! $objects_can_be_migrated ) {
+			$content .= '<p>' . esc_html__( 'The selected Pod Templates or Pod Pages are not available for migration. They no longer contain PHP.', 'pods' ) . '</p>' . "\n";
+		} elseif ( ! $migrated ) {
+			$content .= '<p>' . esc_html__( 'The selected Pod Templates or Pod Pages were not successfully migrated.', 'pods' ) . '</p>' . "\n";
 		} else {
-			$content .= '<p>' . esc_html__( 'The Pod Page(s) and/or Pod Template(s) were not modified. You will need to empty the content on them before they will load from the theme files.', 'pods' ) . '</p>' . "\n";
+			$content .= '<p>' . esc_html__( 'Migration Complete! The following paths were saved:', 'pods' ) . '</p>' . "\n";
+
+			if ( ! empty( $pod_templates_file_paths ) ) {
+				$content .= '<h4>' . esc_html__( 'Pod Templates saved', 'pods' ) . '</h4>' . "\n";
+				$content .= '<ul class="normal">' . "\n";
+
+				foreach ( $pod_templates_file_paths as $file_path ) {
+					$content .= '<li>' . esc_html( $file_path ) . '</li>' . "\n";
+				}
+
+				$content .= '</ul>' . "\n";
+			}
+
+			if ( ! empty( $pod_pages_file_paths ) ) {
+				$content .= '<h4>' . esc_html__( 'Pod Pages saved', 'pods' ) . '</h4>' . "\n";
+				$content .= '<ul class="normal">' . "\n";
+
+				foreach ( $pod_pages_file_paths as $file_path ) {
+					$content .= '<li>' . esc_html( $file_path ) . '</li>' . "\n";
+				}
+
+				$content .= '</ul>' . "\n";
+			}
+
+			if ( $cleanup ) {
+				$content .= '<p>' . esc_html__( 'The Pod Page(s) and/or Pod Template(s) were cleaned up and will now load directly from the theme files.', 'pods' ) . '</p>' . "\n";
+			} else {
+				$content .= '<p>' . esc_html__( 'The Pod Page(s) and/or Pod Template(s) were not modified. You will need to empty the content on them before they will load from the theme files.', 'pods' ) . '</p>' . "\n";
+			}
 		}
 
 		return $content;
@@ -259,6 +305,7 @@ PHPTEMPLATE;
 		if ( $cleanup ) {
 			$api->save_template( [
 				'id'   => $object->get_id(),
+				'name'   => $object->get_label(),
 				'code' => '',
 			] );
 		}

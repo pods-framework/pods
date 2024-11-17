@@ -60,7 +60,8 @@
 					</div>
 					<div id="pods-wizard-panel-2" class="pods-wizard-panel pods-wizard-option-content">
 						<div class="pods-wizard-content">
-							<p><?php esc_html_e( 'Choose below which Pod Page(s) and/or Pod Template(s) you want to migrate into theme files', 'pods' ); ?></p>
+							<p><?php esc_html_e( 'The objects listed have been determined to currently contain PHP that needs to be migrated. Choose below which Pod Page(s) and/or Pod Template(s) you want to migrate into theme files', 'pods' ); ?></p>
+							<p><?php esc_html_e( 'If you have chosen to clear the content in this migration, when you refresh this migration screen the migrated objects will no longer be shown.', 'pods' ); ?></p>
 
 							<p>
 								<a href="#toggle" class="button pods-wizard-toggle-all"

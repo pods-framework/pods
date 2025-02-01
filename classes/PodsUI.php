@@ -3000,7 +3000,7 @@ class PodsUI {
 
 							echo PodsForm::submit_button( $this->header['search'], 'button', false, false, array( 'id' => $this->num_prefix . 'search' . $this->num . '-submit' ) );
 
-							if ( 0 < strlen( $this->search ) ) {
+							if ( NULL === $this->search ) {
 								$clear_filters = array(
 									$this->num_prefix . 'search' . $this->num => false,
 								);

@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.2.8.2 - February 7th, 2025 =
+
+* Security: Do not allow using custom SQL clauses for Relationship fields when SQL clauses are disabled in the Pods security settings. Props to the CleanTalk / Dmitrii Ignatyev for responsibly reporting this. (@sc0ttkclark) 
+
 = 3.2.8.1 - November 22nd, 2024 =
 
 * Security: Resolve stored XSS issue with the File Upload field Add Button Text option. Props to the CleanTalk / Dmitrii Ignatyev for responsibly reporting this (their second report, they are doing good work!). (@sc0ttkclark)

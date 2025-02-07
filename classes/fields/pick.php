@@ -2696,13 +2696,22 @@ class PodsField_Pick extends PodsField {
 				$params = array(
 					'select'     => "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`",
 					'table'      => $search_data->table,
-					'where'      => pods_v( static::$type . '_where', $options, (array) $table_info['where_default'], true ),
+					'where'      => pods_v( static::$type . '_where', $options, null, true ),
 					'orderby'    => pods_v( static::$type . '_orderby', $options, null, true ),
 					'having'     => pods_v( static::$type . '_having', $options, null, true ),
 					'groupby'    => pods_v( static::$type . '_groupby', $options, null, true ),
 					'pagination' => false,
 					'search'     => false,
 				);
+
+				if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+					$params['where'] = $params['where'] ? '0=1 /* Dynamic SQL clauses disabled in Pods */' : (array) $table_info['where_default'];
+					$params['orderby'] = null;
+					$params['having'] = null;
+					$params['groupby'] = null;
+				} elseif ( null === $params['where'] ) {
+					$params['where'] = (array) $table_info['where_default'];
+				}
 
 				if ( in_array( $options[ static::$type . '_object' ], array( 'site', 'network' ), true ) ) {
 					$params['select'] .= ', `t`.`path`';
@@ -2882,6 +2891,10 @@ class PodsField_Pick extends PodsField {
 						$orderby[] = "( {$display_field} LIKE '%{$query_sanitized_like}%' ) DESC";
 
 						$pick_orderby = pods_v( static::$type . '_orderby', $options, null, true );
+
+						if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+							$pick_orderby = null;
+						}
 
 						if ( is_string( $pick_orderby ) && 0 < strlen( $pick_orderby ) ) {
 							$orderby[] = $pick_orderby;

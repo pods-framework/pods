@@ -41,6 +41,11 @@ class PodsWidgetList extends WP_Widget {
 			'cache_mode' => trim( (string) pods_v( 'cache_mode', $instance, 'none', true ) ),
 		);
 
+		if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+			$args['orderby'] = '';
+			$args['where'] = $args['where'] ? '0=1 /* Dynamic SQL clauses disabled in Pods */' : '';
+		}
+
 		$content = trim( (string) pods_v( 'template_custom', $instance, '' ) );
 
 		if ( 0 < strlen( $args['name'] ) && ( 0 < strlen( $args['template'] ) || 0 < strlen( $content ) ) ) {

@@ -72,17 +72,21 @@ const useBlockEditor = () => {
 			// @todo Use hook instead of savePost override once stable.
 			//wp.hooks.addFilter( 'editor.__unstablePreSavePost', 'editor', filter );
 
-			if (messages.length) {
-				window.PodsBlockEditor.messages[name] = messages;
-				window.PodsBlockEditor.callbacks[name] = callback;
+			if (typeof window.PodsBlockEditor !== 'undefined') {
+				if (messages.length) {
+					window.PodsBlockEditor.messages[name] = messages;
+					window.PodsBlockEditor.callbacks[name] = callback;
+				}
 			}
 		},
 		unlockPostSaving: (name) => {
 			// @todo Use hook instead of savePost override once stable.
 			//wp.hooks.removeFilter( 'editor.__unstablePreSavePost', 'editor', filter );
 
-			delete window.PodsBlockEditor.messages[name];
-			delete window.PodsBlockEditor.callbacks[name];
+			if (typeof window.PodsBlockEditor !== 'undefined') {
+				delete window.PodsBlockEditor.messages[name];
+				delete window.PodsBlockEditor.callbacks[name];
+			}
 
 			editorDispatch?.unlockPostSaving(name);
 		},

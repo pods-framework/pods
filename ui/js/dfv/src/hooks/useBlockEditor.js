@@ -1,4 +1,9 @@
 
+/**
+ * WordPress dependencies
+ */
+import { __, sprintf } from '@wordpress/i18n';
+
 const useBlockEditor = () => {
 	const editorSelect = wp.data?.select( 'core/editor' );
 	const editorDispatch = wp.data?.dispatch( 'core/editor' );
@@ -30,19 +35,28 @@ const useBlockEditor = () => {
 				if ( options.isAutosave || options.isPreview ) {
 					return resolve( 'Validation ignored (autosave).' );
 				}
+
+				let validationFieldErrorList = [];
 				for ( const fieldName in pbe.messages ) {
-					if ( pbe.messages.hasOwnProperty( fieldName ) ) {
-						pbe.messages[ fieldName ].forEach( function( message ) {
-							notices.createErrorNotice( 'Pods: ' + message, { id: fieldName, isDismissible: true } );
-						} );
-					}
 					editorDispatch?.lockPostSaving( fieldName );
+
+					let fieldRealName = fieldName.replace( 'pods-field-', '' );
+					let fieldData = window.PodsDFVAPI.getField(fieldRealName);
+
+					validationFieldErrorList.push(fieldData?.fieldConfig?.label ?? realFieldName);
 				}
+
+				notices.createErrorNotice(
+					sprintf(__('Please complete these fields before saving: %s', 'pods'), validationFieldErrorList.join(', ')),
+					{id: 'pods-validation', isDismissible: true},
+				);
+
 				for ( const fieldCallback in pbe.callbacks ) {
 					if ( pbe.callbacks.hasOwnProperty( fieldCallback ) && 'function' === typeof pbe.callbacks[ fieldCallback ] ) {
 						pbe.callbacks[ fieldCallback ]();
 					}
 				}
+
 				return reject( 'Pods validation failed' );
 			} );
 		};

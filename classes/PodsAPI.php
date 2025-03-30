@@ -6552,10 +6552,10 @@ class PodsAPI {
 
 			if ( 'post_type' === $pod['type'] ) {
 				// Max length for post types are 20 characters, so let's limit it to that minus the strlen of $try.
-				$check_name_limited = substr( $$check_name_limited, 0, 20 - strlen( (string) $try ) );
+				$check_name_limited = substr( $check_name_limited, 0, 20 - strlen( (string) $try ) );
 			} elseif ( 'taxonomy' === $pod['type'] ) {
 				// Max length for taxonomies are 32 characters, so let's limit it to that minus the strlen of $try.
-				$check_name_limited = substr( $$check_name_limited, 0, 32 - strlen( (string) $try ) );
+				$check_name_limited = substr( $check_name_limited, 0, 32 - strlen( (string) $try ) );
 			}
 
 			$check_name = $check_name_limited . $try;

@@ -1,16 +1,15 @@
-
 /**
  * WordPress dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import {__, sprintf} from '@wordpress/i18n';
 
 const useBlockEditor = () => {
-	const editorSelect = wp.data?.select( 'core/editor' );
-	const editorDispatch = wp.data?.dispatch( 'core/editor' );
-	const notices = wp.data?.dispatch( 'core/notices' );
+	const editorSelect = wp.data?.select('core/editor');
+	const editorDispatch = wp.data?.dispatch('core/editor');
+	const notices = wp.data?.dispatch('core/notices');
 
 	// @todo Use hook instead of savePost override once stable.
-	if ( ! window.PodsBlockEditor && editorDispatch && editorDispatch.hasOwnProperty( 'savePost' ) ) {
+	if (!window.PodsBlockEditor && editorDispatch && editorDispatch.hasOwnProperty('savePost')) {
 		// First init.
 		window.PodsBlockEditor = {
 			// Store original.
@@ -20,27 +19,27 @@ const useBlockEditor = () => {
 		};
 
 		// Override the current editor savePost function.
-		editorDispatch.savePost = async ( options ) => {
+		editorDispatch.savePost = async (options) => {
 			options = options || {};
 
 			const pbe = window.PodsBlockEditor;
 
-			if ( ! Object.values( pbe.messages ).length ) {
+			if (!Object.values(pbe.messages).length) {
 				// eslint-disable-next-line no-undef
-				return pbe.savePost.apply( this, arguments );
+				return pbe.savePost.apply(this, arguments);
 			}
 
-			return new Promise( function( resolve, reject ) {
+			return new Promise(function (resolve, reject) {
 				// Bail early if is autosave or preview.
-				if ( options.isAutosave || options.isPreview ) {
-					return resolve( 'Validation ignored (autosave).' );
+				if (options.isAutosave || options.isPreview) {
+					return resolve('Validation ignored (autosave).');
 				}
 
 				let validationFieldErrorList = [];
-				for ( const fieldName in pbe.messages ) {
-					editorDispatch?.lockPostSaving( fieldName );
+				for (const fieldName in pbe.messages) {
+					editorDispatch?.lockPostSaving(fieldName);
 
-					let fieldRealName = fieldName.replace( 'pods-field-', '' );
+					let fieldRealName = fieldName.replace('pods-field-', '');
 					let fieldData = window.PodsDFVAPI.getField(fieldRealName);
 
 					validationFieldErrorList.push(fieldData?.fieldConfig?.label ?? realFieldName);
@@ -51,14 +50,14 @@ const useBlockEditor = () => {
 					{id: 'pods-validation', isDismissible: true},
 				);
 
-				for ( const fieldCallback in pbe.callbacks ) {
-					if ( pbe.callbacks.hasOwnProperty( fieldCallback ) && 'function' === typeof pbe.callbacks[ fieldCallback ] ) {
-						pbe.callbacks[ fieldCallback ]();
+				for (const fieldCallback in pbe.callbacks) {
+					if (pbe.callbacks.hasOwnProperty(fieldCallback) && 'function' === typeof pbe.callbacks[fieldCallback]) {
+						pbe.callbacks[fieldCallback]();
 					}
 				}
 
-				return reject( 'Pods validation failed' );
-			} );
+				return reject('Pods validation failed');
+			});
 		};
 	}
 
@@ -67,23 +66,23 @@ const useBlockEditor = () => {
 		select: editorSelect,
 		dispatch: editorDispatch,
 		notices,
-		lockPostSaving: ( name, messages, callback ) => {
+		lockPostSaving: (name, messages, callback) => {
 			// @todo Use hook instead of savePost override once stable.
 			//wp.hooks.addFilter( 'editor.__unstablePreSavePost', 'editor', filter );
 
-			const pbe = window.PodsBlockEditor;
-			if ( messages.length ) {
-				pbe.messages[ name ] = messages;
-				pbe.callbacks[ name ] = callback;
+			if (messages.length) {
+				window.PodsBlockEditor.messages[name] = messages;
+				window.PodsBlockEditor.callbacks[name] = callback;
 			}
 		},
-		unlockPostSaving: ( name ) => {
+		unlockPostSaving: (name) => {
 			// @todo Use hook instead of savePost override once stable.
 			//wp.hooks.removeFilter( 'editor.__unstablePreSavePost', 'editor', filter );
 
-			delete window.PodsBlockEditor.messages[ name ];
-			delete window.PodsBlockEditor.callbacks[ name ];
-			editorDispatch?.unlockPostSaving( name );
+			delete window.PodsBlockEditor.messages[name];
+			delete window.PodsBlockEditor.callbacks[name];
+
+			editorDispatch?.unlockPostSaving(name);
 		},
 	};
 };

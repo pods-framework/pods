@@ -629,7 +629,7 @@ class Pods_Templates extends PodsComponent {
 
 		$template_file = null;
 
-		if ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
+		if ( $template_name && $template_name === trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', (string) $template_name ), ' /-' ) ) {
 			$default_templates   = self::get_templates_for_pod_template( $template, $obj );
 			$template_files_info = self::get_template_files_info( $default_templates );
 
@@ -739,7 +739,12 @@ class Pods_Templates extends PodsComponent {
 	 */
 	public static function get_templates_for_pod_template( $template, $obj = null ): array {
 		$template_name = $template instanceof Template ? $template->get_name() : ( $template['slug'] ?? $template['name'] );
-		$template_name = trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' );
+
+		if ( empty( $template_name ) ) {
+			return [];
+		}
+
+		$template_name = trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', (string) $template_name ), ' /-' );
 
 		$default_templates = array(
 			'pods/templates/' . $template_name . '.php',

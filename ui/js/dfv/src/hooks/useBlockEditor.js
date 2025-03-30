@@ -25,6 +25,8 @@ const useBlockEditor = () => {
 			const pbe = window.PodsBlockEditor;
 
 			if (!Object.values(pbe.messages).length) {
+				notices.removeNotice('pods-validation');
+
 				// eslint-disable-next-line no-undef
 				return pbe.savePost.apply(this, arguments);
 			}

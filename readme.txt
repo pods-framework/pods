@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.2
 Stable tag: 3.2.9-a-1
 License: GPLv2 or later
@@ -181,6 +181,10 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.2.9 - TBD, 2025 =
+
+* 
 
 = 3.2.8.2 - February 7th, 2025 =
 

@@ -1978,6 +1978,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		'field_index' => $field_index,
 		'separator'   => null,
 		'serial'      => true,
+		'force'       => false,
 	);
 
 	if ( is_array( $field ) ) {
@@ -1992,14 +1993,13 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 	$simple = false;
 
-	if ( ! empty( $params->fields ) && is_array( $params->fields ) && isset( $params->fields[ $params->field ] ) ) {
+	if ( ! $params->force && ! empty( $params->fields ) && is_array( $params->fields ) && isset( $params->fields[ $params->field ] ) ) {
 		$params->field = $params->fields[ $params->field ];
 
 		if ( 1 === (int) pods_v( 'repeatable', $params->field, 0 ) ) {
 			$format = pods_v( 'repeatable_format', $params->field, 'default', true );
 
 			if ( 'default' !== $format ) {
-
 				switch ( $format ) {
 					case 'ul':
 					case 'ol':

@@ -76,7 +76,11 @@ class Pods_Templates extends PodsComponent {
 	 * {@inheritdoc}
 	 */
 	public function init() {
-		$this->register_config();
+		if ( ! did_action( 'init' ) ) {
+			add_action( 'init', [ $this, 'register_config' ] );
+		} else {
+			$this->register_config();
+		}
 
 		if ( is_admin() ) {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );

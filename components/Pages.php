@@ -78,7 +78,11 @@ class Pods_Pages extends PodsComponent {
 	 * {@inheritdoc}
 	 */
 	public function init() {
-		$this->register_config();
+		if ( ! did_action( 'init' ) ) {
+			add_action( 'init', [ $this, 'register_config' ] );
+		} else {
+			$this->register_config();
+		}
 
 		add_shortcode( 'pods-content', array( $this, 'shortcode' ) );
 

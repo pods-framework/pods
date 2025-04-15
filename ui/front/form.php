@@ -165,8 +165,8 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		};
 
 		$template        = 'ui/forms/list-rows.php';
-		$template_before = '';
-		$template_after  = '';
+		$template_before = '<div class="pods-form-fieldset">';
+		$template_after  = '</div>';
 
 		if ( 'div' === $output_type ) {
 			$template = 'ui/forms/div-rows.php';
@@ -174,7 +174,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 			$template = 'ui/forms/p-rows.php';
 		} elseif ( 'table' === $output_type ) {
 			$template        = 'ui/forms/table-rows.php';
-			$template_before = '<table>';
+			$template_before = '<table class="pods-form-fieldset">';
 			$template_after  = '</table>';
 		}
 

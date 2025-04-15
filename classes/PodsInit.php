@@ -1,8 +1,7 @@
 <?php
 
 use Pods\Config_Handler;
-use Pods\Static_Cache;
-use Pods\Whatsit\Pod;
+use Pods\Whatsit\Store;
 use Pods\Wisdom_Tracker;
 
 /**
@@ -924,7 +923,7 @@ class PodsInit {
 			'delete_with_user' => false,
 		);
 
-		$args = self::object_label_fix( $args, 'post_type' );
+		$args = self::object_label_fix( $args, 'post_type', '_pods_pod' );
 
 		register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
@@ -943,7 +942,7 @@ class PodsInit {
 			'delete_with_user' => false,
 		);
 
-		$args = self::object_label_fix( $args, 'post_type' );
+		$args = self::object_label_fix( $args, 'post_type', '_pods_group' );
 
 		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
 
@@ -962,7 +961,7 @@ class PodsInit {
 			'delete_with_user' => false,
 		);
 
-		$args = self::object_label_fix( $args, 'post_type' );
+		$args = self::object_label_fix( $args, 'post_type', '_pods_field' );
 
 		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
 
@@ -1991,20 +1990,31 @@ class PodsInit {
 		return $messages;
 	}
 
-	/**
-	 * @param        $args
-	 * @param string $type
-	 *
-	 * @return array
-	 */
-	public static function object_label_fix( $args, $type = 'post_type' ) {
+	public static function object_label_fix( array $args, string $type, string $name ): array {
 
-		if ( empty( $args ) || ! is_array( $args ) ) {
-			$args = array();
+		if ( empty( $args ) ) {
+			$args = [];
 		}
 
 		if ( ! isset( $args['labels'] ) || ! is_array( $args['labels'] ) ) {
-			$args['labels'] = array();
+			$args['labels'] = [];
+		}
+
+		$is_placeholder_label = Store::PLACEHOLDER === pods_v( 'label', $args );
+		$is_placeholder_description = Store::PLACEHOLDER === pods_v( 'description', $args );
+
+		if ( $is_placeholder_label || $is_placeholder_description ) {
+			$default_object_labels = Store::get_default_object_labels();
+
+			if ( isset( $default_object_labels[ $name ] ) ) {
+				if ( $is_placeholder_label ) {
+					$args['label'] = $default_object_labels[ $name ]['label'] ?? null;
+				}
+
+				if ( $is_placeholder_description ) {
+					$args['description'] = $default_object_labels[ $name ]['description'] ?? null;
+				}
+			}
 		}
 
 		$label          = pods_v( 'name', $args['labels'], pods_v( 'label', $args, __( 'Items', 'pods' ), true ), true );
@@ -2467,6 +2477,12 @@ class PodsInit {
 				$this->admin_init();
 			}
 		}
+
+		/*if ( ! did_action( 'plugins_loaded' ) ) {
+			add_action( 'plugins_loaded', $this->load_plugin_textdomain() );
+		} else {
+			$this->load_plugin_textdomain();
+		}*/
 
 		if ( ! $is_admin ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ], 15 );

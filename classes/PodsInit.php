@@ -216,7 +216,7 @@ class PodsInit {
 			);
 
 			if ( ! empty( $loader['exclude_prefix'] ) ) {
-				$class = substr( $class, strlen( $loader['prefix'] ) );
+				$class = substr( $class, strlen( (string) $loader['prefix'] ) );
 			}
 
 			if ( ! empty( $loader['filter'] ) ) {
@@ -383,7 +383,7 @@ class PodsInit {
 			];
 
 			foreach ( $tlds_to_check as $tld ) {
-				$minus_tld = strlen( $host ) - strlen( $tld );
+				$minus_tld = strlen( (string) $host ) - strlen( (string) $tld );
 
 				if ( $minus_tld === strpos( $host, $tld ) ) {
 					return true;

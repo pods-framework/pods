@@ -1594,10 +1594,10 @@ function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
  */
 function pods_mb_strlen( $string ) {
 	if ( function_exists( 'mb_strlen' ) ) {
-		return mb_strlen( $string );
+		return mb_strlen( (string) $string );
 	}
 
-	return strlen( $string );
+	return strlen( (string) $string );
 }
 
 /**

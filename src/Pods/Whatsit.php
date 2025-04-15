@@ -813,11 +813,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$args['object_type'],
 		];
 
-		if ( isset( $args['parent'] ) && 0 < strlen( $args['parent'] ) ) {
+		if ( isset( $args['parent'] ) && 0 < strlen( (string) $args['parent'] ) ) {
 			$parts[] = $args['parent'];
 		}
 
-		if ( isset( $args['name'] ) && 0 < strlen( $args['name'] ) ) {
+		if ( isset( $args['name'] ) && 0 < strlen( (string) $args['name'] ) ) {
 			$parts[] = $args['name'];
 		}
 

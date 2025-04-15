@@ -127,7 +127,7 @@ class PodsField_Website extends PodsField {
 		// Ensure proper format
 		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-		if ( 1 === (int) pods_v( static::$type . '_clickable', $options ) && 0 < strlen( $value ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_clickable', $options ) && 0 < strlen( (string) $value ) ) {
 			$link = '<a href="%s"%s>%s</a>';
 
 			$atts = '';
@@ -219,7 +219,7 @@ class PodsField_Website extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && '' === $check ) {
+			if ( 0 < strlen( (string) $value ) && '' === $check ) {
 				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {

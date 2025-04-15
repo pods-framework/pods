@@ -353,7 +353,7 @@ class PodsView {
 	 *
 	 * @since 2.6.2
 	 */
-	public static function get_key( $key, $group_key = '' ) {
+	public static function get_key( string $key, string $group_key = '' ): string {
 
 		// Add some salt
 		$key .= '-' . sanitize_key( PODS_VERSION );

@@ -939,7 +939,7 @@ class PodsField_DateTime extends PodsField {
 		$new_format = '';
 		$escaping   = false;
 
-		$source_format_length = strlen( $source_format );
+		$source_format_length = strlen( (string) $source_format );
 
 		for ( $i = 0; $i < $source_format_length; $i ++ ) {
 			$char = $source_format[ $i ];

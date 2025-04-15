@@ -165,7 +165,7 @@ class PodsField_Phone extends PodsField {
 
 		if ( is_array( $check ) ) {
 			$errors = $check;
-		} elseif ( '' === $check && 0 < strlen( $value ) ) {
+		} elseif ( '' === $check && 0 < strlen( (string) $value ) ) {
 			if ( $this->is_required( $options ) ) {
 				$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 			} else {
@@ -251,14 +251,14 @@ class PodsField_Phone extends PodsField {
 			}
 
 			// Add extension
-			if ( 1 === (int) pods_v( static::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) ) {
+			if ( 1 === (int) pods_v( static::$type . '_enable_phone_extension', $options ) && 0 < strlen( (string) $extension ) ) {
 				$value .= ' x' . $extension;
 			}
 		}//end if
 
 		$length = (int) pods_v( static::$type . '_max_length', $options, 25 );
 
-		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+		if ( 0 < $length && $length < pods_mb_strlen( (string) $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );
 		}
 

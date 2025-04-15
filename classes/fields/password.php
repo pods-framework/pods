@@ -124,7 +124,7 @@ class PodsField_Password extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && '' === $check ) {
+			if ( 0 < strlen( (string) $value ) && '' === $check ) {
 				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}

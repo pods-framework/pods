@@ -1630,7 +1630,7 @@ class PodsInit {
 			$ct_post_types = $options['post_types'];
 			$options       = $options['options'];
 
-			$options = self::object_label_fix( $options, 'taxonomy' );
+			$options = self::object_label_fix( $options, 'taxonomy', $taxonomy );
 
 			// Max length for taxonomies are 32 characters
 			$taxonomy = substr( $taxonomy, 0, 32 );
@@ -1687,7 +1687,7 @@ class PodsInit {
 				continue;
 			}
 
-			$options = self::object_label_fix( $options, 'post_type' );
+			$options = self::object_label_fix( $options, 'post_type', $post_type );
 
 			// Max length for post types are 20 characters
 			$post_type = substr( $post_type, 0, 20 );
@@ -1941,7 +1941,7 @@ class PodsInit {
 				continue;
 			}
 
-			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][ $post_type['name'] ], 'post_type' );
+			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][ $post_type['name'] ], 'post_type', $post_type['name'] );
 			$labels = $labels['labels'];
 
 			$revision = (int) pods_v( 'revision' );
@@ -1990,7 +1990,7 @@ class PodsInit {
 		return $messages;
 	}
 
-	public static function object_label_fix( array $args, string $type, string $name ): array {
+	public static function object_label_fix( array $args, string $type, ?string $name = null ): array {
 
 		if ( empty( $args ) ) {
 			$args = [];
@@ -2006,7 +2006,7 @@ class PodsInit {
 		if ( $is_placeholder_label || $is_placeholder_description ) {
 			$default_object_labels = Store::get_default_object_labels();
 
-			if ( isset( $default_object_labels[ $name ] ) ) {
+			if ( $name && isset( $default_object_labels[ $name ] ) ) {
 				if ( $is_placeholder_label ) {
 					$args['label'] = $default_object_labels[ $name ]['label'] ?? null;
 				}

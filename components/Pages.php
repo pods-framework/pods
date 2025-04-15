@@ -136,7 +136,7 @@ class Pods_Pages extends PodsComponent {
 			$args['capability_type'] = $this->capability_type;
 		}
 
-		$args = PodsInit::object_label_fix( $args, 'post_type' );
+		$args = PodsInit::object_label_fix( $args, 'post_type', $this->object_type );
 
 		register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
 

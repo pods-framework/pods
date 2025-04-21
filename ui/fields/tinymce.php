@@ -25,5 +25,5 @@ $attributes       = PodsForm::merge_attributes( $attributes, $name, $form_field_
 $class_attributes = array( 'class' => $attributes['class'] );
 ?>
 <div<?php PodsForm::attributes( $class_attributes, $name, $form_field_type, $options ); ?>>
-	<?php wp_editor( $value, $attributes['id'], $settings ); ?>
+	<?php wp_editor( (string) $value, $attributes['id'], $settings ); ?>
 </div>

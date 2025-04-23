@@ -14,10 +14,17 @@ jobs:
       uses: actions/checkout@v4
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@master
+      id: deploy
+      with:
+        generate-zip: true
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         VERSION: ${{ env.PLUGIN_VERSION }}
+    - name: Generate build provenance attestation
+      uses: johnbillion/action-wordpress-plugin-attestation@0.7.0
+      with:
+        zip-path: ${{ steps.deploy.outputs.zip-path }}
     - name: Send message to Slack API
       uses: archive/github-actions-slack@v2.7.0
       id: notify

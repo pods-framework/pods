@@ -22,7 +22,7 @@ jobs:
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         VERSION: ${{ env.PLUGIN_VERSION }}
     - name: Generate build provenance attestation
-      uses: johnbillion/action-wordpress-plugin-attestation@0.7.0
+      uses: johnbillion/action-wordpress-plugin-attestation@0.7.1
       with:
         zip-path: ${{ steps.deploy.outputs.zip-path }}
     - name: Send message to Slack API

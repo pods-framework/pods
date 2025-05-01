@@ -1837,6 +1837,9 @@ function pods_access_get_capabilities_preview( string $pod_type, string $pod_nam
  * @return array The pod settings config for access-related settings.
  */
 function pods_access_settings_config(): array {
+	// Only use translation functions after `init` to prevent a WP core notice.
+	$did_init = doing_action( 'init' ) || did_action( 'init' );
+
 	$first_pods_version = get_option( 'pods_framework_version_first' );
 	$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
 
@@ -1844,47 +1847,47 @@ function pods_access_settings_config(): array {
 
 	$fields['dynamic_features_allow'] = [
 		'name'               => 'dynamic_features_allow',
-		'label'              => __( 'Dynamic Features', 'pods' ),
+		'label'              => $did_init ? __( 'Dynamic Features', 'pods' ) : '',
 		'help'               => [
-			__( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilties. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+			$did_init ? __( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilties. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ) : '',
 			'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 		],
-		'description'        => __( 'Dynamic features include Pods Shortcodes, Blocks, and Widgets which let you embed content and forms on your site.', 'pods' ),
+		'description'        => $did_init ? __( 'Dynamic features include Pods Shortcodes, Blocks, and Widgets which let you embed content and forms on your site.', 'pods' ) : '',
 		'type'               => 'pick',
 		'default'            => '1',
 		'pick_format_type'   => 'single',
 		'pick_format_single' => 'radio',
 		'data'               => [
-			'1' => __( 'Enable Dynamic Features including Pods Shortcodes, Blocks, and Widgets', 'pods' ),
-			'0' => __( 'Disable All Dynamic Features in Pods', 'pods' ),
+			'1' => $did_init ? __( 'Enable Dynamic Features including Pods Shortcodes, Blocks, and Widgets', 'pods' ) : '',
+			'0' => $did_init ? __( 'Disable All Dynamic Features in Pods', 'pods' ) : '',
 		],
 		'site_health_data' => [
-			'1' => __( 'Enable', 'pods' ),
-			'0' => __( 'Disable', 'pods' ),
+			'1' => $did_init ? __( 'Enable', 'pods' ) : '',
+			'0' => $did_init ? __( 'Disable', 'pods' ) : '',
 		],
 		'site_health_include_in_info' => true,
 	];
 
 	$fields['security_access_rights_info'] = [
 		'name'               => 'security_access_rights_info',
-		'label'              => __( 'How access rights work in Pods', 'pods' ),
+		'label'              => $did_init ? __( 'How access rights work in Pods', 'pods' ) : '',
 		'type'               => 'html',
 		'html_content'       => sprintf(
 			'
 				<p>%1$s</p>
 				<p><a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">%2$s</a> <span class="dashicon dashicons dashicons-external"></span></p>
 			',
-			__( 'Pods handles access rights similar to how WordPress itself works.', 'pods' ),
-			__( 'Read more about how access rights work in Pods on our Documentation site', 'pods' )
+			$did_init ? __( 'Pods handles access rights similar to how WordPress itself works.', 'pods' ) : '',
+			$did_init ? __( 'Read more about how access rights work in Pods on our Documentation site', 'pods' ) : ''
 		),
 		'depends-on'         => [ 'dynamic_features_allow' => '1' ],
 	];
 
 	$fields['dynamic_features_enabled'] = [
 		'name'               => 'dynamic_features_enabled',
-		'label'              => __( 'Dynamic Features to Enable', 'pods' ),
+		'label'              => $did_init ? __( 'Dynamic Features to Enable', 'pods' ) : '',
 		'help'               => [
-			__( 'You can choose one or more dynamic features to enable. By default, only Display and Form are enabled.', 'pods' ),
+			$did_init ? __( 'You can choose one or more dynamic features to enable. By default, only Display and Form are enabled.', 'pods' ) : '',
 			'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 		],
 		'type'               => 'pick',
@@ -1895,14 +1898,14 @@ function pods_access_settings_config(): array {
 		'pick_format_type'   => 'multi',
 		'pick_format_multi'  => 'checkbox',
 		'data'               => [
-			'display' => __( 'Display - Shortcodes and Blocks that allow querying content from *any* Pod and displaying any field (WordPress access rights are still checked).', 'pods' ),
-			'form'    => __( 'Form - The Form Shortcode and Block that allows submitting new content or editing existing content from *any* Pod (WordPress access rights are still checked).', 'pods' ),
-			'view'    => __( 'View - The View Shortcode and Block that allows embedding *any* theme file on a page.', 'pods' ),
+			'display' => $did_init ? __( 'Display - Shortcodes and Blocks that allow querying content from *any* Pod and displaying any field (WordPress access rights are still checked).', 'pods' ) : '',
+			'form'    => $did_init ? __( 'Form - The Form Shortcode and Block that allows submitting new content or editing existing content from *any* Pod (WordPress access rights are still checked).', 'pods' ) : '',
+			'view'    => $did_init ? __( 'View - The View Shortcode and Block that allows embedding *any* theme file on a page.', 'pods' ) : '',
 		],
 		'site_health_data' => [
-			'display' => __( 'Display', 'pods' ),
-			'form'    => __( 'Form', 'pods' ),
-			'view'    => __( 'View', 'pods' ),
+			'display' => $did_init ? __( 'Display', 'pods' ) : '',
+			'form'    => $did_init ? __( 'Form', 'pods' ) : '',
+			'view'    => $did_init ? __( 'View', 'pods' ) : '',
 		],
 		'depends-on'         => [ 'dynamic_features_allow' => '1' ],
 		'site_health_include_in_info' => true,
@@ -1910,9 +1913,9 @@ function pods_access_settings_config(): array {
 
 	$fields['show_access_restricted_messages'] = [
 		'name'               => 'show_access_restricted_messages',
-		'label'              => __( 'Access-related Restricted Messages', 'pods' ),
+		'label'              => $did_init ? __( 'Access-related Restricted Messages', 'pods' ) : '',
 		'help'               => [
-			__( 'Access-related Restricted Messages will show to anyone who does not have access to add/edit/read a specific item from a content type.', 'pods' ),
+			$did_init ? __( 'Access-related Restricted Messages will show to anyone who does not have access to add/edit/read a specific item from a content type.', 'pods' ) : '',
 			'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 		],
 		'type'               => 'pick',
@@ -1920,12 +1923,12 @@ function pods_access_settings_config(): array {
 		'pick_format_type'   => 'single',
 		'pick_format_single' => 'radio',
 		'data'               => [
-			'1' => __( 'Enable access-related restricted messages for forms/content displayed (instead of the form/content output)', 'pods' ),
-			'0' => __( 'Disable access-related restricted messages for forms/content displayed (the form/content output will be blank)', 'pods' ),
+			'1' => $did_init ? __( 'Enable access-related restricted messages for forms/content displayed (instead of the form/content output)', 'pods' ) : '',
+			'0' => $did_init ? __( 'Disable access-related restricted messages for forms/content displayed (the form/content output will be blank)', 'pods' ) : '',
 		],
 		'site_health_data' => [
-			'1' => __( 'Enable', 'pods' ),
-			'0' => __( 'Disable', 'pods' ),
+			'1' => $did_init ? __( 'Enable', 'pods' ) : '',
+			'0' => $did_init ? __( 'Disable', 'pods' ) : '',
 		],
 		'site_health_include_in_info' => true,
 		'depends-on'         => [ 'dynamic_features_allow' => '1' ],
@@ -1933,9 +1936,9 @@ function pods_access_settings_config(): array {
 
 	$fields['show_access_admin_notices'] = [
 		'name'               => 'show_access_admin_notices',
-		'label'              => __( 'Access-related Admin Notices', 'pods' ),
+		'label'              => $did_init ? __( 'Access-related Admin Notices', 'pods' ) : '',
 		'help'               => [
-			__( 'Access-related Admin Notices will only show to admins and will appear above content/forms that may not be entirely public.', 'pods' ),
+			$did_init ? __( 'Access-related Admin Notices will only show to admins and will appear above content/forms that may not be entirely public.', 'pods' ) : '',
 			'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 		],
 		'type'               => 'pick',
@@ -1943,12 +1946,12 @@ function pods_access_settings_config(): array {
 		'pick_format_type'   => 'single',
 		'pick_format_single' => 'radio',
 		'data'               => [
-			'1' => __( 'Enable access-related admin notices above forms/content displayed', 'pods' ),
-			'0' => __( 'Disable access-related admin notices above forms/content displayed', 'pods' ),
+			'1' => $did_init ? __( 'Enable access-related admin notices above forms/content displayed', 'pods' ) : '',
+			'0' => $did_init ? __( 'Disable access-related admin notices above forms/content displayed', 'pods' ) : '',
 		],
 		'site_health_data' => [
-			'1' => __( 'Enable', 'pods' ),
-			'0' => __( 'Disable', 'pods' ),
+			'1' => $did_init ? __( 'Enable', 'pods' ) : '',
+			'0' => $did_init ? __( 'Disable', 'pods' ) : '',
 		],
 		'site_health_include_in_info' => true,
 		'depends-on'         => [ 'dynamic_features_allow' => '1' ],
@@ -1956,21 +1959,21 @@ function pods_access_settings_config(): array {
 
 	$fields['dynamic_features_allow_sql_clauses'] = [
 		'name'               => 'dynamic_features_allow_sql_clauses',
-		'label'              => __( 'Allow SQL clauses to be used in Dynamic Features', 'pods' ),
-		'description'        => __( 'SQL clauses in general should only be enabled for sites with trusted users. Since WordPress allows anyone to enter any shortcode or block in the editor, any person with the Contributor role or higher could have access to use this.', 'pods' ),
+		'label'              => $did_init ? __( 'Allow SQL clauses to be used in Dynamic Features', 'pods' ) : '',
+		'description'        => $did_init ? __( 'SQL clauses in general should only be enabled for sites with trusted users. Since WordPress allows anyone to enter any shortcode or block in the editor, any person with the Contributor role or higher could have access to use this.', 'pods' ) : '',
 		'type'               => 'pick',
 		'default'            => version_compare( $first_pods_version, '3.1.0-a-1', '<' ) ? 'simple' : '0',
 		'pick_format_type'   => 'single',
 		'pick_format_single' => 'radio',
 		'data'               => [
-			'all'    => __( 'Unrestricted - Enable ALL SQL clause usage through dynamic features (only use this if you trust ALL users who have access to create content)', 'pods' ),
-			'simple' => __( 'Restricted - Enable Simple SQL clause usage (only SELECT, WHERE, and ORDER BY) through dynamic features (only use this if you trust ALL users who have access to create content)', 'pods' ),
-			'0'      => __( 'Disable SQL clause usage through dynamic features', 'pods' ),
+			'all'    => $did_init ? __( 'Unrestricted - Enable ALL SQL clause usage through dynamic features (only use this if you trust ALL users who have access to create content)', 'pods' ) : '',
+			'simple' => $did_init ? __( 'Restricted - Enable Simple SQL clause usage (only SELECT, WHERE, and ORDER BY) through dynamic features (only use this if you trust ALL users who have access to create content)', 'pods' ) : '',
+			'0'      => $did_init ? __( 'Disable SQL clause usage through dynamic features', 'pods' ) : '',
 		],
 		'site_health_data' => [
-			'all'    => __( 'Unrestricted', 'pods' ),
-			'simple' => __( 'Restricted', 'pods' ),
-			'0'      => __( 'Disable', 'pods' ),
+			'all'    => $did_init ? __( 'Unrestricted', 'pods' ) : '',
+			'simple' => $did_init ? __( 'Restricted', 'pods' ) : '',
+			'0'      => $did_init ? __( 'Disable', 'pods' ) : '',
 		],
 		'depends-on'         => [
 			'dynamic_features_allow'   => '1',
@@ -1983,21 +1986,21 @@ function pods_access_settings_config(): array {
 
 	$fields['display_callbacks'] = [
 		'name'               => 'display_callbacks',
-		'label'              => __( 'Display callbacks', 'pods' ),
-		'description'        => __( 'Callbacks can be used when using Pods Templating syntax like {@my_field,my_callback} in your magic tags.', 'pods' ),
+		'label'              => $did_init ? __( 'Display callbacks', 'pods' ) : '',
+		'description'        => $did_init ? __( 'Callbacks can be used when using Pods Templating syntax like {@my_field,my_callback} in your magic tags.', 'pods' ) : '',
 		'type'               => 'pick',
 		'default'            => version_compare( $first_pods_version, '3.1.0-a-1', '<' ) ? 'restricted' : 'customized',
 		'pick_format_type'   => 'single',
 		'pick_format_single' => 'radio',
 		'data'               => [
-			'restricted' => __( 'Restricted - Certain system PHP functions are disallowed from being used for security reasons.', 'pods' ),
-			'customized' => __( 'Customized - Only allow a list of specific PHP function callbacks.', 'pods' ),
-			'0'          => __( 'Disable display callbacks', 'pods' ),
+			'restricted' => $did_init ? __( 'Restricted - Certain system PHP functions are disallowed from being used for security reasons.', 'pods' ) : '',
+			'customized' => $did_init ? __( 'Customized - Only allow a list of specific PHP function callbacks.', 'pods' ) : '',
+			'0'          => $did_init ? __( 'Disable display callbacks', 'pods' ) : '',
 		],
 		'site_health_data' => [
-			'restricted' => __( 'Restricted', 'pods' ),
-			'customized' => __( 'Customized', 'pods' ),
-			'0'          => __( 'Disable', 'pods' ),
+			'restricted' => $did_init ? __( 'Restricted', 'pods' ) : '',
+			'customized' => $did_init ? __( 'Customized', 'pods' ) : '',
+			'0'          => $did_init ? __( 'Disable', 'pods' ) : '',
 		],
 		'depends-on'         => [
 			'dynamic_features_allow'   => '1',
@@ -2010,8 +2013,8 @@ function pods_access_settings_config(): array {
 
 	$fields['display_callbacks_allowed'] = [
 		'name'               => 'display_callbacks_allowed',
-		'label'              => __( 'Display callbacks allowed', 'pods' ),
-		'description'        => __( 'Please provide a comma-separated list of PHP function names to allow in callbacks.', 'pods' ),
+		'label'              => $did_init ? __( 'Display callbacks allowed', 'pods' ) : '',
+		'description'        => $did_init ? __( 'Please provide a comma-separated list of PHP function names to allow in callbacks.', 'pods' ) : '',
 		'type'               => 'text',
 		'default'            => 'esc_attr,esc_html',
 		'depends-on'         => [

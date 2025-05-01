@@ -54,6 +54,8 @@ class Store {
 	 */
 	protected $objects_in_storage = [];
 
+	public const PLACEHOLDER = '__DEFAULT_LABEL_PLACEHOLDER__';
+
 	/**
 	 * Store constructor.
 	 */
@@ -97,20 +99,46 @@ class Store {
 		];
 	}
 
+	public static function get_default_object_labels(): array {
+		return [
+			'_pods_pod'   => [
+				'label'        => __( 'Pod', 'pods' ),
+				'description'  => __( 'Pod configuration', 'pods' ),
+			],
+			'_pods_group' => [
+				'label'        => __( 'Pod Group', 'pods' ),
+				'description'  => __( 'Pod Group configuration', 'pods' ),
+			],
+			'_pods_field' => [
+				'label'        => __( 'Pod Field', 'pods' ),
+				'description'  => __( 'Pod Field configuration', 'pods' ),
+			],
+			'_pods_template' => [
+				'label'        => __( 'Pod Template', 'pods' ),
+				'description'  => __( 'Pod Template configuration', 'pods' ),
+			],
+			'_pods_page' => [
+				'label'        => __( 'Pod Page', 'pods' ),
+				'description'  => __( 'Pod Page configuration', 'pods' ),
+			],
+		];
+	}
+
 	/**
 	 * Get list of default objects.
 	 *
 	 * @return array List of objects.
 	 */
 	public function get_default_objects() {
+		// Labels and descriptions are in get_default_object_labels() which is used later during/after init action.
 		return [
 			'pod/_pods_pod'   => [
 				'internal'     => true,
 				'object_type'  => 'pod',
 				'object_storage_type' => 'collection',
 				'name'         => '_pods_pod',
-				'label'        => __( 'Pod', 'pods' ),
-				'description'  => __( 'Pod configuration', 'pods' ),
+				'label'        => self::PLACEHOLDER,
+				'description'  => self::PLACEHOLDER,
 				'type'         => 'post_type',
 			],
 			'pod/_pods_group' => [
@@ -118,8 +146,8 @@ class Store {
 				'object_type'  => 'pod',
 				'object_storage_type' => 'collection',
 				'name'         => '_pods_group',
-				'label'        => __( 'Pod Group', 'pods' ),
-				'description'  => __( 'Pod Group configuration', 'pods' ),
+				'label'        => self::PLACEHOLDER,
+				'description'  => self::PLACEHOLDER,
 				'type'         => 'post_type',
 			],
 			'pod/_pods_field' => [
@@ -127,8 +155,8 @@ class Store {
 				'object_type'  => 'pod',
 				'object_storage_type' => 'collection',
 				'name'         => '_pods_field',
-				'label'        => __( 'Pod Field', 'pods' ),
-				'description'  => __( 'Pod Field configuration', 'pods' ),
+				'label'        => self::PLACEHOLDER,
+				'description'  => self::PLACEHOLDER,
 				'type'         => 'post_type',
 			],
 			'pod/_pods_template' => [
@@ -136,8 +164,8 @@ class Store {
 				'object_type'  => 'pod',
 				'object_storage_type' => 'collection',
 				'name'         => '_pods_template',
-				'label'        => __( 'Pod Template', 'pods' ),
-				'description'  => __( 'Pod Template configuration', 'pods' ),
+				'label'        => self::PLACEHOLDER,
+				'description'  => self::PLACEHOLDER,
 				'type'         => 'post_type',
 			],
 			'pod/_pods_page' => [
@@ -145,8 +173,8 @@ class Store {
 				'object_type'  => 'pod',
 				'object_storage_type' => 'collection',
 				'name'         => '_pods_page',
-				'label'        => __( 'Pod Page', 'pods' ),
-				'description'  => __( 'Pod Page configuration', 'pods' ),
+				'label'        => self::PLACEHOLDER,
+				'description'  => self::PLACEHOLDER,
 				'type'         => 'post_type',
 			],
 		];

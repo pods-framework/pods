@@ -233,7 +233,7 @@ class PodsField_Link extends PodsField_Website {
 			$errors = $validate;
 		}
 
-		if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check['url'] ) {
+		if ( ! empty( $value['url'] ) && 0 < strlen( (string) $value['url'] ) && '' === $check['url'] ) {
 			$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
 			if ( $this->is_required( $options ) ) {

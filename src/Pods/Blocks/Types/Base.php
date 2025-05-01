@@ -144,7 +144,7 @@ abstract class Base extends Blocks_Abstract {
 	public function render_placeholder( $heading, $content, $image = null ) {
 		ob_start();
 		?>
-		<div class="pods-block-placeholder_container">
+		<div <?php echo get_block_wrapper_attributes( [ 'class' => 'pods-block-placeholder_container' ] ); ?>">
 			<div class="pods-block-placeholder_content-container">
 				<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
 				<div class="pods-block-placeholder_content">

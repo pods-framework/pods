@@ -1174,6 +1174,9 @@ class Pods implements Iterator {
 							$last_options        = $current_field;
 							$last_object_options = $current_field;
 
+							// Don't fetch extra unnecessary data.
+							$ids = array_unique( $ids );
+
 							// Temporary hack until there's some better handling here.
 							$last_limit *= count( $ids );
 

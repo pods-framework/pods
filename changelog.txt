@@ -2,9 +2,28 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.3 - May 1st, 2025 =
+
+* New minimum WP version required: WordPress 6.3+ (previously: WP 6.0+)
+* Removed: PHP support for Pod Templates and Pod Pages has been officially removed from Pods. This feature was deprecated in Pods 2.3. We recommend you follow the newer more secure way: https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/ and https://docs.pods.io/displaying-pods/pod-template-hierarchy-for-themes/ and a snippet if you absolutely still need PHP support for now https://gist.github.com/sc0ttkclark/35a15e6f93622c45f12d671184fb1315 (@sc0ttkclark)
+* Feature: Form validation for the Block Editor now prevents saving a post if there are required fields and shows the appropriate error message. #7343 #7369 (@JoryHogeveen, @sc0ttkclark)
+* Feature: Upgraded Pods Blocks to the WP Blocks API version 3 to support more feautres like block wrapper attributes and the iframe editor. (@sc0ttkclark)
+* Feature: Added support for WYSIWYG field type when using the TinyMCE editor to allow Delayed initialization and not showing the editor until clicking. This is optional and can be enabled per field. (@sc0ttkclark)
+* Feature: Added support for WYSIWYG field type when using the TinyMCE editor to refresh the editor if you encounter compatibility issues with other plugins on load. (@sc0ttkclark)
+* Tweak: Allow forcing `pods_serial_comma()` to use exactly what is sent instead of relying on the field config itself. (@sc0ttkclark)
+* Tweak: Remove Pods Pro WPGraphQL deactivation message to support future features there. The core functionality of that was merged into Pods 2.9 but new work is still being done in the add-on. (@sc0ttkclark)
+* Tweak: Pods Forms now wrap `div` / `p` form output types within a new `div.pods-form-fieldset` wrapper element. The table form output type has the new class `pods-form-fieldset` added to it too. (@sc0ttkclark)
+* Fixed: Prevent doing it wrong notices in WP from unintentionally loading translatable strings too early. (@sc0ttkclark)
+* Fixed: Improved PHP compatibiltiy with strlen() usage. #7394 (@lbonomo, @sc0ttkclark)
+* Fixed: More PHP 8.x compatibility fixes for `PodsUI`. (@sc0ttkclark)
+* Fixed: Docs link for Date / Time field type now points to the correct URL. #7405 (@BrookeDot)
+* Fixed: Remove unnecessary duplicate IDs in the fetching within `Pods::field()`. (@sc0ttkclark)
+* Fixed: Name check handling when duplicating pod now works as expected and prevents weirdly named duplicate pod names. (@sc0ttkclark)
+* Tooling: Generate build provenance attestation during deployment for .org zip. #7419 (@johnbillion)
+
 = 3.2.8.2 - February 7th, 2025 =
 
-* Security: Do not allow using custom SQL clauses for Relationship fields when SQL clauses are disabled in the Pods security settings. Props to the CleanTalk / Dmitrii Ignatyev for responsibly reporting this. (@sc0ttkclark) 
+* Security: Do not allow using custom SQL clauses for Relationship fields when SQL clauses are disabled in the Pods security settings. Props to the CleanTalk / Dmitrii Ignatyev for responsibly reporting this. (@sc0ttkclark)
 
 = 3.2.8.1 - November 22nd, 2024 =
 
@@ -108,7 +127,7 @@ To be safe and sure that those who are using Pods do not mistake Pods 3.2.3 as a
 * Fixed: PHP 8.1 compatibility fix for null values passed to esc_* functions in WP. (@sc0ttkclark)
 * Fixed: PHP 8.1 compatibility fix for html_entity_decode. (@sc0ttkclark)
 
-= 3.2.0 - March 25th, 2024 =
+= 3.2 - March 25th, 2024 =
 
 * Feature: New support for Custom Field revisions in Pods that are Post Types that use Meta storage. You can optionally enable the feature per-pod or per-field. #7265 (@sc0ttkclark)
 * Feature: New support for WordPress `register_meta()` for all Pods fields on meta-based Pods. You can enable this feature in Pods Admin > Settings > "Register meta fields". (@sc0ttkclark)

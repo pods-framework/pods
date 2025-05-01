@@ -155,7 +155,7 @@ class PodsField_Color extends PodsField {
 
 		$value = str_replace( '#', '', $value );
 
-		if ( 0 < strlen( $value ) ) {
+		if ( 0 < strlen( (string) $value ) ) {
 			$value = '#' . $value;
 		}
 

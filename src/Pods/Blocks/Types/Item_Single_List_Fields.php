@@ -168,7 +168,13 @@ class Item_Single_List_Fields extends Item_Single {
 
 		$attributes['template_custom'] = '{@' . implode( '.', $magic_tag_data ) . '}';
 
-		return parent::render( $attributes, $content, $block );
+		pods_set_render_is_in_block( true );
+
+		$content = parent::render( $attributes, $content, $block );
+
+		pods_set_render_is_in_block( false );
+
+		return $content;
 	}
 
 	/**

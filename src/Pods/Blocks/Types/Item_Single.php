@@ -279,6 +279,12 @@ class Item_Single extends Base {
 			unset( $attributes['use_current'] );
 		}
 
-		return pods_shortcode( $attributes, $attributes['template_custom'] );
+		pods_set_render_is_in_block( true );
+
+		$content = pods_shortcode( $attributes, $attributes['template_custom'] );
+
+		pods_set_render_is_in_block( false );
+
+		return $content;
 	}
 }

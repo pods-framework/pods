@@ -498,6 +498,7 @@ export const FIELD_PROP_TYPE = {
 	wysiwyg_editor: PropTypes.string,
 	wysiwyg_editor_height: NUMBER_OR_NUMBER_AS_STRING,
 	wysiwyg_media_buttons: BOOLEAN_ALL_TYPES,
+	wysiwyg_delay_init: BOOLEAN_ALL_TYPES,
 	wysiwyg_default_editor: PropTypes.string,
 	wysiwyg_oembed: BOOLEAN_ALL_TYPES,
 	wysiwyg_wpautop: BOOLEAN_ALL_TYPES,

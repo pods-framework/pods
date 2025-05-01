@@ -223,7 +223,7 @@ const createBlock = ( block ) => {
 
 	registerBlockType( blockName, {
 		...blockArgs,
-		apiVersion: 1,
+		apiVersion: 3,
 		edit: createBlockEditComponent( block ),
 		icon,
 		save: () => null,

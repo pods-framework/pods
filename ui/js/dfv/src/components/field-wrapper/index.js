@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isEqual, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -36,6 +36,7 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './field-wrapper.scss';
 import RepeatableFieldList from './repeatable-field-list';
+import useBlockEditor from '../../hooks/useBlockEditor';
 
 export const FieldWrapper = ( props ) => {
 	const {
@@ -192,6 +193,21 @@ export const FieldWrapper = ( props ) => {
 		value
 	);
 
+	// Handle Block Editor save lock.
+	const blockEditor = useBlockEditor();
+	useEffect( () => {
+		if ( ! meetsConditionalLogic || ! validationMessages.length ) {
+			blockEditor.unlockPostSaving( `pods-field-${ name }` );
+		} else {
+			blockEditor.lockPostSaving( `pods-field-${ name }`, validationMessages, () => setHasBlurred( true ) );
+		}
+
+		// Unlock on unmount.
+		return () => {
+			blockEditor.unlockPostSaving( `pods-field-${ name }` );
+		};
+	}, [ validationMessages, meetsConditionalLogic ] );
+
 	// Don't render a field that hasn't had its dependencies met.
 	if ( ! meetsConditionalLogic ) {
 		return <span ref={ fieldRef } />;
@@ -225,7 +241,7 @@ export const FieldWrapper = ( props ) => {
 								allPodValues={ passAllPodValues ? allPodValues : undefined }
 								allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
 								setOptionValue={ setOptionValue }
-								isValid={ !! validationMessages.length }
+								isValid={ ! validationMessages.length }
 								addValidationRules={ addValidationRules }
 								setHasBlurred={ () => setHasBlurred( true ) }
 								fieldConfig={ field }
@@ -259,7 +275,7 @@ export const FieldWrapper = ( props ) => {
 							allPodValues={ allPodValues }
 							allPodFieldsMap={ allPodFieldsMap }
 							setValue={ setValue }
-							isValid={ !! validationMessages.length }
+							isValid={ ! validationMessages.length }
 							addValidationRules={ addValidationRules }
 							setHasBlurred={ () => setHasBlurred( true ) }
 							fieldConfig={ processedFieldConfig }

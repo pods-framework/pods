@@ -297,7 +297,7 @@ class PodsField_Number extends PodsField {
 
 		$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-		if ( 0 < strlen( $check ) ) {
+		if ( 0 < strlen( (string) $check ) ) {
 			// Translators: %s stands for the input value.
 			$errors[] = sprintf( esc_html__( '%s is not numeric', 'pods' ), $label );
 		}

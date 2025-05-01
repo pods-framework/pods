@@ -27,16 +27,12 @@ class Integration {
 			[
 				// WPGraphQL should be installed.
 				'check'   => defined( 'WPGRAPHQL_VERSION' ),
+				// No message because we don't need to autoload this integration.
 			],
 			[
 				// WPGraphQL should be the minimum required version.
 				'check'   => defined( 'WPGRAPHQL_VERSION' ) && version_compare( '1.1.3', WPGRAPHQL_VERSION, '<=' ),
 				'message' => __( 'You need WPGraphQL 1.1.3+ installed and activated in order to use the Pods WPGraphQL integration.', 'pods' ),
-			],
-			[
-				// Pods Pro WPGraphQL should be deactivated.
-				'check'   => ! class_exists( \Pods_Pro\WPGraphQL\Plugin::class ),
-				'message' => __( 'You can now deactivate the Pods Pro WPGraphQL Add-On because it is now officially available as part of Pods 2.9+.', 'pods' ),
 			],
 		];
 	}

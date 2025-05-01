@@ -228,21 +228,6 @@ class PodsForm {
 		$value           = apply_filters( "pods_form_ui_field_{$type}_value", $value, $name, $options, $pod, $id );
 		$form_field_type = self::$field_type;
 
-		$helper = false;
-
-		$input_helper = pods_v( 'input_helper', $options );
-
-		/**
-		 * Input helpers are deprecated and not guaranteed to work properly.
-		 *
-		 * They will be entirely removed in Pods 3.0.
-		 *
-		 * @deprecated 2.7.0
-		 */
-		if ( is_string( $input_helper ) && 0 < strlen( $input_helper ) ) {
-			$helper = pods_api()->load_helper( array( 'name' => $input_helper ) );
-		}
-
 		if ( empty( $type ) ) {
 			return;
 		}
@@ -485,6 +470,8 @@ class PodsForm {
 
 		$attributes = (array) apply_filters( "pods_form_ui_field_{$type}_attributes", $attributes, $name, $options );
 
+		$final_attributes = [];
+
 		foreach ( $attributes as $attribute => $value ) {
 			if ( null === $value ) {
 				continue;
@@ -496,6 +483,16 @@ class PodsForm {
 				$value = pods_enforce_safe_id( $value );
 			}
 
+			$final_attributes[ (string) $attribute ] = (string) $value;
+		}
+
+		if (pods_render_is_in_block()) {
+			echo get_block_wrapper_attributes( $final_attributes );
+
+			return;
+		}
+
+		foreach ( $final_attributes as $attribute => $value ) {
 			echo ' ' . esc_attr( (string) $attribute ) . '="' . esc_attr( (string) $value ) . '"';
 		}
 	}

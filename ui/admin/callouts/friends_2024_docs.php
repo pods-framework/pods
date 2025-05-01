@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $callout = 'friends_2024_docs';
 
-$donor_count    = 2747;
+$donor_count    = 3631;
 $donor_goal     = 7000;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 

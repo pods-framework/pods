@@ -1,0 +1,23 @@
+name: Build ZIP for new release
+on:
+  release:
+    types:
+      - published
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+      - name: Create zip
+        run: |
+          git archive --format=zip --worktree-attributes -9 -o ${{ github.event.repository.name }}.zip HEAD
+          unzip -d ${{ github.event.repository.name }} ${{ github.event.repository.name }}.zip
+          zip -9 -r ${{ github.event.repository.name }}.${{ github.ref_name }}.zip ${{ github.event.repository.name }}
+      - name: Add asset to release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ github.event.repository.name }}.${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

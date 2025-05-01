@@ -733,7 +733,7 @@ class PodsField_File extends PodsField {
 			$title = false;
 
 			if ( is_array( $attachment_id ) ) {
-				if ( isset( $attachment_id['title'] ) && 0 < strlen( trim( $attachment_id['title'] ) ) ) {
+				if ( isset( $attachment_id['title'] ) && 0 < strlen( trim( (string) $attachment_id['title'] ) ) ) {
 					$title = trim( $attachment_id['title'] );
 				}
 

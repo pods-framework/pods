@@ -4,13 +4,13 @@
  *
  * @package   Pods
  * @author    Pods Framework Team
- * @copyright 2024 Pods Foundation, Inc
+ * @copyright 2025 Pods Foundation, Inc
  * @license   GPL v2 or later
  *
  * Plugin Name:       Pods - Custom Content Types and Fields
  * Plugin URI:        https://pods.io/
  * Description:       Pods is a framework for creating, managing, and deploying customized content types and fields
- * Version:           3.2.8.2
+ * Version:           3.3.0
  * Author:            Pods Framework Team
  * Author URI:        https://pods.io/about/
  * Text Domain:       pods
@@ -43,7 +43,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version.
-	define( 'PODS_VERSION', '3.2.8.2' );
+	define( 'PODS_VERSION', '3.3.0' );
 
 	// Current database version, this is the last version the database changed.
 	define( 'PODS_DB_VERSION', '2.3.5' );
@@ -54,9 +54,12 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * This should always be -2 versions behind the latest WP release. Example: 5.5 if 5.7 is current.
 	 *
 	 * To be updated each Major x.x Pods release.
+	 *
+	 *  Next planned minimum WP version: 6.6
 	 */
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '6.0' );
+		$pods_wp_version_minimum = getenv( 'PODS_WP_VERSION_MINIMUM' ) ?: '6.3';
+		define( 'PODS_WP_VERSION_MINIMUM', $pods_wp_version_minimum );
 	}
 
 	/**
@@ -64,7 +67,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 *
 	 * Found at: https://wordpress.org/about/stats/
 	 *
-	 * Next planned minimum PHP version: 7.2 (to match WooCommerce and others pushing WP forward).
+	 * Next planned minimum PHP version: 7.3
 	 */
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
 		define( 'PODS_PHP_VERSION_MINIMUM', '7.2' );
@@ -74,6 +77,8 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * This should match minimum WP requirements or usage of 90%+.
 	 *
 	 * Found at: https://wordpress.org/about/stats/
+	 *
+	 *  Next planned minimum MySQL version: 5.6
 	 */
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
 		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );

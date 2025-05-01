@@ -80,7 +80,7 @@ class PodsField_DateTime extends PodsField {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a>',
+					'<a href="https://docs.pods.io/fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a>',
 					esc_html__( 'Date / Time field documentation', 'pods' )
 				),
 			),
@@ -90,7 +90,7 @@ class PodsField_DateTime extends PodsField {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
+					'<a href="https://docs.pods.io/fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
 					esc_html__( 'Date / Time field documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
@@ -139,7 +139,7 @@ class PodsField_DateTime extends PodsField {
 				'default'     => '',
 				'type'        => 'text',
 				'help'       => sprintf(
-					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a>',
+					'<a href="https://docs.pods.io/fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a>',
 					esc_html__( 'Date / Time field documentation', 'pods' )
 				),
 			),
@@ -150,7 +150,7 @@ class PodsField_DateTime extends PodsField {
 				'default'     => '',
 				'type'        => 'text',
 				'help'       => sprintf(
-					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
+					'<a href="https://docs.pods.io/fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
 					esc_html__( 'Date / Time field documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
@@ -194,7 +194,7 @@ class PodsField_DateTime extends PodsField {
 				'default' => '',
 				'type'    => 'text',
 				'help'    => sprintf(
-					'%1$s<br /><a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%2$s</a>',
+					'%1$s<br /><a href="https://docs.pods.io/fields/datetime/" target="_blank" rel="noopener noreferrer">%2$s</a>',
 					sprintf(
 						esc_html__( 'Example: %1$s for specifying a hard coded year range or %2$s for the last and next 10 years.', 'pods' ),
 						'<code>2010:2030</code>',
@@ -939,7 +939,7 @@ class PodsField_DateTime extends PodsField {
 		$new_format = '';
 		$escaping   = false;
 
-		$source_format_length = strlen( $source_format );
+		$source_format_length = strlen( (string) $source_format );
 
 		for ( $i = 0; $i < $source_format_length; $i ++ ) {
 			$char = $source_format[ $i ];

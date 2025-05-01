@@ -64,6 +64,12 @@ class PodsField_WYSIWYG extends PodsField {
 						'default' => 1,
 						'type'    => 'boolean',
 					],
+					static::$type . '_delay_init' => [
+						'label'   => __( 'Delay TinyMCE Initialization', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+						'help' => __( 'Delay the initialization of the TinyMCE editor until you click to initialize it.', 'pods' ),
+					],
 				],
 			],
 			static::$type . '_editor_height'     => [
@@ -346,7 +352,7 @@ class PodsField_WYSIWYG extends PodsField {
 
 			// WP will handle the scripting needed, but we won't output the textarea here.
 			ob_start();
-			wp_editor( $value, '_pods_dfv_' . $name, $settings );
+			wp_editor( (string) $value, '_pods_dfv_' . $name, $settings );
 			$unused_output = ob_get_clean();
 
 			// Workaround because the above already outputs the style we need.

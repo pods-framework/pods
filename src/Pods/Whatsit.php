@@ -161,33 +161,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$args = @json_decode( $json, true );
 
 		if ( is_array( $args ) ) {
-			if ( ! empty( $args['id'] ) ) {
-				// Check if we already have an object registered and available.
-				$store = Store::get_instance();
-
-				// Attempt to get from storage directly.
-				$object = $store->get_object_from_storage( isset( $args['object_storage_type'] ) ? $args['object_storage_type'] : null, $args['id'] );
-
-				if ( $object ) {
-					if ( $to_args ) {
-						return $object->get_args();
-					}
-
-					return $object;
-				}
-			}
-
-			$called_class = get_called_class();
-
-			/** @var Whatsit $object */
-			$object = new $called_class( $args );
-
-			if ( $to_args ) {
-				return $object->get_args();
-			}
-
-			return $object;
-		}//end if
+			return self::from_array( $args, $to_args );
+		}
 
 		return null;
 	}
@@ -206,7 +181,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$store = Store::get_instance();
 
 			// Attempt to get from storage directly.
-			$object = $store->get_object_from_storage( isset( $args['object_storage_type'] ) ? $args['object_storage_type'] : null, $array['id'] );
+			$object = $store->get_object_from_storage( isset( $array['object_storage_type'] ) ? $array['object_storage_type'] : null, $array['id'] );
 
 			if ( $object ) {
 				if ( $to_args ) {
@@ -813,11 +788,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$args['object_type'],
 		];
 
-		if ( isset( $args['parent'] ) && 0 < strlen( $args['parent'] ) ) {
+		if ( isset( $args['parent'] ) && 0 < strlen( (string) $args['parent'] ) ) {
 			$parts[] = $args['parent'];
 		}
 
-		if ( isset( $args['name'] ) && 0 < strlen( $args['name'] ) ) {
+		if ( isset( $args['name'] ) && 0 < strlen( (string) $args['name'] ) ) {
 			$parts[] = $args['name'];
 		}
 

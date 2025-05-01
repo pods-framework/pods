@@ -1,8 +1,7 @@
 <?php
 
 use Pods\Config_Handler;
-use Pods\Static_Cache;
-use Pods\Whatsit\Pod;
+use Pods\Whatsit\Store;
 use Pods\Wisdom_Tracker;
 
 /**
@@ -216,7 +215,7 @@ class PodsInit {
 			);
 
 			if ( ! empty( $loader['exclude_prefix'] ) ) {
-				$class = substr( $class, strlen( $loader['prefix'] ) );
+				$class = substr( $class, strlen( (string) $loader['prefix'] ) );
 			}
 
 			if ( ! empty( $loader['filter'] ) ) {
@@ -254,10 +253,6 @@ class PodsInit {
 
 		if ( ! defined( 'PODS_TABLELESS' ) ) {
 			define( 'PODS_TABLELESS', false );
-		}
-
-		if ( ! defined( 'PODS_DISABLE_EVAL' ) ) {
-			define( 'PODS_DISABLE_EVAL', true );
 		}
 
 		if ( ! defined( 'PODS_STATS_TRACKING' ) || PODS_STATS_TRACKING ) {
@@ -383,7 +378,7 @@ class PodsInit {
 			];
 
 			foreach ( $tlds_to_check as $tld ) {
-				$minus_tld = strlen( $host ) - strlen( $tld );
+				$minus_tld = strlen( (string) $host ) - strlen( (string) $tld );
 
 				if ( $minus_tld === strpos( $host, $tld ) ) {
 					return true;
@@ -924,7 +919,7 @@ class PodsInit {
 			'delete_with_user' => false,
 		);
 
-		$args = self::object_label_fix( $args, 'post_type' );
+		$args = self::object_label_fix( $args, 'post_type', '_pods_pod' );
 
 		register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
@@ -943,7 +938,7 @@ class PodsInit {
 			'delete_with_user' => false,
 		);
 
-		$args = self::object_label_fix( $args, 'post_type' );
+		$args = self::object_label_fix( $args, 'post_type', '_pods_group' );
 
 		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
 
@@ -962,7 +957,7 @@ class PodsInit {
 			'delete_with_user' => false,
 		);
 
-		$args = self::object_label_fix( $args, 'post_type' );
+		$args = self::object_label_fix( $args, 'post_type', '_pods_field' );
 
 		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
 
@@ -1631,7 +1626,7 @@ class PodsInit {
 			$ct_post_types = $options['post_types'];
 			$options       = $options['options'];
 
-			$options = self::object_label_fix( $options, 'taxonomy' );
+			$options = self::object_label_fix( $options, 'taxonomy', $taxonomy );
 
 			// Max length for taxonomies are 32 characters
 			$taxonomy = substr( $taxonomy, 0, 32 );
@@ -1688,7 +1683,7 @@ class PodsInit {
 				continue;
 			}
 
-			$options = self::object_label_fix( $options, 'post_type' );
+			$options = self::object_label_fix( $options, 'post_type', $post_type );
 
 			// Max length for post types are 20 characters
 			$post_type = substr( $post_type, 0, 20 );
@@ -1942,7 +1937,7 @@ class PodsInit {
 				continue;
 			}
 
-			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][ $post_type['name'] ], 'post_type' );
+			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][ $post_type['name'] ], 'post_type', $post_type['name'] );
 			$labels = $labels['labels'];
 
 			$revision = (int) pods_v( 'revision' );
@@ -1991,20 +1986,31 @@ class PodsInit {
 		return $messages;
 	}
 
-	/**
-	 * @param        $args
-	 * @param string $type
-	 *
-	 * @return array
-	 */
-	public static function object_label_fix( $args, $type = 'post_type' ) {
+	public static function object_label_fix( array $args, string $type, ?string $name = null ): array {
 
-		if ( empty( $args ) || ! is_array( $args ) ) {
-			$args = array();
+		if ( empty( $args ) ) {
+			$args = [];
 		}
 
 		if ( ! isset( $args['labels'] ) || ! is_array( $args['labels'] ) ) {
-			$args['labels'] = array();
+			$args['labels'] = [];
+		}
+
+		$is_placeholder_label = Store::PLACEHOLDER === pods_v( 'label', $args );
+		$is_placeholder_description = Store::PLACEHOLDER === pods_v( 'description', $args );
+
+		if ( $is_placeholder_label || $is_placeholder_description ) {
+			$default_object_labels = Store::get_default_object_labels();
+
+			if ( $name && isset( $default_object_labels[ $name ] ) ) {
+				if ( $is_placeholder_label ) {
+					$args['label'] = $default_object_labels[ $name ]['label'] ?? null;
+				}
+
+				if ( $is_placeholder_description ) {
+					$args['description'] = $default_object_labels[ $name ]['description'] ?? null;
+				}
+			}
 		}
 
 		$label          = pods_v( 'name', $args['labels'], pods_v( 'label', $args, __( 'Items', 'pods' ), true ), true );

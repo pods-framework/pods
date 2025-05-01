@@ -195,13 +195,28 @@ function pods_message( $message, $type = null, $return = false, $is_dismissible 
 		$div_attr_id = '';
 
 		wp_enqueue_style( 'pods-form' );
+
+		$div_id = '';
 	} else {
 		$div_attr_id = 'id="' . esc_attr( $div_id ) . '"';
 	}
 
 	$div_classes = implode( ' ', $div_classes );
 
-	$html = '<div ' . $div_attr_id . ' class="pods-ui-notice ' . esc_attr( $div_classes ) . '">' . $message . '</div>';
+	if ( pods_render_is_in_block() ) {
+		$attrs = get_block_wrapper_attributes(
+			array_filter(
+				[
+					'id'    => $div_id,
+					'class' => 'pods-ui-notice ' . esc_attr( $div_classes ),
+				]
+			)
+		);
+	} else {
+		$attrs = $div_attr_id . ' class="pods-ui-notice ' . esc_attr( $div_classes ) . '"';
+	}
+
+	$html = '<div ' . $attrs . '>' . $message . '</div>';
 
 	if ( $return ) {
 		return $html;
@@ -5139,4 +5154,55 @@ function pods_is_debug_logging_enabled(): bool {
 	 * @param bool $is_debug_logging_enabled Whether debug logging is enabled.
 	 */
 	return (bool) apply_filters( 'pods_is_debug_logging_enabled', pods_is_debug_display() );
+}
+
+/**
+ * Set whether the render is in a block.
+ *
+ * @since 3.3.0
+ *
+ * @param bool $render_is_in_block Whether the render is in a block.
+ */
+function pods_set_render_is_in_block( bool $render_is_in_block ): void {
+	if ( ! $render_is_in_block ) {
+		remove_filter( 'pods_render_is_in_block', '__return_true' );
+	} elseif ( ! has_filter( 'pods_render_is_in_block', '__return_true' ) ) {
+		add_filter( 'pods_render_is_in_block', '__return_true' );
+	}
+}
+
+/**
+ * Determine whether the render is in a block.
+ *
+ * @since 3.3.0
+ *
+ * @return bool Whether the render is in a block.
+ */
+function pods_render_is_in_block(): bool {
+	/**
+	 * Allow filtering whether the render is in a block.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param bool $render_is_in_block Whether the render is in a block.
+	 */
+	return (bool) apply_filters( 'pods_render_is_in_block', false );
+}
+
+/**
+ * Determine whether to show errors when detecting PHP code in eval context.
+ *
+ * @since 3.3.0
+ *
+ * @return bool Whether to show errors when detecting PHP code in eval context.
+ */
+function pods_eval_show_errors(): bool {
+	/**
+	 * Allow filtering whether to show errors when detecting PHP code in eval context.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param bool $eval_show_errors Whether to show errors when detecting PHP code in eval context.
+	 */
+	return (bool) apply_filters( 'pods_eval_show_errors', true );
 }

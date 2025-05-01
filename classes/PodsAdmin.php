@@ -2019,9 +2019,7 @@ class PodsAdmin {
 	 */
 	public function get_callouts() {
 		// Demo mode always bypasses callouts.
-		if ( pods_is_demo() ) {
-			return [];
-		}
+		$is_demo = pods_is_demo();
 
 		$force_callouts = 1 === (int) pods_v( 'pods_force_callouts' );
 
@@ -2035,9 +2033,10 @@ class PodsAdmin {
 
 		if ( ! $callouts ) {
 			$callouts = [
-				'friends_2024_docs' => 1,
+				'friends_2024_docs' => $is_demo ? 0 : 1,
 				'access_rights'     => (
-					PodsInit::$version_last
+					! $is_demo
+					&& PodsInit::$version_last
 					&& version_compare( PodsInit::$version_last, '3.1.0-a-1', '<' )
 				) ? 1 : 0,
 			];
@@ -2046,8 +2045,8 @@ class PodsAdmin {
 		}
 
 		// Handle callouts logic.
-		$callouts['access_rights'] = ! isset( $callouts['access_rights'] ) || $callouts['access_rights'] ? 1 : 0;
-		$callouts['friends_2024_docs'] = ! isset( $callouts['friends_2024_docs'] ) || $callouts['friends_2024_docs'] || $force_callouts ? 1 : 0;
+		$callouts['access_rights'] = $callouts['access_rights'] ?? 0;
+		$callouts['friends_2024_docs'] = ( ! isset( $callouts['friends_2024_docs'] ) || $callouts['friends_2024_docs'] || $force_callouts ) ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.

@@ -175,6 +175,12 @@ class View extends Base {
 			return '';
 		}
 
-		return pods_shortcode( $attributes );
+		pods_set_render_is_in_block( true );
+
+		$content = pods_shortcode( $attributes );
+
+		pods_set_render_is_in_block( false );
+
+		return $content;
 	}
 }

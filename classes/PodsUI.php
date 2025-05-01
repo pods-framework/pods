@@ -568,7 +568,7 @@ class PodsUI {
 		if ( ( ! is_object( $this->pod ) || 'Pods' != get_class( $this->pod ) ) && false === $this->sql['table'] && false === $this->data ) {
 			echo $this->error( __( '<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods' ) );
 
-			return null;
+			return;
 		}
 
 		// Assign pod labels
@@ -900,7 +900,7 @@ class PodsUI {
 		}
 
 		$unique_identifier .= '_' . $this->page;
-		if ( $this->num && 0 < strlen( $this->num ) ) {
+		if ( $this->num && 0 < strlen( (string) $this->num ) ) {
 			$unique_identifier .= '_' . $this->num_prefix . $this->num;
 		}
 
@@ -3000,7 +3000,7 @@ class PodsUI {
 
 							echo PodsForm::submit_button( $this->header['search'], 'button', false, false, array( 'id' => $this->num_prefix . 'search' . $this->num . '-submit' ) );
 
-							if ( 0 < strlen( $this->search ) ) {
+							if ( 0 < strlen( (string) $this->search ) ) {
 								$clear_filters = array(
 									$this->num_prefix . 'search' . $this->num => false,
 								);
@@ -3373,7 +3373,7 @@ class PodsUI {
 								}
 							}//end if
 
-							if ( strlen( $value_label ) < 1 ) {
+							if ( strlen( (string) $value_label ) < 1 ) {
 								$value_label = $value;
 							}
 							?>
@@ -3463,7 +3463,7 @@ class PodsUI {
 					$get = $_GET;
 
 					foreach ( $get as $k => $v ) {
-						if ( in_array( $k, $excluded_filters ) || strlen( $v ) < 1 ) {
+						if ( in_array( $k, $excluded_filters ) || strlen( (string) $v ) < 1 ) {
 							continue;
 						}
 						?>
@@ -4003,7 +4003,7 @@ class PodsUI {
 											$row_values[ $row_value_key ] = '';
 										} elseif ( $field_value && 0 < strlen( trim( (string) $field_value ) ) ) {
 											$row_values[ $row_value_key ] = trim( (string) $field_value );
-										} elseif ( $field_output && 0 < strlen( $field_output ) ) {
+										} elseif ( $field_output && 0 < strlen( (string) $field_output ) ) {
 											$row_values[ $row_value_key ] = $field_output;
 										}
 									}
@@ -4659,10 +4659,10 @@ class PodsUI {
 				}
 			}
 		}//end if
-		$screen_html = $this->do_hook( 'screen_meta_screen_html', $screen_html );
-		$screen_link = $this->do_hook( 'screen_meta_screen_link', $screen_link );
-		$help_html   = $this->do_hook( 'screen_meta_help_html', $help_html );
-		$help_link   = $this->do_hook( 'screen_meta_help_link', $help_link );
+		$screen_html = (string) $this->do_hook( 'screen_meta_screen_html', $screen_html );
+		$screen_link = (string) $this->do_hook( 'screen_meta_screen_link', $screen_link );
+		$help_html   = (string) $this->do_hook( 'screen_meta_help_html', $help_html );
+		$help_link   = (string) $this->do_hook( 'screen_meta_help_link', $help_link );
 		if ( 0 < strlen( $screen_html ) || 0 < strlen( $screen_link ) || 0 < strlen( $help_html ) || 0 < strlen( $help_link ) ) {
 			?>
 			<div id="screen-meta">
@@ -4889,7 +4889,7 @@ class PodsUI {
 				<?php
 				if ( true == $header ) {
 					?>
-					<span class="paging-input"><input class="current-page" title="<?php esc_attr_e( 'Current page', 'pods' ); ?>" type="text" name="<?php echo esc_attr( $this->num_prefix ); ?>pg<?php echo esc_attr( $this->num ); ?>" value="<?php esc_attr_e( absint( $this->page ) ); ?>" size="<?php esc_attr_e( strlen( $total_pages ) ); ?>"> <?php _e( 'of', 'pods' ); ?>
+					<span class="paging-input"><input class="current-page" title="<?php esc_attr_e( 'Current page', 'pods' ); ?>" type="text" name="<?php echo esc_attr( $this->num_prefix ); ?>pg<?php echo esc_attr( $this->num ); ?>" value="<?php esc_attr_e( absint( $this->page ) ); ?>" size="<?php esc_attr_e( strlen( (string) $total_pages ) ); ?>"> <?php _e( 'of', 'pods' ); ?>
 						<span class="total-pages"><?php echo absint( $total_pages ); ?></span></span>
 					<script type="text/javascript">
 						document.addEventListener( 'DOMContentLoaded', function( event ) {
@@ -4997,7 +4997,7 @@ class PodsUI {
 	public function do_magic_tags( $tag ) {
 
 		if ( is_array( $tag ) ) {
-			if ( ! isset( $tag[2] ) && strlen( trim( $tag[2] ) ) < 1 ) {
+			if ( ! isset( $tag[2] ) && strlen( trim( (string) $tag[2] ) ) < 1 ) {
 				return '';
 			}
 
@@ -5007,7 +5007,7 @@ class PodsUI {
 		$tag = trim( $tag, ' {@}' );
 		$tag = explode( ',', $tag );
 
-		if ( empty( $tag ) || ! isset( $tag[0] ) || strlen( trim( $tag[0] ) ) < 1 ) {
+		if ( empty( $tag ) || ! isset( $tag[0] ) || strlen( trim( (string) $tag[0] ) ) < 1 ) {
 			return null;
 		}
 
@@ -5034,7 +5034,7 @@ class PodsUI {
 			$after = $tag[3];
 		}
 
-		if ( 0 < strlen( $value ) ) {
+		if ( 0 < strlen( (string) $value ) ) {
 			return $before . $value . $after;
 		}
 
@@ -5057,7 +5057,7 @@ class PodsUI {
 		$get = $_GET;
 		if ( is_array( $array ) ) {
 			foreach ( $array as $key => $val ) {
-				if ( 0 < strlen( $val ) ) {
+				if ( 0 < strlen( (string) $val ) ) {
 					$get[ $key ] = $val;
 				} else {
 					unset( $get[ $key ] );

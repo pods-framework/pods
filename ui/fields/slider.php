@@ -17,14 +17,14 @@ if ( strlen( $value ) < 1 ) {
 
 $values = explode( ',', $value );
 $values = array(
-	pods_var( 0, $values, pods_var( $form_field_type . '_min', $options, 0, null, true ) ),
-	pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) ),
+	(int) pods_v( 0, $values, pods_v( $form_field_type . '_min', $options, 0, true ) ),
+	(int) pods_v( 1, $values, pods_v( $form_field_type . '_max', $options, 100, true ) ),
 );
 
-$values[0] = max( $values[0], pods_var( $form_field_type . '_min', $options, 0 ) );
-$values[1] = min( $values[1], pods_var( $form_field_type . '_min', $options, 100 ) );
+$values[0] = max( $values[0], (int) pods_v( $form_field_type . '_min', $options, 0 ) );
+$values[1] = min( $values[1], (int) pods_v( $form_field_type . '_min', $options, 100 ) );
 
-if ( 0 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
+if ( 0 === pods_v( $form_field_type . '_range', $options, 0 ) ) {
 	$value        = $values[0];
 	$output_value = $value;
 } else {
@@ -55,7 +55,7 @@ $attributes          = PodsForm::merge_attributes( $attributes, $name, $form_fie
 			step        : <?php echo esc_js( pods_v( $form_field_type . '_step', $options, 1 ) ); ?>,
 
 			<?php
-			if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
+			if ( 1 === (int) pods_v( $form_field_type . '_range', $options, 0 ) ) {
 				?>
 				range  : true,
 				values : [

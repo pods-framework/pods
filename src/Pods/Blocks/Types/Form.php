@@ -280,6 +280,12 @@ class Form extends Base {
 			}
 		}
 
-		return pods_shortcode_form( $attributes );
+		pods_set_render_is_in_block( true );
+
+		$content = pods_shortcode_form( $attributes );
+
+		pods_set_render_is_in_block( false );
+
+		return $content;
 	}
 }

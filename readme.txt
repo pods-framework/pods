@@ -184,6 +184,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 3.3 - May 1st, 2025 =
 
+* New minimum WP version required: WordPress 6.3+ (previously: WP 6.0+)
 * Feature: Form validation for the Block Editor now prevents saving a post if there are required fields and shows the appropriate error message. #7343 #7369 (@JoryHogeveen, @sc0ttkclark)
 * Feature: Upgraded Pods Blocks to the WP Blocks API version 3 to support more feautres like block wrapper attributes and the iframe editor. (@sc0ttkclark)
 * Feature: Added support for WYSIWYG field type when using the TinyMCE editor to allow Delayed initialization and not showing the editor until clicking. This is optional and can be enabled per field. (@sc0ttkclark)

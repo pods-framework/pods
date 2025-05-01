@@ -54,6 +54,8 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * This should always be -2 versions behind the latest WP release. Example: 5.5 if 5.7 is current.
 	 *
 	 * To be updated each Major x.x Pods release.
+	 *
+	 *  Next planned minimum WP version: 6.6
 	 */
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
 		$pods_wp_version_minimum = getenv( 'PODS_WP_VERSION_MINIMUM' ) ?: '6.3';
@@ -65,7 +67,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 *
 	 * Found at: https://wordpress.org/about/stats/
 	 *
-	 * Next planned minimum PHP version: 7.2 (to match WooCommerce and others pushing WP forward).
+	 * Next planned minimum PHP version: 7.3
 	 */
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
 		define( 'PODS_PHP_VERSION_MINIMUM', '7.2' );
@@ -75,6 +77,8 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * This should match minimum WP requirements or usage of 90%+.
 	 *
 	 * Found at: https://wordpress.org/about/stats/
+	 *
+	 *  Next planned minimum MySQL version: 5.6
 	 */
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
 		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );

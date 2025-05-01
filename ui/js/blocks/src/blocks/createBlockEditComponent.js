@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import {
 	PanelBody,
 } from '@wordpress/components';
@@ -32,7 +32,7 @@ const createBlockEditComponent = ( block ) => ( props ) => {
 	} = props;
 
 	return (
-		<div className={ className }>
+		<>
 			<InspectorControls>
 				<PanelBody
 					title={ blockGroupLabel }
@@ -45,12 +45,14 @@ const createBlockEditComponent = ( block ) => ( props ) => {
 					/>
 				</PanelBody>
 			</InspectorControls>
-			<BlockPreview
-				block={ block }
-				attributes={ attributes }
-				context={ context }
-			/>
-		</div>
+			<div {...useBlockProps()}>
+				<BlockPreview
+					block={ block }
+					attributes={ attributes }
+					context={ context }
+				/>
+			</div>
+		</>
 	);
 };
 

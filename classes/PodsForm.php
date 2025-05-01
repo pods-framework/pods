@@ -485,6 +485,8 @@ class PodsForm {
 
 		$attributes = (array) apply_filters( "pods_form_ui_field_{$type}_attributes", $attributes, $name, $options );
 
+		$final_attributes = [];
+
 		foreach ( $attributes as $attribute => $value ) {
 			if ( null === $value ) {
 				continue;
@@ -496,6 +498,16 @@ class PodsForm {
 				$value = pods_enforce_safe_id( $value );
 			}
 
+			$final_attributes[ (string) $attribute ] = (string) $value;
+		}
+
+		if (pods_render_is_in_block()) {
+			echo get_block_wrapper_attributes( $final_attributes );
+
+			return;
+		}
+
+		foreach ( $final_attributes as $attribute => $value ) {
 			echo ' ' . esc_attr( (string) $attribute ) . '="' . esc_attr( (string) $value ) . '"';
 		}
 	}

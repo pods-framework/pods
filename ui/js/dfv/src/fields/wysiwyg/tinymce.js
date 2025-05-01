@@ -103,7 +103,7 @@ const TinyMCE = ( {
 	}
 
 	function initialize() {
-		if (willDelayInitNow) {
+		if ( willDelayInitNow ) {
 			return;
 		}
 
@@ -134,7 +134,7 @@ const TinyMCE = ( {
 			wpautop,
 		};
 
-		if (editorHeight) {
+		if ( editorHeight ) {
 			tinymceSettings.height = editorHeight;
 		}
 
@@ -208,7 +208,7 @@ const TinyMCE = ( {
 				name={ htmlAttributes.name || name }
 			/>
 
-			{ !willDelayInit && (
+			{ ! willDelayInit && (
 				<p className="pods-tinymce-reinit">
 					<Button
 						onClick={reInit}

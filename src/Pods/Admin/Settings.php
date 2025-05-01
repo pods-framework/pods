@@ -169,6 +169,7 @@ class Settings {
 	 * @return array The list of Pods settings fields.
 	 */
 	public function get_setting_fields() {
+		// Only use translation functions after `init` to prevent a WP core notice.
 		$did_init = doing_action( 'init' ) || did_action( 'init' );
 
 		$disabled_text = $did_init ? __( 'This setting is disabled because it is forced through the constant/filter elsewhere.', 'pods' ) : '';

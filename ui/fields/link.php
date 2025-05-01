@@ -13,7 +13,7 @@ PodsForm::field_method( 'link', 'validate_link_modal' );
 
 $url_attributes = array();
 $url_type       = 'text';
-if ( 1 == pods_var( 'link_html5', $options ) ) {
+if ( 1 === (int) pods_v( 'link_html5', $options ) ) {
 	$url_type = 'url';
 }
 $url_attributes['type']     = $url_type;

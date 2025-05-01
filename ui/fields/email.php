@@ -8,7 +8,7 @@ $attributes = array();
 
 $type = 'text';
 
-if ( 1 == pods_var( 'email_html5', $options ) ) {
+if ( 1 === (int) pods_v( 'email_html5', $options ) ) {
 	$type = 'email';
 }
 

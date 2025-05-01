@@ -30,10 +30,10 @@ if ( is_user_logged_in() ) {
 
 $field_nonce = wp_create_nonce( 'pods_upload_' . ( ! is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options['id'] );
 
-$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
+$limit_file_type = pods_v( $form_field_type . '_type', $options, 'images' );
 
-$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
-$linked         = pods_var( $form_field_type . '_linked', $options, 0 );
+$title_editable = pods_v( $form_field_type . '_edit_title', $options, 0 );
+$linked         = pods_v( $form_field_type . '_linked', $options, 0 );
 
 if ( 'images' === $limit_file_type ) {
 	$limit_types = 'jpg,jpeg,png,gif';
@@ -46,12 +46,12 @@ if ( 'images' === $limit_file_type ) {
 } elseif ( 'any' === $limit_file_type ) {
 	$limit_types = '';
 } else {
-	$limit_types = pods_var( $form_field_type . '_allowed_extensions', $options, '' );
+	$limit_types = pods_v_sanitized( $form_field_type . '_allowed_extensions', $options, '' );
 }
 
 $limit_types = str_replace( ' ', '', $limit_types );
 
-$tab = pods_var( $form_field_type . '_attachment_tab', $options, 'type', null, true );
+$tab = pods_v_sanitized( $form_field_type . '_attachment_tab', $options, 'type', true );
 
 if ( 'upload' === $tab ) {
 	$tab = 'type';
@@ -61,8 +61,8 @@ if ( 'upload' === $tab ) {
 
 $file_limit = 1;
 
-if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' ) ) {
-	$file_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
+if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) ) {
+	$file_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 }
 
 $data = array(

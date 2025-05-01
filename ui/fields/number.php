@@ -14,13 +14,13 @@ $attributes             = PodsForm::merge_attributes( $attributes, $name, $form_
 
 global $wp_locale;
 
-if ( '9999.99' == pods_var( 'number_format', $options ) ) {
+if ( '9999.99' === pods_v( 'number_format', $options ) ) {
 	$thousands = ',';
 	$dot       = '.';
-} elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
+} elseif ( '9999,99' === pods_v( 'number_format', $options ) ) {
 	$thousands = '.';
 	$dot       = ',';
-} elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+} elseif ( '9.999,99' === pods_v( 'number_format', $options ) ) {
 	$thousands = '.';
 	$dot       = ',';
 } else {

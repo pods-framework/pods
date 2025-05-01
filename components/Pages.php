@@ -710,84 +710,48 @@ class Pods_Pages extends PodsComponent {
 		$has_php = false !== strpos( $page_code, '<?' );
 		$has_precode = ! empty( $pre_code );
 
-		if ( $has_php ) {
+		if ( $has_php && pods_eval_show_errors() ) {
 			pods_deprecated( 'Pod Page PHP code has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
 
-			if ( defined( 'PODS_DISABLE_EVAL' ) && ! PODS_DISABLE_EVAL ) {
-				pods_message(
-					sprintf(
-						'
-							<p><strong>%1$s:</strong> %2$s</p>
-							<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
-						',
-						esc_html__( 'Pod Page Error', 'pods' ),
-						esc_html__( 'This Pod Page contains PHP code that will not run due to security restrictions in Pods.', 'pods' ),
-						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
-						esc_html__( 'Read more about file-based templates', 'pods' ),
-						admin_url( 'admin.php?page=pods-components' ),
-						esc_html__( 'Switch to file-based Pod Pages using our Migrate PHP into File-based templates component', 'pods' )
-					),
-					'error',
-					false,
-					false
-				);
-			} else {
-				pods_message(
-					sprintf(
-						'
-							<p><strong>%1$s:</strong> %2$s</p>
-							<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
-						',
-						esc_html__( 'Pod Page Warning', 'pods' ),
-						esc_html__( 'This Pod Page contains PHP code that will no longer run in Pods 3.3+.', 'pods' ),
-						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
-						esc_html__( 'Read more about file-based templates', 'pods' ),
-						admin_url( 'admin.php?page=pods-components' ),
-						esc_html__( 'Switch to file-based Pod Pages using our Migrate PHP into File-based templates component', 'pods' )
-					),
-					'warning'
-				);
-			}
+			pods_message(
+				sprintf(
+					'
+						<p><strong>%1$s:</strong> %2$s</p>
+						<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
+					',
+					esc_html__( 'Pod Page Error', 'pods' ),
+					esc_html__( 'This Pod Page contains PHP code that will not run due to security restrictions in Pods.', 'pods' ),
+					'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+					esc_html__( 'Read more about file-based templates', 'pods' ),
+					admin_url( 'admin.php?page=pods-components' ),
+					esc_html__( 'Switch to file-based Pod Pages using our Migrate PHP into File-based templates component', 'pods' )
+				),
+				'error',
+				false,
+				false
+			);
 		}
 
-		if ( $has_precode ) {
+		if ( $has_precode && pods_eval_show_errors() ) {
 			pods_deprecated( 'Pod Page precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
 
-			if ( defined( 'PODS_DISABLE_EVAL' ) && ! PODS_DISABLE_EVAL ) {
-				pods_message(
-					sprintf(
-						'
-							<p><strong>%1$s:</strong> %2$s</p>
-							<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
-						',
-						__( 'Pod Page Error', 'pods' ),
-						__( 'This Pod Page contains precode (deprecated) that will not run due to security restrictions in Pods.', 'pods' ),
-						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
-						esc_html__( 'Read more about file-based templates', 'pods' ),
-						admin_url( 'admin.php?page=pods-components' ),
-						esc_html__( 'Switch to file-based Pod Pages using our Migrate PHP into File-based templates component', 'pods' )
-					),
-					'error',
-					false,
-					false
-				);
-			} else {
-				pods_message(
-					sprintf(
-						'
-							<p><strong>%1$s:</strong> %2$s</p>
-							<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
-						',
-						__( 'Pod Page Warning', 'pods' ),
-						__( 'This Pod Page contains precode which is deprecated -- it will no longer run in Pods 3.3+.', 'pods' ),
-						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
-						esc_html__( 'Read more about file-based templates', 'pods' ),
-						admin_url( 'admin.php?page=pods-components' ),
-						esc_html__( 'Switch to file-based Pod Pages using our Migrate PHP into File-based templates component', 'pods' )
-					),
-					'warning'
-				);
-			}
+			pods_message(
+				sprintf(
+					'
+						<p><strong>%1$s:</strong> %2$s</p>
+						<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
+					',
+					__( 'Pod Page Error', 'pods' ),
+					__( 'This Pod Page contains precode (deprecated) that will not run due to security restrictions in Pods.', 'pods' ),
+					'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
+					esc_html__( 'Read more about file-based templates', 'pods' ),
+					admin_url( 'admin.php?page=pods-components' ),
+					esc_html__( 'Switch to file-based Pod Pages using our Migrate PHP into File-based templates component', 'pods' )
+				),
+				'error',
+				false,
+				false
+			);
 		}
 
 	}

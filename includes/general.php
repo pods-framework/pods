@@ -5188,3 +5188,21 @@ function pods_render_is_in_block(): bool {
 	 */
 	return (bool) apply_filters( 'pods_render_is_in_block', false );
 }
+
+/**
+ * Determine whether to show errors when detecting PHP code in eval context.
+ *
+ * @since 3.3.0
+ *
+ * @return bool Whether to show errors when detecting PHP code in eval context.
+ */
+function pods_eval_show_errors(): bool {
+	/**
+	 * Allow filtering whether to show errors when detecting PHP code in eval context.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param bool $eval_show_errors Whether to show errors when detecting PHP code in eval context.
+	 */
+	return (bool) apply_filters( 'pods_eval_show_errors', true );
+}

@@ -1,11 +1,17 @@
 .pods-dfv-container .pods-tinymce-editor-container {
 	border: none;
 	background: transparent;
-}
 
-.pods-tinymce-editor-container .mce-tinymce {
-	border: 1px solid #e5e5e5;
-	box-sizing: border-box;
+	.mce-tinymce {
+		border: 1px solid #e5e5e5;
+		box-sizing: border-box;
+	}
+
+	.pods-tinymce-reinit {
+		text-align: right;
+		max-width: 100%;
+		margin-top: 10px;
+	}
 }
 
 .pods-alternate-editor {

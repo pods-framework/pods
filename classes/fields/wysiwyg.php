@@ -64,6 +64,12 @@ class PodsField_WYSIWYG extends PodsField {
 						'default' => 1,
 						'type'    => 'boolean',
 					],
+					static::$type . '_delay_init' => [
+						'label'   => __( 'Delay TinyMCE Initialization', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+						'help' => __( 'Delay the initialization of the TinyMCE editor until you click to initialize it.', 'pods' ),
+					],
 				],
 			],
 			static::$type . '_editor_height'     => [

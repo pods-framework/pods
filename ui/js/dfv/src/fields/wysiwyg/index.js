@@ -39,8 +39,9 @@ const Wysiwyg = ( props ) => {
 		htmlAttr: htmlAttributes = {},
 		name,
 		wysiwyg_editor: editor = 'tinymce',
-		wysiwyg_editor_height: editorHeight = 400,
-		wysiwyg_media_buttons: mediaButtons,
+		wysiwyg_editor_height: editorHeight = 200,
+		wysiwyg_media_buttons: mediaButtons = false,
+		wysiwyg_delay_init: delayInit = false,
 		wysiwyg_wpautop: wpautop = true,
 		wysiwyg_default_editor: defaultEditor = 'tinymce',
 		read_only: readOnly,
@@ -90,6 +91,7 @@ const Wysiwyg = ( props ) => {
 			value={ value || '' }
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }
+			delayInit={ toBool( delayInit ) }
 			mediaButtons={ toBool( mediaButtons ) }
 			wpautop={ toBool( wpautop ) }
 			defaultEditor={ defaultEditor }

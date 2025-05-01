@@ -2478,12 +2478,6 @@ class PodsInit {
 			}
 		}
 
-		/*if ( ! did_action( 'plugins_loaded' ) ) {
-			add_action( 'plugins_loaded', $this->load_plugin_textdomain() );
-		} else {
-			$this->load_plugin_textdomain();
-		}*/
-
 		if ( ! $is_admin ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ], 15 );
 		} else {

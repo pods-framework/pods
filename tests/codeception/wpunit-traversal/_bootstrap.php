@@ -22,3 +22,7 @@ require_once PODS_DIR . '/components/Advanced-Content-Types.php';
 require_once PODS_DIR . '/components/Table-Storage.php';
 
 Pods_Unit_Tests\Pods_TraversalTestCase::_initialize();
+
+if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
+	define( 'PODS_WP_VERSION_MINIMUM', '6.1' );
+}

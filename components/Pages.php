@@ -265,6 +265,9 @@ class Pods_Pages extends PodsComponent {
 				'label' => __( 'Page Precode', 'pods' ),
 				'type'  => 'code',
 				'help'  => __( 'Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default.', 'pods' ),
+				'excludes-on'  => [
+					'precode' => '',
+				],
 			],
 			[
 				'name'                  => 'page_template',

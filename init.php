@@ -56,7 +56,8 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 * To be updated each Major x.x Pods release.
 	 */
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '6.3' );
+		$pods_wp_version_minimum = getenv( 'PODS_WP_VERSION_MINIMUM' ) ?: '6.3';
+		define( 'PODS_WP_VERSION_MINIMUM', $pods_wp_version_minimum );
 	}
 
 	/**

@@ -213,6 +213,7 @@ const TinyMCE = ( {
 					<Button
 						onClick={reInit}
 						isTertiary
+						isSmall
 						aria-label={__('Reload the editor instance in case of a compatibility issue', 'pods')}
 					>
 						{__('Reload editor', 'pods')}

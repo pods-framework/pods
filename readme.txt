@@ -2,10 +2,10 @@
 Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, dan.stefan, Desertsnowman, mgibbs189, Shelob9, clubduece, curtismchale, mikedamage, jchristopher, pcfreak30
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
-Requires at least: 6.0
+Requires at least: 6.3
 Tested up to: 6.8
 Requires PHP: 7.2
-Stable tag: 3.2.9
+Stable tag: 3.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,7 +182,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.2.9 - May 1st, 2025 =
+= 3.3 - May 1st, 2025 =
 
 * Feature: Form validation for the Block Editor now prevents saving a post if there are required fields and shows the appropriate error message. #7343 #7369 (@JoryHogeveen, @sc0ttkclark)
 * Feature: Upgraded Pods Blocks to the WP Blocks API version 3 to support more feautres like block wrapper attributes and the iframe editor. (@sc0ttkclark)
@@ -305,7 +305,7 @@ To be safe and sure that those who are using Pods do not mistake Pods 3.2.3 as a
 * Fixed: PHP 8.1 compatibility fix for null values passed to esc_* functions in WP. (@sc0ttkclark)
 * Fixed: PHP 8.1 compatibility fix for html_entity_decode. (@sc0ttkclark)
 
-= 3.2.0 - March 25th, 2024 =
+= 3.2 - March 25th, 2024 =
 
 * Feature: New support for Custom Field revisions in Pods that are Post Types that use Meta storage. You can optionally enable the feature per-pod or per-field. #7265 (@sc0ttkclark)
 * Feature: New support for WordPress `register_meta()` for all Pods fields on meta-based Pods. You can enable this feature in Pods Admin > Settings > "Register meta fields". (@sc0ttkclark)

@@ -5159,7 +5159,7 @@ function pods_is_debug_logging_enabled(): bool {
 /**
  * Set whether the render is in a block.
  *
- * @since 3.2.9
+ * @since 3.3.0
  *
  * @param bool $render_is_in_block Whether the render is in a block.
  */
@@ -5174,7 +5174,7 @@ function pods_set_render_is_in_block( bool $render_is_in_block ): void {
 /**
  * Determine whether the render is in a block.
  *
- * @since 3.2.9
+ * @since 3.3.0
  *
  * @return bool Whether the render is in a block.
  */
@@ -5182,7 +5182,7 @@ function pods_render_is_in_block(): bool {
 	/**
 	 * Allow filtering whether the render is in a block.
 	 *
-	 * @since 3.2.9
+	 * @since 3.3.0
 	 *
 	 * @param bool $render_is_in_block Whether the render is in a block.
 	 */

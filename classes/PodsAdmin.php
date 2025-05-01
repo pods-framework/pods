@@ -2045,8 +2045,8 @@ class PodsAdmin {
 		}
 
 		// Handle callouts logic.
-		$callouts['access_rights'] = ! isset( $callouts['access_rights'] ) || $callouts['access_rights'] ? 1 : 0;
-		$callouts['friends_2024_docs'] = ! isset( $callouts['friends_2024_docs'] ) || $callouts['friends_2024_docs'] || $force_callouts ? 1 : 0;
+		$callouts['access_rights'] = $callouts['access_rights'] ?? 0;
+		$callouts['friends_2024_docs'] = ( ! isset( $callouts['friends_2024_docs'] ) || $callouts['friends_2024_docs'] || $force_callouts ) ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.

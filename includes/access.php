@@ -1837,6 +1837,7 @@ function pods_access_get_capabilities_preview( string $pod_type, string $pod_nam
  * @return array The pod settings config for access-related settings.
  */
 function pods_access_settings_config(): array {
+	// Only use translation functions after `init` to prevent a WP core notice.
 	$did_init = doing_action( 'init' ) || did_action( 'init' );
 
 	$first_pods_version = get_option( 'pods_framework_version_first' );

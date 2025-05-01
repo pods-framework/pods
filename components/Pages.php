@@ -710,7 +710,7 @@ class Pods_Pages extends PodsComponent {
 		if ( $has_php ) {
 			pods_deprecated( 'Pod Page PHP code has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
 
-			if ( PODS_DISABLE_EVAL ) {
+			if ( defined( 'PODS_DISABLE_EVAL' ) && ! PODS_DISABLE_EVAL ) {
 				pods_message(
 					sprintf(
 						'
@@ -718,7 +718,7 @@ class Pods_Pages extends PodsComponent {
 							<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
 						',
 						esc_html__( 'Pod Page Error', 'pods' ),
-						esc_html__( 'This Pod Page contains PHP code that will not run due to security restrictions in Pods. To enable PHP code, you must configure your website to allow PHP by setting the constant PODS_DISABLE_EVAL to false.', 'pods' ),
+						esc_html__( 'This Pod Page contains PHP code that will not run due to security restrictions in Pods.', 'pods' ),
 						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
 						esc_html__( 'Read more about file-based templates', 'pods' ),
 						admin_url( 'admin.php?page=pods-components' ),
@@ -750,7 +750,7 @@ class Pods_Pages extends PodsComponent {
 		if ( $has_precode ) {
 			pods_deprecated( 'Pod Page precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
 
-			if ( PODS_DISABLE_EVAL ) {
+			if ( defined( 'PODS_DISABLE_EVAL' ) && ! PODS_DISABLE_EVAL ) {
 				pods_message(
 					sprintf(
 						'
@@ -758,7 +758,7 @@ class Pods_Pages extends PodsComponent {
 							<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
 						',
 						__( 'Pod Page Error', 'pods' ),
-						__( 'This Pod Page contains precode (deprecated) that will not run due to security restrictions in Pods. To enable PHP code, you must configure your website to allow PHP by setting the constant PODS_DISABLE_EVAL to false.', 'pods' ),
+						__( 'This Pod Page contains precode (deprecated) that will not run due to security restrictions in Pods.', 'pods' ),
 						'https://docs.pods.io/displaying-pods/pod-page-template-hierarchy-for-themes/',
 						esc_html__( 'Read more about file-based templates', 'pods' ),
 						admin_url( 'admin.php?page=pods-components' ),
@@ -1242,16 +1242,17 @@ class Pods_Pages extends PodsComponent {
 
 				echo $content;
 			} elseif ( $content && 0 < strlen( $content ) ) {
-				// @todo Remove this code in Pods 3.3 and completely ignore any $code that starts with <? in the string.
 				if ( false !== strpos( $content, '<?' ) ) {
-					_doing_it_wrong( 'Pods Pages', 'Pod Page Precode PHP code is no longer actively supported and will be completely removed in Pods 3.3', '3.0' );
-
-					// Only use $content if eval is enabled.
-					if ( ! PODS_DISABLE_EVAL ) {
-						pods_deprecated( 'Pod Page PHP code has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
-
-						eval( "?>$content" );
-					}
+					/**
+					 * Allow evaluating Pod Pages content by custom code snippet if needed.
+					 *
+					 * @since 3.3.0
+					 *
+					 * @param array  $pods_page The Pod Page data.
+					 * @param Pods   $pods      The Pods instance.
+					 * @param string $content   The content of the Pod Page.
+					 */
+					do_action( 'pods_pages_eval_content', $pods_page, $pods, $content );
 				} elseif ( is_object( $pods ) && ! empty( $pods->id ) ) {
 					echo $pods->do_magic_tags( $content );
 				} else {
@@ -1321,17 +1322,6 @@ class Pods_Pages extends PodsComponent {
 
 				if ( 0 < strlen( trim( self::$exists['precode'] ) ) ) {
 					$content = trim( self::$exists['precode'] );
-				}
-
-				// @todo Remove this code in Pods 3.3.
-				if ( $content && 0 < strlen( $content ) ) {
-					_doing_it_wrong( 'Pods Pages', 'Pod Page Precode PHP code is no longer actively supported and will be completely removed in Pods 3.3', '3.0' );
-
-					if ( ! PODS_DISABLE_EVAL ) {
-						pods_deprecated( 'Pod Page Precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
-
-						eval( "?>$content" );
-					}
 				}
 
 				do_action( 'pods_page_precode', self::$exists, $pods, $content );

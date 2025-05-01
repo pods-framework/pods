@@ -831,20 +831,22 @@ class Pods_Templates extends PodsComponent {
 		$out = '';
 
 		if ( false !== strpos( $code, '<?' ) ) {
-			// @todo Remove this code in Pods 3.3 and completely ignore any $code that starts with <? in the string.
-			_doing_it_wrong( 'Pods Templates', 'Pod Template PHP code is no longer actively supported and will be completely removed in Pods 3.3', '3.0' );
+			$code = str_replace( '$this->', '$obj->', $code );
 
-			if ( $process_php && ! PODS_DISABLE_EVAL ) {
-				pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
+			ob_start();
 
-				$code = str_replace( '$this->', '$obj->', $code );
+			/**
+			 * Allow evaluating Pod Template content by custom code snippet if needed.
+			 *
+			 * @since 3.3.0
+			 *
+			 * @param string $code        The template string to parse.
+			 * @param object $obj         The Pods object.
+			 * @param bool   $process_php Whether to process PHP.
+			 */
+			do_action( 'pods_templates_eval_content', $code, $obj, $process_php );
 
-				ob_start();
-
-				eval( "?>$code" );
-
-				$out = (string) ob_get_clean();
-			}
+			$out = (string) ob_get_clean();
 		} else {
 			$out = $code;
 		}

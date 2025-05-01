@@ -255,10 +255,6 @@ class PodsInit {
 			define( 'PODS_TABLELESS', false );
 		}
 
-		if ( ! defined( 'PODS_DISABLE_EVAL' ) ) {
-			define( 'PODS_DISABLE_EVAL', true );
-		}
-
 		if ( ! defined( 'PODS_STATS_TRACKING' ) || PODS_STATS_TRACKING ) {
 			$this->stats_tracking( PODS_FILE, 'pods' );
 		}

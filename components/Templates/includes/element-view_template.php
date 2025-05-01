@@ -40,7 +40,7 @@ if ( isset( $content ) ) {
 	);
 	?>
 
-	<?php if ( PODS_DISABLE_EVAL ) : ?>
+	<?php if ( defined( 'PODS_DISABLE_EVAL' ) && ! PODS_DISABLE_EVAL ) : ?>
 		<?php
 		pods_message(
 			sprintf(
@@ -49,7 +49,7 @@ if ( isset( $content ) ) {
 					<p><a href="%3$s" target="_blank" rel="noopener noreferrer">%4$s</a> | <a href="%5$s" target="_blank" rel="noopener noreferrer">%6$s</a></p>
 				',
 				esc_html__( 'Pod Template Error', 'pods' ),
-				esc_html__( 'This template contains PHP code that will not run due to security restrictions in Pods. To enable PHP code, you must configure your website to allow PHP by setting the constant PODS_DISABLE_EVAL to false.', 'pods' ),
+				esc_html__( 'This template contains PHP code that will not run due to security restrictions in Pods.', 'pods' ),
 				'https://docs.pods.io/displaying-pods/pod-template-hierarchy-for-themes/',
 				esc_html__( 'Read more about file-based templates', 'pods' ),
 				admin_url( 'admin.php?page=pods-components' ),

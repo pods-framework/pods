@@ -19,7 +19,7 @@ if ( 'multi' === pods_v( $form_field_type . '_format_type', $options ) && 1 != $
 if ( ! is_array( $options['data'] ) && false !== $options['data'] && 0 < strlen( $options['data'] ) ) {
 	$options['data'] = implode( ',', $options['data'] );
 } else {
-	$options['data'] = (array) pods_var_raw( 'data', $options, array(), null, true );
+	$options['data'] = (array) pods_v( 'data', $options, [] );
 }
 
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );

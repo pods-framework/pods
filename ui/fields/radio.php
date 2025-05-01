@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-$options['data'] = (array) pods_var_raw( 'data', $options, array() );
+$options['data'] = (array) pods_v( 'data', $options, [] );
 
 if ( 1 === (int) pods_v( 'grouped', $options, 0 ) ) {
 	?>
@@ -73,7 +73,7 @@ foreach ( $options['data'] as $val => $label ) {
 		<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 		<?php
 		if ( 0 < strlen( $label ) ) {
-			$help = pods_var_raw( 'help', $options );
+			$help = pods_v( 'help', $options );
 
 			if ( 1 === (int) pods_v( 'grouped', $options, 0 ) || empty( $help ) ) {
 				$help = '';

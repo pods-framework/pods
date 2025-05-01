@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-$options['data'] = (array) pods_var_raw( 'data', $options, array(), null, true );
+$options['data'] = (array) pods_v( 'data', $options, [] );
 
 $data_count = count( $options['data'] );
 
@@ -92,7 +92,7 @@ if ( 0 < $data_count ) {
 			}
 
 			if ( 0 < strlen( $label ) ) {
-				$help = pods_var_raw( 'help', $options );
+				$help = pods_v( 'help', $options );
 
 				if ( 1 === (int) pods_v( 'grouped', $options ) || empty( $help ) ) {
 					$help = '';

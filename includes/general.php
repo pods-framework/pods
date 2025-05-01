@@ -203,7 +203,7 @@ function pods_message( $message, $type = null, $return = false, $is_dismissible 
 
 	$div_classes = implode( ' ', $div_classes );
 
-	if (pods_render_is_in_block()) {
+	if ( pods_render_is_in_block() ) {
 		$attrs = get_block_wrapper_attributes(
 			array_filter(
 				[

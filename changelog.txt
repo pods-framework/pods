@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.3.1 - May 2nd, 2025 =
+
+* Fixed: Resolve issue with `get_block_wrapper_attributes()` usage. (@sc0ttkclark)
+
 = 3.3 - May 1st, 2025 =
 
 * New minimum WP version required: WordPress 6.3+ (previously: WP 6.0+)

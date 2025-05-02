@@ -13,7 +13,7 @@ jobs:
     - name: Checkout the code
       uses: actions/checkout@v4
     - name: WordPress Plugin Deploy
-      uses: 10up/action-wordpress-plugin-deploy@master
+      uses: 10up/action-wordpress-plugin-deploy@2.3.0
       id: deploy
       with:
         generate-zip: true

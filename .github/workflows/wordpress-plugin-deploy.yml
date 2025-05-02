@@ -1,4 +1,7 @@
 name: Deploy to WordPress.org
+permissions:
+  id-token: write
+  attestations: write
 on:
   release:
     types: [published]

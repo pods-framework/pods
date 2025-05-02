@@ -487,7 +487,7 @@ class PodsForm {
 		}
 
 		if (pods_render_is_in_block()) {
-			echo get_block_wrapper_attributes( $final_attributes );
+			echo ' ' . get_block_wrapper_attributes( $final_attributes );
 
 			return;
 		}

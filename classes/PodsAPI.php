@@ -6559,7 +6559,7 @@ class PodsAPI {
 			}
 
 			$check_name = $check_name_limited . $try;
-			$new_label  = $pod['label'] . $try;
+			$new_label  = $pod['label'] . ' ' . $try;
 		}
 
 		$pod['name']  = $check_name;
@@ -6693,7 +6693,7 @@ class PodsAPI {
 			$try ++;
 
 			$check_name = $group['name'] . $try;
-			$new_label  = $group['label'] . $try;
+			$new_label  = $group['label'] . ' ' . $try;
 		}
 
 		$group['name']  = $check_name;
@@ -6803,7 +6803,7 @@ class PodsAPI {
 			$try ++;
 
 			$check_name = $field['name'] . $try;
-			$new_label  = $field['label'] . $try;
+			$new_label  = $field['label'] . ' ' . $try;
 		}
 
 		$field['name']  = $check_name;

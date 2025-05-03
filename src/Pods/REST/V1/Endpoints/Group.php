@@ -103,52 +103,6 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 					],
 				],
 			],
-			'post'   => [
-				'summary'    => 'Duplicate a specific Group',
-				'parameters' => $this->swaggerize_args( $this->CREATE_args(), $POST_defaults ),
-				'responses'  => [
-					'201' => [
-						'description' => 'Returns the newly duplicated Group',
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'$ref' => '#/components/schemas/Group',
-								],
-							],
-						],
-					],
-					'400' => [
-						'description' => 'The request was invalid or cannot be otherwise served',
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'type' => 'object',
-								],
-							],
-						],
-					],
-					'401' => [
-						'description' => 'Unauthorized access - user does not have permission to duplicate this Group',
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'type' => 'object',
-								],
-							],
-						],
-					],
-					'404' => [
-						'description' => 'The Group to duplicate was not found',
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'type' => 'object',
-								],
-							],
-						],
-					],
-				],
-			],
 			'put'    => [
 				'summary'    => 'Update a specific Group',
 				'parameters' => $this->swaggerize_args( $this->EDIT_args(), $POST_defaults ),

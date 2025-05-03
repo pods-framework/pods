@@ -6632,6 +6632,7 @@ class PodsAPI {
 	 * $params['id'] int The Group ID.
 	 * $params['name'] string The Group name.
 	 * $params['new_name'] string The new Group name.
+	 * $params['duplicate_fields'] bool Whether to duplicate the fields.
 	 *
 	 * @since 2.8.0
 	 *
@@ -6670,7 +6671,11 @@ class PodsAPI {
 			return false;
 		}
 
+		$pod_data = null;
+
 		if ( $group instanceof Group ) {
+			$pod_data = $group->get_parent_object();
+
 			$group = $group->export(
 				[
 					'include_fields' => true,
@@ -6701,7 +6706,13 @@ class PodsAPI {
 
 		$fields = $group['fields'];
 
-		unset( $group['id'], $group['parent'], $group['object_type'], $group['object_storage_type'], $group['fields'] );
+		unset( $group['id'], $group['object_type'], $group['object_storage_type'], $group['fields'] );
+
+		if ( $pod_data ) {
+			unset( $group['parent'] );
+
+			$group['pod_data'] = $pod_data;
+		}
 
 		try {
 			$group_id = $this->save_group( $group );
@@ -6715,16 +6726,24 @@ class PodsAPI {
 			return false;
 		}
 
-		foreach ( $fields as $field => $field_data ) {
-			unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['object_storage_type'], $field_data['group'] );
+		$group_data = $this->load_group( [ 'id' => $group_id ] );
 
-			$field_data['group_id'] = $group_id;
+		if ( ! empty( $params->duplicate_fields ) ) {
+			foreach ( $fields as $field_data ) {
+				try {
+					$field_params = [
+						'pod' => $pod_data,
+						'id' => $field_data['id'],
+						'name' => $field_data['name'],
+						'new_group' => $group_data,
+						'new_group_id' => $group_id,
+					];
 
-			try {
-				$this->save_field( $field_data );
-			} catch ( Exception $exception ) {
-				// Field not saved.
-				pods_debug_log( $exception );
+					$this->duplicate_field( $field_params, true || $strict );
+				} catch ( Exception $exception ) {
+					// Field not saved.
+					pods_debug_log( $exception );
+				}
 			}
 		}
 

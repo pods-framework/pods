@@ -1,5 +1,6 @@
 import {
 	SAVE_STATUSES,
+	DUPLICATE_STATUSES,
 	DELETE_STATUSES,
 	UI_ACTIONS,
 	CURRENT_POD_ACTIONS,
@@ -11,6 +12,7 @@ import {
 	setSaveStatus,
 	setDeleteStatus,
 	setGroupSaveStatus,
+	setGroupDuplicateStatus,
 	setGroupDeleteStatus,
 	// @todo add Field tests:
 	setFieldSaveStatus,
@@ -27,6 +29,7 @@ import {
 	savePod,
 	deletePod,
 	saveGroup,
+	duplicateGroup,
 	deleteGroup,
 
 	// setGroupFields,
@@ -98,6 +101,24 @@ describe( 'actions', () => {
 				SAVE_STATUSES.SAVE_SUCCESS,
 			)( {
 				message: 'Saved successfully.',
+			} );
+
+			expect( result ).toEqual( expected );
+		} );
+
+		test( 'setGroupDuplicateStatus() creates a function to create an action to change the group\'s duplicate status', () => {
+			const expected = {
+				type: UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS,
+				saveStatus: DUPLICATE_STATUSES.DUPLICATE_SUCCESS,
+				result: {
+					message: 'Duplicated successfully.',
+				},
+			};
+
+			const result = setGroupDuplicateStatus(
+				DUPLICATE_STATUSES.DUPLICATE_SUCCESS,
+			)( {
+				message: 'Duplicated successfully.',
 			} );
 
 			expect( result ).toEqual( expected );
@@ -320,6 +341,18 @@ describe( 'actions', () => {
 			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.ADD_GROUP );
 			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+		} );
+
+		test( 'duplicateGroup() returns an action to duplicate a pod by its ID', () => {
+			const action = CURRENT_POD_ACTIONS.API_REQUEST;
+
+			const result = duplicateGroup( 123 );
+
+			expect( result.type ).toEqual( action );
+			expect( result.payload.onSuccess[ 0 ]().type ).toEqual( UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS );
+			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.DUPLICATE_GROUP );
+			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS );
+			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS );
 		} );
 
 		test( 'deleteGroup() returns an action to delete a group by its ID', () => {

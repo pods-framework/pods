@@ -4,6 +4,7 @@ import * as paths from '../state-paths';
 
 import {
 	SAVE_STATUSES,
+	DUPLICATE_STATUSES,
 	DELETE_STATUSES,
 	CURRENT_POD_ACTIONS,
 	UI_ACTIONS,
@@ -59,15 +60,30 @@ describe( 'UI reducer', () => {
 		expect( newState.saveMessage ).toEqual( 'Saving...' );
 	} );
 
-	it( 'uses the default for an unknown save status', () => {
+	it( 'changes the duplicate status', () => {
 		const action = {
-			type: UI_ACTIONS.SET_SAVE_STATUS,
-			saveStatus: 'xyzzy',
+			type: UI_ACTIONS.SET_DUPLICATE_STATUS,
+			duplicateStatus: DUPLICATE_STATUSES.DUPLICATING,
+			result: {
+				message: 'Duplicating...',
+			},
 		};
 
 		const newState = ui( state, action );
 
-		expect( newState.saveStatus ).toEqual( INITIAL_UI_STATE.saveStatus );
+		expect( newState.duplicateStatus ).toEqual( action.duplicateStatus );
+		expect( newState.duplicateMessage ).toEqual( 'Duplicating...' );
+	} );
+
+	it( 'uses the default for an unknown duplicate status', () => {
+		const action = {
+			type: UI_ACTIONS.SET_DUPLICATE_STATUS,
+			duplicateStatus: 'xyzzy',
+		};
+
+		const newState = ui( state, action );
+
+		expect( newState.duplicateStatus ).toEqual( INITIAL_UI_STATE.duplicateStatus );
 	} );
 
 	it( 'changes the delete status', () => {

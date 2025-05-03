@@ -271,7 +271,7 @@ function pods_error( $error, $obj = null ) {
 		$error_mode = $display_errors;
 	}
 
-	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+	if ( is_object( $error ) && $error instanceof Exception ) {
 		$error_mode = 'exception';
 
 		if ( 'final_exception' === $display_errors ) {

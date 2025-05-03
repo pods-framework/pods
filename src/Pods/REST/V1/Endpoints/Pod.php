@@ -50,15 +50,19 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 			'type'    => 'string',
 		];
 
-		// @todo Handle get/post/delete
+		$POST_defaults = [
+			'in'      => 'body',
+			'default' => '',
+			'type'    => 'string',
+		];
 
 		return [
 			'get' => [
-				'summary'    => '', // @todo Fill this out
+				'summary'    => 'Retrieve a specific Pod',
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'Returns the requested Pod with its details',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -68,7 +72,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 						],
 					],
 					'400' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'The request was invalid or cannot be otherwise served',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -78,7 +82,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 						],
 					],
 					'401' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'Unauthorized access - user does not have permission to access this Pod',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -88,7 +92,99 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 						],
 					],
 					'404' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'The requested Pod was not found',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+				],
+			],
+			'put' => [
+				'summary'    => 'Update a specific Pod',
+				'parameters' => $this->swaggerize_args( $this->EDIT_args(), $POST_defaults ),
+				'responses'  => [
+					'200' => [
+						'description' => 'Returns the updated Pod',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'$ref' => '#/components/schemas/Pod',
+								],
+							],
+						],
+					],
+					'400' => [
+						'description' => 'The request was invalid or cannot be otherwise served',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'401' => [
+						'description' => 'Unauthorized access - user does not have permission to update this Pod',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'404' => [
+						'description' => 'The Pod to update was not found',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+				],
+			],
+			'delete' => [
+				'summary'    => 'Delete a specific Pod',
+				'parameters' => $this->swaggerize_args( $this->DELETE_args(), $POST_defaults ),
+				'responses'  => [
+					'200' => [
+						'description' => 'Returns the deleted Pod details',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'$ref' => '#/components/schemas/Pod',
+								],
+							],
+						],
+					],
+					'400' => [
+						'description' => 'The request was invalid or cannot be otherwise served',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'401' => [
+						'description' => 'Unauthorized access - user does not have permission to delete this Pod',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'404' => [
+						'description' => 'The Pod to delete was not found',
 						'content'     => [
 							'application/json' => [
 								'schema' => [

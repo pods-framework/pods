@@ -35,14 +35,19 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Provider_
 			'default' => '',
 		];
 
-		// @todo Handle get/post
+		$POST_defaults = [
+			'in'      => 'body',
+			'default' => '',
+			'type'    => 'string',
+		];
 
 		return [
 			'get' => [
+				'summary'    => 'Retrieve a collection of Fields',
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'Returns a collection of Fields matching the request',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -82,6 +87,52 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Provider_
 					],
 					'404' => [
 						'description' => __( 'The requested page was not found.', 'pods' ),
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+				],
+			],
+			'post' => [
+				'summary'    => 'Create a new Field',
+				'parameters' => $this->swaggerize_args( $this->CREATE_args(), $POST_defaults ),
+				'responses'  => [
+					'201' => [
+						'description' => 'Returns the newly created Field',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'$ref' => '#/components/schemas/Field',
+								],
+							],
+						],
+					],
+					'400' => [
+						'description' => 'The request was invalid or cannot be otherwise served',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'401' => [
+						'description' => 'Unauthorized access - user does not have permission to create Fields',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'403' => [
+						'description' => 'Forbidden - creation of this Field is not allowed',
 						'content'     => [
 							'application/json' => [
 								'schema' => [

@@ -33,16 +33,22 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 		$GET_defaults = [
 			'in'      => 'query',
 			'default' => '',
+			'type'    => 'string',
 		];
 
-		// @todo Handle get/post
+		$POST_defaults = [
+			'in'      => 'body',
+			'default' => '',
+			'type'    => 'string',
+		];
 
 		return [
 			'get' => [
+				'summary'    => 'Retrieve a collection of Pods',
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'Returns a collection of Pods matching the request',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -53,6 +59,72 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 											'items' => [ '$ref' => '#/components/schemas/Pod' ],
 										],
 									],
+								],
+							],
+						],
+					],
+					'400' => [
+						'description' => 'The request was invalid or cannot be otherwise served',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'401' => [
+						'description' => 'Unauthorized access - user does not have permission to access Pods',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+				],
+			],
+			'post' => [
+				'summary'    => 'Create a new Pod',
+				'parameters' => $this->swaggerize_args( $this->CREATE_args(), $POST_defaults ),
+				'responses'  => [
+					'201' => [
+						'description' => 'Returns the newly created Pod',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'$ref' => '#/components/schemas/Pod',
+								],
+							],
+						],
+					],
+					'400' => [
+						'description' => 'The request was invalid or cannot be otherwise served',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'401' => [
+						'description' => 'Unauthorized access - user does not have permission to create Pods',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'403' => [
+						'description' => 'Forbidden - creation of this Pod is not allowed',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
 								],
 							],
 						],

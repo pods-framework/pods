@@ -6735,10 +6735,12 @@ class PodsAPI {
 	 * Duplicate a Field.
 	 *
 	 * $params['pod_id'] int The Pod ID.
-	 * $params['pod'] string The Pod name.
+	 * $params['pod'] string|Whatsit The Pod name or object.
 	 * $params['id'] int The Field ID.
 	 * $params['name'] string The Field name.
 	 * $params['new_name'] string The new Field name.
+	 * $params['new_group'] string|Whatsit The new Group name or object.
+	 * $params['new_group_id'] string The new Group ID.
 	 *
 	 * @since 2.3.10
 	 *
@@ -6783,8 +6785,26 @@ class PodsAPI {
 			return false;
 		}
 
+		$pod_data = $field->get_parent_object();
+
 		if ( $field instanceof Field ) {
 			$field = $field->export();
+		}
+
+		$new_group = null;
+
+		$load_group_params = [];
+
+		if ( ! empty( $params->new_group_id ) ) {
+			$load_group_params['pod'] = $pod_data;
+			$load_group_params['id'] = $params->new_group_id;
+		} elseif ( ! empty( $params->new_group ) ) {
+			$load_group_params['pod'] = $pod_data;
+			$load_group_params['name'] = $params->new_group;
+		}
+
+		if ( $load_group_params ) {
+			$new_group = $this->load_group( $load_group_params, $strict );
 		}
 
 		if ( isset( $params->new_name ) ) {
@@ -6808,6 +6828,14 @@ class PodsAPI {
 
 		$field['name']  = $check_name;
 		$field['label'] = $new_label;
+
+		if ( $new_group ) {
+			$field['group'] = $new_group;
+		}
+
+		if ( $pod_data ) {
+			$field['pod'] = $pod_data;
+		}
 
 		unset( $field['id'], $field['object_type'], $field['object_storage_type'] );
 

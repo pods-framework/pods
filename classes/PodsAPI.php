@@ -8383,6 +8383,10 @@ class PodsAPI {
 			$params = get_object_vars( (object) $params );
 		}
 
+		if ( ! empty( $params['name'] ) && $params['name'] instanceof Pod ) {
+			return $params['name'];
+		}
+
 		if ( empty( $params ) ) {
 			return false;
 		}
@@ -8584,6 +8588,14 @@ class PodsAPI {
 		// Backwards compatibility handling.
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( (object) $params );
+		}
+
+		if ( ! empty( $params['name'] ) && $params['name'] instanceof Field ) {
+			return $params['name'];
+		}
+
+		if ( empty( $params ) ) {
+			return false;
 		}
 
 		// Check if we need to bypass cache automatically.
@@ -8938,6 +8950,14 @@ class PodsAPI {
 		// Backwards compatibility handling.
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( (object) $params );
+		}
+
+		if ( ! empty( $params['name'] ) && $params['name'] instanceof Group ) {
+			return $params['name'];
+		}
+
+		if ( empty( $params ) ) {
+			return false;
 		}
 
 		// Check if we need to bypass cache automatically.

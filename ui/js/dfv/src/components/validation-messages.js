@@ -9,7 +9,7 @@ const ValidationMessages = ( { messages } ) => {
 	}
 
 	return (
-		<div className="pods-validation-messages">
+		<div className="pods-validation-messages" data-testid="validation-messages">
 			{ messages.map( ( message ) => (
 				<Notice
 					key="message"

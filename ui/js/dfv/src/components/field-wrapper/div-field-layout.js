@@ -13,7 +13,7 @@ const DivFieldLayout = ( {
 } ) => {
 	const dfvContainerClass = classnames(
 		'pods-dfv-container',
-		`pods-dfv-container-${ fieldType }`
+		`pods-dfv-container-${ fieldType }`,
 	);
 
 	return (

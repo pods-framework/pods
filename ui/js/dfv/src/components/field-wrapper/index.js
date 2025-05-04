@@ -82,10 +82,14 @@ export const FieldWrapper = ( props ) => {
 	// Sort out different shapes that we could get the help text in.
 	// It's possible to get an array of strings for the help text, but it
 	// will usually be a string.
-	const shouldShowHelpText = helpText && ( 'help' !== helpText );
+	const shouldShowHelpText = helpText && (
+		'help' !== helpText
+	);
 
 	const helpTextString = Array.isArray( helpText ) ? helpText[ 0 ] : helpText;
-	const helpLink = ( Array.isArray( helpText ) && !! helpText[ 1 ] )
+	const helpLink = (
+		Array.isArray( helpText ) && !! helpText[ 1 ]
+	)
 		? helpText[ 1 ]
 		: undefined;
 
@@ -93,7 +97,9 @@ export const FieldWrapper = ( props ) => {
 	// Others get a description and others don't.
 	const showLabel = (
 		'heading' !== fieldType &&
-		( 'html' !== fieldType || ! htmlNoLabel ) &&
+		(
+			'html' !== fieldType || ! htmlNoLabel
+		) &&
 		! fieldEmbed
 	);
 
@@ -110,7 +116,9 @@ export const FieldWrapper = ( props ) => {
 	const passAllPodFieldsMap = isBooleanGroupField;
 
 	// Make all values into an array, to make handling repeatable fields easier.
-	const valuesArray = ( isRepeatable && Array.isArray( value ) )
+	const valuesArray = (
+		isRepeatable && Array.isArray( value )
+	)
 		? value
 		: [ value ];
 
@@ -136,16 +144,16 @@ export const FieldWrapper = ( props ) => {
 		&& field?.required
 	) {
 		// Check if we have a field value.
-		let fieldValue = undefined;
-		let fieldVariation = undefined;
+		let fieldValue;
+		let fieldVariation;
 
-		let variations = [
+		const variations = [
 			field.name,
 			'pods_meta_' + field.name,
 			'pods_field_' + field.name,
 		];
 
-		variations.every( variation => {
+		variations.every( ( variation ) => {
 			// Stop the loop if we found the value we were looking for.
 			if ( 'undefined' !== typeof allPodValues[ variation ] ) {
 				fieldValue = allPodValues[ variation ];
@@ -161,8 +169,8 @@ export const FieldWrapper = ( props ) => {
 		if (
 			'' === fieldValue
 			|| (
-				'undefined' !== typeof field?.data['']
-				&& field?.data[''] === fieldValue
+				'undefined' !== typeof field?.data[ '' ]
+				&& field?.data[ '' ] === fieldValue
 			)
 		) {
 			setValue( field?.default ?? '' );
@@ -190,7 +198,7 @@ export const FieldWrapper = ( props ) => {
 				condition: () => true === toBool( required ),
 			},
 		],
-		value
+		value,
 	);
 
 	// Handle Block Editor save lock.
@@ -230,58 +238,60 @@ export const FieldWrapper = ( props ) => {
 	const inputComponents = !! FieldComponent ? (
 		<FieldErrorBoundary>
 			<div className="pods-field-wrapper">
-				{ ( () => {
-					if ( true === isBooleanGroupField ) {
+				{ (
+					() => {
+						if ( true === isBooleanGroupField ) {
+							return (
+								<FieldComponent
+									storeKey={ storeKey }
+									values={ values }
+									podName={ podName }
+									podType={ podType }
+									allPodValues={ passAllPodValues ? allPodValues : undefined }
+									allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+									setOptionValue={ setOptionValue }
+									isValid={ ! validationMessages.length }
+									addValidationRules={ addValidationRules }
+									setHasBlurred={ () => setHasBlurred( true ) }
+									fieldConfig={ field }
+								/>
+							);
+						}
+
+						if ( true === isRepeatable ) {
+							return (
+								<RepeatableFieldList
+									storeKey={ storeKey }
+									fieldConfig={ processedFieldConfig }
+									valuesArray={ valuesArray }
+									FieldComponent={ FieldComponent }
+									podType={ podType }
+									podName={ podName }
+									allPodValues={ passAllPodValues ? allPodValues : undefined }
+									allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+									setFullValue={ setValue }
+									setHasBlurred={ () => setHasBlurred( true ) }
+								/>
+							);
+						}
+
 						return (
 							<FieldComponent
 								storeKey={ storeKey }
-								values={ values }
+								value={ value }
 								podName={ podName }
 								podType={ podType }
-								allPodValues={ passAllPodValues ? allPodValues : undefined }
-								allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-								setOptionValue={ setOptionValue }
+								allPodValues={ allPodValues }
+								allPodFieldsMap={ allPodFieldsMap }
+								setValue={ setValue }
 								isValid={ ! validationMessages.length }
 								addValidationRules={ addValidationRules }
 								setHasBlurred={ () => setHasBlurred( true ) }
-								fieldConfig={ field }
-							/>
-						);
-					}
-
-					if ( true === isRepeatable ) {
-						return (
-							<RepeatableFieldList
-								storeKey={ storeKey }
 								fieldConfig={ processedFieldConfig }
-								valuesArray={ valuesArray }
-								FieldComponent={ FieldComponent }
-								podType={ podType }
-								podName={ podName }
-								allPodValues={ passAllPodValues ? allPodValues : undefined }
-								allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-								setFullValue={ setValue }
-								setHasBlurred={ () => setHasBlurred( true ) }
 							/>
 						);
 					}
-
-					return (
-						<FieldComponent
-							storeKey={ storeKey }
-							value={ value }
-							podName={ podName }
-							podType={ podType }
-							allPodValues={ allPodValues }
-							allPodFieldsMap={ allPodFieldsMap }
-							setValue={ setValue }
-							isValid={ ! validationMessages.length }
-							addValidationRules={ addValidationRules }
-							setHasBlurred={ () => setHasBlurred( true ) }
-							fieldConfig={ processedFieldConfig }
-						/>
-					);
-				} )() }
+				)() }
 			</div>
 		</FieldErrorBoundary>
 	) : (
@@ -289,12 +299,14 @@ export const FieldWrapper = ( props ) => {
 			{ sprintf(
 				// translators: %s is the field type.
 				__( 'The field type \'%s\' was invalid.', 'pods' ),
-				fieldType
+				fieldType,
 			) }
 		</span>
 	);
 
-	const validationMessagesComponent = ( hasBlurred && validationMessages.length ) ? (
+	const validationMessagesComponent = (
+		hasBlurred && validationMessages.length
+	) ? (
 		<ValidationMessages messages={ validationMessages } />
 	) : undefined;
 
@@ -406,8 +418,10 @@ const MemoizedFieldWrapper = React.memo(
 
 		// Look up the dependencies, we may need to re-render if any of the
 		// values have changed.
-		const allDependencyFieldSlugs = ( nextProps.field?.conditional_logic?.rules || [] ).map(
-			( rule ) => rule.field
+		const allDependencyFieldSlugs = (
+			nextProps.field?.conditional_logic?.rules || []
+		).map(
+			( rule ) => rule.field,
 		);
 
 		// If it's a boolean group, there are also subfields to check.
@@ -416,9 +430,13 @@ const MemoizedFieldWrapper = React.memo(
 
 			subfields.forEach( ( subfield ) => {
 				allDependencyFieldSlugs.push(
-					...( ( subfield?.conditional_logic?.rules || [] ).map(
-						( rule ) => rule.field
-					) )
+					...(
+						(
+							subfield?.conditional_logic?.rules || []
+						).map(
+							( rule ) => rule.field,
+						)
+					),
 				);
 			} );
 		}
@@ -444,9 +462,13 @@ const MemoizedFieldWrapper = React.memo(
 				}
 
 				parentDependencySlugs.push(
-					...( ( parentField?.conditional_logic?.rules || [] ).map(
-						( rule ) => rule.field
-					) )
+					...(
+						(
+							parentField?.conditional_logic?.rules || []
+						).map(
+							( rule ) => rule.field,
+						)
+					),
 				);
 			} );
 
@@ -458,7 +480,7 @@ const MemoizedFieldWrapper = React.memo(
 					...dependencyFieldSlugs,
 					...parentDependencySlugs,
 					...nextLevelSlugs,
-				]
+				],
 			);
 		};
 
@@ -474,7 +496,7 @@ const MemoizedFieldWrapper = React.memo(
 		} );
 
 		return ! haveAnyDependenciesChanged;
-	}
+	},
 );
 
 export default MemoizedFieldWrapper;

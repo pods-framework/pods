@@ -69,8 +69,12 @@ const RepeatableFieldList = ( {
 
 	const deleteValueAtIndex = ( index ) => {
 		const newValues = [
-			...( valuesArray || [] ).slice( 0, index ),
-			...( valuesArray || [] ).slice( index + 1 ),
+			...(
+				valuesArray || []
+			).slice( 0, index ),
+			...(
+				valuesArray || []
+			).slice( index + 1 ),
 		];
 
 		setFullValue( newValues );
@@ -112,7 +116,10 @@ const RepeatableFieldList = ( {
 	);
 
 	const handleDragEnd = ( event ) => {
-		const { active, over } = event;
+		const {
+			active,
+			over,
+		} = event;
 
 		if ( ! over?.id || active.id === over.id ) {
 			return;
@@ -122,7 +129,7 @@ const RepeatableFieldList = ( {
 		const newIndex = parseInt( over.id, 10 );
 
 		setFullValue(
-			arrayMove( valuesArray, oldIndex, newIndex )
+			arrayMove( valuesArray, oldIndex, newIndex ),
 		);
 
 		setHasBlurred( true );
@@ -161,7 +168,9 @@ const RepeatableFieldList = ( {
 									setValue={ createSetValueAtIndex( index ) }
 									setHasBlurred={ setHasBlurred }
 									isDraggable={ valuesArray.length > 1 }
-									moveControls={ ( valuesArray.length > 1 ) ? (
+									moveControls={ (
+										valuesArray.length > 1
+									) ? (
 										<ToolbarGroup className="pods-field-wrapper__movers">
 											<ToolbarButton
 												disabled={ index === 0 }
@@ -173,7 +182,9 @@ const RepeatableFieldList = ( {
 											/>
 
 											<ToolbarButton
-												disabled={ index === ( valuesArray.length - 1 ) }
+												disabled={ index === (
+													valuesArray.length - 1
+												) }
 												onClick={ () => swapValues( index, index + 1 ) }
 												icon={ chevronDown }
 												label={ __( 'Move down', 'pods' ) }
@@ -182,7 +193,9 @@ const RepeatableFieldList = ( {
 											/>
 										</ToolbarGroup>
 									) : null }
-									deleteControl={ ( valuesArray.length > 1 ) ? (
+									deleteControl={ (
+										valuesArray.length > 1
+									) ? (
 										<ToolbarButton
 											onClick={ ( event ) => {
 												event.stopPropagation();
@@ -190,7 +203,7 @@ const RepeatableFieldList = ( {
 												// eslint-disable-next-line no-alert
 												const confirmation = confirm(
 													// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
-													__( 'Are you sure you want to delete this value?', 'pods' )
+													__( 'Are you sure you want to delete this value?', 'pods' ),
 												);
 
 												if ( confirmation ) {
@@ -237,8 +250,8 @@ RepeatableFieldList.propTypes = {
 				PropTypes.bool,
 				PropTypes.number,
 				PropTypes.array,
-			]
-		)
+			],
+		),
 	),
 
 	/**

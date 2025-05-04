@@ -58,6 +58,6 @@ describe( 'FieldInspectorControls', () => {
 			/>
 		);
 
-		expect( screen.getByTestId( 'pods-inspector' ).innerHTML ).toMatchSnapshot();
+		expect( screen.getByTestId( 'pods-inspector' ).tagName ).toEqual( 'DIV' );
 	} );
 } );

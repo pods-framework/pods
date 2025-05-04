@@ -17,7 +17,7 @@ import './number-field.scss';
 const NumberField = ( {
 	addValidationRules,
 	fieldConfig,
-	value,
+	value = '',
 	setValue,
 	setHasBlurred,
 } ) => {
@@ -138,10 +138,6 @@ const NumberField = ( {
 			onBlur={ reformatFormattedValue }
 		/>
 	);
-};
-
-NumberField.defaultProps = {
-	value: '',
 };
 
 NumberField.propTypes = {

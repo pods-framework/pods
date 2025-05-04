@@ -12,10 +12,10 @@ import './field-label.scss';
 
 const FieldLabel = ( {
 	label,
-	required,
+	required = false,
 	htmlFor,
-	helpTextString,
-	helpLink,
+	helpTextString = null,
+	helpLink = null,
 } ) => (
 	<div className={ `pods-field-label pods-field-label-${ name }` }>
 		<label
@@ -41,12 +41,6 @@ const FieldLabel = ( {
 		) }
 	</div>
 );
-
-FieldLabel.defaultProps = {
-	required: false,
-	helpTextString: null,
-	helpLink: null,
-};
 
 FieldLabel.propTypes = {
 	label: PropTypes.string.isRequired,

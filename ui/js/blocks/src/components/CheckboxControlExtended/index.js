@@ -12,11 +12,11 @@ import {
 } from '@wordpress/components';
 
 const CheckboxControlExtended = ( {
-	className,
-	heading,
-	label,
-	help,
-	checked,
+	className = null,
+	heading = null,
+	label = null,
+	help = null,
+	checked = false,
 	onChange,
 } ) => {
 	return (
@@ -27,6 +27,7 @@ const CheckboxControlExtended = ( {
 				help={ help }
 				checked={ checked }
 				onChange={ onChange }
+				__nextHasNoMarginBottom={ true }
 			/>
 		</fieldset>
 	);
@@ -39,14 +40,6 @@ CheckboxControlExtended.propTypes = {
 	help: PropTypes.string,
 	checked: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
-};
-
-CheckboxControlExtended.defaultProps = {
-	className: null,
-	heading: null,
-	label: null,
-	help: null,
-	checked: false,
 };
 
 export default CheckboxControlExtended;

@@ -7,9 +7,6 @@ import Backbone from 'backbone';
 import * as Mn from 'backbone.marionette';
 import underscore from 'underscore';
 
-import Enzyme from 'enzyme';
-import Adapter from '@cfaester/enzyme-adapter-react-18';
-
 import {
 	combineReducers,
 	registerStore,
@@ -41,4 +38,36 @@ global.Backbone.Marionette = Mn;
 // @see PodsInit.php
 global.PodsMn = global.Backbone.noConflict();
 
-Enzyme.configure({ adapter: new Adapter() });
+/*let consoleSpyWarn;
+let consoleSpyError;
+
+beforeAll(() => {
+	consoleSpyWarn = jest.spyOn(global.console, 'warn').mockImplementation((message) => {
+		if (!message.includes('findDOMNode is deprecated') && !message.includes('ReactDOMTestUtils.act')) {
+			global.console.warn(message);
+		}
+	});
+	consoleSpyError = jest.spyOn(global.console, 'error').mockImplementation((message) => {
+		if (!message.includes('findDOMNode is deprecated') && !message.includes('ReactDOMTestUtils.act')) {
+			global.console.error(message);
+		}
+	});
+});
+
+afterAll(() => {
+	consoleSpyWarn.mockRestore();
+	consoleSpyError.mockRestore();
+});*/
+
+/*const consoleError = console.error.bind(console);
+const consoleWarn = console.warn.bind(console);
+beforeAll(() => {
+	console.error = (message, ...args) =>
+		!message.toString().includes('findDOMNode is deprecated') && !message.toString().includes('ReactDOMTestUtils.act') && consoleError(message, args)
+	console.warn = (message, ...args) =>
+		!message.toString().includes('findDOMNode is deprecated') && !message.toString().includes('ReactDOMTestUtils.act') && consoleWarn(message, args)
+})
+afterAll(() => {
+	console.error = consoleError
+	console.warn = consoleWarn
+})*/

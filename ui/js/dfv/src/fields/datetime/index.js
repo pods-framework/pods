@@ -90,7 +90,7 @@ const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, 
 
 const DateTime = ( {
 	addValidationRules,
-	value,
+	value = '',
 	setValue,
 	fieldConfig = {},
 	setHasBlurred,
@@ -378,13 +378,8 @@ const DateTime = ( {
 	);
 };
 
-DateTime.defaultProps = {
-	value: '',
-};
-
 DateTime.propTypes = {
 	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
-
 export default DateTime;

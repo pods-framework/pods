@@ -11,7 +11,7 @@ import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Oembed = ( {
-	value,
+	value = '',
 	setValue,
 	fieldConfig = {},
 	setHasBlurred,
@@ -104,10 +104,6 @@ const Oembed = ( {
 			) }
 		</>
 	);
-};
-
-Oembed.defaultProps = {
-	value: '',
 };
 
 Oembed.propTypes = {

@@ -26,7 +26,7 @@ const FieldInspectorControls = ( {
 	}
 
 	return (
-		<div className="pods-inspector-rows">
+		<div className="pods-inspector-rows" data-testid="pods-inspector">
 			{ fields.map( ( field ) => {
 				const {
 					name,

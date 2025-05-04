@@ -25,7 +25,7 @@ const copyToClipboard = async ( text ) => {
 };
 
 // https://lucide.dev/icons/copy
-const CopyButton = ( { label, textToCopy, onClick } ) => {
+const CopyButton = ( { label = 'Copy', textToCopy = null, onClick = null } ) => {
 	const [ copied, setCopied ] = useState( false );
 	const handleClick = async () => {
 		if ( onClick ) {
@@ -69,12 +69,6 @@ const CopyButton = ( { label, textToCopy, onClick } ) => {
 			) }
 		</button>
 	);
-};
-
-CopyButton.defaultProps = {
-	label: 'Copy',
-	textToCopy: null,
-	onClick: null,
 };
 
 CopyButton.propTypes = {

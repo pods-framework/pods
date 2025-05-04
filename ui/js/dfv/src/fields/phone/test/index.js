@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -28,11 +28,10 @@ describe( 'Phone field component', () => {
 	it( 'creates a text field if the HTML5 phone option is not set', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <Phone { ...props } /> );
+		render( <Phone { ...props } /> );
 
-		expect(
-			wrapper.find( 'input' ).props().type
-		).toBe( 'text' );
+		const input = screen.getByRole( 'textbox' );
+		expect( input.type ).toBe( 'text' );
 	} );
 
 	it( 'applies the relevant attributes to the input field', () => {
@@ -46,23 +45,25 @@ describe( 'Phone field component', () => {
 			},
 		};
 
-		const wrapper = mount( <Phone { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <Phone { ...props } /> );
 
-		expect( input.props().type ).toEqual( 'tel' );
-		expect( input.props().maxLength ).toEqual( 20 );
-		expect( input.props().placeholder ).toEqual( 'Some placeholder for the field' );
+		const input = screen.getByRole( 'textbox' );
+		expect( input.type ).toEqual( 'tel' );
+		expect( input.maxLength ).toEqual( 20 );
+		expect( input.placeholder ).toEqual( 'Some placeholder for the field' );
 	} );
 
 	it( 'calls the setValue callback once updated', () => {
 		const props = {
 			...BASE_PROPS,
-			setValue: jest.fn(),
 		};
 
-		const wrapper = mount( <Phone { ...props } /> );
-		const input = wrapper.find( 'input' ).first();
-		input.simulate( 'change', {
+		render( <Phone { ...props } /> );
+
+		const input = screen.getByRole( 'textbox' );
+		expect( input.type ).toEqual( 'text' );
+
+		fireEvent.change( input, {
 			target: { value: '123-456-7890' },
 		} );
 

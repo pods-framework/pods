@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -44,10 +44,14 @@ describe( 'renderBlockTemplate', () => {
 			renderField
 		);
 
-		const wrapper = mount( renderedTree );
+		render( renderedTree );
 
-		expect( wrapper.find( '.field--TextControl' ) ).toHaveLength( 1 );
-		expect( wrapper.find( '.field--TextControl' ).text() ).toBe( 'Test value' );
+		const wrapper = screen.getByTestId( 'wrapper' );
+		expect( wrapper.textContent ).toEqual( 'Something else here and a field: Test value' );
+
+		const textControl = screen.getByText( 'Test value' );
+		expect( textControl.tagName ).toEqual( 'SPAN' );
+		expect( textControl.className ).toEqual( 'field--TextControl' );
 	} );
 
 	it( 'renders more complex template with no setAttributes function included', () => {
@@ -61,10 +65,17 @@ describe( 'renderBlockTemplate', () => {
 			renderField
 		);
 
-		const wrapper = mount( renderedTree );
+		render( renderedTree );
 
-		expect( wrapper.find( 'div' ) ).toHaveLength( 3 );
-		expect( wrapper.find( '.field--TextControl' ).text() ).toBe( 'Test value' );
-		expect( wrapper.find( '.field--NumberControl' ).text() ).toBe( '4' );
+		const wrapper = screen.getByTestId( 'wrapper' );
+		expect( wrapper.textContent ).toEqual( 'A field with content: Test valueAnd a number: 4' );
+
+		const textControl = screen.getByText( 'Test value' );
+		expect( textControl.tagName ).toEqual( 'SPAN' );
+		expect( textControl.className ).toEqual( 'field--TextControl' );
+
+		const numberControl = screen.getByText( '4' );
+		expect( numberControl.tagName ).toEqual( 'SPAN' );
+		expect( numberControl.className ).toEqual( 'field--NumberControl' );
 	} );
 } );

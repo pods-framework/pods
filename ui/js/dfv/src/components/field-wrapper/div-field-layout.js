@@ -32,11 +32,6 @@ const DivFieldLayout = ( {
 	);
 };
 
-DivFieldLayout.defaultProps = {
-	labelComponent: undefined,
-	descriptionComponent: undefined,
-};
-
 DivFieldLayout.propTypes = {
 	fieldType: PropTypes.string.isRequired,
 	labelComponent: PropTypes.element,

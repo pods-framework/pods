@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -34,37 +34,33 @@ describe( 'Slug field component', () => {
 			},
 		};
 
-		const wrapper = mount( <Slug { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <Slug { ...props } /> );
 
-		expect( input.props().type ).toBe( 'text' );
-		expect( input.props().placeholder ).toEqual( 'Some placeholder for the field' );
+		const input = screen.getByRole( 'textbox' );
+		expect( input.type ).toBe( 'text' );
+		expect( input.placeholder ).toEqual( 'Some placeholder for the field' );
 	} );
 
 	it( 'calls the setValue callback once updated', () => {
-		const props = {
-			...BASE_PROPS,
-			setValue: jest.fn(),
-		};
+		render( <Slug { ...BASE_PROPS } /> );
 
-		const wrapper = mount( <Slug { ...props } /> );
-		const input = wrapper.find( 'input' ).first();
+		const input = screen.getByRole( 'textbox' );
 
-		input.simulate( 'change', {
+		fireEvent.change( input, {
 			target: { value: 'test-123' },
 		} );
 
-		input.simulate( 'change', {
+		fireEvent.change( input, {
 			target: { value: 'Something that needs to be formatted' },
 		} );
 
-		input.simulate( 'change', {
+		fireEvent.change( input, {
 			target: { value: 'Test )*&^*😬and*()*)**&^*^# Test' },
 		} );
 
-		expect( props.setValue ).toHaveBeenNthCalledWith( 1, 'test-123' );
-		expect( props.setValue ).toHaveBeenNthCalledWith( 2, 'something_that_needs_to_be_formatted' );
-		expect( props.setValue ).toHaveBeenNthCalledWith( 3, 'test_and_test' );
+		expect( BASE_PROPS.setValue ).toHaveBeenNthCalledWith( 1, 'test-123' );
+		expect( BASE_PROPS.setValue ).toHaveBeenNthCalledWith( 2, 'something_that_needs_to_be_formatted' );
+		expect( BASE_PROPS.setValue ).toHaveBeenNthCalledWith( 3, 'test_and_test' );
 	} );
 
 	it( 'calls the setValue callback once updated with dash fallback', () => {
@@ -77,18 +73,19 @@ describe( 'Slug field component', () => {
 			},
 		};
 
-		const wrapper = mount( <Slug { ...props } /> );
-		const input = wrapper.find( 'input' ).first();
+		render( <Slug { ...props } /> );
 
-		input.simulate( 'change', {
+		const input = screen.getByRole( 'textbox' );
+
+		fireEvent.change( input, {
 			target: { value: 'test-123' },
 		} );
 
-		input.simulate( 'change', {
+		fireEvent.change( input, {
 			target: { value: 'Something that needs to be_formatted' },
 		} );
 
-		input.simulate( 'change', {
+		fireEvent.change( input, {
 			target: { value: 'Test )*&^*😬and*()*)**&^*^# Test' },
 		} );
 

@@ -6,7 +6,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import NumberField from '..';
+import Currency from '..';
 
 const BASE_PROPS = {
 	value: '',
@@ -16,19 +16,19 @@ const BASE_PROPS = {
 	fieldConfig: {
 		group: 'group/pod/_pods_pod/dfv-demo',
 		id: 'some_id',
-		label: 'Test Number Field',
-		name: 'test_number_field',
+		label: 'Test Currency Field',
+		name: 'test_currency_field',
 		object_type: 'field',
 		parent: 'pod/_pods_pod',
-		type: 'number',
+		type: 'currency',
 	},
 };
 
-describe( 'Number field component', () => {
+describe( 'Currency field component', () => {
 	it( 'creates a text field by default', () => {
 		const props = { ...BASE_PROPS };
 
-		render( <NumberField { ...props } /> );
+		render( <Currency { ...props } /> );
 
 		const input = screen.getByRole( 'textbox' );
 
@@ -40,16 +40,16 @@ describe( 'Number field component', () => {
 			...BASE_PROPS,
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				number_decimals: '2',
-				number_format: '9.999,99',
-				number_format_soft: '0',
-				number_format_type: 'number',
-				number_max_length: '5',
-				number_placeholder: 'Number Field',
+				currency_decimals: '2',
+				currency_format: '9.999,99',
+				currency_format_soft: '0',
+				currency_format_type: 'number',
+				currency_max_length: '5',
+				currency_placeholder: 'Number Field',
 			},
 		};
 
-		render( <NumberField { ...props } /> );
+		render( <Currency { ...props } /> );
 
 		const input = screen.getByRole( 'textbox' );
 
@@ -62,17 +62,17 @@ describe( 'Number field component', () => {
 			...BASE_PROPS,
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				number_decimals: '2',
-				number_format: '9.999,99',
-				number_format_soft: '0',
-				number_format_type: 'number',
-				number_html5: '1',
-				number_max_length: '5',
-				number_placeholder: 'Number Field',
+				currency_decimals: '2',
+				currency_format: '9.999,99',
+				currency_format_soft: '0',
+				currency_format_type: 'number',
+				currency_html5: '1',
+				currency_max_length: '5',
+				currency_placeholder: 'Number Field',
 			},
 		};
 
-		render( <NumberField { ...props } /> );
+		render( <Currency { ...props } /> );
 
 		const input = screen.getByRole( 'spinbutton' );
 
@@ -88,19 +88,19 @@ describe( 'Number field component', () => {
 			...BASE_PROPS,
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				number_decimals: '2',
-				number_format: '9.999,99',
-				number_format_soft: '0',
-				number_format_type: 'number',
-				number_html5: '1',
-				number_max_length: '5',
-				number_placeholder: 'Number Field',
-				number_max: '1000',
-				number_min: '-1000',
+				currency_decimals: '2',
+				currency_format: '9.999,99',
+				currency_format_soft: '0',
+				currency_format_type: 'number',
+				currency_html5: '1',
+				currency_max_length: '5',
+				currency_placeholder: 'Number Field',
+				currency_max: '1000',
+				currency_min: '-1000',
 			},
 		};
 
-		render( <NumberField { ...props } /> );
+		render( <Currency { ...props } /> );
 
 		const input = screen.getByRole( 'spinbutton' );
 
@@ -116,18 +116,18 @@ describe( 'Number field component', () => {
 			...BASE_PROPS,
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				number_decimals: '2',
-				number_format: '9.999,99',
-				number_format_soft: '0',
-				number_format_type: 'slider',
-				number_placeholder: 'Number Field',
-				number_max: '1000',
-				number_min: '-1000',
-				number_step: '100',
+				currency_decimals: '2',
+				currency_format: '9.999,99',
+				currency_format_soft: '0',
+				currency_format_type: 'slider',
+				currency_placeholder: 'Number Field',
+				currency_max: '1000',
+				currency_min: '-1000',
+				currency_step: '100',
 			},
 		};
 
-		render( <NumberField { ...props } /> );
+		render( <Currency { ...props } /> );
 
 		const input = screen.getByRole( 'slider' );
 
@@ -144,12 +144,12 @@ describe( 'Number field component', () => {
 			setValue: jest.fn(),
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				number_decimals: '2',
-				number_format: '9.999,99',
+				currency_decimals: '2',
+				currency_format: '9.999,99',
 			},
 		};
 
-		render( <NumberField { ...props } /> );
+		render( <Currency { ...props } /> );
 
 		const input = screen.getByRole( 'textbox' );
 

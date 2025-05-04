@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import faker from 'faker';
 
 /**
@@ -53,7 +53,7 @@ const setup = ( additionalFieldProps = {}, otherProps = {} ) => {
 		...otherProps,
 	};
 
-	const wrapper = mount( <FieldWrapper { ...fullProps } /> );
+	render( <FieldWrapper { ...fullProps } /> );
 
 	const updatePodValue = ( fieldSlug, value ) => {
 		wrapper.setProps( {

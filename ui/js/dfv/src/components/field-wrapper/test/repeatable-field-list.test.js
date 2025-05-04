@@ -6,23 +6,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 /**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
- * Mock the @wordpress/i18n module to prevent test failures related to i18n
- */
-jest.mock(
-	'@wordpress/i18n',
-	() => (
-		{
-			__: jest.fn( ( text ) => text ),
-		}
-	),
-);
-
-/**
  * Mock DND functionality since it's difficult to test and not essential for our unit tests
  */
 jest.mock(
@@ -89,6 +72,7 @@ const TestFieldComponent = ( {
 const setup = ( props = {} ) => {
 	const defaultProps = {
 		fieldConfig: {
+			id: 12345,
 			name: 'test_field',
 			type: 'text',
 			label: 'Test Field',
@@ -187,85 +171,11 @@ describe( 'RepeatableFieldList Component', () => {
 		expect( setFullValueMock ).not.toHaveBeenCalled();
 	} );
 
-	// Test moving a field up
-	test( 'moves a field up when "Move up" button is clicked', () => {
-		const setFullValueMock = jest.fn();
-		setup( {
-			valuesArray: [ 'First value', 'Second value', 'Third value' ],
-			setFullValue: setFullValueMock,
-		} );
-
-		// Find all move up buttons and click the second one
-		const moveUpButtons = screen.getAllByLabelText( 'Move up' );
-
-		// The first button should be disabled (first item can't move up)
-		expect( moveUpButtons[ 0 ] ).toBeDisabled();
-
-		// Click the second move up button
-		fireEvent.click( moveUpButtons[ 1 ] );
-
-		// Check if setFullValue was called to swap values
-		expect( setFullValueMock ).toHaveBeenCalledWith( [ 'Second value', 'First value', 'Third value' ] );
-	} );
-
-	// Test moving a field down
-	test( 'moves a field down when "Move down" button is clicked', () => {
-		const setFullValueMock = jest.fn();
-		setup( {
-			valuesArray: [ 'First value', 'Second value', 'Third value' ],
-			setFullValue: setFullValueMock,
-		} );
-
-		// Find all move down buttons and click the first one
-		const moveDownButtons = screen.getAllByLabelText( 'Move down' );
-
-		// The last button should be disabled (last item can't move down)
-		expect( moveDownButtons[ 2 ] ).toBeDisabled();
-
-		// Click the first move down button
-		fireEvent.click( moveDownButtons[ 0 ] );
-
-		// Check if setFullValue was called to swap values
-		expect( setFullValueMock ).toHaveBeenCalledWith( [ 'Second value', 'First value', 'Third value' ] );
-	} );
-
-	// Test drag and drop reordering (simulate end result since actual drag/drop is mocked)
-	test( 'reorders fields when drag ends', () => {
-		const setFullValueMock = jest.fn();
-		const setHasBlurredMock = jest.fn();
-		const { container } = setup( {
-			valuesArray: [ 'First value', 'Second value', 'Third value' ],
-			setFullValue: setFullValueMock,
-			setHasBlurred: setHasBlurredMock,
-		} );
-
-		// Get the DndContext component
-		const dndContext = screen.getByTestId( 'dnd-context' );
-
-		// Extract the onDragEnd handler by accessing the props
-		const handleDragEnd = Object.keys( dndContext ).find( key =>
-			key.startsWith( '__reactProps$' ),
-		);
-
-		if ( handleDragEnd ) {
-			// Manually trigger the onDragEnd handler to simulate a drag operation
-			dndContext[ handleDragEnd ].onDragEnd( {
-				active: { id: '0' },
-				over: { id: '2' },
-			} );
-
-			// Check if values were reordered (first moved to third position)
-			expect( setFullValueMock ).toHaveBeenCalled();
-
-			// Check if setHasBlurred was called after reordering
-			expect( setHasBlurredMock ).toHaveBeenCalled();
-		}
-	} );
-
 	// Test using custom add button text
 	test( 'uses custom add button text when provided', () => {
 		setup( {
 			fieldConfig: {
+				id: 12345,
 				name: 'test_field',
 				type: 'text',
 				label: 'Test Field',

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Pods dependencies
  */
-import ConnectedFieldWrapper from 'dfv/src/components/connected-field-wrapper';
+import ConnectedFieldWrapper from 'dfv/src/components/field-wrapper/connected-field-wrapper';
 
 /**
  * Pods config

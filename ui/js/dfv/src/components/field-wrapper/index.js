@@ -223,6 +223,7 @@ export const FieldWrapper = ( props ) => {
 
 	const labelComponent = showLabel ? (
 		<FieldLabel
+			name={ name }
 			label={ label }
 			required={ toBool( required ) }
 			htmlFor={ processedFieldConfig.htmlAttr?.id || `pods-form-ui-${ name }` }

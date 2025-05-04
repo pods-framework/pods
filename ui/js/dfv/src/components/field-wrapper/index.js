@@ -238,7 +238,7 @@ export const FieldWrapper = ( props ) => {
 
 	const inputComponents = !! FieldComponent ? (
 		<FieldErrorBoundary>
-			<div className="pods-field-wrapper">
+			<div className="pods-field-wrapper" data-testid="field-wrapper">
 				{ (
 					() => {
 						if ( true === isBooleanGroupField ) {

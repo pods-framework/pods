@@ -325,6 +325,7 @@ const DateTime = ( {
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 				readOnly={ toBool( readOnly ) }
+				data-testid="datetime-input"
 			/>
 		);
 	}

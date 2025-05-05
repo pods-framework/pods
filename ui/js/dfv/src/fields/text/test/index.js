@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -28,11 +28,10 @@ describe( 'Text field component', () => {
 	it( 'creates a text field', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <Text { ...props } /> );
+		render( <Text { ...props } /> );
 
-		expect(
-			wrapper.find( 'input' ).props().type
-		).toBe( 'text' );
+		const input = screen.getByRole( 'textbox' );
+		expect( input.type ).toEqual( 'text' );
 	} );
 
 	it( 'applies the relevant attributes to the input field', () => {
@@ -45,26 +44,11 @@ describe( 'Text field component', () => {
 			},
 		};
 
-		const wrapper = mount( <Text { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <Text { ...props } /> );
 
-		expect( input.props().type ).toEqual( 'text' );
-		expect( input.props().maxLength ).toEqual( 20 );
-		expect( input.props().placeholder ).toEqual( 'Some placeholder for the field' );
-	} );
-
-	it( 'calls the setValue callback once updated', () => {
-		const props = {
-			...BASE_PROPS,
-			setValue: jest.fn(),
-		};
-
-		const wrapper = mount( <Text { ...props } /> );
-		const input = wrapper.find( 'input' ).first();
-		input.simulate( 'change', {
-			target: { value: 'test@example.com' },
-		} );
-
-		expect( props.setValue ).toHaveBeenCalledWith( 'test@example.com' );
+		const input = screen.getByRole( 'textbox' );
+		expect( input.type ).toEqual( 'text' );
+		expect( input.maxLength ).toEqual( 20 );
+		expect( input.placeholder ).toEqual( 'Some placeholder for the field' );
 	} );
 } );

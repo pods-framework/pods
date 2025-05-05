@@ -1,4 +1,4 @@
-/* global Backbone */
+import Backbone from 'backbone';
 
 export const FileUploadModel = Backbone.Model.extend( {
 	defaults: {

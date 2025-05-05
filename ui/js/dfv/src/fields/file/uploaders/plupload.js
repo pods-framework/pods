@@ -1,4 +1,5 @@
-/*global Backbone, plupload */
+/*global plupload */
+import Backbone from 'backbone';
 
 import { __ } from '@wordpress/i18n';
 

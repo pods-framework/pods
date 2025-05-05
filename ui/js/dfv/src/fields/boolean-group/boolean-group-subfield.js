@@ -114,9 +114,4 @@ BooleanGroupSubfield.propTypes = {
 	 */
 	allPodFieldsMap: PropTypes.object,
 };
-
-BooleanGroupSubfield.defaultProps = {
-	help: undefined,
-};
-
 export default BooleanGroupSubfield;

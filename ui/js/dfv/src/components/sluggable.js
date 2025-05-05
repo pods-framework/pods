@@ -15,12 +15,6 @@ const NotEditing = ( {
 	handleEditClick,
 	value,
 } ) => {
-	const handleKeyPress = ( event ) => {
-		if ( event.charCode === ENTER_KEY ) {
-			handleEditClick();
-		}
-	};
-
 	return (
 		<span>
 			<em
@@ -28,7 +22,6 @@ const NotEditing = ( {
 				tabIndex="0"
 				onClick={ handleEditClick }
 				style={ { cursor: 'pointer' } }
-				onKeyPress={ handleKeyPress }
 			>
 				{ value }
 			</em>
@@ -63,6 +56,8 @@ const Editing = ( {
 			handleOkClick();
 		} else if ( event.charCode === ESCAPE_KEY ) {
 			handleCancelClick();
+		} else if ( event.charCode !== 0 ) {
+			console.log( event.charCode );
 		}
 	};
 
@@ -128,6 +123,7 @@ const Sluggable = ( {
 		// if that happens.
 		if ( ! cleanLocalValue.length ) {
 			setLocalValue( value );
+			updateValue( value );
 			return;
 		}
 
@@ -138,6 +134,7 @@ const Sluggable = ( {
 	const handleCancelClick = () => {
 		setEditing( false );
 		setLocalValue( value );
+		updateValue( value );
 	};
 
 	if ( ! editing ) {

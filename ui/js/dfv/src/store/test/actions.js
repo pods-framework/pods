@@ -1,36 +1,17 @@
 import {
-	SAVE_STATUSES,
-	DUPLICATE_STATUSES,
-	DELETE_STATUSES,
-	UI_ACTIONS,
-	CURRENT_POD_ACTIONS,
+	SAVE_STATUSES, DUPLICATE_STATUSES, DELETE_STATUSES, UI_ACTIONS, CURRENT_POD_ACTIONS,
 } from '../constants';
 
 import {
 	// UI
-	setActiveTab,
-	setSaveStatus,
-	setDeleteStatus,
-	setGroupSaveStatus,
-	setGroupDuplicateStatus,
-	setGroupDeleteStatus,
-	// @todo add Field tests:
-	setFieldSaveStatus,
-	setFieldDeleteStatus,
+	setActiveTab, setSaveStatus, setDeleteStatus, setGroupSaveStatus, setGroupDuplicateStatus, setGroupDeleteStatus, // @todo add Field tests:
+	setFieldSaveStatus, setFieldDeleteStatus,
 
 	// Current Pod options
-	setPodName,
-	setOptionValue,
-	setOptionsValues,
-	moveGroup,
-	addGroup,
+	setPodName, setOptionValue, setOptionsValues, moveGroup, addGroup,
 
 	// API
-	savePod,
-	deletePod,
-	saveGroup,
-	duplicateGroup,
-	deleteGroup,
+	savePod, deletePod, saveGroup, duplicateGroup, deleteGroup,
 
 	// setGroupFields,
 	// addGroupField,
@@ -97,9 +78,7 @@ describe( 'actions', () => {
 				},
 			};
 
-			const result = setGroupSaveStatus(
-				SAVE_STATUSES.SAVE_SUCCESS,
-			)( {
+			const result = setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS )( {
 				message: 'Saved successfully.',
 			} );
 
@@ -109,15 +88,14 @@ describe( 'actions', () => {
 		test( 'setGroupDuplicateStatus() creates a function to create an action to change the group\'s duplicate status', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS,
-				saveStatus: DUPLICATE_STATUSES.DUPLICATE_SUCCESS,
+				duplicateStatus: DUPLICATE_STATUSES.DUPLICATE_SUCCESS,
+				name: 'new_group_name',
 				result: {
 					message: 'Duplicated successfully.',
 				},
 			};
 
-			const result = setGroupDuplicateStatus(
-				DUPLICATE_STATUSES.DUPLICATE_SUCCESS,
-			)( {
+			const result = setGroupDuplicateStatus( DUPLICATE_STATUSES.DUPLICATE_SUCCESS, 'new_group_name' )( {
 				message: 'Duplicated successfully.',
 			} );
 
@@ -133,9 +111,7 @@ describe( 'actions', () => {
 				},
 			};
 
-			const result = setGroupDeleteStatus(
-				DELETE_STATUSES.DELETING,
-			)( {
+			const result = setGroupDeleteStatus( DELETE_STATUSES.DELETING )( {
 				message: 'Deleted.',
 			} );
 
@@ -151,9 +127,7 @@ describe( 'actions', () => {
 				},
 			};
 
-			const result = setFieldSaveStatus(
-				SAVE_STATUSES.SAVE_SUCCESS,
-			)( {
+			const result = setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS )( {
 				message: 'Saved successfully.',
 			} );
 
@@ -169,9 +143,7 @@ describe( 'actions', () => {
 				},
 			};
 
-			const result = setFieldDeleteStatus(
-				DELETE_STATUSES.DELETING,
-			)( {
+			const result = setFieldDeleteStatus( DELETE_STATUSES.DELETING )( {
 				message: 'Deleted.',
 			} );
 
@@ -273,15 +245,12 @@ describe( 'actions', () => {
 				storage: 'test',
 				object_storage_type: 'collection',
 				type: 'post_type',
-				_locale: 'user',
-				// The following should be included.
+				_locale: 'user', // The following should be included.
 				label_add_new: 'Add New Something',
 				rest_enable: '0',
-				description: 'Test',
-				// Groups/fields will change into the "order" data.
+				description: 'Test', // Groups/fields will change into the "order" data.
 				groups: [
-					GROUP,
-					{
+					GROUP, {
 						...GROUP,
 						id: 123,
 						name: 'another-group',
@@ -306,8 +275,7 @@ describe( 'actions', () => {
 						{
 							group_id: 122,
 							fields: [ 119 ],
-						},
-						{
+						}, {
 							group_id: 123,
 							fields: [ 139 ],
 						},

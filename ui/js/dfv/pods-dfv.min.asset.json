@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-{"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"80b6069739008a83b26c"}
-=======
-{"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"dbd7cfddcb6a752a4019"}
->>>>>>> 2a11b0c19 (Support duplicating groups of fields)
+{"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"4b9cc806655e49cfbca5"}

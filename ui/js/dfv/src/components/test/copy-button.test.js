@@ -125,8 +125,8 @@ describe( 'CopyButton Component', () => {
 
 		// Check if temporary input was created with correct text
 		const inputElement = appendChildSpy.mock.calls[ 0 ][ 0 ];
-		expect( inputElement.tagName ).toBe( 'INPUT' );
-		expect( inputElement.value ).toBe( textToCopy );
+		expect( inputElement.tagName ).toEqual( 'INPUT' );
+		expect( inputElement.value ).toEqual( textToCopy );
 
 		// Clean up
 		appendChildSpy.mockRestore();

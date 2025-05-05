@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 /**
@@ -67,7 +67,7 @@ describe( 'useHideContainerDOM Hook', () => {
 		render( <TestComponent name="test-field" meetsDependencies={ true } /> );
 
 		// The hook should have set the display property to empty string (visible)
-		expect( container.style.display ).toBe( '' );
+		expect( container.style.display ).toEqual( '' );
 	} );
 
 	test( 'hides container when dependencies are not met', () => {
@@ -81,7 +81,7 @@ describe( 'useHideContainerDOM Hook', () => {
 		render( <TestComponent name="test-field" meetsDependencies={ false } /> );
 
 		// The hook should have set the display property to 'none' (hidden)
-		expect( container.style.display ).toBe( 'none' );
+		expect( container.style.display ).toEqual( 'none' );
 	} );
 
 	test( 'updates container visibility when dependencies change', () => {
@@ -94,19 +94,19 @@ describe( 'useHideContainerDOM Hook', () => {
 		);
 
 		// Initial state should be visible
-		expect( container.style.display ).toBe( '' );
+		expect( container.style.display ).toEqual( '' );
 
 		// Re-render with dependencies not met
 		rerender( <TestComponent name="test-field" meetsDependencies={ false } /> );
 
 		// Should now be hidden
-		expect( container.style.display ).toBe( 'none' );
+		expect( container.style.display ).toEqual( 'none' );
 
 		// Re-render with dependencies met again
 		rerender( <TestComponent name="test-field" meetsDependencies={ true } /> );
 
 		// Should be visible again
-		expect( container.style.display ).toBe( '' );
+		expect( container.style.display ).toEqual( '' );
 	} );
 
 	test( 'does nothing when container element is not found', () => {
@@ -136,18 +136,18 @@ describe( 'useHideContainerDOM Hook', () => {
 		);
 
 		// Should be visible
-		expect( container.style.display ).toBe( '' );
+		expect( container.style.display ).toEqual( '' );
 
 		// Re-render with a different field name but same dependencies state
 		rerender( <TestComponent name="field-two" meetsDependencies={ true } /> );
 
 		// Should still be visible (hook should run again due to name change in dependencies array)
-		expect( container.style.display ).toBe( '' );
+		expect( container.style.display ).toEqual( '' );
 
 		// Re-render with a different field name and different dependencies state
 		rerender( <TestComponent name="field-three" meetsDependencies={ false } /> );
 
 		// Should now be hidden
-		expect( container.style.display ).toBe( 'none' );
+		expect( container.style.display ).toEqual( 'none' );
 	} );
 } );

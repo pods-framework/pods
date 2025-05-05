@@ -33,7 +33,7 @@ describe( 'Oembed field component', () => {
 		render( <Oembed { ...props } /> );
 		const input = screen.getByRole( 'textbox' );
 
-		expect( input.type ).toBe( 'text' );
+		expect( input.type ).toEqual( 'text' );
 	} );
 
 	it( 'creates a text field which calls the setValue callback when updated', () => {
@@ -49,7 +49,7 @@ describe( 'Oembed field component', () => {
 			target: { value: 'https://www.youtube.com/watch?v=test' },
 		} );
 
-		expect( input.type ).toBe( 'text' );
+		expect( input.type ).toEqual( 'text' );
 		expect( props.setValue ).toHaveBeenCalledWith( 'https://www.youtube.com/watch?v=test' );
 	} );
 

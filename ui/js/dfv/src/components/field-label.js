@@ -30,7 +30,9 @@ const FieldLabel = ( {
 				} }
 				data-testid="field-label-text"
 			/>
-			{ required && ( <span className="pods-field-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
+			{ required && (
+				<span className="pods-field-label__required">{ '\u00A0' /* &nbsp; */ }*</span>
+			) }
 		</label>
 
 		{ helpTextString && (

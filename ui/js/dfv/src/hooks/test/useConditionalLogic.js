@@ -54,7 +54,7 @@ describe( 'conditional logic validation hook', () => {
 			)
 		);
 
-		expect( result.current ).toBe( true );
+		expect( result.current ).toEqual( true );
 	} );
 
 	it( 'should pass if rules are empty', () => {
@@ -73,7 +73,7 @@ describe( 'conditional logic validation hook', () => {
 			)
 		);
 
-		expect( result.current ).toBe( true );
+		expect( result.current ).toEqual( true );
 	} );
 
 	it( 'should show the field with show action and empty rules', () => {
@@ -92,7 +92,7 @@ describe( 'conditional logic validation hook', () => {
 			)
 		);
 
-		expect( result.current ).toBe( true );
+		expect( result.current ).toEqual( true );
 	} );
 
 	it( 'should hide the field with hide action and empty rules', () => {
@@ -111,7 +111,7 @@ describe( 'conditional logic validation hook', () => {
 			)
 		);
 
-		expect( result.current ).toBe( false );
+		expect( result.current ).toEqual( false );
 	} );
 
 	it( 'should validate rules with "any" logic', () => {
@@ -144,25 +144,25 @@ describe( 'conditional logic validation hook', () => {
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_one: '12345' }, fieldsMap )
 			).result.current
-		).toBe( true );
+		).toEqual( true );
 
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_one: '12345', field_two: '1234567890' }, fieldsMap )
 			).result.current
-		).toBe( true );
+		).toEqual( true );
 
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_one: 'abcdef', field_two: '1234567890' }, fieldsMap )
 			).result.current
-		).toBe( true );
+		).toEqual( true );
 
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_one: 'abcdef' }, fieldsMap )
 			).result.current
-		).toBe( false );
+		).toEqual( false );
 	} );
 
 	it( 'should validate rules with "all" logic', () => {
@@ -195,13 +195,13 @@ describe( 'conditional logic validation hook', () => {
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_one: '12345' }, fieldsMap )
 			).result.current
-		).toBe( false );
+		).toEqual( false );
 
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_one: '12345', field_two: '1234567890', field_three: 'abcdef' }, fieldsMap )
 			).result.current
-		).toBe( true );
+		).toEqual( true );
 	} );
 
 	const individualRulesMatrix = [
@@ -425,7 +425,7 @@ describe( 'conditional logic validation hook', () => {
 				renderHook(
 					() => useConditionalLogic( fieldConfig, { field_one: testSubject }, fieldsMap )
 				).result.current
-			).toBe( expected );
+			).toEqual( expected );
 		}
 	);
 
@@ -509,31 +509,31 @@ describe( 'conditional logic validation hook', () => {
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_one: 'abc' }, fieldsMap )
 			).result.current
-		).toBe( true );
+		).toEqual( true );
 
 		// Field 2 has ALL logic based on fields 3 and 4, so it should fail until both also are met.
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_two: 'def' }, fieldsMap )
 			).result.current
-		).toBe( false );
+		).toEqual( false );
 
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_three: 'abc', field_four: 'def' }, fieldsMap )
 			).result.current
-		).toBe( false );
+		).toEqual( false );
 
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_two: 'def', field_three: 'abc' }, fieldsMap )
 			).result.current
-		).toBe( false );
+		).toEqual( false );
 
 		expect(
 			renderHook(
 				() => useConditionalLogic( fieldConfig, { field_two: 'def', field_three: 'abc', field_four: 'def' }, fieldsMap )
 			).result.current
-		).toBe( true );
+		).toEqual( true );
 	} );
 } );

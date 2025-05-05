@@ -107,12 +107,12 @@ describe( 'ValidationMessages Component', () => {
 		const notices = screen.getAllByTestId( 'mock-notice' );
 
 		// Should have one notice per message
-		expect( notices.length ).toBe( 3 );
+		expect( notices.length ).toEqual( 3 );
 
 		// Each notice should contain exactly one message
-		expect( notices[ 0 ].textContent ).toBe( 'Error 1' );
-		expect( notices[ 1 ].textContent ).toBe( 'Error 2' );
-		expect( notices[ 2 ].textContent ).toBe( 'Error 3' );
+		expect( notices[ 0 ].textContent ).toEqual( 'Error 1' );
+		expect( notices[ 1 ].textContent ).toEqual( 'Error 2' );
+		expect( notices[ 2 ].textContent ).toEqual( 'Error 3' );
 	} );
 
 	test( 'handles messages with HTML content safely', () => {

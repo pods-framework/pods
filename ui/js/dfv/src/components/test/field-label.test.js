@@ -208,6 +208,6 @@ describe( 'FieldLabel Component', () => {
 
 		// The span inside should be empty
 		const span = screen.getByTestId( 'field-label-text' );
-		expect( span.innerHTML ).toBe( '' );
+		expect( span.innerHTML ).toEqual( '' );
 	} );
 } );

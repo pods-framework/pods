@@ -37,7 +37,7 @@ describe( 'Slug field component', () => {
 		render( <Slug { ...props } /> );
 
 		const input = screen.getByRole( 'textbox' );
-		expect( input.type ).toBe( 'text' );
+		expect( input.type ).toEqual( 'text' );
 		expect( input.placeholder ).toEqual( 'Some placeholder for the field' );
 	} );
 

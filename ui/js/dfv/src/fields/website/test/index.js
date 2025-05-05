@@ -31,7 +31,7 @@ describe( 'Website field component', () => {
 		render( <Website { ...props } /> );
 
 		const input = screen.getByRole( 'textbox' );
-		expect( input.type ).toBe( 'text' );
+		expect( input.type ).toEqual( 'text' );
 	} );
 
 	it( 'applies the relevant attributes to the input field', () => {
@@ -48,7 +48,7 @@ describe( 'Website field component', () => {
 		render( <Website { ...props } /> );
 
 		const input = screen.getByRole( 'textbox' );
-		expect( input.type ).toBe( 'url' );
+		expect( input.type ).toEqual( 'url' );
 		expect( input.maxLength ).toEqual( 20 );
 		expect( input.placeholder ).toEqual( 'Some placeholder for the field' );
 	} );

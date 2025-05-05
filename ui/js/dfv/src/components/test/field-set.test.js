@@ -81,7 +81,7 @@ describe( 'FieldSet Component', () => {
 		render( <FieldSet { ...propsWithUndefined } /> );
 
 		// The useEffect should set the default value for text_field
-		expect( propsWithUndefined.allPodValues.text_field ).toBe( 'Default Text' );
+		expect( propsWithUndefined.allPodValues.text_field ).toEqual( 'Default Text' );
 	} );
 
 	test( 'applies default values for boolean group subfields', () => {
@@ -138,8 +138,8 @@ describe( 'FieldSet Component', () => {
 		render( <FieldSet { ...propsWithUndefinedSubfields } /> );
 
 		// The useEffect should set the default values for subfields
-		expect( propsWithUndefinedSubfields.allPodValues.subfield1 ).toBe( 1 );
-		expect( propsWithUndefinedSubfields.allPodValues.subfield2 ).toBe( 0 );
+		expect( propsWithUndefinedSubfields.allPodValues.subfield1 ).toEqual( 1 );
+		expect( propsWithUndefinedSubfields.allPodValues.subfield2 ).toEqual( 0 );
 	} );
 
 	test( 'does not apply default values for null defaults', () => {
@@ -203,7 +203,7 @@ describe( 'FieldSet Component', () => {
 		render( <FieldSet { ...propsWithFalsyValues } /> );
 
 		// Values should not be changed to defaults
-		expect( propsWithFalsyValues.allPodValues.empty_string_field ).toBe( '' );
-		expect( propsWithFalsyValues.allPodValues.zero_field ).toBe( 0 );
+		expect( propsWithFalsyValues.allPodValues.empty_string_field ).toEqual( '' );
+		expect( propsWithFalsyValues.allPodValues.zero_field ).toEqual( 0 );
 	} );
 } );

@@ -159,11 +159,11 @@ describe( 'PodsNavTab Component', () => {
 		const createLinkCalls = mockCreateElement.mock.calls.filter( call => call[ 0 ] === 'a' );
 
 		// Check that each tab name is used as a key
-		expect( createLinkCalls.length ).toBe( defaultProps.tabs.length );
+		expect( createLinkCalls.length ).toEqual( defaultProps.tabs.length );
 		defaultProps.tabs.forEach( ( tab, index ) => {
 			// Find the props object (second argument)
 			const props = createLinkCalls[ index ][ 1 ];
-			expect( props.key ).toBe( tab.name );
+			expect( props.key ).toEqual( tab.name );
 		} );
 
 		// Restore original React.createElement

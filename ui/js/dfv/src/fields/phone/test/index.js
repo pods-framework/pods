@@ -31,7 +31,7 @@ describe( 'Phone field component', () => {
 		render( <Phone { ...props } /> );
 
 		const input = screen.getByRole( 'textbox' );
-		expect( input.type ).toBe( 'text' );
+		expect( input.type ).toEqual( 'text' );
 	} );
 
 	it( 'applies the relevant attributes to the input field', () => {

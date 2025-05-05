@@ -141,7 +141,7 @@ describe( 'DivFieldLayout Component', () => {
 
 		// Check the structure
 		const rootElement = container.firstChild;
-		expect( rootElement.className ).toBe( 'pods-field-option' );
+		expect( rootElement.className ).toEqual( 'pods-field-option' );
 
 		// The label should be a direct child of the root
 		expect( rootElement.querySelector( '[data-testid="test-label"]' ) ).not.toBeNull();

@@ -70,7 +70,7 @@ describe( 'FieldDescription Component', () => {
 
 		// Check that an empty paragraph is rendered
 		expect( container.querySelector( '.pods-field-description' ) ).toBeInTheDocument();
-		expect( container.querySelector( '.pods-field-description' ).textContent ).toBe( '' );
+		expect( container.querySelector( '.pods-field-description' ).textContent ).toEqual( '' );
 	} );
 
 	test( 'uses richTextNoLinks configuration', () => {

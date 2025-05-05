@@ -19,7 +19,7 @@ export const getThousandsSeparatorFromPodsFormat = ( format ) => {
 		case '9999,99':
 			thousands = '';
 			break;
-		case "9'999.99":
+		case '9\'999.99':
 			thousands = '\'';
 			break;
 		case '9 999,99':
@@ -53,7 +53,7 @@ export const getDecimalSeparatorFromPodsFormat = ( format ) => {
 		case '9999,99':
 			dot = ',';
 			break;
-		case "9'999.99":
+		case '9\'999.99':
 			dot = '.';
 			break;
 		case '9 999,99':
@@ -70,7 +70,7 @@ export const getDecimalSeparatorFromPodsFormat = ( format ) => {
 
 export const parseFloatWithPodsFormat = (
 	newValue,
-	format
+	format,
 ) => {
 	// Turn empty string to 0.
 	if ( '' === newValue ) {
@@ -88,7 +88,7 @@ export const parseFloatWithPodsFormat = (
 	// Remove the thousands separators and change the decimal separator to a period,
 	// so that parseFloat can handle the rest.
 	return parseFloat(
-		newValue.split( thousands ).join( '' ).split( dot ).join( '.' )
+		newValue.split( thousands ).join( '' ).split( dot ).join( '.' ),
 	);
 };
 
@@ -106,7 +106,9 @@ export const formatNumberWithPodsFormat = (
 	const dotSeparator = getDecimalSeparatorFromPodsFormat( format );
 
 	// A string has to be parsed, but a float does not.
-	const floatNewValue = ( 'string' === typeof newValue )
+	const floatNewValue = (
+		'string' === typeof newValue
+	)
 		? parseFloatWithPodsFormat( newValue, format )
 		: newValue;
 
@@ -126,7 +128,11 @@ export const formatNumberWithPodsFormat = (
 		return formattedNumber;
 	}
 
-	const charactersToTrim = -1 * ( parseInt( ( '' + decimalValue ).length, 10 ) + 1 );
+	const charactersToTrim = -1 * (
+		parseInt( (
+			'' + decimalValue
+		).length, 10 ) + 1
+	);
 
 	return formattedNumber.slice( 0, charactersToTrim );
 };

@@ -6,7 +6,7 @@ describe( 'sanitizeSlug', () => {
 
 		const sanitizedValue = sanitizeSlug( value );
 
-		expect( sanitizedValue ).toBe( 'string_with_some_markup_and_an_attack' );
+		expect( sanitizedValue ).toEqual( 'string_with_some_markup_and_an_attack' );
 	} );
 
 	it( 'forces lowercase and replaces spaces with underscores', () => {
@@ -14,7 +14,7 @@ describe( 'sanitizeSlug', () => {
 
 		const sanitizedValue = sanitizeSlug( value );
 
-		expect( sanitizedValue ).toBe( 'capitalized_words_and_an_allcaps_word' );
+		expect( sanitizedValue ).toEqual( 'capitalized_words_and_an_allcaps_word' );
 	} );
 
 	it( 'forces lowercase and replaces spaces with dashes and keeps underscores', () => {
@@ -24,8 +24,8 @@ describe( 'sanitizeSlug', () => {
 		const sanitizedValue = sanitizeSlug( value, '-' );
 		const secondSanitizedValue = sanitizeSlug( secondValue );
 
-		expect( sanitizedValue ).toBe( 'capitalized-words-and-an-allcaps_word' );
-		expect( secondSanitizedValue ).toBe( 'pod_name_with_spaces' );
+		expect( sanitizedValue ).toEqual( 'capitalized-words-and-an-allcaps_word' );
+		expect( secondSanitizedValue ).toEqual( 'pod_name_with_spaces' );
 	} );
 
 	it( 'removes invalid characters', () => {
@@ -33,6 +33,6 @@ describe( 'sanitizeSlug', () => {
 
 		const sanitizedValue = sanitizeSlug( value );
 
-		expect( sanitizedValue ).toBe( 'test_and_test' );
+		expect( sanitizedValue ).toEqual( 'test_and_test' );
 	} );
 } );

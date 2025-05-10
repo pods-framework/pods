@@ -33,10 +33,12 @@ const loadAjaxOptions = ( ajaxData = {} ) => async ( inputValue = '' ) => {
 			throw new Error( 'Invalid response.' );
 		}
 
-		const formattedResults = resultBody.results.map( ( result ) => ( {
-			label: result?.name,
-			value: result?.id,
-		} ) );
+		const formattedResults = resultBody.results.map( ( result ) => (
+			{
+				label: result?.name,
+				value: result?.id,
+			}
+		) );
 
 		return formattedResults;
 	} catch ( e ) {

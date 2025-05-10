@@ -5,7 +5,7 @@
  */
 const prepareApiFetchData = ( data ) => {
 	// Only process objects.
-	if ( 'object' !== typeof data ) {
+	if ( 'object' !== typeof data || null === data ) {
 		return data;
 	}
 

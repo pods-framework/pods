@@ -46,13 +46,13 @@ test( 'correctly validates depends-on dependencies when there is one boolean dep
 		restrict_role: true,
 	};
 
-	expect( validateFieldDependencies( podValuesFail1, dependsOnRules ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail2, dependsOnRules ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail3, dependsOnRules ) ).toBe( false );
+	expect( validateFieldDependencies( podValuesFail1, dependsOnRules ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail2, dependsOnRules ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail3, dependsOnRules ) ).toEqual( false );
 
-	expect( validateFieldDependencies( podValuesSuccess1, dependsOnRules ) ).toBe( true );
-	expect( validateFieldDependencies( podValuesSuccess2, dependsOnRules ) ).toBe( true );
-	expect( validateFieldDependencies( podValuesSuccess3, dependsOnRules ) ).toBe( true );
+	expect( validateFieldDependencies( podValuesSuccess1, dependsOnRules ) ).toEqual( true );
+	expect( validateFieldDependencies( podValuesSuccess2, dependsOnRules ) ).toEqual( true );
+	expect( validateFieldDependencies( podValuesSuccess3, dependsOnRules ) ).toEqual( true );
 } );
 
 test( 'correctly validates depends-on dependencies when there are multiple string dependencies', () => {
@@ -82,11 +82,11 @@ test( 'correctly validates depends-on dependencies when there are multiple strin
 		second_string_dep: 'Yes',
 	};
 
-	expect( validateFieldDependencies( podValuesFirstFail, dependsOnRules ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesSecondFail, dependsOnRules ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesThirdFail, dependsOnRules ) ).toBe( false );
+	expect( validateFieldDependencies( podValuesFirstFail, dependsOnRules ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesSecondFail, dependsOnRules ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesThirdFail, dependsOnRules ) ).toEqual( false );
 
-	expect( validateFieldDependencies( podValuesSuccess, dependsOnRules ) ).toBe( true );
+	expect( validateFieldDependencies( podValuesSuccess, dependsOnRules ) ).toEqual( true );
 } );
 
 test( 'correctly validates depends-on-any dependencies', () => {
@@ -121,13 +121,13 @@ test( 'correctly validates depends-on-any dependencies', () => {
 		pick_format_multi: 'list',
 	};
 
-	expect( validateFieldDependencies( podValuesFail1, dependsOnAnyRules, 'depends-on-any' ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail2, dependsOnAnyRules, 'depends-on-any' ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail3, dependsOnAnyRules, 'depends-on-any' ) ).toBe( false );
+	expect( validateFieldDependencies( podValuesFail1, dependsOnAnyRules, 'depends-on-any' ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail2, dependsOnAnyRules, 'depends-on-any' ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail3, dependsOnAnyRules, 'depends-on-any' ) ).toEqual( false );
 
-	expect( validateFieldDependencies( podValuesSuccess1, dependsOnAnyRules, 'depends-on-any' ) ).toBe( true );
-	expect( validateFieldDependencies( podValuesSuccess2, dependsOnAnyRules, 'depends-on-any' ) ).toBe( true );
-	expect( validateFieldDependencies( podValuesSuccess3, dependsOnAnyRules, 'depends-on-any' ) ).toBe( true );
+	expect( validateFieldDependencies( podValuesSuccess1, dependsOnAnyRules, 'depends-on-any' ) ).toEqual( true );
+	expect( validateFieldDependencies( podValuesSuccess2, dependsOnAnyRules, 'depends-on-any' ) ).toEqual( true );
+	expect( validateFieldDependencies( podValuesSuccess3, dependsOnAnyRules, 'depends-on-any' ) ).toEqual( true );
 } );
 
 test( 'correctly validates excludes-on dependencies', () => {
@@ -173,14 +173,14 @@ test( 'correctly validates excludes-on dependencies', () => {
 		array_match: [ '2', '3', '4' ],
 	};
 
-	expect( validateFieldDependencies( podValuesFail1, excludesOnRules, 'excludes-on' ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail2, excludesOnRules, 'excludes-on' ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail3, excludesOnRules, 'excludes-on' ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail4, excludesOnRules, 'excludes-on' ) ).toBe( false );
+	expect( validateFieldDependencies( podValuesFail1, excludesOnRules, 'excludes-on' ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail2, excludesOnRules, 'excludes-on' ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail3, excludesOnRules, 'excludes-on' ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail4, excludesOnRules, 'excludes-on' ) ).toEqual( false );
 
-	expect( validateFieldDependencies( podValuesSuccess1, excludesOnRules, 'excludes-on' ) ).toBe( true );
-	expect( validateFieldDependencies( podValuesSuccess2, excludesOnRules, 'excludes-on' ) ).toBe( true );
-	expect( validateFieldDependencies( podValuesSuccess3, excludesOnRules, 'excludes-on' ) ).toBe( true );
+	expect( validateFieldDependencies( podValuesSuccess1, excludesOnRules, 'excludes-on' ) ).toEqual( true );
+	expect( validateFieldDependencies( podValuesSuccess2, excludesOnRules, 'excludes-on' ) ).toEqual( true );
+	expect( validateFieldDependencies( podValuesSuccess3, excludesOnRules, 'excludes-on' ) ).toEqual( true );
 } );
 
 test( 'correctly validates wildcard-on dependencies', () => {
@@ -211,12 +211,12 @@ test( 'correctly validates wildcard-on dependencies', () => {
 		],
 	};
 
-	expect( validateFieldDependencies( podValuesFail1, wildcardOnRules, 'wildcard-on' ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail2, wildcardOnRules, 'wildcard-on' ) ).toBe( false );
-	expect( validateFieldDependencies( podValuesFail3, wildcardOnRules, 'wildcard-on' ) ).toBe( false );
+	expect( validateFieldDependencies( podValuesFail1, wildcardOnRules, 'wildcard-on' ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail2, wildcardOnRules, 'wildcard-on' ) ).toEqual( false );
+	expect( validateFieldDependencies( podValuesFail3, wildcardOnRules, 'wildcard-on' ) ).toEqual( false );
 
-	expect( validateFieldDependencies( podValuesSuccess1, wildcardOnRules, 'wildcard-on' ) ).toBe( true );
-	expect( validateFieldDependencies( podValuesSuccess2, wildcardOnRules, 'wildcard-on' ) ).toBe( true );
+	expect( validateFieldDependencies( podValuesSuccess1, wildcardOnRules, 'wildcard-on' ) ).toEqual( true );
+	expect( validateFieldDependencies( podValuesSuccess2, wildcardOnRules, 'wildcard-on' ) ).toEqual( true );
 } );
 
 test( 'correctly validates an item from an array of values', () => {
@@ -235,7 +235,7 @@ test( 'correctly validates an item from an array of values', () => {
 		// second_dep: 'a',
 	};
 
-	expect( validateFieldDependencies( podValuesFail, dependsOnRules ) ).toBe( false );
+	expect( validateFieldDependencies( podValuesFail, dependsOnRules ) ).toEqual( false );
 
-	expect( validateFieldDependencies( podValuesSuccess, dependsOnRules ) ).toBe( true );
+	expect( validateFieldDependencies( podValuesSuccess, dependsOnRules ) ).toEqual( true );
 } );

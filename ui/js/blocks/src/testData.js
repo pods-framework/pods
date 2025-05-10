@@ -133,9 +133,9 @@ export const numberField = {
 };
 
 // Templates
-export const basicTemplate = '<div class="some_class">Something else here and a field: {@textField}</div>';
+export const basicTemplate = '<div class="some_class" data-testid="wrapper">Something else here and a field: {@textField}</div>';
 
-export const multipleFieldsTemplate = '<section><div>A field with content: {@textField}</div><br /><div></div><div>And a number: {@numberField}</div></section>';
+export const multipleFieldsTemplate = '<section data-testid="wrapper"><div>A field with content: {@textField}</div><br /><div></div><div>And a number: {@numberField}</div></section>';
 
 export const templateWithEveryFieldType = `<div>
 	A text field: {@textField}

@@ -2,11 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {
+const PodsNavTab = ( {
+	tabs,
+	activeTab,
+	setActiveTab,
+} ) => {
 	const getClassName = ( tabName ) => {
 		return classNames(
 			'nav-tab pods-nav-tab-link',
-			{ 'nav-tab-active': ( tabName === activeTab ) },
+			{
+				'nav-tab-active': (
+					tabName === activeTab
+				),
+			},
 		);
 	};
 
@@ -17,7 +25,10 @@ const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {
 
 	return (
 		<h2 className="nav-tab-wrapper pods-nav-tabs">
-			{ tabs.map( ( { name, label } ) => (
+			{ tabs.map( ( {
+				name,
+				label,
+			} ) => (
 				<a
 					key={ name }
 					href={ `#pods-${ name }` }

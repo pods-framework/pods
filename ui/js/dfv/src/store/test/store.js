@@ -8,15 +8,21 @@ import { INITIAL_UI_STATE } from '../constants';
 
 import { TEST_CONFIG_DATA } from '../testData';
 
+let storeNumber = 0;
+
 const testStore = {
 	select: null,
 	dispatch: null,
 
 	initStore: ( initialState ) => {
-		const storeKey = initEditPodStore( initialState );
+		storeNumber++;
+
+		const storeKey = initEditPodStore( initialState, 'test-' + storeNumber );
 
 		testStore.select = select( storeKey );
 		testStore.dispatch = dispatch( storeKey );
+
+		return storeKey;
 	},
 };
 

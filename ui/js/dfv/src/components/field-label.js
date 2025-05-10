@@ -11,23 +11,28 @@ import { richTextNoLinks } from '../../../blocks/src/config/html';
 import './field-label.scss';
 
 const FieldLabel = ( {
+	name = '',
 	label,
-	required,
+	required = false,
 	htmlFor,
-	helpTextString,
-	helpLink,
+	helpTextString = null,
+	helpLink = null,
 } ) => (
 	<div className={ `pods-field-label pods-field-label-${ name }` }>
 		<label
 			className="pods-field-label__label"
 			htmlFor={ htmlFor }
+			data-testid="field-label"
 		>
 			<span
 				dangerouslySetInnerHTML={ {
 					__html: removep( sanitizeHtml( label, richTextNoLinks ) ),
 				} }
+				data-testid="field-label-text"
 			/>
-			{ required && ( <span className="pods-field-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
+			{ required && (
+				<span className="pods-field-label__required">{ '\u00A0' /* &nbsp; */ }*</span>
+			) }
 		</label>
 
 		{ helpTextString && (
@@ -42,13 +47,8 @@ const FieldLabel = ( {
 	</div>
 );
 
-FieldLabel.defaultProps = {
-	required: false,
-	helpTextString: null,
-	helpLink: null,
-};
-
 FieldLabel.propTypes = {
+	name: PropTypes.string,
 	label: PropTypes.string.isRequired,
 	htmlFor: PropTypes.string.isRequired,
 	helpTextString: PropTypes.string,

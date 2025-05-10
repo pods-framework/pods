@@ -26,7 +26,7 @@ class FieldErrorBoundary extends React.Component {
 		console.warn(
 			'There was an error rendering this field.',
 			error,
-			errorInfo
+			errorInfo,
 		);
 	}
 

@@ -9,13 +9,14 @@ const ValidationMessages = ( { messages } ) => {
 	}
 
 	return (
-		<div className="pods-validation-messages">
-			{ messages.map( ( message ) => (
+		<div className="pods-validation-messages" data-testid="validation-messages">
+			{ messages.map( ( message, index ) => (
 				<Notice
-					key="message"
+					key={ `message-${ index }` }
 					status="error"
 					isDismissible={ false }
 					politeness="polite"
+					data-testid="validation-message"
 				>
 					{ message }
 				</Notice>

@@ -1,4 +1,4 @@
-/*global PodsMn */
+import Marionette from 'backbone.marionette';
 
 import { FileUploadCollection } from 'dfv/src/fields/file/file-upload-model';
 
@@ -23,7 +23,7 @@ import { FileUploadCollection } from 'dfv/src/fields/file/file-upload-model';
  *
  * @class
  */
-export const PodsFileUploader = PodsMn.Object.extend( {
+export const PodsFileUploader = Marionette.Object.extend( {
 	constructor( options ) {
 		// Magically set the object properties we need, they'll just "be there" for the concrete instance
 		this.browseButton = options.browseButton;
@@ -31,7 +31,7 @@ export const PodsFileUploader = PodsMn.Object.extend( {
 		this.fieldConfig = options.fieldConfig;
 		this.fileCollection = options.fileCollection;
 
-		PodsMn.Object.call( this, options );
+		Marionette.Object.call( this, options );
 	},
 } );
 

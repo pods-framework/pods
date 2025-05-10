@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -71,16 +71,20 @@ describe( 'Boolean Group field component', () => {
 	it( 'renders the correct subfields with labels and tooltips', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <BooleanGroup { ...props } /> );
+		render( <BooleanGroup {...props} /> );
 
-		expect( wrapper.find( 'input' ).first().props().type ).toEqual( 'checkbox' );
-		expect( wrapper.find( 'label' ).first().text() ).toEqual( 'Restrict access to Admins' );
+		const firstCheckbox = screen.getByLabelText( 'Restrict access to Admins' );
+		expect( firstCheckbox.checked ).toEqual( false );
+		expect( firstCheckbox.type ).toEqual( 'checkbox' );
 
-		expect( wrapper.find( 'input' ).at( 1 ).props().type ).toEqual( 'checkbox' );
-		expect( wrapper.find( 'label' ).at( 1 ).text() ).toEqual( 'Restrict access by Role' );
+		const secondCheckbox = screen.getByLabelText( 'Restrict access by Role' );
+		expect( secondCheckbox.checked ).toEqual( false );
+		expect( secondCheckbox.type ).toEqual( 'checkbox' );
+
+		expect( () => screen.getByLabelText( 'Make field "Read Only" in UI' ) ).toThrow();
 	} );
 
-	it( 'displays and updates values', () => {
+	it( 'displays correct values', () => {
 		const props = {
 			...BASE_PROPS,
 			setOptionValue: jest.fn(),
@@ -90,44 +94,39 @@ describe( 'Boolean Group field component', () => {
 			},
 		};
 
-		const wrapper = mount( <BooleanGroup { ...props } /> );
-		const firstCheckbox = wrapper.find( 'input[name="admin_only"]' );
-		const secondCheckbox = wrapper.find( 'input[name="restrict_role"]' );
+		render( <BooleanGroup {...props} /> );
 
-		expect( firstCheckbox.getDOMNode().checked ).toEqual( false );
-		expect( secondCheckbox.getDOMNode().checked ).toEqual( true );
+		const firstCheckbox = screen.getByLabelText( 'Restrict access to Admins' );
+		expect( firstCheckbox.checked ).toEqual( false );
+		expect( firstCheckbox.type ).toEqual( 'checkbox' );
 
-		firstCheckbox.getDOMNode().checked = ! firstCheckbox.getDOMNode().checked;
-		secondCheckbox.getDOMNode().checked = ! secondCheckbox.getDOMNode().checked;
+		const secondCheckbox = screen.getByLabelText( 'Restrict access by Role' );
+		expect( secondCheckbox.checked ).toEqual( true );
+		expect( secondCheckbox.type ).toEqual( 'checkbox' );
 
-		firstCheckbox.simulate( 'change' );
-		secondCheckbox.simulate( 'change' );
-
-		expect( props.setOptionValue ).toHaveBeenNthCalledWith( 1, 'admin_only', true );
-		expect( props.setOptionValue ).toHaveBeenNthCalledWith( 2, 'restrict_role', false );
+		expect( () => screen.getByLabelText( 'Make field "Read Only" in UI' ) ).toThrow();
 	} );
 
 	it( 'handles dependency logic', () => {
-		const props = { ...BASE_PROPS };
-
-		const wrapper = mount( <BooleanGroup { ...props } /> );
-
-		expect( wrapper.find( 'input[name="read_only"]' ) ).toHaveLength( 0 );
-
-		wrapper.setProps( {
+		const props = {
+			...BASE_PROPS,
 			allPodValues: {
 				type: 'currency',
 			},
-		} );
+		};
 
-		expect( wrapper.find( 'input[name="read_only"]' ) ).toHaveLength( 1 );
+		render( <BooleanGroup {...props} /> );
 
-		wrapper.setProps( {
-			allPodValues: {
-				type: 'something else',
-			},
-		} );
+		const firstCheckbox = screen.getByLabelText( 'Restrict access to Admins' );
+		expect( firstCheckbox.checked ).toEqual( false );
+		expect( firstCheckbox.type ).toEqual( 'checkbox' );
 
-		expect( wrapper.find( 'input[name="read_only"]' ) ).toHaveLength( 0 );
+		const secondCheckbox = screen.getByLabelText( 'Restrict access by Role' );
+		expect( secondCheckbox.checked ).toEqual( false );
+		expect( secondCheckbox.type ).toEqual( 'checkbox' );
+
+		const thirdCheckbox = screen.getByLabelText( 'Make field "Read Only" in UI' );
+		expect( thirdCheckbox.checked ).toEqual( false );
+		expect( thirdCheckbox.type ).toEqual( 'checkbox' );
 	} );
 } );

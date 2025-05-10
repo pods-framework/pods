@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
 export const BOOLEAN_STRINGS = PropTypes.oneOf(
-	[ '0', '1', 0, 1 ]
+	[ '0', '1', 0, 1 ],
 );
 export const BOOLEAN_ALL_TYPES = PropTypes.oneOf(
-	[ '0', '1', 0, 1, true, false ]
+	[ '0', '1', 0, 1, true, false ],
 );
 
 export const BOOLEAN_ALL_TYPES_OR_EMPTY = PropTypes.oneOf(
-	[ '0', '1', 0, 1, true, false, '', null, undefined ]
+	[ '0', '1', 0, 1, true, false, '', null, undefined ],
 );
 
 // Handles issue where objects get passed as arrays when empty from PHP.
@@ -43,7 +43,7 @@ export const PICK_OPTIONS = PropTypes.arrayOf(
 		edit_link: PropTypes.string.isRequired,
 		link: PropTypes.string.isRequired,
 		selected: PropTypes.bool.isRequired,
-	} )
+	} ),
 );
 
 export const HTML_ATTR = PropTypes.shape( {
@@ -106,10 +106,10 @@ export const FIELD_PROP_TYPE = {
 	field_type: PropTypes.string,
 	group: NUMBER_OR_NUMBER_AS_STRING,
 	fields: PropTypes.arrayOf(
-		NUMBER_OR_NUMBER_AS_STRING
+		NUMBER_OR_NUMBER_AS_STRING,
 	),
 	groups: PropTypes.arrayOf(
-		NUMBER_OR_NUMBER_AS_STRING
+		NUMBER_OR_NUMBER_AS_STRING,
 	),
 	group_id: NUMBER_OR_NUMBER_AS_STRING,
 	grouped: PropTypes.number,
@@ -306,7 +306,7 @@ export const FIELD_PROP_TYPE = {
 		'i18n',
 		'9.999,99',
 		'9,999.99',
-		"9'999.99",
+		'9\'999.99',
 		'9 999,99',
 		'9999.99',
 		'9999,99',
@@ -405,7 +405,7 @@ export const FIELD_PROP_TYPE = {
 				),
 			),
 			PropTypes.object,
-		]
+		],
 	),
 	pick_ajax: BOOLEAN_ALL_TYPES,
 	pick_allow_add_new: BOOLEAN_ALL_TYPES,

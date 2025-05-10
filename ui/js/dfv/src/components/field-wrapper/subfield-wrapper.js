@@ -47,7 +47,9 @@ const SubfieldWrapper = ( {
 		...fieldConfig,
 		name: `${ fieldConfig.name }[${ index }]`,
 		htmlAttr: {
-			...( fieldConfig.htmlAttr || {} ),
+			...(
+				fieldConfig.htmlAttr || {}
+			),
 		},
 	};
 
@@ -69,7 +71,7 @@ const SubfieldWrapper = ( {
 	// Subfields get their own set of validation rules
 	const [ validationMessages, addValidationRules ] = useValidation(
 		[],
-		value
+		value,
 	);
 
 	// Set up useSortable hook
@@ -89,7 +91,9 @@ const SubfieldWrapper = ( {
 		transition,
 	};
 
-	const validationMessagesComponent = ( hasSubfieldBlurred && validationMessages.length ) ? (
+	const validationMessagesComponent = (
+		hasSubfieldBlurred && validationMessages.length
+	) ? (
 		<ValidationMessages messages={ validationMessages } />
 	) : undefined;
 
@@ -188,7 +192,7 @@ SubfieldWrapper.propTypes = {
 
 	/**
 	 * Pod slug being edited.
- 	*/
+	 */
 	podName: PropTypes.string,
 
 	/**
@@ -209,7 +213,7 @@ SubfieldWrapper.propTypes = {
 
 	/**
 	 * Function to call when a field has blurred.
- 	*/
+	 */
 	setHasBlurred: PropTypes.func.isRequired,
 };
 

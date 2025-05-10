@@ -15,13 +15,17 @@ const isValueSet = ( value ) => {
 		'undefined' !== typeof value &&
 		null !== value &&
 		'' !== value &&
-		( Array.isArray( value ) ? value.length > 0 : true )
+		(
+			Array.isArray( value ) ? value.length > 0 : true
+		)
 	);
 };
 
 export const requiredValidator = ( fieldLabel, isRepeatable ) => ( value ) => {
 	// Convert all values into an array.
-	const valuesArray = ( isRepeatable && Array.isArray( value ) )
+	const valuesArray = (
+		isRepeatable && Array.isArray( value )
+	)
 		? value
 		: [ value ];
 
@@ -110,13 +114,13 @@ export const dateTimeValidator = (
 	yearRange,
 	momentFormat,
 	allowEmpty = true,
-) => (value) => {
+) => ( value ) => {
 	//If no value is set, we don't need to validate range.
 	//@see https://github.com/pods-framework/pods/issues/7016
-	if (!value && allowEmpty) {
+	if ( ! value && allowEmpty ) {
 		return true;
 	}
-	if ('undefined' === typeof yearRange || !yearRange.length) {
+	if ( 'undefined' === typeof yearRange || ! yearRange.length ) {
 		return true;
 	}
 

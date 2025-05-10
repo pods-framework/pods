@@ -4,7 +4,9 @@
  * @returns bool
  */
 const isModalWindow = () => {
-    return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
+	return (
+		-1 !== location.search.indexOf( 'pods_modal=' )
+	);
 };
 
 export default isModalWindow;

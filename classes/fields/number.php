@@ -82,6 +82,16 @@ class PodsField_Number extends PodsField {
 				'type'        => 'boolean',
 				'excludes-on' => array( static::$type . '_decimals' => 0 ),
 			),
+			static::$type . '_keep_leading_zeroes' => array(
+				'label'       => __( 'Keep Leading Zeroes', 'pods' ),
+				'help'        => __( 'By default, Pods will remove leading zeroes from numbers like "00123" which will become "123". When you keep them, the zeroes at the start of the value will be preserved when formatted.', 'pods' ),
+				'default'     => 0,
+				'type'        => 'boolean',
+				'depends-on' => array(
+					static::$type . '_format_type' => 'number',
+					static::$type . '_html5' => false,
+				),
+			),
 			static::$type . '_step'        => array(
 				'label'      => __( 'Slider Increment (Step)', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
@@ -146,6 +156,10 @@ class PodsField_Number extends PodsField {
 		$decimals = $this->get_max_decimals( $options );
 
 		$schema = 'DECIMAL(' . $length . ',' . $decimals . ')';
+
+		if ( 1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 0 ) ) {
+			$schema = 'VARCHAR(' . $length . ')';
+		}
 
 		return $schema;
 
@@ -232,6 +246,7 @@ class PodsField_Number extends PodsField {
 		// Enforce boolean.
 		$options[ static::$type . '_html5' ]       = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
 		$options[ static::$type . '_format_soft' ] = filter_var( pods_v( static::$type . '_format_soft', $options, false ), FILTER_VALIDATE_BOOLEAN );
+		$options[ static::$type . '_keep_leading_zeroes' ] = filter_var( pods_v( static::$type . '_keep_leading_zeroes', $options, false ), FILTER_VALIDATE_BOOLEAN );
 
 		// Only format the value for non-HTML5 inputs.
 		if ( ! $options[ static::$type . '_html5' ] ) {
@@ -343,11 +358,24 @@ class PodsField_Number extends PodsField {
 			return null;
 		}
 
+		$prefix = null;
+
+		if (
+			1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 0 )
+			&& preg_match( '/^(0+)/', $value, $leading_zeroes )
+		) {
+			$prefix = $leading_zeroes[0];
+		}
+
 		$value = number_format( (float) $value, $decimals, '.', '' );
 
 		// Optionally remove trailing decimal zero's.
 		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
 			$value = $this->trim_decimals( $value, '.' );
+		}
+
+		if ( null !== $prefix ) {
+			$value = $prefix . $value;
 		}
 
 		return $value;
@@ -368,6 +396,15 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 		$decimals    = $format_args['decimals'];
 
+		$prefix = null;
+
+		if (
+			1 === (int) pods_v( static::$type . '_keep_leading_zeroes', $options, 0 )
+			&& preg_match( '/^(0+)/', $value, $leading_zeroes )
+		) {
+			$prefix = $leading_zeroes[0];
+		}
+
 		if ( 'i18n' === pods_v( static::$type . '_format', $options ) ) {
 			$value = number_format_i18n( (float) $value, $decimals );
 		} else {
@@ -377,6 +414,10 @@ class PodsField_Number extends PodsField {
 		// Optionally remove trailing decimal zero's.
 		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
 			$value = $this->trim_decimals( $value, $dot );
+		}
+
+		if ( null !== $prefix ) {
+			$value = $prefix . $value;
 		}
 
 		return $value;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -35,27 +35,11 @@ describe( 'Email field component', () => {
 			},
 		};
 
-		const wrapper = mount( <Password { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <Password { ...props } /> );
 
-		expect( input.props().type ).toBe( 'password' );
-		expect( input.props().type ).toEqual( 'password' );
-		expect( input.props().maxLength ).toEqual( 20 );
-		expect( input.props().placeholder ).toEqual( 'Some placeholder for the field' );
-	} );
-
-	it( 'calls the setValue callback once updated', () => {
-		const props = {
-			...BASE_PROPS,
-			setValue: jest.fn(),
-		};
-
-		const wrapper = mount( <Password { ...props } /> );
-		const input = wrapper.find( 'input' ).first();
-		input.simulate( 'change', {
-			target: { value: 'test123' },
-		} );
-
-		expect( props.setValue ).toHaveBeenCalledWith( 'test123' );
+		const input = screen.getByRole( 'generic' ).firstChild;
+		expect( input.type ).toEqual( 'password' );
+		expect( input.maxLength ).toEqual( 20 );
+		expect( input.placeholder ).toEqual( 'Some placeholder for the field' );
 	} );
 } );

@@ -11,7 +11,7 @@ const sanitizeSlug = ( value, separator = '_' ) => {
 		{
 			allowedTags: [],
 			parser: { decodeEntities: false },
-		}
+		},
 	);
 
 	return deburr( withoutTags )

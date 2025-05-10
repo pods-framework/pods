@@ -19,7 +19,7 @@ export const getThousandsSeparatorFromPodsFormat = ( format ) => {
 		case '9999,99':
 			thousands = '';
 			break;
-		case "9'999.99":
+		case '9\'999.99':
 			thousands = '\'';
 			break;
 		case '9 999,99':
@@ -53,7 +53,7 @@ export const getDecimalSeparatorFromPodsFormat = ( format ) => {
 		case '9999,99':
 			dot = ',';
 			break;
-		case "9'999.99":
+		case '9\'999.99':
 			dot = '.';
 			break;
 		case '9 999,99':
@@ -70,10 +70,11 @@ export const getDecimalSeparatorFromPodsFormat = ( format ) => {
 
 export const parseFloatWithPodsFormat = (
 	newValue,
-	format
+	format,
+	keepLeadingZeroes = false,
 ) => {
 	// Turn empty string to 0.
-	if ( '' === newValue ) {
+	if ( '' === newValue || undefined === newValue || null === newValue || false === newValue ) {
 		return 0;
 	}
 
@@ -82,23 +83,36 @@ export const parseFloatWithPodsFormat = (
 		return newValue;
 	}
 
+	let prefix = null;
+
+	if ( keepLeadingZeroes ) {
+		prefix = ( newValue.match( /^0+/ ) || [ '' ] )[ 0 ];
+	}
+
 	const thousands = getThousandsSeparatorFromPodsFormat( format );
 	const dot = getDecimalSeparatorFromPodsFormat( format );
 
 	// Remove the thousands separators and change the decimal separator to a period,
 	// so that parseFloat can handle the rest.
-	return parseFloat(
-		newValue.split( thousands ).join( '' ).split( dot ).join( '.' )
+	let formattedValue = parseFloat(
+		newValue.split( thousands ).join( '' ).split( dot ).join( '.' ),
 	);
+
+	if ( keepLeadingZeroes && prefix ) {
+		formattedValue = prefix + formattedValue.toString();
+	}
+
+	return formattedValue;
 };
 
 export const formatNumberWithPodsFormat = (
 	newValue,
 	format,
 	trimZeroDecimals = false,
+	keepLeadingZeroes = false,
 ) => {
 	// Skip empty strings or undefined.
-	if ( '' === newValue || undefined === newValue || null === newValue ) {
+	if ( '' === newValue || undefined === newValue || null === newValue || false === newValue ) {
 		return '0';
 	}
 
@@ -106,16 +120,29 @@ export const formatNumberWithPodsFormat = (
 	const dotSeparator = getDecimalSeparatorFromPodsFormat( format );
 
 	// A string has to be parsed, but a float does not.
-	const floatNewValue = ( 'string' === typeof newValue )
+	const floatNewValue = (
+		'string' === typeof newValue
+	)
 		? parseFloatWithPodsFormat( newValue, format )
 		: newValue;
 
-	const formattedNumber = isNaN( floatNewValue )
-		? undefined
-		: formatNumber( floatNewValue, 'auto', dotSeparator, thousands );
+	if ( isNaN( floatNewValue ) ) {
+		return undefined;
+	}
+
+	let formattedNumber = formatNumber( floatNewValue, 'auto', dotSeparator, thousands );
+	let prefix = null;
+
+	if ( keepLeadingZeroes ) {
+		prefix = ( newValue.match( /^0+/ ) || [ '' ] )[ 0 ];
+	}
+
+	if ( keepLeadingZeroes && prefix ) {
+		formattedNumber = prefix + formattedNumber.toString();
+	}
 
 	// We may need to trim decimals
-	if ( ! trimZeroDecimals || undefined === formattedNumber ) {
+	if ( ! trimZeroDecimals ) {
 		return formattedNumber;
 	}
 
@@ -126,7 +153,11 @@ export const formatNumberWithPodsFormat = (
 		return formattedNumber;
 	}
 
-	const charactersToTrim = -1 * ( parseInt( ( '' + decimalValue ).length, 10 ) + 1 );
+	const charactersToTrim = -1 * (
+		parseInt( (
+			'' + decimalValue
+		).length, 10 ) + 1
+	);
 
 	return formattedNumber.slice( 0, charactersToTrim );
 };

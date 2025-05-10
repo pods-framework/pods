@@ -3,8 +3,14 @@
  *
  * @returns bool
  */
-const isMediaModal = () => {
-    return window.location.pathname === '/wp-admin/upload.php';
+const isMediaModal = ( path ) => {
+	if ( ! path ) {
+		path = window.location.pathname;
+	}
+
+	const pathToUpload = '/wp-admin/upload.php';
+
+	return path.includes( pathToUpload );
 };
 
 export default isMediaModal;

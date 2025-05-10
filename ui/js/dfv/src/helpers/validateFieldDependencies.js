@@ -92,7 +92,7 @@ const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) =>
 
 		// Check for any wildcard match.
 		return wildcardData.some(
-			( regexRule ) => !! currentValue.match( regexRule )
+			( regexRule ) => !! currentValue.match( regexRule ),
 		);
 	}
 
@@ -112,7 +112,9 @@ const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) =>
 			( ruleValueItem ) => arrayOfCurrentValues.includes( ruleValueItem ),
 		);
 
-		return ( intersection.length > 0 );
+		return (
+			intersection.length > 0
+		);
 	}
 
 	// Start with a strict comparison.

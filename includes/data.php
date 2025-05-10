@@ -26,9 +26,10 @@ function pods_sanitize( $input, $params = array() ) {
 	$output = array();
 
 	$defaults = array(
-		'nested' => false,
-		'type'   => null,
+		'nested'             => false,
+		'type'               => null,
 		// %s %d %f etc
+		'allow_pods_objects' => false,
 	);
 
 	if ( ! is_array( $params ) ) {
@@ -40,6 +41,10 @@ function pods_sanitize( $input, $params = array() ) {
 	}
 
 	if ( is_object( $input ) ) {
+		if ( $params['allow_pods_objects'] && $input instanceof Whatsit ) {
+			return $input;
+		}
+
 		$input = get_object_vars( $input );
 
 		$n_params           = $params;

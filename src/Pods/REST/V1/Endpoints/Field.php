@@ -50,15 +50,19 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'type'    => 'string',
 		];
 
-		// @todo Handle get/post/delete
+		$POST_defaults = [
+			'in'      => 'body',
+			'default' => '',
+			'type'    => 'string',
+		];
 
 		return [
 			'get' => [
-				'summary'    => '', // @todo Fill this out
+				'summary'    => 'Retrieve a specific Field',
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'Returns the requested Field with its details',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -68,7 +72,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 						],
 					],
 					'400' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'The request was invalid or cannot be otherwise served',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -78,7 +82,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 						],
 					],
 					'401' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'Unauthorized access - user does not have permission to access this Field',
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -88,7 +92,99 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 						],
 					],
 					'404' => [
-						'description' => '', // @todo Fill this out
+						'description' => 'The requested Field was not found',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+				],
+			],
+			'put' => [
+				'summary'    => 'Update a specific Field',
+				'parameters' => $this->swaggerize_args( $this->EDIT_args(), $POST_defaults ),
+				'responses'  => [
+					'200' => [
+						'description' => 'Returns the updated Field',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'$ref' => '#/components/schemas/Field',
+								],
+							],
+						],
+					],
+					'400' => [
+						'description' => 'The request was invalid or cannot be otherwise served',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'401' => [
+						'description' => 'Unauthorized access - user does not have permission to update this Field',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'404' => [
+						'description' => 'The Field to update was not found',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+				],
+			],
+			'delete' => [
+				'summary'    => 'Delete a specific Field',
+				'parameters' => $this->swaggerize_args( $this->DELETE_args(), $POST_defaults ),
+				'responses'  => [
+					'200' => [
+						'description' => 'Returns the deleted Field details',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'$ref' => '#/components/schemas/Field',
+								],
+							],
+						],
+					],
+					'400' => [
+						'description' => 'The request was invalid or cannot be otherwise served',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'401' => [
+						'description' => 'Unauthorized access - user does not have permission to delete this Field',
+						'content'     => [
+							'application/json' => [
+								'schema' => [
+									'type' => 'object',
+								],
+							],
+						],
+					],
+					'404' => [
+						'description' => 'The Field to delete was not found',
 						'content'     => [
 							'application/json' => [
 								'schema' => [

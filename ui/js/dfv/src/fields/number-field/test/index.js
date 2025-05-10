@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -28,11 +28,11 @@ describe( 'Number field component', () => {
 	it( 'creates a text field by default', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <NumberField { ...props } /> );
+		render( <NumberField { ...props } /> );
 
-		expect(
-			wrapper.find( 'input' ).props().type
-		).toBe( 'text' );
+		const input = screen.getByRole( 'textbox' );
+
+		expect( input.type ).toEqual( 'text' );
 	} );
 
 	it( 'applies the relevant attributes to the text input field', () => {
@@ -49,11 +49,12 @@ describe( 'Number field component', () => {
 			},
 		};
 
-		const wrapper = mount( <NumberField { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <NumberField { ...props } /> );
 
-		expect( input.props().type ).toEqual( 'text' );
-		expect( input.props().placeholder ).toEqual( 'Number Field' );
+		const input = screen.getByRole( 'textbox' );
+
+		expect( input.type ).toEqual( 'text' );
+		expect( input.placeholder ).toEqual( 'Number Field' );
 	} );
 
 	it( 'applies the relevant attributes to the number input field', () => {
@@ -71,14 +72,15 @@ describe( 'Number field component', () => {
 			},
 		};
 
-		const wrapper = mount( <NumberField { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <NumberField { ...props } /> );
 
-		expect( input.props().type ).toEqual( 'number' );
-		expect( input.props().placeholder ).toEqual( 'Number Field' );
-		expect( input.props().max ).toBeUndefined();
-		expect( input.props().min ).toBeUndefined();
-		expect( input.props().step ).toEqual( 'any' );
+		const input = screen.getByRole( 'spinbutton' );
+
+		expect( input.type ).toEqual( 'number' );
+		expect( input.placeholder ).toEqual( 'Number Field' );
+		expect( input.max ).toEqual( '' );
+		expect( input.min ).toEqual( '' );
+		expect( input.step ).toEqual( 'any' );
 	} );
 
 	it( 'applies the relevant attributes to the number input field with min max', () => {
@@ -98,14 +100,15 @@ describe( 'Number field component', () => {
 			},
 		};
 
-		const wrapper = mount( <NumberField { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <NumberField { ...props } /> );
 
-		expect( input.props().type ).toEqual( 'number' );
-		expect( input.props().placeholder ).toEqual( 'Number Field' );
-		expect( input.props().max ).toEqual( 1000 );
-		expect( input.props().min ).toEqual( -1000 );
-		expect( input.props().step ).toEqual( 'any' );
+		const input = screen.getByRole( 'spinbutton' );
+
+		expect( input.type ).toEqual( 'number' );
+		expect( input.placeholder ).toEqual( 'Number Field' );
+		expect( input.max ).toEqual( '1000' );
+		expect( input.min ).toEqual( '-1000' );
+		expect( input.step ).toEqual( 'any' );
 	} );
 
 	it( 'applies the relevant attributes to the slider input field', () => {
@@ -124,14 +127,15 @@ describe( 'Number field component', () => {
 			},
 		};
 
-		const wrapper = mount( <NumberField { ...props } /> );
-		const input = wrapper.find( 'input' );
+		render( <NumberField { ...props } /> );
 
-		expect( input.props().type ).toEqual( 'range' );
-		expect( input.props().placeholder ).toEqual( 'Number Field' );
-		expect( input.props().max ).toEqual( 1000 );
-		expect( input.props().min ).toEqual( -1000 );
-		expect( input.props().step ).toEqual( 100 );
+		const input = screen.getByRole( 'slider' );
+
+		expect( input.type ).toEqual( 'range' );
+		expect( input.placeholder ).toEqual( 'Number Field' );
+		expect( input.max ).toEqual( '1000' );
+		expect( input.min ).toEqual( '-1000' );
+		expect( input.step ).toEqual( '100' );
 	} );
 
 	it( 'calls the setValue callback once updated', () => {
@@ -145,14 +149,15 @@ describe( 'Number field component', () => {
 			},
 		};
 
-		const wrapper = mount( <NumberField { ...props } /> );
-		const input = wrapper.find( 'input' ).first();
+		render( <NumberField { ...props } /> );
 
-		input.simulate( 'change', {
+		const input = screen.getByRole( 'textbox' );
+
+		fireEvent.change( input, {
 			target: { value: '1000' },
 		} );
 
-		input.simulate( 'blur' );
+		fireEvent.blur( input );
 
 		expect( props.setValue ).toHaveBeenCalledWith( 1000 );
 	} );

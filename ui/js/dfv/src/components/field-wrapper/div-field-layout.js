@@ -13,7 +13,7 @@ const DivFieldLayout = ( {
 } ) => {
 	const dfvContainerClass = classnames(
 		'pods-dfv-container',
-		`pods-dfv-container-${ fieldType }`
+		`pods-dfv-container-${ fieldType }`,
 	);
 
 	return (
@@ -30,11 +30,6 @@ const DivFieldLayout = ( {
 			</div>
 		</div>
 	);
-};
-
-DivFieldLayout.defaultProps = {
-	labelComponent: undefined,
-	descriptionComponent: undefined,
 };
 
 DivFieldLayout.propTypes = {

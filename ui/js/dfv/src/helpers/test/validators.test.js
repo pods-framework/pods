@@ -10,9 +10,9 @@ describe( 'requiredValidator', () => {
 		const fieldLabel = 'Field Name';
 		const validateField = requiredValidator( fieldLabel );
 
-		expect( validateField( 'Something' ) ).toBe( true );
-		expect( validateField( 1 ) ).toBe( true );
-		expect( validateField( 123.456 ) ).toBe( true );
+		expect( validateField( 'Something' ) ).toEqual( true );
+		expect( validateField( 1 ) ).toEqual( true );
+		expect( validateField( 123.456 ) ).toEqual( true );
 	} );
 
 	it( 'throws when passed an empty value', () => {
@@ -33,12 +33,12 @@ describe( 'maxValidator', () => {
 	it( 'allows when passed a number less than or equal to the maximum', () => {
 		const validateField = maxValidator( 19 );
 
-		expect( validateField( 19 ) ).toBe( true );
-		expect( validateField( 18 ) ).toBe( true );
-		expect( validateField( '18' ) ).toBe( true );
-		expect( validateField( '' ) ).toBe( true );
-		expect( validateField( 1 ) ).toBe( true );
-		expect( validateField( -99999 ) ).toBe( true );
+		expect( validateField( 19 ) ).toEqual( true );
+		expect( validateField( 18 ) ).toEqual( true );
+		expect( validateField( '18' ) ).toEqual( true );
+		expect( validateField( '' ) ).toEqual( true );
+		expect( validateField( 1 ) ).toEqual( true );
+		expect( validateField( -99999 ) ).toEqual( true );
 	} );
 
 	it( 'throws when passed a number past the maximum', () => {
@@ -56,11 +56,11 @@ describe( 'minValidator', () => {
 	it( 'allows when passed a greater than or equal to the minimum', () => {
 		const validateField = minValidator( 5 );
 
-		expect( validateField( 6 ) ).toBe( true );
-		expect( validateField( '5' ) ).toBe( true );
-		expect( validateField( '' ) ).toBe( true );
-		expect( validateField( 5 ) ).toBe( true );
-		expect( validateField( 99999 ) ).toBe( true );
+		expect( validateField( 6 ) ).toEqual( true );
+		expect( validateField( '5' ) ).toEqual( true );
+		expect( validateField( '' ) ).toEqual( true );
+		expect( validateField( 5 ) ).toEqual( true );
+		expect( validateField( 99999 ) ).toEqual( true );
 	} );
 
 	it( 'throws when passed a number below the minimum', () => {
@@ -99,7 +99,7 @@ describe( 'emailValidator', () => {
 
 		validEmailAddress.forEach( ( address ) => {
 			try {
-				expect( validateField( address ) ).toBe( true );
+				expect( validateField( address ) ).toEqual( true );
 			} catch ( e ) {
 				// eslint-disable-next-line
 				console.warn( `Failing address was: ${ address }` );

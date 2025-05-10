@@ -25,8 +25,15 @@ const copyToClipboard = async ( text ) => {
 };
 
 // https://lucide.dev/icons/copy
-const CopyButton = ( { label, textToCopy, onClick } ) => {
+const CopyButton = ( {
+	label = 'Copy',
+	textToCopy = null,
+	onClick = null,
+	setTimeoutFn = null,
+} ) => {
 	const [ copied, setCopied ] = useState( false );
+	const [ lastTimeout, setLastTimeout ] = useState( 0 );
+
 	const handleClick = async () => {
 		if ( onClick ) {
 			onClick();
@@ -34,10 +41,25 @@ const CopyButton = ( { label, textToCopy, onClick } ) => {
 			await copyToClipboard( textToCopy );
 		}
 		setCopied( true );
-		const timeout = setTimeout( () => {
-			setCopied( false );
-			clearTimeout( timeout );
-		}, 3000 );
+
+		if ( setTimeoutFn ) {
+			setTimeoutFn( () => {
+				setCopied( false );
+			} );
+		} else {
+			if ( lastTimeout ) {
+				clearTimeout( lastTimeout );
+
+				setLastTimeout( 0 );
+			}
+
+			setLastTimeout( setTimeout( () => {
+				setCopied( false );
+				clearTimeout( lastTimeout );
+
+				setLastTimeout( 0 );
+			}, 3000 ) );
+		}
 	};
 	return (
 		<button
@@ -46,7 +68,7 @@ const CopyButton = ( { label, textToCopy, onClick } ) => {
 			onClick={ handleClick }
 		>
 			{ copied ? (
-				<span>
+				<span data-testid="copy-button-copied">
 					({ __( 'Copied', 'pods' ) })
 				</span>
 			) : (
@@ -71,14 +93,8 @@ const CopyButton = ( { label, textToCopy, onClick } ) => {
 	);
 };
 
-CopyButton.defaultProps = {
-	label: 'Copy',
-	textToCopy: null,
-	onClick: null,
-};
-
 CopyButton.propTypes = {
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	textToCopy: PropTypes.string,
 	onClick: PropTypes.func,
 };

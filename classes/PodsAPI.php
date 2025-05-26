@@ -1455,7 +1455,7 @@ class PodsAPI {
 	 *
 	 * @param array $params An associative array of parameters
 	 *
-	 * @return bool|int Pod ID
+	 * @return false|int|Pod|WP_Error The Pod object, Pod ID, or WP_Error on failure.
 	 * @since 2.0.0
 	 */
 	public function add_pod( $params ) {
@@ -1671,8 +1671,8 @@ class PodsAPI {
 	 * @param bool|int  $db        (optional) Whether to save into the DB or just return Pod array.
 	 *
 	 * @throws Exception
+	 * @return false|int|Pod|WP_Error The Pod object, Pod ID, or WP_Error on failure.
 	 *
-	 * @return int Pod ID
 	 * @since 1.7.9
 	 */
 	public function save_pod( $params, $sanitized = false, $db = true ) {

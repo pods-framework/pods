@@ -8,6 +8,7 @@ use Pods\REST\V1\Endpoints\Field_Slug;
 use Pods\REST\V1\Endpoints\Fields;
 use Pods\REST\V1\Endpoints\Group;
 use Pods\REST\V1\Endpoints\Group_Slug;
+use Pods\REST\V1\Endpoints\Group_Duplicate;
 use Pods\REST\V1\Endpoints\Groups;
 use Pods\REST\V1\Endpoints\Pod;
 use Pods\REST\V1\Endpoints\Pod_Slug;
@@ -76,16 +77,17 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	 */
 	public function get_endpoints() {
 		$endpoints = [
-			'pods.rest-v1.endpoints.pods'          => Pods::class,
-			'pods.rest-v1.endpoints.pod'           => Pod::class,
-			'pods.rest-v1.endpoints.pod-slug'      => Pod_Slug::class,
-			'pods.rest-v1.endpoints.fields'        => Fields::class,
-			'pods.rest-v1.endpoints.field'         => Field::class,
-			'pods.rest-v1.endpoints.field-slug'    => Field_Slug::class,
-			'pods.rest-v1.endpoints.groups'        => Groups::class,
-			'pods.rest-v1.endpoints.group'         => Group::class,
-			'pods.rest-v1.endpoints.group-slug'    => Group_Slug::class,
-			'pods.rest-v1.endpoints.documentation' => Swagger_Documentation::class,
+			'pods.rest-v1.endpoints.pods'            => Pods::class,
+			'pods.rest-v1.endpoints.pod'             => Pod::class,
+			'pods.rest-v1.endpoints.pod-slug'        => Pod_Slug::class,
+			'pods.rest-v1.endpoints.fields'          => Fields::class,
+			'pods.rest-v1.endpoints.field'           => Field::class,
+			'pods.rest-v1.endpoints.field-slug'      => Field_Slug::class,
+			'pods.rest-v1.endpoints.groups'          => Groups::class,
+			'pods.rest-v1.endpoints.group'           => Group::class,
+			'pods.rest-v1.endpoints.group-slug'      => Group_Slug::class,
+			'pods.rest-v1.endpoints.group-duplicate' => Group_Duplicate::class,
+			'pods.rest-v1.endpoints.documentation'   => Swagger_Documentation::class,
 		];
 
 		return (array) apply_filters( 'pods_rest_v1_endpoints', $endpoints );

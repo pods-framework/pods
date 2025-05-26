@@ -56,8 +56,6 @@ const Editing = ( {
 			handleOkClick();
 		} else if ( event.charCode === ESCAPE_KEY ) {
 			handleCancelClick();
-		} else if ( event.charCode !== 0 ) {
-			console.log( event.charCode );
 		}
 	};
 

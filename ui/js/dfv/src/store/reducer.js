@@ -8,6 +8,7 @@ import {
 
 import {
 	SAVE_STATUSES,
+	DUPLICATE_STATUSES,
 	DELETE_STATUSES,
 	UI_ACTIONS,
 	CURRENT_POD_ACTIONS,
@@ -84,6 +85,37 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			};
 		}
 
+		case UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS: {
+			const newStatus = Object.values( DUPLICATE_STATUSES ).includes( action.duplicateStatus )
+				? action.duplicateStatus
+				: DUPLICATE_STATUSES.NONE;
+
+			if ( ! action.name ) {
+				return state;
+			}
+
+			return {
+				...state,
+				groupDuplicateStatuses: {
+					...state.groupDuplicateStatuses,
+					[ action.name ]: newStatus,
+				},
+				groupDuplicateMessages: {
+					...state.groupDuplicateMessages,
+					[ action.name ]: action.result?.message || '',
+				},
+				// And reset the delete messages.
+				groupDeleteStatuses: {
+					...state.groupDeleteStatuses,
+					[ action.name ]: DELETE_STATUSES.NONE,
+				},
+				groupDeleteMessages: {
+					...state.groupDeleteMessages,
+					[ action.name ]: '',
+				},
+			};
+		}
+
 		case UI_ACTIONS.SET_GROUP_DELETE_STATUS: {
 			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
 				? action.deleteStatus
@@ -102,6 +134,15 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				groupDeleteMessages: {
 					...state.groupDeleteMessages,
 					[ action.name ]: action.result?.message || '',
+				},
+				// And reset the duplicate messages.
+				groupDuplicateStatuses: {
+					...state.groupDuplicateStatuses,
+					[ action.name ]: DUPLICATE_STATUSES.NONE,
+				},
+				groupDuplicateMessages: {
+					...state.groupDuplicateMessages,
+					[ action.name ]: '',
 				},
 			};
 		}
@@ -220,6 +261,20 @@ export const currentPod = ( state = {}, action = {} ) => {
 		}
 
 		case CURRENT_POD_ACTIONS.ADD_GROUP: {
+			if ( ! action?.result?.group?.id ) {
+				return state;
+			}
+
+			return {
+				...state,
+				groups: [
+					...state.groups,
+					action?.result?.group,
+				],
+			};
+		}
+
+		case CURRENT_POD_ACTIONS.DUPLICATE_GROUP: {
 			if ( ! action?.result?.group?.id ) {
 				return state;
 			}

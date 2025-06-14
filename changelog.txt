@@ -152,7 +152,7 @@ To be safe and sure that those who are using Pods do not mistake Pods 3.2.3 as a
 * Fixed: PHP deprecated notice with `trim()`. (@sc0ttkclark)
 * Fixed: Resolved plupload browse button references to prevent JS console errors. (@sc0ttkclark)
 * Fixed: Resolved issue with `window.wpEditorL10n` calls to more safely check for it to prevent JS console errors. (@sc0ttkclark)
-* Fixed: Updated the implementation of the compatibility hooks for `set_transient` and `set_transient` hooks have the proper args expected sent. (@sc0ttkclark)
+* Fixed: Updated the implementation of the compatibility hooks for `set_transient` and `setted_transient` hooks have the proper args expected sent. (@sc0ttkclark)
 * Fixed: Empty REST API fields no longer show when the pod doesn't support REST API. (@sc0ttkclark)
 * Fixed: Restrict/unrestrict dynamic features logic now properly updates all of the associated Pod settings it needs to in the Access Rights Review screen. (@sc0ttkclark)
 * Fixed: Empty arrays now return correctly in Pod / Group / Field settings instead of using their defaults when empty. (@sc0ttkclark)

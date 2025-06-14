@@ -127,7 +127,7 @@ class IfTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function test_psuedo_shortcodes() {
+	public function test_pseudo_shortcodes() {
 		// Make sure our pseudo shortcodes are working properly
 		$this->assertEquals( 'abc123', do_shortcode( '[test_if_text]' ) );
 		$this->assertEquals( 'abc123', do_shortcode( '[test_if_recurse][test_if_text][/test_if_recurse]' ) );

@@ -2744,7 +2744,7 @@ function pods_function_or_file( $function_or_file, $function_name = null, $file_
  *
  * @param string|null $location The path to redirect to.
  * @param int         $status   Status code to use.
- * @param boolean     $die      If true, PHP code exection will stop.
+ * @param boolean     $die      If true, PHP code execution will stop.
  */
 function pods_redirect( $location = null, $status = 302, $die = true ) {
 	if ( empty( $location ) ) {

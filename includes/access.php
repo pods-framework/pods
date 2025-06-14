@@ -1572,7 +1572,7 @@ function pods_access_pod_options( string $pod_type, string $pod_name, ?Pod $pod 
 		$options['dynamic_features_allow'] = [
 			'label'              => __( 'Dynamic Features', 'pods' ),
 			'help'               => [
-				__( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilties. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+				__( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilities. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
 				'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 			],
 			'description'        => __( 'Dynamic features include Pods Shortcodes, Blocks, and Widgets which let you embed content and forms on your site.', 'pods' ),
@@ -1849,7 +1849,7 @@ function pods_access_settings_config(): array {
 		'name'               => 'dynamic_features_allow',
 		'label'              => $did_init ? __( 'Dynamic Features', 'pods' ) : '',
 		'help'               => [
-			$did_init ? __( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilties. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ) : '',
+			$did_init ? __( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilities. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ) : '',
 			'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 		],
 		'description'        => $did_init ? __( 'Dynamic features include Pods Shortcodes, Blocks, and Widgets which let you embed content and forms on your site.', 'pods' ) : '',

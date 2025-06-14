@@ -630,7 +630,7 @@ class PodsMeta {
 	 * @param string|array $pod      The pod or type of element to attach the group to.
 	 * @param string       $label    Title of the edit screen section, visible to user.
 	 * @param string|array $fields   Either a comma separated list of text fields or an associative array containing
-	 *                               field infomration.
+	 *                               field information.
 	 * @param string       $context  (optional) The part of the page where the edit screen section should be shown
 	 *                               ('normal', 'advanced', or 'side').
 	 * @param string       $priority (optional) The priority within the context where the boxes should show ('high',

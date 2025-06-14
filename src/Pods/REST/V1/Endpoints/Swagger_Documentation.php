@@ -170,7 +170,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Interface, Build
 	 * @since 2.8.0
 	 *
 	 * @param string             $path     Documentation path.
-	 * @param Provider_Interface $endpoint Docuemntation endpoint object.
+	 * @param Provider_Interface $endpoint Documentation endpoint object.
 	 */
 	public function register_documentation_provider( $path, Provider_Interface $endpoint ) {
 		$this->documentation_providers[ $path ] = $endpoint;

@@ -11310,6 +11310,7 @@ class PodsAPI {
 	 * @param bool           $flush_rewrites          Whether to flush rewrites.
 	 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
 	 * @param bool           $static_only             Whether to flush only static caches.
+	 * @param bool           $flush_object_cache      Whether to fully flush object caches.
 	 *
 	 * @return void
 	 *
@@ -11319,7 +11320,8 @@ class PodsAPI {
 		$pod = null,
 		$flush_rewrites = true,
 		$flush_groups_and_fields = true,
-		$static_only = false
+		$static_only = false,
+		$flush_object_cache = false
 	) {
 
 		/**
@@ -11404,11 +11406,13 @@ class PodsAPI {
 			if ( class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class ) ) {
 				// Maybe use the test-based cache flushing to prevent major slowdowns.
 				\Pods_Unit_Tests\Pods_UnitTestCase::flush_cache();
-			} else {
+			} else{
 				// Do normal cache clear.
 				pods_cache_clear( true );
 
-				wp_cache_flush();
+				if ( $flush_object_cache ) {
+					wp_cache_flush();
+				}
 			}
 
 			if ( $flush_rewrites ) {
@@ -11416,7 +11420,18 @@ class PodsAPI {
 			}
 		}
 
-		do_action( 'pods_cache_flushed' );
+		/**
+		 * Allow hooking into the end of the Pods cache flush process.
+		 *
+		 * @since unknown
+		 *
+		 * @param array|Pod|null $pod                     The pod object or null of flushing general cache.
+		 * @param bool           $flush_rewrites          Whether to flush rewrites.
+		 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
+		 * @param bool           $static_only             Whether to flush only static caches.
+		 * @param bool           $flush_object_cache      Whether to fully flush object caches.
+		 */
+		do_action( 'pods_cache_flushed', $pod, $flush_rewrites, $flush_groups_and_fields, $static_only, $flush_object_cache );
 	}
 
 	/**
@@ -11448,6 +11463,16 @@ class PodsAPI {
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
 		}
+
+		/**
+		 * Allow hooking into the end of the Pods cache flush for groups process.
+		 *
+		 * @since 3.3.2
+		 *
+		 * @param bool $flush_fields Whether to flush cache for fields.
+		 * @param bool $static_only  Whether to flush only static caches.
+		 */
+		do_action( 'pods_api_cache_flush_groups', $flush_fields, $static_only );
 	}
 
 	/**
@@ -11478,6 +11503,15 @@ class PodsAPI {
 
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
+
+		/**
+		 * Allow hooking into the end of the Pods cache flush for fields process.
+		 *
+		 * @since 3.3.2
+		 *
+		 * @param bool $static_only Whether to flush only static caches.
+		 */
+		do_action( 'pods_api_cache_flush_fields', $static_only );
 	}
 
 	/**

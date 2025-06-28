@@ -38,7 +38,13 @@ if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-s
 		// Handle clearing cache.
 		$api = pods_api();
 
-		$api->cache_flush_pods();
+		$api->cache_flush_pods(
+			null,
+			true,
+			true,
+			false,
+			true
+		);
 
 		if ( defined( 'PODS_PRELOAD_CONFIG_AFTER_FLUSH' ) && PODS_PRELOAD_CONFIG_AFTER_FLUSH ) {
 			$api->load_pods( array( 'bypass_cache' => true ) );

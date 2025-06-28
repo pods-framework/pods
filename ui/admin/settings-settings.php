@@ -57,7 +57,7 @@ if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-s
 			$api->load_pods( [ 'bypass_cache' => true ] );
 		}
 
-		pods_redirect( pods_query_arg( [ 'pods_cache_flushed' => 1 ], [ 'page', 'tab' ] ) );
+		pods_redirect( pods_query_arg( [ 'pods_cache_flushed' => 1, 'pods_cache_flush_objects' => (int) pods_v( 'pods_cache_flush_objects', 'post' ) ], [ 'page', 'tab' ] ) );
 	} else {
 		// Handle saving settings.
 		$action = __( 'saved', 'pods' );
@@ -130,8 +130,12 @@ $do = 'save';
 <p><?php esc_html_e( 'You can clear all of the transients and object caches that are used by Pods and your site.', 'pods' ); ?></p>
 
 <p class="submit">
-	<input type="submit" class="button button-secondary" name="pods_cache_flush"
-		value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />
+	<input type="submit" class="button button-secondary" name="pods_cache_flush" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />
+	&nbsp;&nbsp;&nbsp;
+	<label>
+		<input type="checkbox" name="pods_cache_flush_objects" value="1"<?php checked( pods_v( 'pods_cache_flush_objects', 'get', 1 ) ); ?> />
+		<?php esc_html_e( 'Also flush all WordPress object caches', 'pods' ); ?>
+	</label>
 </p>
 
 <hr />

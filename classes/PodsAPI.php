@@ -11311,6 +11311,7 @@ class PodsAPI {
 	 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
 	 * @param bool           $static_only             Whether to flush only static caches.
 	 * @param bool           $flush_object_cache      Whether to fully flush object caches.
+	 * @param bool           $delete_transients       Whether to fully delete transients.
 	 *
 	 * @return void
 	 *
@@ -11318,10 +11319,11 @@ class PodsAPI {
 	 */
 	public function cache_flush_pods(
 		$pod = null,
-		$flush_rewrites = true,
-		$flush_groups_and_fields = true,
-		$static_only = false,
-		$flush_object_cache = false
+		bool $flush_rewrites = true,
+		bool $flush_groups_and_fields = true,
+		bool $static_only = false,
+		bool $flush_object_cache = false,
+		bool $delete_transients = false
 	) {
 
 		/**
@@ -11396,11 +11398,11 @@ class PodsAPI {
 		pods_init()->refresh_existing_content_types_cache( true );
 
 		if ( ! $static_only ) {
-			// Delete transients in the database
+			// Delete transients in the database.
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
 
-			// Delete Pods Options Cache in the database
+			// Delete Pods Options Cache in the database.
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
 			if ( class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class ) ) {
@@ -11410,8 +11412,15 @@ class PodsAPI {
 				// Do normal cache clear.
 				pods_cache_clear( true );
 
+				// Maybe flush the full object cache.
 				if ( $flush_object_cache ) {
 					wp_cache_flush();
+				}
+
+				// Maybe delete all transients in the database.
+				if ( $delete_transients ) {
+					$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_%'" );
+					$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_%'" );
 				}
 			}
 
@@ -11430,8 +11439,9 @@ class PodsAPI {
 		 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
 		 * @param bool           $static_only             Whether to flush only static caches.
 		 * @param bool           $flush_object_cache      Whether to fully flush object caches.
+		 * @param bool           $delete_transients       Whether to fully delete transients.
 		 */
-		do_action( 'pods_cache_flushed', $pod, $flush_rewrites, $flush_groups_and_fields, $static_only, $flush_object_cache );
+		do_action( 'pods_cache_flushed', $pod, $flush_rewrites, $flush_groups_and_fields, $static_only, $flush_object_cache, $flush_transients );
 	}
 
 	/**

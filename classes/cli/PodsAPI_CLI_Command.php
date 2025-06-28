@@ -343,15 +343,28 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	/**
 	 * Clear the Pods cache.
 	 *
+	 * [--skip-object-cache]
+	 * : Skip flushing the full object cache (default: Flush full object cache).
+	 *
+	 * [--skip-transients]
+	 * : Skip deleting all transients (default: Delete all transients).
+	 *
 	 * ## EXAMPLES
 	 *
 	 * wp pods-legacy-api clear-cache
 	 *
 	 * @subcommand clear-cache
 	 */
-	public function cache_clear() {
+	public function cache_clear( $args, $assoc_args ) {
 
-		pods_api()->cache_flush_pods();
+		pods_api()->cache_flush_pods(
+			null,
+			true,
+			true,
+			false,
+			empty( $assoc_args['skip-object-cache'] ),
+			empty( $assoc_args['skip-transients'] )
+		);
 
 		WP_CLI::success( __( 'Pods cache cleared', 'pods' ) );
 

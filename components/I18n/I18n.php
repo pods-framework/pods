@@ -272,7 +272,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @since 0.1.0
 	 *
 	 * @param  string $current Current value
-	 * @param  string $key     The key / opion name to search for
+	 * @param  string $key     The key / option name to search for
 	 * @param  array|Pods\Whatsit  $data    Pod data (can also be an options array of a pod or field)
 	 *
 	 * @return mixed

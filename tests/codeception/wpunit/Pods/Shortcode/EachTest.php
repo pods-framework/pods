@@ -128,7 +128,7 @@ class EachTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function test_psuedo_shortcodes() {
+	public function test_pseudo_shortcodes() {
 		// Make sure our pseudo shortcodes are working properly
 		$this->assertEquals( 'abc123', do_shortcode( '[test_each_recurse]abc123[/test_each_recurse]' ) );
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Utility function for processesing fromtier based templates
+ * Utility function for processesing frontier based templates
  *
  * @package Pods_Frontier_Template_Editor\view_template
  */

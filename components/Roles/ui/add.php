@@ -46,7 +46,7 @@
 
 								<div class="pods-field__container">
 									<?php
-									echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
+									echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programmatically reference this role throughout WordPress', 'pods' ) );
 									echo PodsForm::field( 'role_name', pods_v( 'role_name', 'post' ), 'slug', [
 										'slug_sluggable' => 'role_label',
 										'class'          => 'pods-validate pods-validate-required pods-slugged-lower pods-slugged-sanitize-title',

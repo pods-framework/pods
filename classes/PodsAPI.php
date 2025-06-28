@@ -85,7 +85,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * Store and retrieve data programatically
+	 * Store and retrieve data programmatically
 	 *
 	 * @param string $pod    (optional) The pod name
 	 * @param string $format (deprecated) Format for import/export, "php" or "csv"

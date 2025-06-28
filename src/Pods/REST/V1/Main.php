@@ -61,7 +61,7 @@ class Main extends Main_Abstract {
 	}
 
 	/**
-	 * Returns the Pods REST API namespace string that hsould be used to register a route.
+	 * Returns the Pods REST API namespace string that should be used to register a route.
 	 *
 	 * @since 2.8.0
 	 *

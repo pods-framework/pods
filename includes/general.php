@@ -4865,12 +4865,16 @@ function pods_config_for_pod( $pod ) {
  *
  * @since 2.9.8
  *
- * @param Field|array|string    $field The Field configuration object, Pods() object, old-style array, or name.
+ * @param Field|Value_Field|array|string    $field The Field configuration object, Pods() object, old-style array, or name.
  * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
  *
  * @return false|Field The Field object or false if invalid.
  */
 function pods_config_for_field( $field, $pod = null ) {
+	if ( $field instanceof Value_Field ) {
+		return $field->get_field_object();
+	}
+
 	if ( $field instanceof Field ) {
 		return $field;
 	}

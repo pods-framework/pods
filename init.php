@@ -55,7 +55,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 *
 	 * To be updated each Major x.x Pods release.
 	 *
-	 *  Next planned minimum WP version: 6.6
+	 * Next planned minimum WP version: 6.6
 	 */
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
 		$pods_wp_version_minimum = getenv( 'PODS_WP_VERSION_MINIMUM' ) ?: '6.3';

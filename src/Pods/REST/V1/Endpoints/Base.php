@@ -603,7 +603,7 @@ abstract class Base {
 		}
 
 		if ( ! $object instanceof Whatsit ) {
-			return new WP_Error( 'rest-object-not-found-cannot-update', sprintf( __( '%s was not found, cannot update.', 'pods' ), ucwords( $this->object ), $args ) );
+			return new WP_Error( 'rest-object-not-found-cannot-update', sprintf( __( '%s was not found, cannot update.', 'pods' ), ucwords( $this->object ) ), $request->get_params() );
 		}
 
 		$params = $this->setup_params( $request );

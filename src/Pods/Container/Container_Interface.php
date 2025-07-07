@@ -5,7 +5,7 @@ namespace Pods\Container;
 /**
  * Describes the interface of a container that exposes methods to read its entries.
  *
- * @credit The StellarWP team - https://github.com/stellarwp/container-contract
+ * @credit The StellarWP team - https://github.com/stellarwp/container-contract v1.1.1
  *
  * @since 3.0
  */
@@ -34,7 +34,8 @@ interface Container_Interface {
 	 *
 	 * @param string|class-string<T> $id Identifier of the entry to look for.
 	 *
-	 * @return ($id is class-string<T> ? T : mixed) Entry.
+	 * @return T|mixed
+	 * @phpstan-return ($id is class-string ? T : mixed)
 	 */
 	public function get( string $id );
 

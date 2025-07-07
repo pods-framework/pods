@@ -5,7 +5,7 @@
  * @package Pods\Prefixed\lucatume\DI52\Builders
  *
  * @license GPL-3.0
- * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
+ * Modified by Scott Kingsley Clark on 07-July-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -57,7 +57,7 @@ class CallableBuilder implements BuilderInterface, ReinitializableBuilderInterfa
     public function __construct(
         Container $container,
         callable $callable,
-        array $afterBuildMethods = null,
+        ?array $afterBuildMethods = null,
         ...$buildArgs
     ) {
         $this->container = $container;
@@ -90,7 +90,7 @@ class CallableBuilder implements BuilderInterface, ReinitializableBuilderInterfa
      *
      * @return void This method does not return any value.
      */
-    public function reinit(array $afterBuildMethods = null, ...$buildArgs)
+    public function reinit(?array $afterBuildMethods = null, ...$buildArgs)
     {
         $this->afterBuildMethods = $afterBuildMethods ?: [];
         $this->buildArgs = $buildArgs;

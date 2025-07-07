@@ -5,7 +5,7 @@
  * @package lucatume\DI52
  *
  * @license GPL-3.0
- * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
+ * Modified by Scott Kingsley Clark on 07-July-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -79,7 +79,7 @@ class ClassBuilder implements BuilderInterface, ReinitializableBuilderInterface
      *
      * @throws NotFoundException If the class does not exist.
      */
-    public function __construct($id, Resolver $resolver, $className, array $afterBuildMethods = null, ...$buildArgs)
+    public function __construct($id, Resolver $resolver, $className, ?array $afterBuildMethods = null, ...$buildArgs)
     {
         if (!class_exists($className)) {
             throw new NotFoundException(
@@ -240,7 +240,7 @@ class ClassBuilder implements BuilderInterface, ReinitializableBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function reinit(array $afterBuildMethods = null, ...$buildArgs)
+    public function reinit(?array $afterBuildMethods = null, ...$buildArgs)
     {
         $this->afterBuildMethods = $afterBuildMethods;
         $this->buildArgs = $buildArgs;

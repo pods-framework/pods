@@ -442,7 +442,7 @@ class Pods__Prefixed__Parsedown
                  * U+000D CARRIAGE RETURN (CR).
                  *
         @license MIT
-        Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
+        Modified by Scott Kingsley Clark on 07-July-2025 using Strauss.
         @see https://github.com/BrianHenryIE/strauss
 */
                 $language = substr($matches[1], 0, strcspn($matches[1], " \t\n\f\r"));

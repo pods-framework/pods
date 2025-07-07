@@ -303,7 +303,14 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}
 
 		if ( empty( $meta['version'] ) ) {
-			return false;
+			// Catch weird pods_version cases but fail if we don't find that either.
+			if ( empty( $meta['pods_version'] ) ) {
+				return false;
+			}
+
+			$meta['version'] = $meta['pods_version'];
+
+			unset( $meta['pods_version'] );
 		}
 
 		// Attempt to adjust the version if needed for compatibility.
@@ -519,7 +526,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					return false;
 				}
 
-				$field = self::import_pod_field( $field );
+				$field = self::import_pod_field_prepare( $field );
 
 				if ( ! $field ) {
 					continue;

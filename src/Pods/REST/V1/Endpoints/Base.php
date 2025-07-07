@@ -77,7 +77,9 @@ abstract class Base {
 	 * @param Validator_Interface $validator
 	 */
 	public function __construct(
-		Messages_Interface $messages, Post_Repository $post_repository = null, Validator_Interface $validator = null
+		Messages_Interface $messages,
+		?Post_Repository $post_repository = null,
+		?Validator_Interface $validator = null
 	) {
 		$this->messages        = $messages;
 		$this->post_repository = $post_repository;
@@ -235,23 +237,23 @@ abstract class Base {
 	 */
 	public function validate_required_params( $params, array $required_params ) {
 		if ( ! is_object( $params ) ) {
-            return new WP_Error( 'rest_invalid_params', __( 'Invalid JSON parameters', 'pods' ), [ 'status' => 500 ] );
-        }
+			return new WP_Error( 'rest_invalid_params', __( 'Invalid JSON parameters', 'pods' ), [ 'status' => 500 ] );
+		}
 
 		foreach ( $required_params as $key => $required_param ) {
 			if ( is_array( $required_param ) ) {
 				if ( ! isset( $params->$key ) || ! is_object( $params->$key ) ) {
-	                return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $key ), [ 'status' => 500 ] );
-	            }
+					return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $key ), [ 'status' => 500 ] );
+				}
 
 				foreach ( $required_param as $required_sub_param ) {
-                    if ( ! isset( $params->$key->$required_sub_param ) ) {
-                        return new WP_Error( 'rest_missing_sub_param', sprintf( __( 'Missing required JSON sub parameter: %s > %s', 'pods' ), $key, $required_sub_param ), [ 'status' => 500 ] );
-                    }
-                }
-            } elseif ( ! isset( $params->$required_param ) ) {
-                return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $required_param ), [ 'status' => 500 ] );
-            }
+					if ( ! isset( $params->$key->$required_sub_param ) ) {
+						return new WP_Error( 'rest_missing_sub_param', sprintf( __( 'Missing required JSON sub parameter: %s > %s', 'pods' ), $key, $required_sub_param ), [ 'status' => 500 ] );
+					}
+				}
+			} elseif ( ! isset( $params->$required_param ) ) {
+				return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $required_param ), [ 'status' => 500 ] );
+			}
 		}
 
 		return true;
@@ -488,7 +490,12 @@ abstract class Base {
 	 * @return array|WP_Error The response or an error.
 	 * @throws Exception
 	 */
-	public function get_by_args( $rest_param, $api_arg, WP_REST_Request $request = null, $return_id = false ) {
+	public function get_by_args(
+		$rest_param,
+		$api_arg,
+		?WP_REST_Request $request = null,
+		$return_id = false
+	) {
 		if ( is_array( $rest_param ) ) {
 			$args = $rest_param;
 		} elseif ( $request ) {
@@ -596,7 +603,7 @@ abstract class Base {
 		}
 
 		if ( ! $object instanceof Whatsit ) {
-			return new WP_Error( 'rest-object-not-found-cannot-update', sprintf( __( '%s was not found, cannot update.', 'pods' ), ucwords( $this->object ), $args ) );
+			return new WP_Error( 'rest-object-not-found-cannot-update', sprintf( __( '%s was not found, cannot update.', 'pods' ), ucwords( $this->object ) ), $request->get_params() );
 		}
 
 		$params = $this->setup_params( $request );

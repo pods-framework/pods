@@ -1311,6 +1311,9 @@ function pods_get_access_user_notice( array $args, bool $force_message = false, 
  * @return bool Whether SQL clauses can be used with dynamic features.
  */
 function pods_can_use_dynamic_feature_sql_clauses( ?string $clause_type = null ): bool {
+	// Set default to most strict clause type check (all).
+	$clause_type = $clause_type ?: 'all';
+
 	if ( defined( 'PODS_DISABLE_SHORTCODE_SQL' ) ) {
 		// Negate the check since this is a "disable" constant.
 		return ! PODS_DISABLE_SHORTCODE_SQL;

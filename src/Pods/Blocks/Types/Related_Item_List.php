@@ -249,7 +249,7 @@ class Related_Item_List extends Base {
 			],
 		];
 
-		if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+		if ( ! pods_can_use_dynamic_feature_sql_clauses( 'simple' ) ) {
 			unset( $fields['orderby'] );
 			unset( $fields['where'] );
 		}

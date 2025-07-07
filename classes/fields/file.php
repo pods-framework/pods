@@ -323,7 +323,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_auto_set_featured_image' => array(
 				'label'      => __( 'Automatically set first image as Featured Image for the Current Post', 'pods' ),
-				'help'       => __( 'On save, the first image of this field will update the featured image for the current post if this field is on a Pod that is a Post Type.', 'pods' ),
+				'help'       => __( 'On save, the first image of this field will update the featured image for the current post if this field is on a Pod that is a Post Type. If you have a file upload that is not an image type then it will be ignored and only the very first file with an image type will be used.', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 			),
@@ -744,6 +744,8 @@ class PodsField_File extends PodsField {
 				}
 			}
 
+			$attachment_id = (int) $attachment_id;
+
 			if ( empty( $attachment_id ) ) {
 				continue;
 			}
@@ -757,7 +759,8 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
-			if ( null === $first_attachment_id ) {
+			// Check whether attachment is a valid image type.
+			if ( null === $first_attachment_id && 'image/' === substr( $attachment->post_mime_type, 0, 6 ) ) {
 				$first_attachment_id = $attachment_id;
 			}
 
@@ -793,7 +796,7 @@ class PodsField_File extends PodsField {
 		}//end foreach
 
 		// Set the first image as the featured image if the option is set.
-		if ( 'post_type' === $pod_type && ! empty( $options[ static::$type . '_auto_set_featured_image' ] ) && ! empty( $first_attachment_id ) ) {
+		if ( 'post_type' === $pod_type && $first_attachment_id && ! empty( $options[ static::$type . '_auto_set_featured_image' ] ) ) {
 			set_post_thumbnail( $id, $first_attachment_id );
 		}
 	}

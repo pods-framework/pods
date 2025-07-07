@@ -182,6 +182,11 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.3.2 - July TBD, 2025 =
+
+* Fixed: Ensure Pods cache flushes when changing settings to prevent issues with Pods Blocks configs not showing fields conditionally linked to those settings. #7429 (@sc0ttkclark)
+* 
+
 = 3.3.1 - May 2nd, 2025 =
 
 * Fixed: Resolve issue with `get_block_wrapper_attributes()` usage. (@sc0ttkclark)

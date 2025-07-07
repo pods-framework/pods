@@ -1322,23 +1322,28 @@ function pods_can_use_dynamic_feature_sql_clauses( ?string $clause_type = null )
 	if ( defined( 'PODS_DYNAMIC_FEATURES_ALLOW_SQL_CLAUSES' ) ) {
 		$allow_sql_clauses = PODS_DYNAMIC_FEATURES_ALLOW_SQL_CLAUSES;
 	} else {
-		$first_pods_version = get_option( 'pods_framework_version_first' );
-		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+		$cached_allow_sql_clauses = pods_transient_get( 'pods_dynamic_features_allow_sql_clauses' );
 
-		$allow_sql_clauses = pods_get_setting( 'dynamic_features_allow_sql_clauses', version_compare( $first_pods_version, '3.1.0-a-1', '<' ) ? 'simple' : '0' );
+		if ( is_string( $cached_allow_sql_clauses ) ) {
+			$allow_sql_clauses = $cached_allow_sql_clauses;
+		} else {
+			$first_pods_version = get_option( 'pods_framework_version_first' );
+			$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+
+			$allow_sql_clauses = pods_get_setting( 'dynamic_features_allow_sql_clauses', version_compare( $first_pods_version, '3.1.0-a-1', '<' ) ? 'simple' : '0' );
+
+			pods_transient_set( 'pods_dynamic_features_allow_sql_clauses', (string) $allow_sql_clauses );
+		}
 	}
 
 	if (
 		false === $allow_sql_clauses
-		|| '0' === $allow_sql_clauses
+		|| '0' === (string) $allow_sql_clauses
 	) {
 		return false;
 	}
 
-	if ( null === $clause_type ) {
-		return true;
-	}
-
+	// The "all" option is inclusive of "simple".
 	if ( 'simple' === $clause_type && 'all' === $allow_sql_clauses ) {
 		return true;
 	}

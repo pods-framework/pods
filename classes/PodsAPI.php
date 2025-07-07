@@ -11319,6 +11319,7 @@ class PodsAPI {
 
 			pods_transient_clear( 'pods_blocks' );
 			pods_transient_clear( 'pods_blocks_js' );
+			pods_transient_clear( 'pods_dynamic_features_allow_sql_clauses' );
 
 			$manager = pods_container( Pod_Manager::class );
 

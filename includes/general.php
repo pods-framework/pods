@@ -3326,7 +3326,7 @@ function pods_static_cache_set( $key, $value, $group = '' ) {
  * @param string $group    (optional) Key for the group.
  * @param string $callback (optional) Callback function to run to set the value if not cached.
  *
- * @return bool
+ * @return bool|mixed|null|void
  *
  * @since 2.8.18
  */

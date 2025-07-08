@@ -13,7 +13,13 @@ export const SAVE_STATUSES = {
 	SAVING: 'SAVING',
 	SAVE_SUCCESS: 'SAVE_SUCCESS',
 	SAVE_ERROR: 'SAVE_ERROR',
-	DELETE_ERROR: 'DELETE_ERROR',
+};
+
+export const DUPLICATE_STATUSES = {
+	NONE: '',
+	DUPLICATING: 'DUPLICATING',
+	DUPLICATE_SUCCESS: 'DUPLICATE_SUCCESS',
+	DUPLICATE_ERROR: 'DUPLICATE_ERROR',
 };
 
 export const DRAG_ITEM_TYPES = {
@@ -28,6 +34,7 @@ export const UI_ACTIONS = {
 	SET_DELETE_STATUS: 'UI/SET_DELETE_STATUS',
 
 	SET_GROUP_SAVE_STATUS: 'UI/SET_GROUP_SAVE_STATUS',
+	SET_GROUP_DUPLICATE_STATUS: 'UI/SET_GROUP_DUPLICATE_STATUS',
 	SET_GROUP_DELETE_STATUS: 'UI/SET_GROUP_DELETE_STATUS',
 
 	SET_FIELD_SAVE_STATUS: 'UI/SET_FIELD_SAVE_STATUS',
@@ -42,6 +49,7 @@ export const CURRENT_POD_ACTIONS = {
 	SET_GROUPS: 'CURRENT_POD/SET_GROUPS',
 	MOVE_GROUP: 'CURRENT_POD/MOVE_GROUP',
 	ADD_GROUP: 'CURRENT_POD/ADD_GROUP',
+	DUPLICATE_GROUP: 'CURRENT_POD/DUPLICATE_GROUP',
 	REMOVE_GROUP: 'CURRENT_POD/REMOVE_GROUP',
 	SET_GROUP_DATA: 'CURRENT_POD/SET_GROUP_DATA',
 
@@ -60,12 +68,18 @@ export const INITIAL_UI_STATE = {
 	saveStatus: SAVE_STATUSES.NONE,
 	saveMessage: null,
 
+	duplicateStatus: DUPLICATE_STATUSES.NONE,
+	duplicateMessage: null,
+
 	deleteStatus: DELETE_STATUSES.NONE,
 	deleteMessage: null,
 
 	// Group statuses and result messages
 	groupSaveStatuses: {},
 	groupSaveMessages: {},
+
+	groupDuplicateStatuses: {},
+	groupDuplicateMessages: {},
 
 	groupDeleteStatuses: {},
 	groupDeleteMessages: {},

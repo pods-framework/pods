@@ -12,7 +12,7 @@ parameters:
     - ui/forms
     - ui/front
     - init.php
-    - vendor/vendor-prefixed
   excludePaths:
+    - vendor/vendor-prefixed
     - src/Pods/Integrations
     - tests

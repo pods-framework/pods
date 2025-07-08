@@ -199,6 +199,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Better caching around the `pods_can_use_dynamic_feature_sql_clauses()` setting usage to prevent additional DB calls. (@sc0ttkclark)
 * Fixed: Resolve issues when saving featured image based on the first value of a file field so it only saves files with the image type. #7433 (@sc0ttkclark)
 * Fixed: Add support for `Value_Field` in `pods_config_for_field()` to ensure bidirectional relationships work as expected for saving on both sides. #7435 (@sc0ttkclark)
+* Fixed: Prevent erroneous `?` and `#` characters in website formatting. (@sc0ttkclark)
 
 = 3.3.1 - May 2nd, 2025 =
 

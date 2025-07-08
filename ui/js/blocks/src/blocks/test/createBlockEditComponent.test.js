@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -34,11 +34,15 @@ describe( 'createBlockEditComponent', () => {
 	} );
 
 	test( 'that the created "edit" component can be rendered', () => {
-		const wrapper = mount(
-			<SimpleEditComponent { ...simpleEditComponentProps } />
-		);
+		render( <SimpleEditComponent { ...simpleEditComponentProps } /> );
 
-		// Look for the expected components
-		expect( wrapper.find( 'div' ) ).toHaveLength( 3 );
+		expect( screen.getAllByRole( 'document' ) ).toHaveLength( 1 );
+
+		const mainDiv = screen.getByRole( 'document' ).firstChild;
+		expect( mainDiv.tagName ).toEqual( 'DIV' );
+		expect( mainDiv.textContent ).toEqual( 'Something else here and a field: Some content' );
+
+		expect( screen.getAllByText( 'Some content' ) ).toHaveLength( 1 );
+		expect( screen.getByText( 'Some content' ).tagName ).toEqual( 'DIV' );
 	} );
 } );

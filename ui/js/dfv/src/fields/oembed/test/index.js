@@ -2,8 +2,8 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
-import { act } from 'react-dom/test-utils';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { act } from 'react';
 
 /**
  * Internal dependencies
@@ -30,11 +30,10 @@ describe( 'Oembed field component', () => {
 	it( 'creates a text field by default', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <Oembed { ...props } /> );
+		render( <Oembed { ...props } /> );
+		const input = screen.getByRole( 'textbox' );
 
-		expect(
-			wrapper.find( 'input' ).props().type
-		).toBe( 'text' );
+		expect( input.type ).toEqual( 'text' );
 	} );
 
 	it( 'creates a text field which calls the setValue callback when updated', () => {
@@ -43,13 +42,14 @@ describe( 'Oembed field component', () => {
 			setValue: jest.fn(),
 		};
 
-		const wrapper = mount( <Oembed { ...props } /> );
-		const input = wrapper.find( 'input' ).first();
-		input.simulate( 'change', {
+		render( <Oembed { ...props } /> );
+		const input = screen.getByRole( 'textbox' );
+
+		fireEvent.change( input, {
 			target: { value: 'https://www.youtube.com/watch?v=test' },
 		} );
 
-		expect( input.props().type ).toBe( 'text' );
+		expect( input.type ).toEqual( 'text' );
 		expect( props.setValue ).toHaveBeenCalledWith( 'https://www.youtube.com/watch?v=test' );
 	} );
 
@@ -77,18 +77,13 @@ describe( 'Oembed field component', () => {
 			} )
 		);
 
-		const wrapper = mount( <Oembed { ...props } /> );
+		const wrapper = render( <Oembed { ...props } /> );
+		const input = screen.getByRole( 'textbox' );
 
 		await act( async () => wrapper );
 
-		wrapper.update();
-		wrapper.render();
-
-		const input = wrapper.find( 'input' ).first();
-		const previewContainer = wrapper.find( '.pods-oembed-preview' ).first();
-
-		expect( input.props().type ).toEqual( 'text' );
+		expect( input.type ).toEqual( 'text' );
 		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
-		expect( previewContainer.render().find( 'iframe' ) ).toHaveLength( 1 );
+		expect( screen.getAllByTitle( 'Embed Title' ) ).toHaveLength( 1 );
 	} );
 } );

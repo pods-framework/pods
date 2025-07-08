@@ -12,12 +12,12 @@ import {
 } from '@wordpress/components';
 
 const CheckboxGroup = ( {
-	id,
-	className,
-	heading,
-	help,
-	options,
-	values,
+	id = '',
+	className = null,
+	heading = null,
+	help = null,
+	options = [],
+	values = [],
 	onChange,
 } ) => {
 	// Update the CheckboxGroup's value whenever an individual checkbox has
@@ -52,6 +52,7 @@ const CheckboxGroup = ( {
 						label={ option.label }
 						checked={ matchingValue.checked || false }
 						onChange={ ( newChecked ) => handleCheckboxControlChange( option.value, newChecked ) }
+						__nextHasNoMarginBottom={ true }
 					/>
 				);
 			} ) }
@@ -86,15 +87,6 @@ CheckboxGroup.propTypes = {
 		} )
 	),
 	onChange: PropTypes.func.isRequired,
-};
-
-CheckboxGroup.defaultProps = {
-	id: '',
-	className: null,
-	heading: null,
-	help: null,
-	options: [],
-	values: [],
 };
 
 export default CheckboxGroup;

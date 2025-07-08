@@ -2704,12 +2704,17 @@ class PodsField_Pick extends PodsField {
 					'search'     => false,
 				);
 
-				if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+				if ( ! pods_can_use_dynamic_feature_sql_clauses( 'simple' ) ) {
 					$params['where'] = $params['where'] ? '0=1 /* Dynamic SQL clauses disabled in Pods */' : (array) $table_info['where_default'];
 					$params['orderby'] = null;
-					$params['having'] = null;
+				}
+
+				if ( ! pods_can_use_dynamic_feature_sql_clauses( 'all' ) ) {
+					$params['having']  = null;
 					$params['groupby'] = null;
-				} elseif ( null === $params['where'] ) {
+				}
+
+				if ( null === $params['where'] ) {
 					$params['where'] = (array) $table_info['where_default'];
 				}
 
@@ -2892,7 +2897,7 @@ class PodsField_Pick extends PodsField {
 
 						$pick_orderby = pods_v( static::$type . '_orderby', $options, null, true );
 
-						if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+						if ( ! pods_can_use_dynamic_feature_sql_clauses( 'simple' ) ) {
 							$pick_orderby = null;
 						}
 

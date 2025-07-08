@@ -271,7 +271,7 @@ function pods_error( $error, $obj = null ) {
 		$error_mode = $display_errors;
 	}
 
-	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+	if ( is_object( $error ) && $error instanceof Exception ) {
 		$error_mode = 'exception';
 
 		if ( 'final_exception' === $display_errors ) {
@@ -2744,7 +2744,7 @@ function pods_function_or_file( $function_or_file, $function_name = null, $file_
  *
  * @param string|null $location The path to redirect to.
  * @param int         $status   Status code to use.
- * @param boolean     $die      If true, PHP code exection will stop.
+ * @param boolean     $die      If true, PHP code execution will stop.
  */
 function pods_redirect( $location = null, $status = 302, $die = true ) {
 	if ( empty( $location ) ) {
@@ -3326,7 +3326,7 @@ function pods_static_cache_set( $key, $value, $group = '' ) {
  * @param string $group    (optional) Key for the group.
  * @param string $callback (optional) Callback function to run to set the value if not cached.
  *
- * @return bool
+ * @return bool|mixed|null|void
  *
  * @since 2.8.18
  */
@@ -3428,6 +3428,11 @@ function pods_register_type( $type, $name, $object = null ) {
 		$debug_info = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
 
 		foreach ( $debug_info as $debug ) {
+			// Skip if info is not there.
+			if ( ! isset( $debug['file'], $debug['line'] ) ) {
+				continue;
+			}
+
 			// Skip Pods-related and WP-related hook registrations.
 			if ( 0 === strpos( $debug['file'], PODS_DIR ) || 0 === strpos( $debug['file'], WPINC ) ) {
 				continue;
@@ -4865,12 +4870,16 @@ function pods_config_for_pod( $pod ) {
  *
  * @since 2.9.8
  *
- * @param Field|array|string    $field The Field configuration object, Pods() object, old-style array, or name.
+ * @param Field|Value_Field|array|string    $field The Field configuration object, Pods() object, old-style array, or name.
  * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
  *
  * @return false|Field The Field object or false if invalid.
  */
 function pods_config_for_field( $field, $pod = null ) {
+	if ( $field instanceof Value_Field ) {
+		return $field->get_field_object();
+	}
+
 	if ( $field instanceof Field ) {
 		return $field;
 	}

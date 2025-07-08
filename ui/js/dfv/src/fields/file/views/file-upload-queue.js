@@ -1,4 +1,6 @@
-/* global _, Backbone, PodsMn */
+/* global _ */
+import Backbone from 'backbone';
+import Marionette from 'backbone.marionette';
 
 import template from 'dfv/src/fields/file/views/file-upload-queue.html';
 
@@ -11,7 +13,7 @@ export const FileUploadQueueModel = Backbone.Model.extend( {
 	},
 } );
 
-export const FileUploadQueueItem = PodsMn.View.extend( {
+export const FileUploadQueueItem = Marionette.View.extend( {
 	model: FileUploadQueueModel,
 
 	tagName: 'li',
@@ -34,7 +36,7 @@ export const FileUploadQueueItem = PodsMn.View.extend( {
 	},
 } );
 
-export const FileUploadQueue = PodsMn.CollectionView.extend( {
+export const FileUploadQueue = Marionette.CollectionView.extend( {
 	tagName: 'ul',
 
 	className: 'pods-dfv-list pods-dfv-list-queue',

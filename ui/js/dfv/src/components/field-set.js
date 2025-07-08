@@ -21,7 +21,7 @@ const FieldSet = ( {
 	// for the Pod does not change, to save render time.
 	const allPodFieldsMap = useMemo( () => {
 		return new Map(
-			allPodFields.map( ( fieldData ) => [ fieldData.name, fieldData ] )
+			allPodFields.map( ( fieldData ) => [ fieldData.name, fieldData ] ),
 		);
 	}, [] );
 

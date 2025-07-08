@@ -5,7 +5,7 @@
  * @package lucatume\DI52
  *
  * @license GPL-3.0
- * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
+ * Modified by Scott Kingsley Clark on 07-July-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 

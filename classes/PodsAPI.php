@@ -85,7 +85,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * Store and retrieve data programatically
+	 * Store and retrieve data programmatically
 	 *
 	 * @param string $pod    (optional) The pod name
 	 * @param string $format (deprecated) Format for import/export, "php" or "csv"
@@ -1455,7 +1455,7 @@ class PodsAPI {
 	 *
 	 * @param array $params An associative array of parameters
 	 *
-	 * @return bool|int Pod ID
+	 * @return false|int|Pod|WP_Error The Pod object, Pod ID, or WP_Error on failure.
 	 * @since 2.0.0
 	 */
 	public function add_pod( $params ) {
@@ -1671,8 +1671,8 @@ class PodsAPI {
 	 * @param bool|int  $db        (optional) Whether to save into the DB or just return Pod array.
 	 *
 	 * @throws Exception
+	 * @return false|int|Pod|WP_Error The Pod object, Pod ID, or WP_Error on failure.
 	 *
-	 * @return int Pod ID
 	 * @since 1.7.9
 	 */
 	public function save_pod( $params, $sanitized = false, $db = true ) {
@@ -6504,9 +6504,9 @@ class PodsAPI {
 				$params = array( 'name' => $params );
 			}
 
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		} else {
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		}
 
 		$pod = $this->load_pod( $params, false );
@@ -6559,7 +6559,7 @@ class PodsAPI {
 			}
 
 			$check_name = $check_name_limited . $try;
-			$new_label  = $pod['label'] . $try;
+			$new_label  = $pod['label'] . ' ' . $try;
 		}
 
 		$pod['name']  = $check_name;
@@ -6649,9 +6649,9 @@ class PodsAPI {
 				$params = array( 'name' => $params );
 			}
 
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		} else {
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		}
 
 		if ( ! empty( $params->pod_id ) ) {
@@ -6660,7 +6660,7 @@ class PodsAPI {
 			$load_params['pod'] = $params->pod;
 		}
 
-		$group = $this->load_group( $params, false );
+		$group = $this->load_group( $load_params, false );
 
 		if ( empty( $group ) ) {
 			if ( false !== $strict ) {
@@ -6693,7 +6693,7 @@ class PodsAPI {
 			$try ++;
 
 			$check_name = $group['name'] . $try;
-			$new_label  = $group['label'] . $try;
+			$new_label  = $group['label'] . ' ' . $try;
 		}
 
 		$group['name']  = $check_name;
@@ -6735,10 +6735,12 @@ class PodsAPI {
 	 * Duplicate a Field.
 	 *
 	 * $params['pod_id'] int The Pod ID.
-	 * $params['pod'] string The Pod name.
+	 * $params['pod'] string|Whatsit The Pod name or object.
 	 * $params['id'] int The Field ID.
 	 * $params['name'] string The Field name.
 	 * $params['new_name'] string The new Field name.
+	 * $params['new_group'] string|Whatsit The new Group name or object.
+	 * $params['new_group_id'] string The new Group ID.
 	 *
 	 * @since 2.3.10
 	 *
@@ -6757,7 +6759,7 @@ class PodsAPI {
 			}
 		}
 
-		$params = (object) pods_sanitize( $params );
+		$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 
 		$load_params = array();
 
@@ -6783,8 +6785,26 @@ class PodsAPI {
 			return false;
 		}
 
+		$pod_data = $field->get_parent_object();
+
 		if ( $field instanceof Field ) {
 			$field = $field->export();
+		}
+
+		$new_group = null;
+
+		$load_group_params = [];
+
+		if ( ! empty( $params->new_group_id ) ) {
+			$load_group_params['pod'] = $pod_data;
+			$load_group_params['id'] = $params->new_group_id;
+		} elseif ( ! empty( $params->new_group ) ) {
+			$load_group_params['pod'] = $pod_data;
+			$load_group_params['name'] = $params->new_group;
+		}
+
+		if ( $load_group_params ) {
+			$new_group = $this->load_group( $load_group_params, $strict );
 		}
 
 		if ( isset( $params->new_name ) ) {
@@ -6803,11 +6823,19 @@ class PodsAPI {
 			$try ++;
 
 			$check_name = $field['name'] . $try;
-			$new_label  = $field['label'] . $try;
+			$new_label  = $field['label'] . ' ' . $try;
 		}
 
 		$field['name']  = $check_name;
 		$field['label'] = $new_label;
+
+		if ( $new_group ) {
+			$field['group'] = $new_group;
+		}
+
+		if ( $pod_data ) {
+			$field['pod'] = $pod_data;
+		}
 
 		unset( $field['id'], $field['object_type'], $field['object_storage_type'] );
 
@@ -6831,7 +6859,7 @@ class PodsAPI {
 	 */
 	public function duplicate_pod_item( $params ) {
 
-		$params = (object) pods_sanitize( $params );
+		$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 
 		$load_pod_params = array(
 			'name' => $params->pod,
@@ -7222,7 +7250,7 @@ class PodsAPI {
 	 */
 	public function reorder_pod_item( $params ) {
 
-		$params = (object) pods_sanitize( $params );
+		$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 
 		if ( null === pods_v( 'pod', $params, null, true ) ) {
 			return pods_error( __( '$params->pod is required', 'pods' ), $this );
@@ -7289,7 +7317,7 @@ class PodsAPI {
 		}
 
 		if ( is_array( $params ) || is_object( $params ) ) {
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		} else {
 			$params = new stdClass();
 		}
@@ -7434,7 +7462,7 @@ class PodsAPI {
 		global $wpdb;
 
 		if ( is_array( $params ) || is_object( $params ) ) {
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		} else {
 			$params = new stdClass();
 		}
@@ -7740,9 +7768,9 @@ class PodsAPI {
 				$params = [ 'name' => $params ];
 			}
 
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		} else {
-			$params = (object) pods_sanitize( $params );
+			$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 		}
 
 		if ( ! isset( $params->delete_all ) ) {
@@ -8285,7 +8313,7 @@ class PodsAPI {
 			$params = array( 'name' => $params );
 		}
 
-		$params = (object) pods_sanitize( $params );
+		$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 
 		if ( ! empty( $params->id ) || ! empty( $params->name ) ) {
 			if ( ! isset( $params->name ) ) {
@@ -8381,6 +8409,10 @@ class PodsAPI {
 		// Backwards compatibility handling.
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( (object) $params );
+		}
+
+		if ( ! empty( $params['name'] ) && $params['name'] instanceof Pod ) {
+			return $params['name'];
 		}
 
 		if ( empty( $params ) ) {
@@ -8584,6 +8616,14 @@ class PodsAPI {
 		// Backwards compatibility handling.
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( (object) $params );
+		}
+
+		if ( ! empty( $params['name'] ) && $params['name'] instanceof Field ) {
+			return $params['name'];
+		}
+
+		if ( empty( $params ) ) {
+			return false;
 		}
 
 		// Check if we need to bypass cache automatically.
@@ -8938,6 +8978,14 @@ class PodsAPI {
 		// Backwards compatibility handling.
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( (object) $params );
+		}
+
+		if ( ! empty( $params['name'] ) && $params['name'] instanceof Group ) {
+			return $params['name'];
+		}
+
+		if ( empty( $params ) ) {
+			return false;
 		}
 
 		// Check if we need to bypass cache automatically.
@@ -9341,7 +9389,7 @@ class PodsAPI {
 	 */
 	public function load_pod_item( $params ) {
 
-		$params = (object) pods_sanitize( $params );
+		$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 
 		if ( ! isset( $params->pod ) || empty( $params->pod ) ) {
 			return pods_error( __( 'Pod name required', 'pods' ), $this );
@@ -9386,7 +9434,7 @@ class PodsAPI {
 	 */
 	public function load_sister_fields( $params, $pod = null ) {
 
-		$params = (object) pods_sanitize( $params );
+		$params = (object) pods_sanitize( $params, [ 'allow_pods_objects' => true ] );
 
 		if ( empty( $pod ) ) {
 			$pod = $this->load_pod( array( 'name' => $params->pod ), false );
@@ -11271,6 +11319,7 @@ class PodsAPI {
 
 			pods_transient_clear( 'pods_blocks' );
 			pods_transient_clear( 'pods_blocks_js' );
+			pods_transient_clear( 'pods_dynamic_features_allow_sql_clauses' );
 
 			$manager = pods_container( Pod_Manager::class );
 

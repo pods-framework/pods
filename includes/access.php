@@ -1311,6 +1311,9 @@ function pods_get_access_user_notice( array $args, bool $force_message = false, 
  * @return bool Whether SQL clauses can be used with dynamic features.
  */
 function pods_can_use_dynamic_feature_sql_clauses( ?string $clause_type = null ): bool {
+	// Set default to most simple clause type check (simple).
+	$clause_type = $clause_type ?: 'simple';
+
 	if ( defined( 'PODS_DISABLE_SHORTCODE_SQL' ) ) {
 		// Negate the check since this is a "disable" constant.
 		return ! PODS_DISABLE_SHORTCODE_SQL;
@@ -1319,23 +1322,28 @@ function pods_can_use_dynamic_feature_sql_clauses( ?string $clause_type = null )
 	if ( defined( 'PODS_DYNAMIC_FEATURES_ALLOW_SQL_CLAUSES' ) ) {
 		$allow_sql_clauses = PODS_DYNAMIC_FEATURES_ALLOW_SQL_CLAUSES;
 	} else {
-		$first_pods_version = get_option( 'pods_framework_version_first' );
-		$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+		$cached_allow_sql_clauses = pods_transient_get( 'pods_dynamic_features_allow_sql_clauses' );
 
-		$allow_sql_clauses = pods_get_setting( 'dynamic_features_allow_sql_clauses', version_compare( $first_pods_version, '3.1.0-a-1', '<' ) ? 'simple' : '0' );
+		if ( is_string( $cached_allow_sql_clauses ) ) {
+			$allow_sql_clauses = $cached_allow_sql_clauses;
+		} else {
+			$first_pods_version = get_option( 'pods_framework_version_first' );
+			$first_pods_version = '' === $first_pods_version ? PODS_VERSION : $first_pods_version;
+
+			$allow_sql_clauses = pods_get_setting( 'dynamic_features_allow_sql_clauses', version_compare( $first_pods_version, '3.1.0-a-1', '<' ) ? 'simple' : '0' );
+
+			pods_transient_set( 'pods_dynamic_features_allow_sql_clauses', (string) $allow_sql_clauses );
+		}
 	}
 
 	if (
 		false === $allow_sql_clauses
-		|| '0' === $allow_sql_clauses
+		|| '0' === (string) $allow_sql_clauses
 	) {
 		return false;
 	}
 
-	if ( null === $clause_type ) {
-		return true;
-	}
-
+	// The "all" option is inclusive of "simple".
 	if ( 'simple' === $clause_type && 'all' === $allow_sql_clauses ) {
 		return true;
 	}
@@ -1572,7 +1580,7 @@ function pods_access_pod_options( string $pod_type, string $pod_name, ?Pod $pod 
 		$options['dynamic_features_allow'] = [
 			'label'              => __( 'Dynamic Features', 'pods' ),
 			'help'               => [
-				__( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilties. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
+				__( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilities. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ),
 				'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 			],
 			'description'        => __( 'Dynamic features include Pods Shortcodes, Blocks, and Widgets which let you embed content and forms on your site.', 'pods' ),
@@ -1849,7 +1857,7 @@ function pods_access_settings_config(): array {
 		'name'               => 'dynamic_features_allow',
 		'label'              => $did_init ? __( 'Dynamic Features', 'pods' ) : '',
 		'help'               => [
-			$did_init ? __( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilties. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ) : '',
+			$did_init ? __( 'Enabling Dynamic Features will also enable the additional access rights checks for user access. This ensures that people viewing embedded content and forms have the required capabilities. Even when Dynamic Features are disabled, you can still embed Pods Content and Forms through PHP and make use of other features directly through code.', 'pods' ) : '',
 			'https://docs.pods.io/displaying-pods/access-rights-in-pods/',
 		],
 		'description'        => $did_init ? __( 'Dynamic features include Pods Shortcodes, Blocks, and Widgets which let you embed content and forms on your site.', 'pods' ) : '',

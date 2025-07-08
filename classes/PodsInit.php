@@ -782,7 +782,7 @@ class PodsInit {
 		];
 
 		/**
-		 * Allow filtering hte admin config data.
+		 * Allow filtering the admin config data.
 		 *
 		 * @since 2.8.0
 		 *
@@ -2114,7 +2114,7 @@ class PodsInit {
 
 		// WP 5.1+.
 		add_action( 'wp_insert_site', array( $this, 'new_blog' ) );
-		// WP < 5.1. (Gets automaticaly removed if `wp_insert_site` is called.
+		// WP < 5.1. (Gets automatically removed if `wp_insert_site` is called.
 		add_action( 'wpmu_new_blog', array( $this, 'new_blog' ) );
 
 		if ( empty( self::$version ) || version_compare( self::$version, PODS_VERSION, '<' ) || version_compare( self::$version, PODS_DB_VERSION, '<=' ) || self::$upgrade_needed ) {

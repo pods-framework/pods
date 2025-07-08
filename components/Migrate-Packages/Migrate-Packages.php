@@ -256,22 +256,6 @@ class Pods_Migrate_Packages extends PodsComponent {
 			}//end foreach
 		}//end if
 
-		if ( isset( $data['helpers'] ) && is_array( $data['helpers'] ) ) {
-			foreach ( $data['helpers'] as $helper_data ) {
-				$helper = self::import_pod_helper( $helper_data, $replace );
-
-				if ( ! $helper ) {
-					continue;
-				}
-
-				if ( ! isset( $found['helpers'] ) ) {
-					$found['helpers'] = array();
-				}
-
-				$found['helpers'][ $helper['name'] ] = $helper['name'];
-			}//end foreach
-		}//end if
-
 		$found = apply_filters( 'pods_packages_import', $found, $data, $replace );
 
 		if ( ! empty( $found ) ) {
@@ -519,7 +503,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					return false;
 				}
 
-				$field = self::import_pod_field( $field );
+				$field = self::import_pod_field_prepare( $field );
 
 				if ( ! $field ) {
 					continue;
@@ -817,8 +801,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 			];
 
 			foreach ( $excluded_args as $excluded_arg ) {
-				if ( isset( $template[ $excluded_arg ] ) ) {
-					unset( $template[ $excluded_arg ] );
+				if ( isset( $page[ $excluded_arg ] ) ) {
+					unset( $page[ $excluded_arg ] );
 				}
 			}
 		} elseif ( ! empty( $page['options'] ) ) {
@@ -841,6 +825,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle importing of the pod helper.
 	 *
+	 * @deprecated 3.3.2
+	 *
 	 * @since 2.8.0
 	 *
 	 * @param array $data    The import data.
@@ -849,49 +835,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * @return array|\Pods\Whatsit|false The imported object or false if failed.
 	 */
 	public static function import_pod_helper( $data, $replace = false ) {
-		if ( isset( $data['id'] ) ) {
-			unset( $data['id'] );
-		}
-
-		$helper = self::$api->load_helper( [ 'name' => $data['name'] ] );
-
-		if ( ! empty( $helper ) ) {
-			// Delete Helper if it exists
-			if ( $replace ) {
-				self::$api->delete_helper( [ 'id' => $helper['id'] ] );
-
-				$helper = [];
-			}
-		} else {
-			$helper = [];
-		}
-
-		// Backwards compatibility
-		if ( isset( $data['phpcode'] ) ) {
-			$data['code'] = $data['phpcode'];
-
-			unset( $data['phpcode'] );
-		}
-
-		if ( isset( $data['type'] ) ) {
-			if ( 'before' === $data['type'] ) {
-				$data['type'] = 'pre_save';
-			} elseif ( 'after' === $data['type'] ) {
-				$data['type'] = 'post_save';
-			}
-		}
-
-		$helper = pods_config_merge_data( $helper, $data );
-
-		if ( isset( $helper['type'] ) ) {
-			$helper['helper_type'] = $helper['type'];
-
-			unset( $helper['helper_type'] );
-		}
-
-		self::$api->save_helper( $helper );
-
-		return $helper;
+		return false;
 	}
 
 	/**
@@ -1154,28 +1098,6 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 
 				$export['pages'][ $k ] = $page;
-			}
-		}
-
-		if ( ! empty( $helper_ids ) ) {
-			$api_params = array();
-
-			if ( true !== $helper_ids ) {
-				$api_params['ids'] = (array) $helper_ids;
-			}
-
-			$export['helpers'] = array_values( self::$api->load_helpers( $api_params ) );
-
-			foreach ( $export['helpers'] as $k => $helper ) {
-				$helper = $helper->get_clean_args();
-
-				foreach ( $excluded_args as $excluded_arg ) {
-					if ( isset( $helper[ $excluded_arg ] ) ) {
-						unset( $helper[ $excluded_arg ] );
-					}
-				}
-
-				$export['helpers'][ $k ] = $helper;
 			}
 		}
 

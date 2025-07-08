@@ -109,17 +109,17 @@ const replaceAllMapEntries = ( map, value ) => {
 
 export const convertPHPDateFormatToMomentFormat = ( phpFormat ) => replaceAllMapEntries(
 	PHP_DATE_FORMAT_REPLACEMENTS,
-	phpFormat
+	phpFormat,
 );
 
 export const convertjQueryUIDateFormatToMomentFormat = ( jqueryFormat ) => replaceAllMapEntries(
 	JQUERY_DATE_FORMAT_REPLACEMENTS,
-	jqueryFormat
+	jqueryFormat,
 );
 
 export const convertjQueryUITimeFormatToMomentFormat = ( jqueryFormat ) => replaceAllMapEntries(
 	JQUERY_TIME_FORMAT_REPLACEMENTS,
-	jqueryFormat
+	jqueryFormat,
 );
 
 export const convertPodsDateFormatToMomentFormat = ( podsFormat, is24Hour = false ) => {

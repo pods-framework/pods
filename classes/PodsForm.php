@@ -1469,7 +1469,7 @@ class PodsForm {
 	/**
 	 * Autoload a Field Type's class
 	 *
-	 * @param string $field_type Field Type indentifier
+	 * @param string $field_type Field Type identifier
 	 * @param string $file       The Field Type class file location
 	 *
 	 * @return string
@@ -1543,7 +1543,7 @@ class PodsForm {
 	 * Run a method from a Field Type's class
 	 *
 	 * @return mixed
-	 * @internal param string $field_type Field Type indentifier
+	 * @internal param string $field_type Field Type identifier
 	 * @internal param string $method Method name
 	 * @internal param mixed $arg More arguments
 	 *

@@ -84,7 +84,7 @@ class Conditional_Logic {
 	}
 
 	/**
-	 * Maybe migrate the field anme from old prefix naming convention.
+	 * Maybe migrate the field name from old prefix naming convention.
 	 *
 	 * @since 3.0
 	 *

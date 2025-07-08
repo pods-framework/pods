@@ -22,4 +22,6 @@ module.exports = {
 	testMatch: [
 		'**/test/*.js',
 	],
+
+	errorOnDeprecated: false,
 };

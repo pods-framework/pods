@@ -91,6 +91,7 @@ const RenderedField = ( {
 					type={ fieldType }
 					help={ help }
 					onChange={ changeHandler }
+					__nextHasNoMarginBottom={ true }
 				/>
 			);
 		}
@@ -108,6 +109,7 @@ const RenderedField = ( {
 					help={ help }
 					rows="4"
 					onChange={ changeHandler }
+					__nextHasNoMarginBottom={ true }
 				/>
 			);
 		}
@@ -191,6 +193,7 @@ const RenderedField = ( {
 					id={ id }
 					key={ name }
 					className="full-width-base-control"
+					__nextHasNoMarginBottom={ true }
 				>
 					<Select
 						id={ id }
@@ -219,6 +222,7 @@ const RenderedField = ( {
 				<BaseControl
 					label={ label }
 					key={ name }
+					__nextHasNoMarginBottom={ true }
 				>
 					<DateTimePicker
 						currentDate={ fieldValue }
@@ -246,6 +250,7 @@ const RenderedField = ( {
 					label={ label }
 					id={ id }
 					key={ name }
+					__nextHasNoMarginBottom={ true }
 				>
 					<NumberControl
 						id={ id }
@@ -307,6 +312,7 @@ const RenderedField = ( {
 					label={ label }
 					id={ id }
 					key={ name }
+					__nextHasNoMarginBottom={ true }
 				>
 					<ColorPicker
 						color={ fieldValue }

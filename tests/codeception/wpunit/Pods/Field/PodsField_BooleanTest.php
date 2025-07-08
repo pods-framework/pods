@@ -419,7 +419,7 @@ class PodsField_BooleanTest extends Pods_UnitTestCase {
 	 * @covers  ::pre_save
 	 * @depends test_method_pre_save_exists
 	 */
-	public function test_method_pre_save_value_captialized_no() {
+	public function test_method_pre_save_value_capitalized_no() {
 		$this->assertEquals( 0, $this->field->pre_save( 'No' ) );
 	}
 

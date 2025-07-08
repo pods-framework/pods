@@ -4248,6 +4248,17 @@ class Pods implements Iterator {
 			return $pre;
 		}
 
+		if ( ! is_string( $code ) ) {
+			_doing_it_wrong( __FUNCTION__, 'Pods::do_magic_tags() must be given a string, a non-string was provided.', '3.3.2' );
+			pods_debug_log( 'Pods::do_magic_tags() called with non-string: ' . var_export( $code, true ) );
+
+			return '';
+		}
+
+		if ( '' === trim( $code ) ) {
+			return '';
+		}
+
 		return preg_replace_callback( '/({@(.*?)})/m', array( $this, 'process_magic_tags' ), $code );
 	}
 

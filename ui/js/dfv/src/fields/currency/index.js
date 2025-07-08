@@ -17,7 +17,7 @@ import './currency.scss';
 const Currency = ( {
 	addValidationRules,
 	fieldConfig,
-	value,
+	value = '',
 	setValue,
 	setHasBlurred,
 } ) => {
@@ -142,10 +142,6 @@ const Currency = ( {
 			/>
 		</div>
 	);
-};
-
-Currency.defaultProps = {
-	value: '',
 };
 
 Currency.propTypes = {

@@ -15,16 +15,11 @@ const elements = {
   div: 'div',
 };
 
-function HeadingTag( { type, children, ...props } ) {
+function HeadingTag( { type = 'h2', children, ...props } ) {
   return React.createElement(
     elements[type] || elements.h2,
     props,
     children
   );
 }
-
-HeadingTag.defaultProps = {
-  type: 'h2',
-};
-
 export default HeadingTag;

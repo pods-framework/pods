@@ -10,8 +10,8 @@ namespace Pods_Unit_Tests\Bugs;
 class Bug_5909Test extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	/*
-	 * Tests for Pod options and Pod fiels options to be stored properly.
-	 * Origin of this test was because it occured that options where stored sanitized (with slashes).
+	 * Tests for Pod options and Pod fields options to be stored properly.
+	 * Origin of this test was because it occurred that options where stored sanitized (with slashes).
 	 */
 	public function test_pod_sanitize_post_request() {
 

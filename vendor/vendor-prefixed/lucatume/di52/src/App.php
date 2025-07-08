@@ -5,7 +5,7 @@
  * @package lucatume\DI52
  *
  * @license GPL-3.0
- * Modified by Scott Kingsley Clark on 21-February-2024 using Strauss.
+ * Modified by Scott Kingsley Clark on 07-July-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -42,7 +42,7 @@ class App
 
         return static::$container;
     }
-    
+
     /**
      * Sets the container instance the Application should use as a Service Locator.
      *
@@ -58,7 +58,7 @@ class App
     {
         static::$container = $container;
     }
-    
+
         /**
      * Sets a variable on the container.
      *
@@ -103,7 +103,7 @@ class App
      *
      * @throws ContainerException If there's any issue reflecting on the class, interface or the implementation.
      */
-    public static function singleton($id, $implementation = null, array $afterBuildMethods = null)
+    public static function singleton($id, $implementation = null, ?array $afterBuildMethods = null)
     {
         static::container()->singleton($id, $implementation, $afterBuildMethods);
     }
@@ -315,7 +315,7 @@ class App
      *
      * @throws ContainerException      If there's an issue while trying to bind the implementation.
      */
-    public static function bind($id, $implementation = null, array $afterBuildMethods = null)
+    public static function bind($id, $implementation = null, ?array $afterBuildMethods = null)
     {
         static::container()->bind($id, $implementation, $afterBuildMethods);
     }
@@ -350,7 +350,7 @@ class App
      * @return void This method does not return any value.
      * @throws ContainerException
      */
-    public static function singletonDecorators($id, $decorators, array $afterBuildMethods = null)
+    public static function singletonDecorators($id, $decorators, ?array $afterBuildMethods = null)
     {
         static::container()->singletonDecorators($id, $decorators, $afterBuildMethods);
     }
@@ -371,7 +371,7 @@ class App
      * @return void This method does not return any value.
      * @throws ContainerException If there's any issue binding the decorators.
      */
-    public static function bindDecorators($id, array $decorators, array $afterBuildMethods = null)
+    public static function bindDecorators($id, array $decorators, ?array $afterBuildMethods = null)
     {
         static::container()->bindDecorators($id, $decorators, $afterBuildMethods);
     }
@@ -475,7 +475,7 @@ class App
      * The callable will be a closure on PHP 5.3+ or a lambda function on PHP 5.2.
      *
      * @param  string|class-string|mixed  $id                 The fully qualified name of a class or an interface.
-     * @param  array<mixed>               $buildArgs          An array of arguments that should be used to build the
+     * @param  array<mixed>|null               $buildArgs     An array of arguments that should be used to build the
      *                                                        instance; note that any argument will be resolved using
      *                                                        the container itself and bindings will apply.
      * @param  string[]|null              $afterBuildMethods  An array of methods that should be called on the built
@@ -484,9 +484,9 @@ class App
      * @return callable  A callable function that will return an instance of the specified class when
      *                   called.
      */
-    public static function instance($id, array $buildArgs = [], array $afterBuildMethods = null)
+    public static function instance($id, ?array $buildArgs = [], ?array $afterBuildMethods = null)
     {
-        return static::container()->instance($id, $buildArgs, $afterBuildMethods);
+        return static::container()->instance($id, $buildArgs ?? [], $afterBuildMethods);
     }
 
     /**

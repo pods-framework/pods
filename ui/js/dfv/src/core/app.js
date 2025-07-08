@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Pods dependencies
  */
-import ConnectedFieldWrapper from 'dfv/src/components/connected-field-wrapper';
+import ConnectedFieldWrapper from 'dfv/src/components/field-wrapper/connected-field-wrapper';
 
 /**
  * Pods config
@@ -65,9 +65,9 @@ const App = ( {
 	// We don't *really* render anything in the main app, all
 	// the fields get set up in Portals.
 	return (
-		<React.StrictMode>
+		<>
 			{ fieldComponents }
-		</React.StrictMode>
+		</>
 	);
 };
 

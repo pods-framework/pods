@@ -1,6 +1,7 @@
 import React from 'react';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
+import Marionette from 'backbone.marionette';
 
 import { PodsDFVFieldModel } from 'dfv/src/core/pods-field-model';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';

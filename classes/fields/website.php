@@ -426,12 +426,20 @@ class PodsField_Website extends PodsField {
 
 		$new_url[] = '/' . ltrim( $url['path'], '/' );
 
-		if ( ! empty( $url['query'] ) ) {
-			$new_url[] = '?' . ltrim( $url['query'], '?' );
+		if ( isset( $url['query'] ) ) {
+			$query = ltrim( $url['query'], '?' );
+
+			if ( ! empty( $query ) ) {
+				$new_url[] = '?' . $query;
+			}
 		}
 
-		if ( ! empty( $url['fragment'] ) ) {
-			$new_url[] = '#' . ltrim( $url['fragment'], '#' );
+		if ( isset( $url['fragment'] ) ) {
+			$fragment = ltrim( $url['fragment'], '#' );
+
+			if ( ! empty( $fragment ) ) {
+				$new_url[] = '#' . $fragment;
+			}
 		}
 
 		// Pull all of the parts back together

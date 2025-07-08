@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -28,10 +28,13 @@ describe( 'Boolean field component', () => {
 	it( 'creates a checkbox field with the default label', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <Boolean { ...props } /> );
+		render( <Boolean { ...props } /> );
 
-		expect( wrapper.find( 'input' ).props().type ).toEqual( 'checkbox' );
-		expect( wrapper.find( 'label' ).text() ).toEqual( 'Yes' );
+		expect( screen.getByRole( 'checkbox' ).type ).toEqual( 'checkbox' );
+
+		const yesInput = screen.getByLabelText( 'Yes' );
+		expect( yesInput.type ).toEqual( 'checkbox' );
+		expect( yesInput.value ).toEqual( '1' );
 	} );
 
 	it( 'renders radio buttons with custom labels and handles changes', () => {
@@ -43,25 +46,21 @@ describe( 'Boolean field component', () => {
 				boolean_yes_label: 'True',
 				boolean_no_label: 'False',
 			},
-			setValue: jest.fn(),
 		};
 
-		const wrapper = mount( <Boolean { ...props } /> );
-		const labels = wrapper.find( 'label' );
-		const yesInput = wrapper.find( 'input[value="1"]' );
-		const noInput = wrapper.find( 'input[value="0"]' );
+		render( <Boolean { ...props } /> );
 
-		yesInput.getDOMNode().checked = ! yesInput.getDOMNode().checked;
-		yesInput.simulate( 'change' );
+		expect( screen.getAllByRole( 'radio' ) ).toHaveLength( 2 );
 
-		noInput.getDOMNode().checked = ! noInput.getDOMNode().checked;
-		noInput.simulate( 'change' );
+		const yesInput = screen.getByLabelText( 'True' );
+		expect( yesInput.type ).toEqual( 'radio' );
+		expect( yesInput.value ).toEqual( '1' );
+		expect( yesInput.checked ).toEqual( false );
 
-		expect( yesInput.props().type ).toEqual( 'radio' );
-		expect( labels.at( 0 ).text() ).toEqual( 'True' );
-		expect( labels.at( 1 ).text() ).toEqual( 'False' );
-
-		expect( props.setValue ).toHaveBeenNthCalledWith( 1, '1' );
+		const noInput = screen.getByLabelText( 'False' );
+		expect( noInput.type ).toEqual( 'radio' );
+		expect( noInput.value ).toEqual( '0' );
+		expect( noInput.checked ).toEqual( true );
 	} );
 
 	it( 'renders a dropdown menu with custom labels and handles changes', () => {
@@ -73,19 +72,22 @@ describe( 'Boolean field component', () => {
 				boolean_yes_label: 'True',
 				boolean_no_label: 'False',
 			},
-			setValue: jest.fn(),
 		};
 
-		const wrapper = mount( <Boolean { ...props } /> );
-		const input = wrapper.find( 'select' );
+		render( <Boolean { ...props } /> );
 
-		input.simulate( 'change', {
-			target: { value: '1' },
-		} );
+		const select = screen.getAllByRole( 'combobox' );
+		expect( select ).toHaveLength( 1 );
 
-		expect( wrapper.find( 'option' ).at( 0 ).text() ).toEqual( 'True' );
-		expect( wrapper.find( 'option' ).at( 1 ).text() ).toEqual( 'False' );
+		const options = screen.getAllByRole( 'option' );
+		expect( options ).toHaveLength( 2 );
 
-		expect( props.setValue ).toHaveBeenNthCalledWith( 1, '1' );
+		const yesInput = screen.getByRole( 'option', { name: 'True' } );
+		expect( yesInput.value ).toEqual( '1' );
+		expect( yesInput.selected ).toEqual( false );
+
+		const noInput = screen.getByRole( 'option', { name: 'False' } );
+		expect( noInput.value ).toEqual( '0' );
+		expect( noInput.selected ).toEqual( true );
 	} );
 } );

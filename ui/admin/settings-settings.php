@@ -91,6 +91,9 @@ if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-s
 		if ( $settings_to_save ) {
 			pods_update_settings( $settings_to_save );
 
+			// Flush cache after changing settings.
+			pods_api()->cache_flush_pods();
+
 			$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), __( 'Settings', 'pods' ), $action );
 
 			pods_message( $message );

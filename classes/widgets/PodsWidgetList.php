@@ -41,7 +41,7 @@ class PodsWidgetList extends WP_Widget {
 			'cache_mode' => trim( (string) pods_v( 'cache_mode', $instance, 'none', true ) ),
 		);
 
-		if ( ! pods_can_use_dynamic_feature_sql_clauses() ) {
+		if ( ! pods_can_use_dynamic_feature_sql_clauses( 'simple' ) ) {
 			$args['orderby'] = '';
 			$args['where'] = $args['where'] ? '0=1 /* Dynamic SQL clauses disabled in Pods */' : '';
 		}

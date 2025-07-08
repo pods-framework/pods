@@ -19,47 +19,49 @@ const useBlockEditor = () => {
 		};
 
 		// Override the current editor savePost function.
-		editorDispatch.savePost = async (options) => {
+		editorDispatch.savePost = (options) => {
 			options = options || {};
 
 			const pbe = window.PodsBlockEditor;
 
+			if (options.isAutosave || options.isPreview) {
+				console.debug( 'Pods object pre-save validation ignored (autosave/preview)' );
+
+				// eslint-disable-next-line no-undef
+				return pbe.savePost.apply(this, [options]);
+			}
+
 			if (!Object.values(pbe.messages).length) {
 				notices.removeNotice('pods-validation');
 
+				console.debug( 'Pods object pre-save validation passed' );
+
 				// eslint-disable-next-line no-undef
-				return pbe.savePost.apply(this, arguments);
+				return pbe.savePost.apply(this, [options]);
 			}
 
-			return new Promise(function (resolve, reject) {
-				// Bail early if is autosave or preview.
-				if (options.isAutosave || options.isPreview) {
-					return resolve('Validation ignored (autosave).');
+			let validationFieldErrorList = [];
+			for (const fieldName in pbe.messages) {
+				editorDispatch?.lockPostSaving(fieldName);
+
+				let fieldRealName = fieldName.replace('pods-field-', '');
+				let fieldData = window.PodsDFVAPI.getField(fieldRealName);
+
+				validationFieldErrorList.push(fieldData?.fieldConfig?.label ?? realFieldName);
+			}
+
+			notices.createErrorNotice(
+				sprintf(__('Please complete these fields before saving: %s', 'pods'), validationFieldErrorList.join(', ')),
+				{id: 'pods-validation', isDismissible: true},
+			);
+
+			console.debug( 'Pods object pre-save validation failed', validationFieldErrorList );
+
+			for (const fieldCallback in pbe.callbacks) {
+				if (pbe.callbacks.hasOwnProperty(fieldCallback) && 'function' === typeof pbe.callbacks[fieldCallback]) {
+					pbe.callbacks[fieldCallback]();
 				}
-
-				let validationFieldErrorList = [];
-				for (const fieldName in pbe.messages) {
-					editorDispatch?.lockPostSaving(fieldName);
-
-					let fieldRealName = fieldName.replace('pods-field-', '');
-					let fieldData = window.PodsDFVAPI.getField(fieldRealName);
-
-					validationFieldErrorList.push(fieldData?.fieldConfig?.label ?? realFieldName);
-				}
-
-				notices.createErrorNotice(
-					sprintf(__('Please complete these fields before saving: %s', 'pods'), validationFieldErrorList.join(', ')),
-					{id: 'pods-validation', isDismissible: true},
-				);
-
-				for (const fieldCallback in pbe.callbacks) {
-					if (pbe.callbacks.hasOwnProperty(fieldCallback) && 'function' === typeof pbe.callbacks[fieldCallback]) {
-						pbe.callbacks[fieldCallback]();
-					}
-				}
-
-				return reject('Pods validation failed');
-			});
+			}
 		};
 	}
 
@@ -69,6 +71,8 @@ const useBlockEditor = () => {
 		dispatch: editorDispatch,
 		notices,
 		lockPostSaving: (name, messages, callback) => {
+			console.debug( 'Pods object pre-save post saving locked' );
+
 			// @todo Use hook instead of savePost override once stable.
 			//wp.hooks.addFilter( 'editor.__unstablePreSavePost', 'editor', filter );
 

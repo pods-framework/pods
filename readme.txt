@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.3
 Tested up to: 6.8
 Requires PHP: 7.2
-Stable tag: 3.3.2-a-1
+Stable tag: 3.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,10 +182,23 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.3.2 - July TBD, 2025 =
+= 3.3.2 - July 8th, 2025 =
 
+* Tweak: Updated Swagger docs for Pods REST API endpoints. (@sc0ttkclark)
+* Tweak: `pods_error()` handles any `Exception` object including those extending the base `Exception` class. This allows for more refined error handling in Pods code. (@sc0ttkclark)
+* Tweak: PodsAPI now allows for passing in Pods related objects to be passed into various save/load methods without breaking those objects. (@sc0ttkclark)
+* Tweak: Allow setting new group when duplicating a field. (@sc0ttkclark)
+* Tweak: Added Jest testing coverage for more areas of the DFV code and updated to support the React Testing Library. #7427 (@sc0ttkclark)
+* Fixed: Block Editor saves no longer trigger full saves when an autosave is sent and Pods form validation passes. (@sc0ttkclark)
 * Fixed: Ensure Pods cache flushes when changing settings to prevent issues with Pods Blocks configs not showing fields conditionally linked to those settings. #7429 (@sc0ttkclark)
-* 
+* Fixed: When duplicating a pod, group, or field it will now add a space between the label and the copy number. (@sc0ttkclark)
+* Fixed: Typos corrected across the codebase. #7434 (@szepeviktor, @sc0ttkclark)
+* Fixed: PHP deprecated warnings resolved in Pods REST API and DI52 usage. #7401 #7437 (@BrookeDot, @sc0ttkclark)
+* Fixed: Saving Pods settings will now properly flush the Pods cache to ensure that the new settings are applied immediately to all areas that may be cached based on those settings. (@sc0ttkclark)
+* Fixed: Added a "doing it wrong" notice and debug log line for when a non-string gets sent to `Pods::do_magic_tags()` to prevent PHP warnings. (@sc0ttkclark)
+* Fixed: Better caching around the `pods_can_use_dynamic_feature_sql_clauses()` setting usage to prevent additional DB calls. (@sc0ttkclark)
+* Fixed: Resolve issues when saving featured image based on the first value of a file field so it only saves files with the image type. #7433 (@sc0ttkclark)
+* Fixed: Add support for `Value_Field` in `pods_config_for_field()` to ensure bidirectional relationships work as expected for saving on both sides. #7435 (@sc0ttkclark)
 
 = 3.3.1 - May 2nd, 2025 =
 

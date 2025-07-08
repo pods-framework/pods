@@ -3428,6 +3428,11 @@ function pods_register_type( $type, $name, $object = null ) {
 		$debug_info = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
 
 		foreach ( $debug_info as $debug ) {
+			// Skip if info is not there.
+			if ( ! isset( $debug['file'], $debug['line'] ) ) {
+				continue;
+			}
+
 			// Skip Pods-related and WP-related hook registrations.
 			if ( 0 === strpos( $debug['file'], PODS_DIR ) || 0 === strpos( $debug['file'], WPINC ) ) {
 				continue;

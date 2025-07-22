@@ -25,6 +25,7 @@ const NumberField = ( {
 		htmlAttr: htmlAttributes = {},
 		name,
 		read_only: readOnly,
+		number_decimal_handling: decimalHandling = 'none',
 		number_decimals: decimalMaxLength = 'auto',
 		number_format: format,
 		number_format_soft: softFormat,
@@ -37,13 +38,19 @@ const NumberField = ( {
 		number_step: step,
 	} = fieldConfig;
 
+	let decimalHandlingForNumber = decimalHandling;
+
+	if ( softFormat && 'none' === decimalHandlingForNumber ) {
+		decimalHandlingForNumber = 'remove';
+	}
+
 	const isSlider = 'slider' === type;
 
 	// The actual value from the store could be either a float or
 	// a formatted string, so be able to handle either one, but keep
 	// a formatted version available locally.
 	const [ formattedValue, setFormattedValue ] = useState(
-		formatNumberWithPodsFormat( value, format, softFormat )
+		formatNumberWithPodsFormat( value, format, softFormat, decimalHandlingForNumber, decimalMaxLength )
 	);
 
 	useEffect( () => {
@@ -56,20 +63,20 @@ const NumberField = ( {
 	}, [] );
 
 	const handleChange = ( event ) => {
-		// The "range" (slider) input doesn't support the readonly attribute,
-		// so handle readOnly here.
-		if ( toBool( readOnly ) ) {
-			return;
-		}
-
 		if ( isSlider ) {
+			// The "range" (slider) input doesn't support the readonly attribute,
+			// so handle readOnly here.
+			if ( toBool( readOnly ) ) {
+				return;
+			}
+
 			// Slider input is always format: `9999.99`.
 			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
-			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat, decimalHandlingForNumber, decimalMaxLength ) );
 		} else if ( html5 ) {
 			// HTML5 input is always format: `9999.99` or `9999,99`.
 			setValue( parseFloatWithPodsFormat( event.target.value, 0 <= event.target.value.indexOf( ',' ) ? '9999.99' : '9999,99' ) );
-			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat, decimalHandlingForNumber, decimalMaxLength ) );
 		} else {
 			setValue( parseFloatWithPodsFormat( event.target.value, format ) );
 			setFormattedValue( event.target.value );
@@ -80,7 +87,9 @@ const NumberField = ( {
 		const newFormattedValue = formatNumberWithPodsFormat(
 			value,
 			format,
-			softFormat
+			softFormat,
+			decimalHandlingForNumber,
+			decimalMaxLength,
 		);
 
 		setFormattedValue( newFormattedValue );
@@ -101,6 +110,7 @@ const NumberField = ( {
 					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-number-slider', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
+					readOnly={ toBool( readOnly ) }
 					onChange={ handleChange }
 					onBlur={ handleBlur }
 					min={ parseInt( min, 10 ) || undefined }

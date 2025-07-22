@@ -96,6 +96,8 @@ export const formatNumberWithPodsFormat = (
 	newValue,
 	format,
 	trimZeroDecimals = false,
+	decimalHandling = 'none',
+	decimals = 'auto',
 ) => {
 	// Skip empty strings or undefined.
 	if ( '' === newValue || undefined === newValue || null === newValue ) {
@@ -114,27 +116,51 @@ export const formatNumberWithPodsFormat = (
 
 	const formattedNumber = isNaN( floatNewValue )
 		? undefined
-		: formatNumber( floatNewValue, 'auto', dotSeparator, thousands );
+		: formatNumber( floatNewValue, decimals, dotSeparator, thousands );
 
 	// We may need to trim decimals
-	if ( ! trimZeroDecimals || undefined === formattedNumber ) {
+	if ( undefined === formattedNumber || ( ! trimZeroDecimals && 'none' === decimalHandling ) ) {
 		return formattedNumber;
 	}
 
 	const formattedNumberParts = formattedNumber.split( dotSeparator );
 
-	const decimalValue = 1 < formattedNumberParts.length ? parseInt( formattedNumberParts.pop(), 10 ) : '';
+	const decimalValue = 1 < formattedNumberParts.length ? parseInt( formattedNumberParts[ 1 ], 10 ) : 0;
 
-	// Don't cut off an actual decimal value.
-	if ( 0 !== decimalValue ) {
+	const isZero = 0 === parseInt( formattedNumberParts[ 0 ], 10 );
+	const isDecimalZero = 0 === decimalValue;
+
+	console.log( {
+		newValue,
+		floatNewValue,
+		formattedNumber,
+		formattedNumberParts,
+		decimalValue,
+		isZero,
+		isDecimalZero,
+		decimalHandling,
+	} );
+
+	if ( ! isDecimalZero ) {
 		return formattedNumber;
 	}
 
-	const charactersToTrim = -1 * (
-		parseInt( (
-			'' + decimalValue
-		).length, 10 ) + 1
-	);
+	switch ( decimalHandling ) {
+		case 'remove':
+		case 'dash':
+			return formattedNumberParts[ 0 ] ?? '0';
 
-	return formattedNumber.slice( 0, charactersToTrim );
+		case 'remove_only_zero':
+		case 'dash_only_zero':
+		case 'dash_whole_zero':
+			if ( isZero ) {
+				return formattedNumberParts[ 0 ] ?? '0';
+			}
+			break;
+
+		default:
+			return formattedNumber;
+	}
+
+	return formattedNumber;
 };

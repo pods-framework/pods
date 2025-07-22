@@ -121,7 +121,9 @@ export const formatNumberWithPodsFormat = (
 		return formattedNumber;
 	}
 
-	const decimalValue = parseInt( formattedNumber.split( dotSeparator ).pop(), 10 );
+	const formattedNumberParts = formattedNumber.split( dotSeparator );
+
+	const decimalValue = 1 < formattedNumberParts.length ? parseInt( formattedNumberParts.pop(), 10 ) : '';
 
 	// Don't cut off an actual decimal value.
 	if ( 0 !== decimalValue ) {

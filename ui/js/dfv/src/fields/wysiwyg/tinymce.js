@@ -60,7 +60,9 @@ const TinyMCE = ( {
 			onReadyStateChange
 		);
 		window.wp.oldEditor.remove( fieldId );
-		textarea.removeAttribute( 'style' );
+        if (textarea) {
+		    textarea.removeAttribute( 'style' );
+        }
 		didMountRef.current = false;
 	}
 

@@ -38,13 +38,30 @@ if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-s
 		// Handle clearing cache.
 		$api = pods_api();
 
-		$api->cache_flush_pods();
+		$flush_objects = (int) pods_v( 'pods_cache_flush_objects', 'post' );
+		$delete_transients = (int) pods_v( 'pods_cache_delete_transients', 'post' );
+
+		$api->cache_flush_pods(
+			null,
+			true,
+			true,
+			false,
+			1 === $flush_objects,
+			1 === $delete_transients
+		);
 
 		if ( defined( 'PODS_PRELOAD_CONFIG_AFTER_FLUSH' ) && PODS_PRELOAD_CONFIG_AFTER_FLUSH ) {
 			$api->load_pods( array( 'bypass_cache' => true ) );
 		}
 
-		pods_redirect( pods_query_arg( array( 'pods_cache_flushed' => 1 ), array( 'page', 'tab' ) ) );
+		pods_redirect( pods_query_arg( [
+			'pods_cache_flushed'          => 1,
+			'pods_cache_flush_objects'    => $flush_objects,
+			'pods_cache_delete_transients' => $delete_transients,
+		], [
+			'page',
+			'tab',
+		] ) );
 	} else {
 		// Handle saving settings.
 		$action = __( 'saved', 'pods' );
@@ -116,6 +133,16 @@ $do = 'save';
 
 <p class="submit">
 	<input type="submit" class="button button-secondary" name="pods_cache_flush" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />
+	&nbsp;&nbsp;&nbsp;
+	<label>
+		<input type="checkbox" name="pods_cache_flush_objects" value="1"<?php checked( pods_v( 'pods_cache_flush_objects', 'get', 1 ) ); ?> />
+		<?php esc_html_e( 'Flush WordPress object caches', 'pods' ); ?>
+	</label>
+	&nbsp;&nbsp;&nbsp;
+	<label>
+		<input type="checkbox" name="pods_cache_delete_transients" value="1"<?php checked( pods_v( 'pods_cache_delete_transients', 'get', 1 ) ); ?> />
+		<?php esc_html_e( 'Flush WordPress transient cache', 'pods' ); ?>
+	</label>
 </p>
 
 <hr />

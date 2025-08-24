@@ -21,6 +21,8 @@ import {
 
 	GROUP_SAVE_STATUSES,
 	GROUP_SAVE_MESSAGES,
+	GROUP_DUPLICATE_STATUSES,
+	GROUP_DUPLICATE_MESSAGES,
 	GROUP_DELETE_STATUSES,
 	GROUP_DELETE_MESSAGES,
 
@@ -117,6 +119,12 @@ export const getGroupSaveStatus = ( state, groupName ) => GROUP_SAVE_STATUSES.ge
 
 export const getGroupSaveMessages = ( state ) => GROUP_SAVE_MESSAGES.getFrom( state );
 export const getGroupSaveMessage = ( state, groupName ) => GROUP_SAVE_MESSAGES.getFrom( state )[ groupName ];
+
+export const getGroupDuplicateStatuses = ( state ) => GROUP_DUPLICATE_STATUSES.getFrom( state );
+export const getGroupDuplicateStatus = ( state, groupName ) => GROUP_DUPLICATE_STATUSES.getFrom( state )[ groupName ];
+
+export const getGroupDuplicateMessages = ( state ) => GROUP_DUPLICATE_MESSAGES.getFrom( state );
+export const getGroupDuplicateMessage = ( state, groupName ) => GROUP_DUPLICATE_MESSAGES.getFrom( state )[ groupName ];
 
 export const getGroupDeleteStatuses = ( state ) => GROUP_DELETE_STATUSES.getFrom( state );
 export const getGroupDeleteStatus = ( state, groupName ) => GROUP_DELETE_STATUSES.getFrom( state )[ groupName ];

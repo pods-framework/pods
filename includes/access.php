@@ -528,7 +528,7 @@ function pods_access_map_capabilities( array $args, ?int $user_id = null, bool $
 		];
 	} elseif ( 'settings' === $info['object_type'] ) {
 		$capabilities['read']   = 'manage_options';
-		$capabilities['edit']   = 'manage_options';
+		$capabilities['edit']   = 'pods_edit_' . $info['object_name'];
 		$capabilities['delete'] = 'manage_options';
 
 		// Fake the WP object for the logic below.

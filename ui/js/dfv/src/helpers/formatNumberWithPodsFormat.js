@@ -130,17 +130,6 @@ export const formatNumberWithPodsFormat = (
 	const isZero = 0 === parseInt( formattedNumberParts[ 0 ], 10 );
 	const isDecimalZero = 0 === decimalValue;
 
-	console.log( {
-		newValue,
-		floatNewValue,
-		formattedNumber,
-		formattedNumberParts,
-		decimalValue,
-		isZero,
-		isDecimalZero,
-		decimalHandling,
-	} );
-
 	if ( ! isDecimalZero ) {
 		return formattedNumber;
 	}

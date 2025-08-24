@@ -891,8 +891,8 @@ class PodsMeta {
 	 *
 	 * @return array List of groups and their fields.
 	 */
-	public function groups_get( $type, $name, $default_fields = null, $full_objects = false ) {
-		$cache_key = $type . '/' . $name;
+	public function groups_get( $type, $name, $default_fields = null, $full_objects = false, $id = null ) {
+		$cache_key = $type . '/' . $name . '/' . $id;
 
 		if ( $full_objects ) {
 			$cache_key .= '/full';
@@ -911,7 +911,7 @@ class PodsMeta {
 			$type = 'taxonomy';
 		}
 
-		do_action( 'pods_meta_groups', $type, $name );
+		do_action( 'pods_meta_groups', $type, $name, $id );
 
 		$pod    = [];
 		$fields = [];
@@ -978,13 +978,14 @@ class PodsMeta {
 		 *
 		 * @since unknown
 		 *
-		 * @param string  $title  The title to use, default is 'More Fields'.
-		 * @param obj|Pod $pod    Current Pods Object.
-		 * @param array   $fields Array of fields that will go in the metabox.
-		 * @param string  $type   The type of Pod.
-		 * @param string  $name   Name of the Pod.
+		 * @param string          $title  The title to use, default is 'More Fields'.
+		 * @param obj|Pod         $pod    Current Pods Object.
+		 * @param array           $fields Array of fields that will go in the metabox.
+		 * @param string          $type   The type of Pod.
+		 * @param string          $name   Name of the Pod.
+		 * @param int|string|null $id     The item ID.
 		 */
-		$title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name );
+		$title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name, $id );
 
 		$groups = [];
 
@@ -1052,11 +1053,12 @@ class PodsMeta {
 		 *
 		 * @since 2.6.6
 		 *
-		 * @param array  $groups Array of groups
-		 * @param string $type   The type of Pod
-		 * @param string $name   Name of the Pod
+		 * @param array           $groups Array of groups
+		 * @param string          $type   The type of Pod
+		 * @param string          $name   Name of the Pod
+		 * @param int|string|null $id     The item ID
 		 */
-		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name, $id );
 
 		pods_static_cache_set( $cache_key, $groups, __CLASS__ . '/groups_get' );
 
@@ -1117,11 +1119,14 @@ class PodsMeta {
 			return;
 		}
 
+		$post_id = null;
+
 		if ( is_object( $post ) ) {
 			$post_type = $post->post_type;
+			$post_id = $post->ID;
 		}
 
-		$groups           = $this->groups_get( 'post_type', $post_type );
+		$groups           = $this->groups_get( 'post_type', $post_type, null, false, $post_id );
 		$pods_field_found = false;
 
 		foreach ( $groups as $group ) {
@@ -1488,7 +1493,7 @@ class PodsMeta {
 			return;
 		}
 
-		$groups = $this->groups_get( 'post_type', $post->post_type );
+		$groups = $this->groups_get( 'post_type', $post->post_type, null, false, $post_id );
 
 		$id   = $post_id;
 		$pod  = $this->maybe_set_up_pod( $post->post_type, $id, 'post_type' );
@@ -1612,7 +1617,13 @@ class PodsMeta {
 	 */
 	public function meta_media( $form_fields, $post ) {
 
-		$groups = $this->groups_get( 'media', 'media' );
+		$post_id = null;
+
+		if ( is_object( $post ) ) {
+			$post_id = $post->ID;
+		}
+
+		$groups = $this->groups_get( 'media', 'media', null, false, $post_id );
 
 		if ( empty( $groups ) || 'attachment' === pods_v( 'typenow', 'global' ) ) {
 			return $form_fields;
@@ -1712,12 +1723,6 @@ class PodsMeta {
 	 */
 	public function save_media( $post, $attachment ) {
 
-		$groups = $this->groups_get( 'media', 'media' );
-
-		if ( empty( $groups ) ) {
-			return $post;
-		}
-
 		$post_id = $attachment;
 
 		if ( empty( $_POST ) || ! wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_media' ) ) {
@@ -1729,6 +1734,12 @@ class PodsMeta {
 		}
 
 		if ( is_array( $post_id ) || empty( $post_id ) ) {
+			return $post;
+		}
+
+		$groups = $this->groups_get( 'media', 'media', null, false, $post_id );
+
+		if ( empty( $groups ) ) {
 			return $post;
 		}
 
@@ -1864,13 +1875,13 @@ class PodsMeta {
 			$taxonomy_name = $tag;
 		}
 
-		$groups = $this->groups_get( 'taxonomy', $taxonomy_name );
-
 		$id = null;
 
 		if ( is_object( $tag ) ) {
 			$id = $tag->term_id;
 		}
+
+		$groups = $this->groups_get( 'taxonomy', $taxonomy_name, null, false, $id );
 
 		$pod = null;
 
@@ -1963,7 +1974,7 @@ class PodsMeta {
 			return $term_id;
 		}
 
-		$groups = $this->groups_get( 'taxonomy', $taxonomy );
+		$groups = $this->groups_get( 'taxonomy', $taxonomy, null, false, $term_id );
 
 		if ( empty( $groups ) ) {
 			return $term_id;
@@ -2112,14 +2123,20 @@ class PodsMeta {
 
 		do_action( 'pods_meta_meta_user', $user_id );
 
-		$groups = $this->groups_get( 'user', 'user' );
-
 		if ( is_object( $user_id ) ) {
 			$user    = $user_id;
 			$user_id = $user_id->ID;
 		} else {
 			$user = get_userdata( $user_id );
+
+			if ( ! $user ) {
+				return;
+			}
+
+			$user_id = $user->ID;
 		}
+
+		$groups = $this->groups_get( 'user', 'user', null, false, $user_id );
 
 		$id  = $user_id;
 		$pod = null;
@@ -2246,7 +2263,7 @@ class PodsMeta {
 			$user_id = $user_id->ID;
 		}
 
-		$groups = $this->groups_get( 'user', 'user' );
+		$groups = $this->groups_get( 'user', 'user', null, false, $user_id );
 
 		$id   = $user_id;
 		$pod  = $this->maybe_set_up_pod( 'user', $id, 'user' );
@@ -2675,13 +2692,15 @@ class PodsMeta {
 	 */
 	public function save_comment( $comment_id ) {
 
-		$groups = $this->groups_get( 'comment', 'comment' );
-
-		if ( empty( $groups ) ) {
-			return $comment_id;
-		} elseif ( empty( $_POST ) ) {
+		if ( empty( $_POST ) ) {
 			return $comment_id;
 		} elseif ( ! wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_comment' ) ) {
+			return $comment_id;
+		}
+
+		$groups = $this->groups_get( 'comment', 'comment', null, false, $comment_id );
+
+		if ( empty( $groups ) ) {
 			return $comment_id;
 		}
 

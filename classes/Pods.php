@@ -4187,7 +4187,7 @@ class Pods implements Iterator {
 				];
 			}
 
-			$field = pods_config_merge_data( $defaults, $fields );
+			$field = pods_config_merge_data( $defaults, $field );
 
 			$field['name'] = trim( $field['name'] );
 

@@ -438,7 +438,7 @@ abstract class Base {
 			return new WP_Error( 'cli-argument-required', sprintf( __( 'Argument is required: %s', 'pods' ), $param ) );
 		}
 
-		if ( 'integer' === $arg['type'] ) {
+		if ( isset( $arg['type'] ) && 'integer' === $arg['type'] ) {
 			$value = (int) $value;
 		}
 

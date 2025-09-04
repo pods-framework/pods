@@ -76,11 +76,27 @@ class PodsField_Number extends PodsField {
 				'help'    => __( 'Set to a positive number to enable decimals. The upper limit in the database for this field is 30 decimals.', 'pods' ),
 			),
 			static::$type . '_format_soft' => array(
-				'label'       => __( 'Soft Formatting', 'pods' ),
+				'label'       => __( 'Soft Formatting (deprecated, use Decimal handling instead)', 'pods' ),
 				'help'        => __( 'Remove trailing decimals (0)', 'pods' ),
 				'default'     => 0,
 				'type'        => 'boolean',
 				'excludes-on' => array( static::$type . '_decimals' => 0 ),
+			),
+			static::$type . '_decimal_handling' => array(
+				'label'                 => __( 'Decimal handling for trailing zero decimals', 'pods' ),
+				'description'           => __( '', 'pods' ),
+				'default'               => 'none',
+				'type'                  => 'pick',
+				'data'                  => array(
+					'none'             => __( 'Default (Examples: "1.00", "0.00")', 'pods' ),
+					'remove'           => __( 'Remove decimals (Examples: "1", "0")', 'pods' ),
+					'remove_only_zero' => __( 'Remove decimals only when number is zero (Examples: "1.00", "0")', 'pods' ),
+					'dash'             => __( 'Convert to dash (Examples: "1.-", "0.-")', 'pods' ),
+					'dash_only_zero'   => __( 'Convert to dash only when number is zero (Examples: "1.00", "0.-")', 'pods' ),
+					'dash_whole_zero'  => __( 'Convert to the whole value to dash when number is zero (Examples: "1.00", "-")', 'pods' ),
+				),
+				'pick_format_single'    => 'dropdown',
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_step'        => array(
 				'label'      => __( 'Slider Increment (Step)', 'pods' ),
@@ -374,9 +390,63 @@ class PodsField_Number extends PodsField {
 			$value = number_format( (float) $value, $decimals, $dot, $thousands );
 		}
 
-		// Optionally remove trailing decimal zero's.
-		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
-			$value = $this->trim_decimals( $value, $dot );
+		// Additional output handling for decimals
+		$decimals = (int) pods_v( static::$type . '_decimals', $options, 2 );
+
+		if ( $decimals < 1 ) {
+			return $value;
+		}
+
+		$decimal_handling = pods_v( static::$type . '_decimal_handling', $options, 'none' );
+
+		if ( 'none' === $decimal_handling && (bool) pods_v( static::$type . '_format_soft', $options, false ) ) {
+			$decimal_handling = 'remove';
+		}
+
+		if ( 'none' !== $decimal_handling ) {
+			$format_args = $this->get_number_format_args( $options );
+			$dot         = $format_args['dot'];
+			$thousands   = $format_args['thousands'];
+
+			$value_parts = explode( $dot, $value );
+
+			$value_number_int = isset( $value_parts[0] ) ? (int) str_replace( $thousands, '', $value_parts[0] ) : 0;
+			$is_zero          = 0 === $value_number_int;
+
+			if ( isset( $value_parts[1] ) && 0 === (int) $value_parts[1] ) {
+				switch ( $decimal_handling ) {
+					case 'remove':
+						// Remove decimals.
+						$value = $value_parts[0];
+						break;
+
+					case 'remove_only_zero':
+						// Remove decimals only when number is zero.
+						if ( $is_zero ) {
+							$value = $value_parts[0];
+						}
+						break;
+
+					case 'dash':
+						// Convert to dash.
+						$value = $value_parts[0] . $dot . '-';
+						break;
+
+					case 'dash_only_zero':
+						// Convert to dash only when number is zero.
+						if ( $is_zero ) {
+							$value = $value_parts[0] . $dot . '-';
+						}
+						break;
+
+					case 'dash_whole_zero':
+						// Convert to the whole value to dash when number is zero.
+						if ( $is_zero ) {
+							$value = '-';
+						}
+						break;
+				}
+			}
 		}
 
 		return $value;

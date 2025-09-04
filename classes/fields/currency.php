@@ -120,15 +120,19 @@ class PodsField_Currency extends PodsField_Number {
 				'help'    => __( 'Set to a positive number to enable decimals. The upper limit in the database for this field is 30 decimals.', 'pods' ),
 			),
 			static::$type . '_decimal_handling' => array(
-				'label'   => __( 'Decimal handling when zero', 'pods' ),
-				'default' => 'none',
-				'type'    => 'pick',
-				'data'    => array(
-					'none'   => __( 'Default', 'pods' ),
-					'remove' => __( 'Remove decimals', 'pods' ),
-					'dash'   => __( 'Convert to dash', 'pods' ) . ' (-)',
+				'label'                 => __( 'Decimal handling for trailing zero decimals', 'pods' ),
+				'description'           => __( '', 'pods' ),
+				'default'               => 'none',
+				'type'                  => 'pick',
+				'data'                  => array(
+					'none'             => __( 'Default (Examples: "$1.00", "$0.00")', 'pods' ),
+					'remove'           => __( 'Remove decimals (Examples: "$1", "$0")', 'pods' ),
+					'remove_only_zero' => __( 'Remove decimals only when number is zero (Examples: "$1.00", "$0")', 'pods' ),
+					'dash'             => __( 'Convert to dash (Examples: "$1.-", "$0.-")', 'pods' ),
+					'dash_only_zero'   => __( 'Convert to dash only when number is zero (Examples: "$1.00", "$0.-")', 'pods' ),
+					'dash_whole_zero'  => __( 'Convert to the whole value to dash when number is zero (Examples: "$1.00", "$-")', 'pods' ),
 				),
-				'pick_format_single' => 'dropdown',
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_step'             => array(
@@ -310,38 +314,6 @@ class PodsField_Currency extends PodsField_Number {
 		$value = rtrim( $value, '-' );
 
 		return parent::pre_save( $value, $id, $name, $options, $fields, $pod, $params );
-
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		$value = parent::format( $value, $name, $options, $pod, $id );
-		if ( null === $value ) {
-			return $value;
-		}
-
-		// Additional output handling for decimals
-		$decimal_handling = pods_v( static::$type . '_decimal_handling', $options, 'none' );
-		if ( 'none' !== $decimal_handling ) {
-			$format_args = $this->get_number_format_args( $options );
-			$dot         = $format_args['dot'];
-			$value_parts = explode( $dot, $value );
-			// Make sure decimals are empty.
-			if ( isset( $value_parts[1] ) && ! (int) $value_parts[1] ) {
-				if ( 'remove' === $decimal_handling ) {
-					array_pop( $value_parts );
-				} elseif ( 'dash' === $decimal_handling ) {
-					array_pop( $value_parts );
-					$value_parts[] = '-';
-				}
-				$value = implode( $dot, $value_parts );
-			}
-		}
-
-		return $value;
 
 	}
 

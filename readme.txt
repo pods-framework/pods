@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.3
 Tested up to: 6.8
 Requires PHP: 7.2
-Stable tag: 3.3.2
+Stable tag: 3.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,6 +181,17 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 3.3.3 - September 4th, 2025 =
+
+* Tweak: Support referencing ID for `PodsMeta::groups_get()`. (@sc0ttkclark)
+* Tweak: Update edit capability used for settings Pods so it can be displayed on the edit pod screen correctly. (@sc0ttkclark)
+* Fixed: Resolve issues with TinyMCE and Quill editors not loading when used as repeatable fields or conditional logic. #7448 #7438 #7430 (@multisme, @altermulti, @sc0ttkclark, @ztackett11)
+* Fixed: Resolve PHP fatal errors for undefined constant `\Pods\Whatsit\Store::PLACEHOLDER` in some edge case circumstances. #7445 (@sc0ttkclark, @Hue-SPetrovic)
+* Fixed: Resolve PHP 8.4 deprecation warnings with DI52 usage. #7448 (@sc0ttkclark, @doehry)
+* Fixed: Resolve warnings when using `--args` with WP-CLI commands. #7452 (@sc0ttkclark, @KhaledSakr)
+* Fixed: Resolve handling of decimals when auto-formatting to prevent removing zero number values and expand decimal handling for more cases. Improve logic matching (except dashes) for PHP vs JS. (@sc0ttkclark)
+* Fixed: Resolve field assigment issue in `pods_config_merge_data()` to reference the correct field. (@sc0ttkclark)
 
 = 3.3.2 - July 8th, 2025 =
 

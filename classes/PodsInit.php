@@ -1996,8 +1996,8 @@ class PodsInit {
 			$args['labels'] = [];
 		}
 
-		$is_placeholder_label = Store::PLACEHOLDER === pods_v( 'label', $args );
-		$is_placeholder_description = Store::PLACEHOLDER === pods_v( 'description', $args );
+		$is_placeholder_label = defined( Store::class . '::PLACEHOLDER' ) && Store::PLACEHOLDER === pods_v( 'label', $args );
+		$is_placeholder_description = defined( Store::class . '::PLACEHOLDER' ) && Store::PLACEHOLDER === pods_v( 'description', $args );
 
 		if ( $is_placeholder_label || $is_placeholder_description ) {
 			$default_object_labels = Store::get_default_object_labels();

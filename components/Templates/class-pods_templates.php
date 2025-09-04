@@ -206,23 +206,43 @@ class Pods_Templates_Frontier {
 		wp_enqueue_script( $this->plugin_slug . '-handlebars-baldrick', $this->get_url( 'assets/js/handlebars.baldrick2.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 		wp_enqueue_style( $this->plugin_slug . '-pod_reference-styles', $this->get_url( 'assets/css/styles-pod_reference.css', __FILE__ ), array(), self::VERSION );
 
+		$metabox_callback = array( $this, 'render_metaboxes_custom' );
+
 		// add metabox
 		add_meta_box(
-			'view_template', __( 'Template', 'pods' ), array(
-				$this,
-				'render_metaboxes_custom',
-			), '_pods_template', 'normal', 'high', array(
+			'view_template',
+			__( 'Template', 'pods' ),
+			$metabox_callback,
+			'_pods_template',
+			'normal',
+			'high',
+			array(
 				'slug'   => 'view_template',
 				'groups' => array(),
 			)
 		);
 
 		add_meta_box(
-			'pod_reference', __( 'Pod Reference', 'pods' ), array(
-				$this,
-				'render_metaboxes_custom',
-			), '_pods_template', 'side', 'default', array(
+			'pod_reference',
+			__( 'Pod Reference', 'pods' ),
+			$metabox_callback,
+			'_pods_template',
+			'side',
+			'default',
+			array(
 				'slug'   => 'pod_reference',
+				'groups' => array(),
+			)
+		);
+		add_meta_box(
+			'pod_reference',
+			__( 'Magic Tag Reference', 'pods' ),
+			$metabox_callback,
+			'_pods_template',
+			'side',
+			'default',
+			array(
+				'slug'   => 'tag_reference',
 				'groups' => array(),
 			)
 		);

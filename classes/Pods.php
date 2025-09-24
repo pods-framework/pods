@@ -1674,6 +1674,10 @@ class Pods implements Iterator {
 										$params->single = false;
 									}
 
+									if ( is_array( $value ) ) {
+										$value = array_unique( $value );
+									}
+
 									$value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
 								} elseif ( false === $params->in_form && ! empty( $value ) && is_array( $value ) && false === $params->keyed ) {
 									$value = array_values( $value );

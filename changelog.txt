@@ -2,6 +2,11 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.3.4 - September 24th, 2025 =
+
+* Feature: Official support for DID `did:plc:e3rm6t7cspgpzaf47kn3nnsl` for optional installation via DID using the FAIR plugin. (@sc0ttkclark)
+* Fix: Prevent duplicates in `Pods::field()` and `Pods::display()` for simple relationships. (@sc0ttkclark)
+
 = 3.3.3 - September 4th, 2025 =
 
 * Tweak: Support referencing ID for `PodsMeta::groups_get()`. (@sc0ttkclark)

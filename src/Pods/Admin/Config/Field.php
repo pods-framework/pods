@@ -41,13 +41,23 @@ class Field extends Base {
 			];
 		}
 
-		$core_tabs['repeatable'] = [
-			'name'       => 'repeatable',
-			'label'      => __( 'Repeatable', 'pods' ),
-			'depends-on' => [
-				'type' => $repeatable_field_types,
-			],
-		];
+		// Only non table-based Pods can have repeatable fields.
+		if ( $pod->is_table_based() ) {
+			$core_tabs['repeatable_message'] = [
+				'name'  => 'repeatable_message',
+				'label' => __( 'Repeatable', 'pods' ),
+				'type'  => 'html',
+				'html_content' => '<p>' . esc_html__( 'Repeatable fields are currently not available for Pods that use table-based storage.', 'pods' ) . '</p>',
+			];
+		} else {
+			$core_tabs['repeatable'] = [
+				'name'       => 'repeatable',
+				'label'      => __( 'Repeatable', 'pods' ),
+				'depends-on' => [
+					'type' => $repeatable_field_types,
+				],
+			];
+		}
 
 		$core_tabs['advanced']          = __( 'Advanced', 'pods' );
 		$core_tabs['conditional-logic'] = __( 'Conditional Logic', 'pods' );

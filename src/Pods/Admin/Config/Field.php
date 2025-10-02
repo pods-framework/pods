@@ -41,23 +41,13 @@ class Field extends Base {
 			];
 		}
 
-		// Only non table-based Pods can have repeatable fields.
-		if ( $pod->is_table_based() ) {
-			$core_tabs['repeatable_message'] = [
-				'name'  => 'repeatable_message',
-				'label' => __( 'Repeatable', 'pods' ),
-				'type'  => 'html',
-				'html_content' => '<p>' . esc_html__( 'Repeatable fields are currently not available for Pods that use table-based storage.', 'pods' ) . '</p>',
-			];
-		} else {
-			$core_tabs['repeatable'] = [
-				'name'       => 'repeatable',
-				'label'      => __( 'Repeatable', 'pods' ),
-				'depends-on' => [
-					'type' => $repeatable_field_types,
-				],
-			];
-		}
+		$core_tabs['repeatable'] = [
+			'name'       => 'repeatable',
+			'label'      => __( 'Repeatable', 'pods' ),
+			'depends-on' => [
+				'type' => $repeatable_field_types,
+			],
+		];
 
 		$core_tabs['advanced']          = __( 'Advanced', 'pods' );
 		$core_tabs['conditional-logic'] = __( 'Conditional Logic', 'pods' );
@@ -249,65 +239,78 @@ class Field extends Base {
 			],
 		];
 
-		$options['repeatable'] = [
-			'repeatable'                  => [
-				'name'              => 'repeatable',
-				'label'             => __( 'Repeatable', 'pods' ),
-				'default'           => 0,
-				'type'              => 'boolean',
-				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values.', 'pods' ),
-				'boolean_yes_label' => __( 'Allow multiple values', 'pods' ),
-				'dependency'        => true,
-				'depends-on'        => [
-					'type' => $repeatable_field_types,
+
+		// Only non table-based Pods can have repeatable fields.
+		if ( $pod->is_table_based() ) {
+			$options['repeatable'] = [
+				'repeatable_message' => [
+					'name'         => 'repeatable_message',
+					'label'        => '',
+					'type'         => 'html',
+					'html_content' => '<div class="notice"><p>' . esc_html__( 'Repeatable fields are currently not available for Pods that use table-based storage.', 'pods' ) . '</p></div>',
 				],
-			],
-			'repeatable_add_new_label'    => [
-				'name'        => 'repeatable_add_new_label',
-				'label'       => __( 'Repeatable - Add New Label', 'pods' ),
-				'placeholder' => __( 'Add New', 'pods' ),
-				'default'     => '',
-				'type'        => 'text',
-				'depends-on'  => [
-					'type'       => $repeatable_field_types,
-					'repeatable' => true,
+			];
+		} else {
+			$options['repeatable'] = [
+				'repeatable'                  => [
+					'name'              => 'repeatable',
+					'label'             => __( 'Repeatable', 'pods' ),
+					'default'           => 0,
+					'type'              => 'boolean',
+					'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values.', 'pods' ),
+					'boolean_yes_label' => __( 'Allow multiple values', 'pods' ),
+					'dependency'        => true,
+					'depends-on'        => [
+						'type' => $repeatable_field_types,
+					],
 				],
-			],
-			'repeatable_format'           => [
-				'label'                 => __( 'Repeatable - Display Format', 'pods' ),
-				'help'                  => __( 'Used as format for front-end display', 'pods' ),
-				'depends-on'            => [
-					'type'       => $serial_repeatable_field_types,
-					'repeatable' => true,
+				'repeatable_add_new_label'    => [
+					'name'        => 'repeatable_add_new_label',
+					'label'       => __( 'Repeatable - Add New Label', 'pods' ),
+					'placeholder' => __( 'Add New', 'pods' ),
+					'default'     => '',
+					'type'        => 'text',
+					'depends-on'  => [
+						'type'       => $repeatable_field_types,
+						'repeatable' => true,
+					],
 				],
-				'default'               => 'default',
-				'required'              => true,
-				'type'                  => 'pick',
-				'data'                  => [
-					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
-					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
-					'br'         => __( 'Line breaks', 'pods' ),
-					'ul'         => __( 'Unordered list', 'pods' ),
-					'ol'         => __( 'Ordered list', 'pods' ),
-					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
+				'repeatable_format'           => [
+					'label'                 => __( 'Repeatable - Display Format', 'pods' ),
+					'help'                  => __( 'Used as format for front-end display', 'pods' ),
+					'depends-on'            => [
+						'type'       => $serial_repeatable_field_types,
+						'repeatable' => true,
+					],
+					'default'               => 'default',
+					'required'              => true,
+					'type'                  => 'pick',
+					'data'                  => [
+						'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
+						'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+						'br'         => __( 'Line breaks', 'pods' ),
+						'ul'         => __( 'Unordered list', 'pods' ),
+						'ol'         => __( 'Ordered list', 'pods' ),
+						'custom'     => __( 'Custom separator (without "and")', 'pods' ),
+					],
+					'pick_format_single' => 'dropdown',
+					'pick_show_select_text' => 0,
+					'dependency'            => true,
 				],
-				'pick_format_single' => 'dropdown',
-				'pick_show_select_text' => 0,
-				'dependency'            => true,
-			],
-			'repeatable_format_separator' => [
-				'label'       => __( 'Repeatable - Display Format Separator', 'pods' ),
-				'help'        => __( 'Used as separator for front-end display. Be sure to include exactly the spaces that you need since the separator is used literally between values. For example, you would use ", " to have values like "One, Two, Three". You would also use " | " to have values like "One | Two | Three".', 'pods' ),
-				'description' => __( 'This option will default to ", "', 'pods' ),
-				'depends-on'  => [
-					'type'              => $serial_repeatable_field_types,
-					'repeatable'        => true,
-					'repeatable_format' => 'custom',
+				'repeatable_format_separator' => [
+					'label'       => __( 'Repeatable - Display Format Separator', 'pods' ),
+					'help'        => __( 'Used as separator for front-end display. Be sure to include exactly the spaces that you need since the separator is used literally between values. For example, you would use ", " to have values like "One, Two, Three". You would also use " | " to have values like "One | Two | Three".', 'pods' ),
+					'description' => __( 'This option will default to ", "', 'pods' ),
+					'depends-on'  => [
+						'type'              => $serial_repeatable_field_types,
+						'repeatable'        => true,
+						'repeatable_format' => 'custom',
+					],
+					'placeholder' => '',
+					'type'        => 'text',
 				],
-				'placeholder' => '',
-				'type'        => 'text',
-			],
-		];
+			];
+		}
 
 		$options['advanced'] = [
 			'visual'                  => [

@@ -236,6 +236,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 				'enum'        => [
 					'meta',
 					'table',
+					'option',
 					'none',
 				],
 			],
@@ -309,7 +310,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 
 			if ( 'settings' === $params['create_pod_type'] ) {
 				$params['create_setting_name'] = $name;
-				$params['create_storage']      = 'none';
+				$params['create_storage']      = 'option';
 			} else {
 				$params['create_name'] = $name;
 			}

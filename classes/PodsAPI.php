@@ -1561,7 +1561,7 @@ class PodsAPI {
 				$pod_params['label']         = ( ! empty( $params->create_label_title ) ? $params->create_label_title : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
 				$pod_params['menu_name']     = ( ! empty( $params->create_label_menu ) ? $params->create_label_menu : $pod_params['label'] );
 				$pod_params['menu_location'] = $params->create_menu_location;
-				$pod_params['storage']       = 'none';
+				$pod_params['storage']       = 'option';
 
 				// Auto-generate name if not provided
 				if ( empty( $pod_params['name'] ) && ! empty( $pod_params['label'] ) ) {

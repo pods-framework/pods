@@ -108,8 +108,6 @@ class PodsTest extends Pods_UnitTestCase {
 	 */
 	public function test_shortcode_pods() {
 		pods_update_setting( 'dynamic_features_allow_sql_clauses', 'all' );
-		pods_update_setting( 'dynamic_features_features_restrict', false );
-		pods_update_setting( 'show_access_restricted_messages', false );
 
 		$pod_name = $this->pod_name;
 
@@ -118,9 +116,6 @@ class PodsTest extends Pods_UnitTestCase {
 			'name'    => 'Tatooine',
 			'number1' => 5,
 		) );
-
-		error_log( do_shortcode( '[pods name="' . $pod_name . '" where="t.number1=5" orderby="t.id"]{@number1}[/pods]' ));
-
 
 		// test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name="' . $pod_name . '" where="t.number1=5" orderby="t.id"]{@number1}[/pods]' ) );

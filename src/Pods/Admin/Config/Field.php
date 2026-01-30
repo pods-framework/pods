@@ -493,12 +493,23 @@ class Field extends Base {
 				'type'    => 'boolean',
 				'default' => 0,
 			],
-			'conditional_logic'        => [
+			'conditional_logic'            => [
 				'name'       => 'conditional_logic',
 				'label'      => __( 'Conditions', 'pods' ),
 				'help'       => __( 'help', 'pods' ),
 				'type'       => 'conditional-logic',
 				'depends-on' => [
+					'enable_conditional_logic' => true,
+				],
+			],
+			'conditional_logic_save_value' => [
+				'name'              => 'conditional_logic_save_value',
+				'label'             => __( 'Save Value When Hidden', 'pods' ),
+				'help'              => __( 'When enabled, the field value will be saved even when the field is hidden by conditional logic.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => 0,
+				'boolean_yes_label' => __( 'Preserve field value when conditionally hidden', 'pods' ),
+				'depends-on'        => [
 					'enable_conditional_logic' => true,
 				],
 			],

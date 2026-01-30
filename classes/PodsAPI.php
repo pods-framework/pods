@@ -5119,14 +5119,6 @@ class PodsAPI {
 						continue;
 					}
 
-					// Check if the field should save its value even when hidden.
-					$save_value_when_hidden = (bool) pods_v( 'conditional_logic_save_value', $fields[ $active_field_name ], false );
-
-					// Skip clearing the value if save_value_when_hidden is enabled.
-					if ( $save_value_when_hidden ) {
-						continue;
-					}
-
 					// Unset the field value.
 					$field_values[ $active_field_name ]    = null;
 					$fields[ $active_field_name ]['value'] = null;

@@ -215,7 +215,7 @@ const RepeatableFieldList = ( {
 											showTooltip
 										/>
 									) : null }
-									key={ `${ fieldConfig.name }-${ index }` }
+									key={ `${ fieldConfig.name }-${ JSON.stringify( valueItem ) }-${ index }` }
 								/>
 							);
 						} ) }

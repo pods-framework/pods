@@ -9616,7 +9616,7 @@ class PodsAPI {
 
 		// Verify required fields
 		if ( $check_required && 'slug' !== $type && 1 === (int) pods_v( 'required', $options, 0 ) ) {
-			if ( '' === $value || null === $value || array() === $value ) {
+			if ( '' === $value || null === $value || array() === $value || $value instanceof WP_Error ) {
 				return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
 			}
 
@@ -9626,7 +9626,7 @@ class PodsAPI {
 				$check_value = (array) $value;
 
 				foreach ( $check_value as $val ) {
-					if ( '' !== $val && null !== $val && 0 !== $val && '0' !== $val ) {
+					if ( '' !== $val && null !== $val && 0 !== $val && '0' !== $val && ! $value instanceof WP_Error ) {
 						$has_value = true;
 
 						continue;
@@ -9642,7 +9642,7 @@ class PodsAPI {
 
 		// @todo move this to after pre-save preparations
 		// Verify unique fields
-		if ( 1 === (int) pods_v( 'unique', $options, 0 ) && '' !== $value && null !== $value && array() !== $value ) {
+		if ( 1 === (int) pods_v( 'unique', $options, 0 ) && '' !== $value && null !== $value && array() !== $value && ! $value instanceof WP_Error ) {
 			if ( empty( $pod ) ) {
 				return false;
 			}
@@ -9670,6 +9670,11 @@ class PodsAPI {
 			} else {
 				// @todo handle tableless check
 			}
+		}
+
+		// Some values are just not valid and cause errors in other areas.
+		if ( $value instanceof WP_Error || is_object( $value ) ) {
+			return pods_error( sprintf( __( '%s is an unexpected value', 'pods' ), $label ), $this );
 		}
 
 		$validate = PodsForm::validate( $options['type'], $value, $field, $options, $fields, $pod, $id, $params );

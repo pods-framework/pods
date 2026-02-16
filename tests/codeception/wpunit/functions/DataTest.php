@@ -20,6 +20,46 @@ class DataTest extends Pods_UnitTestCase {
 
 		$wpdb->show_errors( true );
 
+		// Clean up superglobals from pods_v tests
+		unset(
+			$_GET['test_get'],
+			$_GET['empty_string'],
+			$_GET['zero'],
+			$_GET['false'],
+			$_GET['test_cast'],
+			$_GET['test_allowed'],
+			$_GET['test_allowed_single'],
+			$_GET['test_bool'],
+			$_POST['test_post'],
+			$_REQUEST['test_request'],
+			$_COOKIE['test_cookie'],
+			$_SERVER['TEST_SERVER_VAR']
+		);
+
+		// Clean up session variables
+		if ( isset( $_SESSION['test_pods_v_session'] ) ) {
+			unset( $_SESSION['test_pods_v_session'] );
+		}
+
+		// Clean up global variables
+		if ( isset( $GLOBALS['test_pods_v_global'] ) ) {
+			unset( $GLOBALS['test_pods_v_global'] );
+		}
+
+		// Clean up options
+		delete_option( 'test_pods_v_option' );
+		delete_site_option( 'test_pods_v_site_option' );
+
+		// Clean up transients
+		delete_transient( 'test_pods_v_transient' );
+		delete_site_transient( 'test_pods_v_site_transient' );
+
+		// Clean up cache
+		wp_cache_delete( 'test_pods_v_cache', 'test_group' );
+
+		// Reset current user
+		wp_set_current_user( 0 );
+
 		parent::tearDown();
 	}
 
@@ -276,8 +316,689 @@ class DataTest extends Pods_UnitTestCase {
 
 	}
 
-	public function test_pods_v() {
-		$this->markTestSkipped( 'not yet implemented' );
+	public function test_pods_v_get() {
+		$_GET['test_get'] = 'test value';
+
+		$this->assertEquals( 'test value', pods_v( 'test_get' ) );
+		$this->assertEquals( 'test value', pods_v( 'test_get', 'get' ) );
+	}
+
+	public function test_pods_v_post() {
+		$_POST['test_post'] = 'test value';
+
+		$this->assertEquals( 'test value', pods_v( 'test_post', 'post' ) );
+	}
+
+	public function test_pods_v_request() {
+		$_REQUEST['test_request'] = 'test value';
+
+		$this->assertEquals( 'test value', pods_v( 'test_request', 'request' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_array() {
+		$array = [
+			'key1' => 'value1',
+			'key2' => 'value2',
+		];
+
+		$this->assertEquals( 'value1', pods_v( 'key1', $array ) );
+		$this->assertEquals( 'value2', pods_v( 'key2', $array ) );
+		$this->assertNull( pods_v( 'key3', $array ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_object() {
+		$object = new stdClass();
+		$object->key1 = 'value1';
+		$object->key2 = 'value2';
+
+		$this->assertEquals( 'value1', pods_v( 'key1', $object ) );
+		$this->assertEquals( 'value2', pods_v( 'key2', $object ) );
+		$this->assertNull( pods_v( 'key3', $object ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_default() {
+		$this->assertEquals( 'default_value', pods_v( 'nonexistent', 'get', 'default_value' ) );
+		$this->assertNull( pods_v( 'nonexistent', 'get' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_strict() {
+		$_GET['empty_string'] = '';
+		$_GET['zero'] = 0;
+		$_GET['false'] = false;
+
+		$this->assertEquals( '', pods_v( 'empty_string', 'get', 'default' ) );
+		$this->assertEquals( 'default', pods_v( 'empty_string', 'get', 'default', true ) );
+
+		$this->assertEquals( 0, pods_v( 'zero', 'get', 'default' ) );
+		$this->assertEquals( 'default', pods_v( 'zero', 'get', 'default', true ) );
+
+		$this->assertEquals( false, pods_v( 'false', 'get', 'default' ) );
+		$this->assertEquals( 'default', pods_v( 'false', 'get', 'default', true ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_casting() {
+		$_GET['test_cast'] = '123';
+
+		$result = pods_v( 'test_cast', 'get', 456, false, [ 'casting' => true ] );
+		$this->assertSame( 456, $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_allowed() {
+		$_GET['test_allowed'] = 'valid';
+
+		$result = pods_v( 'test_allowed', 'get', 'default', false, [ 'allowed' => [ 'valid', 'also_valid' ] ] );
+		$this->assertEquals( 'valid', $result );
+
+		$_GET['test_allowed'] = 'invalid';
+		$result = pods_v( 'test_allowed', 'get', 'default', false, [ 'allowed' => [ 'valid', 'also_valid' ] ] );
+		$this->assertEquals( 'default', $result );
+
+		$_GET['test_allowed_single'] = 'exact_match';
+		$result = pods_v( 'test_allowed_single', 'get', 'default', false, [ 'allowed' => 'exact_match' ] );
+		$this->assertEquals( 'exact_match', $result );
+
+		$_GET['test_allowed_single'] = 'no_match';
+		$result = pods_v( 'test_allowed_single', 'get', 'default', false, [ 'allowed' => 'exact_match' ] );
+		$this->assertEquals( 'default', $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_prefix() {
+		global $wpdb;
+
+		$result = pods_v( null, 'prefix' );
+		$this->assertEquals( $wpdb->prefix, $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_cookie() {
+		$_COOKIE['test_cookie'] = 'cookie_value';
+
+		$this->assertEquals( 'cookie_value', pods_v( 'test_cookie', 'cookie' ) );
+		$this->assertNull( pods_v( 'nonexistent_cookie', 'cookie' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_constant() {
+		if ( ! defined( 'TEST_PODS_V_CONSTANT' ) ) {
+			define( 'TEST_PODS_V_CONSTANT', 'constant_value' );
+		}
+
+		$this->assertEquals( 'constant_value', pods_v( 'TEST_PODS_V_CONSTANT', 'constant' ) );
+		$this->assertNull( pods_v( 'NONEXISTENT_CONSTANT', 'constant' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_option() {
+		add_option( 'test_pods_v_option', 'option_value' );
+
+		$this->assertEquals( 'option_value', pods_v( 'test_pods_v_option', 'option' ) );
+		$this->assertEquals( 'default_option', pods_v( 'nonexistent_option', 'option', 'default_option' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_site_option() {
+		add_site_option( 'test_pods_v_site_option', 'site_option_value' );
+
+		$this->assertEquals( 'site_option_value', pods_v( 'test_pods_v_site_option', 'site-option' ) );
+		$this->assertEquals( 'default_site_option', pods_v( 'nonexistent_site_option', 'site-option', 'default_site_option' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_transient() {
+		set_transient( 'test_pods_v_transient', 'transient_value', 3600 );
+
+		$this->assertEquals( 'transient_value', pods_v( 'test_pods_v_transient', 'transient' ) );
+		$this->assertFalse( pods_v( 'nonexistent_transient', 'transient' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_site_transient() {
+		set_site_transient( 'test_pods_v_site_transient', 'site_transient_value', 3600 );
+
+		$this->assertEquals( 'site_transient_value', pods_v( 'test_pods_v_site_transient', 'site-transient' ) );
+		$this->assertFalse( pods_v( 'nonexistent_site_transient', 'site-transient' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_cache() {
+		wp_cache_set( 'test_pods_v_cache', 'cache_value', 'test_group' );
+
+		$this->assertEquals( 'cache_value', pods_v( 'test_pods_v_cache|test_group', 'cache' ) );
+		$this->assertEquals( 'cache_value', pods_v( [ 'test_pods_v_cache', 'test_group' ], 'cache' ) );
+		$this->assertFalse( pods_v( 'nonexistent_cache|test_group', 'cache' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_template_url() {
+		$result = pods_v( null, 'template-url' );
+		$this->assertEquals( get_template_directory_uri(), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_stylesheet_url() {
+		$result = pods_v( null, 'stylesheet-url' );
+		$this->assertEquals( get_stylesheet_directory_uri(), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_site_url() {
+		$result = pods_v( null, 'site-url' );
+		$this->assertEquals( get_site_url(), $result );
+
+		$result = pods_v( [ null, '/test-path' ], 'site-url' );
+		$this->assertEquals( get_site_url( null, '/test-path' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_home_url() {
+		$result = pods_v( null, 'home-url' );
+		$this->assertEquals( get_home_url(), $result );
+
+		$result = pods_v( [ null, '/test-path' ], 'home-url' );
+		$this->assertEquals( get_home_url( null, '/test-path' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_admin_url() {
+		$result = pods_v( null, 'admin-url' );
+		$this->assertEquals( get_admin_url(), $result );
+
+		$result = pods_v( [ null, 'admin.php' ], 'admin-url' );
+		$this->assertEquals( get_admin_url( null, 'admin.php' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_includes_url() {
+		$result = pods_v( '', 'includes-url' );
+		$this->assertEquals( includes_url(), $result );
+
+		$result = pods_v( 'js/jquery/jquery.js', 'includes-url' );
+		$this->assertEquals( includes_url( 'js/jquery/jquery.js' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_content_url() {
+		$result = pods_v( '', 'content-url' );
+		$this->assertEquals( content_url(), $result );
+
+		$result = pods_v( '/uploads', 'content-url' );
+		$this->assertEquals( content_url( '/uploads' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_plugins_url() {
+		$result = pods_v( '', 'plugins-url' );
+		$this->assertEquals( plugins_url(), $result );
+
+		$result = pods_v( 'test-plugin/asset.js', 'plugins-url' );
+		$this->assertEquals( plugins_url( 'test-plugin/asset.js' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_network_site_url() {
+		$result = pods_v( '', 'network-site-url' );
+		$this->assertEquals( network_site_url(), $result );
+
+		$result = pods_v( [ '/path' ], 'network-site-url' );
+		$this->assertEquals( network_site_url( '/path' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_network_home_url() {
+		$result = pods_v( '', 'network-home-url' );
+		$this->assertEquals( network_home_url(), $result );
+
+		$result = pods_v( [ '/path' ], 'network-home-url' );
+		$this->assertEquals( network_home_url( '/path' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_network_admin_url() {
+		$result = pods_v( '', 'network-admin-url' );
+		$this->assertEquals( network_admin_url(), $result );
+
+		$result = pods_v( [ 'settings.php' ], 'network-admin-url' );
+		$this->assertEquals( network_admin_url( 'settings.php' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_user_admin_url() {
+		$result = pods_v( '', 'user-admin-url' );
+		$this->assertEquals( user_admin_url(), $result );
+
+		$result = pods_v( [ 'profile.php' ], 'user-admin-url' );
+		$this->assertEquals( user_admin_url( 'profile.php' ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_date() {
+		$result = pods_v( 'Y-m-d', 'date' );
+		$this->assertEquals( date_i18n( 'Y-m-d' ), $result );
+
+		$result = pods_v( 'Y-m-d|2024-01-01', 'date' );
+		$this->assertEquals( date_i18n( 'Y-m-d', strtotime( '2024-01-01' ) ), $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_post_id() {
+		$post_id = $this->factory->post->create();
+
+		$result = pods_v( $post_id, 'post_id' );
+		$this->assertEquals( $post_id, $result );
+
+		// Test with empty var should use current post
+		global $post;
+		$old_post = $post;
+		$post = get_post( $post_id );
+
+		$result = pods_v( '', 'post_id' );
+		$this->assertEquals( $post_id, $result );
+
+		$post = $old_post;
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_user() {
+		$user_id = $this->factory->user->create( [
+			'user_login' => 'testuser',
+			'user_email' => 'testuser@example.com',
+			'first_name' => 'Test',
+			'last_name' => 'User',
+		] );
+
+		wp_set_current_user( $user_id );
+
+		$this->assertEquals( $user_id, pods_v( 'ID', 'user' ) );
+		$this->assertEquals( $user_id, pods_v( 'id', 'user' ) ); // Test lowercase conversion
+		$this->assertEquals( 'testuser', pods_v( 'user_login', 'user' ) );
+		$this->assertEquals( 'testuser@example.com', pods_v( 'user_email', 'user' ) );
+
+		wp_set_current_user( 0 );
+
+		// When logged out, ID should return 0
+		$this->assertEquals( 0, pods_v( 'ID', 'user' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_global() {
+		$GLOBALS['test_pods_v_global'] = 'global_value';
+
+		$this->assertEquals( 'global_value', pods_v( 'test_pods_v_global', 'global' ) );
+		$this->assertEquals( 'global_value', pods_v( 'test_pods_v_global', 'globals' ) );
+		$this->assertNull( pods_v( 'nonexistent_global', 'global' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_session() {
+		if ( ! isset( $_SESSION ) ) {
+			$_SESSION = [];
+		}
+
+		$_SESSION['test_pods_v_session'] = 'session_value';
+
+		$this->assertEquals( 'session_value', pods_v( 'test_pods_v_session', 'session' ) );
+		$this->assertNull( pods_v( 'nonexistent_session', 'session' ) );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_disallowed_types_for_magic_tag() {
+		$_SERVER['TEST_SERVER_VAR'] = 'server_value';
+
+		// Without source restriction, should work
+		$this->assertEquals( 'server_value', pods_v( 'TEST_SERVER_VAR', 'server' ) );
+
+		// With magic-tag source, server type should be disallowed
+		$result = pods_v( 'TEST_SERVER_VAR', 'server', 'default', false, [ 'source' => 'magic-tag' ] );
+		$this->assertEquals( 'default', $result );
+	}
+
+	/**
+	 * @covers ::pods_v
+	 */
+	public function test_pods_v_invalid_type() {
+		$result = pods_v( 'test', null );
+		$this->assertNull( $result );
+
+		$result = pods_v( 'test', '' );
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * @covers ::pods_v_bool
+	 */
+	public function test_pods_v_bool_basic() {
+		// Test with truthy value
+		$_GET['test_bool'] = '1';
+		$this->assertTrue( pods_v_bool( 'test_bool' ) );
+
+		// Test with falsy value
+		$_GET['test_bool'] = '0';
+		$this->assertFalse( pods_v_bool( 'test_bool' ) );
+
+		// Test with default true
+		$this->assertTrue( pods_v_bool( 'nonexistent_bool', 'get', true ) );
+
+		// Test with default false
+		$this->assertFalse( pods_v_bool( 'nonexistent_bool', 'get', false ) );
+	}
+
+	/**
+	 * @covers ::pods_v_bool
+	 */
+	public function test_pods_v_bool_return_type() {
+		// Ensure return type is always boolean
+		$_GET['test_bool'] = '1';
+		$result = pods_v_bool( 'test_bool' );
+		$this->assertIsBool( $result );
+
+		$_GET['test_bool'] = '0';
+		$result = pods_v_bool( 'test_bool' );
+		$this->assertIsBool( $result );
+
+		// Test with non-existent value
+		$result = pods_v_bool( 'nonexistent' );
+		$this->assertIsBool( $result );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_null() {
+		$this->assertFalse( pods_is_truthy( null ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_boolean() {
+		$this->assertTrue( pods_is_truthy( true ) );
+		$this->assertFalse( pods_is_truthy( false ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_integer() {
+		// Only integer 1 is truthy
+		$this->assertTrue( pods_is_truthy( 1 ) );
+
+		// Other integers are not truthy
+		$this->assertFalse( pods_is_truthy( 0 ) );
+		$this->assertFalse( pods_is_truthy( 2 ) );
+		$this->assertFalse( pods_is_truthy( -1 ) );
+		$this->assertFalse( pods_is_truthy( 100 ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_float() {
+		// Only float 1.0 is truthy
+		$this->assertTrue( pods_is_truthy( 1.0 ) );
+
+		// Other floats are not truthy
+		$this->assertFalse( pods_is_truthy( 0.0 ) );
+		$this->assertFalse( pods_is_truthy( 1.5 ) );
+		$this->assertFalse( pods_is_truthy( 2.0 ) );
+		$this->assertFalse( pods_is_truthy( -1.0 ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_truthy_strings() {
+		// Test all supported truthy strings
+		$this->assertTrue( pods_is_truthy( '1' ) );
+		$this->assertTrue( pods_is_truthy( 'true' ) );
+		$this->assertTrue( pods_is_truthy( 'on' ) );
+		$this->assertTrue( pods_is_truthy( 'yes' ) );
+		$this->assertTrue( pods_is_truthy( 'y' ) );
+		$this->assertTrue( pods_is_truthy( 'enabled' ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_case_insensitive_strings() {
+		// Test uppercase
+		$this->assertTrue( pods_is_truthy( 'TRUE' ) );
+		$this->assertTrue( pods_is_truthy( 'ON' ) );
+		$this->assertTrue( pods_is_truthy( 'YES' ) );
+		$this->assertTrue( pods_is_truthy( 'Y' ) );
+		$this->assertTrue( pods_is_truthy( 'ENABLED' ) );
+
+		// Test mixed case
+		$this->assertTrue( pods_is_truthy( 'True' ) );
+		$this->assertTrue( pods_is_truthy( 'On' ) );
+		$this->assertTrue( pods_is_truthy( 'Yes' ) );
+		$this->assertTrue( pods_is_truthy( 'Enabled' ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_whitespace() {
+		// Test strings with leading/trailing whitespace
+		$this->assertFalse( pods_is_truthy( ' 1 ' ) );
+		$this->assertFalse( pods_is_truthy( '  true  ' ) );
+		$this->assertFalse( pods_is_truthy( "\ton\t" ) );
+		$this->assertFalse( pods_is_truthy( "\nyes\n" ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_falsy_strings() {
+		// Test strings that are not truthy
+		$this->assertFalse( pods_is_truthy( '0' ) );
+		$this->assertFalse( pods_is_truthy( 'false' ) );
+		$this->assertFalse( pods_is_truthy( 'off' ) );
+		$this->assertFalse( pods_is_truthy( 'no' ) );
+		$this->assertFalse( pods_is_truthy( 'n' ) );
+		$this->assertFalse( pods_is_truthy( '' ) );
+		$this->assertFalse( pods_is_truthy( 'disabled' ) );
+		$this->assertFalse( pods_is_truthy( 'random' ) );
+	}
+
+	/**
+	 * @covers ::pods_is_truthy
+	 */
+	public function test_pods_is_truthy_with_unsupported_types() {
+		// Arrays are not supported
+		$this->assertFalse( pods_is_truthy( [] ) );
+		$this->assertFalse( pods_is_truthy( [ 1 ] ) );
+
+		// Objects are not supported
+		$obj = new stdClass();
+		$this->assertFalse( pods_is_truthy( $obj ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_null() {
+		$this->assertTrue( pods_is_falsey( null ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_boolean() {
+		$this->assertTrue( pods_is_falsey( false ) );
+		$this->assertFalse( pods_is_falsey( true ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_integer() {
+		// Only integer 0 is falsey
+		$this->assertTrue( pods_is_falsey( 0 ) );
+
+		// Other integers are not falsey
+		$this->assertFalse( pods_is_falsey( 1 ) );
+		$this->assertFalse( pods_is_falsey( 2 ) );
+		$this->assertFalse( pods_is_falsey( -1 ) );
+		$this->assertFalse( pods_is_falsey( 100 ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_float() {
+		// Only float 0.0 is falsey
+		$this->assertTrue( pods_is_falsey( 0.0 ) );
+
+		// Other floats are not falsey
+		$this->assertFalse( pods_is_falsey( 1.0 ) );
+		$this->assertFalse( pods_is_falsey( 1.5 ) );
+		$this->assertFalse( pods_is_falsey( 2.0 ) );
+		$this->assertFalse( pods_is_falsey( -1.0 ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_falsy_strings() {
+		// Test all supported falsy strings
+		$this->assertTrue( pods_is_falsey( '0' ) );
+		$this->assertTrue( pods_is_falsey( 'false' ) );
+		$this->assertTrue( pods_is_falsey( 'off' ) );
+		$this->assertTrue( pods_is_falsey( 'no' ) );
+		$this->assertTrue( pods_is_falsey( 'n' ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_case_insensitive_strings() {
+		// Test uppercase
+		$this->assertTrue( pods_is_falsey( 'FALSE' ) );
+		$this->assertTrue( pods_is_falsey( 'OFF' ) );
+		$this->assertTrue( pods_is_falsey( 'NO' ) );
+		$this->assertTrue( pods_is_falsey( 'N' ) );
+
+		// Test mixed case
+		$this->assertTrue( pods_is_falsey( 'False' ) );
+		$this->assertTrue( pods_is_falsey( 'Off' ) );
+		$this->assertTrue( pods_is_falsey( 'No' ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_whitespace() {
+		// Test strings with leading/trailing whitespace
+		$this->assertFalse( pods_is_falsey( ' 0 ' ) );
+		$this->assertFalse( pods_is_falsey( '  false  ' ) );
+		$this->assertFalse( pods_is_falsey( "\toff\t" ) );
+		$this->assertFalse( pods_is_falsey( "\nno\n" ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_truthy_strings() {
+		// Test strings that are not falsey
+		$this->assertFalse( pods_is_falsey( '1' ) );
+		$this->assertFalse( pods_is_falsey( 'true' ) );
+		$this->assertFalse( pods_is_falsey( 'on' ) );
+		$this->assertFalse( pods_is_falsey( 'yes' ) );
+		$this->assertFalse( pods_is_falsey( 'y' ) );
+		$this->assertFalse( pods_is_falsey( 'enabled' ) );
+		$this->assertFalse( pods_is_falsey( 'random' ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_empty_string() {
+		// Empty string is NOT considered falsey (cannot be validated)
+		$this->assertFalse( pods_is_falsey( '' ) );
+	}
+
+	/**
+	 * @covers ::pods_is_falsey
+	 */
+	public function test_pods_is_falsey_with_unsupported_types() {
+		// Arrays are not supported (cannot be validated as falsey)
+		$this->assertFalse( pods_is_falsey( [] ) );
+		$this->assertFalse( pods_is_falsey( [ 0 ] ) );
+
+		// Objects are not supported (cannot be validated as falsey)
+		$obj = new stdClass();
+		$this->assertFalse( pods_is_falsey( $obj ) );
 	}
 
 	public function test_pods_v_sanitized() {

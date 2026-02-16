@@ -992,6 +992,24 @@ function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict 
 }
 
 /**
+ * Return the boolean version of a variable.
+ *
+ * @since TBD
+ *
+ * @param mixed               $var     The variable name, can also be a modifier for specific types
+ * @param string|array|object $type    (optional) Super globals, url/url-relative, constants, globals, options,
+ *                                     transients, cache, user data, Pod field values, dates
+ * @param bool                $default (optional) The default value to set if variable doesn't exist
+ *
+ * @return bool The variable (if exists), or default value.
+ */
+function pods_v_bool( $var = null, $type = 'get', bool $default = false ): bool {
+	$value = pods_v( $var, $type, $default );
+
+	return pods_is_truthy( $value );
+}
+
+/**
  * Set a variable
  *
  * @param mixed               $value The value to be set
@@ -2581,7 +2599,7 @@ function pods_is_truthy( $value ) {
 	}
 
 	// Normalize the string to lowercase.
-	$value = trim( strtolower( $value ) );
+	$value = strtolower( $value );
 
 	// This is the list of strings we will support as truthy.
 	$supported_strings = [
@@ -2635,7 +2653,7 @@ function pods_is_falsey( $value ) {
 	}
 
 	// Normalize the string to lowercase.
-	$value = trim( strtolower( $value ) );
+	$value = strtolower( $value );
 
 	// This is the list of strings we will support as falsey.
 	$supported_strings = [

@@ -908,6 +908,12 @@ class PodsUI {
 
 		$this->setup_fields();
 
+		// Debug purposes
+		if ( 1 === (int) pods_v( 'pods_debug_ui_options', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+			pods_debug( __METHOD__ . ':' . __LINE__ );
+			pods_debug( $options );
+		}
+
 		return $options;
 	}
 

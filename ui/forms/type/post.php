@@ -201,7 +201,22 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 				$prev = $prev_next['prev'];
 				$next = $prev_next['next'];
 
-				if ( 0 < $prev || 0 < $next ) {
+				$manage_link = false;
+
+				if ( ! in_array( 'manage', $obj->actions_disabled ) && ! in_array( 'manage', $obj->actions_hidden ) && ! $obj->restricted( 'manage' ) ) {
+					$manage_link = pods_query_arg(
+						[
+							$obj->num_prefix . 'action' . $obj->num => 'manage',
+							$obj->num_prefix . 'id' . $obj->num     => '',
+						], PodsUI::$allowed, $obj->exclusion(),
+					);
+
+					if ( ! empty( $obj->action_links['manage'] ) ) {
+						$link = $obj->action_links['manage'];
+					}
+				}
+
+				if ( 0 < $prev || 0 < $next || $manage_link ) {
 					?>
 					<div id="navigatediv" class="postbox">
 						<?php
@@ -242,6 +257,14 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 									?>
 
 									<div class="clear"></div>
+
+									<?php if ( $manage_link ) : ?>
+										<?php if ( 0 < $prev || 0 < $next ) : ?>
+											<hr />
+										<?php endif; ?>
+
+										<p><a href="<?php echo esc_url( $manage_link ); ?>"><?php echo sprintf( __( 'Back to %s', 'pods' ), $obj->heading['manage'] ); ?></a></p>
+									<?php endif; ?>
 								</div>
 								<!-- /#navigation-actions -->
 							</div>

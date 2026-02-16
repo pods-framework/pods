@@ -249,12 +249,12 @@ class PodsField_Paragraph extends PodsField {
 		$value = $this->normalize_value_for_input( $value, $options, "\n" );
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
-			if ( pods_v( 'read_only', $options, false ) ) {
+			if ( pods_v_bool( 'read_only', $options ) || pods_v_bool( 'read_only_restricted', $options ) ) {
 				$options['readonly'] = true;
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && ( pods_v_bool( 'read_only', $options ) || pods_v_bool( 'read_only_restricted', $options ) ) ) {
 			$options['readonly'] = true;
 		}
 

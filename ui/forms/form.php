@@ -57,13 +57,13 @@ foreach ( $groups as $g => $group ) {
 
 			continue;
 		} elseif ( ! pods_permission( $field ) ) {
-			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
+			if ( pods_v_bool( 'hidden', $field['options'] ) ) {
 				if ( $group['fields'][ $k ] instanceof \Pods\Whatsit\Field ) {
 					$group['fields'][ $k ] = clone $group['fields'][ $k ];
 				}
 
 				$group['fields'][ $k ]['type'] = 'hidden';
-			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
+			} elseif ( pods_v_bool( 'read_only', $field['options'] ) || pods_v_bool( 'read_only_restricted', $field['options'] ) ) {
 				$group['fields'][ $k ]['readonly'] = true;
 			} else {
 				unset( $group['fields'][ $k ] );
@@ -71,13 +71,13 @@ foreach ( $groups as $g => $group ) {
 				continue;
 			}
 		} elseif ( ! pods_has_permissions( $field ) ) {
-			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
+			if ( pods_v_bool( 'hidden', $field['options'] ) ) {
 				if ( $group['fields'][ $k ] instanceof \Pods\Whatsit\Field ) {
 					$group['fields'][ $k ] = clone $group['fields'][ $k ];
 				}
 
 				$group['fields'][ $k ]['type'] = 'hidden';
-			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
+			} elseif ( pods_v_bool( 'read_only', $field['options'] ) || pods_v_bool( 'read_only_restricted', $field['options'] ) ) {
 				$group['fields'][ $k ]['readonly'] = true;
 			}
 		}//end if

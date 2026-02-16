@@ -40,15 +40,15 @@ foreach ( $fields as $k => $field ) {
 	} elseif ( ! pods_permission( $field ) ) {
 		if ( pods_v( 'hidden', $field, false ) ) {
 			$fields[ $k ]['type'] = 'hidden';
-		} elseif ( pods_v( 'read_only', $field, false ) ) {
+		} elseif ( pods_v_bool( 'read_only', $field ) || pods_v_bool( 'read_only_restricted', $field ) ) {
 			$fields[ $k ]['readonly'] = true;
 		} else {
 			unset( $fields[ $k ] );
 		}
 	} elseif ( ! pods_has_permissions( $field ) ) {
-		if ( pods_v( 'hidden', $field, false ) ) {
+		if ( pods_v_bool( 'hidden', $field ) ) {
 			$fields[ $k ]['type'] = 'hidden';
-		} elseif ( pods_v( 'read_only', $field, false ) ) {
+		} elseif ( pods_v_bool( 'read_only', $field ) || pods_v_bool( 'read_only_restricted', $field ) ) {
 			$fields[ $k ]['readonly'] = true;
 		}
 	}

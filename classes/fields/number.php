@@ -230,12 +230,12 @@ class PodsField_Number extends PodsField {
 		}
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
-			if ( pods_v( 'read_only', $options, false ) ) {
+			if ( pods_v_bool( 'read_only', $options ) || pods_v_bool( 'read_only_restricted', $options ) ) {
 				$is_read_only = true;
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && ( pods_v_bool( 'read_only', $options ) || pods_v_bool( 'read_only_restricted', $options ) ) ) {
 			$is_read_only = true;
 		}
 

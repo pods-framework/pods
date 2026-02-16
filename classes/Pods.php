@@ -4211,7 +4211,11 @@ class Pods implements Iterator {
 			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {
 				continue;
 			} elseif ( ! pods_permission( $field ) ) {
-				continue;
+				if ( pods_v( 'read_only_restricted', $field, false, true ) ) {
+					$field['read_only'] = true;
+				} else {
+					continue;
+				}
 			}
 
 			$fields[ $field['name'] ] = $field;

@@ -1514,4 +1514,24 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( $expected, pods_clean_linebreaks( $input ) );
 	}
 
+	public function pods_replace_gt_et_placeholders() {
+		$cases = [
+			'This is a test string with &gt;, &ge;, &lt;, and &le; placeholders.',
+			'This is a test string with __GREATER_THAN__, __GREATER_THAN_OR_EQUAL__, __LESS_THAN__, and __LESS_THAN_OR_EQUAL__ placeholders.',
+		];
+
+		$expected = 'This is a test string with >, >=, <, and <= placeholders.';
+
+		foreach ( $cases as $case ) {
+			$this->assertEquals( $expected, pods_replace_gt_et_placeholders( $case ) );
+		}
+	}
+
+	public function pods_replace_gt_et_placeholders_not_equal() {
+		$this->assertEquals(
+			'This is a test string with != placeholder.',
+			pods_replace_gt_et_placeholders( 'This is a test string with &ne; placeholder.' )
+		);
+	}
+
 }

@@ -3170,3 +3170,52 @@ function pods_enforce_safe_value_via_regex( ?string $value, string $disallowed_p
 
 	return (string) preg_replace( $disallowed_pattern, '', $value );
 }
+
+/**
+ * Replace greater than and less than placeholders in a string or array of strings with the actual characters.
+ *
+ * @since TBD
+ *
+ * @param array|string $value The value to replace the greater than and less than placeholders in.
+ *
+ * @return array|string The value with the greater than and less than placeholders replaced with the actual characters.
+ */
+function pods_replace_gt_et_placeholders( $value ) {
+	if ( is_array( $value ) ) {
+		return array_map( 'pods_replace_gt_et_placeholders', $value );
+	}
+
+	if ( ! $value || ! is_string( $value ) ) {
+		return $value;
+	}
+
+	$gt_lt_find = [
+		// HTML entities.
+		'&lt;', // Entity: Less than.
+		'&le;', // Entity: Less than or equal.
+		'&gt;', // Entity: Greater than.
+		'&ge;', // Entity: Greater than or equal.
+		'&ne;', // Entity: Not equal.
+		// Placeholders.
+		'__LESS_THAN__',
+		'__LESS_THAN_OR_EQUAL__',
+		'__GREATER_THAN__',
+		'__GREATER_THAN_OR_EQUAL__',
+	];
+
+	$gt_lt_replace = [
+		// HTML entities.
+		'<',
+		'<=',
+		'>',
+		'>=',
+		'!=',
+		// Placeholders.
+		'<',
+		'<=',
+		'>',
+		'>=',
+	];
+
+	return str_replace( $gt_lt_find, $gt_lt_replace, $value );
+}

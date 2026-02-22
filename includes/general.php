@@ -1749,39 +1749,11 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		'template_custom',
 	];
 
-	$gt_lt_find = [
-		// HTML entities.
-		'&lt;', // Entity: Less than.
-		'&le;', // Entity: Less than or equal.
-		'&gt;', // Entity: Greater than.
-		'&ge;', // Entity: Greater than or equal.
-		'&ne;', // Entity: Not equal.
-		// Placeholders.
-		'__LESS_THAN__',
-		'__LESS_THAN_OR_EQUAL__',
-		'__GREATER_THAN__',
-		'__GREATER_THAN_OR_EQUAL__',
-	];
-
-	$gt_lt_replace = [
-		// HTML entities.
-		'<',
-		'<=',
-		'>',
-		'>=',
-		'!=',
-		// Placeholders.
-		'<',
-		'<=',
-		'>',
-		'>=',
-	];
-
 	foreach ( $tags_for_gt_lt as $tag ) {
 		$tag_value = $tags[ $tag ] ?? null;
 
 		if ( $tag_value && is_string( $tag_value ) ) {
-			$tags[ $tag ] = str_replace( $gt_lt_find, $gt_lt_replace, $tag_value );
+			$tags[ $tag ] = pods_replace_gt_et_placeholders( $tag_value );
 		}
 	}
 

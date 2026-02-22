@@ -1446,7 +1446,7 @@ class PodsUI {
 							$link = $this->action_links['manage'];
 						}
 						?>
-						<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
 					<?php } ?>
 				</h2>
 			<?php endif; ?>
@@ -1510,7 +1510,7 @@ class PodsUI {
 							$link = $this->action_links['add'];
 						}
 						?>
-						<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
 						<?php
 					} elseif ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
 						$link = pods_query_arg(
@@ -1524,7 +1524,7 @@ class PodsUI {
 							$link = $this->action_links['manage'];
 						}
 						?>
-						<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
 						<?php
 					}//end if
 					?>
@@ -1827,7 +1827,7 @@ class PodsUI {
 							$link = $this->action_links['add'];
 						}
 						?>
-						<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
 						<?php
 					} elseif ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
 						$link = pods_query_arg(
@@ -1841,7 +1841,7 @@ class PodsUI {
 							$link = $this->action_links['manage'];
 						}
 						?>
-						<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
 						<?php
 					}//end if
 
@@ -2736,7 +2736,7 @@ class PodsUI {
 							$link = $this->action_links['add'];
 						}
 						?>
-						<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->label['add_new'] ); ?></a>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->label['add_new'] ); ?></a>
 						<?php
 					}
 					if ( ! in_array( 'reorder', $this->actions_disabled ) && ! in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder['on'] && ! $this->restricted( 'reorder' ) ) {
@@ -2746,7 +2746,7 @@ class PodsUI {
 							$link = $this->action_links['reorder'];
 						}
 						?>
-						<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->label['reorder'] ); ?></a>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->label['reorder'] ); ?></a>
 						<?php
 					}
 
@@ -2783,7 +2783,7 @@ class PodsUI {
 								$label = ucwords( str_replace( [ '_', '-' ], ' ', $custom_action ) );
 							}
 							?>
-							<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $label ); ?></a>
+							<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $label ); ?></a>
 							<?php
 						}
 					}

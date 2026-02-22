@@ -696,7 +696,7 @@ class Field extends Base {
 		 * @param null|\Pods\Whatsit\Pod $pod            Pods object for the Pod this UI is for.
 		 * @param array                  $tabs           List of registered tabs
 		 */
-		$field_settings = apply_filters( "pods_field_settings_{$pod_name}", $field_settings, $pod );
+		$field_settings = apply_filters( "pods_field_settings_{$pod_name}", $field_settings, $pod, $tabs );
 
 		/**
 		 * Allow filtering the field settings by pod name.

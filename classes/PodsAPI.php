@@ -9564,7 +9564,7 @@ class PodsAPI {
 	 * @param array|Pods   $pod           Array of pod data (or Pods object)
 	 * @param array|object $params        Extra parameters to pass to the validation function of the field.
 	 *
-	 * @return array|bool
+	 * @return array|bool|WP_Error
 	 *
 	 * @uses  PodsForm::validate
 	 *

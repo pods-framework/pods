@@ -61,10 +61,10 @@ foreach ( $fields as $field ) {
 	 *
 	 * @since 2.7.2
 	 *
-	 * @param string $html_class The HTML class.
-	 * @param array  $field      The current field.
+	 * @param string $row_classes The row classes.
+	 * @param array  $field       The current field.
 	 */
-	$row_classes = apply_filters( 'pods_form_html_class', $row_classes );
+	$row_classes = apply_filters( 'pods_form_html_class', $row_classes, $field );
 
 	$row_classes = trim( $row_classes );
 

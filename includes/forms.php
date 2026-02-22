@@ -432,6 +432,7 @@ function pods_form_validate_submitted_fields( $name, $object_id = null, array $o
 
 		$value = pods_form_get_submitted_field_value( $field_name );
 
+		/** @var array|bool|WP_Error $field_is_valid */
 		$field_is_valid = $api->handle_field_validation( $value, $field_name, [], $fields, $pod );
 
 		if ( is_wp_error( $field_is_valid ) ) {

@@ -75,17 +75,19 @@ class PodsField_Color extends PodsField {
 		$field_type = 'color';
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
-			if ( pods_v_bool( 'read_only', $options ) || pods_v_bool( 'read_only_restricted', $options ) ) {
+			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && ( pods_v_bool( 'read_only', $options ) || pods_v_bool( 'read_only_restricted', $options ) ) ) {
-			$options['readonly'] = true;
+		} elseif ( ! pods_has_permissions( $options ) ) {
+			if ( pods_v_bool( 'read_only', $options ) ) {
+				$options['readonly'] = true;
 
-			$field_type = 'text';
+				$field_type = 'text';
+			}
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {

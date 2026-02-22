@@ -600,7 +600,7 @@ class PodsField {
 
 		// Backcompat readonly argument handling.
 		if ( isset( $config['readonly'] ) ) {
-			if ( ! isset( $config['read_only'] ) ) {
+			if ( empty( $config['read_only'] ) ) {
 				$config['read_only'] = (int) $config['readonly'];
 			}
 

@@ -223,6 +223,20 @@ const recursiveCheckConditionalLogicForField = (
 		return true;
 	}
 
+	// Maybe check multiple conditional logic sets.
+	if ( 'undefined' !== conditionalLogic.logic_sets && Array.isArray( conditionalLogic.logic_sets ) ) {
+		return conditionalLogic.logic_sets.every( ( logicGroup ) => {
+			return recursiveCheckConditionalLogicForField(
+				{
+					...fieldConfig,
+					conditional_logic: logicGroup,
+				},
+				allPodValues,
+				allPodFieldsMap,
+			);
+		} );
+	}
+
 	console.debug( 'Conditional logic: enabled' );
 	console.debug( { fieldName, conditionalLogic, allPodValues } );
 

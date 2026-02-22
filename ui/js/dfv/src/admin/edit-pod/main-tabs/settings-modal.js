@@ -309,6 +309,7 @@ const SettingsModal = ( {
 						name: sectionName,
 						label: sectionLabel,
 						'depends-on': dependsOn = {},
+						'depends-on-any': dependsOnAny = {},
 						'excludes-on': excludesOn = {},
 						'wildcard-on': wildcardOn = {},
 						fields,
@@ -320,6 +321,11 @@ const SettingsModal = ( {
 
 						// Check that dependencies are met.
 						if ( Object.keys( dependsOn || {} ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+							return null;
+						}
+
+						// Check that any dependencies are met.
+						if ( Object.keys( dependsOnAny || {} ).length && ! validateFieldDependencies( changedOptions, dependsOnAny, 'depends-on-any' ) ) {
 							return null;
 						}
 

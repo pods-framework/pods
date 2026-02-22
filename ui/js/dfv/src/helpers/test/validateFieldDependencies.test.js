@@ -239,3 +239,181 @@ test( 'correctly validates an item from an array of values', () => {
 
 	expect( validateFieldDependencies( podValuesSuccess, dependsOnRules ) ).toEqual( true );
 } );
+
+test( 'correctly validates combined depends-on and excludes-on rules', () => {
+	const podValuesFail1 = {
+		// Fails because depends-on is not met (restrict_role is false)
+		restrict_role: false,
+		format_type: 'list', // This would pass excludes-on
+	};
+
+	const podValuesFail2 = {
+		// Fails because excludes-on is not met (format_type matches excluded value)
+		restrict_role: true, // This would pass depends-on
+		format_type: 'dropdown', // This fails excludes-on
+	};
+
+	const podValuesFail3 = {
+		// Fails both rules
+		restrict_role: false,
+		format_type: 'dropdown',
+	};
+
+	const podValuesSuccess = {
+		// Passes both rules
+		restrict_role: true, // Passes depends-on
+		format_type: 'list', // Passes excludes-on (not in excluded values)
+	};
+
+	const dependsOnRules = {
+		restrict_role: true,
+	};
+
+	const excludesOnRules = {
+		format_type: [ 'dropdown', 'radio' ],
+	};
+
+	// Test that both rules must pass for validation to succeed
+	expect(
+		validateFieldDependencies( podValuesFail1, dependsOnRules ) &&
+		validateFieldDependencies( podValuesFail1, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesFail2, dependsOnRules ) &&
+		validateFieldDependencies( podValuesFail2, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesFail3, dependsOnRules ) &&
+		validateFieldDependencies( podValuesFail3, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesSuccess, dependsOnRules ) &&
+		validateFieldDependencies( podValuesSuccess, excludesOnRules, 'excludes-on' )
+	).toEqual( true );
+} );
+
+test( 'correctly validates combined depends-on-any and excludes-on rules', () => {
+	const podValuesFail1 = {
+		// Fails because depends-on-any is not met
+		pick_format_single: 'different',
+		pick_format_multi: 'also different',
+		exclude_field: 'allowed', // This would pass excludes-on
+	};
+
+	const podValuesFail2 = {
+		// Fails because excludes-on is not met
+		pick_format_single: 'list', // This passes depends-on-any
+		pick_format_multi: 'different',
+		exclude_field: 'forbidden', // This fails excludes-on
+	};
+
+	const podValuesFail3 = {
+		// Fails both rules
+		pick_format_single: 'different',
+		pick_format_multi: 'also different',
+		exclude_field: 'forbidden',
+	};
+
+	const podValuesSuccess1 = {
+		// Passes both rules
+		pick_format_single: 'list', // Passes depends-on-any
+		pick_format_multi: 'different',
+		exclude_field: 'allowed', // Passes excludes-on
+	};
+
+	const podValuesSuccess2 = {
+		// Passes both rules with different depends-on-any match
+		pick_format_single: 'different',
+		pick_format_multi: 'list', // Passes depends-on-any
+		exclude_field: 'allowed', // Passes excludes-on
+	};
+
+	const dependsOnAnyRules = {
+		pick_format_single: 'list',
+		pick_format_multi: 'list',
+	};
+
+	const excludesOnRules = {
+		exclude_field: [ 'forbidden', 'blocked' ],
+	};
+
+	// Test that both rules must pass for validation to succeed
+	expect(
+		validateFieldDependencies( podValuesFail1, dependsOnAnyRules, 'depends-on-any' ) &&
+		validateFieldDependencies( podValuesFail1, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesFail2, dependsOnAnyRules, 'depends-on-any' ) &&
+		validateFieldDependencies( podValuesFail2, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesFail3, dependsOnAnyRules, 'depends-on-any' ) &&
+		validateFieldDependencies( podValuesFail3, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesSuccess1, dependsOnAnyRules, 'depends-on-any' ) &&
+		validateFieldDependencies( podValuesSuccess1, excludesOnRules, 'excludes-on' )
+	).toEqual( true );
+
+	expect(
+		validateFieldDependencies( podValuesSuccess2, dependsOnAnyRules, 'depends-on-any' ) &&
+		validateFieldDependencies( podValuesSuccess2, excludesOnRules, 'excludes-on' )
+	).toEqual( true );
+} );
+
+test( 'correctly validates complex combined rules with multiple dependencies', () => {
+	const podValuesFail1 = {
+		// Fails depends-on (missing second_dep: true)
+		first_dep: 'required',
+		second_dep: false,
+		exclude_field1: 'allowed',
+		exclude_field2: 'also_allowed',
+	};
+
+	const podValuesFail2 = {
+		// Fails excludes-on (exclude_field1 matches forbidden value)
+		first_dep: 'required',
+		second_dep: true,
+		exclude_field1: 'forbidden',
+		exclude_field2: 'allowed',
+	};
+
+	const podValuesSuccess = {
+		// Passes both rule sets
+		first_dep: 'required',
+		second_dep: true,
+		exclude_field1: 'allowed',
+		exclude_field2: 'also_allowed',
+	};
+
+	const dependsOnRules = {
+		first_dep: 'required',
+		second_dep: true,
+	};
+
+	const excludesOnRules = {
+		exclude_field1: [ 'forbidden', 'blocked' ],
+		exclude_field2: 'not_allowed',
+	};
+
+	expect(
+		validateFieldDependencies( podValuesFail1, dependsOnRules ) &&
+		validateFieldDependencies( podValuesFail1, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesFail2, dependsOnRules ) &&
+		validateFieldDependencies( podValuesFail2, excludesOnRules, 'excludes-on' )
+	).toEqual( false );
+
+	expect(
+		validateFieldDependencies( podValuesSuccess, dependsOnRules ) &&
+		validateFieldDependencies( podValuesSuccess, excludesOnRules, 'excludes-on' )
+	).toEqual( true );
+} );

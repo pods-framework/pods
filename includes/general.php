@@ -1725,6 +1725,65 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		$tags = $defaults;
 	}
 
+	// Attempt to detect shortcode issues when using > or < in attributes.
+	// Get the int keys from the array.
+	$int_keys = array_filter( array_keys( $tags ), 'is_int' );
+
+	if ( $int_keys ) {
+		if ( pods_is_admin() ) {
+			return pods_get_access_admin_notice( [
+				'content' => esc_html__( 'Malformed shortcode detected. WordPress shortcodes have limited support for certain characters in attributes. If you are using the characters "<" or ">" in an attribute then you must switch them to "__LESS_THAN__" or "__GREATER_THAN__" respectively. Other options include "__LESS_THAN_OR_EQUAL__" and "__GREATER_THAN_OR_EQUAL__".', 'pods' ),
+			] );
+		}
+
+		return '';
+	}
+
+	// Auto replace placeholders in shortcode attributes to get around WP shortcode limitations with certain characters.
+	$tags_for_gt_lt = [
+		'select',
+		'join',
+		'where',
+		'having',
+		'template_custom',
+	];
+
+	$gt_lt_find = [
+		// HTML entities.
+		'&lt;', // Entity: Less than.
+		'&le;', // Entity: Less than or equal.
+		'&gt;', // Entity: Greater than.
+		'&ge;', // Entity: Greater than or equal.
+		'&ne;', // Entity: Not equal.
+		// Placeholders.
+		'__LESS_THAN__',
+		'__LESS_THAN_OR_EQUAL__',
+		'__GREATER_THAN__',
+		'__GREATER_THAN_OR_EQUAL__',
+	];
+
+	$gt_lt_replace = [
+		// HTML entities.
+		'<',
+		'<=',
+		'>',
+		'>=',
+		'!=',
+		// Placeholders.
+		'<',
+		'<=',
+		'>',
+		'>=',
+	];
+
+	foreach ( $tags_for_gt_lt as $tag ) {
+		$tag_value = $tags[ $tag ] ?? null;
+
+		if ( $tag_value && is_string( $tag_value ) ) {
+			$tags[ $tag ] = str_replace( $gt_lt_find, $gt_lt_replace, $tag_value );
+		}
+	}
+
 	if ( ! empty( $tags['template_custom'] ) ) {
 		$content = $tags['template_custom'];
 	}
@@ -2076,7 +2135,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			$params['where'] = $tags['where'];
 
 			if ( $shortcode_allow_evaluate_tags ) {
-				$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
+				$params['where'] = pods_evaluate_tags_sql( $params['where'], $evaluate_tags_args );
 			}
 		}
 
@@ -2114,7 +2173,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			$params['having'] = $tags['having'];
 
 			if ( $shortcode_allow_evaluate_tags ) {
-				$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
+				$params['having'] = pods_evaluate_tags_sql( $params['having'], $evaluate_tags_args );
 			}
 		}
 

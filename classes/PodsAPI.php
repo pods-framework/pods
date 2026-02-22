@@ -11389,7 +11389,7 @@ class PodsAPI {
 
 			if ( class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class ) ) {
 				// Maybe use the test-based cache flushing to prevent major slowdowns.
-				// phpstan-ignore-next-line
+				// @phpstan-ignore-next-line
 				\Pods_Unit_Tests\Pods_UnitTestCase::flush_cache();
 			} else {
 				// Do normal cache clear.

@@ -4208,10 +4208,14 @@ class Pods implements Iterator {
 				$field['name'] = $to_merge['name'];
 			}
 
-			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {
+			if ( pods_v_bool( 'hidden', $field ) || 'hidden' === $field['type'] ) {
 				continue;
 			} elseif ( ! pods_permission( $field ) ) {
-				continue;
+				if ( pods_v_bool( 'read_only_restricted', $field ) ) {
+					$field['read_only'] = true;
+				} else {
+					continue;
+				}
 			}
 
 			$fields[ $field['name'] ] = $field;

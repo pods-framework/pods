@@ -2,10 +2,10 @@
 Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, dan.stefan, Desertsnowman, mgibbs189, Shelob9, clubduece, curtismchale, mikedamage, jchristopher, pcfreak30
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
-Requires at least: 6.3
-Tested up to: 6.8
-Requires PHP: 7.2
-Stable tag: 3.3.4
+Requires at least: 6.8
+Tested up to: 7.0
+Requires PHP: 8.0
+Stable tag: 3.4.0-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -434,6 +434,9 @@ Read more about [How access rights work with Pods](https://docs.pods.io/displayi
 Our GitHub has the full list of all prior releases of Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
 
 == Upgrade Notice ==
+
+= 3.4 =
+This upgrade requires a minimum versions of PHP 8.0+, WordPress 6.8+, and MySQL 5.7+.
 
 = 3.1 =
 This upgrade is security focused.

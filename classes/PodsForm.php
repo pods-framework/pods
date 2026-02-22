@@ -221,7 +221,10 @@ class PodsForm {
 			$options['help'] = '';
 		}
 
-		if ( false === self::permission( $type, $name, $options, null, $pod, $id ) ) {
+		if (
+			false === self::permission( $type, $name, $options, null, $pod, $id )
+			&& ! pods_v_bool( 'read_only_restricted', $options )
+		) {
 			return false;
 		}
 

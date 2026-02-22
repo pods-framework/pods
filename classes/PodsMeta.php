@@ -1532,6 +1532,14 @@ class PodsMeta {
 						}
 					}
 
+					// Check if field wasn't submitted (likely hidden by conditional logic).
+					if ( ! isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
+						// If save_value_when_hidden is enabled, skip this field to preserve existing DB value.
+						if ( pods_v_bool( 'conditional_logic_save_value', $field ) ) {
+							continue;
+						}
+					}
+
 					$data[ $field['name'] ] = '';
 
 					if ( isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {

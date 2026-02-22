@@ -3,7 +3,7 @@
 namespace Pods_Unit_Tests\Pods;
 
 use WP_User;
-use Codeception\TestCase\WPTestCase;
+use lucatume\WPBrowser\TestCase\WPTestCase;
 use Pods\Permissions;
 
 /**

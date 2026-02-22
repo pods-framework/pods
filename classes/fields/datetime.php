@@ -289,20 +289,20 @@ class PodsField_DateTime extends PodsField {
 
 		$field_type = static::$type;
 
-		$is_read_only = (boolean) pods_v( 'read_only', $options, false );
-
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
-			if ( $is_read_only ) {
+			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && $is_read_only ) {
-			$options['readonly'] = true;
+		} elseif ( ! pods_has_permissions( $options ) ) {
+			if ( pods_v_bool( 'read_only', $options ) ) {
+				$options['readonly'] = true;
 
-			$field_type = 'text';
+				$field_type = 'text';
+			}
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {

@@ -55,6 +55,7 @@ phpstan.neon
 phpunit.xml.dist
 README.md
 rollup.config.js
+slic.json
 TESTS.md
 webpack.common.js
 webpack.dev.js

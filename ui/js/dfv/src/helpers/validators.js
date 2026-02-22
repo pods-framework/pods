@@ -59,7 +59,8 @@ export const minValidator = ( minValue ) => ( value ) => {
 export const emailValidator = () => ( value ) => {
 	const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-	if ( ! value || ! value.match( EMAIL_REGEX ) ) {
+	// Allow empty values for optional fields (required validation is handled separately).
+	if ( value && ! value.match( EMAIL_REGEX ) ) {
 		throw __( 'Invalid email address format.', 'pods' );
 	}
 

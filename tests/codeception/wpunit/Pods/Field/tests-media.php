@@ -10,7 +10,7 @@ class Test_Media extends Pods_UnitTestCase {
 	/** @var array */
 	public static $images = array();
 
-	public function setUp() {
+	public function setUp(): void {
 		self::$images[] = $this->factory()->attachment->create();
 		self::$images[] = $this->factory()->attachment->create();
 		self::$images[] = $this->factory()->attachment->create();

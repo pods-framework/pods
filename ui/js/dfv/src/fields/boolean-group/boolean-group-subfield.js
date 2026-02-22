@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useRef } from 'react';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -15,6 +15,7 @@ import HelpTooltip from 'dfv/src/components/help-tooltip';
  */
 import useConditionalLogic from 'dfv/src/hooks/useConditionalLogic';
 import { FIELD_PROP_TYPE } from 'dfv/src/config/prop-types';
+import useHideContainerDOM from 'dfv/src/components/field-wrapper/useHideContainerDOM';
 
 const BooleanGroupSubfield = ( {
 	subfieldConfig,
@@ -30,11 +31,16 @@ const BooleanGroupSubfield = ( {
 		name,
 	} = subfieldConfig;
 
+	const subFieldRef = useRef( null );
+
 	const meetsConditionalLogic = useConditionalLogic(
 		subfieldConfig,
 		allPodValues,
 		allPodFieldsMap,
 	);
+
+	// Use hook to hide the container element
+	useHideContainerDOM( name, subFieldRef, meetsConditionalLogic );
 
 	const idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;
 

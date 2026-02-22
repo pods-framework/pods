@@ -908,6 +908,12 @@ class PodsUI {
 
 		$this->setup_fields();
 
+		// Debug purposes
+		if ( 1 === (int) pods_v( 'pods_debug_ui_options', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+			pods_debug( __METHOD__ . ':' . __LINE__ );
+			pods_debug( $options );
+		}
+
 		return $options;
 	}
 
@@ -1403,12 +1409,15 @@ class PodsUI {
 	 */
 	public function add() {
 
-		if ( false !== $this->callback_action( 'add' ) ) {
-			return null;
+		if ( $this->restricted( $this->action ) ) {
+			$action_label = ! empty( $this->label[ $this->action ] ) ? $this->label[ $this->action ] : ucwords( str_replace( [ '_', '-' ], ' ', $this->action ) );
+
+			// translators: %1$s is the action label, %2$s is the item singular label.
+			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to %1$s for this %2$s.', 'pods' ), $action_label, $this->item ) );
 		}
 
-		if ( $this->restricted( $this->action ) ) {
-			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
+		if ( false !== $this->callback_action( 'add' ) ) {
+			return null;
 		}
 
 		$icon_style = '';
@@ -1417,28 +1426,32 @@ class PodsUI {
 		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
-				<br />
-			</div>
-			<h2>
-				<?php
-				echo wp_kses_post( $this->header['add'] );
+			<?php if ( $this->header['add'] ) : ?>
+				<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+					<br />
+				</div>
+				<h2>
+					<?php
+					echo wp_kses_post( $this->header['add'] );
 
-				if ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'manage',
-							$this->num_prefix . 'id' . $this->num     => '',
-						), self::$allowed, $this->exclusion()
-					);
+					if ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
+						$link = pods_query_arg(
+							array(
+								$this->num_prefix . 'action' . $this->num => 'manage',
+								$this->num_prefix . 'id' . $this->num     => '',
+							), self::$allowed, $this->exclusion()
+						);
 
-					if ( ! empty( $this->action_links['manage'] ) ) {
-						$link = $this->action_links['manage'];
-					}
-					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
-				<?php } ?>
-			</h2>
+						if ( ! empty( $this->action_links['manage'] ) ) {
+							$link = $this->action_links['manage'];
+						}
+						?>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
+					<?php } ?>
+				</h2>
+			<?php endif; ?>
+
+			<?php do_action( 'pods_ui_after_heading', $this->action, $this ); ?>
 
 			<?php $this->form( true ); ?>
 		</div>
@@ -1476,45 +1489,49 @@ class PodsUI {
 		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
-				<br />
-			</div>
-			<h2>
-				<?php
-				echo wp_kses_post( $this->do_template( $duplicate ? $this->header['duplicate'] : $this->header['edit'] ) );
-
-				if ( ! in_array( 'add', $this->actions_disabled ) && ! in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'add',
-							$this->num_prefix . 'id' . $this->num     => '',
-							$this->num_prefix . 'do' . $this->num     => '',
-						), self::$allowed, $this->exclusion()
-					);
-
-					if ( ! empty( $this->action_links['add'] ) ) {
-						$link = $this->action_links['add'];
-					}
-					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
+			<?php if ( $duplicate ? $this->header['duplicate'] : $this->header['edit'] ) : ?>
+				<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+					<br />
+				</div>
+				<h2>
 					<?php
-				} elseif ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'manage',
-							$this->num_prefix . 'id' . $this->num     => '',
-						), self::$allowed, $this->exclusion()
-					);
+					echo wp_kses_post( $this->do_template( $duplicate ? $this->header['duplicate'] : $this->header['edit'] ) );
 
-					if ( ! empty( $this->action_links['manage'] ) ) {
-						$link = $this->action_links['manage'];
-					}
+					if ( ! in_array( 'add', $this->actions_disabled ) && ! in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
+						$link = pods_query_arg(
+							array(
+								$this->num_prefix . 'action' . $this->num => 'add',
+								$this->num_prefix . 'id' . $this->num     => '',
+								$this->num_prefix . 'do' . $this->num     => '',
+							), self::$allowed, $this->exclusion()
+						);
+
+						if ( ! empty( $this->action_links['add'] ) ) {
+							$link = $this->action_links['add'];
+						}
+						?>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
+						<?php
+					} elseif ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
+						$link = pods_query_arg(
+							array(
+								$this->num_prefix . 'action' . $this->num => 'manage',
+								$this->num_prefix . 'id' . $this->num     => '',
+							), self::$allowed, $this->exclusion()
+						);
+
+						if ( ! empty( $this->action_links['manage'] ) ) {
+							$link = $this->action_links['manage'];
+						}
+						?>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
+						<?php
+					}//end if
 					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
-					<?php
-				}//end if
-				?>
-			</h2>
+				</h2>
+			<?php endif; ?>
+
+			<?php do_action( 'pods_ui_after_heading', $this->action, $this ); ?>
 
 			<?php $this->form( false, $duplicate ); ?>
 		</div>
@@ -1789,48 +1806,51 @@ class PodsUI {
 		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
-				<br />
-			</div>
-			<h2>
-				<?php
-				echo wp_kses_post( $this->do_template( $this->header['view'] ) );
-
-				if ( ! in_array( 'add', $this->actions_disabled ) && ! in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'add',
-							$this->num_prefix . 'id' . $this->num     => '',
-							$this->num_prefix . 'do' . $this->num     => '',
-						), self::$allowed, $this->exclusion()
-					);
-
-					if ( ! empty( $this->action_links['add'] ) ) {
-						$link = $this->action_links['add'];
-					}
-					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
+			<?php if ( $this->header['view'] ) : ?>
+				<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+					<br />
+				</div>
+				<h2>
 					<?php
-				} elseif ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'manage',
-							$this->num_prefix . 'id' . $this->num     => '',
-						), self::$allowed, $this->exclusion()
-					);
+					echo wp_kses_post( $this->do_template( $this->header['view'] ) );
 
-					if ( ! empty( $this->action_links['manage'] ) ) {
-						$link = $this->action_links['manage'];
-					}
+					if ( ! in_array( 'add', $this->actions_disabled ) && ! in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
+						$link = pods_query_arg(
+							array(
+								$this->num_prefix . 'action' . $this->num => 'add',
+								$this->num_prefix . 'id' . $this->num     => '',
+								$this->num_prefix . 'do' . $this->num     => '',
+							), self::$allowed, $this->exclusion()
+						);
+
+						if ( ! empty( $this->action_links['add'] ) ) {
+							$link = $this->action_links['add'];
+						}
+						?>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
+						<?php
+					} elseif ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
+						$link = pods_query_arg(
+							array(
+								$this->num_prefix . 'action' . $this->num => 'manage',
+								$this->num_prefix . 'id' . $this->num     => '',
+							), self::$allowed, $this->exclusion()
+						);
+
+						if ( ! empty( $this->action_links['manage'] ) ) {
+							$link = $this->action_links['manage'];
+						}
+						?>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
+						<?php
+					}//end if
+
+					pods_view( PODS_DIR . 'ui/admin/view.php', compact( array_keys( get_defined_vars() ) ) );
 					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
-					<?php
-				}//end if
+				</h2>
+			<?php endif; ?>
 
-				pods_view( PODS_DIR . 'ui/admin/view.php', compact( array_keys( get_defined_vars() ) ) );
-				?>
-
-			</h2>
+			<?php do_action( 'pods_ui_after_heading', $this->action, $this ); ?>
 		</div>
 		<?php
 	}
@@ -2673,65 +2693,105 @@ class PodsUI {
 		?>
 
 		<div class="pods-admin-container">
-			<?php if ( ! in_array( 'manage_header', $this->actions_disabled, true ) && ! in_array( 'manage_header', $this->actions_hidden, true ) ) : ?>
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
-				<br />
-			</div>
-			<h2>
-				<?php
-				if ( true === $reorder ) {
-					echo wp_kses_post( $this->header['reorder'] );
+			<?php if ( $this->header['manage'] && ! in_array( 'manage_header', $this->actions_disabled, true ) && ! in_array( 'manage_header', $this->actions_hidden, true ) ) : ?>
+				<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+					<br />
+				</div>
+				<h2>
+					<?php
+					if ( true === $reorder ) {
+						echo wp_kses_post( $this->header['reorder'] );
 
-					if ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
+						if ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
+							$link = pods_query_arg(
+								array(
+									$this->num_prefix . 'action' . $this->num => 'manage',
+									$this->num_prefix . 'id' . $this->num     => '',
+								),
+								self::$allowed, $this->exclusion()
+							);
+
+							if ( ! empty( $this->action_links['manage'] ) ) {
+								$link = $this->action_links['manage'];
+							}
+						?>
+						<small>(<a href="<?php echo esc_url( $link ); ?>">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>)</small>
+						<?php
+						}
+					} else {
+						echo wp_kses_post( $this->header['manage'] );
+					}
+
+					if ( ! in_array( 'add', $this->actions_disabled ) && ! in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
 						$link = pods_query_arg(
 							array(
-								$this->num_prefix . 'action' . $this->num => 'manage',
+								$this->num_prefix . 'action' . $this->num => 'add',
 								$this->num_prefix . 'id' . $this->num     => '',
+								$this->num_prefix . 'do' . $this->num     => '',
 							),
 							self::$allowed, $this->exclusion()
 						);
 
-						if ( ! empty( $this->action_links['manage'] ) ) {
-							$link = $this->action_links['manage'];
+						if ( ! empty( $this->action_links['add'] ) ) {
+							$link = $this->action_links['add'];
 						}
-					?>
-					<small>(<a href="<?php echo esc_url( $link ); ?>">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>)</small>
-					<?php
+						?>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->label['add_new'] ); ?></a>
+						<?php
 					}
-				} else {
-					echo wp_kses_post( $this->header['manage'] );
-				}
+					if ( ! in_array( 'reorder', $this->actions_disabled ) && ! in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder['on'] && ! $this->restricted( 'reorder' ) ) {
+						$link = pods_query_arg( array( $this->num_prefix . 'action' . $this->num => 'reorder' ), self::$allowed, $this->exclusion() );
 
-				if ( ! in_array( 'add', $this->actions_disabled ) && ! in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'add',
-							$this->num_prefix . 'id' . $this->num     => '',
-							$this->num_prefix . 'do' . $this->num     => '',
-						),
-						self::$allowed, $this->exclusion()
-					);
+						if ( ! empty( $this->action_links['reorder'] ) ) {
+							$link = $this->action_links['reorder'];
+						}
+						?>
+						<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $this->label['reorder'] ); ?></a>
+						<?php
+					}
 
-					if ( ! empty( $this->action_links['add'] ) ) {
-						$link = $this->action_links['add'];
+					if ( is_array( $this->actions_custom ) ) {
+						foreach ( $this->actions_custom as $custom_action => $custom_data ) {
+							if ( in_array( $custom_action, [ 'add', 'manage', 'reorder' ], true ) ) {
+								continue;
+							}
+
+							if ( empty( $custom_data['show_in_header'] ) ) {
+								continue;
+							}
+
+							if ( in_array( $custom_action, $this->actions_disabled ) || in_array( $custom_action, $this->actions_hidden ) || $this->restricted( $custom_action ) ) {
+								continue;
+							}
+
+							$link = pods_query_arg(
+								[
+									$this->num_prefix . 'action' . $this->num => $custom_action,
+									$this->num_prefix . 'id' . $this->num     => '',
+									$this->num_prefix . 'do' . $this->num     => '',
+								],
+								self::$allowed, $this->exclusion()
+							);
+
+							if ( ! empty( $this->action_links[ $custom_action ] ) ) {
+								$link = $this->action_links[ $custom_action ];
+							}
+
+							$label = ! empty( $this->label[ $custom_action ] ) ? $this->label[ $custom_action ] : $custom_data['label'];
+
+							if ( empty( $label ) ) {
+								$label = ucwords( str_replace( [ '_', '-' ], ' ', $custom_action ) );
+							}
+							?>
+							<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2"><?php echo wp_kses_post( $label ); ?></a>
+							<?php
+						}
 					}
 					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->label['add_new'] ); ?></a>
-					<?php
-				}
-				if ( ! in_array( 'reorder', $this->actions_disabled ) && ! in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder['on'] && ! $this->restricted( 'reorder' ) ) {
-					$link = pods_query_arg( array( $this->num_prefix . 'action' . $this->num => 'reorder' ), self::$allowed, $this->exclusion() );
-
-					if ( ! empty( $this->action_links['reorder'] ) ) {
-						$link = $this->action_links['reorder'];
-					}
-					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->label['reorder'] ); ?></a>
-					<?php
-				}
-				?>
-			</h2>
+				</h2>
 			<?php endif; ?>
+
+			<?php do_action( 'pods_ui_after_heading', $this->action, $this ); ?>
 
 			<?php
 			/**
@@ -4546,6 +4606,10 @@ class PodsUI {
 
 		if ( is_array( $this->actions_custom ) ) {
 			foreach ( $this->actions_custom as $custom_action => $custom_data ) {
+				if ( ! empty( $custom_data['show_in_header'] ) ) {
+					continue;
+				}
+
 				if ( 'add' !== $custom_action && is_array( $custom_data ) && ( isset( $custom_data['link'] ) || isset( $custom_data['callback'] ) ) && ! in_array( $custom_action, $this->actions_disabled ) && ! in_array( $custom_action, $this->actions_hidden ) ) {
 					if ( ! in_array(
 						$custom_action, array(
@@ -4711,7 +4775,7 @@ class PodsUI {
 									if ( true === $this->pagination ) {
 										?>
 										<input type="text" class="screen-per-page" name="wp_screen_options[value]" id="<?php echo esc_attr( $this->unique_identifier ); ?>_per_page" maxlength="3" value="20">
-										<label for="<?php echo esc_attr( $this->unique_identifier ); ?>_per_page"><?php esc_html_e( sprintf( __( '%s per page', 'pods' ), $this->items ) ); ?></label>
+										<label for="<?php echo esc_attr( $this->unique_identifier ); ?>_per_page"><?php echo esc_html( sprintf( __( '%s per page', 'pods' ), $this->items ) ); ?></label>
 										<?php
 									}
 									$this->do_hook( 'screen_meta_screen_submit' );

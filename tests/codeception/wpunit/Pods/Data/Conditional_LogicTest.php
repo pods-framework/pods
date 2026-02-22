@@ -3,7 +3,7 @@
 namespace Pods_Unit_Tests\Pods;
 
 use WP_User;
-use Codeception\TestCase\WPTestCase;
+use lucatume\WPBrowser\TestCase\WPTestCase;
 use Pods\Data\Conditional_Logic;
 
 /**
@@ -634,6 +634,369 @@ class Conditional_LogicTest extends WPTestCase {
 			$this->assertFalse( $sut->validate_rule( $rule_with_readable_compare, $values ), 'Debug: ' . var_export( $values, true ) );
 			$this->assertFalse( $sut->validate_rule( $rule_with_basic_compare, $values ), 'Debug: ' . var_export( $values, true ) );
 		}
+	}
+
+	/**
+	 * Direct unit tests for helper comparison methods
+	 */
+
+	/**
+	 * Test loose_string_equality_check method
+	 */
+	public function test_loose_string_equality_check_identical_strings() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->loose_string_equality_check( 'test', 'test' ) );
+	}
+
+	public function test_loose_string_equality_check_case_insensitive() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->loose_string_equality_check( 'Test', 'test' ) );
+		$this->assertTrue( $sut->loose_string_equality_check( 'TEST', 'test' ) );
+		$this->assertTrue( $sut->loose_string_equality_check( 'abc', 'ABC' ) );
+	}
+
+	public function test_loose_string_equality_check_string_number_coercion() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->loose_string_equality_check( '123', 123 ) );
+		$this->assertTrue( $sut->loose_string_equality_check( 123, '123' ) );
+		$this->assertTrue( $sut->loose_string_equality_check( '456', 456 ) );
+	}
+
+	public function test_loose_string_equality_check_boolean_number_coercion() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->loose_string_equality_check( true, 1 ) );
+		$this->assertTrue( $sut->loose_string_equality_check( 1, true ) );
+		$this->assertTrue( $sut->loose_string_equality_check( false, 0 ) );
+		$this->assertTrue( $sut->loose_string_equality_check( 0, false ) );
+	}
+
+	public function test_loose_string_equality_check_boolean_string_coercion() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->loose_string_equality_check( true, '1' ) );
+		$this->assertTrue( $sut->loose_string_equality_check( '1', true ) );
+		$this->assertTrue( $sut->loose_string_equality_check( false, '0' ) );
+		$this->assertTrue( $sut->loose_string_equality_check( '0', false ) );
+	}
+
+	public function test_loose_string_equality_check_arrays() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->loose_string_equality_check( [ 1, 2 ], [ 1, 2 ] ) );
+		$this->assertFalse( $sut->loose_string_equality_check( [ 1, 2 ], [ 2, 1 ] ) );
+		$this->assertTrue( $sut->loose_string_equality_check( [ 'a' => 1 ], [ 'a' => 1 ] ) );
+	}
+
+	public function test_loose_string_equality_check_not_matching() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->loose_string_equality_check( 'abc', 'def' ) );
+		$this->assertFalse( $sut->loose_string_equality_check( 123, 456 ) );
+		$this->assertFalse( $sut->loose_string_equality_check( true, false ) );
+	}
+
+	/**
+	 * Test convert_string_to_array method
+	 */
+	public function test_convert_string_to_array_comma_separated() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertEquals( [ '123', '456', '789' ], $sut->convert_string_to_array( '123,456,789' ) );
+	}
+
+	public function test_convert_string_to_array_with_whitespace() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertEquals( [ '123', '456', '789' ], $sut->convert_string_to_array( '123, 456, 789' ) );
+		$this->assertEquals( [ '123', '456', '789' ], $sut->convert_string_to_array( ' 123 , 456 , 789 ' ) );
+	}
+
+	public function test_convert_string_to_array_already_array() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertEquals( [ '123', '456' ], $sut->convert_string_to_array( [ '123', '456' ] ) );
+	}
+
+	public function test_convert_string_to_array_non_string() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertEquals( [], $sut->convert_string_to_array( 123 ) );
+		$this->assertEquals( [], $sut->convert_string_to_array( null ) );
+	}
+
+	/**
+	 * Test is_value_empty method
+	 */
+	public function test_is_value_empty_returns_true() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->is_value_empty( '' ) );
+		$this->assertTrue( $sut->is_value_empty( null ) );
+		$this->assertTrue( $sut->is_value_empty( [] ) );
+		$this->assertTrue( $sut->is_value_empty( false ) );
+	}
+
+	public function test_is_value_empty_returns_false() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->is_value_empty( 'value' ) );
+		$this->assertFalse( $sut->is_value_empty( 'null' ) );
+		$this->assertFalse( $sut->is_value_empty( '0' ) );
+		$this->assertFalse( $sut->is_value_empty( 0 ) );
+		$this->assertFalse( $sut->is_value_empty( 1 ) );
+		$this->assertFalse( $sut->is_value_empty( true ) );
+		$this->assertFalse( $sut->is_value_empty( [ 'item' ] ) );
+	}
+
+	/**
+	 * Test string_comparison method
+	 */
+	public function test_string_comparison_contains() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->string_comparison( 'contains', 'word', 'sentence with word in it' ) );
+		$this->assertTrue( $sut->string_comparison( 'contains', 'test', 'this is a test' ) );
+		$this->assertTrue( $sut->string_comparison( 'contains', 'WORD', 'word' ) ); // Case insensitive
+		$this->assertFalse( $sut->string_comparison( 'contains', 'word', 'no match' ) );
+		$this->assertTrue( $sut->string_comparison( 'contains', '', 'anything' ) ); // Empty search
+	}
+
+	public function test_string_comparison_starts_with() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->string_comparison( 'starts_with', 'word', 'word starts' ) );
+		$this->assertTrue( $sut->string_comparison( 'starts_with', 'test', 'testing' ) );
+		$this->assertTrue( $sut->string_comparison( 'starts_with', 'WORD', 'word' ) ); // Case insensitive
+		$this->assertFalse( $sut->string_comparison( 'starts_with', 'word', 'no word here' ) );
+		$this->assertTrue( $sut->string_comparison( 'starts_with', '', 'anything' ) ); // Empty search
+	}
+
+	public function test_string_comparison_ends_with() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->string_comparison( 'ends_with', 'word', 'ends with word' ) );
+		$this->assertTrue( $sut->string_comparison( 'ends_with', 'test', 'a test' ) );
+		$this->assertTrue( $sut->string_comparison( 'ends_with', 'WORD', 'word' ) ); // Case insensitive
+		$this->assertFalse( $sut->string_comparison( 'ends_with', 'word', 'word at start' ) );
+		$this->assertTrue( $sut->string_comparison( 'ends_with', '', 'anything' ) ); // Empty search
+	}
+
+	public function test_string_comparison_non_scalar() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->string_comparison( 'contains', 'word', [ 'word' ] ) );
+		$this->assertFalse( $sut->string_comparison( 'contains', [ 'word' ], 'word' ) );
+	}
+
+	/**
+	 * Test regex_match method
+	 */
+	public function test_regex_match_pattern() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->regex_match( '^[a-z]+$', 'onlyletters' ) );
+		$this->assertTrue( $sut->regex_match( '^\d+$', '12345' ) );
+		$this->assertFalse( $sut->regex_match( '^[a-z]+$', 'Has123' ) );
+		$this->assertFalse( $sut->regex_match( '^\d+$', 'abc' ) );
+	}
+
+	public function test_regex_match_partial() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->regex_match( 'test', 'this is a test' ) );
+		$this->assertFalse( $sut->regex_match( 'test', 'no match' ) );
+	}
+
+	public function test_regex_match_array() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		// ANY match in array
+		$this->assertTrue( $sut->regex_match( '^[a-z]+$', [ 'abc', '123' ] ) );
+		$this->assertFalse( $sut->regex_match( '^[a-z]+$', [ '123', '456' ] ) );
+	}
+
+	/**
+	 * Test in_comparison method
+	 */
+	public function test_in_comparison_any_match() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_comparison( [ '123', '456' ], '123', false ) );
+		$this->assertTrue( $sut->in_comparison( [ '123', '456' ], '456', false ) );
+		$this->assertFalse( $sut->in_comparison( [ '123', '456' ], '789', false ) );
+	}
+
+	public function test_in_comparison_loose_equality() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_comparison( [ '123', '456' ], 123, false ) );
+		$this->assertTrue( $sut->in_comparison( [ 123, 456 ], '123', false ) );
+	}
+
+	public function test_in_comparison_string_to_array() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_comparison( '123,456', [ '123', '999' ], false ) );
+		$this->assertFalse( $sut->in_comparison( '123,456', [ '999', '000' ], false ) );
+	}
+
+	public function test_in_comparison_all_match() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_comparison( [ '123' ], '123', true ) );
+		$this->assertTrue( $sut->in_comparison( [ '123', '123' ], '123', true ) );
+		$this->assertFalse( $sut->in_comparison( [ '123', '456' ], '123', true ) );
+	}
+
+	public function test_in_comparison_all_with_string_to_array() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_comparison( '123,456', [ '123', '456' ], true ) );
+		$this->assertTrue( $sut->in_comparison( '123,456', [ '123', '456', '789' ], true ) );
+		$this->assertFalse( $sut->in_comparison( '123,456,789', [ '123', '456' ], true ) );
+	}
+
+	/**
+	 * Test in_values_comparison method
+	 */
+	public function test_in_values_comparison_any_match() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_values_comparison( '123', [ '123', '456' ], false ) );
+		$this->assertTrue( $sut->in_values_comparison( '456', [ '123', '456' ], false ) );
+		$this->assertFalse( $sut->in_values_comparison( '789', [ '123', '456' ], false ) );
+	}
+
+	public function test_in_values_comparison_loose_equality() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_values_comparison( 123, [ '123', '456' ], false ) );
+		$this->assertTrue( $sut->in_values_comparison( '123', [ 123, 456 ], false ) );
+	}
+
+	public function test_in_values_comparison_empty_array() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->in_values_comparison( '123', [], false ) );
+	}
+
+	public function test_in_values_comparison_non_array() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->in_values_comparison( '123', '123', false ) );
+		$this->assertFalse( $sut->in_values_comparison( '123', 123, false ) );
+	}
+
+	public function test_in_values_comparison_all_match() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->in_values_comparison( '123', [ '123' ], true ) );
+		$this->assertTrue( $sut->in_values_comparison( '123', [ '123', '123' ], true ) );
+		$this->assertFalse( $sut->in_values_comparison( '123', [ '123', '456' ], true ) );
+	}
+
+	public function test_in_values_comparison_all_empty_array() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		// Empty array with "all" returns true (vacuous truth)
+		$this->assertTrue( $sut->in_values_comparison( '123', [], true ) );
+	}
+
+	/**
+	 * Test equality_comparison method
+	 */
+	public function test_equality_comparison_identical() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->equality_comparison( '123', '123' ) );
+		$this->assertTrue( $sut->equality_comparison( 123, 123 ) );
+	}
+
+	public function test_equality_comparison_type_coercion() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->equality_comparison( '123', 123 ) );
+		$this->assertTrue( $sut->equality_comparison( 123, '123' ) );
+	}
+
+	public function test_equality_comparison_boolean_number() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->equality_comparison( true, 1 ) );
+		$this->assertTrue( $sut->equality_comparison( 1, true ) );
+		$this->assertTrue( $sut->equality_comparison( false, 0 ) );
+		$this->assertTrue( $sut->equality_comparison( 0, false ) );
+	}
+
+	public function test_equality_comparison_boolean_string() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->equality_comparison( true, '1' ) );
+		$this->assertTrue( $sut->equality_comparison( '1', true ) );
+		$this->assertTrue( $sut->equality_comparison( false, '0' ) );
+		$this->assertTrue( $sut->equality_comparison( '0', false ) );
+	}
+
+	public function test_equality_comparison_not_matching() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->equality_comparison( '123', '456' ) );
+		$this->assertFalse( $sut->equality_comparison( 123, 456 ) );
+		$this->assertFalse( $sut->equality_comparison( true, false ) );
+	}
+
+	public function test_equality_comparison_non_scalar() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->equality_comparison( '123', [ '123' ] ) );
+	}
+
+	/**
+	 * Test numeric_comparison method
+	 */
+	public function test_numeric_comparison_less_than() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->numeric_comparison( '<', '100', 99 ) );
+		$this->assertTrue( $sut->numeric_comparison( '<', '100', '99' ) );
+		$this->assertFalse( $sut->numeric_comparison( '<', '100', 100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '<', '100', 101 ) );
+	}
+
+	public function test_numeric_comparison_less_than_or_equal() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->numeric_comparison( '<=', '100', 99 ) );
+		$this->assertTrue( $sut->numeric_comparison( '<=', '100', 100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '<=', '100', 101 ) );
+	}
+
+	public function test_numeric_comparison_greater_than() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->numeric_comparison( '>', '100', 101 ) );
+		$this->assertTrue( $sut->numeric_comparison( '>', '100', '101' ) );
+		$this->assertFalse( $sut->numeric_comparison( '>', '100', 100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '>', '100', 99 ) );
+	}
+
+	public function test_numeric_comparison_greater_than_or_equal() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertTrue( $sut->numeric_comparison( '>=', '100', 101 ) );
+		$this->assertTrue( $sut->numeric_comparison( '>=', '100', 100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '>=', '100', 99 ) );
+	}
+
+	public function test_numeric_comparison_non_scalar() : void {
+		$sut = $this->sut( 'show', 'any', [] );
+
+		$this->assertFalse( $sut->numeric_comparison( '<', '100', [ 99 ] ) );
+		$this->assertFalse( $sut->numeric_comparison( '>', '100', [ 101 ] ) );
 	}
 
 	private function sut( string $action, string $logic, array $rules ) : Conditional_Logic {

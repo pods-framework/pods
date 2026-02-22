@@ -2638,6 +2638,13 @@ class PodsAdmin {
 							if ( is_string( $bgf_key ) ) {
 								$boolean_group[ $bgf_key ]['name'] = $bgf_key;
 							}
+
+							$boolean_group[ $bgf_key ] = $this->backcompat_convert_tabs_to_groups_setup_field( [
+								'field_name'    => $boolean_group[ $bgf_key ]['name'],
+								'field_options' => $boolean_group[ $bgf_key ],
+								'parent'        => $parent,
+								'group_name'    => $group_name,
+							] );
 						}
 
 						$boolean_group = array_values( $boolean_group );

@@ -187,7 +187,7 @@ function frontier_if_block( $attributes, $code ) {
 			$attributes['compare'] = '=';
 		}
 
-		$attributes['compare'] = html_entity_decode( $attributes['compare'] );
+		$attributes['compare'] = pods_replace_gt_et_placeholders( $attributes['compare'] );
 		$attributes['compare'] = strtoupper( $attributes['compare'] );
 
 		// Normalize the compare.

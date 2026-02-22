@@ -33,7 +33,7 @@ class Bug3451Test extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	];
 	private $user_id = 0;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$params = [

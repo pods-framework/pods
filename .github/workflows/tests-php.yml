@@ -39,7 +39,7 @@ jobs:
       - name: Configure PHP environment
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.0
       # ------------------------------------------------------------------------------
       # Checkout slic
       # ------------------------------------------------------------------------------
@@ -98,6 +98,7 @@ jobs:
         run: |
           docker network prune -f
           ${SLIC_BIN} use ${GITHUB_REPOSITORY#*/}
+          ${SLIC_BIN} php-version 8.0
           ${SLIC_BIN} composer set-version 2
           ${SLIC_BIN} composer install
       # ------------------------------------------------------------------------------

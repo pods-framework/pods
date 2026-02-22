@@ -208,7 +208,9 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 						[
 							$obj->num_prefix . 'action' . $obj->num => 'manage',
 							$obj->num_prefix . 'id' . $obj->num     => '',
-						], PodsUI::$allowed, $obj->exclusion(),
+						],
+						PodsUI::$allowed,
+						$obj->exclusion()
 					);
 
 					if ( ! empty( $obj->action_links['manage'] ) ) {

@@ -2770,7 +2770,7 @@ class PodsUI {
 									$this->num_prefix . 'id' . $this->num     => '',
 									$this->num_prefix . 'do' . $this->num     => '',
 								],
-								self::$allowed, $this->exclusion(),
+								self::$allowed, $this->exclusion()
 							);
 
 							if ( ! empty( $this->action_links[ $custom_action ] ) ) {

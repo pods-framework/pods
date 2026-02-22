@@ -266,8 +266,8 @@ const ConditionalLogic = ( {
 							value={ rule.compare }
 							onChange={ ( event ) => setRuleOption( index, 'compare', event.target.value ) }
 						>
-							<option value="=">{ isRelationalFieldType ? __( 'is (id/value)', 'pods' ) : __( 'is', 'pods' ) }</option>
-							<option value="!=">{ isRelationalFieldType ? __( 'is not (id/value)', 'pods' ) : __( 'is not', 'pods' ) }</option>
+							<option value="=">{ isRelationalFieldType ? __( 'is (id/value, comma-separated)', 'pods' ) : __( 'is', 'pods' ) }</option>
+							<option value="!=">{ isRelationalFieldType ? __( 'is not (id/value, comma-separated)', 'pods' ) : __( 'is not', 'pods' ) }</option>
 
 							{ isRelationalFieldType ? (
 								<>

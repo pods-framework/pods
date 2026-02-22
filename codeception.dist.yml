@@ -2,6 +2,7 @@ actor: Tester
 paths:
     tests: tests/codeception
     log: tests/codeception/_output
+    output: tests/codeception/_output
     data: tests/codeception/_data
     helpers: tests/codeception/_support
     wp_root: "%WP_ROOT_FOLDER%"

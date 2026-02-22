@@ -705,16 +705,22 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 					$user = pods_access_bleep_data( $user );
 
-					if ( isset( $user->{$var} ) ) {
-						$value = $user->{$var};
-					} elseif ( 'role' === $var ) {
+					if ( 'role' === $var ) {
 						$value = '';
 
 						if ( ! empty( $user->roles ) ) {
 							$value = array_shift( $user->roles );
 						}
 					} else {
-						$value = get_user_meta( $user->ID, $var );
+						$value = '';
+						if ( isset( $user->data->{$var} ) ) {
+							$user_data = pods_access_bleep_data( $user->data );
+							$value = $user_data->{$var};
+						} elseif ( metadata_exists( 'user', $user->ID, $var ) ) {
+							$value = get_user_meta( $user->ID, $var );
+						} elseif ( isset( $user->{$var} ) ) {
+							$value = $user->{$var};
+						}
 					}
 
 					if ( is_array( $value ) && ! empty( $value ) ) {
@@ -1846,6 +1852,23 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		}
 
 		return $value;
+	}
+
+	// User special magic tag.
+	if ( 0 === strpos( $tag, 'user.' ) ) {
+		$pod = pods( 'user', get_current_user_id() );
+		if ( $pod->is_valid() && $pod->exists() ) {
+			$value = $pod->do_magic_tags( '{@' . substr( $tag, 5 ) . '}' );
+
+			if ( $value ) {
+
+				if ( $sanitize ) {
+					$value = pods_sanitize( $value );
+				}
+
+				return $value;
+			}
+		}
 	}
 
 	$tag = trim( $tag, ' {@}' );

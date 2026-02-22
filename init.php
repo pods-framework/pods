@@ -16,8 +16,8 @@
  * Text Domain:       pods
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Requires at least: 6.0
- * Requires PHP:      7.2
+ * Requires at least: 6.8
+ * Requires PHP:      8.0
  * GitHub Plugin URI: https://github.com/pods-framework/pods
  * Primary Branch:    main
  * Plugin ID:         did:plc:e3rm6t7cspgpzaf47kn3nnsl
@@ -56,10 +56,10 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 *
 	 * To be updated each Major x.x Pods release.
 	 *
-	 * Next planned minimum WP version: 6.6
+	 * Next planned minimum WP version: 6.9
 	 */
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		$pods_wp_version_minimum = getenv( 'PODS_WP_VERSION_MINIMUM' ) ?: '6.3';
+		$pods_wp_version_minimum = getenv( 'PODS_WP_VERSION_MINIMUM' ) ?: '6.8';
 		define( 'PODS_WP_VERSION_MINIMUM', $pods_wp_version_minimum );
 	}
 
@@ -68,10 +68,10 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 *
 	 * Found at: https://wordpress.org/about/stats/
 	 *
-	 * Next planned minimum PHP version: 7.3
+	 * Next planned minimum PHP version: 8.1
 	 */
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_PHP_VERSION_MINIMUM', '7.2' );
+		define( 'PODS_PHP_VERSION_MINIMUM', '8.0' );
 	}
 
 	/**
@@ -79,10 +79,10 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	 *
 	 * Found at: https://wordpress.org/about/stats/
 	 *
-	 *  Next planned minimum MySQL version: 5.6
+	 *  Next planned minimum MySQL version: 5.8
 	 */
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
-		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
+		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.7' );
 	}
 
 	define( 'PODS_FILE', __FILE__ );

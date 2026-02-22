@@ -61,7 +61,7 @@
     "erusev/parsedown": "^1.7.4",
     "lucatume/di52": "^4.0.1",
     "mustangostang/spyc": "^0.6.3",
-    "php": ">=7.2"
+    "php": ">=8.0"
   },
   "require-dev": {
     "automattic/vipwpcs": "^3.0.0",

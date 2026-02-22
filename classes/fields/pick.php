@@ -1957,7 +1957,7 @@ class PodsField_Pick extends PodsField {
 		}
 
 		// Handle syncing of taxonomy terms first (doesn't require bidirectional relationship).
-		if ( ! empty( $pod['type'] ) && 'post_type' === $pod['type'] && ! empty( $options[ static::$type . '_sync_taxonomy' ] ) ) {
+		if ( ! empty( $pod['type'] ) && 'post_type' === $pod['type'] && pods_v_bool( static::$type . '_sync_taxonomy', $options ) ) {
 			// Check if post type has the same attached taxonomy.
 			$taxonomies_available = get_object_taxonomies( $pod['name'] );
 			$taxonomies_available = array_flip( $taxonomies_available );

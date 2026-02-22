@@ -2843,6 +2843,16 @@ class PodsField_Pick extends PodsField {
 						$limit = 30;
 					}
 
+					$autocomplete_limit = pods_get_setting( 'autocomplete_limit' );
+
+					if ( 'admin_ajax_relationship' === $context && ! empty( $data_params['query'] ) && null !== $autocomplete_limit ) {
+						$limit = max( (int) $autocomplete_limit, -1 );
+
+						if ( 0 === $limit ) {
+							$limit = -1;
+						}
+					}
+
 					$params['limit'] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', $limit, $name, $value, $options, $pod, $id, $object_params );
 
 					if ( -1 !== (int) $params['limit'] && is_array( $value ) && $params['limit'] < count( $value ) ) {

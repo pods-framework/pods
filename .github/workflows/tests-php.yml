@@ -100,7 +100,7 @@ jobs:
           docker network prune -f
           ${SLIC_BIN} use ${GITHUB_REPOSITORY#*/}
           ${SLIC_BIN} composer set-version 2
-          ${SLIC_BIN} composer install
+          ${SLIC_BIN} composer install --ignore-platform-reqs
       # ------------------------------------------------------------------------------
       # Init WordPress container
       # ------------------------------------------------------------------------------

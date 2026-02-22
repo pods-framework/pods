@@ -1956,13 +1956,36 @@ class PodsField_Pick extends PodsField {
 			}
 		}
 
-		if (
-			(
-				empty( $related_field )
-				|| empty( $related_pod )
-			)
-			&& empty( $options[ static::$type . '_sync_taxonomy' ] )
-		) {
+		// Handle syncing of taxonomy terms first (doesn't require bidirectional relationship).
+		if ( ! empty( $pod['type'] ) && 'post_type' === $pod['type'] && ! empty( $options[ static::$type . '_sync_taxonomy' ] ) ) {
+			// Check if post type has the same attached taxonomy.
+			$taxonomies_available = get_object_taxonomies( $pod['name'] );
+			$taxonomies_available = array_flip( $taxonomies_available );
+
+			if ( $options instanceof Field || $options instanceof Value_Field ) {
+				$taxonomy_name = $options->get_related_object_name();
+
+				if ( isset( $taxonomies_available[ $taxonomy_name ] ) ) {
+					/**
+					 * Allow filtering the list of term IDs that will be synced for a field.
+					 *
+					 * @since 3.2.4
+					 *
+					 * @param array  $term_ids_to_sync The list of term IDs to sync.
+					 * @param Field  $field            The field object.
+					 * @param int    $id               The post ID.
+					 * @param string $taxonomy_name    The taxonomy name being synced.
+					 */
+					$term_ids_to_sync = apply_filters( 'pods_field_pick_save_sync_taxonomy_term_ids', $value_ids, $options, $id, $taxonomy_name );
+
+					// Update the taxonomy terms for the current post.
+					wp_set_post_terms( $id, $term_ids_to_sync, $taxonomy_name );
+				}
+			}
+		}
+
+		// Exit early if no bidirectional relationship to handle.
+		if ( empty( $related_field ) || empty( $related_pod ) ) {
 			return;
 		}
 
@@ -2042,34 +2065,6 @@ class PodsField_Pick extends PodsField {
 		// Remove this ID from the related IDs.
 		if ( ! empty( $remove_ids ) ) {
 			self::$api->delete_relationships( $remove_ids, $id, $related_pod, $related_field );
-		}
-
-		// Handle syncing of taxonomy terms.
-		if ( ! empty( $pod['type'] ) && 'post_type' === $pod['type'] && ! empty( $options[ static::$type . '_sync_taxonomy' ] ) ) {
-			// Check if post type has the same attached taxonomy.
-			$taxonomies_available = get_object_taxonomies( $pod['name'] );
-			$taxonomies_available = array_flip( $taxonomies_available );
-
-			if ( $options instanceof Field || $options instanceof Value_Field ) {
-				$taxonomy_name = $options->get_related_object_name();
-
-				if ( isset( $taxonomies_available[ $taxonomy_name ] ) ) {
-					/**
-					 * Allow filtering the list of term IDs that will be synced for a field.
-					 *
-					 * @since 3.2.4
-					 *
-					 * @param array  $term_ids_to_sync The list of term IDs to sync.
-					 * @param Field  $field            The field object.
-					 * @param int    $id               The post ID.
-					 * @param string $taxonomy_name    The taxonomy name being synced.
-					 */
-					$term_ids_to_sync = apply_filters( 'pods_field_pick_save_sync_taxonomy_term_ids', $value_ids, $options, $id, $taxonomy_name );
-
-					// Update the taxonomy terms for the current post.
-					wp_set_post_terms( $id, $term_ids_to_sync, $taxonomy_name );
-				}
-			}
 		}
 
 		if ( ! $no_conflict ) {

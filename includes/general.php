@@ -1732,7 +1732,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	if ( $int_keys ) {
 		if ( pods_is_admin() ) {
 			return pods_get_access_admin_notice( [
-				'content' => esc_html__( 'Malformed shortcode detected. WordPress shortcodes have limited support for certain characters in attributes. If you are using the characters "<" or ">" in an attribute then you must switch them to "__LESS_THAN__" or "__GREATER_THAN__" respectively. Other options include "__LESS_THAN_OR_EQUAL__" and "__GREATER_THAN_OR_EQUAL__".', 'pods' ),
+				'summary' => esc_html__( 'Admin Notice: Malformed Shortcode Detected', 'pods' ),
+				'content' => esc_html__( 'WordPress shortcodes have limited support for certain characters in attributes. If you are using the characters "<" or ">" in an attribute then you must switch them to "__LESS_THAN__" or "__GREATER_THAN__" respectively. Other options include "__LESS_THAN_OR_EQUAL__" and "__GREATER_THAN_OR_EQUAL__".', 'pods' ),
 			] );
 		}
 

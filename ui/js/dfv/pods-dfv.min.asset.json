@@ -1,10 +1,1 @@
-<<<<<<< HEAD
-{"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"f9e06e56d16b0a1ded06"}
-=======
-<<<<<<< HEAD
 {"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"a535fa292a232d00fb1e"}
->>>>>>> d9306befa (Rebuild assets)
-=======
-{"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"1c787679135b0a07425a"}
->>>>>>> 267c57c29 (Fix: Unable to custom reorder repeatable date/time values (#7471))
->>>>>>> 13d65f3f1 (Fix: Unable to custom reorder repeatable date/time values (#7471))

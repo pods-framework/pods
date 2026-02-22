@@ -506,14 +506,393 @@ class Conditional_Logic {
 	}
 
 	/**
-	 * Determine whether the rule validates for the field values provided.
+	 * Helper function to compare values of differing items, which allows strings
+	 * to match numbers.
+	 *
+	 * Comparing an array of 1 item could create false positives, because
+	 * [ '123' ] when converted to string === '123', so compare objects (usually arrays)
+	 * without using toString().
 	 *
 	 * @since 3.0
 	 *
-	 * @param array $rule   The conditional rule.
-	 * @param array $values The field values.
+	 * @param mixed $item1 First item to compare.
+	 * @param mixed $item2 Second item to compare.
 	 *
-	 * @return bool Whether the rule validates for the field values provided.
+	 * @return bool True if matches.
+	 */
+	public function loose_string_equality_check( $item1, $item2 ): bool {
+		// Compare objects (usually arrays) using serialization.
+		if ( is_object( $item1 ) || is_object( $item2 ) || is_array( $item1 ) || is_array( $item2 ) ) {
+			return wp_json_encode( $item1 ) === wp_json_encode( $item2 );
+		}
+
+		// Convert booleans to integers.
+		if ( is_bool( $item1 ) ) {
+			$item1 = $item1 ? 1 : 0;
+		}
+
+		if ( is_bool( $item2 ) ) {
+			$item2 = $item2 ? 1 : 0;
+		}
+
+		// Attempt to normalize numbers.
+		if ( is_numeric( $item1 ) && is_numeric( $item2 ) ) {
+			$item1 = (float) $item1;
+			$item2 = (float) $item2;
+		}
+
+		// Case-insensitive string comparison.
+		return strtolower( (string) $item1 ) === strtolower( (string) $item2 );
+	}
+
+	/**
+	 * Convert a string to an array by splitting on commas.
+	 *
+	 * @since 3.0
+	 *
+	 * @param mixed $value The value to convert.
+	 *
+	 * @return array The converted array.
+	 */
+	public function convert_string_to_array( $value ): array {
+		if ( is_array( $value ) ) {
+			return $value;
+		}
+
+		if ( is_int( $value ) || is_float( $value ) ) {
+			return [ $value ];
+		}
+
+		if ( ! is_string( $value ) ) {
+			return [];
+		}
+
+		// Split by comma and trim whitespace from each item.
+		return array_map( 'trim', explode( ',', $value ) );
+	}
+
+	/**
+	 * Check if a value is considered empty.
+	 *
+	 * @since 3.0
+	 *
+	 * @param mixed $value The value to check.
+	 *
+	 * @return bool True if the value is empty.
+	 */
+	public function is_value_empty( $value ): bool {
+		return in_array( $value, [ '', null, [], false ], true );
+	}
+
+	/**
+	 * Perform a string comparison operation.
+	 *
+	 * @since 3.0
+	 *
+	 * @param string $operation   The operation to perform: 'contains', 'starts_with', or 'ends_with'.
+	 * @param mixed  $rule_value  The value to compare against.
+	 * @param mixed  $value_to_test The value to be tested.
+	 *
+	 * @return bool True if the test passes.
+	 */
+	public function string_comparison( string $operation, $rule_value, $value_to_test ): bool {
+		if ( null !== $value_to_test && ! is_scalar( $value_to_test ) ) {
+			if ( ! is_array( $value_to_test ) ) {
+				return false;
+			}
+
+			$value_to_test = implode( ',', $value_to_test );
+		}
+
+		if ( null !== $rule_value && ! is_scalar( $rule_value ) ) {
+			if ( ! is_array( $rule_value ) ) {
+				return false;
+			}
+
+			$rule_value = implode( ',', $rule_value );
+		}
+
+		$value_str = strtolower( (string) $value_to_test );
+		$rule_str  = strtolower( (string) $rule_value );
+
+		if ( '' === $rule_str ) {
+			return true;
+		}
+
+		switch ( $operation ) {
+			case 'contains':
+				if ( function_exists( 'str_contains' ) ) {
+					return str_contains( $value_str, $rule_str );
+				}
+				return false !== stripos( $value_str, $rule_str );
+
+			case 'starts_with':
+				if ( function_exists( 'str_starts_with' ) ) {
+					return str_starts_with( $value_str, $rule_str );
+				}
+				return 0 === stripos( $value_str, $rule_str );
+
+			case 'ends_with':
+				if ( function_exists( 'str_ends_with' ) ) {
+					return str_ends_with( $value_str, $rule_str );
+				}
+				return 0 === substr_compare( $value_str, $rule_str, - strlen( $rule_str ) );
+
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * Perform a regex match operation.
+	 *
+	 * @since 3.0
+	 *
+	 * @param mixed $rule_value  The regex pattern to match against.
+	 * @param mixed $value_to_test The value to be tested.
+	 *
+	 * @return bool True if the test passes.
+	 */
+	public function regex_match( $rule_value, $value_to_test ): bool {
+		$pattern = '/' . str_replace( '/', '\/', (string) $rule_value ) . '/';
+
+		if ( is_array( $value_to_test ) ) {
+			foreach ( $value_to_test as $value_item ) {
+				if ( 1 === preg_match( $pattern, (string) $value_item ) ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		if ( ! is_scalar( $value_to_test ) ) {
+			return false;
+		}
+
+		return 1 === preg_match( $pattern, (string) $value_to_test );
+	}
+
+	/**
+	 * Check if value_to_test is in the rule_value array.
+	 *
+	 * @since 3.0
+	 *
+	 * @param mixed $rule_value    The array or string to check against.
+	 * @param mixed $value_to_test The value to be tested.
+	 * @param bool  $exact         If true, all items must match; if false, any item can match.
+	 *
+	 * @return bool True if the test passes.
+	 */
+	public function in_comparison( $rule_value, $value_to_test, bool $exact = false ): bool {
+		// We can't compare 'in' if the rule's value is not an array.
+		if ( ! is_array( $rule_value ) ) {
+			// If ruleValue is a string and valueToTest is an array, convert string to array.
+			if ( is_array( $value_to_test ) && is_string( $rule_value ) ) {
+				$check_rule_value = $this->convert_string_to_array( $rule_value );
+
+				// Check if values in ruleValue are contained within the array valueToTest.
+				if ( $exact ) {
+					// ALL items in check_rule_value must be found in value_to_test.
+					foreach ( $check_rule_value as $rule_value_item ) {
+						$found = false;
+						foreach ( $value_to_test as $value_item ) {
+							if ( $this->loose_string_equality_check( $rule_value_item, $value_item ) ) {
+								$found = true;
+								break;
+							}
+						}
+						if ( ! $found ) {
+							return false;
+						}
+					}
+					return true;
+				} else {
+					// ANY item in check_rule_value must be found in value_to_test.
+					foreach ( $check_rule_value as $rule_value_item ) {
+						foreach ( $value_to_test as $value_item ) {
+							if ( $this->loose_string_equality_check( $rule_value_item, $value_item ) ) {
+								return true;
+							}
+						}
+					}
+					return false;
+				}
+			}
+
+			return false;
+		}
+
+		// value_to_test must be scalar for array comparison.
+		if ( ! is_scalar( $value_to_test ) ) {
+			return false;
+		}
+
+		// Use loose equality check for all comparisons.
+		if ( $exact ) {
+			// ALL items in rule_value must match value_to_test.
+			foreach ( $rule_value as $rule_value_item ) {
+				if ( ! $this->loose_string_equality_check( $rule_value_item, $value_to_test ) ) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		// ANY item in rule_value must match value_to_test.
+		foreach ( $rule_value as $rule_value_item ) {
+			if ( $this->loose_string_equality_check( $rule_value_item, $value_to_test ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if rule_value is in the value_to_test array.
+	 *
+	 * @since 3.0
+	 *
+	 * @param mixed $rule_value    The value to check for.
+	 * @param mixed $value_to_test The array to check within.
+	 * @param bool  $exact         If true, all items must match; if false, any item can match.
+	 *
+	 * @return bool True if the test passes.
+	 */
+	public function in_values_comparison( $rule_value, $value_to_test, bool $exact = false ): bool {
+		// We can't compare 'in values' if valueToTest is not an array.
+		if ( ! is_array( $value_to_test ) ) {
+			// If valueToTest is a string and ruleValue is an array, convert string to array.
+			if ( is_array( $rule_value ) && is_string( $value_to_test ) ) {
+				$check_value_to_test = $this->convert_string_to_array( $value_to_test );
+
+				// Check if values in valueToTest are contained within the array ruleValue.
+				if ( $exact ) {
+					// ALL items in check_value_to_test must be found in rule_value.
+					foreach ( $check_value_to_test as $value_item ) {
+						$found = false;
+						foreach ( $rule_value as $rule_value_item ) {
+							if ( $this->loose_string_equality_check( $value_item, $rule_value_item ) ) {
+								$found = true;
+								break;
+							}
+						}
+						if ( ! $found ) {
+							return false;
+						}
+					}
+					return true;
+				} else {
+					// ANY item in check_value_to_test must be found in rule_value.
+					foreach ( $check_value_to_test as $value_item ) {
+						foreach ( $rule_value as $rule_value_item ) {
+							if ( $this->loose_string_equality_check( $value_item, $rule_value_item ) ) {
+								return true;
+							}
+						}
+					}
+					return false;
+				}
+			}
+
+			return false;
+		}
+
+		// rule_value must be scalar for array comparison.
+		if ( ! is_scalar( $rule_value ) ) {
+			return false;
+		}
+
+		// Use loose equality check for all comparisons.
+		if ( $exact ) {
+			// ALL items in value_to_test must match rule_value.
+			foreach ( $value_to_test as $value_item ) {
+				if ( ! $this->loose_string_equality_check( $value_item, $rule_value ) ) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		// ANY item in value_to_test must match rule_value.
+		foreach ( $value_to_test as $value_item ) {
+			if ( $this->loose_string_equality_check( $value_item, $rule_value ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Perform an equality comparison.
+	 *
+	 * @since 3.0
+	 *
+	 * @param mixed $rule_value  The value to compare against.
+	 * @param mixed $value_to_test The value to be tested.
+	 *
+	 * @return bool True if the test passes.
+	 */
+	public function equality_comparison( $rule_value, $value_to_test ): bool {
+		if ( ! is_scalar( $value_to_test ) ) {
+			return false;
+		}
+
+		// Numeric comparisons enforce floats on numeric values for strict checks.
+		if ( is_numeric( $rule_value ) ) {
+			$rule_value = (float) $rule_value;
+		}
+
+		if ( is_numeric( $value_to_test ) ) {
+			$value_to_test = (float) $value_to_test;
+		}
+
+		return $value_to_test === $rule_value;
+	}
+
+	/**
+	 * Perform a numeric comparison operation.
+	 *
+	 * @since 3.0
+	 *
+	 * @param string $operator    The comparison operator: '<', '<=', '>', or '>='.
+	 * @param mixed  $rule_value  The value to compare against.
+	 * @param mixed  $value_to_test The value to be tested.
+	 *
+	 * @return bool True if the test passes.
+	 */
+	public function numeric_comparison( string $operator, $rule_value, $value_to_test ): bool {
+		if ( ! is_scalar( $value_to_test ) ) {
+			return false;
+		}
+
+		$num_value = (float) $value_to_test;
+		$num_rule  = (float) $rule_value;
+
+		switch ( $operator ) {
+			case '<':
+				return $num_rule < $num_value;
+			case '<=':
+				return $num_rule <= $num_value;
+			case '>':
+				return $num_rule > $num_value;
+			case '>=':
+				return $num_rule >= $num_value;
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * Validate a single rule.
+	 *
+	 * @since 3.0
+	 *
+	 * @param array $rule   The rule data.
+	 * @param array $values The values to check.
+	 *
+	 * @return bool Whether the rule passes.
 	 */
 	public function validate_rule( array $rule, array $values ): bool {
 		$field   = $rule['field'];
@@ -529,10 +908,8 @@ class Conditional_Logic {
 
 		$check_value = pods_v( $field, $values );
 
-		if ( ! in_array( $compare, [
-			'EMPTY',
-			'NOT EMPTY',
-		], true ) ) {
+		// Normalize values for non-empty comparisons.
+		if ( ! in_array( $compare, [ 'EMPTY', 'NOT EMPTY' ], true ) ) {
 			if ( null === $value ) {
 				$value = '';
 			} elseif ( is_bool( $value ) ) {
@@ -546,247 +923,54 @@ class Conditional_Logic {
 			}
 		}
 
-		if ( 'LIKE' === $compare ) {
-			if ( '' === $value ) {
-				return true;
-			}
-
-			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
+		switch ( $compare ) {
+			case 'LIKE':
+				return $this->string_comparison( 'contains', $value, $check_value );
+			case 'NOT LIKE':
+				return ! $this->string_comparison( 'contains', $value, $check_value );
+			case 'BEGINS':
+				return $this->string_comparison( 'starts_with', $value, $check_value );
+			case 'NOT BEGINS':
+				return ! $this->string_comparison( 'starts_with', $value, $check_value );
+			case 'ENDS':
+				return $this->string_comparison( 'ends_with', $value, $check_value );
+			case 'NOT ENDS':
+				return ! $this->string_comparison( 'ends_with', $value, $check_value );
+			case 'MATCHES':
+				return $this->regex_match( $value, $check_value );
+			case 'NOT MATCHES':
+				return ! $this->regex_match( $value, $check_value );
+			case 'IN':
+				return $this->in_comparison( $value, $check_value );
+			case 'NOT IN':
+				return ! $this->in_comparison( $value, $check_value );
+			case 'IN VALUES':
+				return $this->in_values_comparison( $value, $check_value );
+			case 'NOT IN VALUES':
+				return ! $this->in_values_comparison( $value, $check_value );
+			case 'ALL':
+				return $this->in_comparison( $value, $check_value, true );
+			case 'NOT ALL':
+				return ! $this->in_comparison( $value, $check_value, true );
+			case 'ALL VALUES':
+				return $this->in_values_comparison( $value, $check_value, true );
+			case 'NOT ALL VALUES':
+				return ! $this->in_values_comparison( $value, $check_value, true );
+			case 'EMPTY':
+				return $this->is_value_empty( $check_value );
+			case 'NOT EMPTY':
+				return ! $this->is_value_empty( $check_value );
+			case '=':
+				return $this->equality_comparison( $value, $check_value );
+			case '!=':
+				return ! $this->equality_comparison( $value, $check_value );
+			case '<':
+			case '<=':
+			case '>':
+			case '>=':
+				return $this->numeric_comparison( $compare, $value, $check_value );
+			default:
 				return false;
-			}
-
-			if ( null !== $value && ! is_scalar( $value ) ) {
-				return false;
-			}
-
-			if ( function_exists( 'str_contains' ) ) {
-				return str_contains( strtolower( (string) $check_value ), strtolower( (string) $value ) );
-			}
-
-			return false !== stripos( (string) $check_value, (string) $value );
 		}
-
-		if ( 'NOT LIKE' === $compare ) {
-			if ( '' === $value ) {
-				return false;
-			}
-
-			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return true;
-			}
-
-			if ( null !== $value && ! is_scalar( $value ) ) {
-				return true;
-			}
-
-			if ( function_exists( 'str_contains' ) ) {
-				return ! str_contains( strtolower( (string) $check_value ), strtolower( (string) $value ) );
-			}
-
-			return false === stripos( (string) $check_value, (string) $value );
-		}
-
-		if ( 'BEGINS' === $compare ) {
-			if ( '' === $value ) {
-				return true;
-			}
-
-			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return false;
-			}
-
-			if ( null !== $value && ! is_scalar( $value ) ) {
-				return false;
-			}
-
-			if ( function_exists( 'str_starts_with' ) ) {
-				return str_starts_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
-			}
-
-			return 0 === stripos( (string) $check_value, (string) $value );
-		}
-
-		if ( 'NOT BEGINS' === $compare ) {
-			if ( '' === $value ) {
-				return false;
-			}
-
-			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return true;
-			}
-
-			if ( null !== $value && ! is_scalar( $value ) ) {
-				return true;
-			}
-
-			if ( function_exists( 'str_starts_with' ) ) {
-				return ! str_starts_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
-			}
-
-			return 0 !== stripos( (string) $check_value, (string) $value );
-		}
-
-		if ( 'ENDS' === $compare ) {
-			if ( '' === $value ) {
-				return true;
-			}
-
-			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return false;
-			}
-
-			if ( null !== $value && ! is_scalar( $value ) ) {
-				return false;
-			}
-
-			if ( function_exists( 'str_ends_with' ) ) {
-				return str_ends_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
-			}
-
-			return 0 === substr_compare( (string) $check_value, (string) $value, - strlen( (string) $value ) );
-		}
-
-		if ( 'NOT ENDS' === $compare ) {
-			if ( '' === $value ) {
-				return false;
-			}
-
-			if ( null !== $check_value && ! is_scalar( $check_value ) ) {
-				return true;
-			}
-
-			if ( null !== $value && ! is_scalar( $value ) ) {
-				return true;
-			}
-
-			if ( function_exists( 'str_ends_with' ) ) {
-				return ! str_ends_with( strtolower( (string) $check_value ), strtolower( (string) $value ) );
-			}
-
-			return 0 !== substr_compare( (string) $check_value, (string) $value, - strlen( (string) $value ) );
-		}
-
-		if ( 'MATCHES' === $compare ) {
-			if ( is_array( $check_value ) ) {
-				foreach ( $check_value as $check_value_item ) {
-					if ( 1 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value_item ) ) {
-						return true;
-					}
-				}
-
-				return false;
-			}
-
-			if ( ! is_scalar( $check_value ) ) {
-				return false;
-			}
-
-			return 1 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value );
-		}
-
-		if ( 'NOT MATCHES' === $compare ) {
-			if ( is_array( $check_value ) ) {
-				foreach ( $check_value as $check_value_item ) {
-					if ( 0 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value_item ) ) {
-						return true;
-					}
-				}
-
-				return false;
-			}
-
-			if ( ! is_scalar( $check_value ) ) {
-				return true;
-			}
-
-			return 0 === preg_match( '/' . str_replace( '/', '\/', (string) $value ) . '/', (string) $check_value );
-		}
-
-		if ( 'IN' === $compare ) {
-			if ( ! is_scalar( $check_value ) ) {
-				return false;
-			}
-
-			return in_array( $check_value, (array) $value, false );
-		}
-
-		if ( 'NOT IN' === $compare ) {
-			if ( ! is_scalar( $check_value ) ) {
-				return true;
-			}
-
-			return ! in_array( $check_value, (array) $value, false );
-		}
-
-		if ( 'IN VALUES' === $compare ) {
-			if ( ! is_scalar( $value ) ) {
-				return false;
-			}
-
-			return in_array( $value, (array) $check_value, false );
-		}
-
-		if ( 'NOT IN VALUES' === $compare ) {
-			if ( ! is_scalar( $value ) ) {
-				return true;
-			}
-
-			return ! in_array( $value, (array) $check_value, false );
-		}
-
-		if ( 'EMPTY' === $compare ) {
-			return in_array( $check_value, [ '', null, [], false ], true );
-		}
-
-		if ( 'NOT EMPTY' === $compare ) {
-			return ! in_array( $check_value, [ '', null, [], false ], true );
-		}
-
-		// Numeric comparisons enforce floats on numeric values for strict checks.
-		if ( is_numeric( $value ) ) {
-			$value = (float) $value;
-		}
-
-		if ( is_numeric( $check_value ) ) {
-			$check_value = (float) $check_value;
-		}
-
-		if ( '=' === $compare ) {
-			if ( ! is_scalar( $check_value ) ) {
-				return false;
-			}
-
-			return $check_value === $value;
-		}
-
-		if ( '!=' === $compare ) {
-			if ( ! is_scalar( $check_value ) ) {
-				return true;
-			}
-
-			return $check_value !== $value;
-		}
-
-		if ( ! is_scalar( $check_value ) ) {
-			return false;
-		}
-
-		if ( '<' === $compare ) {
-			return (float) $value < (float) $check_value;
-		}
-
-		if ( '<=' === $compare ) {
-			return (float) $value <= (float) $check_value;
-		}
-
-		if ( '>' === $compare ) {
-			return (float) $value > (float) $check_value;
-		}
-
-		if ( '>=' === $compare ) {
-			return (float) $value >= (float) $check_value;
-		}
-
-		return false;
 	}
 }

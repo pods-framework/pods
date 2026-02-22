@@ -102,7 +102,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 				if ( ! empty( $all_pods ) ) {
 					$link = pods_query_arg( [ 'page' => 'pods', 'action' . $obj->num => 'manage' ] );
 					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php esc_html_e( 'Back to Manage', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php esc_html_e( 'Back to Manage', 'pods' ); ?></a>
 					<?php
 				}
 				?>

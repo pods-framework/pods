@@ -161,7 +161,7 @@ const ListSelectValues = ( {
 
 								return (
 									<DraggableListSelectItem
-										key={ `${ fieldName }-${ index }` }
+										key={ `${ fieldName }-${ JSON.stringify( valueItem ) }-${ index }` }
 										fieldName={ fieldName }
 										value={ getValueWithCorrectedLabel( valueItem ) }
 										isDraggable={ ! readOnly && ( 1 !== limit ) }

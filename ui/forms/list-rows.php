@@ -26,21 +26,22 @@ $post_callback     = isset( $post_callback ) ? $post_callback : null;
 foreach ( $fields as $field ) {
 	$field['name_prefix'] = $field_prefix;
 
-	$hidden_field = 'hidden' === $field['type'] || filter_var( pods_v( 'hidden', $field, false ), FILTER_VALIDATE_BOOLEAN );
+	$hidden_field = 'hidden' === $field['type'] || pods_v_bool( 'hidden', $field );
 
-	if (
-		! pods_permission( $field )
-		|| ( ! pods_has_permissions( $field ) && $hidden_field )
-	) {
-		if ( ! $hidden_field ) {
+	if ( ! pods_permission( $field ) ) {
+		if ( $hidden_field ) {
+			$field = pods_form_field_make_hidden( $field );
+		} elseif ( pods_v_bool( 'read_only_restricted', $field ) ) {
+			$field = pods_form_field_make_readonly( $field );
+		} else {
 			continue;
 		}
-
-		if ( $field instanceof \Pods\Whatsit\Field ) {
-			$field = clone $field;
+	} elseif ( ! pods_has_permissions( $field ) ) {
+		if ( $hidden_field ) {
+			$field = pods_form_field_make_hidden( $field );
+		} elseif ( pods_v_bool( 'read_only', $field ) ) {
+			$field = pods_form_field_make_readonly( $field );
 		}
-
-		$field['type'] = 'hidden';
 	}
 
 	$value = '';
@@ -60,10 +61,10 @@ foreach ( $fields as $field ) {
 	 *
 	 * @since 2.7.2
 	 *
-	 * @param string $html_class The HTML class.
-	 * @param array  $field      The current field.
+	 * @param string $row_classes The row classes.
+	 * @param array  $field       The current field.
 	 */
-	$row_classes = apply_filters( 'pods_form_html_class', $row_classes );
+	$row_classes = apply_filters( 'pods_form_html_class', $row_classes, $field );
 
 	$row_classes = trim( $row_classes );
 

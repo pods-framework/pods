@@ -1674,6 +1674,10 @@ class Pods implements Iterator {
 										$params->single = false;
 									}
 
+									if ( is_array( $value ) ) {
+										$value = array_unique( $value );
+									}
+
 									$value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
 								} elseif ( false === $params->in_form && ! empty( $value ) && is_array( $value ) && false === $params->keyed ) {
 									$value = array_values( $value );
@@ -4187,7 +4191,7 @@ class Pods implements Iterator {
 				];
 			}
 
-			$field = pods_config_merge_data( $defaults, $fields );
+			$field = pods_config_merge_data( $defaults, $field );
 
 			$field['name'] = trim( $field['name'] );
 
@@ -4204,10 +4208,14 @@ class Pods implements Iterator {
 				$field['name'] = $to_merge['name'];
 			}
 
-			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {
+			if ( pods_v_bool( 'hidden', $field ) || 'hidden' === $field['type'] ) {
 				continue;
 			} elseif ( ! pods_permission( $field ) ) {
-				continue;
+				if ( pods_v_bool( 'read_only_restricted', $field ) ) {
+					$field['read_only'] = true;
+				} else {
+					continue;
+				}
 			}
 
 			$fields[ $field['name'] ] = $field;

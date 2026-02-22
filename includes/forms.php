@@ -432,6 +432,7 @@ function pods_form_validate_submitted_fields( $name, $object_id = null, array $o
 
 		$value = pods_form_get_submitted_field_value( $field_name );
 
+		/** @var array|bool|WP_Error $field_is_valid */
 		$field_is_valid = $api->handle_field_validation( $value, $field_name, [], $fields, $pod );
 
 		if ( is_wp_error( $field_is_valid ) ) {
@@ -547,4 +548,42 @@ function pods_form_get_submitted_fields( $name, array $options = [] ) {
 
 	// Get fields and save them.
 	return pods_form_get_visible_objects( $pod, $options );
+}
+
+/**
+ * Make a field into a hidden field.
+ *
+ * @since TBD
+ *
+ * @param array|Field $field The field object.
+ *
+ * @return array|Field The field object.
+ */
+function pods_form_field_make_hidden( $field ) {
+	if ( $field instanceof Field ) {
+		$field = clone $field;
+	}
+
+	$field['type'] = 'hidden';
+
+	return $field;
+}
+
+/**
+ * Make a field into a readonly field.
+ *
+ * @since TBD
+ *
+ * @param array|Field $field The field object.
+ *
+ * @return array|Field The field object.
+ */
+function pods_form_field_make_readonly( $field ) {
+	if ( $field instanceof Field ) {
+		$field = clone $field;
+	}
+
+	$field['readonly'] = true;
+
+	return $field;
 }

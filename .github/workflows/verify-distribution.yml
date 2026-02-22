@@ -1,0 +1,43 @@
+name: Verify Plugin Distribution
+on:
+  schedule:
+    # Once per hour
+    #
+    #        ┌───────────── minute           (0 - 59)
+    #        │  ┌────────── hour             (0 - 23)
+    #        │  │  ┌─────── day of the month (1 - 31)
+    #        │  │  │  ┌──── month            (1 - 12 or JAN-DEC)
+    #        │  │  │  │  ┌─ day of the week  (0 - 6 or SUN-SAT)
+    #        │  │  │  │  │
+    #        │  │  │  │  │
+    #        │  │  │  │  │
+    - cron: '45 *  *  *  *'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/verify-distribution.yml'
+  pull_request:
+    branches:
+      - '**'
+    paths:
+      - '.github/workflows/verify-distribution.yml'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  fair:
+    name: Verify FAIR status
+    runs-on: ubuntu-latest
+    permissions: {}
+    timeout-minutes: 5
+    steps:
+      - name: Install fair-tools
+        run: | #shell
+          npm install -g fair-tools@0.8.1
+
+      - name: Verify PLC DID and FAIR metadata
+        run: | #shell
+          fair-tools did verify \
+            --did "did:plc:e3rm6t7cspgpzaf47kn3nnsl"

@@ -10,17 +10,17 @@ These are the versions we support security updates for. If a problem is found in
 
 The list below may become outdated over time but the above criteria will always apply. The list will be updated as often as needed.
 
-| Version  | Supported                           |
-| -------  | ----------------------------------- |
-| Current  | :white_check_mark:                  |
-| 3.2.x    | :white_check_mark:                  |
-| 3.1.x    | :white_check_mark:                  |
-| 3.0.x    | :white_check_mark:                  |
-| 2.9.x    | :white_check_mark:                  |
-| 2.8.x    | :white_check_mark: - EOL 2024-12-31 |
-| 2.7.x    | :white_check_mark: - EOL 2024-12-31 |
-| >=2.6.x  | :x: - EOL                           |
-| 1.x      | :x: - EOL                           |
+| Version  | Supported          | EOL Date   |
+| -------  | ------------------ | ---------- | 
+| Current  | :white_check_mark: |            |
+| 3.2.x    | :white_check_mark: | 2026-12-31 |
+| 3.1.x    | :white_check_mark: | 2026-12-31 |
+| 3.0.x    | :white_check_mark: | 2025-12-31 |
+| 2.9.x    | :white_check_mark: | 2025-12-31 |
+| 2.8.x    | :x:                | 2024-12-31 |
+| 2.7.x    | :x:                | 2024-12-31 |
+| >=2.6.x  | :x:                |            |
+| 1.x      | :x:                |            |
 
 ## Reporting a Vulnerability
 

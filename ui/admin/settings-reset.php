@@ -72,15 +72,21 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 }
 
 // Monday Mode
-$monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
+$monday_mode = (
+	1 === (int) pods_v( 'pods_monday_mode', 'get', 0, true )
+	|| (
+		1 === (int) date_i18n( 'N' )
+		&& (int) date_i18n( 'H' ) < 12
+	)
+);
 
 if ( pods_v_sanitized( 'pods_reset_weekend', 'post', pods_v_sanitized( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
+	$html = '<br /><br /><iframe width="480" height="360" src="https://www.youtube-nocookie.com/embed/2yJgwwDcgV8?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+
 	if ( $monday_mode ) {
-		$html = '<br /><br /><iframe width="480" height="360" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
 		pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );
 	} else {
-		$html = '<br /><br /><iframe width="480" height="360" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
-		pods_message( 'Oops, sorry! You can only reset the weekend on a Monday before the end of the work day. Somebody call the Waaambulance!' . $html, 'error' );
+		pods_message( 'Oops, sorry! You can only reset the weekend on a Monday morning but enjoy the video below..' . $html, 'error' );
 	}
 }
 

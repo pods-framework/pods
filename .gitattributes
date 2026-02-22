@@ -62,6 +62,7 @@ phpstan.neon export-ignore
 phpunit.xml.dist export-ignore
 README.md export-ignore
 rollup.config.js export-ignore
+slic.json export-ignore
 TESTS.md export-ignore
 webpack.common.js export-ignore
 webpack.dev.js export-ignore

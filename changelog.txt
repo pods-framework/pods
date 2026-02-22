@@ -2,6 +2,22 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.3.4 - September 24th, 2025 =
+
+* Feature: Official support for DID `did:plc:e3rm6t7cspgpzaf47kn3nnsl` for optional installation via DID using the FAIR plugin. (@sc0ttkclark)
+* Fix: Prevent duplicates in `Pods::field()` and `Pods::display()` for simple relationships. (@sc0ttkclark)
+
+= 3.3.3 - September 4th, 2025 =
+
+* Tweak: Support referencing ID for `PodsMeta::groups_get()`. (@sc0ttkclark)
+* Tweak: Update edit capability used for settings Pods so it can be displayed on the edit pod screen correctly. (@sc0ttkclark)
+* Fixed: Resolve issues with TinyMCE and Quill editors not loading when used as repeatable fields or conditional logic. #7448 #7438 #7430 (@multisme, @altermulti, @sc0ttkclark, @ztackett11)
+* Fixed: Resolve PHP fatal errors for undefined constant `\Pods\Whatsit\Store::PLACEHOLDER` in some edge case circumstances. #7445 (@sc0ttkclark, @Hue-SPetrovic)
+* Fixed: Resolve PHP 8.4 deprecation warnings with DI52 usage. #7448 (@sc0ttkclark, @doehry)
+* Fixed: Resolve warnings when using `--args` with WP-CLI commands. #7452 (@sc0ttkclark, @KhaledSakr)
+* Fixed: Resolve handling of decimals when auto-formatting to prevent removing zero number values and expand decimal handling for more cases. Improve logic matching (except dashes) for PHP vs JS. (@sc0ttkclark)
+* Fixed: Resolve field assigment issue in `pods_config_merge_data()` to reference the correct field. (@sc0ttkclark)
+
 = 3.3.2 - July 8th, 2025 =
 
 * Tweak: Updated Swagger docs for Pods REST API endpoints. (@sc0ttkclark)

@@ -54,7 +54,13 @@ const Wysiwyg = ( props ) => {
 				<ReactQuill
 					value={ value || '' }
 					onBlur={ () => setHasBlurred() }
-					onChange={ setValue }
+					onChange={ ( content, delta, source ) => {
+			// Only update state for user-initiated changes
+			// to prevent infinite loops on mount/programmatic updates
+			if ( source === 'user' ) {
+				setValue( content );
+			}
+		} }
 					theme="snow"
 					modules={ {
 						toolbar: QUILL_TOOLBAR_OPTIONS,

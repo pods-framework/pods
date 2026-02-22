@@ -39,17 +39,19 @@ foreach ( $fields as $k => $field ) {
 		unset( $fields[ $k ] );
 	} elseif ( ! pods_permission( $field ) ) {
 		if ( pods_v( 'hidden', $field, false ) ) {
-			$fields[ $k ]['type'] = 'hidden';
-		} elseif ( pods_v( 'read_only', $field, false ) ) {
-			$fields[ $k ]['readonly'] = true;
+			$fields[ $k ] = pods_form_field_make_hidden( $fields[ $k ] );
+		} elseif ( pods_v_bool( 'read_only_restricted', $field ) ) {
+			$fields[ $k ] = pods_form_field_make_readonly( $fields[ $k ] );
 		} else {
 			unset( $fields[ $k ] );
+
+			continue;
 		}
 	} elseif ( ! pods_has_permissions( $field ) ) {
-		if ( pods_v( 'hidden', $field, false ) ) {
-			$fields[ $k ]['type'] = 'hidden';
-		} elseif ( pods_v( 'read_only', $field, false ) ) {
-			$fields[ $k ]['readonly'] = true;
+		if ( pods_v_bool( 'hidden', $field ) ) {
+			$fields[ $k ] = pods_form_field_make_hidden( $fields[ $k ] );
+		} elseif ( pods_v_bool( 'read_only', $field ) ) {
+			$fields[ $k ] = pods_form_field_make_readonly( $fields[ $k ] );
 		}
 	}
 }

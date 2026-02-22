@@ -301,6 +301,7 @@ export const FIELD_PROP_TYPE = {
 	html_no_label: BOOLEAN_ALL_TYPES,
 
 	// Number field
+	number_decimal_handling: PropTypes.string,
 	number_decimals: NUMBER_OR_NUMBER_AS_STRING,
 	number_format: PropTypes.oneOf( [
 		'i18n',

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"7f4cf75e4bde119eac2d"}
+=======
+{"dependencies":["lodash","moment","react","react-dom","react-jsx-runtime","regenerator-runtime","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-hooks","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"3cafd786036f9983623e"}
+>>>>>>> release/3.3.5

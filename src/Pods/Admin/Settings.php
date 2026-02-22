@@ -319,6 +319,19 @@ class Settings {
 			'site_health_include_in_info' => true,
 		];
 
+		$fields['autocomplete_limit'] = [
+			'name'                        => 'autocomplete_limit',
+			'label'                       => $did_init ? __( 'Limit autocomplete search results in Relationship fields', 'pods' ) : '',
+			'help'                        => $did_init ? __( 'This is the default result limit to use for Relationship fields when doing autocomplete searches. For performance reasons, you will want to keep this number low. To remove the limit, set the value to "-1".', 'pods' ) : '',
+			'type'                        => 'number',
+			'default'                     => '15',
+			'number_format_type'          => 'number',
+			'number_format'               => '9999.99',
+			'number_min'                  => -1,
+			'number_html5'                => true,
+			'site_health_include_in_info' => true,
+		];
+
 		$session_auto_start            = pods_session_auto_start( true );
 		$session_auto_start_overridden = null !== $session_auto_start;
 

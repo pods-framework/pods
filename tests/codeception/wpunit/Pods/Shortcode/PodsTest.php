@@ -54,6 +54,7 @@ class PodsTest extends Pods_UnitTestCase {
 		$this->pod_id = $api->save_pod( array(
 			'type'   => 'pod',
 			'name'   => $this->pod_name,
+			'public' => 1,
 		) );
 
 		$params = array(

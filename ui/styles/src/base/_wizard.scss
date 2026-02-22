@@ -5,26 +5,26 @@
 
 // Primary buttons.
 $button-primary-text-color: #ffffff;
-$button-primary-border-color: #2271b1;
-$button-primary-background-color: #2271b1;
+$button-primary-border-color: var(--wp-admin-theme-color);
+$button-primary-background-color: var(--wp-admin-theme-color);
 
 // :hover
-$button-primary-border-color-hover: #2271b1;
-$button-primary-background-color-hover: #135e96;
+$button-primary-border-color-hover: var(--wp-admin-theme-color);
+$button-primary-background-color-hover: var(--wp-admin-theme-color-darker-20);
 
 // Secondary buttons.
 $button-secondary-text-color: $button-primary-background-color;
 $button-secondary-border-color: $button-primary-background-color;
-$button-secondary-background-color: #f6f7f7;
+$button-secondary-background-color: inherit;
 
 // :hover
-$button-secondary-text-color-hover: #0a4b78;
-$button-secondary-border-color-hover: #0a4b78;
-$button-secondary-background-color-hover: #f0f0f1;
+$button-secondary-text-color-hover: var(--wp-admin-theme-color-darker-20);
+$button-secondary-border-color-hover: var(--wp-admin-theme-color-darker-20);
+$button-secondary-background-color-hover: rgba(var(--wp-admin-theme-color--rgb), .04);
 
 // Container.
-$button-container-background-color-hover: #e7e7e7;
-$button-container-outline-color: #4f94d4;
+$button-container-background-color-hover: rgba(var(--wp-admin-theme-color--rgb), .04);
+$button-container-outline-color: var(--wp-admin-theme-color);
 
 
 // Upgrade wizard specific styles
@@ -612,10 +612,10 @@ $button-container-outline-color: #4f94d4;
 			&.button-primary {
 				right: 0;
 				color: #fff;
-				@include mixins.vertical-gradient(#278ab8, #22789f);
+				@include mixins.vertical-gradient(var(--wp-admin-theme-color), var(--wp-admin-theme-color-darker-20));
 				@include mixins.multi-border-radius(0, 0, 8px, 0);
 				&:hover {
-					background: #22789f;
+					background: var(--wp-admin-theme-color-darker-20);
 				}
 			}
 			&.button-secondary {

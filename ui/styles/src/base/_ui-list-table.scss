@@ -56,16 +56,16 @@
 	border: none;
 	font-weight: bold;
 	color: white;
-	background: #21759B;
+	background: var(--wp-admin-theme-color);
 	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
 }
 
 .pods-ui-filter-bar-primary ul.subsubsub li a.current:hover {
-	border-color: #13455B;
+	border-color: var(--wp-admin-theme-color-darker-20);
 }
 
 .pods-ui-filter-bar-primary ul.subsubsub li a.current:active {
-	background: #21759B repeat-x scroll left top;
+	background: var(--wp-admin-theme-color) repeat-x scroll left top;
 }
 
 .pods-ui-filter-bar-primary ul.subsubsub li a.current:hover,
@@ -134,7 +134,7 @@
 	box-sizing: content-box;
 
 	border: none;
-	background: #21759B;
+	background: var(--wp-admin-theme-color);
 	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
 }
 
@@ -143,11 +143,11 @@
 }
 
 .pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover {
-	border-color: #13455B;
+	border-color: var(--wp-admin-theme-color-darker-20);
 }
 
 .pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:active {
-	background: #21759B;
+	background: var(--wp-admin-theme-color);
 }
 
 .pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a:hover,
@@ -192,7 +192,7 @@
 }
 
 .pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle {
-	color: #2175A4;
+	color: var(--wp-admin-theme-color-darker-20);
 	font-size: 10px;
 	line-height: 15px;
 	text-transform: uppercase;
@@ -274,11 +274,11 @@
 	visibility: hidden;
 }
 
-.pods-ui { 
+.pods-ui {
 	.wp-list-table .toggle-row {
 		display: none;
 	}
-	
+
 	/* #7196 Improve tab support for /admin.php?page=pods pods table */
 	.wp-list-table tr:focus-within .row-actions {
 		position: static;

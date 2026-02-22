@@ -149,11 +149,6 @@
 	box-sizing: border-box;
 }
 
-.components-modal__frame .pods-field-option input[type="checkbox"]:checked {
-	// Fixes conflicting different WP checkbox styles
-    background: white;
-}
-
 // RTL support.
 .rtl {
 

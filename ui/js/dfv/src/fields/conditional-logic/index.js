@@ -269,6 +269,15 @@ const ConditionalLogic = ( {
 							<option value="=">{ isRelationalFieldType ? __( 'is (id/value)', 'pods' ) : __( 'is', 'pods' ) }</option>
 							<option value="!=">{ isRelationalFieldType ? __( 'is not (id/value)', 'pods' ) : __( 'is not', 'pods' ) }</option>
 
+							{ isRelationalFieldType ? (
+								<>
+									<option value="in">{ __( 'contains any (id/value, comma-separated)', 'pods' ) }</option>
+									<option value="not-in">{ __( 'does not contain any (id/value, comma-separated)', 'pods' ) }</option>
+									<option value="all">{ __( 'contains all (id/value, comma-separated)', 'pods' ) }</option>
+									<option value="not-all">{ __( 'does not contain all (id/value, comma-separated)', 'pods' ) }</option>
+								</>
+							) : null }
+
 							{ ! FIELD_TYPES_WITH_NO_BLANK_COMPARISONS.includes( ruleFieldType ) ? (
 								<>
 									<option value="empty">{ __( 'is blank', 'pods' ) }</option>

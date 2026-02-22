@@ -12,4 +12,16 @@ settings:
     memory_limit: 1024M
 params:
   # read dynamic configuration parameters from the .env file
-  - .env
+  - tests/codeception/.env
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed
+  config: {  }
+  commands:
+    - lucatume\WPBrowser\Command\RunOriginal
+    - lucatume\WPBrowser\Command\RunAll
+    - lucatume\WPBrowser\Command\GenerateWPUnit
+    - lucatume\WPBrowser\Command\DbExport
+    - lucatume\WPBrowser\Command\DbImport
+    - lucatume\WPBrowser\Command\MonkeyCachePath
+    - lucatume\WPBrowser\Command\MonkeyCacheClear

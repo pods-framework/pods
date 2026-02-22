@@ -63,7 +63,7 @@
     "@wordpress/editor": "^14.0.6",
     "@wordpress/eslint-plugin": "^19.0.1",
     "@wordpress/jest-preset-default": "^12.0.1",
-    "@wordpress/scripts": "^28.3.0",
+    "@wordpress/scripts": "^31.5.0",
     "@wordpress/server-side-render": "^5.0.3",
     "babel-loader": "^8.2.5",
     "babel-plugin-module-resolver": "^4.1.0",

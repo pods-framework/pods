@@ -11387,8 +11387,16 @@ class PodsAPI {
 			// Delete Pods Options Cache in the database
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
-			if ( class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class ) ) {
-				// Maybe use the test-based cache flushing to prevent major slowdowns.
+			// Maybe use the test-based cache flushing to prevent major slowdowns.
+			if (
+				/*
+				 * wp-browser 4 will load and activate each plugin in a dedicated process
+				 * that will not load the test classes (like the `WP_UnitTestCase` one) by default.
+				 * This guard will avoid throwing a fatal when the plugin is activated in that context,
+				 */
+				class_exists( WP_UnitTestCase::class )
+				&& class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class )
+			) {
 				// @phpstan-ignore-next-line
 				\Pods_Unit_Tests\Pods_UnitTestCase::flush_cache();
 			} else {

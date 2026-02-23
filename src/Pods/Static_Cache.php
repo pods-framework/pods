@@ -2,6 +2,11 @@
 
 namespace Pods;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Static cache class used for storing on-page cached vars but not storing them into the object cache
  * with support for multisite. Each site has their own cache.

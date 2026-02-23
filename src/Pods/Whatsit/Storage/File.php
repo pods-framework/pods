@@ -2,6 +2,11 @@
 
 namespace Pods\Whatsit\Storage;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * File class.
  *

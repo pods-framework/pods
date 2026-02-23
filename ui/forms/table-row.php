@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 /**
  * @var Pods                $pod
@@ -25,23 +28,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 				id="heading-<?php echo esc_attr( $field['name'] ); ?>">
 				<?php echo esc_html( $field['label'] ); ?>
 			</<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>>
-			<?php echo PodsForm::comment( $field['name'], pods_v( 'description', $field ), $field ); ?>
+			<?php PodsForm::output_comment( $field['name'], pods_v( 'description', $field ), $field ); ?>
 		</td>
 	<?php elseif ( 'html' === $field['type'] && 1 === (int) $field['html_no_label'] ) : ?>
 		<td colspan="2">
-			<?php echo PodsForm::field( $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
+			<?php PodsForm::output_field( $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
 		</td>
 	<?php else : ?>
 		<th<?php if ( ! empty( $th_scope ) ) : ?>
 			scope="<?php echo esc_attr( $th_scope ); ?>"
 		<?php endif; ?>>
-			<?php echo PodsForm::label( $field['name'], $field['label'], pods_v( 'help', $field ), $field ); ?>
+			<?php PodsForm::output_label( $field['name'], $field['label'], pods_v( 'help', $field ), $field ); ?>
 		</th>
 		<td>
 			<div class="pods-submittable-fields">
 				<?php
-				echo PodsForm::field( $field['name'], $value, $field['type'], $field, $pod, $id );
-				echo PodsForm::comment( $field['name'], pods_v( 'description', $field ), $field );
+				PodsForm::output_field( $field['name'], $value, $field['type'], $field, $pod, $id );
+				PodsForm::output_comment( $field['name'], pods_v( 'description', $field ), $field );
 				?>
 			</div>
 		</td>

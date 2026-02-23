@@ -2,6 +2,11 @@
 
 namespace Pods\Data;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Object_Field;
@@ -237,7 +242,7 @@ class Map_Field_Values {
 
 		$pod = $obj->pod_data;
 
-		$are_fields_excluded = 0 === strpos( $fields_to_display, 'exclude=' );
+		$are_fields_excluded = 0 === strpos( $fields_to_display, 'exclude=' ); // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 
 		if ( '_all' === $fields_to_display || $are_fields_excluded ) {
 			$display_fields = $pod->get_fields();
@@ -255,7 +260,7 @@ class Map_Field_Values {
 
 			if ( $are_fields_excluded ) {
 				// Handle excluded fields.
-				$fields_to_exclude = substr( $fields_to_display, strlen( 'exclude=' ) );
+				$fields_to_exclude = substr( $fields_to_display, strlen( 'exclude=' ) ); // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 				$fields_to_exclude = explode( '|', $fields_to_exclude );
 				$fields_to_exclude = array_filter( array_unique( $fields_to_exclude ) );
 

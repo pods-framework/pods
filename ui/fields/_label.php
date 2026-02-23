@@ -1,12 +1,15 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <label<?php PodsForm::attributes( $attributes, $name, 'label' ); ?>>
 	<?php
-	echo pods_kses_exclude_p( $label );
+	pods_output_kses_exclude_p( $label );
 
 	if ( 1 == pods_v( 'required', $options, pods_v( 'options', $options, $options ) ) ) {
 		echo ' <abbr title="required" class="required">*</abbr>';

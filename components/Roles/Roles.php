@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Name: Roles and Capabilities
  *
@@ -28,7 +34,7 @@ class Pods_Roles extends PodsComponent {
 	 */
 	public function init() {
 
-		add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
+		add_filter( 'pods_roles_get_capabilities', [ $this, 'remove_deprecated_capabilities' ] );
 	}
 
 	/**
@@ -56,75 +62,76 @@ class Pods_Roles extends PodsComponent {
 
 		$default_role = get_option( 'default_role' );
 
-		$roles = array();
+		$roles = [];
 
 		foreach ( $wp_roles->role_objects as $key => $role ) {
 			$count = $this->count_users( $key );
 
-			$roles[ $key ] = array(
+			$roles[ $key ] = [
 				'id'           => $key,
 				'label'        => $wp_roles->role_names[ $key ],
 				'name'         => $key,
 				'capabilities' => count( (array) $role->capabilities ),
+				// translators: %s is the number of users.
 				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count ),
-			);
+			];
 
 			if ( $default_role == $key ) {
 				$roles[ $key ]['label'] .= ' (site default)';
 			}
 
-			if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
+			if ( 0 < $count && pods_is_admin( [ 'list_users' ] ) ) {
 				$roles[ $key ]['users'] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
 			}
 		}
 
-		$ui = array(
+		$ui = [
 			'component'        => $component,
 			'data'             => $roles,
 			'total'            => count( $roles ),
 			'total_found'      => count( $roles ),
 			'items'            => __( 'Roles', 'pods' ),
 			'item'             => __( 'Role', 'pods' ),
-			'fields'           => array(
-				'manage' => array(
-					'label'        => array( 'label' => __( 'Label', 'pods' ) ),
-					'name'         => array( 'label' => __( 'Name', 'pods' ) ),
-					'capabilities' => array( 'label' => __( 'Capabilities', 'pods' ) ),
-					'users'        => array(
+			'fields'           => [
+				'manage' => [
+					'label'        => [ 'label' => __( 'Label', 'pods' ) ],
+					'name'         => [ 'label' => __( 'Name', 'pods' ) ],
+					'capabilities' => [ 'label' => __( 'Capabilities', 'pods' ) ],
+					'users'        => [
 						'label'   => __( 'Users', 'pods' ),
 						'type'    => 'text',
-						'options' => array(
+						'options' => [
 							'text_allow_html'        => 1,
 							'text_allowed_html_tags' => 'strong em a ul ol li b i br',
-						),
-					),
-				),
-			),
-			'actions_disabled' => array( 'duplicate', 'view', 'export' ),
-			'actions_custom'   => array(
-				'add'    => array( $this, 'admin_add' ),
-				'edit'   => array( $this, 'admin_edit' ),
-				'delete' => array( $this, 'admin_delete' ),
-			),
+						],
+					],
+				],
+			],
+			'actions_disabled' => [ 'duplicate', 'view', 'export' ],
+			'actions_custom'   => [
+				'add'    => [ $this, 'admin_add' ],
+				'edit'   => [ $this, 'admin_edit' ],
+				'delete' => [ $this, 'admin_delete' ],
+			],
 			'search'           => false,
 			'searchable'       => false,
 			'sortable'         => false,
 			'pagination'       => false,
-		);
+		];
 
 		if ( isset( $roles[ pods_v( 'id', 'get', - 1 ) ] ) ) {
 			$ui['row'] = $roles[ pods_v( 'id', 'get', - 1 ) ];
 		}
 
-		if ( ! pods_is_admin( array( 'pods_roles_add' ) ) ) {
+		if ( ! pods_is_admin( [ 'pods_roles_add' ] ) ) {
 			$ui['actions_disabled'][] = 'add';
 		}
 
-		if ( ! pods_is_admin( array( 'pods_roles_edit' ) ) ) {
+		if ( ! pods_is_admin( [ 'pods_roles_edit' ] ) ) {
 			$ui['actions_disabled'][] = 'edit';
 		}
 
-		if ( count( $roles ) < 2 || ! pods_is_admin( array( 'pods_roles_delete' ) ) ) {
+		if ( count( $roles ) < 2 || ! pods_is_admin( [ 'pods_roles_delete' ] ) ) {
 			$ui['actions_disabled'][] = 'delete';
 		}
 
@@ -207,10 +214,11 @@ class Pods_Roles extends PodsComponent {
 		$default_role = get_option( 'default_role' );
 
 		if ( $id == $default_role ) {
+			// translators: %s is the role name.
 			return $obj->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $obj->data[ $id ]['name'] ) );
 		}
 
-		$wp_user_query = new WP_User_Query( array( 'role' => $id ) );
+		$wp_user_query = new WP_User_Query( [ 'role' => $id ] );
 
 		$users = $wp_user_query->get_results();
 
@@ -227,24 +235,25 @@ class Pods_Roles extends PodsComponent {
 
 		remove_role( $id );
 
-		$roles = array();
+		$roles = [];
 
 		foreach ( $wp_roles->role_objects as $key => $role ) {
 			$count = $this->count_users( $key );
 
-			$roles[ $key ] = array(
+			$roles[ $key ] = [
 				'id'           => $key,
 				'label'        => wp_strip_all_tags( $wp_roles->role_names[ $key ] ),
 				'name'         => $key,
 				'capabilities' => count( (array) $role->capabilities ),
+				// translators: %s is the number of users.
 				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count ),
-			);
+			];
 
 			if ( $default_role == $key ) {
 				$roles[ $key ]['label'] .= ' (site default)';
 			}
 
-			if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
+			if ( 0 < $count && pods_is_admin( [ 'list_users' ] ) ) {
 				$roles[ $key ]['users'] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
 			}
 		}
@@ -325,9 +334,9 @@ class Pods_Roles extends PodsComponent {
 
 		$capabilities = $this->get_capabilities();
 
-		$params->capabilities = (array) pods_v( 'capabilities', $params, array() );
+		$params->capabilities = (array) pods_v( 'capabilities', $params, [] );
 
-		$params->custom_capabilities = (array) pods_v( 'custom_capabilities', $params, array() );
+		$params->custom_capabilities = (array) pods_v( 'custom_capabilities', $params, [] );
 		$params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
 
 		if ( ! isset( $params->id ) || empty( $params->id ) || ! isset( $wp_roles->role_objects[ $params->id ] ) ) {
@@ -342,7 +351,7 @@ class Pods_Roles extends PodsComponent {
 		$role_label        = $wp_roles->role_names[ $params->id ];
 		$role_capabilities = $role->capabilities;
 
-		$new_capabilities = array();
+		$new_capabilities = [];
 
 		foreach ( $params->capabilities as $capability => $x ) {
 			if ( empty( $capability ) || true !== (boolean) $x ) {
@@ -392,7 +401,7 @@ class Pods_Roles extends PodsComponent {
 
 		$count_users = count_users();
 
-		$avail_roles = array();
+		$avail_roles = [];
 
 		foreach ( $count_users['avail_roles'] as $count_role => $count ) {
 			$avail_roles[ $count_role ] = $count;
@@ -418,7 +427,7 @@ class Pods_Roles extends PodsComponent {
 
 		$default_caps = $this->get_wp_capabilities();
 
-		$role_caps = array();
+		$role_caps = [];
 
 		foreach ( $wp_roles->role_objects as $key => $role ) {
 			if ( is_array( $role->capabilities ) ) {
@@ -430,11 +439,11 @@ class Pods_Roles extends PodsComponent {
 
 		$role_caps = array_unique( $role_caps );
 
-		$plugin_caps = array(
+		$plugin_caps = [
 			'pods_roles_add',
 			'pods_roles_delete',
 			'pods_roles_edit',
-		);
+		];
 
 		$capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
 
@@ -444,7 +453,7 @@ class Pods_Roles extends PodsComponent {
 		}
 
 		// To support Members filters.
-		$capabilities = apply_filters( 'members_get_capabilities', $capabilities );
+		$capabilities = apply_filters( 'members_get_capabilities', $capabilities ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		$capabilities = apply_filters( 'pods_roles_get_capabilities', $capabilities );
 
@@ -460,7 +469,7 @@ class Pods_Roles extends PodsComponent {
 	 */
 	public function get_wp_capabilities() {
 
-		$defaults = array(
+		$defaults = [
 			'activate_plugins',
 			'add_users',
 			'create_users',
@@ -510,7 +519,7 @@ class Pods_Roles extends PodsComponent {
 			'update_plugins',
 			'update_themes',
 			'upload_files',
-		);
+		];
 
 		return $defaults;
 	}
@@ -520,12 +529,12 @@ class Pods_Roles extends PodsComponent {
 	 */
 	public function get_default_capabilities() {
 
-		$capabilities = array(
+		$capabilities = [
 			'read',
-		);
+		];
 
 		// To support Members filters
-		$capabilities = apply_filters( 'members_new_role_default_capabilities', $capabilities );
+		$capabilities = apply_filters( 'members_new_role_default_capabilities', $capabilities ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		$capabilities = apply_filters( 'pods_roles_default_capabilities', $capabilities );
 
@@ -539,7 +548,7 @@ class Pods_Roles extends PodsComponent {
 	 */
 	public function remove_deprecated_capabilities( $capabilities ) {
 
-		$deprecated_capabilities = array(
+		$deprecated_capabilities = [
 			'level_0',
 			'level_1',
 			'level_2',
@@ -551,7 +560,7 @@ class Pods_Roles extends PodsComponent {
 			'level_8',
 			'level_9',
 			'level_10',
-		);
+		];
 
 		$capabilities = array_diff( $capabilities, $deprecated_capabilities );
 

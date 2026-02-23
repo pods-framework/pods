@@ -2,6 +2,11 @@
 
 namespace Pods\Blocks\Types;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods\Blocks\Blocks_Abstract;
 use WP_Block;
@@ -144,7 +149,7 @@ abstract class Base extends Blocks_Abstract {
 	public function render_placeholder( $heading, $content, $image = null ) {
 		ob_start();
 		?>
-		<div <?php echo get_block_wrapper_attributes( [ 'class' => 'pods-block-placeholder_container' ] ); ?>">
+		<div <?php echo get_block_wrapper_attributes( [ 'class' => 'pods-block-placeholder_container' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 			<div class="pods-block-placeholder_content-container">
 				<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
 				<div class="pods-block-placeholder_content">

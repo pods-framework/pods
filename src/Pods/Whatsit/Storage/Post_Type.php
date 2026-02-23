@@ -2,6 +2,11 @@
 
 namespace Pods\Whatsit\Storage;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 use Pods\Whatsit\Store;
 use WP_Post;
@@ -211,7 +216,7 @@ class Post_Type extends Collection {
 			'order'            => 'ASC',
 			'orderby'          => 'title',
 			'posts_per_page'   => $limit,
-			'meta_query'       => $meta_query,
+			'meta_query'       => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'post_type'        => 'any',
 			'post_status'      => [
 				'publish',

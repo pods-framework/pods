@@ -1,13 +1,22 @@
+<?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+?>
 <div class="wrap pods-admin">
 	<div id="icon-pods" class="icon32"><br /></div>
 
 	<form action="" method="post" class="pods-submittable">
 		<div class="pods-submittable-fields">
-			<?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-			<?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-			<?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
-			<?php echo PodsForm::field( 'import_export', 'export', 'hidden' ); ?>
+			<?php PodsForm::output_field( 'action', 'pods_admin_components', 'hidden' ); ?>
+			<?php PodsForm::output_field( 'component', $component, 'hidden' ); ?>
+			<?php PodsForm::output_field( 'method', $method, 'hidden' ); ?>
+			<?php PodsForm::output_field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+			<?php PodsForm::output_field( 'import_export', 'export', 'hidden' ); ?>
 
 			<h2 class="italicized"><?php esc_html_e( 'Migrate: Packages', 'pods' ); ?></h2>
 
@@ -91,7 +100,7 @@
 								<div class="inside pods-manage-field pods-dependency">
 									<div class="pods-field__container pods-field-option">
 										<?php
-										echo PodsForm::label( 'import_package_file', __( 'Upload your pods-package.json', 'pods' ) );
+										PodsForm::output_label( 'import_package_file', __( 'Upload your pods-package.json', 'pods' ) );
 										?>
 										<input type="file" name="import_package_file" id="pods-form-ui-import-package-file" accept=".json" />
 										<button type="button"
@@ -103,8 +112,8 @@
 									</div>
 									<div class="pods-field__container pods-field-option">
 										<?php
-										echo PodsForm::label( 'import_package', __( 'Or paste the Package code', 'pods' ), __( 'If you paste the code, you may encounter issues on certain hosts where mod_security will block the submission. If you encounter an error message on submit, contact your host and let them know that you believe you are seeing a mod_security issue with /wp-admin/admin-ajax.php and they can look through your error logs to help solve it.', 'pods' ) );
-										echo PodsForm::field( 'import_package', pods_v( 'import_package', 'post' ), 'paragraph', [
+										PodsForm::output_label( 'import_package', __( 'Or paste the Package code', 'pods' ), __( 'If you paste the code, you may encounter issues on certain hosts where mod_security will block the submission. If you encounter an error message on submit, contact your host and let them know that you believe you are seeing a mod_security issue with /wp-admin/admin-ajax.php and they can look through your error logs to help solve it.', 'pods' ) );
+										PodsForm::output_field( 'import_package', pods_v( 'import_package', 'post' ), 'paragraph', [
 											'attributes'  => [
 												'style' => 'width: 100%; max-width: 100%; height: 250px;',
 											],
@@ -151,7 +160,7 @@
 													?>
 													<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
 														<?php
-														echo PodsForm::field( $data_name . '[' . $key . ']', true, 'boolean', [
+														PodsForm::output_field( $data_name . '[' . $key . ']', true, 'boolean', [
 															'boolean_yes_label' => $label,
 															'disable_dfv'       => true,
 														] );
@@ -196,7 +205,7 @@
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
 															<?php
-															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+															PodsForm::output_field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
 																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
 																'disable_dfv'       => true,
 															] );
@@ -242,7 +251,7 @@
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
 															<?php
-															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+															PodsForm::output_field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
 																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
 																'disable_dfv'       => true,
 															] );
@@ -288,7 +297,7 @@
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
 															<?php
-															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+															PodsForm::output_field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
 																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
 																'disable_dfv'       => true,
 															] );

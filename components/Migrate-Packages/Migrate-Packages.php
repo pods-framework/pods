@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * ID: migrate-packages
  *
@@ -128,7 +134,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			$content .= '</div>';
 
-			echo $content;
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} elseif ( 'export' === $params->import_export ) {
 			$params = get_object_vars( $params );
 			foreach ( $params as $k => $v ) {
@@ -141,7 +147,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			echo '<div class="pods-field-option">';
 
-			echo PodsForm::field( 'export_package', $package, 'paragraph', [
+			PodsForm::output_field( 'export_package', $package, 'paragraph', [
 				'attributes'  => [
 					'style' => 'width: 94%; max-width: 94%; height: 300px;',
 				],

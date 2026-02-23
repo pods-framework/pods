@@ -25,6 +25,7 @@ tests/_support/_generated/* linguist-generated=true
 # Dot-files
 .babelrc export-ignore
 .distignore export-ignore
+.DS_Store
 .editorconfig export-ignore
 .env export-ignore
 .env.example export-ignore

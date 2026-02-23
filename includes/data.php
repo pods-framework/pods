@@ -3,6 +3,11 @@
  * @package Pods\Global\Functions\Data
  */
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 
@@ -68,7 +73,7 @@ function pods_sanitize( $input, $params = array() ) {
 		 */
 		global $wpdb;
 
-		$output = $wpdb->prepare( $params['type'], $output );
+		$output = $wpdb->prepare( $params['type'], $output ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	} elseif ( function_exists( 'wp_slash' ) ) {
 		// @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
 		$output = wp_slash( $input );
@@ -171,7 +176,7 @@ function pods_slash( $input, $params = array() ) {
 		 */
 		global $wpdb;
 
-		$output = $wpdb->prepare( $params['type'], $output );
+		$output = $wpdb->prepare( $params['type'], $output ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	} elseif ( function_exists( 'wp_slash' ) ) {
 		$output = wp_slash( $input );
 	} else {
@@ -461,7 +466,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				break;
 			case 'url':
 			case 'uri':
-				$url = parse_url( pods_current_url() );
+				$url = wp_parse_url( pods_current_url() );
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
@@ -483,7 +488,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					$url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
 				}
 
-				$url = parse_url( $url_raw );
+				$url = wp_parse_url( $url_raw );
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
@@ -1053,7 +1058,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 			$ret = $_REQUEST;
 		} elseif ( 'url' === $type ) {
 			if ( is_numeric( $var ) && function_exists( 'http_build_url' ) ) {
-				$url = parse_url( pods_current_url() );
+				$url = wp_parse_url( pods_current_url() );
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
@@ -1081,7 +1086,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 
 			$ret = $_SERVER;
 		} elseif ( in_array( $type, array( 'global', 'globals' ), true ) ) {
-			$GLOBALS[ $var ] = $value;
+			$GLOBALS[ $var ] = $value; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 			$ret = $GLOBALS;
 		} elseif ( 'session' === $type ) {
@@ -1096,7 +1101,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 
 			$ret = $_COOKIE;
 		} elseif ( 'constant' === $type && ! defined( $var ) && ( is_scalar( $value ) || null === $value ) ) {
-			define( $var, $value );
+			define( $var, $value ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound
 
 			$ret = constant( $var );
 		} elseif ( 'user' === $type && is_user_logged_in() ) {
@@ -3065,6 +3070,19 @@ function pods_kses_exclude_p( $content ) {
 			'p' => true,
 		]
 	);
+}
+
+/**
+ * Filters text content and strips out disallowed HTML including the p tag.
+ *
+ * This function expects unslashed data.
+ *
+ * @since TBD
+ *
+ * @param string $content Text content to filter.
+ */
+function pods_output_kses_exclude_p( $content ) {
+	pods_output_kses_exclude_p( $content );
 }
 
 /**

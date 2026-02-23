@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 $field_number = PodsForm::field_loader( 'number' );
 
@@ -34,10 +37,10 @@ $regex_replace = '[^0-9\\' . implode( '\\', array_filter( array( $dot, $thousand
 <script>
 	jQuery( function ( $ ) {
 		$( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).on( 'blur', function () {
-            if ( !/<?php echo $regex_test; ?>/.test( $( this ).val() ) ) {
+            if ( !/<?php echo esc_js( $regex_test ); ?>/.test( $( this ).val() ) ) {
 				var newval = $( this )
 					.val()
-                    .replace( /<?php echo $regex_replace; ?>/g, '' );
+                    .replace( /<?php echo esc_js( $regex_replace ); ?>/g, '' );
 				$( this ).val( newval );
 			}
 		} );

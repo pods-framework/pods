@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -64,11 +69,11 @@ class PodsField_WYSIWYG extends PodsField {
 						'default' => 1,
 						'type'    => 'boolean',
 					],
-					static::$type . '_delay_init' => [
+					static::$type . '_delay_init'    => [
 						'label'   => __( 'Delay TinyMCE Initialization', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
-						'help' => __( 'Delay the initialization of the TinyMCE editor until you click to initialize it.', 'pods' ),
+						'help'    => __( 'Delay the initialization of the TinyMCE editor until you click to initialize it.', 'pods' ),
 					],
 				],
 			],
@@ -84,22 +89,22 @@ class PodsField_WYSIWYG extends PodsField {
 				'label'         => __( 'Output Options', 'pods' ),
 				'type'          => 'boolean_group',
 				'boolean_group' => [
-					static::$type . '_trim'            => [
-						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
-						'default'    => 1,
-						'type'       => 'boolean',
+					static::$type . '_trim'             => [
+						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
 					],
-					static::$type . '_trim_lines'        => [
+					static::$type . '_trim_lines'       => [
 						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
 					],
-					static::$type . '_trim_p_brs'        => [
+					static::$type . '_trim_p_brs'       => [
 						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
 					],
-					static::$type . '_trim_extra_lines'  => [
+					static::$type . '_trim_extra_lines' => [
 						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
@@ -111,7 +116,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'type'       => 'boolean',
 						'dependency' => true,
 					],
-					static::$type . '_oembed'          => [
+					static::$type . '_oembed'           => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
@@ -120,7 +125,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'https://wordpress.org/support/article/embeds/',
 						],
 					],
-					static::$type . '_wptexturize'     => [
+					static::$type . '_wptexturize'      => [
 						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -129,7 +134,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'https://developer.wordpress.org/reference/functions/wptexturize/',
 						],
 					],
-					static::$type . '_convert_chars'   => [
+					static::$type . '_convert_chars'    => [
 						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -138,7 +143,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'https://developer.wordpress.org/reference/functions/convert_chars/',
 						],
 					],
-					static::$type . '_wpautop'         => [
+					static::$type . '_wpautop'          => [
 						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -147,7 +152,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'https://developer.wordpress.org/reference/functions/wpautop/',
 						],
 					],
-					static::$type . '_allow_shortcode' => [
+					static::$type . '_allow_shortcode'  => [
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -308,7 +313,7 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'tinymce';
 
 			// Enforce boolean.
-			$options[ static::$type . '_media_buttons' ]  = filter_var( pods_v( static::$type . '_media_buttons', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_media_buttons', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			// Set up default editor.
 			// @todo Support this properly in React, which will be a challenge.
@@ -330,7 +335,7 @@ class PodsField_WYSIWYG extends PodsField {
 
 			wp_enqueue_editor();
 
-			$settings = [];
+			$settings                  = [];
 			$settings['textarea_name'] = $name;
 			$settings['media_buttons'] = false;
 

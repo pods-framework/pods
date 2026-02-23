@@ -18,6 +18,7 @@
 # Dot-files
 .babelrc
 .distignore
+.DS_Store
 .editorconfig
 .env
 .env.example

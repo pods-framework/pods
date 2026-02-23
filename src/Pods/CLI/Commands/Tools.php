@@ -2,6 +2,11 @@
 
 namespace Pods\CLI\Commands;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods\Tools\Repair;
 use Pods\Tools\Reset;

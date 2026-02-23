@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Global\Functions\Access
  */
@@ -1203,7 +1209,7 @@ function pods_get_access_admin_notice( array $args, bool $force_message = false 
 						%2$s
 					</details>
 				',
-				strip_tags( ! empty( $info['summary'] ) ? $info['summary'] : $summary ),
+				wp_strip_all_tags( ! empty( $info['summary'] ) ? $info['summary'] : $summary ),
 				! empty( $info['content'] ) ? wpautop( $info['content'] ) : $content
 			),
 			'notice',
@@ -1523,7 +1529,7 @@ function pods_access_callback_allowed( $callback, array $params = [] ): bool {
 
 	// Clean up helper callback (if string).
 	if ( is_string( $callback ) ) {
-		$callback = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $callback ) );
+		$callback = wp_strip_all_tags( str_replace( array( '`', chr( 96 ) ), "'", $callback ) );
 	}
 
 	return (
@@ -1719,7 +1725,7 @@ function pods_access_pod_options( string $pod_type, string $pod_name, ?Pod $pod 
 		'label'        => __( 'Capabilities preview', 'pods' ),
 		'type'         => 'html',
 		'html_content' => '
-			<p>' . esc_html__( 'Below is a list of capabilities that a user will normally need for this content.' ) . '</p>
+			<p>' . esc_html__( 'Below is a list of capabilities that a user will normally need for this content.', 'pods' ) . '</p>
 		' . pods_access_get_capabilities_preview( $pod_type, $pod_name ),
 	];
 

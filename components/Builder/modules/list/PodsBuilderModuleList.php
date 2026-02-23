@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package    Pods\Components
  * @subpackage Builder
@@ -64,7 +70,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 		public function _before_table_edit( $form, $results = true ) {
 
 			?>
-			<p><?php echo $this->_description; ?></p>
+			<p><?php echo esc_html( $this->_description ); ?></p>
 			<?php
 		}
 
@@ -87,14 +93,14 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			?>
 			<tr>
 				<td valign="top">
-					<label for="pod_type"><?php _e( 'Pod', 'pods' ); ?></label>
+					<label for="pod_type"><?php esc_html_e( 'Pod', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php
 					if ( 0 < count( $all_pods ) ) {
 						$form->add_drop_down( 'pod_type', $pod_types );
 					} else {
-						echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
+						echo '<strong class="red">' . esc_html__( 'None Found', 'pods' ) . '</strong>';
 					}
 					?>
 				</td>
@@ -114,14 +120,14 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				?>
 				<tr>
 					<td valign="top">
-						<label for="template"><?php _e( 'Template', 'pods' ); ?></label>
+						<label for="template"><?php esc_html_e( 'Template', 'pods' ); ?></label>
 					</td>
 					<td>
 						<?php
 						if ( 0 < count( $all_templates ) ) {
 							$form->add_drop_down( 'template', $templates );
 						} else {
-							echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
+							echo '<strong class="red">' . esc_html__( 'None Found', 'pods' ) . '</strong>';
 						}
 						?>
 					</td>
@@ -131,7 +137,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				?>
 				<tr>
 					<td valign="top">
-						<label for="template"><?php _e( 'Template', 'pods' ); ?></label>
+						<label for="template"><?php esc_html_e( 'Template', 'pods' ); ?></label>
 					</td>
 					<td>
 						<?php $form->add_text_box( 'template' ); ?>
@@ -143,7 +149,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 
 			<tr>
 				<td valign="top">
-					<label for="template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
+					<label for="template_custom"><?php esc_html_e( 'Custom Template', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php
@@ -158,7 +164,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="limit"><?php _e( 'Limit', 'pods' ); ?></label>
+					<label for="limit"><?php esc_html_e( 'Limit', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'limit' ); ?>
@@ -166,7 +172,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="orderby"><?php _e( 'Order By', 'pods' ); ?></label>
+					<label for="orderby"><?php esc_html_e( 'Order By', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'orderby' ); ?>
@@ -174,7 +180,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="where"><?php _e( 'Where', 'pods' ); ?></label>
+					<label for="where"><?php esc_html_e( 'Where', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'where' ); ?>
@@ -182,7 +188,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
+					<label for="cache_mode"><?php esc_html_e( 'Cache Type', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php
@@ -199,7 +205,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
+					<label for="expires"><?php esc_html_e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'expires' ); ?>
@@ -228,7 +234,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			$content = trim( (string) pods_var_raw( 'template_custom', $fields['data'], '' ) );
 
 			if ( 0 < strlen( $args['name'] ) && ( 0 < strlen( $args['template'] ) || 0 < strlen( $content ) ) ) {
-				echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
+				echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
 

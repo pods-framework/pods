@@ -2,6 +2,11 @@
 
 namespace Pods\Integrations\WPGraphQL;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use GraphQL\Type\Definition\ResolveInfo;
 use Pods\Pod_Manager;
 use Pods\Whatsit\Field as Pod_Field;

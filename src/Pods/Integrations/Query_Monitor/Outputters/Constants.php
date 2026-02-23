@@ -2,13 +2,13 @@
 
 namespace Pods\Integrations\Query_Monitor\Outputters;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use QM_Collector;
 use QM_Output_Html;
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 /**
  * Class Constants

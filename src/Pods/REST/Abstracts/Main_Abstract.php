@@ -2,6 +2,11 @@
 
 namespace Pods\REST\Abstracts;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use WP_Rewrite;
 
 /**
@@ -41,13 +46,7 @@ abstract class Main_Abstract {
 	 * @return string The REST API URL prefix.
 	 */
 	public function get_url_prefix() {
-		$use_builtin = $this->use_builtin();
-
-		if ( $use_builtin ) {
-			$prefix = rest_get_url_prefix();
-		} else {
-			$prefix = apply_filters( 'rest_url_prefix', 'wp-json' );
-		}
+		$prefix = rest_get_url_prefix();
 
 		$default_pods_prefix = $this->namespace . '/' . trim( $this->url_prefix(), '/' );
 		$prefix = rtrim( $prefix, '/' ) . '/' . trim( $default_pods_prefix, '/' );
@@ -106,7 +105,7 @@ abstract class Main_Abstract {
 
 			if ( is_ssl() ) {
 				// If the current host is the same as the REST URL host, force the REST URL scheme to HTTPS.
-				if ( $_SERVER['SERVER_NAME'] === parse_url( get_home_url( $blog_id ), PHP_URL_HOST ) ) {
+				if ( $_SERVER['SERVER_NAME'] === wp_parse_url( get_home_url( $blog_id ), PHP_URL_HOST ) ) {
 					$url = set_url_scheme( $url, 'https' );
 				}
 			}

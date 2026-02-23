@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 $options['data'] = (array) pods_v( 'data', $options, [] );
 
@@ -43,14 +46,14 @@ foreach ( $options['data'] as $val => $label ) {
 
 	$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
-	$indent = '';
+	$indent_escaped = '';
 
 	$indent_count = substr_count( $label, '&nbsp;&nbsp;&nbsp;' );
 
 	if ( 0 < $indent_count ) {
 		$label = str_replace( '&nbsp;&nbsp;&nbsp;', '', $label );
 
-		$indent = ' style="margin-left:' . ( 18 * $indent_count ) . 'px;"';
+		$indent_escaped = ' style="margin-left:' . ( 18 * $indent_count ) . 'px;"';
 	}
 
 	if ( (bool) pods_v( 'readonly', $options, false ) ) {
@@ -69,7 +72,7 @@ foreach ( $options['data'] as $val => $label ) {
 		<?php
 	}
 	?>
-	<div class="pods-field pods-boolean"<?php echo $indent; ?>>
+	<div class="pods-field pods-boolean"<?php echo $indent_escaped; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 		<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 		<?php
 		if ( 0 < strlen( $label ) ) {
@@ -79,7 +82,7 @@ foreach ( $options['data'] as $val => $label ) {
 				$help = '';
 			}
 
-			echo PodsForm::label( $attributes['id'], $label, $help );
+			PodsForm::output_label( $attributes['id'], $label, $help );
 		}
 		?>
 	</div>

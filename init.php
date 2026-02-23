@@ -38,6 +38,11 @@
  * along with this program. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	// Prevent conflicts with Pods 1.x and Pods UI plugins.
 	add_action( 'init', 'pods_deactivate_pods_duplicate' );
@@ -157,7 +162,7 @@ function pods_deactivate_pods_duplicate() {
 		deactivate_plugins( realpath( untrailingslashit( PODS_DIR ) . '/init.php' ) );
 
 		if ( ! headers_sent() && ( ! function_exists( 'pods_ui_manage' ) && ! file_exists( WP_CONTENT_DIR . 'plugins/pods-ui/pods-ui.php' ) ) ) {
-			wp_redirect( $_SERVER['REQUEST_URI'] );
+			wp_safe_redirect( add_query_arg( [ 'refresh' => 1 ] ) );
 			die();
 		}
 	}
@@ -177,8 +182,79 @@ function pods_deactivate_pods_ui() {
 		deactivate_plugins( realpath( WP_CONTENT_DIR . 'plugins/pods-ui/pods-ui.php' ) );
 
 		if ( ! headers_sent() ) {
-			wp_redirect( $_SERVER['REQUEST_URI'] );
+			wp_safe_redirect( add_query_arg( [ 'refresh' => 1 ] ) );
 			die();
 		}
 	}
 }
+
+add_filter( 'wp_plugin_check_ignore_files', static function( $ignored_files ) {
+	$pods_dev_files = [
+		'ui/js/dfv/pods-dfv.min.js.map',
+		'ui/js/codemirror/lib/codemirror.js',
+		'.babelrc',
+		'.distignore',
+		'.DS_Store',
+		'.editorconfig',
+		'.env',
+		'.env.example',
+		'.env.testing.slic',
+		'.eslintignore',
+		'.eslintrc.json',
+		'.gitattributes',
+		'.gitignore',
+		'.jshintrc',
+		'.nvmrc',
+		'.phpcs.compat.xml',
+		'.phpcs.xml',
+		'.phpstorm.meta.php',
+		'.scrutinizer.yml',
+		'.travis.yml',
+		'babel.config.js',
+		'CODE_OF_CONDUCT.md',
+		'codeception.dist.yml',
+		'codeception.example.yml',
+		'codeception.slic.yml',
+		'CODEOWNERS',
+		'composer.json',
+		'composer.lock',
+		'Gruntfile.js',
+		'jest.config.json',
+		'jest.config.js',
+		'jest-setup-wordpress-globals.js',
+		'package.json',
+		'package-lock.json',
+		'phpcs.xml',
+		'phpcs.xml.dist',
+		'phpstan.neon',
+		'phpunit.xml.dist',
+		'README.md',
+		'rollup.config.js',
+		'slic.json',
+		'TESTS.md',
+		'webpack.common.js',
+		'webpack.dev.js',
+		'webpack.prod.js',
+	];
+
+	return array_merge( $ignored_files, $pods_dev_files );
+} );
+
+add_filter( 'wp_plugin_check_ignore_directories', static function( $ignored_dirs ) {
+	$pods_dev_dirs = [
+		'.git',
+		'.github',
+		'.wordpress-org',
+		'bin',
+		'dev',
+		'docs',
+		'github',
+		'tests',
+		'workspace',
+		'ui/js/blocks/src',
+		'ui/js/dfv/src',
+		'ui/styles/src',
+	];
+
+	return array_merge( $ignored_dirs, $pods_dev_dirs );
+} );

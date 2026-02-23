@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package    Pods\Components
  * @subpackage Builder
@@ -59,7 +65,7 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 		public function _before_table_edit( $form, $results = true ) {
 
 			?>
-			<p><?php echo $this->_description; ?></p>
+			<p><?php echo esc_html( $this->_description ); ?></p>
 			<?php
 		}
 
@@ -82,21 +88,21 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 			?>
 			<tr>
 				<td valign="top">
-					<label for="pod_type"><?php _e( 'Pod', 'pods' ); ?></label>
+					<label for="pod_type"><?php esc_html_e( 'Pod', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php
 					if ( 0 < count( $all_pods ) ) {
 						$form->add_drop_down( 'pod_type', $pod_types );
 					} else {
-						echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
+						echo '<strong class="red">' . esc_html__( 'None Found', 'pods' ) . '</strong>';
 					}
 					?>
 				</td>
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="slug"><?php _e( 'Slug or ID', 'pods' ); ?></label>
+					<label for="slug"><?php esc_html_e( 'Slug or ID', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'slug' ); ?>
@@ -104,7 +110,7 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="field"><?php _e( 'Field', 'pods' ); ?></label>
+					<label for="field"><?php esc_html_e( 'Field', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'field' ); ?>
@@ -127,7 +133,7 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 			);
 
 			if ( 0 < strlen( $args['name'] ) && 0 < strlen( $args['slug'] ) && 0 < strlen( $args['field'] ) ) {
-				echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
+				echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
 

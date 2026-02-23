@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 wp_enqueue_script( 'wplink' );
 wp_enqueue_style( 'editor-buttons' );
@@ -63,14 +66,14 @@ $class_attributes = array( 'class' => $attributes['class'] );
 			<div class="link-target">
 				<label>
 					<div>&nbsp;</div>
-					<input<?php PodsForm::attributes( $target_attributes, $target_name, $form_field_type, $options ); ?> /> <?php esc_html_e( 'Open link in a new tab' ); ?>
+					<input<?php PodsForm::attributes( $target_attributes, $target_name, $form_field_type, $options ); ?> /> <?php esc_html_e( 'Open link in a new tab', 'pods' ); ?>
 				</label>
 			</div>
 			</p>		<br clear="both">
 
 			<?php if ( 1 == pods_v( 'link_select_existing', $options, 1 ) ) { ?>
 				<div class="howto link-existing-content" style="display: none;">
-					<a href="#" class="podsLinkPopup"><?php esc_html_e( 'Or link to existing content' ); ?></a>
+					<a href="#" class="podsLinkPopup"><?php esc_html_e( 'Or link to existing content', 'pods' ); ?></a>
 					<textarea id="pods-link-editor-hidden" disabled="disabled" style="display: none;"></textarea>
 				</div>
 			<?php } ?>

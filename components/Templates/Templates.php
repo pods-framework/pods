@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Name: Templates
  *
@@ -83,23 +89,23 @@ class Pods_Templates extends PodsComponent {
 		}
 
 		if ( is_admin() ) {
-			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
+			add_filter( 'post_updated_messages', [ $this, 'setup_updated_messages' ], 10, 1 );
 
-			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
+			add_action( 'add_meta_boxes_' . $this->object_type, [ $this, 'edit_page_form' ] );
 
-			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
-			add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
+			add_filter( 'get_post_metadata', [ $this, 'get_meta' ], 10, 4 );
+			add_filter( 'update_post_metadata', [ $this, 'save_meta' ], 10, 4 );
 
-			add_action( 'pods_meta_save_pre_post__pods_template', array( $this, 'fix_filters' ), 10, 5 );
-			add_action( 'post_updated', array( $this, 'clear_cache' ), 10, 3 );
-			add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
-			add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
-			add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
+			add_action( 'pods_meta_save_pre_post__pods_template', [ $this, 'fix_filters' ], 10, 5 );
+			add_action( 'post_updated', [ $this, 'clear_cache' ], 10, 3 );
+			add_action( 'delete_post', [ $this, 'clear_cache' ], 10, 1 );
+			add_filter( 'post_row_actions', [ $this, 'remove_row_actions' ], 10, 2 );
+			add_filter( 'bulk_actions-edit-' . $this->object_type, [ $this, 'remove_bulk_actions' ] );
 
-			add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
+			add_filter( 'builder_layout_filter_non_layout_post_types', [ $this, 'disable_builder_layout' ] );
 		}
 
-		add_filter( 'members_get_capabilities', array( $this, 'get_capabilities' ) );
+		add_filter( 'members_get_capabilities', [ $this, 'get_capabilities' ] );
 	}
 
 	/**
@@ -110,9 +116,9 @@ class Pods_Templates extends PodsComponent {
 	public function register_config() {
 		$is_admin_user = pods_is_admin();
 
-		$args = array(
+		$args = [
 			'label'            => 'Pod Templates',
-			'labels'           => array( 'singular_name' => 'Pod Template' ),
+			'labels'           => [ 'singular_name' => 'Pod Template' ],
 			'public'           => false,
 			'can_export'       => false,
 			'show_ui'          => true,
@@ -121,10 +127,10 @@ class Pods_Templates extends PodsComponent {
 			'rewrite'          => false,
 			'has_archive'      => false,
 			'hierarchical'     => false,
-			'supports'         => array( 'title', 'author', 'revisions' ),
+			'supports'         => [ 'title', 'author', 'revisions' ],
 			'menu_icon'        => pods_svg_icon( 'pods' ),
 			'delete_with_user' => false,
-		);
+		];
 
 		if ( ! $is_admin_user ) {
 			$args['capability_type'] = $this->capability_type;
@@ -229,7 +235,7 @@ class Pods_Templates extends PodsComponent {
 	public function get_capabilities( $caps ) {
 
 		$caps = array_merge(
-			$caps, array(
+			$caps, [
 				'edit_' . $this->capability_type,
 				'read_' . $this->capability_type,
 				'delete_' . $this->capability_type,
@@ -238,7 +244,7 @@ class Pods_Templates extends PodsComponent {
 				'publish_' . $this->capability_type . 's',
 				'read_private_' . $this->capability_type . 's',
 				'edit_' . $this->capability_type . 's',
-			)
+			]
 		);
 
 		return $caps;
@@ -272,33 +278,45 @@ class Pods_Templates extends PodsComponent {
 
 		$labels = $post_type->labels;
 
-		$messages[ $post_type->name ] = array(
+		$messages[ $post_type->name ] = [
+			// translators: %1$s is the singular label, %2$s is the permalink, %3$s is the view item label.
 			1  => sprintf( __( '%1$s updated. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			2  => __( 'Custom field updated.', 'pods' ),
 			3  => __( 'Custom field deleted.', 'pods' ),
+			// translators: %s is the singular label.
 			4  => sprintf( __( '%s updated.', 'pods' ), $labels->singular_name ),
 			/* translators: %s: date and time of the revision */
 			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			// translators: %1$s is the singular label, %2$s is the permalink, %3$s is the view item label.
 			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+			// translators: %s is the singular label.
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
+			// translators: %1$s is the singular label, %2$s is the preview link, %3$s is the singular label again.
 			8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 			9  => sprintf(
+				// translators: %1$s is the singular label, %2$s is the scheduled date, %3$s is the permalink, %4$s is the singular label again.
 				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" rel="noopener noreferrer" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
+				date_i18n( __( 'M j, Y @ G:i', 'pods' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
 			),
+			// translators: %1$s is the singular label, %2$s is the preview link, %3$s is the singular label again.
 			10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
-		);
+		];
 
 		if ( false === (boolean) $post_type->public ) {
+			// translators: %s is the singular label.
 			$messages[ $post_type->name ][1] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+			// translators: %s is the singular label.
 			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+			// translators: %s is the singular label.
 			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
 			$messages[ $post_type->name ][9] = sprintf(
+				// translators: %1$s is the singular label, %2$s is the scheduled date.
 				__( '%1$s scheduled for: <strong>%2$s</strong>.', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
+				date_i18n( __( 'M j, Y @ G:i', 'pods' ), strtotime( $post->post_date ) )
 			);
+			// translators: %s is the singular label.
 			$messages[ $post_type->name ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
 		}
 
@@ -443,8 +461,8 @@ class Pods_Templates extends PodsComponent {
 			return;
 		}
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
-		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_assets' ], 21 );
+		add_filter( 'enter_title_here', [ $this, 'set_title_text' ], 10, 2 );
 	}
 
 	/**
@@ -492,12 +510,12 @@ class Pods_Templates extends PodsComponent {
 			return $_null;
 		}
 
-		$postdata = array(
+		$postdata = [
 			'ID'           => $post_ID,
 			'post_content' => $meta_value,
-		);
+		];
 
-		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
+		remove_filter( current_filter(), [ $this, __FUNCTION__ ] );
 
 		$revisions = false;
 
@@ -561,13 +579,13 @@ class Pods_Templates extends PodsComponent {
 
 		/** @var Pods $obj */
 
-		$template = array(
+		$template = [
 			'id'      => 0,
 			'name'    => $template_name,
 			'slug'    => $template_name,
 			'code'    => $code,
-			'options' => array(),
-		);
+			'options' => [],
+		];
 
 		if ( empty( $code ) && ! empty( $template_name ) ) {
 			// Check for an ID in the template name.
@@ -659,7 +677,7 @@ class Pods_Templates extends PodsComponent {
 						continue;
 					}
 
-					echo self::do_template( $code, $obj, true );
+					echo self::do_template( $code, $obj, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 			} else {
 				$info['item_id'] = $obj->id();
@@ -671,7 +689,7 @@ class Pods_Templates extends PodsComponent {
 						&& ! pods_access_bypass_private_post( $info )
 					)
 				) {
-					echo self::do_template( $code, $obj, true );
+					echo self::do_template( $code, $obj, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 			}
 		} elseif ( $template_file ) {
@@ -700,7 +718,7 @@ class Pods_Templates extends PodsComponent {
 						$template_output = self::do_template( $template_output, $obj );
 					}
 
-					echo $template_output;
+					echo $template_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 			} else {
 				$info['item_id'] = $obj->id();
@@ -718,7 +736,7 @@ class Pods_Templates extends PodsComponent {
 						$template_output = self::do_template( $template_output, $obj );
 					}
 
-					echo $template_output;
+					echo $template_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 			}
 		}//end if
@@ -750,12 +768,12 @@ class Pods_Templates extends PodsComponent {
 
 		$template_name = trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', (string) $template_name ), ' /-' );
 
-		$default_templates = array(
+		$default_templates = [
 			'pods/templates/' . $template_name . '.php',
 			'pods/' . $template_name . '.php',
 			'pods-' . $template_name . '.php',
 			$template_name . '.php',
-		);
+		];
 
 		/**
 		 * Allow filtering the list of default theme templates to check for a template.
@@ -791,8 +809,8 @@ class Pods_Templates extends PodsComponent {
 			}
 
 			$data = get_file_data( $file_path, [
-				'PodTemplate'  => 'Pod Template',
-				'MagicTags' => 'Magic Tags',
+				'PodTemplate' => 'Pod Template',
+				'MagicTags'   => 'Magic Tags',
 			] );
 
 			$data['MagicTags'] = pods_is_truthy( $data['MagicTags'] );

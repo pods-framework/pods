@@ -1,4 +1,12 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 /**
  * @package Pods\Upgrade
  */
@@ -47,7 +55,12 @@ if ( version_compare( $pods_version, '2.3.5', '<' ) ) {
 	if ( ! empty( $pods_object_ids ) ) {
 		array_walk( $pods_object_ids, 'absint' );
 
-		$wpdb->query( "DELETE FROM `{$wpdb->postmeta}` WHERE `post_id` IN ( " . implode( ', ', $pods_object_ids ) . " ) AND `meta_value` = ''" );
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM `{$wpdb->postmeta}` WHERE `post_id` IN ( " . implode( ', ', array_fill( 0, count( $pods_object_ids ), '%d' ) ) . " ) AND `meta_value` = ''",
+				$pods_object_ids
+			)
+		);
 	}
 
 	update_option( 'pods_framework_version', '2.3.5' );

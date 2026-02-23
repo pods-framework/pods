@@ -1,13 +1,22 @@
+<?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+?>
 <div class="wrap pods-admin">
 	<div id="icon-pods" class="icon32"><br /></div>
 
 	<form action="" method="post" class="pods-submittable">
 		<div class="pods-submittable-fields">
-			<?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-			<?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-			<?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
-			<?php echo PodsForm::field( 'cleanup', 0, 'hidden', array( 'attributes' => array( 'id' => 'pods_cleanup' ) ) ); ?>
+			<?php PodsForm::output_field( 'action', 'pods_admin_components', 'hidden' ); ?>
+			<?php PodsForm::output_field( 'component', $component, 'hidden' ); ?>
+			<?php PodsForm::output_field( 'method', $method, 'hidden' ); ?>
+			<?php PodsForm::output_field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+			<?php PodsForm::output_field( 'cleanup', 0, 'hidden', array( 'attributes' => array( 'id' => 'pods_cleanup' ) ) ); ?>
 
 			<h2 class="italicized"><?php esc_html_e( 'Migrate: Pod Page and Pod Template PHP into File-based templates', 'pods' ); ?></h2>
 
@@ -107,7 +116,7 @@
 													?>
 													<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
 														<?php
-														echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+														PodsForm::output_field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
 															'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
 															'disable_dfv'       => true,
 														] );
@@ -155,7 +164,7 @@
 													?>
 													<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
 														<?php
-														echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+														PodsForm::output_field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
 															'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
 															'disable_dfv'       => true,
 														] );

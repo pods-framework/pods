@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\API\Whatsit\Value_Field;
@@ -927,7 +932,7 @@ class PodsField {
 					if ( ! empty( $allowed_tags ) ) {
 						$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
 
-						$value = strip_tags( $value, $allowed_html_tags );
+						$value = wp_strip_all_tags( $value, $allowed_html_tags );
 					}
 				}
 

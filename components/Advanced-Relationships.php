@@ -14,6 +14,11 @@
  * @subpackage Advanced Relationships
  */
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 if ( class_exists( 'Pods_Advanced_Relationships' ) ) {
 	return;
 }

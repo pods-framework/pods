@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -23,10 +28,10 @@ class PodsField_Slug extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $pod_types = array(
+	public static $pod_types = [
 		'pod',
 		'table',
-	);
+	];
 
 	/**
 	 * {@inheritdoc}
@@ -41,17 +46,17 @@ class PodsField_Slug extends PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			static::$type . '_placeholder' => array(
+		$options = [
+			static::$type . '_placeholder' => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => array(
+				'help'    => [
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		return $options;
 

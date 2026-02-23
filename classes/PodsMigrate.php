@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods
  */
@@ -851,7 +856,13 @@ class PodsMigrate {
 		// Set correct file permissions
 		$stat  = stat( dirname( $new_file ) );
 		$perms = $stat['mode'] & 0000666;
-		@chmod( $new_file, $perms );
+
+		WP_Filesystem();
+
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+
+		$wp_filesystem->chmod( $new_file, $perms );
 
 		// Only attach if we want to and don't have a custom path.
 		if ( $params['attach'] && empty( $params['path'] ) ) {
@@ -983,12 +994,14 @@ class PodsMigrate {
 
 			$data = array_merge( $default_data, $data );
 
+			$data['limit'] = absint( $data['limit'] );
+
 			if ( null === $data['pod'] ) {
 				$data['pod'] = array( 'name' => $datatype );
 			}
 
 			if ( false !== $output ) {
-				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - <em>' . $data['pod']['name'] . '</em> - <strong>Loading Pod: ' . $data['pod']['name'] . "</strong>\n";
+				echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - <em>' . esc_html( $data['pod']['name'] ) . '</em> - <strong>Loading Pod: ' . esc_html( $data['pod']['name'] ) . "</strong>\n";
 			}
 
 			if ( 2 > count( $data['pod'] ) ) {
@@ -1005,7 +1018,7 @@ class PodsMigrate {
 
 			if ( $data['reset'] === true ) {
 				if ( false !== $output ) {
-					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - <strong style='color:blue;'>Resetting Pod: " . $data['pod']['name'] . "</strong>\n";
+					echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . "</em> - <strong style='color:blue;'>Resetting Pod: " . esc_html( $data['pod']['name'] ) . "</strong>\n";
 				}
 
 				$api->reset_pod(
@@ -1027,7 +1040,7 @@ class PodsMigrate {
 			$page = 1;
 
 			if ( false !== $data['page_var'] && isset( $_GET[ $data['page_var'] ] ) ) {
-				$page = absval( $_GET[ $data['page_var'] ] );
+				$page = absval( sanitize_text_field( $_GET[ $data['page_var'] ] ) );
 			}
 
 			if ( null === $data['sql'] ) {
@@ -1035,17 +1048,20 @@ class PodsMigrate {
 			}
 
 			if ( false !== $output ) {
-				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Getting Results: ' . $data['pod']['name'] . "\n";
+				echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Getting Results: ' . esc_html( $data['pod']['name'] ) . "\n";
 			}
 
 			if ( false !== $output ) {
-				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Using Query: <small><code>' . $data['sql'] . "</code></small>\n";
+				echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Using Query: <small><code>' . esc_html( $data['sql'] ) . "</code></small>\n";
 			}
 
-			$result = $wpdb->get_results( $data['sql'], ARRAY_A );
+			$result = $wpdb->get_results( // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+				$data['sql'], // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				ARRAY_A
+			);
 
 			if ( false !== $output ) {
-				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Results Found: ' . count( $result ) . "\n";
+				echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Results Found: ' . count( $result ) . "\n";
 			}
 
 			$avg_time     = - 1;
@@ -1057,7 +1073,7 @@ class PodsMigrate {
 			$paginated    = false;
 
 			if ( false !== $data['page_var'] && $result_count === $data['limit'] ) {
-				$paginated = "<input type=\"button\" onclick=\"document.location=\'" . pods_ui_var_update( array( $data['page_var'] => $page + 1 ), false, false ) . "\';\" value=\"  Continue Import &raquo;  \" />";
+				$paginated = "<input type=\"button\" onclick=\"document.location=\'" . esc_js( pods_ui_var_update( array( $data['page_var'] => $page + 1 ), false, false ) ) . "\';\" value=\"  Continue Import &raquo;  \" />";
 			}
 
 			if ( $result_count < $avg_unit && 5 < $result_count ) {
@@ -1070,7 +1086,7 @@ class PodsMigrate {
 			timer_start();
 
 			if ( false !== $output && 1 === $import_counter ) {
-				echo "<div style='width:50%;background-color:navy;padding:10px 10px 30px 10px;color:#FFF;position:absolute;top:10px;left:25%;text-align:center;'><p id='progress_status' align='center'>" . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Running Importer..</p><br /><small>This will automatically update every ' . $avg_unit . " rows</small></div>\n";
+				echo "<div style='width:50%;background-color:navy;padding:10px 10px 30px 10px;color:#FFF;position:absolute;top:10px;left:25%;text-align:center;'><p id='progress_status' align='center'>" . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Running Importer..</p><br /><small>This will automatically update every ' . esc_html( $avg_unit ) . " rows</small></div>\n";
 			}
 
 			foreach ( $result as $k => $row ) {
@@ -1079,12 +1095,12 @@ class PodsMigrate {
 				usleep( 50000 );
 
 				if ( false !== $output ) {
-					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Processing Row #' . ( $k + 1 ) . "\n";
+					echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Processing Row #' . esc_html( $k + 1 ) . "\n";
 				}
 
 				if ( null !== $data['row_filter'] && function_exists( $data['row_filter'] ) ) {
 					if ( false !== $output ) {
-						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Filtering <strong>' . $data['row_filter'] . '</strong> on Row #' . ( $k + 1 ) . "\n";
+						echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Filtering <strong>' . esc_html( $data['row_filter'] ) . '</strong> on Row #' . esc_html( $k + 1 ) . "\n";
 					}
 
 					$row = $data['row_filter']( $row, $data );
@@ -1138,7 +1154,7 @@ class PodsMigrate {
 					if ( null !== $field_data['filter'] ) {
 						if ( function_exists( $field_data['filter'] ) ) {
 							if ( false !== $output ) {
-								echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Filtering <strong>' . $field_data['filter'] . '</strong> on Field: ' . $field . "\n";
+								echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Filtering <strong>' . esc_html( $field_data['filter'] ) . '</strong> on Field: ' . esc_html( $field ) . "\n";
 							}
 
 							$value = $field_data['filter']( $value, $row, $data );
@@ -1148,7 +1164,7 @@ class PodsMigrate {
 					}
 
 					if ( 1 === $field_info['required'] && ( ! is_string( $value ) || strlen( $value ) < 1 ) ) {
-						die( '<h1 style="color:red;font-weight:bold;">ERROR: Field Required for <strong>' . $field . '</strong></h1>' );
+						die( '<h1 style="color:red;font-weight:bold;">ERROR: Field Required for <strong>' . esc_html( $field ) . '</strong></h1>' );
 					}
 
 					$params['columns'][ $field ] = $value;
@@ -1164,7 +1180,7 @@ class PodsMigrate {
 
 				if ( null !== $data['update_on'] && isset( $params['columns'][ $data['update_on'] ] ) ) {
 					if ( false !== $output ) {
-						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - Checking for Existing Item\n";
+						echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . "</em> - Checking for Existing Item\n";
 					}
 
 					$check = new Pod( $data['pod']['name'] );
@@ -1185,20 +1201,20 @@ class PodsMigrate {
 						$params['pod_id']     = $check->get_pod_id();
 
 						if ( false !== $output ) {
-							echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Found Existing Item w/ ID: ' . $params['tbl_row_id'] . "\n";
+							echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Found Existing Item w/ ID: ' . esc_html( $params['tbl_row_id'] ) . "\n";
 						}
 
 						unset( $check );
 					}
 
 					if ( ! isset( $params['tbl_row_id'] ) && false !== $output ) {
-						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - Existing item not found - Creating New\n";
+						echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . "</em> - Existing item not found - Creating New\n";
 					}
 				}//end if
 
 				if ( null !== $data['pre_save'] && function_exists( $data['pre_save'] ) ) {
 					if ( false !== $output ) {
-						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Running Pre Save <strong>' . $data['pre_save'] . '</strong> on ' . $data['pod']['name'] . "\n";
+						echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Running Pre Save <strong>' . esc_html( $data['pre_save'] ) . '</strong> on ' . esc_html( $data['pod']['name'] ) . "\n";
 					}
 
 					$params = $data['pre_save']( $params, $row, $data );
@@ -1207,14 +1223,14 @@ class PodsMigrate {
 				$id = $api->save_pod_item( $params );
 
 				if ( false !== $output ) {
-					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - <strong>Saved Row #' . ( $k + 1 ) . ' w/ ID: ' . $id . "</strong>\n";
+					echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - <strong>Saved Row #' . esc_html( $k + 1 ) . ' w/ ID: ' . esc_html( $id ) . "</strong>\n";
 				}
 
 				$params['tbl_row_id'] = $id;
 
 				if ( null !== $data['post_save'] && function_exists( $data['post_save'] ) ) {
 					if ( false !== $output ) {
-						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Running Post Save <strong>' . $data['post_save'] . '</strong> on ' . $data['pod']['name'] . "\n";
+						echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Running Post Save <strong>' . esc_html( $data['post_save'] ) . '</strong> on ' . esc_html( $data['pod']['name'] ) . "\n";
 					}
 
 					$data['post_save']( $params, $row, $data );
@@ -1236,8 +1252,8 @@ class PodsMigrate {
 					$estimated_time_left = ( ( $total_time / $counter ) * $rows_left ) / 60;
 					$percent_complete    = 100 - ( ( $rows_left * 100 ) / $result_count );
 
-					echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em><br /><strong>' . $percent_complete . '% Complete</strong><br /><strong>Estimated Time Left:</strong> ' . $estimated_time_left . ' minute(s) or ' . ( $estimated_time_left / 60 ) . ' hours(s)<br /><strong>Time Spent:</strong> ' . ( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Done:</strong> ' . ( $result_count - $rows_left ) . '/' . $result_count . '<br /><strong>Rows Left:</strong> ' . $rows_left . "';</script>\n";
-					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - <strong>Updated Status:</strong> ' . $percent_complete . "% Complete</strong>\n";
+					echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . esc_js( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_js( $data['pod']['name'] ) . '</em><br /><strong>' . esc_js( $percent_complete ) . '% Complete</strong><br /><strong>Estimated Time Left:</strong> ' . esc_js( $estimated_time_left ) . ' minute(s) or ' . esc_js( $estimated_time_left / 60 ) . ' hours(s)<br /><strong>Time Spent:</strong> ' . esc_js( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Done:</strong> ' . esc_js( $result_count - $rows_left ) . '/' . esc_js( $result_count ) . '<br /><strong>Rows Left:</strong> ' . esc_js( $rows_left ) . "';</script>\n";
+					echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - <strong>Updated Status:</strong> ' . esc_html( $percent_complete ) . "% Complete</strong>\n";
 				}
 			}//end foreach
 
@@ -1249,8 +1265,8 @@ class PodsMigrate {
 				$estimated_time_left = ( ( $total_time / $counter ) * $rows_left ) / 60;
 				$percent_complete    = 100 - ( ( $rows_left * 100 ) / $result_count );
 
-				echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em><br /><strong style=\'color:green;\'>100% Complete</strong><br /><br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Imported:</strong> ' . $result_count . ( false !== $paginated ? '<br /><br />' . $paginated : '' ) . "';</script>\n";
-				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - <strong style='color:green;'>Done Importing: " . $data['pod']['name'] . "</strong>\n";
+				echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . esc_js( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . "</em><br /><strong style=\'color:green;\'>100% Complete</strong><br /><br /><strong>Time Spent:</strong> " . esc_html( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Imported:</strong> ' . esc_html( $result_count ) . ( false !== $paginated ? '<br /><br />' . wp_kses_post( $paginated ) : '' ) . "';</script>\n";
+				echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . "</em> - <strong style='color:green;'>Done Importing: " . esc_html( $data['pod']['name'] ) . "</strong>\n";
 			}
 
 			unset( $result, $import[ $datatype ], $datatype, $data );
@@ -1265,8 +1281,8 @@ class PodsMigrate {
 			$total_time += $avg_time;
 			$rows_left   = $result_count - $counter;
 
-			echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . " - <strong style=\'color:green;\'>Import Complete</strong><br /><br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Imported:</strong> ' . $result_count . ( false !== $paginated ? '<br /><br />' . $paginated : '' ) . "';</script>\n";
-			echo '<br />' . date( 'Y-m-d h:i:sa' ) . " - <strong style='color:green;'>Import Complete</strong>\n";
+			echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . esc_js( date_i18n( 'Y-m-d h:i:sa' ) ) . " - <strong style=\'color:green;\'>Import Complete</strong><br /><br /><strong>Time Spent:</strong> " . esc_html( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Imported:</strong> ' . esc_html( $result_count ) . ( false !== $paginated ? '<br /><br />' . wp_kses_post( $paginated ) : '' ) . "';</script>\n";
+			echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . " - <strong style='color:green;'>Import Complete</strong>\n";
 		}
 	}
 

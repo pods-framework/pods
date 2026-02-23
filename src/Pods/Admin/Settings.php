@@ -2,6 +2,11 @@
 
 namespace Pods\Admin;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use PodsForm;
 
 /**
@@ -155,10 +160,6 @@ class Settings {
 		$autoload = apply_filters( 'pods_admin_settings_autoload', 'yes' );
 
 		update_option( self::OPTION_NAME, $settings, $autoload );
-	}
-
-	public function __( string $text, string $domain, bool $did_init ): string {
-		return $did_init ? __( $text, $domain ) : $text;
 	}
 
 	/**

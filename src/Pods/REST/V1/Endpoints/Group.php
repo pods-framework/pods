@@ -2,6 +2,11 @@
 
 namespace Pods\REST\V1\Endpoints;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\REST\Interfaces\Endpoints\DELETE_Interface;
 use Pods\REST\Interfaces\Endpoints\READ_Interface;
 use Pods\REST\Interfaces\Endpoints\UPDATE_Interface;

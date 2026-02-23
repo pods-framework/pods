@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <style type="text/css">
     ol.pods_single_widget_form {
@@ -16,11 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     }
 </style>
 
-<p><em><?php _e('You must specify a Pods Template or create a custom template, using <a href="https://docs.pods.io/displaying-pods/magic-tags/using-magic-tags/" title="Using Magic Tags" target="_blank" rel="noopener noreferrer">magic tags</a>.', 'pods'); ?></p></em>
+<p><em><?php echo wp_kses_post( __( 'You must specify a Pods Template or create a custom template, using <a href="https://docs.pods.io/displaying-pods/magic-tags/using-magic-tags/" title="Using Magic Tags" target="_blank" rel="noopener noreferrer">magic tags</a>.', 'pods') ); ?></p></em>
 
 <ol class="pods_single_widget_form">
     <li>
-        <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"> <?php _e( 'Title', 'pods' ); ?></label>
+        <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title', 'pods' ); ?></label>
 
         <input type="text" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" value="<?php echo esc_attr( $title ); ?>" />
     </li>
@@ -31,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             $all_pods = $api->load_pods( array( 'names' => true ) );
         ?>
         <label for="<?php echo esc_attr( $this->get_field_id( 'pod_type' ) ); ?>">
-            <?php _e( 'Pod', 'pods' ); ?>
+            <?php esc_html_e( 'Pod', 'pods' ); ?>
         </label>
 
         <?php if ( 0 < count( $all_pods ) ): ?>
@@ -43,13 +46,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <?php endforeach; ?>
             </select>
         <?php else: ?>
-            <strong class="red"><?php _e( 'None Found', 'pods' ); ?></strong>
+            <strong class="red"><?php esc_html_e( 'None Found', 'pods' ); ?></strong>
         <?php endif; ?>
     </li>
 
     <li>
         <label for="<?php echo esc_attr( $this->get_field_id( 'slug' ) ); ?>">
-            <?php _e( 'Slug or ID', 'pods' ); ?>
+            <?php esc_html_e( 'Slug or ID', 'pods' ); ?>
         </label>
 
         <input class="widefat" type="text" id="<?php echo esc_attr( $this->get_field_id( 'slug' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'slug' ) ); ?>" value="<?php echo esc_attr( $slug ); ?>" />
@@ -57,7 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     <li>
         <label for="<?php echo esc_attr( $this->get_field_id( 'use_current' ) ); ?>">
-            <?php _e( 'Use current post (singular) or term (term archive)', 'pods' ); ?>
+            <?php esc_html_e( 'Use current post (singular) or term (term archive)', 'pods' ); ?>
         </label>
 
         <input type="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'use_current' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'use_current' ) ); ?>" value="1"<?php checked( $use_current, '1' ); ?> />
@@ -70,10 +73,10 @@ if ( ! defined( 'ABSPATH' ) ) {
             <?php
                 $all_templates = (array) $api->load_templates( array() );
             ?>
-            <label for="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>"> <?php _e( 'Template', 'pods' ); ?> </label>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>"><?php esc_html_e( 'Template', 'pods' ); ?> </label>
 
             <select name="<?php echo esc_attr( $this->get_field_name( 'template' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>">
-                <option value="">- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
+                <option value="">- <?php esc_html_e( 'Custom Template', 'pods' ); ?> -</option>
                 <?php foreach ( $all_templates as $tpl ): ?>
                     <option value="<?php echo esc_attr( $tpl[ 'name' ] ); ?>"<?php selected( $tpl[ 'name' ], $template ); ?>>
                         <?php echo esc_html( $tpl[ 'name' ] ); ?>
@@ -86,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         else {
     ?>
         <li>
-            <label for="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>"> <?php _e( 'Template', 'pods' ); ?> </label>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>"><?php esc_html_e( 'Template', 'pods' ); ?> </label>
 
             <input class="widefat" type="text" id="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'template' ) ); ?>" value="<?php echo esc_attr( $template ); ?>" />
         </li>
@@ -95,7 +98,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     ?>
 
     <li>
-        <label for="<?php echo esc_attr( $this->get_field_id( 'template_custom' ) ); ?>"> <?php _e( 'Custom Template', 'pods' ); ?> </label>
+        <label for="<?php echo esc_attr( $this->get_field_id( 'template_custom' ) ); ?>"><?php esc_html_e( 'Custom Template', 'pods' ); ?> </label>
 
         <textarea name="<?php echo esc_attr( $this->get_field_name( 'template_custom' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'template_custom' ) ); ?>" cols="10" rows="10" class="widefat"><?php echo esc_html( $template_custom ); ?></textarea>
     </li>

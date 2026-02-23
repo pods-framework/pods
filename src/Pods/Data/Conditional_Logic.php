@@ -2,6 +2,11 @@
 
 namespace Pods\Data;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 
 /**

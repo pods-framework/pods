@@ -2,6 +2,11 @@
 
 namespace Pods\CLI\Commands;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods_Migrate_Packages;
 use PodsInit;
@@ -82,7 +87,9 @@ class Playbook extends WP_CLI_Command {
 		$api = pods_api();
 
 		// Enforce exceptions for errors.
-		add_filter( 'pods_error_mode', static function() { return 'exception'; } );
+		add_filter( 'pods_error_mode', static function () {
+			return 'exception';
+		} );
 		add_filter( 'pods_error_mode_force', '__return_true' );
 
 		$total_actions = count( $playbook_actions );
@@ -186,13 +193,14 @@ class Playbook extends WP_CLI_Command {
 			include_once PODS_DIR . 'components/Migrate-Packages/Migrate-Packages.php';
 
 			if ( ! class_exists( 'Pods_Migrate_Packages' ) ) {
-				throw new Exception( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-api activate-component --component=migrate-packages' ), 'pods-package-import-error' );
+				// translators: %s is the WP-CLI command to activate the component.
+				throw new Exception( esc_html( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-api activate-component --component=migrate-packages' ) ), 'pods-package-import-error' );
 			}
 		}
 
 		// Check that we have the file or package we expect.
 		if ( empty( $data ) ) {
-			throw new Exception( __( 'Playbook import package was not set.', 'pods' ), 'pods-package-import-error' );
+			throw new Exception( esc_html( __( 'Playbook import package was not set.', 'pods' ) ), 'pods-package-import-error' );
 		}
 
 		$is_file = is_string( $data ) && '.json' === substr( $data, strrpos( $data, '.json' ) );
@@ -200,7 +208,7 @@ class Playbook extends WP_CLI_Command {
 		if ( $is_file ) {
 			// Get package file data.
 			if ( ! file_exists( $data ) ) {
-				throw new Exception( __( 'Playbook import package "file" does not exist.', 'pods' ), 'pods-package-import-error' );
+				throw new Exception( esc_html( __( 'Playbook import package "file" does not exist.', 'pods' ) ), 'pods-package-import-error' );
 			}
 
 			// Load PodsMigrate class file for use.
@@ -210,7 +218,7 @@ class Playbook extends WP_CLI_Command {
 		}
 
 		if ( empty( $data ) ) {
-			throw new Exception( __( 'No Pods Package data found.', 'pods' ), 'pods-package-import-error' );
+			throw new Exception( esc_html( __( 'No Pods Package data found.', 'pods' ) ), 'pods-package-import-error' );
 		}
 
 		return Pods_Migrate_Packages::import( $data, $replace );

@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package  Pods
  * @category Utilities
@@ -273,7 +279,7 @@ function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache'
 		return $view;
 	}
 
-	echo $view;
+	echo $view; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**

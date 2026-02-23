@@ -2,6 +2,11 @@
 
 namespace Pods\CLI;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\CLI\Commands\Field;
 use Pods\CLI\Commands\Group;
 use Pods\CLI\Commands\Playbook;

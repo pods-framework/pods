@@ -144,8 +144,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			$pod = $pods_api->load_pod( $pod['name'] );
 
 			if ( 'media' === $pod['name'] ) {
-				pods_debug( 'Media orig: ' . var_export( $config[ $k ], true ) );
-				pods_debug( 'Media debug: ' . var_export( $pod->export(), true ) );
+				pods_debug( 'Media orig: ' . wp_json_encode( $config[ $k ], JSON_PRETTY_PRINT ) );
+				pods_debug( 'Media debug: ' . wp_json_encode( $pod->export(), JSON_PRETTY_PRINT ) );
 			}
 
 			if ( ! empty( $pod['fields'] ) ) {

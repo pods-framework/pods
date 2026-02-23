@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Handles boolean field type data and operations.
  *
@@ -35,31 +40,31 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			static::$type . '_format_type' => array(
-				'label'      => __( 'Input Type', 'pods' ),
-				'default'    => 'checkbox',
-				'type'       => 'pick',
-				'data'       => array(
+		$options = [
+			static::$type . '_format_type' => [
+				'label'                 => __( 'Input Type', 'pods' ),
+				'default'               => 'checkbox',
+				'type'                  => 'pick',
+				'data'                  => [
 					'checkbox' => __( 'Checkbox', 'pods' ),
 					'radio'    => __( 'Radio Buttons', 'pods' ),
 					'dropdown' => __( 'Drop Down', 'pods' ),
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			static::$type . '_yes_label'   => array(
+				'dependency'            => true,
+			],
+			static::$type . '_yes_label'   => [
 				'label'   => __( 'Yes Label', 'pods' ),
 				'default' => __( 'Yes', 'pods' ),
 				'type'    => 'text',
-			),
-			static::$type . '_no_label'    => array(
+			],
+			static::$type . '_no_label'    => [
 				'label'   => __( 'No Label', 'pods' ),
 				'default' => __( 'No', 'pods' ),
 				'type'    => 'text',
-			),
-		);
+			],
+		];
 
 		return $options;
 	}
@@ -97,10 +102,10 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		$yesno = array(
+		$yesno = [
 			1 => pods_v( static::$type . '_yes_label', $options ),
 			0 => pods_v( static::$type . '_no_label', $options ),
-		);
+		];
 
 		// Deprecated handling for 1.x
 		if ( ! parent::$deprecated && isset( $yesno[ (int) $value ] ) ) {
@@ -170,14 +175,14 @@ class PodsField_Boolean extends PodsField {
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 
 		if ( 'checkbox' !== pods_v( static::$type . '_format_type', $options ) ) {
-			$data = array(
+			$data = [
 				1 => pods_v( static::$type . '_yes_label', $options ),
 				0 => pods_v( static::$type . '_no_label', $options ),
-			);
+			];
 		} else {
-			$data = array(
+			$data = [
 				1 => pods_v( static::$type . '_yes_label', $options ),
-			);
+			];
 		}
 
 		return $data;
@@ -194,7 +199,7 @@ class PodsField_Boolean extends PodsField {
 			return $validate;
 		}
 
-		$errors = array();
+		$errors = [];
 
 		if ( is_array( $validate ) ) {
 			$errors = $validate;
@@ -244,13 +249,13 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
-		$yesno = array(
+		$yesno = [
 			1 => pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ),
 			0 => pods_v( static::$type . '_no_label', $options, __( 'No', 'pods' ), true ),
-		);
+		];
 
 		if ( isset( $yesno[ (int) $value ] ) ) {
-			$value = strip_tags( $yesno[ (int) $value ], '<strong><a><em><span><img>' );
+			$value = wp_strip_all_tags( $yesno[ (int) $value ], '<strong><a><em><span><img>' );
 		}
 
 		return $value;

@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Pods_Templates_Frontier
  *
@@ -112,12 +118,12 @@ class Pods_Templates_Frontier {
 					include $fieldfile;
 					if ( ! empty( $group['scripts'] ) ) {
 						foreach ( $group['scripts'] as $script ) {
-							wp_enqueue_script( $this->plugin_slug . '-' . strtok( $script, '.' ), $this->get_url( 'assets/js/' . $script, __FILE__ ), array( 'jquery' ) );
+							wp_enqueue_script( $this->plugin_slug . '-' . strtok( $script, '.' ), $this->get_url( 'assets/js/' . $script, __FILE__ ), array( 'jquery' ), PODS_VERSION, [ 'in_footer' => true ] );
 						}
 					}
 					if ( ! empty( $group['styles'] ) ) {
 						foreach ( $group['styles'] as $style ) {
-							wp_enqueue_style( $this->plugin_slug . '-' . strtok( $style, '.' ), $this->get_url( 'assets/css/' . $style, __FILE__ ) );
+							wp_enqueue_style( $this->plugin_slug . '-' . strtok( $style, '.' ), $this->get_url( 'assets/css/' . $style, __FILE__ ), [], PODS_VERSION, [ 'in_footer' => true ] );
 						}
 					}
 				}
@@ -125,11 +131,11 @@ class Pods_Templates_Frontier {
 			wp_enqueue_style( $this->plugin_slug . '-admin-styles', $this->get_url( 'assets/css/panel.css', __FILE__ ), array(), self::VERSION );
 			wp_enqueue_style( 'pods-codemirror' );
 			wp_enqueue_style( 'pods-codemirror-hints' );
-			wp_enqueue_script( $this->plugin_slug . '-admin-scripts', $this->get_url( 'assets/js/panel.js', __FILE__ ), array(), self::VERSION );
+			wp_enqueue_script( $this->plugin_slug . '-admin-scripts', $this->get_url( 'assets/js/panel.js', __FILE__ ), array(), self::VERSION, [ 'in_footer' => true ] );
 			wp_enqueue_script( 'pods-codemirror' );
 			wp_enqueue_script( 'pods-codemirror-overlay' );
 			wp_enqueue_script( 'pods-codemirror-hints' );
-			wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+			wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION, [ 'in_footer' => true ] );
 			wp_enqueue_script( 'pods-codemirror-mode-xml' );
 			wp_enqueue_script( 'pods-codemirror-mode-html' );
 			wp_enqueue_script( 'pods-codemirror-mode-css' );
@@ -478,7 +484,7 @@ class Pods_Templates_Frontier {
 		if ( ! empty( $this->element_header_styles ) ) {
 			echo "<style type=\"text/css\">\r\n";
 			foreach ( $this->element_header_styles as $styles ) {
-				echo $styles . "\r\n";
+				echo $styles . "\r\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			echo "</style>\r\n";
 		}
@@ -492,7 +498,7 @@ class Pods_Templates_Frontier {
 		if ( ! empty( $this->element_footer_scripts ) ) {
 			echo "<script type=\"text/javascript\">\r\n";
 			foreach ( $this->element_footer_scripts as $script ) {
-				echo $script . "\r\n";
+				echo $script . "\r\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			echo "</script>\r\n";
 		}

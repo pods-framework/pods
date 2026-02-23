@@ -1,4 +1,12 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 /**
  * @package Pods\Upgrade
  */
@@ -308,7 +316,12 @@ if ( version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
 
 	if ( ! empty( $helpers ) ) {
 		foreach ( $helpers as $helper ) {
-			$wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'helper_type' WHERE `meta_key` = 'type' AND `post_id` = {$helper->ID}" );
+			$wpdb->query(
+				$wpdb->prepare(
+					"UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'helper_type' WHERE `meta_key` = 'type' AND `post_id` = %d",
+					$helper->ID
+				)
+			);
 		}
 	}
 

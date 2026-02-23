@@ -2,6 +2,11 @@
 
 namespace Pods\Tools;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use PodsForm;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
@@ -34,7 +39,7 @@ class Reset extends Base {
 			$this->api->reset_pod( [], $pod );
 		}
 
-		$results[ __( 'Delete all content for pod' ) ] = __( 'Pod content has been deleted' );
+		$results[ __( 'Delete all content for pod', 'pods' ) ] = __( 'Pod content has been deleted', 'pods' );
 
 		$tool_heading = sprintf(
 			// translators: %s: The Pod label.
@@ -242,8 +247,8 @@ class Reset extends Base {
 			}
 		}
 
-		// translators: %1$s: The total number of fields deleted; %2$s: The singular or plural text for fields.
 		return sprintf(
+			// translators: %1$s: The total number of fields deleted; %2$s: The singular or plural text for fields.
 			_x( 'Deleted %1$s %2$s', 'The text for how many fields were deleted', 'pods' ),
 			number_format_i18n( $total_deleted ),
 			_n( 'field', 'fields', $total_deleted, 'pods' )
@@ -273,12 +278,11 @@ class Reset extends Base {
 			}
 		}
 
-		// translators: %1$s: The total number of groups deleted; %2$s: The singular or plural text for groups.
 		return sprintf(
+			// translators: %1$s: The total number of groups deleted; %2$s: The singular or plural text for groups.
 			_x( 'Deleted %1$s %2$s', 'The text for how many groups were deleted', 'pods' ),
 			number_format_i18n( $total_deleted ),
 			_n( 'group', 'groups', $total_deleted, 'pods' )
 		);
 	}
-
 }

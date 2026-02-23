@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 /**
  * @var string $form_field_type
@@ -162,7 +165,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		// Test whether or not the browser supports date inputs
 		function podsCheckHtml5 () {
 			var input = document.createElement('input');
-			input.setAttribute( 'type', '<?php echo $type; ?>' );
+			input.setAttribute( 'type', '<?php echo esc_js( $type ); ?>' );
 
 			var notADateValue = 'not-a-date';
 			input.setAttribute( 'value', notADateValue );

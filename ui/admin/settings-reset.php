@@ -1,10 +1,18 @@
 <?php
-use Pods\Tools\Reset;
 
 // Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+// Prevent non-admins.
+if ( ! pods_is_admin( 'pods_settings' ) ) {
+	die( '-1' );
+}
+
+use Pods\Tools\Reset;
 
 /** @var $pods_init PodsInit */
 global $pods_init, $wpdb;
@@ -91,7 +99,7 @@ if ( pods_v_sanitized( 'pods_reset_weekend', 'post', pods_v_sanitized( 'pods_res
 }
 
 // Please Note:
-$please_note = __( 'Please Note:' );
+$please_note = __( 'Please Note:', 'pods' );
 
 $all_pods = $pods_api->load_pods();
 ?>
@@ -192,7 +200,7 @@ if ( ! empty( $old_version ) ) {
 	<h3><?php esc_html_e( 'Reset Pods 2.x', 'pods' ); ?></h3>
 
 	<p><?php esc_html_e( 'This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it\'s data, and performs a fresh install.', 'pods' ); ?></p>
-	<p><?php echo sprintf( '<strong>%1$s</strong>', $please_note ) . __( 'This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified. Any custom fields stored using the table storage component, content in Advanced Content Types, and relationships between posts will be lost.', 'pods' ); ?></p>
+	<p><?php echo sprintf( '<strong>%1$s</strong>', esc_html( $please_note ) ) . esc_html__( 'This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified. Any custom fields stored using the table storage component, content in Advanced Content Types, and relationships between posts will be lost.', 'pods' ); ?></p>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install.", 'pods' ); ?>
@@ -204,7 +212,7 @@ if ( ! empty( $old_version ) ) {
 	<h3><?php esc_html_e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?></h3>
 
 	<p><?php esc_html_e( 'This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed.', 'pods' ); ?></p>
-	<p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
+	<p><?php esc_html_e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup.\n\nWe are deleting ALL of the data that surrounds 2.x with no turning back.", 'pods' ); ?>

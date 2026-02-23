@@ -2,6 +2,11 @@
 
 namespace Pods\Blocks\Types;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use WP_Block;
 
 /**
@@ -162,7 +167,7 @@ class Item_Single_List_Fields extends Item_Single {
 			$exclude_fields = $this->prepare_formatted_fields_by_pipe( $attributes['exclude_fields'] );
 
 			if ( '' !== $exclude_fields ) {
-				$magic_tag_data[] = 'exclude=' . $exclude_fields;
+				$magic_tag_data[] = 'exclude=' . $exclude_fields; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			}
 		}
 

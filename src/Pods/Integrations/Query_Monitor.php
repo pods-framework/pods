@@ -2,6 +2,11 @@
 
 namespace Pods\Integrations;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Integration;
 use Pods\Integrations\Query_Monitor\Collectors;
 use Pods\Integrations\Query_Monitor\Outputters;

@@ -2,6 +2,11 @@
 
 namespace Pods\Admin\Config;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Group configuration class.
  *

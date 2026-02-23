@@ -1,25 +1,34 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 wp_enqueue_style( 'wp-color-picker' );
 
 if ( ! is_admin() ) {
 	wp_enqueue_script(
-		'iris', admin_url( 'js/iris.min.js' ), array(
+		'iris',
+		admin_url( 'js/iris.min.js' ),
+		array(
 			'jquery-ui-draggable',
 			'jquery-ui-slider',
 			'jquery-touch-punch',
-		)
+		),
+		'3.5',
+		[
+			'in_footer' => true,
+		]
 	);
 	wp_enqueue_script( 'wp-color-picker', admin_url( 'js/color-picker.min.js' ), array( 'iris' ), '3.5', true );
 	$colorpicker_l10n = array(
-		'clear'         => __( 'Clear' ),
-		'defaultString' => __( 'Default' ),
-		'pick'          => __( 'Select Color' ),
-		'current'       => __( 'Current Color' ),
+		'clear'         => __( 'Clear', 'pods' ),
+		'defaultString' => __( 'Default', 'pods' ),
+		'pick'          => __( 'Select Color', 'pods' ),
+		'current'       => __( 'Current Color', 'pods' ),
 	);
 	wp_localize_script( 'wp-color-picker', 'wpColorPickerL10n', $colorpicker_l10n );
 } else {

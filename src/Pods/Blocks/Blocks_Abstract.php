@@ -2,6 +2,11 @@
 
 namespace Pods\Blocks;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Throwable;
 use WP_Block;
 use WP_Post;

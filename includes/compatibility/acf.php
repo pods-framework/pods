@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Compatibility functions for integration with other plugins.
  *
@@ -12,7 +18,7 @@
  *
  * @since 2.7.17
  */
-$acf_backwards_compatibility = apply_filters( 'pods_acf_backwards_compatibility', true );
+$acf_backwards_compatibility = apply_filters( 'pods_acf_backwards_compatibility', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 if ( $acf_backwards_compatibility ) {
 	if ( ! function_exists( 'the_field' ) ) {
@@ -24,6 +30,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function the_field( $field, $id = false ) {
 			// @codingStandardsIgnoreLine
 			echo pods_field_display( null, $id, $field, true );
@@ -41,6 +48,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_field( $field, $id = false ) {
 			return pods_field( null, $id, $field, true );
 		}
@@ -58,6 +66,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function update_field( $field, $value, $id = false ) {
 			return pods_field_update( null, $id, $field, $value );
 		}
@@ -74,6 +83,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function delete_field( $field, $id = false ) {
 			return pods_field_update( null, $id, $field, null );
 		}
@@ -121,6 +131,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_field_object() {
 			return array();
 		}
@@ -134,6 +145,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_fields() {
 			return array();
 		}
@@ -147,6 +159,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_field_objects() {
 			return array();
 		}
@@ -160,6 +173,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function have_rows() {
 			return false;
 		}
@@ -173,6 +187,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_sub_field() {
 			return false;
 		}
@@ -186,6 +201,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function the_sub_field() {
 			return null;
 		}
@@ -199,6 +215,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_sub_field_object() {
 			return array();
 		}
@@ -212,6 +229,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_row() {
 			return array();
 		}
@@ -225,6 +243,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_row_index() {
 			return 0;
 		}
@@ -238,6 +257,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function get_row_layout() {
 			return null;
 		}
@@ -251,6 +271,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function delete_sub_field() {
 			return null;
 		}
@@ -264,6 +285,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function update_sub_field() {
 			return null;
 		}
@@ -277,6 +299,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function add_row() {
 			return null;
 		}
@@ -290,6 +313,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function update_row() {
 			return null;
 		}
@@ -303,6 +327,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function delete_row() {
 			return null;
 		}
@@ -316,6 +341,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function add_sub_row() {
 			return null;
 		}
@@ -329,6 +355,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function update_sub_row() {
 			return null;
 		}
@@ -342,6 +369,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function delete_sub_row() {
 			return null;
 		}
@@ -355,6 +383,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function acf_add_options_page() {
 			return null;
 		}
@@ -368,6 +397,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function acf_add_options_sub_page() {
 			return null;
 		}
@@ -381,6 +411,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function acf_form_head() {
 			return null;
 		}
@@ -394,6 +425,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function acf_form() {
 			return null;
 		}
@@ -407,6 +439,7 @@ if ( $acf_backwards_compatibility ) {
 		 *
 		 * @since 2.7.17
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		function acf_register_form() {
 			return null;
 		}

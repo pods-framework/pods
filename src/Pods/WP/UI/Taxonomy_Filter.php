@@ -2,6 +2,11 @@
 
 namespace Pods\WP\UI;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit\Pod;
 use WP_Query;
 use WP_Taxonomy;
@@ -89,7 +94,7 @@ class Taxonomy_Filter {
 		printf(
 			'<label class="screen-reader-text" for="%s">%s</label>',
 			esc_attr( $filter_name ),
-			$taxonomy->labels->filter_by_item
+			esc_html( $taxonomy->labels->filter_by_item )
 		);
 
 		wp_dropdown_categories( $dropdown_options );

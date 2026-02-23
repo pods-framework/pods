@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Name: Migrate: Import from the Advanced Custom Fields plugin
  *
@@ -175,24 +181,24 @@ class Pods_Migrate_ACF extends PodsComponent {
 	 * @return bool|int|mixed
 	 */
 	private function migrate_post_type( $post_type ) {
-		$supports = [];
+		$supports        = [];
 		$custom_supports = [];
 
 		if ( isset( $post_type['supports'] ) && is_array( $post_type['supports'] ) ) {
 			$supports = $post_type['supports'];
 
 			$core_supports = [
-				'title' => true,
-				'editor' => true,
-				'excerpt' => true,
-				'trackbacks' => true,
-				'custom-fields' => true,
-				'comments' => true,
-				'revisions' => true,
-				'thumbnail' => true,
-				'author' => true,
+				'title'           => true,
+				'editor'          => true,
+				'excerpt'         => true,
+				'trackbacks'      => true,
+				'custom-fields'   => true,
+				'comments'        => true,
+				'revisions'       => true,
+				'thumbnail'       => true,
+				'author'          => true,
 				'page-attributes' => true,
-				'post-formats' => true,
+				'post-formats'    => true,
 			];
 
 			foreach ( $supports as $support ) {
@@ -313,7 +319,7 @@ class Pods_Migrate_ACF extends PodsComponent {
 			'menu_icon'                      => pods_v( 'menu_icon', $post_type ),
 			'register_meta_box_cb'           => pods_v( 'register_meta_box_cb', $post_type ), // Not currently used.
 
-			'import_source'                  => 'acf',
+			'import_source' => 'acf',
 		];
 
 		// Migrate built-in taxonomies
@@ -330,6 +336,7 @@ class Pods_Migrate_ACF extends PodsComponent {
 		$pod = $this->api->load_pod( [ 'name' => pods_clean_name( $params['name'] ) ], false );
 
 		if ( ! empty( $pod ) ) {
+			// translators: %s is the pod name.
 			return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params['name'] ) ) );
 		}
 
@@ -453,6 +460,7 @@ class Pods_Migrate_ACF extends PodsComponent {
 		$pod = $this->api->load_pod( [ 'name' => pods_clean_name( $params['name'] ) ], false );
 
 		if ( ! empty( $pod ) ) {
+			// translators: %s is the pod name.
 			return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params['name'] ) ) );
 		}
 

@@ -2,6 +2,11 @@
 
 namespace Pods\REST\V1\Validator;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\REST\Interfaces\Validator_Interface;
 
 /**

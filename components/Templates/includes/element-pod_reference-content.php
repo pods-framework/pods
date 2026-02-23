@@ -1,3 +1,12 @@
+<?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+?>
 <?php if ( ! empty( $atts['pod'] ) ) : ?>
 	<p><?php esc_html_e( 'Magic tags can be used in your template code to reference field values from the pod.', 'pods' ); ?></p>
 	<p><strong><?php esc_html_e( 'Example', 'pods' ); ?>:</strong> <code>{@field_name}</code></p>

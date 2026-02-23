@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package    Pods\Components
  * @subpackage Builder
@@ -58,7 +64,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 		public function _before_table_edit( $form, $results = true ) {
 
 			?>
-			<p><?php echo $this->_description; ?></p>
+			<p><?php echo esc_html( $this->_description ); ?></p>
 			<?php
 		}
 
@@ -73,7 +79,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 			?>
 			<tr>
 				<td valign="top">
-					<label for="view"><?php _e( 'File to include', 'pods' ); ?></label>
+					<label for="view"><?php esc_html_e( 'File to include', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'view' ); ?>
@@ -81,7 +87,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
+					<label for="cache_mode"><?php esc_html_e( 'Cache Type', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php
@@ -98,7 +104,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 			</tr>
 			<tr>
 				<td valign="top">
-					<label for="expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
+					<label for="expires"><?php esc_html_e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
 				</td>
 				<td>
 					<?php $form->add_text_box( 'expires' ); ?>
@@ -121,7 +127,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 			);
 
 			if ( 0 < strlen( $args['view'] ) && 'none' !== $args['cache_mode'] ) {
-				echo pods_shortcode( $args );
+				echo pods_shortcode( $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
 

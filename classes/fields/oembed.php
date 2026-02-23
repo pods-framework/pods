@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -31,7 +36,7 @@ class PodsField_OEmbed extends PodsField {
 	 * @var array
 	 * @since 2.7.0
 	 */
-	private $providers = array();
+	private $providers = [];
 
 	/**
 	 * Current embed width
@@ -64,7 +69,7 @@ class PodsField_OEmbed extends PodsField {
 	public function admin_init() {
 
 		// AJAX for Uploads
-		add_action( 'wp_ajax_oembed_update_preview', array( $this, 'admin_ajax_oembed_update_preview' ) );
+		add_action( 'wp_ajax_oembed_update_preview', [ $this, 'admin_ajax_oembed_update_preview' ] );
 	}
 
 	/**
@@ -72,28 +77,28 @@ class PodsField_OEmbed extends PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			static::$type . '_width'        => array(
+		$options = [
+			static::$type . '_width'        => [
 				'label'   => __( 'Embed Width', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
 				'help'    => __( 'Optional width to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' ),
-			),
-			static::$type . '_height'       => array(
+			],
+			static::$type . '_height'       => [
 				'label'   => __( 'Embed Height', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
 				'help'    => __( 'Optional height to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' ),
-			),
-			static::$type . '_show_preview' => array(
+			],
+			static::$type . '_show_preview' => [
 				'label'   => __( 'Show preview', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
-			),
-		);
+			],
+		];
 
 		// Get all unique provider host names
-		$unique_providers = array();
+		$unique_providers = [];
 		foreach ( $this->get_providers() as $provider ) {
 			if ( ! in_array( $provider['host'], $unique_providers, true ) ) {
 				$unique_providers[] = $provider['host'];
@@ -103,26 +108,26 @@ class PodsField_OEmbed extends PodsField {
 
 		// Only add the options if we have data
 		if ( ! empty( $unique_providers ) ) {
-			$options[ static::$type . '_restrict_providers' ] = array(
+			$options[ static::$type . '_restrict_providers' ] = [
 				'label'      => __( 'Restrict to providers', 'pods' ),
 				'help'       => __( 'Restrict input to specific WordPress oEmbed compatible providers.', 'pods' ),
 				'type'       => 'boolean',
 				'default'    => 0,
 				'dependency' => true,
-			);
-			$options[ static::$type . '_enable_providers' ]   = array(
-				'label'      => __( 'Select enabled providers', 'pods' ),
-				'type'  => 'boolean_group',
-				'depends-on' => array( static::$type . '_restrict_providers' => true ),
-				'boolean_group'      => array(),
-			);
+			];
+			$options[ static::$type . '_enable_providers' ]   = [
+				'label'         => __( 'Select enabled providers', 'pods' ),
+				'type'          => 'boolean_group',
+				'depends-on'    => [ static::$type . '_restrict_providers' => true ],
+				'boolean_group' => [],
+			];
 			// Add all the oEmbed providers
 			foreach ( $unique_providers as $provider ) {
-				$options[ static::$type . '_enable_providers' ]['boolean_group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
+				$options[ static::$type . '_enable_providers' ]['boolean_group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = [
 					'label'   => $provider,
 					'type'    => 'boolean',
 					'default' => 0,
-				);
+				];
 			}
 		}//end if
 
@@ -147,7 +152,7 @@ class PodsField_OEmbed extends PodsField {
 
 		$width  = (int) pods_v( static::$type . '_width', $options );
 		$height = (int) pods_v( static::$type . '_height', $options );
-		$args   = array();
+		$args   = [];
 		if ( $width > 0 ) {
 			$args['width'] = $width;
 		}
@@ -198,7 +203,7 @@ class PodsField_OEmbed extends PodsField {
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
-		$errors = array();
+		$errors = [];
 
 		if ( is_array( $validate ) ) {
 			$errors = $validate;
@@ -297,14 +302,14 @@ class PodsField_OEmbed extends PodsField {
 	public function autoembed( $content ) {
 
 		// Replace line breaks from all HTML elements with placeholders.
-		$content = wp_replace_in_html_tags( $content, array( "\n" => '<!-- wp-line-break -->' ) );
+		$content = wp_replace_in_html_tags( $content, [ "\n" => '<!-- wp-line-break -->' ] );
 
 		// Find URLs that are on their own line.
 		$content = preg_replace_callback(
-			'|^(\s*)(https?://[^\s"]+)(\s*)$|im', array(
-				$this,
-				'autoembed_callback',
-			), $content
+			'|^(\s*)(https?://[^\s"]+)(\s*)$|im', [
+			$this,
+			'autoembed_callback',
+		], $content
 		);
 
 		// Put the line breaks back.
@@ -355,7 +360,7 @@ class PodsField_OEmbed extends PodsField {
 		}
 
 		// Return an empty array if no providers could be found
-		$providers = array();
+		$providers = [];
 
 		if ( function_exists( '_wp_oembed_get_object' ) ) {
 			$wp_oembed = _wp_oembed_get_object();
@@ -391,7 +396,7 @@ class PodsField_OEmbed extends PodsField {
 	/**
 	 * Takes a URL and returns the corresponding oEmbed provider's URL, if there is one.
 	 *
-	 * @since 2.7.0
+	 * @since  2.7.0
 	 * @access public
 	 *
 	 * @see    WP_oEmbed::get_provider()
@@ -401,7 +406,7 @@ class PodsField_OEmbed extends PodsField {
 	 *
 	 * @return false|string False on failure, otherwise the oEmbed provider URL.
 	 */
-	public function get_provider( $url, $args = array() ) {
+	public function get_provider( $url, $args = [] ) {
 
 		if ( ! class_exists( 'WP_oEmbed' ) && file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
 			require_once ABSPATH . WPINC . '/class-oembed.php';
@@ -410,7 +415,7 @@ class PodsField_OEmbed extends PodsField {
 		if ( function_exists( '_wp_oembed_get_object' ) ) {
 			$wp_oembed = _wp_oembed_get_object();
 
-			if ( is_callable( array( $wp_oembed, 'get_provider' ) ) ) {
+			if ( is_callable( [ $wp_oembed, 'get_provider' ] ) ) {
 				return $wp_oembed->get_provider( $url, $args );
 			}
 		}
@@ -479,7 +484,7 @@ class PodsField_OEmbed extends PodsField {
 		if ( ! empty( $params['_nonce_pods_oembed'] ) && ! empty( $params['pods_field_oembed_value'] ) && wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) ) {
 			$name    = '';
 			$value   = '';
-			$options = array();
+			$options = [];
 
 			if ( ! empty( $params['pods_field_oembed_name'] ) ) {
 				$name = $params['pods_field_oembed_name'];

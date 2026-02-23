@@ -1,13 +1,22 @@
+<?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+?>
 <div class="wrap pods-admin">
 	<div id="icon-pods" class="icon32"><br /></div>
 
 	<form action="" method="post" class="pods-submittable pods-form">
 		<div class="pods-submittable-fields">
-			<?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-			<?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-			<?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-			<?php echo PodsForm::field( 'id', $id, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+			<?php PodsForm::output_field( 'action', 'pods_admin_components', 'hidden' ); ?>
+			<?php PodsForm::output_field( 'component', $component, 'hidden' ); ?>
+			<?php PodsForm::output_field( 'method', $method, 'hidden' ); ?>
+			<?php PodsForm::output_field( 'id', $id, 'hidden' ); ?>
+			<?php PodsForm::output_field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 
 			<h2 class="italicized"><?php esc_html_e( 'Roles & Capabilities: Edit Role', 'pods' ); ?></h2>
 
@@ -19,9 +28,10 @@
 					$action = __( 'created', 'pods' );
 				}
 
+				// translators: %1$s is the item label, %2$s is the action performed (created/updated).
 				$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
-				echo $obj->message( wp_kses_post( $message ) );
+				$obj->message( wp_kses_post( $message ) );
 			}
 			?>
 
@@ -42,8 +52,12 @@
 										<div id="minor-publishing">
 											<div id="major-publishing-actions">
 												<div id="publishing-action">
-													<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-													<input type="submit" name="publish" id="publish" class="button-primary" value="<?php esc_html_e( 'Save', 'pods' ); ?>" accesskey="p" />
+													<img class="waiting"
+														src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>"
+														alt="" />
+													<input type="submit" name="publish" id="publish"
+														class="button-primary"
+														value="<?php esc_html_e( 'Save', 'pods' ); ?>" accesskey="p" />
 												</div>
 												<!-- /#publishing-action -->
 
@@ -79,7 +93,8 @@
 										<div class="pods-field-option-group">
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 												<p>
-													<a href="#toggle" class="button" id="toggle-all"><?php esc_html_e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+													<a href="#toggle" class="button"
+														id="toggle-all"><?php esc_html_e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
 												</p>
 
 												<ul>
@@ -97,9 +112,10 @@
 
 														$zebra = ( ! $zebra );
 														?>
-														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
+														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>"
+															data-capability="<?php echo esc_attr( $capability ); ?>">
 															<?php
-															echo PodsForm::field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+															PodsForm::output_field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
 																'boolean_yes_label' => $capability,
 																'disable_dfv'       => true,
 															] );
@@ -115,7 +131,7 @@
 										<div class="pods-field-option-group">
 											<p class="pods-field-option-group-label">
 												<?php
-												echo PodsForm::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
+												PodsForm::output_label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
 												?>
 											</p>
 
@@ -123,14 +139,14 @@
 												<ul id="custom-capabilities">
 													<li class="pods-repeater hidden">
 														<?php
-														echo PodsForm::field( 'custom_capabilities[--1]', '', 'text', [
+														PodsForm::output_field( 'custom_capabilities[--1]', '', 'text', [
 															'disable_dfv' => true,
 														] );
 														?>
 													</li>
 													<li>
 														<?php
-														echo PodsForm::field( 'custom_capabilities[0]', '', 'text', [
+														PodsForm::output_field( 'custom_capabilities[0]', '', 'text', [
 															'disable_dfv' => true,
 														] );
 														?>
@@ -138,7 +154,8 @@
 												</ul>
 
 												<p>
-													<a href="#add-capability" id="add-capability" class="button"><?php esc_html_e( 'Add Another Custom Capability', 'pods' ); ?></a>
+													<a href="#add-capability" id="add-capability"
+														class="button"><?php esc_html_e( 'Add Another Custom Capability', 'pods' ); ?></a>
 												</p>
 											</div>
 										</div>
@@ -170,12 +187,13 @@
 </div>
 
 <script type="text/javascript">
-	var pods_admin_submit_callback = function ( id ) {
+	var pods_admin_submit_callback = function( id ) {
 		id = parseInt( id );
-		document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&action=edit&id=<?php echo esc_js( $id ); ?>&do=save';
+		document.location
+			= 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&action=edit&id=<?php echo esc_js( $id ); ?>&do=save';
 	};
 
-	jQuery( function ( $ ) {
+	jQuery( function( $ ) {
 		$( document ).Pods( 'validate' );
 		$( document ).Pods( 'submit' );
 		$( document ).Pods( 'wizard' );
@@ -186,15 +204,17 @@
 
 		var toggle_all = true;
 
-		$( '#toggle-all' ).on( 'click', function ( e ) {
+		$( '#toggle-all' ).on( 'click', function( e ) {
 			e.preventDefault();
 
 			$( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
 
-			toggle_all = (!toggle_all);
+			toggle_all = (
+				! toggle_all
+			);
 		} );
 
-		$( '#add-capability' ).on( 'click', function ( e ) {
+		$( '#add-capability' ).on( 'click', function( e ) {
 			e.preventDefault();
 
 			var new_id = $( 'ul#custom-capabilities li' ).length;

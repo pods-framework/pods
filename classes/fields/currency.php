@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -31,7 +36,7 @@ class PodsField_Currency extends PodsField_Number {
 	 * @var array
 	 * @since 2.0.0
 	 */
-	public static $currencies = array();
+	public static $currencies = [];
 
 	/**
 	 * {@inheritdoc}
@@ -49,43 +54,43 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function options() {
 
-		$currency_options = array();
+		$currency_options = [];
 		foreach ( static::$currencies as $key => $value ) {
 			$currency = $value['label'];
 			if ( $value['label'] !== $value['name'] ) {
 				$currency .= ': ' . $value['name'];
 			}
-			$currency                .= ' (' . $value['sign'] . ')';
+			$currency                 .= ' (' . $value['sign'] . ')';
 			$currency_options[ $key ] = $currency;
 		}
 
-		$options = array(
-			static::$type . '_format_type'      => array(
-				'label'      => __( 'Input Type', 'pods' ),
-				'default'    => 'number',
-				'type'       => 'pick',
-				'data'       => array(
+		$options = [
+			static::$type . '_format_type'      => [
+				'label'                 => __( 'Input Type', 'pods' ),
+				'default'               => 'number',
+				'type'                  => 'pick',
+				'data'                  => [
 					'number' => __( 'Freeform Number', 'pods' ),
 					'slider' => __( 'Slider', 'pods' ),
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			static::$type . '_format_sign'      => array(
-				'label'   => __( 'Currency Sign', 'pods' ),
-				'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
-				'type'    => 'pick',
-				'data'    => apply_filters( 'pods_form_ui_field_number_currency_options', $currency_options ),
-				'pick_format_single' => 'dropdown',
+				'dependency'            => true,
+			],
+			static::$type . '_format_sign'      => [
+				'label'                 => __( 'Currency Sign', 'pods' ),
+				'default'               => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
+				'type'                  => 'pick',
+				'data'                  => apply_filters( 'pods_form_ui_field_number_currency_options', $currency_options ),
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_format_placement' => array(
-				'label'   => __( 'Currency Placement on Display', 'pods' ),
-				'default' => apply_filters( 'pods_form_ui_field_number_currency_placement_default', 'before' ),
-				'help'    => __( 'This is the placement of the currency sign when displaying the value. The input will always have the sign on the left to identify the currency', 'pods' ),
-				'type'    => 'pick',
-				'data'    => array(
+			],
+			static::$type . '_format_placement' => [
+				'label'                 => __( 'Currency Placement on Display', 'pods' ),
+				'default'               => apply_filters( 'pods_form_ui_field_number_currency_placement_default', 'before' ),
+				'help'                  => __( 'This is the placement of the currency sign when displaying the value. The input will always have the sign on the left to identify the currency', 'pods' ),
+				'type'                  => 'pick',
+				'data'                  => [
 					'before'                => __( 'Before (ex. $100)', 'pods' ),
 					'after'                 => __( 'After (ex. 100$)', 'pods' ),
 					'before_space'          => __( 'Before with space (ex. $ 100)', 'pods' ),
@@ -93,15 +98,15 @@ class PodsField_Currency extends PodsField_Number {
 					'none'                  => __( 'None (ex. 100)', 'pods' ),
 					'beforeaftercode'       => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' ),
 					'beforeaftercode_space' => __( 'Before with space and with Currency Code after (ex. $ 100 USD)', 'pods' ),
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_format'           => array(
-				'label'   => __( 'Number Format', 'pods' ),
-				'default' => apply_filters( 'pods_form_ui_field_number_currency_format_default', 'i18n' ),
-				'type'    => 'pick',
-				'data'    => array(
+			],
+			static::$type . '_format'           => [
+				'label'                 => __( 'Number Format', 'pods' ),
+				'default'               => apply_filters( 'pods_form_ui_field_number_currency_format_default', 'i18n' ),
+				'type'                  => 'pick',
+				'data'                  => [
 					'i18n'      => __( 'Localized Default', 'pods' ),
 					'9,999.99'  => '1,234.00',
 					'9999.99'   => '1234.00',
@@ -109,77 +114,76 @@ class PodsField_Currency extends PodsField_Number {
 					'9999,99'   => '1234,00',
 					'9 999,99'  => '1 234,00',
 					'9\'999.99' => '1\'234.00',
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_decimals'         => array(
+			],
+			static::$type . '_decimals'         => [
 				'label'   => __( 'Decimals', 'pods' ),
 				'default' => 2,
 				'type'    => 'number',
 				'help'    => __( 'Set to a positive number to enable decimals. The upper limit in the database for this field is 30 decimals.', 'pods' ),
-			),
-			static::$type . '_decimal_handling' => array(
+			],
+			static::$type . '_decimal_handling' => [
 				'label'                 => __( 'Decimal handling for trailing zero decimals', 'pods' ),
-				'description'           => __( '', 'pods' ),
 				'default'               => 'none',
 				'type'                  => 'pick',
-				'data'                  => array(
+				'data'                  => [
 					'none'             => __( 'Default (Examples: "$1.00", "$0.00")', 'pods' ),
 					'remove'           => __( 'Remove decimals (Examples: "$1", "$0")', 'pods' ),
 					'remove_only_zero' => __( 'Remove decimals only when number is zero (Examples: "$1.00", "$0")', 'pods' ),
 					'dash'             => __( 'Convert to dash (Examples: "$1.-", "$0.-")', 'pods' ),
 					'dash_only_zero'   => __( 'Convert to dash only when number is zero (Examples: "$1.00", "$0.-")', 'pods' ),
 					'dash_whole_zero'  => __( 'Convert to the whole value to dash when number is zero (Examples: "$1.00", "$-")', 'pods' ),
-				),
+				],
 				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_step'             => array(
+			],
+			static::$type . '_step'             => [
 				'label'      => __( 'Slider Increment (Step)', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
+				'depends-on' => [ static::$type . '_format_type' => 'slider' ],
 				'default'    => 1,
 				'type'       => 'text',
-			),
-			static::$type . '_min'              => array(
-				'label'      => __( 'Minimum Number', 'pods' ),
-				'depends-on-any' => array(
+			],
+			static::$type . '_min'              => [
+				'label'          => __( 'Minimum Number', 'pods' ),
+				'depends-on-any' => [
 					static::$type . '_format_type' => 'slider',
-					static::$type . '_html5' => true,
-				),
-				'default'    => 0,
-				'type'       => 'text',
-			),
-			static::$type . '_max'              => array(
-				'label'      => __( 'Maximum Number', 'pods' ),
-				'depends-on-any' => array(
+					static::$type . '_html5'       => true,
+				],
+				'default'        => 0,
+				'type'           => 'text',
+			],
+			static::$type . '_max'              => [
+				'label'          => __( 'Maximum Number', 'pods' ),
+				'depends-on-any' => [
 					static::$type . '_format_type' => 'slider',
-					static::$type . '_html5' => true,
-				),
-				'default'    => 1000,
-				'type'       => 'text',
-			),
-			static::$type . '_max_length'       => array(
+					static::$type . '_html5'       => true,
+				],
+				'default'        => 1000,
+				'type'           => 'text',
+			],
+			static::$type . '_max_length'       => [
 				'label'   => __( 'Maximum Digits', 'pods' ),
 				'default' => 12,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit. The upper limit in the database for this field is 64 digits.', 'pods' ),
-			),
-			static::$type . '_html5'            => array(
+			],
+			static::$type . '_html5'            => [
 				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
-			),
-			static::$type . '_placeholder'      => array(
+			],
+			static::$type . '_placeholder'      => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => array(
+				'help'    => [
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		return $options;
 
@@ -210,7 +214,7 @@ class PodsField_Currency extends PodsField_Number {
 
 		if ( mb_strlen( $currency_sign ) > 1 && false === strpos( $currency_sign, '&' ) ) {
 			$currency_gap = ' ';
-		} elseif ( in_array( $placement, array( 'before_space', 'after_space', 'beforeaftercode_space' ), true ) ) {
+		} elseif ( in_array( $placement, [ 'before_space', 'after_space', 'beforeaftercode_space' ], true ) ) {
 			$currency_gap = ' ';
 		}
 
@@ -250,7 +254,7 @@ class PodsField_Currency extends PodsField_Number {
 
 		$currency_sign = static::$currencies[ $currency ]['sign'];
 
-		return '\-*\\' . $currency_sign . '*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
+		return '\-*\\' . $currency_sign . '*[0-9\\' . implode( '\\', array_filter( [ $dot, $thousands ] ) ) . ']+';
 
 	}
 
@@ -270,12 +274,12 @@ class PodsField_Currency extends PodsField_Number {
 
 		// Remove currency and thousands symbols.
 		$value = str_replace(
-			array(
+			[
 				$currency_sign,
 				$currency_entity,
 				html_entity_decode( $currency_sign ),
 				html_entity_decode( $currency_entity ),
-			),
+			],
 			'',
 			$value
 		);
@@ -300,12 +304,12 @@ class PodsField_Currency extends PodsField_Number {
 
 		// Convert decimal type for numeric type.
 		$value = str_replace(
-			array(
+			[
 				$currency_sign,
 				$currency_entity,
 				html_entity_decode( $currency_sign ),
 				html_entity_decode( $currency_entity ),
-			),
+			],
 			'',
 			$value
 		);
@@ -330,217 +334,217 @@ class PodsField_Currency extends PodsField_Number {
 			return static::$currencies;
 		}
 
-		$default_currencies = array(
-			'aud'     => array(
+		$default_currencies = [
+			'aud'     => [
 				'label'  => 'AUD',
 				'name'   => __( 'Australian Dollar', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'brl'     => array(
+			],
+			'brl'     => [
 				'label'  => 'BRL',
 				'name'   => __( 'Brazilian Real', 'pods' ),
 				'sign'   => 'R$',
 				'entity' => 'R&#36;',
-			),
-			'gbp'     => array(
+			],
+			'gbp'     => [
 				'label'  => 'GBP',
 				'name'   => __( 'British Pound', 'pods' ),
 				'sign'   => '£',
 				'entity' => '&pound;',
-			),
-			'cad'     => array(
+			],
+			'cad'     => [
 				'label'  => 'CAD',
 				'name'   => __( 'Canadian Dollar', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'cny'     => array(
+			],
+			'cny'     => [
 				'label'  => 'CNY',
 				'name'   => __( 'Chinese Yen (¥)', 'pods' ),
 				'sign'   => '¥',
 				'entity' => '&yen;',
-			),
-			'cny2'    => array(
+			],
+			'cny2'    => [
 				'label'  => 'CNY',
 				'name'   => __( 'Chinese Yuan (元)', 'pods' ),
 				'sign'   => '元',
 				'entity' => '&#20803;',
-			),
-			'czk'     => array(
+			],
+			'czk'     => [
 				'label'  => 'CZK',
 				'name'   => __( 'Czech Koruna', 'pods' ),
 				'sign'   => 'Kč',
 				'entity' => 'K&#x10D;',
-			),
-			'dkk'     => array(
+			],
+			'dkk'     => [
 				'label'  => 'DKK',
 				'name'   => __( 'Danish Krone', 'pods' ),
 				'sign'   => 'kr.',
 				'entity' => 'kr.',
-			),
-			'euro'    => array(
+			],
+			'euro'    => [
 				'label'  => 'EUR',
 				'name'   => __( 'Euro', 'pods' ),
 				'sign'   => '€',
 				'entity' => '&euro;',
-			),
-			'hkd'     => array(
+			],
+			'hkd'     => [
 				'label'  => 'HKD',
 				'name'   => __( 'Hong Kong Dollar', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'huf'     => array(
+			],
+			'huf'     => [
 				'label'  => 'HUF',
 				'name'   => __( 'Hungarian Forint', 'pods' ),
 				'sign'   => 'Ft',
 				'entity' => 'Ft',
-			),
-			'inr'     => array(
+			],
+			'inr'     => [
 				'label'  => 'INR',
 				'name'   => __( 'Indian Rupee', 'pods' ),
 				'sign'   => '₹',
 				'entity' => '&#x20B9;',
-			),
-			'idr'     => array(
+			],
+			'idr'     => [
 				'label'  => 'IDR',
 				'name'   => __( 'Indonesian Rupiah', 'pods' ),
 				'sign'   => 'Rp',
 				'entity' => 'Rp',
-			),
-			'ils'     => array(
+			],
+			'ils'     => [
 				'label'  => 'ILS',
 				'name'   => __( 'Israeli New Sheqel', 'pods' ),
 				'sign'   => '₪',
 				'entity' => '&#x20AA;',
-			),
-			'jpy'     => array(
+			],
+			'jpy'     => [
 				'label'  => 'JPY',
 				'name'   => __( 'Japanese Yen', 'pods' ),
 				'sign'   => '¥',
 				'entity' => '&yen;',
-			),
-			'krw'     => array(
+			],
+			'krw'     => [
 				'label'  => 'KRW',
 				'name'   => __( 'Korean Won', 'pods' ),
 				'sign'   => '₩',
 				'entity' => '&#8361;',
-			),
-			'myr'     => array(
+			],
+			'myr'     => [
 				'label'  => 'MYR',
 				'name'   => __( 'Malaysian Ringgit', 'pods' ),
 				'sign'   => 'RM',
 				'entity' => 'RM',
-			),
-			'mxn'     => array(
+			],
+			'mxn'     => [
 				'label'  => 'MXN',
 				'name'   => __( 'Mexican Peso', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'ngn'     => array(
+			],
+			'ngn'     => [
 				'label'  => 'NGN',
 				'name'   => __( 'Nigerian Naira', 'pods' ),
 				'sign'   => '₦',
 				'entity' => '&#8358;',
-			),
-			'nzd'     => array(
+			],
+			'nzd'     => [
 				'label'  => 'NZD',
 				'name'   => __( 'New Zealand Dollar', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'nok'     => array(
+			],
+			'nok'     => [
 				'label'  => 'NOK',
 				'name'   => __( 'Norwegian Krone', 'pods' ),
 				'sign'   => 'kr',
 				'entity' => 'kr',
-			),
-			'php'     => array(
+			],
+			'php'     => [
 				'label'  => 'PHP',
 				'name'   => __( 'Philippine Peso', 'pods' ),
 				'sign'   => '₱',
 				'entity' => '&#x20B1;',
-			),
-			'pln'     => array(
+			],
+			'pln'     => [
 				'label'  => 'PLN',
 				'name'   => __( 'Polish Złoty', 'pods' ),
 				'sign'   => 'zł',
 				'entity' => 'z&#x142;',
-			),
-			'rub'     => array(
+			],
+			'rub'     => [
 				'label'  => 'RUB',
 				'name'   => __( 'Russian Ruble', 'pods' ),
 				'sign'   => '₽',
 				'entity' => '&#8381;',
-			),
-			'sek'     => array(
+			],
+			'sek'     => [
 				'label'  => 'SEK',
 				'name'   => __( 'Swedish Krona', 'pods' ),
 				'sign'   => 'kr',
 				'entity' => 'kr',
-			),
-			'sgd'     => array(
+			],
+			'sgd'     => [
 				'label'  => 'SGD',
 				'name'   => __( 'Singapore Dollar', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'zar'     => array(
+			],
+			'zar'     => [
 				'label'  => 'ZAR',
 				'name'   => __( 'South African Rand', 'pods' ),
 				'sign'   => 'R',
 				'entity' => 'R',
-			),
-			'chf'     => array(
+			],
+			'chf'     => [
 				'label'  => 'CHF',
 				'name'   => __( 'Swiss Franc', 'pods' ),
 				'sign'   => 'Fr',
 				'entity' => 'Fr',
-			),
-			'twd'     => array(
+			],
+			'twd'     => [
 				'label'  => 'TWD',
 				'name'   => __( 'Taiwan New Dollar', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'thb'     => array(
+			],
+			'thb'     => [
 				'label'  => 'THB',
 				'name'   => __( 'Thai Baht', 'pods' ),
 				'sign'   => '฿',
 				'entity' => '&#x0E3F;',
-			),
-			'trl'     => array(
+			],
+			'trl'     => [
 				'label'  => 'TRL',
 				'name'   => __( 'Turkish Lira', 'pods' ),
 				'sign'   => '₺',
 				'entity' => '&#8378;',
-			),
-			'usd'     => array(
+			],
+			'usd'     => [
 				'label'  => 'USD',
 				'name'   => __( 'US Dollar', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
-			),
-			'usdcent' => array(
+			],
+			'usdcent' => [
 				'label'  => 'USDCENT',
 				'name'   => __( 'US Dollar Cent', 'pods' ),
 				'sign'   => '¢',
 				'entity' => '&cent;',
-			),
-			'vnd'     => array(
+			],
+			'vnd'     => [
 				'label'  => 'VND',
 				'name'   => __( 'Vietnamese Dong', 'pods' ),
 				'sign'   => '₫',
 				'entity' => '&#8363;',
-			),
-		);
+			],
+		];
 
 		/**
 		 * Add custom currencies
 		 *
-		 * @param  array $options {
+		 * @param array  $options {
 		 *                        Required array of arrays.
 		 *
 		 * @type  array {
@@ -548,8 +552,8 @@ class PodsField_Currency extends PodsField_Number {
 		 * @type  string $name    The full name (example: US Dollar).
 		 * @type  string $sign    The sign (example: $).
 		 * @type  string $entity  The HTML entity (example: &#36;).
-		 *     }
-		 * }
+		 *                        }
+		 *                        }
 		 * @return array
 		 */
 		static::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', $default_currencies );
@@ -560,12 +564,12 @@ class PodsField_Currency extends PodsField_Number {
 		// Backwards compatibility
 		foreach ( static::$currencies as $key => $value ) {
 			if ( is_string( $value ) ) {
-				static::$currencies[ $key ] = array(
+				static::$currencies[ $key ] = [
 					'label'  => strtoupper( $key ),
 					'name'   => strtoupper( $key ),
 					'sign'   => $value,
 					'entity' => $value,
-				);
+				];
 			} elseif ( is_array( $value ) ) {
 				// Make sure all required values are set
 				if ( empty( $value['label'] ) ) {

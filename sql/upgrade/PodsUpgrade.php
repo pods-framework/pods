@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Upgrade
  */
@@ -8,12 +13,12 @@ class PodsUpgrade {
 	/**
 	 * @var array
 	 */
-	public $tables = array();
+	public $tables = [];
 
 	/**
 	 * @var array
 	 */
-	protected $progress = array();
+	protected $progress = [];
 
 	/**
 	 * @var PodsAPI
@@ -80,7 +85,7 @@ class PodsUpgrade {
 				$sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
 			}
 
-			$sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
+			$sql = explode( ";\n", str_replace( [ "\r", 'wp_' ], [ "\n", $wpdb->prefix ], $sql ) );
 			$sql = array_map( 'trim', $sql );
 			$sql = array_filter( $sql );
 
@@ -135,7 +140,7 @@ class PodsUpgrade {
 			$sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
 		}
 
-		$sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
+		$sql = explode( ";\n", str_replace( [ "\r", 'wp_' ], [ "\n", $wpdb->prefix ], $sql ) );
 
 		// Remove empty lines and queries.
 		$sql = array_map( 'trim', $sql );
@@ -214,7 +219,7 @@ class PodsUpgrade {
 			return pods_error( __( 'Upgrade method not found.', 'pods' ) );
 		}
 
-		return call_user_func( array( $this, $params->step . '_' . $params->type ), $params );
+		return call_user_func( [ $this, $params->step . '_' . $params->type ], $params );
 	}
 
 	/**
@@ -269,7 +274,7 @@ class PodsUpgrade {
 		$upgraded = get_option( 'pods_framework_upgraded' );
 
 		if ( empty( $upgraded ) || ! is_array( $upgraded ) ) {
-			$upgraded = array();
+			$upgraded = [];
 		}
 
 		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );

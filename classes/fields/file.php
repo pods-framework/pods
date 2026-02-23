@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 
@@ -30,6 +35,7 @@ class PodsField_File extends PodsField {
 
 	/**
 	 * Temporary upload directory.
+	 *
 	 * @var string
 	 */
 	private static $tmp_upload_dir;
@@ -50,8 +56,8 @@ class PodsField_File extends PodsField {
 	public function admin_init() {
 
 		// Hook into AJAX for Uploads.
-		add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
-		add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
+		add_action( 'wp_ajax_pods_upload', [ $this, 'admin_ajax_upload' ] );
+		add_action( 'wp_ajax_nopriv_pods_upload', [ $this, 'admin_ajax_upload' ] );
 
 	}
 
@@ -62,7 +68,7 @@ class PodsField_File extends PodsField {
 
 		$sizes = get_intermediate_image_sizes();
 
-		$image_sizes = array();
+		$image_sizes = [];
 
 		foreach ( $sizes as $size ) {
 			$image_sizes[ $size ] = ucwords( str_replace( '-', ' ', $size ) );
@@ -70,120 +76,120 @@ class PodsField_File extends PodsField {
 
 		$type = static::$type;
 
-		$options = array(
-			static::$type . '_format_type'            => array(
-				'label'      => __( 'Upload Limit', 'pods' ),
-				'default'    => 'single',
-				'required'   => true,
-				'type'       => 'pick',
-				'data'       => array(
+		$options = [
+			static::$type . '_format_type'                  => [
+				'label'                 => __( 'Upload Limit', 'pods' ),
+				'default'               => 'single',
+				'required'              => true,
+				'type'                  => 'pick',
+				'data'                  => [
 					'single' => __( 'Single File', 'pods' ),
 					'multi'  => __( 'Multiple Files', 'pods' ),
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			static::$type . '_uploader'               => array(
-				'label'      => __( 'File Uploader', 'pods' ),
-				'default'    => 'attachment',
-				'required'   => true,
-				'type'       => 'pick',
-				'data'       => apply_filters(
+				'dependency'            => true,
+			],
+			static::$type . '_uploader'                     => [
+				'label'                 => __( 'File Uploader', 'pods' ),
+				'default'               => 'attachment',
+				'required'              => true,
+				'type'                  => 'pick',
+				'data'                  => apply_filters(
 					"pods_form_ui_field_{$type}_uploader_options",
-					array(
+					[
 						'attachment' => __( 'Upload and/or Select (Media Library)', 'pods' ),
 						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
-					)
+					]
 				),
-				'pick_format_single' => 'dropdown',
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			static::$type . '_type'                   => array(
-				'label'      => __( 'Restrict File Types', 'pods' ),
-				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
-				'type'       => 'pick',
-				'data'       => apply_filters(
+				'dependency'            => true,
+			],
+			static::$type . '_type'                         => [
+				'label'                 => __( 'Restrict File Types', 'pods' ),
+				'default'               => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
+				'type'                  => 'pick',
+				'data'                  => apply_filters(
 					"pods_form_ui_field_{$type}_type_options",
 					[
-						'Images' => [
+						'Images'       => [
 							'images'     => __( 'Images (ONLY jpg, jpeg, png, gif, and webp)', 'pods' ),
 							'images-any' => __( 'Images - Any (jpg, jpeg, png, gif, webp, and others supported by WP)', 'pods' ),
 						],
-						'Video' => [
-							'video'      => __( 'Video (ONLY mpg, mov, flv, and mp4)', 'pods' ),
-							'video-any'  => __( 'Video - Any (mpg, mov, flv, mp4, and others supported by WP)', 'pods' ),
+						'Video'        => [
+							'video'     => __( 'Video (ONLY mpg, mov, flv, and mp4)', 'pods' ),
+							'video-any' => __( 'Video - Any (mpg, mov, flv, mp4, and others supported by WP)', 'pods' ),
 						],
-						'Audio' => [
-							'audio'      => __( 'Audio (ONLY mp3, m4a, wav, and wma)', 'pods' ),
-							'audio-any'  => __( 'Audio - Any (mp3, m4a, wav, wma, and others supported by WP)', 'pods' ),
+						'Audio'        => [
+							'audio'     => __( 'Audio (ONLY mp3, m4a, wav, and wma)', 'pods' ),
+							'audio-any' => __( 'Audio - Any (mp3, m4a, wav, wma, and others supported by WP)', 'pods' ),
 						],
-						'Text' => [
-							'text'       => __( 'Text (txt, csv, tsv, rtx)', 'pods' ),
+						'Text'         => [
+							'text' => __( 'Text (txt, csv, tsv, rtx)', 'pods' ),
 						],
 						'More Options' => [
-							'any'        => __( 'Any Type (no restriction)', 'pods' ),
-							'other'      => __( 'Other (customize allowed extensions)', 'pods' ),
+							'any'   => __( 'Any Type (no restriction)', 'pods' ),
+							'other' => __( 'Other (customize allowed extensions)', 'pods' ),
 						],
 					]
 				),
-				'pick_format_single' => 'dropdown',
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			static::$type . '_allowed_extensions'     => array(
-				'label'       => __( 'Allowed File Extensions', 'pods' ),
-				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime type group like Images, Video, etc.', 'pods' ),
-				'depends-on'  => array( static::$type . '_type' => 'other' ),
-				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
+				'dependency'            => true,
+			],
+			static::$type . '_allowed_extensions'           => [
+				'label'            => __( 'Allowed File Extensions', 'pods' ),
+				'description'      => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime type group like Images, Video, etc.', 'pods' ),
+				'depends-on'       => [ static::$type . '_type' => 'other' ],
+				'default'          => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
 				'text_placeholder' => 'jpg,png,mp4,mov',
-				'type'        => 'text',
-			),
-			static::$type . '_attachment_tab'         => array(
-				'label'      => __( 'Media Library Default Tab', 'pods' ),
-				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
-				'default'    => 'upload',
-				'required'   => true,
-				'type'       => 'pick',
-				'data'       => array(
+				'type'             => 'text',
+			],
+			static::$type . '_attachment_tab'               => [
+				'label'                 => __( 'Media Library Default Tab', 'pods' ),
+				'depends-on'            => [ static::$type . '_uploader' => 'attachment' ],
+				'default'               => 'upload',
+				'required'              => true,
+				'type'                  => 'pick',
+				'data'                  => [
 					// These keys must match WP media modal router names.
 					'upload' => __( 'Upload File', 'pods' ),
 					'browse' => __( 'Media Library', 'pods' ),
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_attachment_current_post_only'         => array(
+			],
+			static::$type . '_attachment_current_post_only' => [
 				'label'      => __( 'Restrict Media Library to Current Post ID', 'pods' ),
 				'help'       => __( 'The media library will be restricted to only showing attachments that are attached to the current post ID if this field is on a Pod that is a Post Type.', 'pods' ),
-				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
+				'depends-on' => [ static::$type . '_uploader' => 'attachment' ],
 				'default'    => 0,
 				'type'       => 'boolean',
-			),
-			static::$type . '_upload_dir'             => array(
-				'label'      => __( 'Upload Directory', 'pods' ),
-				'default'    => 'wp',
-				'type'       => 'pick',
-				'required'   => true,
-				'data'       => array(
+			],
+			static::$type . '_upload_dir'                   => [
+				'label'                 => __( 'Upload Directory', 'pods' ),
+				'default'               => 'wp',
+				'type'                  => 'pick',
+				'required'              => true,
+				'data'                  => [
 					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/wp-content/uploads/yyyy/mm/)',
 					'uploads' => __( 'Custom directory within the default uploads directory', 'pods' ),
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
-				'dependency' => true,
-			),
-			static::$type . '_upload_dir_custom'     => array(
+				'depends-on'            => [ static::$type . '_uploader' => 'plupload' ],
+				'dependency'            => true,
+			],
+			static::$type . '_upload_dir_custom'            => [
 				'label'       => __( 'Custom Upload Directory', 'pods' ),
 				'help'        => __( 'Magic tags are allowed for this field. The path is relative to the /wp-content/uploads/ folder on your site.', 'pods' ),
 				'placeholder' => 'my-custom-folder',
 				'required'    => true,
-				'depends-on'  => array(
+				'depends-on'  => [
 					static::$type . '_uploader'   => 'plupload',
 					static::$type . '_upload_dir' => 'uploads',
-				),
+				],
 				/**
 				 * Allow filtering the custom upload directory used.
 				 *
@@ -193,107 +199,108 @@ class PodsField_File extends PodsField {
 				 */
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_upload_dir_custom", '' ),
 				'type'        => 'text',
-			),
-			static::$type . '_edit_title'             => array(
+			],
+			static::$type . '_edit_title'                   => [
 				'label'   => __( 'Editable Title', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
-			),
-			static::$type . '_show_edit_link'         => array(
+			],
+			static::$type . '_show_edit_link'               => [
 				'label'   => __( 'Show Edit Link', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
-			),
-			static::$type . '_linked'                 => array(
+			],
+			static::$type . '_linked'                       => [
 				'label'   => __( 'Show Download Link', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
-			),
-			static::$type . '_limit'                  => array(
+			],
+			static::$type . '_limit'                        => [
 				'label'      => __( 'Max Number of Files', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
+				'depends-on' => [ static::$type . '_format_type' => 'multi' ],
 				'default'    => 0,
 				'type'       => 'number',
-			),
-			static::$type . '_restrict_filesize'      => array(
-				'label'      => __( 'Restrict File Size', 'pods' ),
-				'help'       => __( 'Valid size suffixes are: GB (gigabytes), MB (megabytes), KB (kilobytes), or B (bytes).  Defaults to the <a href="https://developer.wordpress.org/reference/functions/wp_max_upload_size/">wp_max_upload_size</a> setting.', 'pods' ),
-				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
-				'default'    => '',
+			],
+			static::$type . '_restrict_filesize'            => [
+				'label'            => __( 'Restrict File Size', 'pods' ),
+				'help'             => __( 'Valid size suffixes are: GB (gigabytes), MB (megabytes), KB (kilobytes), or B (bytes).  Defaults to the <a href="https://developer.wordpress.org/reference/functions/wp_max_upload_size/">wp_max_upload_size</a> setting.', 'pods' ),
+				'depends-on'       => [ static::$type . '_uploader' => 'plupload' ],
+				'default'          => '',
 				'text_placeholder' => '10MB',
-				'type'       => 'text',
-			),
-			static::$type . '_field_template'         => array(
-				'label'      => __( 'List Style', 'pods' ),
-				'help'       => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
-				'depends-on' => array(
+				'type'             => 'text',
+			],
+			static::$type . '_field_template'               => [
+				'label'                 => __( 'List Style', 'pods' ),
+				'help'                  => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
+				'depends-on'            => [
 					static::$type . '_type' => [
 						'images',
 						'images-any',
-					]
-				),
-				'default'    => apply_filters( "pods_form_ui_field_{$type}_template_default", 'rows' ),
-				'type'       => 'pick',
-				'data'       => apply_filters(
+					],
+				],
+				'default'               => apply_filters( "pods_form_ui_field_{$type}_template_default", 'rows' ),
+				'type'                  => 'pick',
+				'data'                  => apply_filters(
 					"pods_form_ui_field_{$type}_type_templates",
-					array(
+					[
 						'rows'  => __( 'Rows', 'pods' ),
 						'tiles' => __( 'Tiles', 'pods' ),
-					)
+					]
 				),
-				'pick_format_single' => 'dropdown',
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_add_button'             => array(
+			],
+			static::$type . '_add_button'                   => [
 				'label'   => __( 'Add Button Text', 'pods' ),
 				'default' => __( 'Add File', 'pods' ),
 				'type'    => 'text',
-			),
-			static::$type . '_modal_title'            => array(
+			],
+			static::$type . '_modal_title'                  => [
 				'label'      => __( 'Modal Title', 'pods' ),
-				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
+				'depends-on' => [ static::$type . '_uploader' => 'attachment' ],
 				'default'    => __( 'Attach a file', 'pods' ),
 				'type'       => 'text',
-			),
-			static::$type . '_modal_add_button'       => array(
+			],
+			static::$type . '_modal_add_button'             => [
 				'label'      => __( 'Modal Add Button Text', 'pods' ),
-				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
+				'depends-on' => [ static::$type . '_uploader' => 'attachment' ],
 				'default'    => __( 'Add File', 'pods' ),
 				'type'       => 'text',
-			),
+			],
 
 			/* WP GALLERY OUTPUT */
-			static::$type . '_wp_gallery_output'      => array(
+			static::$type . '_wp_gallery_output'            => [
 				'label'      => __( 'Output as a WP Gallery', 'pods' ),
+				// translators: %s is the URL to WordPress documentation.
 				'help'       => sprintf( __( '<a href="%s" target="_blank" rel="noopener noreferrer">Click here for more info</a>', 'pods' ), 'https://wordpress.org/support/article/inserting-images-into-posts-and-pages/' ),
 				'depends-on' => [
 					static::$type . '_type' => [
 						'images',
 						'images-any',
-					]
+					],
 				],
 				'dependency' => true,
 				'type'       => 'boolean',
-			),
-			static::$type . '_wp_gallery_link'        => array(
-				'label'      => __( 'Gallery Image Links', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
-				'type'       => 'pick',
-				'default'    => 'file',
-				'data'       => array(
+			],
+			static::$type . '_wp_gallery_link'              => [
+				'label'                 => __( 'Gallery Image Links', 'pods' ),
+				'depends-on'            => [ static::$type . '_wp_gallery_output' => true ],
+				'type'                  => 'pick',
+				'default'               => 'file',
+				'data'                  => [
 					'post' => __( 'Attachment Page', 'pods' ),
 					'file' => __( 'Media File', 'pods' ),
 					'none' => __( 'None', 'pods' ),
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_wp_gallery_columns'     => array(
-				'label'      => __( 'Gallery Image Columns', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
-				'type'       => 'pick',
-				'default'    => '3',
-				'data'       => array(
+			],
+			static::$type . '_wp_gallery_columns'           => [
+				'label'                 => __( 'Gallery Image Columns', 'pods' ),
+				'depends-on'            => [ static::$type . '_wp_gallery_output' => true ],
+				'type'                  => 'pick',
+				'default'               => '3',
+				'data'                  => [
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -303,31 +310,31 @@ class PodsField_File extends PodsField {
 					'7' => '7',
 					'8' => '8',
 					'9' => '9',
-				),
-				'pick_format_single' => 'dropdown',
+				],
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_wp_gallery_random_sort' => array(
+			],
+			static::$type . '_wp_gallery_random_sort'       => [
 				'label'      => __( 'Gallery Randomized Order', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
+				'depends-on' => [ static::$type . '_wp_gallery_output' => true ],
 				'type'       => 'boolean',
-			),
-			static::$type . '_wp_gallery_size'        => array(
-				'label'      => __( 'Gallery Image Size', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
-				'type'       => 'pick',
-				'default'    => 'thumbnail',
-				'data'       => $this->data_image_sizes(),
-				'pick_format_single' => 'dropdown',
+			],
+			static::$type . '_wp_gallery_size'              => [
+				'label'                 => __( 'Gallery Image Size', 'pods' ),
+				'depends-on'            => [ static::$type . '_wp_gallery_output' => true ],
+				'type'                  => 'pick',
+				'default'               => 'thumbnail',
+				'data'                  => $this->data_image_sizes(),
+				'pick_format_single'    => 'dropdown',
 				'pick_show_select_text' => 0,
-			),
-			static::$type . '_auto_set_featured_image' => array(
-				'label'      => __( 'Automatically set first image as Featured Image for the Current Post', 'pods' ),
-				'help'       => __( 'On save, the first image of this field will update the featured image for the current post if this field is on a Pod that is a Post Type. If you have a file upload that is not an image type then it will be ignored and only the very first file with an image type will be used.', 'pods' ),
-				'default'    => 0,
-				'type'       => 'boolean',
-			),
-		);
+			],
+			static::$type . '_auto_set_featured_image'      => [
+				'label'   => __( 'Automatically set first image as Featured Image for the Current Post', 'pods' ),
+				'help'    => __( 'On save, the first image of this field will update the featured image for the current post if this field is on a Pod that is a Post Type. If you have a file upload that is not an image type then it will be ignored and only the very first file with an image type will be used.', 'pods' ),
+				'default' => 0,
+				'type'    => 'boolean',
+			],
+		];
 
 		return $options;
 
@@ -368,7 +375,7 @@ class PodsField_File extends PodsField {
 				$value = wp_get_attachment_url( $value['ID'] );
 			} else {
 				$attachments = $value;
-				$value       = array();
+				$value       = [];
 
 				foreach ( $attachments as $v ) {
 					if ( ! is_array( $v ) ) {
@@ -422,17 +429,17 @@ class PodsField_File extends PodsField {
 		 */
 		$is_user_logged_in = is_user_logged_in();
 
-		$file_upload_requirements = array(
+		$file_upload_requirements = [
 			'disabled'          => ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ),
 			'require_login'     => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! $is_user_logged_in ),
 			'require_login_cap' => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_string( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ),
-		);
+		];
 
-		$file_browser_requirements = array(
+		$file_browser_requirements = [
 			'disabled'          => ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER ),
 			'require_login'     => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && true === PODS_FILES_REQUIRE_LOGIN && ! $is_user_logged_in ),
 			'require_login_cap' => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_string( PODS_FILES_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ),
-		);
+		];
 
 		$file_upload_requirements  = array_filter( $file_upload_requirements );
 		$file_browser_requirements = array_filter( $file_browser_requirements );
@@ -629,14 +636,14 @@ class PodsField_File extends PodsField {
 	 */
 	public function build_dfv_field_item_data( $args ) {
 
-		$data = array();
+		$data = [];
 
 		$title_editable = (int) pods_v( $args->type . '_edit_title', $args->options, 0 );
 
 		$value = $args->value;
 
 		if ( empty( $value ) ) {
-			$value = array();
+			$value = [];
 		} else {
 			$value = (array) $value;
 		}
@@ -668,7 +675,7 @@ class PodsField_File extends PodsField {
 				$title = basename( $attachment->guid );
 			}
 
-			$data[] = array(
+			$data[] = [
 				'id'        => esc_html( $id ),
 				'icon'      => esc_attr( $icon ),
 				'name'      => wp_strip_all_tags( html_entity_decode( $title ) ),
@@ -676,7 +683,7 @@ class PodsField_File extends PodsField {
 				'link'      => html_entity_decode( esc_url( $link ) ),
 				'download'  => html_entity_decode( esc_url( $download ) ),
 				'selected'  => true,
-			);
+			];
 		}//end foreach
 
 		return $data;
@@ -751,7 +758,7 @@ class PodsField_File extends PodsField {
 			}
 
 			$attachment      = null;
-			$attachment_data = array();
+			$attachment_data = [];
 
 			$attachment = get_post( $attachment_id );
 
@@ -811,7 +818,7 @@ class PodsField_File extends PodsField {
 		}
 
 		if ( ! empty( $value ) && isset( $value['ID'] ) ) {
-			$value = array( $value );
+			$value = [ $value ];
 		}
 
 		$type       = static::$type;
@@ -865,7 +872,7 @@ class PodsField_File extends PodsField {
 	 */
 	public function data_image_sizes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$data = array();
+		$data = [];
 
 		$image_sizes = get_intermediate_image_sizes();
 
@@ -873,7 +880,7 @@ class PodsField_File extends PodsField {
 			$data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
 		}
 
-		$data['full'] = __( 'Full Size' ); // Translated by WordPress core.
+		$data['full'] = __( 'Full Size', 'pods' );
 
 		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 
@@ -884,8 +891,8 @@ class PodsField_File extends PodsField {
 	 *
 	 * @since 2.7.0
 	 *
-	 * @param  string|array $value   The value(s).
-	 * @param  array        $options The field options.
+	 * @param string|array $value   The value(s).
+	 * @param array        $options The field options.
 	 *
 	 * @return string
 	 */
@@ -895,7 +902,7 @@ class PodsField_File extends PodsField {
 			return '';
 		}
 
-		$shortcode_args = array();
+		$shortcode_args = [];
 
 		if ( ! empty( $options[ static::$type . '_wp_gallery_columns' ] ) ) {
 			$shortcode_args['columns'] = absint( $options[ static::$type . '_wp_gallery_columns' ] );
@@ -916,7 +923,7 @@ class PodsField_File extends PodsField {
 		if ( isset( $value['ID'] ) ) {
 			$shortcode_args['ids'] = $value['ID'];
 		} else {
-			$images = array();
+			$images = [];
 
 			foreach ( (array) $value as $v ) {
 				if ( ! is_array( $v ) ) {
@@ -958,7 +965,7 @@ class PodsField_File extends PodsField {
 	 * @param null|string     $link       Link URL.
 	 *
 	 * @return string
-	 * @since 2.0.0
+	 * @since      2.0.0
 	 *
 	 * @deprecated 2.7.0
 	 */
@@ -992,8 +999,8 @@ class PodsField_File extends PodsField {
 		?>
 		<li class="pods-file hidden" id="pods-file-<?php echo esc_attr( $id ); ?>">
 			<?php
-				// @codingStandardsIgnoreLine
-				echo PodsForm::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' );
+			// @codingStandardsIgnoreLine
+			PodsForm::output_field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' );
 			?>
 
 			<ul class="pods-file-meta media-item">
@@ -1009,7 +1016,7 @@ class PodsField_File extends PodsField {
 					<?php
 					if ( $editable ) {
 						// @codingStandardsIgnoreLine
-						echo PodsForm::field( $attributes['name'] . '[' . $id . '][title]', $name, 'text' );
+						PodsForm::output_field( $attributes['name'] . '[' . $id . '][title]', $name, 'text' );
 					} else {
 						echo esc_html( $name );
 					}
@@ -1023,7 +1030,8 @@ class PodsField_File extends PodsField {
 						if ( $linked ) {
 							?>
 							<li class="pods-file-col pods-file-download">
-								<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noopener noreferrer">Download</a></li>
+								<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noopener noreferrer">Download</a>
+							</li>
 							<?php
 						}
 						?>
@@ -1062,9 +1070,9 @@ class PodsField_File extends PodsField {
 
 		$params = (object) $params;
 
-		$methods = array(
+		$methods = [
 			'upload',
-		);
+		];
 
 		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) ) {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
@@ -1189,7 +1197,7 @@ class PodsField_File extends PodsField {
 					$limit_size = $limit_size * 1025 * 1025;
 					// convert to KB to B
 				} elseif ( false !== stripos( $limit_size, 'KB' ) ) {
-					$limit_size  = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
+					$limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
 					$limit_size *= 1025;
 					// convert to B
 				} elseif ( false !== stripos( $limit_size, 'B' ) ) {
@@ -1200,6 +1208,7 @@ class PodsField_File extends PodsField {
 
 				if ( 0 < $limit_size && $limit_size < $file['size'] ) {
 					$error = sprintf(
+						// translators: %s is the maximum file size allowed.
 						__( 'Error: File size too large, max size is %s', 'pods' ),
 						pods_v( $field['type'] . '_restrict_filesize', $field )
 					);
@@ -1226,6 +1235,7 @@ class PodsField_File extends PodsField {
 
 				if ( false === $ok ) {
 					$error = sprintf(
+						// translators: %s is a comma-separated list of allowed file extensions.
 						__( 'Error: File type not allowed, please use one of the following: %s', 'pods' ),
 						'.' . implode( ', .', $file_mime_types_extensions )
 					);
@@ -1250,7 +1260,8 @@ class PodsField_File extends PodsField {
 					// Do not allow if the mime type was found and it does not match.
 					if ( $real_mime && $real_mime !== $file_mime_types_mapping[ $file_info['extension'] ] ) {
 						$error = sprintf(
-							__( 'Error: File mime type "%s" not expected, please ensure your file is valid: %s', 'pods' ),
+							// translators: %1$s is the detected mime type, %2$s is the expected mime type with extension.
+							__( 'Error: File mime type "%1$s" not expected, please ensure your file is valid: %2$s', 'pods' ),
 							$real_mime,
 							'.' . $file_info['extension'] . ' (' . $file_mime_types_mapping[ $file_info['extension'] ] . ')'
 						);
@@ -1291,7 +1302,7 @@ class PodsField_File extends PodsField {
 					 */
 					$context_pod = apply_filters( 'pods_upload_dir_custom_context_pod', $context_pod, $params, $field, $pod );
 
-					$custom_dir = pods_evaluate_tags( $custom_dir, array( 'pod' => $context_pod ) );
+					$custom_dir = pods_evaluate_tags( $custom_dir, [ 'pod' => $context_pod ] );
 
 					/**
 					 * Filter the custom Pod upload directory.
@@ -1308,7 +1319,7 @@ class PodsField_File extends PodsField {
 
 					self::$tmp_upload_dir = $custom_dir;
 
-					add_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
+					add_filter( 'upload_dir', [ $this, 'filter_upload_dir' ] );
 				}
 
 				// Upload file.
@@ -1316,13 +1327,13 @@ class PodsField_File extends PodsField {
 
 				// End custom directory.
 				if ( 'wp' !== $upload_dir ) {
-					remove_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
+					remove_filter( 'upload_dir', [ $this, 'filter_upload_dir' ] );
 
 					self::$tmp_upload_dir = null;
 				}
 
 				if ( is_object( $attachment_id ) ) {
-					$errors = array();
+					$errors = [];
 
 					foreach ( $attachment_id->errors['upload_error'] as $error_code => $error_message ) {
 						$errors[] = '[' . $error_code . '] ' . $error_message;
@@ -1362,7 +1373,7 @@ class PodsField_File extends PodsField {
 	 *
 	 * @since 2.7.28
 	 *
-	 * @see wp_upload_dir()
+	 * @see   wp_upload_dir()
 	 *
 	 * @param array $uploads The uploads directory information.
 	 *
@@ -1383,7 +1394,7 @@ class PodsField_File extends PodsField {
 
 			if ( $subdir ) {
 				$uploads[ $key ] = str_replace( $subdir, $dir, $val );
-			} elseif ( in_array( $key, array( 'path', 'url', 'subdir' ), true ) ) {
+			} elseif ( in_array( $key, [ 'path', 'url', 'subdir' ], true ) ) {
 				$uploads[ $key ] = trailingslashit( $val ) . $dir;
 			}
 		}
@@ -1394,17 +1405,17 @@ class PodsField_File extends PodsField {
 	/**
 	 * Build field data for Pods DFV.
 	 *
-	 * @param object $args            {
-	 *     Field information arguments.
+	 * @param object    $args            {
+	 *                                   Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
-	 * }
+	 * @type string     $name            Field name.
+	 * @type string     $type            Field type.
+	 * @type array      $options         Field options.
+	 * @type mixed      $value           Current value.
+	 * @type array      $pod             Pod information.
+	 * @type int|string $id              Current item ID.
+	 * @type string     $form_field_type HTML field type.
+	 *                                   }
 	 *
 	 * @return array
 	 */
@@ -1430,7 +1441,7 @@ class PodsField_File extends PodsField {
 	 *                    list of extensions, mime types, and mapping of extensions to mime types.
 	 */
 	public function get_file_mime_types_for_field( $field ) {
-		$media_type  = pods_v( $field['type'] . '_type', $field, 'images', true );
+		$media_type = pods_v( $field['type'] . '_type', $field, 'images', true );
 
 		$other_extensions = [];
 
@@ -1469,7 +1480,7 @@ class PodsField_File extends PodsField {
 				'txt',
 				'csv',
 				'tsv',
-				'rtx'
+				'rtx',
 			];
 		} elseif ( 'other' === $media_type ) {
 			// Allow specifying allowed extensions.

@@ -2,12 +2,12 @@
 
 namespace Pods\Integrations\Query_Monitor\Collectors;
 
-use QM_DataCollector;
-
-// Exit if accessed directly.
+// Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	die( '-1' );
 }
+
+use QM_DataCollector;
 
 /**
  * Class Constants

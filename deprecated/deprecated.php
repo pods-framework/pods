@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Deprecated
  */
@@ -39,6 +45,7 @@ if ( ! function_exists( 'wp_send_json' ) ) {
 	/**
 	 * @param array $response Response data.
 	 */
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	function wp_send_json( $response ) {
 		@header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
 		echo json_encode( $response );
@@ -62,9 +69,11 @@ if ( ! function_exists( 'get_current_url' ) ) {
 	/**
 	 * @return mixed|void
 	 */
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	function get_current_url() {
 		$url = pods_current_url();
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'get_current_url', $url );
 	}
 }
@@ -94,10 +103,12 @@ function pod_query( $sql, $error = 'SQL failed', $results_error = null, $no_resu
 	$sql = str_replace( '@wp_', $wpdb->prefix, $sql );
 	$sql = str_replace( '{prefix}', '@wp_', $sql );
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	$sql = apply_filters( 'pod_query', $sql, $error, $results_error, $no_results_error );
 
 	$result = pods_query( $sql, $error, $results_error, $no_results_error );
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	$result = apply_filters( 'pod_query_return', $result, $sql, $error, $results_error, $no_results_error );
 
 	return $result;

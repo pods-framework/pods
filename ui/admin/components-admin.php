@@ -1,6 +1,14 @@
 <?php
+
 // Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_components' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+// Prevent non-admins.
+if ( ! pods_is_admin( 'pods_components' ) ) {
 	die( '-1' );
 }
 ?>
@@ -8,16 +16,16 @@ if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_components' ) ) {
 	<div id="icon-pods" class="icon32"><br /></div>
 	<form action="" method="post" class="pods-submittable">
 		<div class="pods-submittable-fields">
-			<?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-			<?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-			<?php echo PodsForm::field( 'method', 'settings', 'hidden' ); ?>
-			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-settings' ), 'hidden' ); ?>
+			<?php PodsForm::output_field( 'action', 'pods_admin_components', 'hidden' ); ?>
+			<?php PodsForm::output_field( 'component', $component, 'hidden' ); ?>
+			<?php PodsForm::output_field( 'method', 'settings', 'hidden' ); ?>
+			<?php PodsForm::output_field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-settings' ), 'hidden' ); ?>
 
-			<h2><?php _e( 'Settings', 'pods' ); ?>: <?php echo $component_label; ?></h2>
+			<h2><?php esc_html_e( 'Settings', 'pods' ); ?>: <?php echo esc_html( $component_label ); ?></h2>
 
 			<?php
 			if ( isset( $_GET['do'] ) ) {
-				pods_message( __( 'Settings saved successfully.', 'pods' ) );
+				pods_message( esc_html__( 'Settings saved successfully.', 'pods' ) );
 			}
 			?>
 
@@ -53,10 +61,10 @@ if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_components' ) ) {
 						?>
 						<tr valign="top" class="pods-field-option" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
 						<th>
-							<?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option['label'], pods_v( 'help', $field_option ), $field_option ); ?>
+							<?php PodsForm::output_label( 'pods_setting_' . $field_name, $field_option['label'], pods_v( 'help', $field_option ), $field_option ); ?>
 						</th>
 						<td>
-							<?php echo PodsForm::field( 'pods_setting_' . $field_name, $value, $field_option['type'], $field_option ); ?>
+							<?php PodsForm::output_field( 'pods_setting_' . $field_name, $value, $field_option['type'], $field_option ); ?>
 						</td>
 						</tr>
 						<?php
@@ -64,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_components' ) ) {
 						?>
 						<tr valign="top" class="pods-field-option-group" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
 						<th class="pods-field-option-group-label">
-							<?php echo $field_option['label']; ?>
+							<?php echo esc_html( $field_option['label'] ); ?>
 						</th>
 						<td class="pods-pick-values pods-pick-checkbox">
 							<ul>
@@ -85,7 +93,7 @@ if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_components' ) ) {
 									$value = pods_v( $field_group_name, $settings, $field_group_option['default'] );
 									?>
 									<li class="<?php echo esc_attr( $group_dep_classes ); ?>" <?php PodsForm::data( $group_dep_data ); ?>>
-										<?php echo PodsForm::field( 'pods_setting_' . $field_group_name, $value, $field_group_option['type'], $field_group_option ); ?>
+										<?php PodsForm::output_field( 'pods_setting_' . $field_group_name, $value, $field_group_option['type'], $field_group_option ); ?>
 									</li>
 									<?php
 								}
@@ -127,6 +135,6 @@ if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_components' ) ) {
 	} );
 
 	var pods_admin_submit_callback = function ( id ) {
-		document.location = '<?php echo pods_slash( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
+		document.location = '<?php echo esc_url_raw( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
 	}
 </script>

@@ -2,6 +2,11 @@
 
 namespace Pods\REST\Interfaces\Swagger;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Provider interface.
  *

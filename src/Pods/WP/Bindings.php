@@ -2,6 +2,11 @@
 
 namespace Pods\WP;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Blocks\Types\Field;
 use WP_Block;
 

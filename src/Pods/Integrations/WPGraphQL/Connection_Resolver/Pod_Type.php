@@ -2,6 +2,11 @@
 
 namespace Pods\Integrations\WPGraphQL\Connection_Resolver;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -183,7 +188,7 @@ class Pod_Type extends AbstractConnectionResolver {
 
 		// Maybe throw an error if necessary.
 		if ( ! $has_access ) {
-			throw new UserError( __( 'Sorry, you are not allowed to use this combination of filters.', 'pods' ) );
+			throw new UserError( esc_html__( 'Sorry, you are not allowed to use this combination of filters.', 'pods' ) );
 		}
 
 		$supported_query_args = [

@@ -2,6 +2,11 @@
 
 namespace Pods\REST\V1\Endpoints;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods;
 use Exception;
 use Pods\REST\V1\Post_Repository;
@@ -243,15 +248,18 @@ abstract class Base {
 		foreach ( $required_params as $key => $required_param ) {
 			if ( is_array( $required_param ) ) {
 				if ( ! isset( $params->$key ) || ! is_object( $params->$key ) ) {
+					// translators: %s is the parameter name.
 					return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $key ), [ 'status' => 500 ] );
 				}
 
 				foreach ( $required_param as $required_sub_param ) {
 					if ( ! isset( $params->$key->$required_sub_param ) ) {
-						return new WP_Error( 'rest_missing_sub_param', sprintf( __( 'Missing required JSON sub parameter: %s > %s', 'pods' ), $key, $required_sub_param ), [ 'status' => 500 ] );
+						// translators: %1$s is the parent parameter name, %2$s is the sub-parameter name.
+						return new WP_Error( 'rest_missing_sub_param', sprintf( __( 'Missing required JSON sub parameter: %1$s > %2$s', 'pods' ), $key, $required_sub_param ), [ 'status' => 500 ] );
 					}
 				}
 			} elseif ( ! isset( $params->$required_param ) ) {
+				// translators: %s is the parameter name.
 				return new WP_Error( 'rest_missing_param', sprintf( __( 'Missing required JSON parameter: %s', 'pods' ), $required_param ), [ 'status' => 500 ] );
 			}
 		}
@@ -389,6 +397,7 @@ abstract class Base {
 		$api->display_errors = 'wp_error';
 
 		if ( empty( $params['name'] ) && empty( $params['label'] ) ) {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-added-fields-required', sprintf( __( '%s not added, name or label is required.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
@@ -413,6 +422,7 @@ abstract class Base {
 		$loaded_object = $api->$load_method( $load_params );
 
 		if ( $loaded_object && ! is_wp_error( $loaded_object ) ) {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-added-already-exists', sprintf( __( '%s not added, it already exists.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
@@ -429,6 +439,7 @@ abstract class Base {
 		}
 
 		if ( empty( $id ) ) {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-added', sprintf( __( '%s not added.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
@@ -511,6 +522,7 @@ abstract class Base {
 
 			$args = array_merge( $request->get_params(), $args );
 		} else {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
@@ -527,6 +539,7 @@ abstract class Base {
 		}
 
 		if ( empty( $object ) ) {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ), $args );
 		}
 
@@ -537,7 +550,10 @@ abstract class Base {
 
 		// Set up flags based on request.
 		if ( $request ) {
-			$include_parent = in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'];
+			$include_parent = in_array( $this->object, [
+					'group',
+					'field',
+				], true ) && 1 === (int) $request['include_parent'];
 
 			if ( 'pod' === $this->object ) {
 				$include_groups       = 1 === (int) $request['include_groups'];
@@ -603,6 +619,7 @@ abstract class Base {
 		}
 
 		if ( ! $object instanceof Whatsit ) {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-found-cannot-update', sprintf( __( '%s was not found, cannot update.', 'pods' ), ucwords( $this->object ) ), $request->get_params() );
 		}
 
@@ -676,6 +693,7 @@ abstract class Base {
 		}
 
 		if ( ! $deleted ) {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-deleted', sprintf( __( '%s not deleted.', 'pods' ), ucwords( $this->object ) ) );
 		}
 

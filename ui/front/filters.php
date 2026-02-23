@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 /**
  * @var Pods $pod
@@ -27,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			// @todo Support other field types.
 			$field['type'] = 'pick';
 
-			echo PodsForm::field( $pod->filter_var . '_' . $name, $filter, $field['type'], $field, $pod->pod, $pod->id() );
+			PodsForm::output_field( $pod->filter_var . '_' . $name, $filter, $field['type'], $field, $pod->pod, $pod->id() );
 		}
 	}
 	?>

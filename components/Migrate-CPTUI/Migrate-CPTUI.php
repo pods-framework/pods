@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Name: Migrate: Import from the Custom Post Type UI plugin
  *
@@ -323,6 +329,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 		$pod = $this->api->load_pod( [ 'name' => pods_clean_name( $params['name'] ) ], false );
 
 		if ( ! empty( $pod ) ) {
+			// translators: %s is the pod name.
 			return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params['name'] ) ) );
 		}
 
@@ -451,6 +458,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 		$pod = $this->api->load_pod( [ 'name' => pods_clean_name( $params['name'] ) ], false );
 
 		if ( ! empty( $pod ) ) {
+			// translators: %s is the pod name.
 			return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params['name'] ) ) );
 		}
 

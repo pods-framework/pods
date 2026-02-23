@@ -3,6 +3,11 @@
  * @package Pods\Global\Functions\Media
  */
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Get the Attachment ID for a specific image field.
  *
@@ -246,7 +251,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 
 	if ( ! ( $uploads && false === $uploads['error'] ) ) {
 		if ( $strict ) {
-			throw new Exception( sprintf( 'Attachment import failed, uploads directory has a problem: %s', var_export( $uploads, true ) ) );
+			throw new Exception( esc_html( sprintf( 'Attachment import failed, uploads directory has a problem: %s', wp_json_encode( $uploads, JSON_PRETTY_PRINT ) ) ) );
 		}
 
 		return 0;
@@ -257,7 +262,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 
 	if ( ! copy( $url, $new_file ) ) {
         if ( $strict ) {
-            throw new Exception( sprintf( 'Attachment import failed, could not copy file from %s to %s', $url, $new_file ) );
+            throw new Exception( esc_html( sprintf( 'Attachment import failed, could not copy file from %s to %s', $url, $new_file ) ) );
         }
 
         return 0;
@@ -265,13 +270,19 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 
 	$stat  = stat( dirname( $new_file ) );
 	$perms = $stat['mode'] & 0000666;
-	@chmod( $new_file, $perms );
+
+	WP_Filesystem();
+
+	/** @var WP_Filesystem_Base $wp_filesystem */
+	global $wp_filesystem;
+
+	$wp_filesystem->chmod( $new_file, $perms );
 
 	$wp_filetype = wp_check_filetype( $filename );
 
 	if ( ! $wp_filetype['type'] || ! $wp_filetype['ext'] ) {
 		if ( $strict ) {
-			throw new Exception( sprintf( 'Attachment import failed, filetype check failed: %s', var_export( $wp_filetype, true ) ) );
+			throw new Exception( esc_html( sprintf( 'Attachment import failed, filetype check failed: %s', wp_json_encode( $wp_filetype, JSON_PRETTY_PRINT ) ) ) );
 		}
 
 		return 0;
@@ -289,7 +300,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 
 	if ( is_wp_error( $attachment_id ) ) {
 		if ( $strict ) {
-			throw new Exception( sprintf( 'Attachment import failed, wp_insert_attachment failed: %s', var_export( $attachment_id, true ) ) );
+			throw new Exception( esc_html( sprintf( 'Attachment import failed, wp_insert_attachment failed: %s', wp_json_encode( $attachment_id, JSON_PRETTY_PRINT ) ) ) );
 		}
 
 		return 0;

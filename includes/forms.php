@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Global\Functions\Forms
  */
@@ -161,12 +167,12 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 		if ( $is_table_rows_render ) {
 			printf(
 				'<tr><td colspan="2" class="%s">',
-				$wrapper_classes
+				esc_attr( $wrapper_classes )
 			);
 		} elseif ( $is_div_rows_render && $options['wrapper'] ) {
 			printf(
 				'<div class="%s">',
-			    $wrapper_classes
+			    esc_attr( $wrapper_classes )
             );
 		}
 
@@ -230,7 +236,7 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 				'<%1$s class="%2$s">%3$s</%1$s>' . "\n",
 				esc_html( $options['heading'] ),
 				esc_attr( $heading_classes ),
-				$heading_text
+				wp_kses_post( $heading_text )
 			);
 		}
 

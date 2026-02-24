@@ -14,3 +14,4 @@ on:
 jobs:
   phpstan:
     uses: pods-framework/.github/.github/workflows/php-phpstan.yml@main
+    secrets: inherit

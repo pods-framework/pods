@@ -436,7 +436,7 @@ class PodsCest extends BaseRestCest {
 				'name'           => 'my-name',
 				'label'          => 'my-label-plural',
 				'type'           => 'settings',
-				'storage'        => 'none',
+				'storage'        => 'option',
 				'label_singular' => 'my-label-singular',
 				'menu_name'      => 'my-label-menu',
 				'menu_location'  => 'menu-location',

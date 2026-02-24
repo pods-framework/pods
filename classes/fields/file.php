@@ -678,10 +678,10 @@ class PodsField_File extends PodsField {
 			$data[] = [
 				'id'        => esc_html( $id ),
 				'icon'      => esc_attr( $icon ),
-				'name'      => wp_strip_all_tags( html_entity_decode( $title ) ),
-				'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
-				'link'      => html_entity_decode( esc_url( $link ) ),
-				'download'  => html_entity_decode( esc_url( $download ) ),
+				'name'      => wp_strip_all_tags( html_entity_decode( $title, ENT_COMPAT ) ),
+				'edit_link' => html_entity_decode( esc_url( $edit_link ), ENT_COMPAT ),
+				'link'      => html_entity_decode( esc_url( $link ), ENT_COMPAT ),
+				'download'  => html_entity_decode( esc_url( $download ), ENT_COMPAT ),
 				'selected'  => true,
 			];
 		}//end foreach

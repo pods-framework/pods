@@ -2150,11 +2150,12 @@ class PodsInit {
 
 			// Ensure we use special characters to prevent further entity exposure.
 			return htmlspecialchars(
-			// Remove HTML tags and strip script/style tag contents.
+				// Remove HTML tags and strip script/style tag contents.
 				wp_strip_all_tags(
-				// Decode potential entities at the first level to so HTML tags can be removed.
-					htmlspecialchars_decode( (string) $label )
-				)
+					// Decode potential entities at the first level to so HTML tags can be removed.
+					htmlspecialchars_decode( (string) $label, ENT_COMPAT )
+				),
+				ENT_COMPAT
 			);
 		}, $labels );
 

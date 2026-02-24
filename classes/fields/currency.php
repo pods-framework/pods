@@ -277,8 +277,8 @@ class PodsField_Currency extends PodsField_Number {
 			[
 				$currency_sign,
 				$currency_entity,
-				html_entity_decode( $currency_sign ),
-				html_entity_decode( $currency_entity ),
+				html_entity_decode( $currency_sign, ENT_COMPAT ),
+				html_entity_decode( $currency_entity, ENT_COMPAT ),
 			],
 			'',
 			$value
@@ -307,8 +307,8 @@ class PodsField_Currency extends PodsField_Number {
 			[
 				$currency_sign,
 				$currency_entity,
-				html_entity_decode( $currency_sign ),
-				html_entity_decode( $currency_entity ),
+				html_entity_decode( $currency_sign, ENT_COMPAT ),
+				html_entity_decode( $currency_entity, ENT_COMPAT ),
 			],
 			'',
 			$value

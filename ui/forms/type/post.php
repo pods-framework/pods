@@ -377,7 +377,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 									name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
 									data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
 									id="title" size="30" tabindex="1"
-									value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index() ) ); ?>"
+									value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index(), ENT_COMPAT ) ); ?>"
 									class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
 									autocomplete="off"<?php echo $extra_attributes_escaped; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 							</div>
@@ -408,7 +408,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 									name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
 									data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
 									id="title" size="30" tabindex="1"
-									value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index() ) ); ?>"
+									value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index(), ENT_COMPAT ) ); ?>"
 									class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
 									autocomplete="off"<?php echo $extra_attributes_escaped; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 								<?php

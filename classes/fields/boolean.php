@@ -284,7 +284,7 @@ class PodsField_Boolean extends PodsField {
 			$data[] = [
 				'id'        => esc_html( $key ),
 				'icon'      => '',
-				'name'      => wp_strip_all_tags( html_entity_decode( $label ) ),
+				'name'      => wp_strip_all_tags( html_entity_decode( $label, ENT_COMPAT ) ),
 				'edit_link' => '',
 				'link'      => '',
 				'download'  => '',

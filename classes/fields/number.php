@@ -308,7 +308,7 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 
 		$check = str_replace(
-			[ $thousands, $dot, html_entity_decode( $thousands ) ],
+			[ $thousands, $dot, html_entity_decode( $thousands, ENT_COMPAT ) ],
 			[ '', '.', '' ],
 			$value
 		);
@@ -345,7 +345,7 @@ class PodsField_Number extends PodsField {
 		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
 			// Not a slider so we need to replace format characters.
 			$value = str_replace(
-				[ $thousands, html_entity_decode( $thousands ), $dot, html_entity_decode( $dot ) ],
+				[ $thousands, html_entity_decode( $thousands, ENT_COMPAT ), $dot, html_entity_decode( $dot, ENT_COMPAT ) ],
 				[ '', '', '.', '.' ],
 				$value
 			);

@@ -13,6 +13,8 @@ use PodsInit;
 use PodsMigrate;
 use WP_CLI;
 use WP_CLI_Command;
+
+// @phpstan-ignore-next-line
 use function WP_CLI\Utils\make_progress_bar;
 
 /**
@@ -94,6 +96,7 @@ class Playbook extends WP_CLI_Command {
 
 		$total_actions = count( $playbook_actions );
 
+		// @phpstan-ignore-next-line
 		$progress_bar = make_progress_bar(
 			sprintf(
 				// translators: %1$d is the total number of actions to run; %2$s is the singular/plural name for action.

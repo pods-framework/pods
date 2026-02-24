@@ -10,12 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Exception;
 use Pods\Tools\Repair;
 use Pods\Tools\Reset;
-use Pods_Migrate_Packages;
-use PodsInit;
-use PodsMigrate;
 use WP_CLI;
 use WP_CLI_Command;
-use function WP_CLI\Utils\make_progress_bar;
 
 /**
  * Pods Tools commands.

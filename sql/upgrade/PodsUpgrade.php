@@ -58,12 +58,22 @@ class PodsUpgrade {
 
 		$pods_version = get_option( 'pods_version' );
 
+		/**
+		 * Allow hooking in before Pods install is run.
+		 *
+		 * @param string $current_version The current version of Pods installed.
+		 * @param string $new_version The new version of Pods being installed.
+		 * @param int|null $blog_id The blog ID being installed on, or null for
+		 */
 		do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
 		/**
 		 * Allow filtering of whether the Pods SQL installation should be run. Return false to bypass.
 		 *
 		 * @param bool $run Whether the Pods SQL installation should be run.
+		 * @param string $current_version The current version of Pods installed.
+		 * @param string $new_version The new version of Pods being installed.
+		 * @param int|null $blog_id The blog ID being installed on, or null for
 		 */
 		$run = apply_filters( 'pods_install_run', true, PODS_VERSION, $pods_version, $_blog_id );
 
@@ -106,6 +116,13 @@ class PodsUpgrade {
 			}
 		}//end if
 
+		/**
+		 * Allow hooking in after Pods install is run.
+		 *
+		 * @param string $current_version The current version of Pods installed.
+		 * @param string $new_version The new version of Pods being installed.
+		 * @param int|null $blog_id The blog ID being installed on, or null for
+		 */
 		do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
 	}
 

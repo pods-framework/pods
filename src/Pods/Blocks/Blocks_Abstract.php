@@ -81,7 +81,7 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 		 * @since 3.0
 		 *
 		 * @param array $attributes The attributes
-		 * @param object $this The current object
+		 * @param object $pods_block The current object
 		 */
 		$attributes = apply_filters( 'pods_block_attributes_defaults_' . $this->slug(), $attributes, $this );
 
@@ -105,7 +105,7 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 		 * Filters the default attributes
 		 *
 		 * @param array $params The attributes
-		 * @param object $this The current object
+		 * @param object $pods_block The current object
 		 */
 		$attributes = apply_filters( 'pods_block_attributes_defaults', $attributes, $this );
 
@@ -183,6 +183,36 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 		remove_filter( 'pods_shortcode_throw_errors', '__return_true' );
 
 		return $return;
+	}
+
+	/**
+	 * Render content for block with placeholder template.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $heading The heading text.
+	 * @param string $content The content text.
+	 * @param null|string $image The image content or null if not set.
+	 *
+	 * @return string The content to render.
+	 */
+	public function render_placeholder( $heading, $content, $image = null ) {
+		ob_start();
+		?>
+		<div <?php echo get_block_wrapper_attributes( [ 'class' => 'pods-block-placeholder_container' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
+		<div class="pods-block-placeholder_content-container">
+			<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
+			<div class="pods-block-placeholder_content">
+				<h2 class="pods-block-placeholder_title"><?php echo wp_kses_post( $heading ); ?></h2>
+				<p><?php echo wp_kses_post( $content ); ?></p>
+			</div>
+		</div>
+		<?php if ( $image ) : ?>
+			<?php echo wp_kses_post( $image ); ?>
+		<?php endif; ?>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
@@ -291,7 +321,7 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 		 * @since 3.0
 		 *
 		 * @param array $block_data The block data.
-		 * @param object $this The current object.
+		 * @param object $pods_block The current object.
 		 */
 		$block_data = apply_filters( 'pods_block_block_data', $block_data, $this );
 
@@ -301,7 +331,7 @@ abstract class Blocks_Abstract implements Blocks_Interface {
 		 * @since 3.0
 		 *
 		 * @param array $block_data The block data.
-		 * @param object $this The current object.
+		 * @param object $pods_block The current object.
 		 */
 		$block_data = apply_filters( 'pods_block_block_data_' . $this->slug(), $block_data, $this );
 

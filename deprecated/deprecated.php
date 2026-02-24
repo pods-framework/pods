@@ -13,50 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  */
 
-// JSON support
-if ( ! function_exists( 'json_encode' ) ) {
-	require_once ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php';
-
-	/**
-	 * @param mixed $str Data to encode.
-	 *
-	 * @return mixed
-	 */
-	function json_encode( $str ) {
-		$json = new Moxiecode_JSON();
-
-		return $json->encode( $str );
-	}
-
-	/**
-	 * @param string $str JSON string.
-	 *
-	 * @return mixed
-	 */
-	function json_decode( $str ) {
-		$json = new Moxiecode_JSON();
-
-		return $json->decode( $str );
-	}
-}//end if
-
-// WP 3.4.x support
-if ( ! function_exists( 'wp_send_json' ) ) {
-	/**
-	 * @param array $response Response data.
-	 */
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
-	function wp_send_json( $response ) {
-		@header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
-		echo json_encode( $response );
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			wp_die();
-		} else {
-			die;
-		}
-	}
-}
-
 /**
  * Get the full URL of the current page
  *
@@ -435,8 +391,6 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
  * @param string $message
  * @param bool   $error Whether or not it is an error message
  *
- * @return bool
- *
  * @since     1.12
  * @deprcated 2.3
  */
@@ -450,8 +404,6 @@ function pods_ui_message( $message, $error = false ) {
  * Output an error in the WP Dashboard UI
  *
  * @param string $message
- *
- * @return bool
  *
  * @since     1.12
  * @deprcated 2.3

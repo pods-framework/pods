@@ -331,7 +331,6 @@ class Pods_Templates_Auto_Template_Settings {
 		}
 
 		// Add data to $pick for template location
-		unset( $pick['data'] );
 		$location_data = [
 			'append'  => __( 'After', 'pods' ),
 			'prepend' => __( 'Before', 'pods' ),
@@ -355,8 +354,6 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @param bool $load_in_admin Optional. Whether to load in admin. Default is false.
 	 *
-	 * @return Pods_PFAT_Frontend
-	 *
 	 * @since 2.5.5
 	 */
 	public function front_end( $load_in_admin = false ) {
@@ -368,8 +365,6 @@ class Pods_Templates_Auto_Template_Settings {
 			if ( is_null( $this->front_end_class ) ) {
 				$this->front_end_class = new Pods_Templates_Auto_Template_Front_End();
 			}
-
-			return $this->front_end_class;
 		}
 
 	}
@@ -407,8 +402,10 @@ class Pods_Templates_Auto_Template_Settings {
 
 		if ( $archive_test === false ) {
 			$archive_test = [];
-			$front        = $this->front_end( true );
-			$auto_pods    = $front->auto_pods();
+
+			$this->front_end( true );
+
+			$auto_pods = $this->front_end_class->auto_pods();
 
 			foreach ( $auto_pods as $name => $pod ) {
 				if ( ! $pod['has_archive'] && $pod['archive'] && 'post_type' === $pod['type'] && ! in_array(

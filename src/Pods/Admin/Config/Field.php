@@ -538,7 +538,6 @@ class Field extends Base {
 			'conditional_logic'            => [
 				'name'       => 'conditional_logic',
 				'label'      => __( 'Conditions', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
 				'type'       => 'conditional-logic',
 				'depends-on' => [
 					'enable_conditional_logic' => true,
@@ -558,7 +557,6 @@ class Field extends Base {
 			'conditional_logic_help'        => [
 				'name'         => 'conditional_logic_help',
 				'label'        => '',
-				'help'         => __( 'help', 'pods' ),
 				'type'         => 'html',
 				'html_content' => wpautop(
 					sprintf(
@@ -720,32 +718,27 @@ class Field extends Base {
 		/*
 			'search' => [
 				'label'   => __( 'Include in searches', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			],
 			'regex_validation' => [
 				'label'   => __( 'RegEx Validation', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
 			'message_regex'    => [
 				'label'   => __( 'Message if field does not pass RegEx', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
 			'message_required' => [
 				'label'      => __( 'Message if field is blank', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
 				'type'       => 'text',
 				'default'    => '',
 				'depends-on' => [ 'required' => true ],
 			],
 			'message_unique'   => [
 				'label'      => __( 'Message if field is not unique', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
 				'type'       => 'text',
 				'default'    => '',
 				'depends-on' => [ 'unique' => true ],

@@ -5,10 +5,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-add_action( 'wp_ajax_pq_loadpod', 'pq_loadpod' );
+add_action( 'wp_ajax_pq_loadpod', 'pods_ajax_pq_loadpod' );
 
 /**
- * @param bool $podname
+ * @param bool|string $podname
+ */
+function pods_ajax_pq_loadpod() {
+	pq_loadpod();
+}
+
+/**
+ * @param bool|string $podname
  *
  * @return array
  */

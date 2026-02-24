@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Pods\Whatsit;
+use WP_Error;
 
 /**
  * Storage class.
@@ -176,7 +177,7 @@ abstract class Storage {
 	 *
 	 * @param Whatsit $object Object to add.
 	 *
-	 * @return string|int|false Object name, object ID, or false if not added.
+	 * @return string|int|false|WP_Error Object name, object ID, or false if not added.
 	 */
 	protected function add_object( Whatsit $object ) {
 		return $this->save_object( $object );
@@ -212,6 +213,7 @@ abstract class Storage {
 		 */
 		do_action( 'pods_whatsit_storage_save_' . $object->get_object_type(), $object, $this );
 
+		/* @var string|int|false|WP_Error $added */
 		$added = $this->add_object( $object );
 
 		if ( $added && ! is_wp_error( $added ) ) {
@@ -254,7 +256,7 @@ abstract class Storage {
 	 *
 	 * @param Whatsit $object Object to save.
 	 *
-	 * @return string|int|false Object name, object ID, or false if not saved.
+	 * @return string|int|false|WP_Error Object name, object ID, or false if not saved.
 	 */
 	protected function save_object( Whatsit $object ) {
 		return false;
@@ -290,6 +292,7 @@ abstract class Storage {
 		 */
 		do_action( 'pods_whatsit_storage_save_' . $object->get_object_type(), $object, $this );
 
+		/* @var string|int|false|WP_Error $saved */
 		$saved = $this->save_object( $object );
 
 		if ( $saved && ! is_wp_error( $saved ) ) {
@@ -340,6 +343,7 @@ abstract class Storage {
 		$duplicated_object->set_arg( 'id', null );
 		$duplicated_object->set_arg( 'name', $duplicated_object->get_name() . '_copy' );
 
+		/* @var string|int|false|WP_Error $added */
 		$added = $this->add( $duplicated_object );
 
 		if ( $added && ! is_wp_error( $added ) ) {

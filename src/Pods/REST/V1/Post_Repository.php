@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Pods\REST\Interfaces\Messages_Interface;
+use WP_Error;
 use WP_Post;
 
 /**

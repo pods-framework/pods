@@ -136,36 +136,6 @@ abstract class Base extends Blocks_Abstract {
 	}
 
 	/**
-	 * Render content for block with placeholder template.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @param string $heading The heading text.
-	 * @param string $content The content text.
-	 * @param null|string $image The image content or null if not set.
-	 *
-	 * @return string The content to render.
-	 */
-	public function render_placeholder( $heading, $content, $image = null ) {
-		ob_start();
-		?>
-		<div <?php echo get_block_wrapper_attributes( [ 'class' => 'pods-block-placeholder_container' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
-			<div class="pods-block-placeholder_content-container">
-				<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
-				<div class="pods-block-placeholder_content">
-					<h2 class="pods-block-placeholder_title"><?php echo wp_kses_post( $heading ); ?></h2>
-					<p><?php echo wp_kses_post( $content ); ?></p>
-				</div>
-			</div>
-			<?php if ( $image ) : ?>
-				<?php echo wp_kses_post( $image ); ?>
-			<?php endif; ?>
-		</div>
-		<?php
-		return ob_get_clean();
-	}
-
-	/**
 	 * Get the list of all Pods for a block field.
 	 *
 	 * @since 2.9.10

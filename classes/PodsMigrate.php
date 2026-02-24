@@ -884,6 +884,7 @@ class PodsMigrate {
 			}
 
 			// insert attachment
+			/* @var int|WP_Error $attachment_id */
 			$attachment_id = wp_insert_attachment( $attachment, $new_file );
 
 			// error!
@@ -1039,8 +1040,8 @@ class PodsMigrate {
 
 			$page = 1;
 
-			if ( false !== $data['page_var'] && isset( $_GET[ $data['page_var'] ] ) ) {
-				$page = absval( sanitize_text_field( $_GET[ $data['page_var'] ] ) );
+			if ( false !== $data['page_var'] && 0 < (int) pods_v( $data['page_var'] ) ) {
+				$page = (int) pods_v( $data['page_var'] );
 			}
 
 			if ( null === $data['sql'] ) {
@@ -1073,7 +1074,7 @@ class PodsMigrate {
 			$paginated    = false;
 
 			if ( false !== $data['page_var'] && $result_count === $data['limit'] ) {
-				$paginated = "<input type=\"button\" onclick=\"document.location=\'" . esc_js( pods_ui_var_update( array( $data['page_var'] => $page + 1 ), false, false ) ) . "\';\" value=\"  Continue Import &raquo;  \" />";
+				$paginated = "<input type=\"button\" onclick=\"document.location=\'" . esc_js( add_query_arg( [ $data['page_var'] => $page + 1 ] ) ) . "\';\" value=\"  Continue Import &raquo;  \" />";
 			}
 
 			if ( $result_count < $avg_unit && 5 < $result_count ) {
@@ -1183,31 +1184,30 @@ class PodsMigrate {
 						echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . "</em> - Checking for Existing Item\n";
 					}
 
-					$check = new Pod( $data['pod']['name'] );
-					$check->findRecords(
-						array(
+					$check = pods( $data['pod']['name'] );
+					$check->find(
+						[
 							'orderby' => 't.id',
 							'limit'   => 1,
 							'where'   => "t.{$data['update_on']} = '{$params['columns'][$data['update_on']]}'",
 							'search'  => false,
 							'page'    => 1,
-						)
+						]
 					);
 
-					if ( 0 < $check->getTotalRows() ) {
-						$check->fetchRecord();
-
-						$params['tbl_row_id'] = $check->get_field( 'id' );
-						$params['pod_id']     = $check->get_pod_id();
+					if ( $check->fetch() ) {
+						$params['id'] = $check->id();
+						$params['pod'] = $check->pod;
+						$params['pod_id'] = $check->pod_id;
 
 						if ( false !== $output ) {
-							echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Found Existing Item w/ ID: ' . esc_html( $params['tbl_row_id'] ) . "\n";
+							echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - Found Existing Item w/ ID: ' . esc_html( $params['id'] ) . "\n";
 						}
 
 						unset( $check );
 					}
 
-					if ( ! isset( $params['tbl_row_id'] ) && false !== $output ) {
+					if ( ! isset( $params['id'] ) && false !== $output ) {
 						echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . "</em> - Existing item not found - Creating New\n";
 					}
 				}//end if
@@ -1226,7 +1226,7 @@ class PodsMigrate {
 					echo '<br />' . esc_html( date_i18n( 'Y-m-d h:i:sa' ) ) . ' - <em>' . esc_html( $data['pod']['name'] ) . '</em> - <strong>Saved Row #' . esc_html( $k + 1 ) . ' w/ ID: ' . esc_html( $id ) . "</strong>\n";
 				}
 
-				$params['tbl_row_id'] = $id;
+				$params['id'] = $id;
 
 				if ( null !== $data['post_save'] && function_exists( $data['post_save'] ) ) {
 					if ( false !== $output ) {

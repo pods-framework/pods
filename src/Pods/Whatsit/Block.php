@@ -311,12 +311,12 @@ class Block extends Pod {
 		 * @since 2.8.0
 		 *
 		 * @param string        $render        The HTML render for the block.
-		 * @param string        $template_path The block render template path.
 		 * @param array         $attributes    The block instance argument values.
 		 * @param string        $content       The block inner content.
 		 * @param WP_Block|null $block_obj     The block object.
+		 * @param string        $template_path The block render template path.
 		 */
-		return apply_filters( 'pods_block_render_html', $render, $attributes, $content, $block_obj );
+		return apply_filters( 'pods_block_render_html', $render, $attributes, $content, $block_obj, $template_path );
 	}
 
 	/**

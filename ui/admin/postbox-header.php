@@ -46,4 +46,4 @@ $box_id = 'pods-ui-postbox-header-' . sanitize_title( $title );
 		<span><?php echo esc_html( $title ); ?></span>
 	</h3>
 <?php endif; ?>
-
+<?php

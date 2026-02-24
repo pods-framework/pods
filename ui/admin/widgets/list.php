@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <select name="<?php echo esc_attr( $this->get_field_name( 'template' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>">
                 <option value="">- <?php esc_html_e( 'Custom Template', 'pods' ); ?> -</option>
                 <?php foreach ( $all_templates as $tpl ): ?>
-                    <option value="<?php echo esc_attr( $tpl[ 'name' ] ); ?>"<?php echo selected( $tpl[ 'name' ], $template ); ?>>
+                    <option value="<?php echo esc_attr( $tpl[ 'name' ] ); ?>"<?php selected( $tpl[ 'name' ], $template ); ?>>
                         <?php echo esc_html( $tpl[ 'name' ] ); ?>
                     </option>
                 <?php endforeach; ?>

@@ -432,29 +432,7 @@ function pods_2_alpha_migrate_pods() {
  * @return array
  */
 function pods_2_alpha_migrate_helpers() {
-	$api = pods_api();
-
-	$helper_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'helper'", false );
-
-	$helper_ids = array();
-
-	if ( empty( $helper_rows ) ) {
-		return $helper_ids;
-	}
-
-	foreach ( $helper_rows as $row ) {
-		$opts = json_decode( $row->options );
-
-		$helper_params = array(
-			'name'    => $row->name,
-			'type'    => $opts->type,
-			'phpcode' => $opts->phpcode,
-		);
-
-		$helper_ids[] = $api->save_helper( $helper_params );
-	}
-
-	return $helper_ids;
+	return [];
 }
 
 /**

@@ -330,7 +330,7 @@ class Repair extends Base {
 					$pod->get_id()
 				);
 			} catch ( Throwable $exception ) {
-				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $pod->get_name() . ' - #' . $pod->get_id() . ')';
 			}
 		}
 

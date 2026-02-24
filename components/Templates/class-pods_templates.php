@@ -33,7 +33,7 @@ class Pods_Templates_Frontier {
 	/**
 	 * @var     string
 	 */
-	const VERSION = '1.00';
+	public const VERSION = '1.00';
 
 	/**
 	 * @var      string
@@ -54,6 +54,8 @@ class Pods_Templates_Frontier {
 	 * @var      array
 	 */
 	protected $element_css_once = array();
+	protected $element_header_styles = array();
+	protected $element_footer_scripts = array();
 
 	/**
 	 * @var      array
@@ -70,7 +72,7 @@ class Pods_Templates_Frontier {
 	 */
 	private function __construct() {
 
-		add_filter( 'pods_templates_pre_template', 'frontier_prefilter_template', 25, 4 );
+		add_filter( 'pods_templates_pre_template', 'frontier_prefilter_template', 25, 3 );
 		// Load admin style sheet and JavaScript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylescripts' ), 20 );
 		add_action( 'wp_footer', array( $this, 'footer_scripts' ) );
@@ -94,8 +96,6 @@ class Pods_Templates_Frontier {
 
 	/**
 	 * Register and enqueue admin-specific style sheet.
-	 *
-	 * @return    null
 	 */
 	public function enqueue_admin_stylescripts() {
 
@@ -107,27 +107,11 @@ class Pods_Templates_Frontier {
 
 		if ( in_array( $screen->id, $this->plugin_screen_hook_suffix, true ) ) {
 			$slug = array_search( $screen->id, $this->plugin_screen_hook_suffix );
-			// $configfiles = glob( $this->get_path( __FILE__ ) .'configs/'.$slug.'-*.php' );
+
 			if ( file_exists( $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php' ) ) {
 				include $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php';
 			}
 
-			if ( ! empty( $configfiles ) ) {
-
-				foreach ( $configfiles as $key => $fieldfile ) {
-					include $fieldfile;
-					if ( ! empty( $group['scripts'] ) ) {
-						foreach ( $group['scripts'] as $script ) {
-							wp_enqueue_script( $this->plugin_slug . '-' . strtok( $script, '.' ), $this->get_url( 'assets/js/' . $script, __FILE__ ), array( 'jquery' ), PODS_VERSION, [ 'in_footer' => true ] );
-						}
-					}
-					if ( ! empty( $group['styles'] ) ) {
-						foreach ( $group['styles'] as $style ) {
-							wp_enqueue_style( $this->plugin_slug . '-' . strtok( $style, '.' ), $this->get_url( 'assets/css/' . $style, __FILE__ ), [], PODS_VERSION, [ 'in_footer' => true ] );
-						}
-					}
-				}
-			}
 			wp_enqueue_style( $this->plugin_slug . '-admin-styles', $this->get_url( 'assets/css/panel.css', __FILE__ ), array(), self::VERSION );
 			wp_enqueue_style( 'pods-codemirror' );
 			wp_enqueue_style( 'pods-codemirror-hints' );
@@ -166,8 +150,6 @@ class Pods_Templates_Frontier {
 
 	/**
 	 * Register metaboxes.
-	 *
-	 * @return    null
 	 */
 	public function activate_metaboxes() {
 
@@ -180,8 +162,6 @@ class Pods_Templates_Frontier {
 	 * setup meta boxes.
 	 *
 	 * @param bool $post
-	 *
-	 * @return null
 	 */
 	public function add_metaboxes( $post = false ) {
 
@@ -351,53 +331,10 @@ class Pods_Templates_Frontier {
 			$instanceID = $this->element_instance_id( 'pods_templates' . $slug, 'footer' );
 		}
 
-		// $configfiles = glob($this->get_path( __FILE__ ) .'configs/'.$slug.'-*.php');
 		if ( file_exists( $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php' ) ) {
 			include $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php';
 
-			$defaults = array();
-			foreach ( $configfiles as $file ) {
-
-				include $file;
-				foreach ( $group['fields'] as $variable => $conf ) {
-					if ( ! empty( $group['multiple'] ) ) {
-						$value = array( $this->process_value( $conf['type'], $conf['default'] ) );
-					} else {
-						$value = $this->process_value( $conf['type'], $conf['default'] );
-					}
-					if ( ! empty( $group['multiple'] ) ) {
-						if ( isset( $atts[ $variable . '_1' ] ) ) {
-							$index = 1;
-							$value = array();
-							while ( isset( $atts[ $variable . '_' . $index ] ) ) {
-								$value[] = $this->process_value( $conf['type'], $atts[ $variable . '_' . $index ] );
-								$index ++;
-							}
-						} elseif ( isset( $atts[ $variable ] ) ) {
-							if ( is_array( $atts[ $variable ] ) ) {
-								foreach ( $atts[ $variable ] as &$varval ) {
-									$varval = $this->process_value( $conf['type'], $varval );
-								}
-								$value = $atts[ $variable ];
-							} else {
-								$value[] = $this->process_value( $conf['type'], $atts[ $variable ] );
-							}
-						}
-					} else {
-						if ( isset( $atts[ $variable ] ) ) {
-							$value = $this->process_value( $conf['type'], $atts[ $variable ] );
-						}
-					}//end if
-
-					if ( ! empty( $group['multiple'] ) && ! empty( $value ) ) {
-						foreach ( $value as $key => $val ) {
-							$groups[ $group['master'] ][ $key ][ $variable ] = $val;
-						}
-					}
-					$defaults[ $variable ] = $value;
-				}//end foreach
-			}//end foreach
-			$atts = $defaults;
+			$atts = [];
 		}//end if
 
 		// pull in the assets
@@ -409,10 +346,8 @@ class Pods_Templates_Frontier {
 		ob_start();
 		if ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.php' ) ) {
 			include $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.php';
-		} else {
-			if ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.html' ) ) {
-				include $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.html';
-			}
+		} elseif ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.html' ) ) {
+			include $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.html';
 		}
 		$out = ob_get_clean();
 
@@ -424,10 +359,8 @@ class Pods_Templates_Frontier {
 				include $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.php';
 				$this->element_header_styles[] = ob_get_clean();
 				add_action( 'wp_head', array( $this, 'header_styles' ) );
-			} else {
-				if ( file_exists( $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.css' ) ) {
-					wp_enqueue_style( $this->plugin_slug . '-' . $slug . '-styles', $this->get_url( 'assets/css/styles-' . $slug . '.css', __FILE__ ), array(), self::VERSION );
-				}
+			} elseif ( file_exists( $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.css' ) ) {
+				wp_enqueue_style( $this->plugin_slug . '-' . $slug . '-styles', $this->get_url( 'assets/css/styles-' . $slug . '.css', __FILE__ ), array(), self::VERSION );
 			}
 			// process headers - JS
 			if ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $slug . '.php' ) ) {

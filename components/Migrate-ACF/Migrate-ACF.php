@@ -162,11 +162,15 @@ class Pods_Migrate_ACF extends PodsComponent {
 
 		if ( 1 === (int) pods_v( 'cleanup', $params, 0 ) ) {
 			foreach ( $migrate_post_types as $post_type ) {
-				acf_delete_post_type( $post_type );
+				if ( function_exists( 'acf_delete_post_type' ) ) {
+					acf_delete_post_type( $post_type );
+				}
 			}
 
 			foreach ( $migrate_taxonomies as $taxonomy ) {
-				acf_delete_taxonomy( $taxonomy );
+				if ( function_exists( 'acf_delete_taxonomy' ) ) {
+					acf_delete_taxonomy( $taxonomy );
+				}
 			}
 		}//end if
 	}
@@ -429,7 +433,6 @@ class Pods_Migrate_ACF extends PodsComponent {
 			'rewrite_hierarchical'             => (int) pods_v( 'rewrite_hierarchical', pods_v( 'rewrite', $taxonomy ) ),
 			'query_var'                        => (int) ( 'none' !== pods_v( 'query_var', $taxonomy ) ),
 			'query_var_string'                 => pods_v( 'query_var_name', $taxonomy ),
-			'rewrite_hierarchical'             => (int) pods_v( 'rewrite_hierarchical', $taxonomy ),
 			'show_admin_column'                => (int) pods_v( 'show_admin_column', $taxonomy ),
 			'show_in_rest'                     => (int) pods_v( 'show_in_rest', $taxonomy ),
 			'show_tagcloud'                    => (int) pods_v( 'show_tagcloud', $taxonomy ),

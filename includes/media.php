@@ -296,6 +296,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 		'post_content'   => '',
 	);
 
+	/** @var int|WP_Error $attachment_id */
 	$attachment_id = wp_insert_attachment( $attachment, $new_file, $post_parent );
 
 	if ( is_wp_error( $attachment_id ) ) {

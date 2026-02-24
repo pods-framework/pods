@@ -167,9 +167,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		 *
 		 * Note: If this filter does not return null, all back-end settings are ignored. To add to settings with a filter, use 'pods_pfat_auto_pods';
 		 *
-		 * @param array $auto_pods Array of parameters to use instead of those from settings.
+		 * @param null|array $auto_pods Array of parameters to use instead of those from settings.
 		 *
-		 * @return array Settings arrays for each post type.
+		 * @return null|array Settings arrays for each post type.
 		 *
 		 * @since 2.4.5
 		 */
@@ -405,11 +405,11 @@ class Pods_Templates_Auto_Template_Front_End {
 			 *
 			 * @since 2.7.17
 			 *
-			 * @param string          $pod_name_and_id An array of the name of the pod to run the template against and the ID of the item in that pod to use.
+			 * @param string[]        $pod_name_and_id An array of the name of the pod to run the template against and the ID of the item in that pod to use.
 			 * @param string          $pod_name        The name of the pod from which the template was selected.
 			 * @param WP_post|WP_Term $obj             The object that is about to be displayed.
 			 */
-			$pod_name_and_id = apply_filters( 'pods_auto_template_pod_name_and_id', $pod_name_and_id, $pod_name, $obj );
+			$pod_name_and_id = (array) apply_filters( 'pods_auto_template_pod_name_and_id', $pod_name_and_id, $pod_name, $obj );
 
 			$pod_name = $pod_name_and_id[0];
 			$pod_id   = $pod_name_and_id[1];

@@ -39,7 +39,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @param Whatsit $field The field object.
 	 */
-	public function __construct( Whatsit $field ) {
+	final public function __construct( Whatsit $field ) {
 		$this->_field = $field;
 	}
 

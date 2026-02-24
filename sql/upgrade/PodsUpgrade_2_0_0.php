@@ -852,34 +852,6 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 	 * @return array|string
 	 */
 	public function migrate_helpers() {
-		if ( true === $this->check_progress( __FUNCTION__ ) ) {
-			return '1';
-		}
-
-		$helpers = pods_query( 'SELECT * FROM `@wp_pod_helpers`', false );
-
-		$notice = false;
-
-		if ( ! empty( $helpers ) ) {
-			foreach ( $helpers as $helper ) {
-				unset( $helper->id );
-
-				if ( 'input' === $helper->helper_type ) {
-					$helper->status = 'draft';
-
-					$notice = true;
-				}
-
-				$this->api->save_helper( $helper );
-			}
-		}
-
-		$this->update_progress( __FUNCTION__, true );
-
-		if ( $notice ) {
-			return pods_error( __( 'Input Helpers may not function in our new forms, we have imported and disabled them for your review.', 'pods' ) );
-		}
-
 		return '1';
 	}
 

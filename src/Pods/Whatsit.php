@@ -111,7 +111,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @todo Define storage per Whatsit.
 	 *
 	 */
-	public function __construct( array $args = [] ) {
+	final public function __construct( array $args = [] ) {
 		$this->args['object_type'] = static::$type;
 
 		// Setup the object.

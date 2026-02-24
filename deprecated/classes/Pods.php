@@ -83,9 +83,9 @@ class Pods_Deprecated {
 		$pod_id                  = $this->obj->pod_id;
 		$this->obj->type_counter = array();
 
-		if ( ! empty( $public_fields ) ) {
-			$attributes = array();
+		$attributes = array();
 
+		if ( ! empty( $public_fields ) ) {
 			foreach ( $public_fields as $key => $value ) {
 				if ( is_array( $public_fields[ $key ] ) ) {
 					$attributes[ $key ] = $value;
@@ -122,9 +122,6 @@ class Pods_Deprecated {
 			) {
 				continue;
 			}
-
-			// Pass options so they can be manipulated via form
-			$field = $field;
 
 			// Replace field attributes with public form attributes
 			if ( ! empty( $attributes ) && is_array( $attributes[ $key ] ) ) {

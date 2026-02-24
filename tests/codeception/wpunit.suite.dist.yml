@@ -1,7 +1,3 @@
-# Codeception Test Suite Configuration
-
-# suite for WordPress functional tests.
-# Emulate web requests and make application process them.
 actor: WpunitTester
 suite_namespace: \Pods_Unit_Tests
 bootstrap: _bootstrap.php

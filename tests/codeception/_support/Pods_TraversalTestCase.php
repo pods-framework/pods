@@ -71,7 +71,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 		if ( static::$db_reset_teardown ) {
 			parent::setUp();
 
-			$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+			$load_config = $this->should_load_data();
 
 			if ( $load_config ) {
 				$counter ++;
@@ -532,11 +532,11 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 * for all variations and combinations to be covered.
 	 */
 	public function data_provider_base() {
-		$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+		$load_config = $this->should_load_data();
 
 		// Bail but don't throw skip notices.
 		if ( ! $load_config ) {
-			return [ [ 1, 2, 3 ] ];
+			return [];
 		}
 
 		$data_base = [];
@@ -768,5 +768,10 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 		}//end foreach
 
 		return $data_deep;
+	}
+
+	protected function should_load_data(): bool {
+		return true;
+		// return filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
 	}
 }

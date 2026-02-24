@@ -108,6 +108,9 @@ jobs:
         run: |
           ${SLIC_BIN} up wordpress
           ${SLIC_BIN} site-cli core version
+          ${SLIC_BIN} site-cli core update
+          ${SLIC_BIN} site-cli core update-db
+          ${SLIC_BIN} site-cli core version
       # ------------------------------------------------------------------------------
       # Install and activate TwentyTwenty
       # ------------------------------------------------------------------------------

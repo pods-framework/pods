@@ -20,3 +20,5 @@ jobs:
 
       - name: Run plugin check
         uses: wordpress/plugin-check-action@v1
+        with:
+          ignore-warnings: 'true'

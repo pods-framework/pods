@@ -47,7 +47,7 @@ class Value_FieldTest extends Pods_WhatsitTestCase {
 
 		$to = (string) $this->value_field;
 
-		$this->assertInternalType( 'string', $to );
+		$this->assertIsString( $to );
 		$this->assertEquals( $this->pods_object_field->get_identifier(), $to );
 	}
 
@@ -137,7 +137,7 @@ class Value_FieldTest extends Pods_WhatsitTestCase {
 
 		$to = (string) $value_field;
 
-		$this->assertInternalType( 'string', $to );
+		$this->assertIsString( $to );
 		$this->assertEquals( $this->pods_object_group->get_identifier(), $to );
 	}
 

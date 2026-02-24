@@ -255,7 +255,7 @@ class PodsField_Boolean extends PodsField {
 		];
 
 		if ( isset( $yesno[ (int) $value ] ) ) {
-			$value = wp_strip_all_tags( $yesno[ (int) $value ], '<strong><a><em><span><img>' );
+			$value = strip_tags( $yesno[ (int) $value ], '<strong><a><em><span><img>' );
 		}
 
 		return $value;

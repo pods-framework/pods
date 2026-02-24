@@ -185,49 +185,49 @@ class MappingTest extends Pods_UnitTestCase {
 	public function test_display_fields_as_all_fields() {
 		$pod = pods( $this->pod_name, $this->item_id );
 
-		$current_wp_url = getenv( 'WP_URL' );
+		$current_wp_url = getenv( 'WORDPRESS_URL' );
 		$snapshot_url   = 'https://wp.localhost';
 
 		$driver = new WPHtmlOutputDriver( $current_wp_url, $snapshot_url );
 
 		$all_fields_ul = $pod->display( '_all_fields' );
 
-		$this->assertContains( '</ul>', $all_fields_ul );
-		$this->assertMatchesSnapshot( $all_fields_ul, $driver );
+		$this->assertStringContainsString( '</ul>', $all_fields_ul );
+		$this->assertMatchesHtmlSnapshot( $all_fields_ul, $driver );
 
 		$all_fields_ul2 = $pod->display( '_all_fields.ul' );
 
-		$this->assertContains( '</ul>', $all_fields_ul2 );
-		$this->assertMatchesSnapshot( $all_fields_ul2, $driver );
+		$this->assertStringContainsString( '</ul>', $all_fields_ul2 );
+		$this->assertMatchesHtmlSnapshot( $all_fields_ul2, $driver );
 
 		$all_fields_div = $pod->display( '_all_fields.div' );
 
-		$this->assertContains( '</div>', $all_fields_div );
-		$this->assertMatchesSnapshot( $all_fields_div, $driver );
+		$this->assertStringContainsString( '</div>', $all_fields_div );
+		$this->assertMatchesHtmlSnapshot( $all_fields_div, $driver );
 
 		$all_fields_p = $pod->display( '_all_fields.p' );
 
-		$this->assertContains( '</p>', $all_fields_p );
-		$this->assertMatchesSnapshot( $all_fields_p, $driver );
+		$this->assertStringContainsString( '</p>', $all_fields_p );
+		$this->assertMatchesHtmlSnapshot( $all_fields_p, $driver );
 
 		$all_fields_table = $pod->display( '_all_fields.table' );
 
-		$this->assertContains( '</table>', $all_fields_table );
-		$this->assertMatchesSnapshot( $all_fields_table, $driver );
+		$this->assertStringContainsString( '</table>', $all_fields_table );
+		$this->assertMatchesHtmlSnapshot( $all_fields_table, $driver );
 
 		$all_fields_ol = $pod->display( '_all_fields.ol' );
 
-		$this->assertContains( '</ol>', $all_fields_ol );
-		$this->assertMatchesSnapshot( $all_fields_ol, $driver );
+		$this->assertStringContainsString( '</ol>', $all_fields_ol );
+		$this->assertMatchesHtmlSnapshot( $all_fields_ol, $driver );
 
 		$all_fields_dl = $pod->display( '_all_fields.dl' );
 
-		$this->assertContains( '</dl>', $all_fields_dl );
-		$this->assertMatchesSnapshot( $all_fields_dl, $driver );
+		$this->assertStringContainsString( '</dl>', $all_fields_dl );
+		$this->assertMatchesHtmlSnapshot( $all_fields_dl, $driver );
 
 		$this->assertNull( pods_data_field( $this->pod_name, '_all_fields' ) );
-		$this->assertContains( 'Another test value', pods_data_field( $pod, '_all_fields' ) );
-		$this->assertContains( 'Test title', pods_data_field( $pod, '_all_fields.ul.' . $this->field_name ) ); // Ignored field name.
+		$this->assertStringContainsString( 'Another test value', pods_data_field( $pod, '_all_fields' ) );
+		$this->assertStringContainsString( 'Test title', pods_data_field( $pod, '_all_fields.ul.' . $this->field_name ) ); // Ignored field name.
 		$this->assertNull( pods_data_field( null, '_all_fields' ) );
 	}
 
@@ -237,15 +237,15 @@ class MappingTest extends Pods_UnitTestCase {
 	public function test_display_fields() {
 		$pod = pods( $this->pod_name, $this->item_id );
 
-		$current_wp_url = getenv( 'WP_URL' );
+		$current_wp_url = getenv( 'WORDPRESS_URL' );
 		$snapshot_url   = 'https://wp.localhost';
 
 		$driver = new WPHtmlOutputDriver( $current_wp_url, $snapshot_url );
 
 		$display_fields_ul = $pod->display( '_display_fields' );
 
-		$this->assertContains( '</ul>', $display_fields_ul );
-		$this->assertMatchesSnapshot( $display_fields_ul, $driver );
+		$this->assertStringContainsString( '</ul>', $display_fields_ul );
+		$this->assertMatchesHtmlSnapshot( $display_fields_ul, $driver );
 
 		$display_fields_ul_with_no_type_and_fields_are_ignored = $pod->display( '_display_fields.post_title' );
 
@@ -253,121 +253,121 @@ class MappingTest extends Pods_UnitTestCase {
 
 		$display_fields_ul2 = $pod->display( '_display_fields.ul' );
 
-		$this->assertContains( '</ul>', $display_fields_ul2 );
-		$this->assertMatchesSnapshot( $display_fields_ul2, $driver );
+		$this->assertStringContainsString( '</ul>', $display_fields_ul2 );
+		$this->assertMatchesHtmlSnapshot( $display_fields_ul2, $driver );
 
 		$display_fields_ul2_with_included = $pod->display( '_display_fields.ul.' . $this->field_name );
 
-		$this->assertContains( '</ul>', $display_fields_ul2_with_included );
-		$this->assertContains( 'Test value', $display_fields_ul2_with_included );
-		$this->assertNotContains( 'Test title', $display_fields_ul2_with_included );
-		$this->assertNotContains( 'Another test value', $display_fields_ul2_with_included );
+		$this->assertStringContainsString( '</ul>', $display_fields_ul2_with_included );
+		$this->assertStringContainsString( 'Test value', $display_fields_ul2_with_included );
+		$this->assertStringNotContainsString( 'Test title', $display_fields_ul2_with_included );
+		$this->assertStringNotContainsString( 'Another test value', $display_fields_ul2_with_included );
 
 		$display_fields_ul2_with_excluded = $pod->display( '_display_fields.ul.exclude=' . $this->field_name );
 
-		$this->assertContains( '</ul>', $display_fields_ul2_with_excluded );
-		$this->assertNotContains( 'Test value', $display_fields_ul2_with_excluded );
-		$this->assertContains( 'Test title', $display_fields_ul2_with_excluded );
-		$this->assertContains( 'Another test value', $display_fields_ul2_with_excluded );
+		$this->assertStringContainsString( '</ul>', $display_fields_ul2_with_excluded );
+		$this->assertStringNotContainsString( 'Test value', $display_fields_ul2_with_excluded );
+		$this->assertStringContainsString( 'Test title', $display_fields_ul2_with_excluded );
+		$this->assertStringContainsString( 'Another test value', $display_fields_ul2_with_excluded );
 
 		$display_fields_div = $pod->display( '_display_fields.div' );
 
-		$this->assertContains( '</div>', $display_fields_div );
-		$this->assertMatchesSnapshot( $display_fields_div, $driver );
+		$this->assertStringContainsString( '</div>', $display_fields_div );
+		$this->assertMatchesHtmlSnapshot( $display_fields_div, $driver );
 
 		$display_fields_div_with_included = $pod->display( '_display_fields.div.' . $this->field_name );
 
-		$this->assertContains( '</div>', $display_fields_div_with_included );
-		$this->assertContains( 'Test value', $display_fields_div_with_included );
-		$this->assertNotContains( 'Test title', $display_fields_div_with_included );
-		$this->assertNotContains( 'Another test value', $display_fields_div_with_included );
+		$this->assertStringContainsString( '</div>', $display_fields_div_with_included );
+		$this->assertStringContainsString( 'Test value', $display_fields_div_with_included );
+		$this->assertStringNotContainsString( 'Test title', $display_fields_div_with_included );
+		$this->assertStringNotContainsString( 'Another test value', $display_fields_div_with_included );
 
 		$display_fields_div_with_excluded = $pod->display( '_display_fields.div.exclude=' . $this->field_name );
 
-		$this->assertContains( '</div>', $display_fields_div_with_excluded );
-		$this->assertNotContains( 'Test value', $display_fields_div_with_excluded );
-		$this->assertContains( 'Test title', $display_fields_div_with_excluded );
-		$this->assertContains( 'Another test value', $display_fields_div_with_excluded );
+		$this->assertStringContainsString( '</div>', $display_fields_div_with_excluded );
+		$this->assertStringNotContainsString( 'Test value', $display_fields_div_with_excluded );
+		$this->assertStringContainsString( 'Test title', $display_fields_div_with_excluded );
+		$this->assertStringContainsString( 'Another test value', $display_fields_div_with_excluded );
 
 		$display_fields_p = $pod->display( '_display_fields.p' );
 
-		$this->assertContains( '</p>', $display_fields_p );
-		$this->assertMatchesSnapshot( $display_fields_p, $driver );
+		$this->assertStringContainsString( '</p>', $display_fields_p );
+		$this->assertMatchesHtmlSnapshot( $display_fields_p, $driver );
 
 		$display_fields_p_with_included = $pod->display( '_display_fields.p.' . $this->field_name );
 
-		$this->assertContains( '</p>', $display_fields_p_with_included );
-		$this->assertContains( 'Test value', $display_fields_p_with_included );
-		$this->assertNotContains( 'Test title', $display_fields_p_with_included );
-		$this->assertNotContains( 'Another test value', $display_fields_p_with_included );
+		$this->assertStringContainsString( '</p>', $display_fields_p_with_included );
+		$this->assertStringContainsString( 'Test value', $display_fields_p_with_included );
+		$this->assertStringNotContainsString( 'Test title', $display_fields_p_with_included );
+		$this->assertStringNotContainsString( 'Another test value', $display_fields_p_with_included );
 
 		$display_fields_p_with_excluded = $pod->display( '_display_fields.p.exclude=' . $this->field_name );
 
-		$this->assertContains( '</p>', $display_fields_p_with_excluded );
-		$this->assertNotContains( 'Test value', $display_fields_p_with_excluded );
-		$this->assertContains( 'Test title', $display_fields_p_with_excluded );
-		$this->assertContains( 'Another test value', $display_fields_p_with_excluded );
+		$this->assertStringContainsString( '</p>', $display_fields_p_with_excluded );
+		$this->assertStringNotContainsString( 'Test value', $display_fields_p_with_excluded );
+		$this->assertStringContainsString( 'Test title', $display_fields_p_with_excluded );
+		$this->assertStringContainsString( 'Another test value', $display_fields_p_with_excluded );
 
 		$display_fields_table = $pod->display( '_display_fields.table' );
 
-		$this->assertContains( '</table>', $display_fields_table );
-		$this->assertMatchesSnapshot( $display_fields_table, $driver );
+		$this->assertStringContainsString( '</table>', $display_fields_table );
+		$this->assertMatchesHtmlSnapshot( $display_fields_table, $driver );
 
 		$display_fields_table_with_included = $pod->display( '_display_fields.table.' . $this->field_name );
 
-		$this->assertContains( '</table>', $display_fields_table_with_included );
-		$this->assertContains( 'Test value', $display_fields_table_with_included );
-		$this->assertNotContains( 'Test title', $display_fields_table_with_included );
-		$this->assertNotContains( 'Another test value', $display_fields_table_with_included );
+		$this->assertStringContainsString( '</table>', $display_fields_table_with_included );
+		$this->assertStringContainsString( 'Test value', $display_fields_table_with_included );
+		$this->assertStringNotContainsString( 'Test title', $display_fields_table_with_included );
+		$this->assertStringNotContainsString( 'Another test value', $display_fields_table_with_included );
 
 		$display_fields_table_with_excluded = $pod->display( '_display_fields.table.exclude=' . $this->field_name );
 
-		$this->assertContains( '</table>', $display_fields_table_with_excluded );
-		$this->assertNotContains( 'Test value', $display_fields_table_with_excluded );
-		$this->assertContains( 'Test title', $display_fields_table_with_excluded );
-		$this->assertContains( 'Another test value', $display_fields_table_with_excluded );
+		$this->assertStringContainsString( '</table>', $display_fields_table_with_excluded );
+		$this->assertStringNotContainsString( 'Test value', $display_fields_table_with_excluded );
+		$this->assertStringContainsString( 'Test title', $display_fields_table_with_excluded );
+		$this->assertStringContainsString( 'Another test value', $display_fields_table_with_excluded );
 
 		$display_fields_ol = $pod->display( '_display_fields.ol' );
 
-		$this->assertContains( '</ol>', $display_fields_ol );
-		$this->assertMatchesSnapshot( $display_fields_ol, $driver );
+		$this->assertStringContainsString( '</ol>', $display_fields_ol );
+		$this->assertMatchesHtmlSnapshot( $display_fields_ol, $driver );
 
 		$display_fields_ol_with_included = $pod->display( '_display_fields.ol.' . $this->field_name );
 
-		$this->assertContains( '</ol>', $display_fields_ol_with_included );
-		$this->assertContains( 'Test value', $display_fields_ol_with_included );
-		$this->assertNotContains( 'Test title', $display_fields_ol_with_included );
-		$this->assertNotContains( 'Another test value', $display_fields_ol_with_included );
+		$this->assertStringContainsString( '</ol>', $display_fields_ol_with_included );
+		$this->assertStringContainsString( 'Test value', $display_fields_ol_with_included );
+		$this->assertStringNotContainsString( 'Test title', $display_fields_ol_with_included );
+		$this->assertStringNotContainsString( 'Another test value', $display_fields_ol_with_included );
 
 		$display_fields_ol_with_excluded = $pod->display( '_display_fields.ol.exclude=' . $this->field_name );
 
-		$this->assertContains( '</ol>', $display_fields_ol_with_excluded );
-		$this->assertNotContains( 'Test value', $display_fields_ol_with_excluded );
-		$this->assertContains( 'Test title', $display_fields_ol_with_excluded );
-		$this->assertContains( 'Another test value', $display_fields_ol_with_excluded );
+		$this->assertStringContainsString( '</ol>', $display_fields_ol_with_excluded );
+		$this->assertStringNotContainsString( 'Test value', $display_fields_ol_with_excluded );
+		$this->assertStringContainsString( 'Test title', $display_fields_ol_with_excluded );
+		$this->assertStringContainsString( 'Another test value', $display_fields_ol_with_excluded );
 
 		$display_fields_dl = $pod->display( '_display_fields.dl' );
 
-		$this->assertContains( '</dl>', $display_fields_dl );
-		$this->assertMatchesSnapshot( $display_fields_dl, $driver );
+		$this->assertStringContainsString( '</dl>', $display_fields_dl );
+		$this->assertMatchesHtmlSnapshot( $display_fields_dl, $driver );
 
 		$display_fields_dl_with_included = $pod->display( '_display_fields.dl.' . $this->field_name );
 
-		$this->assertContains( '</dl>', $display_fields_dl_with_included );
-		$this->assertContains( 'Test value', $display_fields_dl_with_included );
-		$this->assertNotContains( 'Test title', $display_fields_dl_with_included );
-		$this->assertNotContains( 'Another test value', $display_fields_dl_with_included );
+		$this->assertStringContainsString( '</dl>', $display_fields_dl_with_included );
+		$this->assertStringContainsString( 'Test value', $display_fields_dl_with_included );
+		$this->assertStringNotContainsString( 'Test title', $display_fields_dl_with_included );
+		$this->assertStringNotContainsString( 'Another test value', $display_fields_dl_with_included );
 
 		$display_fields_dl_with_excluded = $pod->display( '_display_fields.dl.exclude=' . $this->field_name );
 
-		$this->assertContains( '</dl>', $display_fields_dl_with_excluded );
-		$this->assertNotContains( 'Test value', $display_fields_dl_with_excluded );
-		$this->assertContains( 'Test title', $display_fields_dl_with_excluded );
-		$this->assertContains( 'Another test value', $display_fields_dl_with_excluded );
+		$this->assertStringContainsString( '</dl>', $display_fields_dl_with_excluded );
+		$this->assertStringNotContainsString( 'Test value', $display_fields_dl_with_excluded );
+		$this->assertStringContainsString( 'Test title', $display_fields_dl_with_excluded );
+		$this->assertStringContainsString( 'Another test value', $display_fields_dl_with_excluded );
 
 		$this->assertNull( pods_data_field( $this->pod_name, '_display_fields' ) );
-		$this->assertContains( 'Another test value', pods_data_field( $pod, '_display_fields' ) );
-		$this->assertContains( 'Test title', pods_data_field( $pod, '_display_fields.ul.post_title' ) );
+		$this->assertStringContainsString( 'Another test value', pods_data_field( $pod, '_display_fields' ) );
+		$this->assertStringContainsString( 'Test title', pods_data_field( $pod, '_display_fields.ul.post_title' ) );
 		$this->assertNull( pods_data_field( null, '_display_fields' ) );
 	}
 
@@ -506,18 +506,18 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $pod, 'post_thumbnail.123x123' ) );
 		$this->assertNull( pods_data_field( null, 'post_thumbnail.123x123' ) );
 
-		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_url' ) );
-		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_url.medium' ) );
-		$this->assertContains( '-123x123.jpg', $pod->field( 'post_thumbnail_url.123x123' ) );
+		$this->assertStringContainsString( '-150x150.jpg', $pod->field( 'post_thumbnail_url' ) );
+		$this->assertStringContainsString( '-200x300.jpg', $pod->field( 'post_thumbnail_url.medium' ) );
+		$this->assertStringContainsString( '-123x123.jpg', $pod->field( 'post_thumbnail_url.123x123' ) );
 		$this->assertNull( pods_data_field( $this->pod_name, 'post_thumbnail_url.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'post_thumbnail_url.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( $pod, 'post_thumbnail_url.123x123' ) );
 		$this->assertNull( pods_data_field( null, 'post_thumbnail_url.123x123' ) );
 
-		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_src' ) );
-		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_src.medium' ) );
-		$this->assertContains( '-123x123.jpg', $pod->field( 'post_thumbnail_src.123x123' ) );
+		$this->assertStringContainsString( '-150x150.jpg', $pod->field( 'post_thumbnail_src' ) );
+		$this->assertStringContainsString( '-200x300.jpg', $pod->field( 'post_thumbnail_src.medium' ) );
+		$this->assertStringContainsString( '-123x123.jpg', $pod->field( 'post_thumbnail_src.123x123' ) );
 		$this->assertNull( pods_data_field( $this->pod_name, 'post_thumbnail_src.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'post_thumbnail_src.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( $pod, 'post_thumbnail_src.123x123' ) );
 		$this->assertNull( pods_data_field( null, 'post_thumbnail_src.123x123' ) );
 	}
 
@@ -542,19 +542,19 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( $pod, 'image_attachment.' . $attachment_id . '.123x123' ) );
 		$this->assertStringStartsWith( '<img width="123" height="123" src="', pods_data_field( null, 'image_attachment.' . $attachment_id . '.123x123' ) );
 
-		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_url.' . $attachment_id ) );
-		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.medium' ) );
-		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( null, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-150x150.jpg', $pod->field( 'image_attachment_url.' . $attachment_id ) );
+		$this->assertStringContainsString( '-200x300.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.medium' ) );
+		$this->assertStringContainsString( '-123x123.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( null, 'image_attachment_url.' . $attachment_id . '.123x123' ) );
 
-		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_src.' . $attachment_id ) );
-		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.medium' ) );
-		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
-		$this->assertContains( '-123x123.jpg', pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-150x150.jpg', $pod->field( 'image_attachment_src.' . $attachment_id ) );
+		$this->assertStringContainsString( '-200x300.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.medium' ) );
+		$this->assertStringContainsString( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( $this->pod_name, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( $pod, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
+		$this->assertStringContainsString( '-123x123.jpg', pods_data_field( null, 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}
 
 }

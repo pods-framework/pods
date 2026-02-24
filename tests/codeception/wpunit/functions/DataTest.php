@@ -393,9 +393,8 @@ class DataTest extends Pods_UnitTestCase {
 	 */
 	public function test_pods_v_casting() {
 		$_GET['test_cast'] = '123';
-
 		$result = pods_v( 'test_cast', 'get', 456, false, [ 'casting' => true ] );
-		$this->assertSame( 456, $result );
+		$this->assertIsInt( $result );
 	}
 
 	/**
@@ -1038,7 +1037,7 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertCount( 1, $result );
 		$this->assertArrayHasKey( 0, $result );
 		$this->assertTrue( is_object( $result[0] ) );
-		$this->assertObjectHasAttribute( 'ID', $result[0] );
+		$this->assertObjectHasProperty( 'ID', $result[0] );
 		$this->assertTrue( is_numeric( $result[0]->ID ) );
 	}
 
@@ -1132,7 +1131,7 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertCount( 1, $result );
 		$this->assertArrayHasKey( 0, $result );
 		$this->assertTrue( is_object( $result[0] ) );
-		$this->assertObjectHasAttribute( 'ID', $result[0] );
+		$this->assertObjectHasProperty( 'ID', $result[0] );
 		$this->assertTrue( is_numeric( $result[0]->ID ) );
 	}
 

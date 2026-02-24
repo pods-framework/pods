@@ -2593,9 +2593,14 @@ function pods_is_truthy( $value ) {
 		return true === $value;
 	}
 
-	// Check integer / float for 1.
-	if ( is_int( $value ) || is_float( $value ) ) {
+	// Check integer for 1.
+	if ( is_int( $value ) ) {
 		return 1 === $value;
+	}
+
+	// Check float for 1.
+	if ( is_float( $value ) ) {
+		return 1.0 === $value;
 	}
 
 	// We only support strings from this point forward.
@@ -2643,9 +2648,14 @@ function pods_is_falsey( $value ) {
 		return false === $value;
 	}
 
-	// Check integer / float for 0.
-	if ( is_int( $value ) || is_float( $value ) ) {
+	// Check integer for 0.
+	if ( is_int( $value ) ) {
 		return 0 === $value;
+	}
+
+	// Check float for 0.
+	if ( is_float( $value ) ) {
+		return 0.0 === $value;
 	}
 
 	// We only support strings from this point forward.
@@ -3082,7 +3092,7 @@ function pods_kses_exclude_p( $content ) {
  * @param string $content Text content to filter.
  */
 function pods_output_kses_exclude_p( $content ) {
-	pods_output_kses_exclude_p( $content );
+	echo pods_kses_exclude_p( $content );
 }
 
 /**

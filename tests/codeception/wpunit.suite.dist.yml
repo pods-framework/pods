@@ -4,6 +4,7 @@
 # Emulate web requests and make application process them.
 actor: WpunitTester
 suite_namespace: \Pods_Unit_Tests
+bootstrap: _bootstrap.php
 modules:
   enabled:
     - lucatume\WPBrowser\Module\WPLoader
@@ -13,6 +14,7 @@ modules:
       dbUrl: '%WORDPRESS_DB_URL%'
       wpDebug: true
       tablePrefix: '%TEST_TABLE_PREFIX%'
+      dump: 'tests/codeception/_data/dump.sql'
       domain: '%WORDPRESS_DOMAIN%'
       adminEmail: 'admin@%WORDPRESS_DOMAIN%'
       title: 'Pods Tests'

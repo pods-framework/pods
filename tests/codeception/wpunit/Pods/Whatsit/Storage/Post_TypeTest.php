@@ -431,7 +431,7 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 
 		$post = get_post( $id );
 
-		$this->assertInternalType( 'integer', $id );
+		$this->assertIsInt( $id );
 		$this->assertInstanceOf( WP_Post::class, $post );
 		$this->assertEquals( $id, $object->get_id() );
 		$this->assertEquals( $object->get_label(), $post->post_title );
@@ -471,7 +471,7 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 
 		$post = get_post( $id );
 
-		$this->assertInternalType( 'integer', $id );
+		$this->assertIsInt( $id );
 		$this->assertInstanceOf( WP_Post::class, $post );
 		$this->assertEquals( $id, $object->get_id() );
 		$this->assertEquals( $object->get_label(), $post->post_title );
@@ -580,7 +580,7 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 
 		$duplicated_object = $this->pods_object_storage->to_object( $post );
 
-		$this->assertInternalType( 'integer', $id );
+		$this->assertIsInt( $id );
 		$this->assertInstanceOf( WP_Post::class, $post );
 		$this->assertEquals( $id, $duplicated_object->get_id() );
 		$this->assertEquals( $duplicated_object->get_label(), $post->post_title );

@@ -394,7 +394,7 @@ class AccessTest extends Pods_UnitTestCase {
 	}
 
 	public function test_pods_get_access_admin_notice_is_shown() {
-		$this->assertContains( '<!-- pods:access-notices/admin/message ', pods_get_access_admin_notice( [
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/message ', pods_get_access_admin_notice( [
 			'pods' => $this->public_pod,
 		] ) );
 	}
@@ -402,7 +402,7 @@ class AccessTest extends Pods_UnitTestCase {
 	public function test_pods_get_access_admin_notice_is_hidden_by_setting() {
 		pods_update_setting( 'show_access_admin_notices', '0' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/hidden-by-setting ', pods_get_access_admin_notice( [
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/hidden-by-setting ', pods_get_access_admin_notice( [
 			'pods' => $this->public_pod,
 		] ) );
 	}
@@ -410,7 +410,7 @@ class AccessTest extends Pods_UnitTestCase {
 	public function test_pods_get_access_admin_notice_is_hidden_by_pod() {
 		$this->public_pod->pod_data->set_arg( 'show_access_admin_notices', '0' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/hidden-by-pod ', pods_get_access_admin_notice( [
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/hidden-by-pod ', pods_get_access_admin_notice( [
 			'pods' => $this->public_pod,
 		] ) );
 	}
@@ -419,13 +419,13 @@ class AccessTest extends Pods_UnitTestCase {
 		pods_update_setting( 'show_access_restricted_messages', '1' );
 		$this->public_pod->pod_data->set_arg( 'show_access_restricted_messages', '1' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/message ', pods_get_access_user_notice( [
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/message ', pods_get_access_user_notice( [
 			'pods' => $this->public_pod,
 		] ) );
 	}
 
 	public function test_pods_get_access_user_notice_is_hidden_by_setting() {
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-setting ', pods_get_access_user_notice( [
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-setting ', pods_get_access_user_notice( [
 			'pods' => $this->public_pod,
 		] ) );
 	}
@@ -434,7 +434,7 @@ class AccessTest extends Pods_UnitTestCase {
 		pods_update_setting( 'show_access_restricted_messages', '1' );
 		$this->public_pod->pod_data->set_arg( 'show_access_restricted_messages', '0' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-pod ', pods_get_access_user_notice( [
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-pod ', pods_get_access_user_notice( [
 			'pods' => $this->public_pod,
 		] ) );
 	}

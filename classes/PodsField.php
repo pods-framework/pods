@@ -932,7 +932,7 @@ class PodsField {
 					if ( ! empty( $allowed_tags ) ) {
 						$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
 
-						$value = wp_strip_all_tags( $value, $allowed_html_tags );
+						$value = strip_tags( $value, $allowed_html_tags );
 					}
 				}
 

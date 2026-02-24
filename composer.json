@@ -69,6 +69,7 @@
     "codeception/module-rest": "^3.4",
     "codeception/util-universalframework": "^1.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+    "dms/phpunit-arraysubset-asserts": "^0.5",
     "fzaninotto/faker": "^1.9",
     "lucatume/codeception-snapshot-assertions": "^1.4",
     "lucatume/function-mocker": "^2.0",

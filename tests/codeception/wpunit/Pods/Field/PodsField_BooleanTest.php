@@ -36,7 +36,7 @@ class PodsField_BooleanTest extends Pods_UnitTestCase {
 	 * @depends test_method_options_exists
 	 */
 	public function test_method_options_returns_array() {
-		$this->assertInternalType( 'array', $this->field->options() );
+		$this->assertIsArray( $this->field->options() );
 	}
 
 	/**

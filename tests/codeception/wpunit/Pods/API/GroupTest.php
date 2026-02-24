@@ -124,7 +124,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_group( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$group = $this->api->load_group( $response );
 
@@ -147,7 +147,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_group( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$params = [
 			'id'     => $response,
@@ -181,7 +181,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 		$response = $this->api->add_group( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$params = [
 			'pod_id' => $this->pod_id,
@@ -208,7 +208,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_group( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$group = $this->api->load_group( $response );
 
@@ -233,7 +233,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_group( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$group = $this->api->load_group( $response );
 
@@ -622,7 +622,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 		$groups = $this->api->load_groups( $params );
 
-		$this->assertInternalType( 'int', $groups );
+		$this->assertIsInt( $groups );
 		$this->assertEquals( 2, $groups );
 
 		$params = [
@@ -635,7 +635,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 		$groups = $this->api->load_groups( $params );
 
-		$this->assertInternalType( 'int', $groups );
+		$this->assertIsInt( $groups );
 		$this->assertEquals( 2, $groups );
 	}
 }

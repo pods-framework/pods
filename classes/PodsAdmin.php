@@ -3676,7 +3676,7 @@ class PodsAdmin {
 				$meta[] = $deprecated;
 			}
 
-			$component_data['Description'] = wpautop( trim( make_clickable( wp_strip_all_tags( $component_data['Description'], 'em,strong' ) ) ) );
+			$component_data['Description'] = wpautop( trim( make_clickable( strip_tags( $component_data['Description'], 'em,strong' ) ) ) );
 
 			if ( ! empty( $meta ) ) {
 				$description_style = '';

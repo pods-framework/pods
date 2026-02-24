@@ -888,7 +888,7 @@ class PodsMigrate {
 			$attachment_id = wp_insert_attachment( $attachment, $new_file );
 
 			// error!
-			if ( is_wp_error( $attachment_id ) ) {
+			if ( $attachment_id instanceof WP_Error ) {
 				return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
 			}
 

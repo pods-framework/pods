@@ -802,7 +802,7 @@ class Post_Type extends Collection {
 		/* @var array|false|null|WP_Post|WP_Error $deleted */
 		$deleted = wp_delete_post( $id, true );
 
-		if ( false !== $deleted && ! is_wp_error( $deleted ) ) {
+		if ( false !== $deleted && ! $deleted instanceof WP_Error ) {
 			return parent::delete_object( $object );
 		}
 
@@ -834,7 +834,7 @@ class Post_Type extends Collection {
 			return null;
 		}
 
-		if ( is_wp_error( $post ) ) {
+		if ( $post instanceof WP_Error ) {
 			return null;
 		}
 

@@ -216,7 +216,7 @@ abstract class Storage {
 		/* @var string|int|false|WP_Error $added */
 		$added = $this->add_object( $object );
 
-		if ( $added && ! is_wp_error( $added ) ) {
+		if ( $added && ! $added instanceof WP_Error ) {
 			/**
 			 * Hook into the storage adding of an object after adding.
 			 *
@@ -346,7 +346,7 @@ abstract class Storage {
 		/* @var string|int|false|WP_Error $added */
 		$added = $this->add( $duplicated_object );
 
-		if ( $added && ! is_wp_error( $added ) ) {
+		if ( $added && ! $added instanceof WP_Error ) {
 			/**
 			 * Hook into the storage duplication of an object after duplication.
 			 *

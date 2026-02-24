@@ -153,7 +153,7 @@ class Pods_Templates_Frontier {
 	 */
 	public function activate_metaboxes() {
 
-		add_action( 'add_meta_boxes__pods_template', array( $this, 'add_metaboxes' ), 5, 2 );
+		add_action( 'add_meta_boxes__pods_template', array( $this, 'add_metaboxes' ), 5, 1 );
 		add_action( 'save_post', array( $this, 'save_post_metaboxes' ), 1, 2 );
 
 	}

@@ -4,13 +4,13 @@
  *
  * @package   Pods
  * @author    Pods Framework Team
- * @copyright 2025 Pods Foundation, Inc
+ * @copyright 2026 Pods Foundation, Inc
  * @license   GPL v2 or later
  *
  * Plugin Name:       Pods - Custom Content Types and Fields
  * Plugin URI:        https://pods.io/
  * Description:       Pods is a framework for creating, managing, and deploying customized content types and fields
- * Version:           3.3.5-rc-1
+ * Version:           3.3.5
  * Author:            Pods Framework Team
  * Author URI:        https://pods.io/about/
  * Text Domain:       pods
@@ -49,7 +49,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version.
-	define( 'PODS_VERSION', '3.3.5-rc-1' );
+	define( 'PODS_VERSION', '3.3.5' );
 
 	// Current database version, this is the last version the database changed.
 	define( 'PODS_DB_VERSION', '2.3.5' );

@@ -3368,7 +3368,7 @@ class Pods implements Iterator {
 	 * are simple, paginate and advanced. The base and format parameters
 	 * are used only for the paginate view.
 	 *
-	 * @since TBD
+	 * @since 3.3.5
 	 *
 	 * @param array|object $params Associative array of parameters.
 	 */
@@ -3462,7 +3462,7 @@ class Pods implements Iterator {
 	/**
 	 * Return a filter form for searching a Pod
 	 *
-	 * @since TBD
+	 * @since 3.3.5
 	 *
 	 * @param array|string $params Comma-separated list of fields or array of parameters.
 	 */
@@ -3913,7 +3913,7 @@ class Pods implements Iterator {
 	 * and override options where needed. For WP object based Pods, you can pass through the WP object
 	 * field names too, such as "post_title" or "post_content" for example.
 	 *
-	 * @since TBD
+	 * @since 3.3.5
 	 *
 	 * @param array  $params    (optional) Fields to show on the form, defaults to all fields.
 	 * @param string $label     (optional) Save button label, defaults to "Save Changes".

@@ -999,7 +999,7 @@ function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict 
 /**
  * Return the boolean version of a variable.
  *
- * @since TBD
+ * @since 3.3.5
  *
  * @param mixed               $var     The variable name, can also be a modifier for specific types
  * @param string|array|object $type    (optional) Super globals, url/url-relative, constants, globals, options,
@@ -1086,7 +1086,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 
 			$ret = $_SERVER;
 		} elseif ( in_array( $type, array( 'global', 'globals' ), true ) ) {
-			$GLOBALS[ $var ] = $value; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+			$GLOBALS[ $var ] = $value; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound,PHPCompatibility.Variables.RemovedIndirectModificationOfGlobals.AssignmentOfGlobals
 
 			$ret = $GLOBALS;
 		} elseif ( 'session' === $type ) {
@@ -3087,7 +3087,7 @@ function pods_kses_exclude_p( $content ) {
  *
  * This function expects unslashed data.
  *
- * @since TBD
+ * @since 3.3.5
  *
  * @param string $content Text content to filter.
  */
@@ -3202,7 +3202,7 @@ function pods_enforce_safe_value_via_regex( ?string $value, string $disallowed_p
 /**
  * Replace greater than and less than placeholders in a string or array of strings with the actual characters.
  *
- * @since TBD
+ * @since 3.3.5
  *
  * @param array|string $value The value to replace the greater than and less than placeholders in.
  *

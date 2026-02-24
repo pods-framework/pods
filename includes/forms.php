@@ -559,7 +559,7 @@ function pods_form_get_submitted_fields( $name, array $options = [] ) {
 /**
  * Make a field into a hidden field.
  *
- * @since TBD
+ * @since 3.3.5
  *
  * @param array|Field $field The field object.
  *
@@ -578,7 +578,7 @@ function pods_form_field_make_hidden( $field ) {
 /**
  * Make a field into a readonly field.
  *
- * @since TBD
+ * @since 3.3.5
  *
  * @param array|Field $field The field object.
  *

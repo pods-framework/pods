@@ -403,7 +403,7 @@ class Conditional_Logic {
 	/**
 	 * Set the conditional logic sets.
 	 *
-	 * @since TBD
+	 * @since 3.3.5
 	 *
 	 * @param array $logic_sets The conditional logic sets.
 	 */

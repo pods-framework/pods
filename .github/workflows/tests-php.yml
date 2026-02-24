@@ -107,16 +107,16 @@ jobs:
       - name: Init the WordPress container
         run: |
           ${SLIC_BIN} up wordpress
-          ${SLIC_BIN} site-cli core version
-          ${SLIC_BIN} site-cli core update
-          ${SLIC_BIN} site-cli core update-db
-          ${SLIC_BIN} site-cli core version
+          ${SLIC_BIN} wp core version
+          ${SLIC_BIN} wp core update --force
+          ${SLIC_BIN} wp core update-db
+          ${SLIC_BIN} wp core version
       # ------------------------------------------------------------------------------
       # Install and activate TwentyTwenty
       # ------------------------------------------------------------------------------
       - name: Install and activate TwentyTwenty
         if: ${{ matrix.suite == 'acceptance' }}
-        run:  ${SLIC_BIN} site-cli theme install twentytwenty --activate
+        run:  ${SLIC_BIN} wp theme install twentytwenty --activate
       # ------------------------------------------------------------------------------
       # Run tests
       # ------------------------------------------------------------------------------

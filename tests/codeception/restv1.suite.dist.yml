@@ -12,11 +12,14 @@ modules:
         - lucatume\WPBrowser\Module\WPLoader
     config:
         WPDb:
+            dsn: 'mysql:host=%WORDPRESS_DB_HOST%;dbname=%WORDPRESS_DB_NAME%'
+            user: '%WORDPRESS_DB_USER%'
+            password: '%WORDPRESS_DB_PASSWORD%'
+            url: '%WORDPRESS_URL%'
             dbUrl: '%WORDPRESS_DB_URL%'
             dump: 'tests/codeception/_data/dump.sql'
             populate: true
             cleanup: true
-            url: '%WORDPRESS_URL%'
             tablePrefix: '%WORDPRESS_TABLE_PREFIX%'
             waitlock: 10
         WPBrowser:

@@ -3092,7 +3092,7 @@ function pods_kses_exclude_p( $content ) {
  * @param string $content Text content to filter.
  */
 function pods_output_kses_exclude_p( $content ) {
-	echo pods_kses_exclude_p( $content );
+	echo pods_kses_exclude_p( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**

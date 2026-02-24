@@ -11454,7 +11454,6 @@ class PodsAPI {
 				class_exists( WP_UnitTestCase::class )
 				&& class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class )
 			) {
-				// @phpstan-ignore-next-line
 				\Pods_Unit_Tests\Pods_UnitTestCase::flush_cache();
 			} else {
 				// Do normal cache clear.

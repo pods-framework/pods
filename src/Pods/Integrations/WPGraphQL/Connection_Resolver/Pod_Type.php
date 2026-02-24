@@ -92,7 +92,7 @@ class Pod_Type extends AbstractConnectionResolver {
 		];
 
 		// @todo Eventually support this kind of functionality in PodsAPI::load_pods().
-		// $query_args['offset'] = $this->get_offset();
+		// $query_args['offset'] = $this->get_offset_for_cursor();
 
 		// Determine whether we are pulling records by last first.
 		$last = ! empty( $this->args['last'] ) ? (bool) $this->args['last'] : false;
@@ -217,15 +217,13 @@ class Pod_Type extends AbstractConnectionResolver {
 		 * @since 2.9.0
 		 *
 		 * @param array       $query_args The query arguments to pass to PodsAPI::load_pods().
-		 * @param array       $args       The input arguments provided which contain 'where', 'having', and others.
+		 * @param array       $input_args The input arguments provided which contain 'where', 'having', and others.
 		 * @param mixed       $source     The source passed down from the resolve tree.
 		 * @param array       $args       List of arguments input in the field as part of the GraphQL query.
 		 * @param AppContext  $context    Object containing app context that gets passed down the resolve tree.
 		 * @param ResolveInfo $info       Info about fields passed down the resolve tree.
 		 */
-		$query_args = (array) apply_filters( 'pods_wpgraphql_integration_connection_resolver_pod_input_fields_query_args', $query_args, $args, $this->source, $this->args, $this->context, $this->info );
-
-		return $query_args;
+		return (array) apply_filters( 'pods_wpgraphql_integration_connection_resolver_pod_input_fields_query_args', $query_args, $args, $this->source, $this->args, $this->context, $this->info );
 	}
 
 	/**

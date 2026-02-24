@@ -42,20 +42,6 @@
     "source": "https://github.com/pods-framework/pods",
     "docs": "https://docs.pods.io/"
   },
-  "repositories": [
-    {
-      "name": "the-events-calendar/coding-standards",
-      "type": "github",
-      "url": "https://github.com/the-events-calendar/coding-standards",
-      "no-api": true
-    },
-    {
-      "name": "lucatume/di52",
-      "type": "github",
-      "url": "https://github.com/lucatume/di52",
-      "no-api": true
-    }
-  ],
   "require": {
     "composer/installers": "2.2.*",
     "erusev/parsedown": "^1.7.4",
@@ -71,6 +57,7 @@
     "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
     "dms/phpunit-arraysubset-asserts": "^0.5",
     "fzaninotto/faker": "^1.9",
+    "johnbillion/query-monitor": "dev-develop",
     "lucatume/codeception-snapshot-assertions": "^1.4",
     "lucatume/function-mocker": "^2.0",
     "lucatume/function-mocker-le": "^1.0",
@@ -80,11 +67,13 @@
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^1.12",
     "phpstan/phpstan-deprecation-rules": "^1.2",
-    "stellarwp/coding-standards": "dev-main",
     "spatie/phpunit-snapshot-assertions": "^4.2",
+    "stellarwp/coding-standards": "dev-main",
     "szepeviktor/phpstan-wordpress": "*",
     "wp-cli/wp-cli": "2.*",
-    "wp-coding-standards/wpcs": "^3.1"
+    "wp-coding-standards/wpcs": "^3.1",
+    "wp-graphql/wp-graphql": "^v2.5.4"
+    "wpsyntex/polylang": "dev-master",
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
@@ -105,6 +94,11 @@
   },
   "extra": {
     "installer-name": "pods",
+    "installer-paths": {
+      "vendor/wordpress-plugin/{$name}/": [
+        "type:wordpress-plugin"
+      ]
+    },
     "strauss": {
       "target_directory": "vendor/vendor-prefixed",
       "namespace_prefix": "Pods\\Prefixed",

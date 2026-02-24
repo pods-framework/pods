@@ -2491,8 +2491,8 @@ class PodsInit {
 		pods_container_register_service_provider( \Pods\Service_Provider::class );
 		pods_container_register_service_provider( \Pods\Admin\Service_Provider::class );
 		pods_container_register_service_provider( \Pods\Blocks\Service_Provider::class );
-		pods_container_register_service_provider( \Pods\Integrations\Service_Provider::class );
 		pods_container_register_service_provider( \Pods\REST\V1\Service_Provider::class );
+		pods_container_register_service_provider( \Pods\Integrations\Service_Provider::class );
 		pods_container_register_service_provider( \Pods\Integrations\WPGraphQL\Service_Provider::class );
 
 		// Add WP-CLI commands.

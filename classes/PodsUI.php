@@ -5230,10 +5230,22 @@ class PodsUI {
 	}
 
 	/**
-	 * @param            $code
-	 * @param bool|array $row
+	 * Output the template and evaluate the row data.
 	 *
-	 * @return mixed
+	 * @param string $code The template code.
+	 * @param bool|array $row The row data.
+	 */
+	public function output_template( $code, $row = false ) {
+		echo $this->do_template( $code, $row ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Run the template and evaluate the row data.
+	 *
+	 * @param string     $code The template code.
+	 * @param bool|array $row  The row data.
+	 *
+	 * @return string
 	 */
 	public function do_template( $code, $row = false ) {
 

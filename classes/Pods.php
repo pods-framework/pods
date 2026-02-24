@@ -4197,6 +4197,17 @@ class Pods implements Iterator {
 	/**
 	 * Render a singular view for the Pod item content.
 	 *
+	 * @since TBD
+	 *
+	 * @param array|string|null $view_fields (optional) Fields to show in the view, defaults to all fields.
+	 */
+	public function output_view( $view_fields = null ) {
+		echo $this->view( $view_fields ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Render a singular view for the Pod item content.
+	 *
 	 * @param array|string|null $view_fields (optional) Fields to show in the view, defaults to all fields.
 	 *
 	 * @return mixed

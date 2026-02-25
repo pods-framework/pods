@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
+= 3.3.7 - February 25th, 2026 =
+
+* Fixed: Resolve issues using `WP_Filesystem` to check session paths before starting a session. (@sc0ttkclark)
+
 = 3.3.6 - February 25th, 2026 =
 
 * Fixed: Resolve a fatal error with `WP_Filesystem` usage. (@sc0ttkclark)

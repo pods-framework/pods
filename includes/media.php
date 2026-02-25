@@ -271,6 +271,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 	$stat  = stat( dirname( $new_file ) );
 	$perms = $stat['mode'] & 0000666;
 
+	require_once ABSPATH . '/wp-admin/includes/file.php';
 	WP_Filesystem();
 
 	/** @var WP_Filesystem_Base $wp_filesystem */

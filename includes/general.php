@@ -4683,6 +4683,7 @@ function pods_can_use_sessions( $only_env_check = false ) {
 			// Allow for non-file based sessions, like Memcache.
 			// This is OK, but we don't want to check if file_exists on next statement.
 		} else {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
 			WP_Filesystem();
 
 			/** @var WP_Filesystem_Base $wp_filesystem */

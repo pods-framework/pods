@@ -129,6 +129,7 @@ class Pods_Migrate_PHP extends PodsComponent {
 	 * @param $params
 	 */
 	public function ajax_migrate( $params ) {
+		require_once ABSPATH . '/wp-admin/includes/file.php';
 		WP_Filesystem();
 
 		[

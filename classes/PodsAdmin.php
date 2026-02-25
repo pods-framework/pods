@@ -4678,6 +4678,7 @@ class PodsAdmin {
 
 		$auto_start = pods_v( $auto_start, $settings_fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
+		require_once ABSPATH . '/wp-admin/includes/file.php';
 		WP_Filesystem();
 
 		/** @var WP_Filesystem_Base $wp_filesystem */

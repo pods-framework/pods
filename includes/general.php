@@ -4686,12 +4686,7 @@ function pods_can_use_sessions( $only_env_check = false ) {
 			// Allow for non-file based sessions, like Memcache.
 			// This is OK, but we don't want to check if file_exists on next statement.
 		} else {
-			require_once ABSPATH . '/wp-admin/includes/file.php';
-
-			/** @var WP_Filesystem_Base $wp_filesystem */
-			global $wp_filesystem;
-
-			if ( ! WP_Filesystem() || ! $wp_filesystem || empty( $save_path ) || ! $wp_filesystem->exists( $save_path ) || ! $wp_filesystem->is_writable( $save_path ) ) {
+			if ( empty( $save_path ) || ! file_exists( $save_path ) || ! is_writable( $save_path ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Unable to use WP_Filesystem logic for session path checks.
 				// Check if session path exists and can be written to, avoiding PHP fatal errors.
 				return false;
 			}

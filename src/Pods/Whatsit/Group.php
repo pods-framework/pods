@@ -2,6 +2,11 @@
 
 namespace Pods\Whatsit;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods\Whatsit;
 
@@ -76,7 +81,7 @@ class Group extends Whatsit {
 
 		try {
 			if ( empty( $args['parent_identifier'] ) && empty( $args['group_id'] ) ) {
-				throw new Exception( 'Invalid parent identifier for field lookup by group not by ID: ' . var_export( $args, true ) );
+				throw new Exception( 'Invalid parent identifier for field lookup by group not by ID: ' . wp_json_encode( $args, JSON_PRETTY_PRINT ) );
 			}
 
 			if ( ! empty( $args['object_type'] ) ) {

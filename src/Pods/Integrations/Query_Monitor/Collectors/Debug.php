@@ -2,13 +2,13 @@
 
 namespace Pods\Integrations\Query_Monitor\Collectors;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use QM_Backtrace;
 use QM_DataCollector;
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 /**
  * Class Debug

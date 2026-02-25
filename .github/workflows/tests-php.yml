@@ -39,7 +39,7 @@ jobs:
       - name: Configure PHP environment
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.2
       # ------------------------------------------------------------------------------
       # Checkout slic
       # ------------------------------------------------------------------------------
@@ -86,6 +86,7 @@ jobs:
           ${SLIC_BIN} interactive off
           ${SLIC_BIN} build-prompt off
           ${SLIC_BIN} build-subdir off
+          ${SLIC_BIN} php-version set 8.2 --skip-rebuild
           ${SLIC_BIN} xdebug off
           ${SLIC_BIN} composer-cache set /home/runner/.cache/composer
           ${SLIC_BIN} debug on
@@ -99,20 +100,23 @@ jobs:
           docker network prune -f
           ${SLIC_BIN} use ${GITHUB_REPOSITORY#*/}
           ${SLIC_BIN} composer set-version 2
-          ${SLIC_BIN} composer install
+          ${SLIC_BIN} composer install --ignore-platform-reqs
       # ------------------------------------------------------------------------------
       # Init WordPress container
       # ------------------------------------------------------------------------------
       - name: Init the WordPress container
         run: |
           ${SLIC_BIN} up wordpress
-          ${SLIC_BIN} site-cli core version
+          ${SLIC_BIN} wp core version
+          ${SLIC_BIN} wp core update --version=6.9 --force
+          ${SLIC_BIN} wp core update-db
+          ${SLIC_BIN} wp core version
       # ------------------------------------------------------------------------------
       # Install and activate TwentyTwenty
       # ------------------------------------------------------------------------------
       - name: Install and activate TwentyTwenty
         if: ${{ matrix.suite == 'acceptance' }}
-        run:  ${SLIC_BIN} site-cli theme install twentytwenty --activate
+        run:  ${SLIC_BIN} wp theme install twentytwenty --activate
       # ------------------------------------------------------------------------------
       # Run tests
       # ------------------------------------------------------------------------------

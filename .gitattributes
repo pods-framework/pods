@@ -25,6 +25,7 @@ tests/_support/_generated/* linguist-generated=true
 # Dot-files
 .babelrc export-ignore
 .distignore export-ignore
+.DS_Store
 .editorconfig export-ignore
 .env export-ignore
 .env.example export-ignore
@@ -62,6 +63,7 @@ phpstan.neon export-ignore
 phpunit.xml.dist export-ignore
 README.md export-ignore
 rollup.config.js export-ignore
+slic.json export-ignore
 TESTS.md export-ignore
 webpack.common.js export-ignore
 webpack.dev.js export-ignore

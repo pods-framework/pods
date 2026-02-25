@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Component managing class
  *
@@ -224,7 +229,7 @@ class PodsComponents {
 				continue;
 			}
 
-			$page = add_submenu_page( $parent, strip_tags( $menu_data['page_title'] ), '- ' . strip_tags( $menu_title ), pods_v( 'capability', $menu_data, 'read', true ), $menu_data['menu_page'], $menu_data['callback'] );
+			$page = add_submenu_page( $parent, wp_strip_all_tags( $menu_data['page_title'] ), '- ' . wp_strip_all_tags( $menu_title ), pods_v( 'capability', $menu_data, 'read', true ), $menu_data['menu_page'], $menu_data['callback'] );
 
 			if ( isset( $menu_data['assets'] ) && is_callable( $menu_data['assets'] ) ) {
 				add_action( 'admin_print_styles-' . $page, $menu_data['assets'] );
@@ -728,7 +733,7 @@ class PodsComponents {
 				continue;
 			}
 
-			$capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( str_replace( ' and ', ' ', strip_tags( $component_data['Name'] ) ) ) );
+			$capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( str_replace( ' and ', ' ', wp_strip_all_tags( $component_data['Name'] ) ) ) );
 
 			if ( 0 < strlen( (string) $component_data['Capability'] ) ) {
 				$capability = $component_data['Capability'];

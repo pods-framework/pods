@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 
 <?php if ( $wrap_pagination ) : ?>
@@ -23,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'next_text' => $params->next_text,
 		];
 
-		echo paginate_links( $args );
+		echo paginate_links( $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		?>
 	</span>
 

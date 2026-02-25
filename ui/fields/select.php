@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 $attributes             = array();
 $attributes['tabindex'] = 2;
@@ -54,11 +57,11 @@ $selection_made = false;
 
 					$sub_option_label = (string) $sub_option_label;
 
-					$selected            = '';
+					$is_selected = false;
 					$options['selected'] = '';
 
 					if ( ! $selection_made && ( ( ! is_array( $value ) && (string) $sub_option_value === (string) $value ) || ( is_array( $value ) && ( in_array( $sub_option_value, $value ) || in_array( (string) $sub_option_value, $value ) ) ) ) ) {
-						$selected            = ' SELECTED';
+						$is_selected = true;
 						$options['selected'] = 'selected';
 
 						if ( ! $multiple ) {
@@ -72,7 +75,7 @@ $selection_made = false;
 						<?php
 					} else {
 						?>
-						<option value="<?php echo esc_attr( $sub_option_value ); ?>"<?php echo $selected; ?>><?php echo esc_html( $sub_option_label ); ?></option>
+						<option value="<?php echo esc_attr( $sub_option_value ); ?>"<?php selected( $is_selected ); ?>><?php echo esc_html( $sub_option_label ); ?></option>
 						<?php
 					}
 				}//end foreach
@@ -82,11 +85,11 @@ $selection_made = false;
 		} else {
 			$option_label = (string) $option_label;
 
-			$selected            = '';
+			$is_selected = false;
 			$options['selected'] = '';
 
 			if ( ! $selection_made && ( ( ! is_array( $value ) && (string) $option_value === (string) $value ) || ( is_array( $value ) && ( in_array( $option_value, $value ) || in_array( (string) $option_value, $value ) ) ) ) ) {
-				$selected            = ' SELECTED';
+				$is_selected = true;
 				$options['selected'] = 'selected';
 
 				if ( ! $multiple ) {
@@ -100,7 +103,7 @@ $selection_made = false;
 				<?php
 			} else {
 				?>
-				<option value="<?php echo esc_attr( $option_value ); ?>"<?php echo $selected; ?>><?php echo esc_html( $option_label ); ?></option>
+				<option value="<?php echo esc_attr( $option_value ); ?>"<?php selected( $is_selected ); ?>><?php echo esc_html( $option_label ); ?></option>
 				<?php
 			}
 		}//end if

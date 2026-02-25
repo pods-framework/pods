@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods
  * @since 2.7.0
@@ -85,11 +90,11 @@ final class PodsI18n {
 		 * @since 2.7.0
 		 * @see   default_strings()
 		 *
-		 * @param array
+		 * @param array $strings_extra Key/value pairs with label/translation.
 		 *
 		 * @return array format: 'Untranslated string' => 'Translated string with use of WP translate functions'
 		 */
-		$strings_extra = apply_filters( 'pods_localized_strings', array() );
+		$strings_extra = apply_filters( 'pods_localized_strings', [] );
 
 		self::$strings = array_merge( $strings_extra, self::default_strings() );
 

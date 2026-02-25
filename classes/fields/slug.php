@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -23,10 +28,10 @@ class PodsField_Slug extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $pod_types = array(
+	public static $pod_types = [
 		'pod',
 		'table',
-	);
+	];
 
 	/**
 	 * {@inheritdoc}
@@ -41,17 +46,17 @@ class PodsField_Slug extends PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			static::$type . '_placeholder' => array(
+		$options = [
+			static::$type . '_placeholder' => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => array(
+				'help'    => [
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		return $options;
 
@@ -80,17 +85,19 @@ class PodsField_Slug extends PodsField {
 		$field_type = 'slug';
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
-			if ( pods_v( 'read_only', $options, false ) ) {
+			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+		} elseif ( ! pods_has_permissions( $options ) ) {
+			if ( pods_v_bool( 'read_only', $options ) ) {
+				$options['readonly'] = true;
 
-			$field_type = 'text';
+				$field_type = 'text';
+			}
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {

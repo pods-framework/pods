@@ -40,7 +40,7 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 * @depends test_method_exists_options
 	 */
 	public function test_method_options_returns_array() {
-		$this->assertInternalType( 'array', $this->field->options() );
+		$this->assertIsArray( $this->field->options() );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 * @depends test_method_exists_schema
 	 */
 	public function test_method_schema_returns_string() {
-		$this->assertInternalType( 'string', $this->field->schema() );
+		$this->assertIsString( $this->field->schema() );
 	}
 
 	/**

@@ -2,6 +2,11 @@
 
 namespace Pods\Whatsit;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods\Whatsit;
 use WP_Block;
@@ -177,12 +182,12 @@ class Block extends Pod {
 
 		// Maybe enqueue the style.
 		if ( $enqueue_style ) {
-			wp_enqueue_style( $handle, $enqueue_style );
+			wp_enqueue_style( $handle, $enqueue_style, [], PODS_VERSION );
 		}
 
 		// Maybe enqueue the script.
 		if ( $enqueue_script ) {
-			wp_enqueue_script( $handle, $enqueue_script, [], false, true );
+			wp_enqueue_script( $handle, $enqueue_script, [], PODS_VERSION, [ 'in_footer' => true ] );
 		}
 
 		// Maybe run the enqueue assets callback.
@@ -306,12 +311,12 @@ class Block extends Pod {
 		 * @since 2.8.0
 		 *
 		 * @param string        $render        The HTML render for the block.
-		 * @param string        $template_path The block render template path.
 		 * @param array         $attributes    The block instance argument values.
 		 * @param string        $content       The block inner content.
 		 * @param WP_Block|null $block_obj     The block object.
+		 * @param string        $template_path The block render template path.
 		 */
-		return apply_filters( 'pods_block_render_html', $render, $attributes, $content, $block_obj );
+		return apply_filters( 'pods_block_render_html', $render, $attributes, $content, $block_obj, $template_path );
 	}
 
 	/**

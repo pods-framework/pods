@@ -2,6 +2,11 @@
 
 namespace Pods\API\Whatsit;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Object_Field;
@@ -34,7 +39,7 @@ class Value_Field implements \ArrayAccess {
 	 *
 	 * @param Whatsit $field The field object.
 	 */
-	public function __construct( Whatsit $field ) {
+	final public function __construct( Whatsit $field ) {
 		$this->_field = $field;
 	}
 

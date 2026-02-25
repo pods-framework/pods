@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 pods_form_enqueue_style( 'pods-form' );
 
@@ -33,11 +36,11 @@ pods_form_enqueue_style( 'pods-form' );
 			?>
 			<li class="pods-field__container pods-field <?php echo esc_attr( $html_class, true ); ?>">
 				<div class="pods-field-label">
-					<strong><?php echo $field['label']; ?></strong>
+					<strong><?php echo esc_html($field['label'] ); ?></strong>
 				</div>
 
 				<div class="pods-field-input">
-					<?php echo $value; ?>
+					<?php echo wp_kses_post( $value ); ?>
 				</div>
 			</li>
 		<?php

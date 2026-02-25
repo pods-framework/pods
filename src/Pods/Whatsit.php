@@ -2,6 +2,11 @@
 
 namespace Pods;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Closure;
 use Exception;
 use Pods\Data\Conditional_Logic;
@@ -106,7 +111,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @todo Define storage per Whatsit.
 	 *
 	 */
-	public function __construct( array $args = [] ) {
+	final public function __construct( array $args = [] ) {
 		$this->args['object_type'] = static::$type;
 
 		// Setup the object.

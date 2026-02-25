@@ -1,6 +1,14 @@
 <?php
+
 // Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+// Prevent non-admins.
+if ( ! pods_is_admin( 'pods' ) ) {
 	die( '-1' );
 }
 
@@ -102,7 +110,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 				if ( ! empty( $all_pods ) ) {
 					$link = pods_query_arg( [ 'page' => 'pods', 'action' . $obj->num => 'manage' ] );
 					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php esc_html_e( 'Back to Manage', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $link ); ?>" class="page-title-action add-new-h2">&laquo; <?php esc_html_e( 'Back to Manage', 'pods' ); ?></a>
 					<?php
 				}
 				?>
@@ -190,7 +198,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 								<div class="inside pods-manage-field pods-dependency">
 									<div class="pods-field__container">
 										<?php
-										echo PodsForm::label( 'create_pod_type', __( 'Content Type', 'pods' ), [
+										PodsForm::output_label( 'create_pod_type', __( 'Content Type', 'pods' ), [
 											__( '<h3>Content Types</h3> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ),
 											'https://docs.pods.io/creating-editing-pods/compare-content-types/',
 										] );
@@ -213,7 +221,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											unset( $data['settings'], $data['pod'] );
 										}
 
-										echo PodsForm::field( 'create_pod_type', pods_v( 'create_pod_type', 'post', 'post_type', true ), 'pick', [
+										PodsForm::output_field( 'create_pod_type', pods_v( 'create_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
 											'pick_format_single' => 'dropdown',
 											'dependency' => true,
@@ -222,8 +230,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</div>
 									<div class="pods-field__container">
 										<?php
-										echo PodsForm::label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h3>Singular Label</h3> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-										echo PodsForm::field( 'create_label_singular', pods_v( 'create_label_singular', 'post' ), 'text', [
+										PodsForm::output_label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h3>Singular Label</h3> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
+										PodsForm::output_field( 'create_label_singular', pods_v( 'create_label_singular', 'post' ), 'text', [
 											'class'           => 'pods-validate pods-validate-required',
 											'text_max_length' => 30,
 											'excludes-on'     => [
@@ -234,8 +242,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</div>
 									<div class="pods-field__container">
 										<?php
-										echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h3>Plural Label</h3> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-										echo PodsForm::field( 'create_label_plural', pods_v( 'create_label_plural', 'post' ), 'text', [
+										PodsForm::output_label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h3>Plural Label</h3> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
+										PodsForm::output_field( 'create_label_plural', pods_v( 'create_label_plural', 'post' ), 'text', [
 											'text_max_length' => 30,
 											'excludes-on'     => [
 												'create_pod_type' => 'settings',
@@ -245,8 +253,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</div>
 									<div class="pods-field__container">
 										<?php
-										echo PodsForm::label( 'create_label_title', __( 'Page Title', 'pods' ), __( '<h3>Page Title</h3> This is the text that will appear at the top of your settings page.', 'pods' ) );
-										echo PodsForm::field( 'create_label_title', pods_v( 'create_label_title', 'post' ), 'text', [
+										PodsForm::output_label( 'create_label_title', __( 'Page Title', 'pods' ), __( '<h3>Page Title</h3> This is the text that will appear at the top of your settings page.', 'pods' ) );
+										PodsForm::output_field( 'create_label_title', pods_v( 'create_label_title', 'post' ), 'text', [
 											'class'           => 'pods-validate pods-validate-required',
 											'text_max_length' => 30,
 											'depends-on'      => [
@@ -257,8 +265,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</div>
 									<div class="pods-field__container">
 										<?php
-										echo PodsForm::label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h3>Menu Label</h3> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
-										echo PodsForm::field( 'create_label_menu', pods_v( 'create_label_menu', 'post' ), 'text', [
+										PodsForm::output_label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h3>Menu Label</h3> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
+										PodsForm::output_field( 'create_label_menu', pods_v( 'create_label_menu', 'post' ), 'text', [
 											'text_max_length' => 30,
 											'depends-on'      => [
 												'create_pod_type' => 'settings',
@@ -268,7 +276,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 									</div>
 									<div class="pods-field__container">
 										<?php
-										echo PodsForm::label( 'create_menu_location', __( 'Menu Location', 'pods' ), __( '<h3>Menu Location</h3> This is the location where the new settings page will be added in the WordPress Dashboard menu.', 'pods' ) );
+										PodsForm::output_label( 'create_menu_location', __( 'Menu Location', 'pods' ), __( '<h3>Menu Location</h3> This is the location where the new settings page will be added in the WordPress Dashboard menu.', 'pods' ) );
 
 										$data = [
 											'settings'    => __( 'Add to Settings menu', 'pods' ),
@@ -276,7 +284,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											'top'         => __( 'Make a new menu item below Settings', 'pods' ),
 										];
 
-										echo PodsForm::field( 'create_menu_location', pods_v( 'create_menu_location', 'post' ), 'pick', [
+										PodsForm::output_field( 'create_menu_location', pods_v( 'create_menu_location', 'post' ), 'pick', [
 											'data' => $data,
 											'pick_format_single' => 'dropdown',
 											'depends-on'      => [
@@ -288,8 +296,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 									<div class='pods-field__container'>
 										<?php
-										echo PodsForm::label( 'create_publicly_queryable', __( 'Content Privacy', 'pods' ), __( 'This option will make the content type publicly queryable.', 'pods' ) );
-										echo PodsForm::field( 'create_publicly_queryable', pods_v( 'create_publicly_queryable', 'post' ), 'boolean', [
+										PodsForm::output_label( 'create_publicly_queryable', __( 'Content Privacy', 'pods' ), __( 'This option will make the content type publicly queryable.', 'pods' ) );
+										PodsForm::output_field( 'create_publicly_queryable', pods_v( 'create_publicly_queryable', 'post' ), 'boolean', [
 											'default'           => 0,
 											'boolean_yes_label' => __( 'Yes, make this content available for Dynamic Features in Pods and WordPress', 'pods' ),
 											'depends-on'        => [
@@ -314,8 +322,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											$max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
 											$max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
-											echo PodsForm::label( 'create_name', __( 'Pod Name', 'pods' ), __( '<h3>Pod Identifier</h3> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programmatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-											echo PodsForm::field( 'create_name', pods_v( 'create_name', 'post' ), 'slug', [
+											PodsForm::output_label( 'create_name', __( 'Pod Name', 'pods' ), __( '<h3>Pod Identifier</h3> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programmatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
+											PodsForm::output_field( 'create_name', pods_v( 'create_name', 'post' ), 'slug', [
 												'attributes'  => [
 													'maxlength' => $max_length_name,
 													'size'      => 25,
@@ -333,8 +341,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											$max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
 											$max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
-											echo PodsForm::label( 'create_setting_name', __( 'Pod Name', 'pods' ), __( '<h3>Pod Identifier</h3> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programmatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-											echo PodsForm::field( 'create_setting_name', pods_v( 'create_setting_name', 'post' ), 'slug', [
+											PodsForm::output_label( 'create_setting_name', __( 'Pod Name', 'pods' ), __( '<h3>Pod Identifier</h3> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programmatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
+											PodsForm::output_field( 'create_setting_name', pods_v( 'create_setting_name', 'post' ), 'slug', [
 												'attributes' => [
 													'maxlength' => $max_length_name,
 													'size'      => 25,
@@ -347,8 +355,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										</div>
 										<div class="pods-field__container">
 											<?php
-											echo PodsForm::label( 'create_rest_api', __( 'Enable REST API', 'pods' ), __( 'This option will enable the REST API. For Custom Post Types, this will allow communication with the Block Editor. For Custom Taxonomies, this simply enables the REST API communication that can be taken advantage of by theme integrations.', 'pods' ) );
-											echo PodsForm::field( 'create_rest_api', pods_v( 'create_block_editor', 'post' ), 'boolean', [
+											PodsForm::output_label( 'create_rest_api', __( 'Enable REST API', 'pods' ), __( 'This option will enable the REST API. For Custom Post Types, this will allow communication with the Block Editor. For Custom Taxonomies, this simply enables the REST API communication that can be taken advantage of by theme integrations.', 'pods' ) );
+											PodsForm::output_field( 'create_rest_api', pods_v( 'create_block_editor', 'post' ), 'boolean', [
 												'default' => 1,
 												'depends-on' => [
 													'create_pod_type' => [
@@ -365,7 +373,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											?>
 											<div class="pods-field__container">
 												<?php
-												echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), [
+												PodsForm::output_label( 'create_storage', __( 'Storage Type', 'pods' ), [
 													__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
 													'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
 												] );
@@ -375,7 +383,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 													'table' => __( 'Table Based', 'pods' ),
 												];
 
-												echo PodsForm::field( 'create_storage', pods_v( 'create_storage', 'post' ), 'pick', [
+												PodsForm::output_field( 'create_storage', pods_v( 'create_storage', 'post' ), 'pick', [
 													'data'       => $data,
 													'pick_format_single' => 'dropdown',
 													'depends-on' => [
@@ -407,7 +415,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 									<div class="pods-field__container">
 										<?php
-										echo PodsForm::label( 'extend_pod_type', __( 'Content Type', 'pods' ), [
+										PodsForm::output_label( 'extend_pod_type', __( 'Content Type', 'pods' ), [
 											__( '<h3>Content Types</h3> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ),
 											'https://docs.pods.io/creating-editing-pods/compare-content-types/',
 										] );
@@ -434,7 +442,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 										$data = apply_filters( 'pods_admin_setup_add_extend_pod_type', $data );
 
-										echo PodsForm::field( 'extend_pod_type', pods_v( 'extend_pod_type', 'post', 'post_type', true ), 'pick', [
+										PodsForm::output_field( 'extend_pod_type', pods_v( 'extend_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
 											'pick_format_single' => 'dropdown',
 											'dependency' => true,
@@ -470,11 +478,11 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										 */
 										$post_types = apply_filters( 'pods_admin_setup_add_extend_post_types', $post_types );
 
-										echo PodsForm::label( 'extend_post_type', __( 'Post Type', 'pods' ), [
+										PodsForm::output_label( 'extend_post_type', __( 'Post Type', 'pods' ), [
 											__( '<h3>Post Types</h3> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_posts table. These are differentiated by a column called post_type.', 'pods' ),
 											'http://codex.wordpress.org/Post_Types',
 										] );
-										echo PodsForm::field( 'extend_post_type', pods_v( 'extend_post_type', 'post' ), 'pick', [
+										PodsForm::output_field( 'extend_post_type', pods_v( 'extend_post_type', 'post' ), 'pick', [
 											'data'       => $post_types,
 											'pick_format_single' => 'dropdown',
 											'depends-on' => [
@@ -511,11 +519,11 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										 */
 										$taxonomies = apply_filters( 'pods_admin_setup_add_extend_taxonomies', $taxonomies );
 
-										echo PodsForm::label( 'extend_taxonomy', __( 'Taxonomy', 'pods' ), [
+										PodsForm::output_label( 'extend_taxonomy', __( 'Taxonomy', 'pods' ), [
 											__( '<h3>Taxonomies</h3> A taxonomy is a way to group Post Types.', 'pods' ),
 											'http://codex.wordpress.org/Taxonomies',
 										] );
-										echo PodsForm::field( 'extend_taxonomy', pods_v( 'extend_taxonomy', 'post' ), 'pick', [
+										PodsForm::output_field( 'extend_taxonomy', pods_v( 'extend_taxonomy', 'post' ), 'pick', [
 											'data'       => $taxonomies,
 											'pick_format_single' => 'dropdown',
 											'depends-on' => [
@@ -535,7 +543,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										<div class="pods-advanced">
 											<div class="pods-field__container">
 												<?php
-												echo PodsForm::label( 'extend_storage', __( 'Storage Type', 'pods' ), [
+												PodsForm::output_label( 'extend_storage', __( 'Storage Type', 'pods' ), [
 													__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
 													'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
 												] );
@@ -545,7 +553,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 													'table' => __( 'Table Based', 'pods' ),
 												];
 
-												echo PodsForm::field( 'extend_storage', pods_v( 'extend_storage', 'post' ), 'pick', [
+												PodsForm::output_field( 'extend_storage', pods_v( 'extend_storage', 'post' ), 'pick', [
 													'data'       => $data,
 													'pick_format_single' => 'dropdown',
 													'depends-on' => [

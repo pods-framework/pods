@@ -2,6 +2,11 @@
 
 namespace Pods\Blocks;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods;
 use Pods\Pod_Manager;
 use Pods\Whatsit\Block;

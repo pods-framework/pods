@@ -143,7 +143,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_field( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$field = $this->api->load_field( $response );
 
@@ -169,7 +169,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_field( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$params = [
 			'pod_id'   => $this->pod_id,
@@ -198,7 +198,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_field( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$field = $this->api->load_field( $response );
 
@@ -227,7 +227,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_field( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$field = $this->api->load_field( $response );
 
@@ -264,7 +264,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_field( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$field = $this->api->load_field( $response );
 
@@ -293,7 +293,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_field( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$field = $this->api->load_field( $response );
 
@@ -310,7 +310,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_field( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$field = $this->api->load_field( $response );
 
@@ -760,7 +760,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$fields = $this->api->load_fields( $params );
 
-		$this->assertInternalType( 'int', $fields );
+		$this->assertIsInt( $fields );
 		$this->assertEquals( 2, $fields );
 
 		$params = [
@@ -773,7 +773,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 		$fields = $this->api->load_fields( $params );
 
-		$this->assertInternalType( 'int', $fields );
+		$this->assertIsInt( $fields );
 		$this->assertEquals( 2, $fields );
 	}
 

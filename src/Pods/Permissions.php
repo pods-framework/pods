@@ -2,6 +2,11 @@
 
 namespace Pods;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use PodsForm;
 use Pods\Whatsit;
 use WP_User;
@@ -400,7 +405,7 @@ class Permissions {
 		 * @param string  $capability_match        The matching capability.
 		 * @param WP_User $user                    The user object.
 		 */
-		return apply_filters( 'pods_is_admin', $match, $additional_capabilities, $capability_match );
+		return apply_filters( 'pods_is_admin', $match, $additional_capabilities, $capability_match, $user );
 	}
 
 }

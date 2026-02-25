@@ -3,6 +3,7 @@
 namespace Pods_Unit_Tests\Pods\API;
 
 use Codeception\Module\WPDb;
+use lucatume\WPBrowser\Module\WPLoader;
 use Pods\Whatsit\Pod;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use PodsAPI;
@@ -106,9 +107,6 @@ class PodTest extends Pods_UnitTestCase {
 	 * @throws \Exception
 	 */
 	public function test_save_pod_table( $config ) {
-		/** @var WPDb $db */
-		$db = $this->getModule( 'WPDb' );
-
 		$params = $config;
 
 		$params['storage'] = 'table';
@@ -116,7 +114,7 @@ class PodTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_pod( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$pod = $this->api->load_pod( [ 'name' => $params['name'] ] );
 
@@ -140,20 +138,20 @@ class PodTest extends Pods_UnitTestCase {
 			'type' => 'text',
 			'pod'  => $pod,
 		] );
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$field = $this->api->load_field( [ 'name' => 'test_field', 'pod' => $pod ] );
 		$this->assertEquals( 'test_field', $field['name'] );
 		$this->assertEquals( 'text', $field['type'] );
 
-		$wpdb->get_var( 'SELECT `id`, `test_field` FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
+		$wpdb->get_var( 'SELECT `id`, `test_field` FROM `' . $wpdb->prefix . 'pods_' . $params['name'] . '`' );
 		$this->assertEmpty( $wpdb->last_error );
 
 		// Test that the test_field column was deleted.
 		$deleted = $this->api->delete_field( [ 'name' => 'test_field', 'pod' => $pod ] );
 		$this->assertTrue( $deleted );
 
-		$wpdb->get_var( 'SELECT `id`, `test_field` FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
+		$wpdb->get_var( 'SELECT `id`, `test_field` FROM `' . $wpdb->prefix . 'pods_' . $params['name'] . '`' );
 		$this->assertNotEmpty( $wpdb->last_error );
 	}
 
@@ -165,8 +163,6 @@ class PodTest extends Pods_UnitTestCase {
 	 * @throws \Exception
 	 */
 	public function test_save_pod_meta( $config ) {
-		$db = $this->getModule( 'WPDb' );
-
 		$params = $config;
 
 		$params['storage'] = 'meta';
@@ -174,7 +170,7 @@ class PodTest extends Pods_UnitTestCase {
 
 		$response = $this->api->save_pod( $params );
 
-		$this->assertInternalType( 'int', $response );
+		$this->assertIsInt( $response );
 
 		$pod = $this->api->load_pod( [ 'name' => $params['name'] ] );
 
@@ -185,9 +181,9 @@ class PodTest extends Pods_UnitTestCase {
 
 		global $wpdb;
 
-		$wpdb->get_var( 'SELECT id FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
+		$wpdb->get_var( 'SELECT id FROM `' . $wpdb->prefix . 'pods_' . $params['name'] . '`' );
 
-		$this->assertContains( $db->grabTablePrefix() . 'pods_' . $params['name'] . '\' doesn\'t exist', $wpdb->last_error );
+		$this->assertStringContainsString( $wpdb->prefix . 'pods_' . $params['name'] . '\' doesn\'t exist', $wpdb->last_error );
 	}
 
 	/**
@@ -644,7 +640,7 @@ class PodTest extends Pods_UnitTestCase {
 
 		$pods = $this->api->load_pods( $params );
 
-		$this->assertInternalType( 'int', $pods );
+		$this->assertIsInt( $pods );
 		$this->assertEquals( 2, $pods );
 
 		$params = [
@@ -657,7 +653,7 @@ class PodTest extends Pods_UnitTestCase {
 
 		$pods = $this->api->load_pods( $params );
 
-		$this->assertInternalType( 'int', $pods );
+		$this->assertIsInt( $pods );
 		$this->assertEquals( 2, $pods );
 	}
 }

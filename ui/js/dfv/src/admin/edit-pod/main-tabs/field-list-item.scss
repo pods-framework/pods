@@ -81,11 +81,11 @@
 
 .pods-field_actions i {
 	padding: 10px;
-	color: #0073aa;
+	color: var(--wp-admin-theme-color);
 
 	&:hover {
 		cursor: pointer;
-		color: #00a0d2;
+		color: var(--wp-admin-theme-color-darker-20);
 	}
 }
 
@@ -126,7 +126,7 @@
 
 .pods-field_label,
 .pods-field_name {
-	color: #0073aa;
+	color: var(--wp-admin-theme-color);
 }
 
 .pods-field_name button {
@@ -141,7 +141,7 @@
 	cursor: pointer;
 
 	&:hover {
-		color: #00a0d2;
+		color: var(--wp-admin-theme-color-darker-20);
 	}
 }
 

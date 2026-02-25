@@ -162,7 +162,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$data = self::$data[ $pod['name'] ];
 
-		// pods_debug( 'Data: ' . var_export( $data, true ) );
+		// pods_debug( 'Data: ' . wp_json_encode( $data, JSON_PRETTY_PRINT ) );
 
 		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
 
@@ -256,7 +256,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$data = self::$data[ $pod['name'] ];
 
-		// pods_debug( 'Data: ' . var_export( $data, true ) );
+		// pods_debug( 'Data: ' . wp_json_encode( $data, JSON_PRETTY_PRINT ) );
 
 		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
 

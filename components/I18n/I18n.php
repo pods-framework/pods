@@ -16,7 +16,10 @@
  * @subpackage i18n
  */
 
-! defined( 'ABSPATH' ) and die();
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
 
 if ( class_exists( 'Pods_Component_I18n' ) ) {
 	return;

@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -33,20 +38,20 @@ class PodsField_Color extends PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			static::$type . '_select_label'   => array(
+		$options = [
+			static::$type . '_select_label' => [
 				'label'       => __( 'Select Color Label', 'pods' ),
 				'placeholder' => __( 'Select Color', 'pods' ),
 				'default'     => '',
 				'type'        => 'text',
-			),
-			static::$type . '_clear_label'   => array(
+			],
+			static::$type . '_clear_label'  => [
 				'label'       => __( 'Clear Label', 'pods' ),
 				'placeholder' => __( 'Clear', 'pods' ),
 				'default'     => '',
 				'type'        => 'text',
-			),
-		);
+			],
+		];
 
 		return $options;
 	}
@@ -75,17 +80,19 @@ class PodsField_Color extends PodsField {
 		$field_type = 'color';
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
-			if ( pods_v( 'read_only', $options, false ) ) {
+			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+		} elseif ( ! pods_has_permissions( $options ) ) {
+			if ( pods_v_bool( 'read_only', $options ) ) {
+				$options['readonly'] = true;
 
-			$field_type = 'text';
+				$field_type = 'text';
+			}
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {
@@ -114,7 +121,7 @@ class PodsField_Color extends PodsField {
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
-		$errors = array();
+		$errors = [];
 
 		if ( is_array( $validate ) ) {
 			$errors = $validate;
@@ -134,7 +141,7 @@ class PodsField_Color extends PodsField {
 					// @todo Ask for a specific format in error message
 					$errors[] = __( 'Invalid value provided for this field.', 'pods' );
 				}
-			} elseif ( ! empty( $color ) && ! in_array( strlen( $color ), array( 3, 6 ), true ) ) {
+			} elseif ( ! empty( $color ) && ! in_array( strlen( $color ), [ 3, 6 ], true ) ) {
 				$errors[] = __( 'Invalid Hex Color value provided for this field.', 'pods' );
 			}
 		}

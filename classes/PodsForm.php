@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit\Field;
 use Pods\API\Whatsit\Value_Field;
 
@@ -83,13 +88,21 @@ class PodsForm {
 	}
 
 	/**
-	 * Output a field's label
+	 * Output a label container.
 	 *
-	 * @since 2.0.0
+	 * @since 3.3.5
+	 *
+	 * @param string $name    Field name
+	 * @param string $label   Label text
+	 * @param string $help    Help text
+	 * @param array  $options Field options
 	 */
+	public static function output_label( $name, $label, $help = '', $options = null ) {
+		echo self::label( $name, $label, $help, $options ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
 
 	/**
-	 * Output a field's label
+	 * Return a field's label
 	 *
 	 * @param string $name    Field name
 	 * @param string $label   Label text
@@ -138,7 +151,20 @@ class PodsForm {
 	}
 
 	/**
-	 * Output a Field Comment Paragraph
+	 * Output a comment container.
+	 *
+	 * @since 3.3.5
+	 *
+	 * @param string $name    Field name
+	 * @param string $message Field comments
+	 * @param array  $options Field options
+	 */
+	public static function output_comment( $name, $message = null, $options = null ) {
+		echo self::comment( $name, $message, $options ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Return a Field Comment Paragraph
 	 *
 	 * @param string $name    Field name
 	 * @param string $message Field comments
@@ -179,6 +205,22 @@ class PodsForm {
 
 	/**
 	 * Output a field
+	 *
+	 * @since 3.3.5
+	 *
+	 * @param string     $name    Field name
+	 * @param mixed      $value   Field value
+	 * @param string     $type    Field type
+	 * @param array      $options Field options
+	 * @param array|Pods $pod     Pod data or the Pods object.
+	 * @param int        $id      Item ID
+	 */
+	public static function output_field( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
+		echo self::field( $name, $value, $type, $options, $pod, $id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Return a field
 	 *
 	 * @param string     $name    Field name
 	 * @param mixed      $value   Field value
@@ -221,7 +263,10 @@ class PodsForm {
 			$options['help'] = '';
 		}
 
-		if ( false === self::permission( $type, $name, $options, null, $pod, $id ) ) {
+		if (
+			false === self::permission( $type, $name, $options, null, $pod, $id )
+			&& ! pods_v_bool( 'read_only_restricted', $options )
+		) {
 			return false;
 		}
 
@@ -261,7 +306,7 @@ class PodsForm {
 			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
 		} elseif ( method_exists( static::class, 'field_' . $type ) ) {
 			// @todo Move these custom field methods into real/faux field classes
-			echo call_user_func( array( static::class, 'field_' . $type ), $name, $value, $options );
+			echo call_user_func( array( static::class, 'field_' . $type ), $name, $value, $options ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
 			// Force non-repeatable field types to be non-repeatable even if option is set to 1.
 			if ( ! empty( $options['repeatable'] ) && ! in_array( $type, $repeatable_field_types, true ) ) {
@@ -339,6 +384,31 @@ class PodsForm {
 	}
 
 	/**
+	 * Output a submit button.
+	 *
+	 * @since 3.3.5
+	 *
+	 * @param string       $text              The text of the button (defaults to 'Save Changes')
+	 * @param string       $type              The type of button. One of: primary, secondary, delete
+	 * @param string       $name              The HTML name of the submit button. Defaults to "submit". If no id
+	 *                                        attribute is given in $other_attributes below, $name will be used as the
+	 *                                        button's id.
+	 * @param bool         $wrap              True if the output button should be wrapped in a paragraph tag,
+	 *                                        false otherwise. Defaults to true
+	 * @param array|string $other_attributes  Other attributes that should be output with the button,
+	 *                                        mapping attributes to their values, such as array( 'tabindex' => '1' ).
+	 *                                        These attributes will be output as attribute="value", such as
+	 *                                        tabindex="1".
+	 *                                        Defaults to no other attributes. Other attributes can also be provided as
+	 *                                        a
+	 *                                        string such as 'tabindex="1"', though the array format is typically
+	 *                                        cleaner.
+	 */
+	public static function output_submit_button( $text = null, $type = 'primary large', $name = 'submit', $wrap = true, $other_attributes = null ) {
+		echo self::submit_button( $text, $type, $name, $wrap, $other_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
 	 * Returns a submit button, with provided text and appropriate class, copied from WP Core for use on the frontend
 	 *
 	 * @see   get_submit_button
@@ -396,7 +466,7 @@ class PodsForm {
 			$class = 'button-secondary delete';
 		}
 
-		$text = $text ? $text : __( 'Save Changes' );
+		$text = $text ? $text : __( 'Save Changes', 'pods' );
 
 		// Default the id attribute to $name unless an id was specifically provided in $other_attributes
 		$id = $name;
@@ -487,7 +557,7 @@ class PodsForm {
 		}
 
 		if (pods_render_is_in_block()) {
-			echo ' ' . get_block_wrapper_attributes( $final_attributes );
+			echo ' ' . get_block_wrapper_attributes( $final_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			return;
 		}
@@ -557,7 +627,7 @@ class PodsForm {
 			$_attributes['data-name-clean'] = $name_more_clean;
 
 			if ( 0 < strlen( (string) pods_v( 'label', $options, '' ) ) ) {
-				$_attributes['data-label'] = strip_tags( pods_v( 'label', $options ) );
+				$_attributes['data-label'] = wp_strip_all_tags( pods_v( 'label', $options ) );
 			}
 
 			$_attributes['id']    = 'pods-form-ui-' . $name_clean . ( self::$form_counter > 1 ? '-' . self::$form_counter : '' );

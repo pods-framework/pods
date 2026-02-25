@@ -1,4 +1,12 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 /**
  * Frontier Template code editor metabox
  *
@@ -14,7 +22,7 @@ if ( isset( $content ) ) {
 
 	// WordPress will already call esc_textarea() if richedit is off, don't escape twice (see #3462)
 	if ( ! user_can_richedit() ) {
-		// phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		$pods_output = $content;
 	} else {
 		$pods_output = esc_textarea( $content );
@@ -46,5 +54,5 @@ if ( isset( $content ) ) {
 <?php endif; ?>
 
 <div class="pods-compat-container">
-	<textarea id="content" name="content"><?php echo $pods_output; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?></textarea>
+	<textarea id="content" name="content"><?php echo $pods_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></textarea>
 </div>

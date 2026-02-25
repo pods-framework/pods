@@ -1,4 +1,12 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 /**
  * @package Pods\Upgrade
  */
@@ -308,7 +316,12 @@ if ( version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
 
 	if ( ! empty( $helpers ) ) {
 		foreach ( $helpers as $helper ) {
-			$wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'helper_type' WHERE `meta_key` = 'type' AND `post_id` = {$helper->ID}" );
+			$wpdb->query(
+				$wpdb->prepare(
+					"UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'helper_type' WHERE `meta_key` = 'type' AND `post_id` = %d",
+					$helper->ID
+				)
+			);
 		}
 	}
 
@@ -419,29 +432,7 @@ function pods_2_alpha_migrate_pods() {
  * @return array
  */
 function pods_2_alpha_migrate_helpers() {
-	$api = pods_api();
-
-	$helper_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'helper'", false );
-
-	$helper_ids = array();
-
-	if ( empty( $helper_rows ) ) {
-		return $helper_ids;
-	}
-
-	foreach ( $helper_rows as $row ) {
-		$opts = json_decode( $row->options );
-
-		$helper_params = array(
-			'name'    => $row->name,
-			'type'    => $opts->type,
-			'phpcode' => $opts->phpcode,
-		);
-
-		$helper_ids[] = $api->save_helper( $helper_params );
-	}
-
-	return $helper_ids;
+	return [];
 }
 
 /**

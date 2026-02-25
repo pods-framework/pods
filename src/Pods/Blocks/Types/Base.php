@@ -2,6 +2,11 @@
 
 namespace Pods\Blocks\Types;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods\Blocks\Blocks_Abstract;
 use WP_Block;
@@ -128,36 +133,6 @@ abstract class Base extends Blocks_Abstract {
 		$params['_preview_id']     = $params['_is_preview'] ? get_queried_object_id() : null;
 
 		return parent::attributes( $params );
-	}
-
-	/**
-	 * Render content for block with placeholder template.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @param string $heading The heading text.
-	 * @param string $content The content text.
-	 * @param null|string $image The image content or null if not set.
-	 *
-	 * @return string The content to render.
-	 */
-	public function render_placeholder( $heading, $content, $image = null ) {
-		ob_start();
-		?>
-		<div <?php echo get_block_wrapper_attributes( [ 'class' => 'pods-block-placeholder_container' ] ); ?>">
-			<div class="pods-block-placeholder_content-container">
-				<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
-				<div class="pods-block-placeholder_content">
-					<h2 class="pods-block-placeholder_title"><?php echo wp_kses_post( $heading ); ?></h2>
-					<p><?php echo wp_kses_post( $content ); ?></p>
-				</div>
-			</div>
-			<?php if ( $image ) : ?>
-				<?php echo wp_kses_post( $image ); ?>
-			<?php endif; ?>
-		</div>
-		<?php
-		return ob_get_clean();
 	}
 
 	/**

@@ -2,6 +2,11 @@
 
 namespace Pods\REST\Interfaces\Endpoints;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;

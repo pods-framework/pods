@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\API\Whatsit\Value_Field;
@@ -600,7 +605,7 @@ class PodsField {
 
 		// Backcompat readonly argument handling.
 		if ( isset( $config['readonly'] ) ) {
-			if ( ! isset( $config['read_only'] ) ) {
+			if ( empty( $config['read_only'] ) ) {
 				$config['read_only'] = (int) $config['readonly'];
 			}
 

@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Global\Functions\Compatibility
  */
@@ -27,6 +32,7 @@ if (
 	 *
 	 * @return mixed|null The pods_container() object or null if the function does not exist yet.
 	 */
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	function tribe( $slug_or_class = null ) {
 		_doing_it_wrong( 'tribe', 'tribe() is no longer included in Pods Framework directly. Please use pods_container() instead.', '3.0' );
 

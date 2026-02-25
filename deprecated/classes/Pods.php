@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 require_once PODS_DIR . 'deprecated/deprecated.php';
 
 use Pods\Whatsit\Field;
@@ -77,9 +83,9 @@ class Pods_Deprecated {
 		$pod_id                  = $this->obj->pod_id;
 		$this->obj->type_counter = array();
 
-		if ( ! empty( $public_fields ) ) {
-			$attributes = array();
+		$attributes = array();
 
+		if ( ! empty( $public_fields ) ) {
 			foreach ( $public_fields as $key => $value ) {
 				if ( is_array( $public_fields[ $key ] ) ) {
 					$attributes[ $key ] = $value;
@@ -116,9 +122,6 @@ class Pods_Deprecated {
 			) {
 				continue;
 			}
-
-			// Pass options so they can be manipulated via form
-			$field = $field;
 
 			// Replace field attributes with public form attributes
 			if ( ! empty( $attributes ) && is_array( $attributes[ $key ] ) ) {
@@ -256,7 +259,7 @@ class Pods_Deprecated {
 				}
 
 				$params = array(
-					'exclude'      => $exclude,
+					'exclude'      => $exclude, // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 					'selected_ids' => $selected_ids,
 					'table'        => $pick_table,
 					'field_id'     => $pick_field_id,
@@ -291,13 +294,6 @@ class Pods_Deprecated {
 		);
 
 		$save_button_atts = apply_filters( 'pods_showform_save_button_atts', $save_button_atts, $this );
-		$atts             = '';
-
-		foreach ( $save_button_atts as $att => $value ) {
-			$atts .= ' ' . esc_attr( $att ) . '="' . esc_attr( $value ) . '"';
-		}
-
-		$save_button = '<input ' . $atts . '/>';
 		?>
 		<div>
 			<input type="hidden" class="form num id" value="<?php echo esc_attr( $id ); ?>" />
@@ -306,7 +302,9 @@ class Pods_Deprecated {
 			<input type="hidden" class="form txt form_count" value="1" />
 			<input type="hidden" class="form txt token" value="<?php echo esc_attr( pods_generate_key( $pod, $uri_hash, $public_fields, 1 ) ); ?>" />
 			<input type="hidden" class="form txt uri_hash" value="<?php echo esc_attr( $uri_hash ); ?>" />
-			<?php echo apply_filters( 'pods_showform_save_button', $save_button, $save_button_atts, $this ); ?>
+			<input <?php foreach ( $save_button_atts as $att => $value ) : ?>
+				<?php echo esc_html( sanitize_title( $att ) ); ?>="<?php echo esc_attr( $value ); ?>
+			<?php endforeach; ?> />
 		</div>
 		<?php
 		do_action( 'pods_showform_post', $pod_id, $public_fields, $label, $this );
@@ -413,7 +411,7 @@ class Pods_Deprecated {
 			}//end foreach
 		}//end if
 
-		echo $this->obj->form( $fields, $label, $thankyou_url );
+		$this->obj->output_form( $fields, $label, $thankyou_url );
 	}
 
 	/**
@@ -642,10 +640,10 @@ class Pods_Deprecated {
 			pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
 		}
 
-		echo $this->obj->pagination( array(
-				'type'  => 'advanced',
-				'label' => $label,
-			) );
+		$this->obj->output_pagination( array(
+			'type'  => 'advanced',
+			'label' => $label,
+		) );
 	}
 
 	/**
@@ -672,7 +670,7 @@ class Pods_Deprecated {
 			$params = array_merge( $params, $filters );
 		}
 
-		echo $this->obj->filters( $params );
+		$this->obj->output_filters( $params );
 	}
 
 	/**

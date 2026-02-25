@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 /**
  * @var string      $form_type
@@ -57,32 +60,24 @@ foreach ( $groups as $g => $group ) {
 
 			continue;
 		} elseif ( ! pods_permission( $field ) ) {
-			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
-				if ( $group['fields'][ $k ] instanceof \Pods\Whatsit\Field ) {
-					$group['fields'][ $k ] = clone $group['fields'][ $k ];
-				}
-
-				$group['fields'][ $k ]['type'] = 'hidden';
-			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
-				$group['fields'][ $k ]['readonly'] = true;
+			if ( pods_v_bool( 'hidden', $field['options'] ) ) {
+				$group['fields'][ $k ] = pods_form_field_make_hidden( $group['fields'][ $k ] );
+			} elseif ( pods_v_bool( 'read_only_restricted', $group['fields'][ $k ]['options'] ) ) {
+				$group['fields'][ $k ] = pods_form_field_make_readonly( $group['fields'][ $k ] );
 			} else {
 				unset( $group['fields'][ $k ] );
 
 				continue;
 			}
 		} elseif ( ! pods_has_permissions( $field ) ) {
-			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
-				if ( $group['fields'][ $k ] instanceof \Pods\Whatsit\Field ) {
-					$group['fields'][ $k ] = clone $group['fields'][ $k ];
-				}
-
-				$group['fields'][ $k ]['type'] = 'hidden';
-			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
-				$group['fields'][ $k ]['readonly'] = true;
+			if ( pods_v_bool( 'hidden', $field['options'] ) ) {
+				$group['fields'][ $k ] = pods_form_field_make_hidden( $group['fields'][ $k ] );
+			} elseif ( pods_v_bool( 'read_only', $field['options'] ) ) {
+				$group['fields'][ $k ] = pods_form_field_make_readonly( $group['fields'][ $k ] );
 			}
 		}//end if
 
-		if ( ! pods_v_sanitized( 'readonly', $field, false ) ) {
+		if ( ! pods_v_bool( 'readonly', $field ) ) {
 			$submittable_fields[ $field['name'] ] = $group['fields'][ $k ];
 		}
 
@@ -116,7 +111,7 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 
 		$submit_result = 0 !== $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 	} catch ( Exception $e ) {
-		echo $obj->error( $e->getMessage() );
+		$obj->error( wp_kses_post( $e->getMessage() ) );
 	}
 } elseif ( isset( $_GET['do'] ) ) {
 	$submit_result = 0 !== $pod->id();
@@ -167,11 +162,11 @@ if ( null !== $submit_result ) {
 			);
 		}
 
-		echo $obj->message( $message );
+		$obj->message( wp_kses_post( $message ) );
 	} else {
 		$error = sprintf( $error_message, $obj->item );
 
-		echo $obj->error( $error );
+		$obj->error( wp_kses_post( $error ) );
 	}
 }
 
@@ -211,16 +206,16 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 >
 	<div class="pods-submittable-fields">
 		<?php
-		echo PodsForm::field( 'action', 'pods_admin', 'hidden' );
-		echo PodsForm::field( 'method', 'process_form', 'hidden' );
-		echo PodsForm::field( 'do', $do, 'hidden' );
-		echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' );
-		echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' );
-		echo PodsForm::field( '_pods_id', $item_id, 'hidden' );
-		echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' );
-		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
-		echo PodsForm::field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' );
-		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
+		PodsForm::output_field( 'action', 'pods_admin', 'hidden' );
+		PodsForm::output_field( 'method', 'process_form', 'hidden' );
+		PodsForm::output_field( 'do', $do, 'hidden' );
+		PodsForm::output_field( '_pods_nonce', $nonce, 'hidden' );
+		PodsForm::output_field( '_pods_pod', $pod->pod, 'hidden' );
+		PodsForm::output_field( '_pods_id', $item_id, 'hidden' );
+		PodsForm::output_field( '_pods_uri', $uri_hash, 'hidden' );
+		PodsForm::output_field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
+		PodsForm::output_field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' );
+		PodsForm::output_field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
 
 		pods_view( PODS_DIR . 'ui/forms/type/' . sanitize_title( $form_type ) . '.php', compact( array_keys( get_defined_vars() ) ) );
 		?>
@@ -229,7 +224,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 
 <script type="text/javascript">
 	if ( 'undefined' == typeof ajaxurl ) {
-		var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
+		var ajaxurl = '<?php echo esc_url_raw( admin_url( 'admin-ajax.php' ) ); ?>';
 	}
 
 	if ( 'undefined' == typeof pods_form_thank_you ) {
@@ -238,7 +233,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 
 	<?php if ( $is_settings_pod ) : ?>
 		var pods_admin_submit_callback = function ( id ) {
-			document.location = '<?php echo pods_slash( pods_query_arg( array( 'do' => $do ) ) ); ?>';
+			document.location = '<?php echo esc_url_raw( pods_query_arg( array( 'do' => $do ) ) ); ?>';
 		}
 	<?php else : ?>
 		var pods_admin_submit_callback = function ( id ) {

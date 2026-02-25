@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit\Field;
 
 /**
@@ -114,10 +119,10 @@ class PodsField_Heading extends PodsField {
 		$options[ static::$type . '_tag' ] = static::get_heading_tag( $options );
 
 		// Format content.
-		$options[ 'label' ] = $this->display( $options[ 'label' ], $name, $options, $pod, $id );
+		$options['label'] = $this->display( $options['label'], $name, $options, $pod, $id );
 
 		if ( isset( $options['_field_object'] ) && $options['_field_object'] instanceof Field ) {
-			$options['_field_object']->set_arg( 'label', $options[ 'label' ] );
+			$options['_field_object']->set_arg( 'label', $options['label'] );
 		}
 
 		$type = pods_v( 'type', $options, static::$type );
@@ -133,8 +138,8 @@ class PodsField_Heading extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		// Support passing label into the options for custom HTML option layouts.
-		if ( empty( $value ) && ! empty( $options[ 'label' ] ) ) {
-			$value = $options[ 'label' ];
+		if ( empty( $value ) && ! empty( $options['label'] ) ) {
+			$value = $options['label'];
 		}
 
 		$value = $this->strip_html( $value, $options );
@@ -176,13 +181,13 @@ class PodsField_Heading extends PodsField {
 	public static function get_heading_tag( $options, ?string $default = null ): string {
 		// Only allow specific HTML tags.
 		$allowed_html_tags = [
-			'h1' => 'h1',
-			'h2' => 'h2',
-			'h3' => 'h3',
-			'h4' => 'h4',
-			'h5' => 'h5',
-			'h6' => 'h6',
-			'p' => 'p',
+			'h1'  => 'h1',
+			'h2'  => 'h2',
+			'h3'  => 'h3',
+			'h4'  => 'h4',
+			'h5'  => 'h5',
+			'h6'  => 'h6',
+			'p'   => 'p',
 			'div' => 'div',
 		];
 

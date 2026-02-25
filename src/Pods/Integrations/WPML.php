@@ -2,6 +2,11 @@
 
 namespace Pods\Integrations;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Integration;
 
 /**
@@ -51,6 +56,7 @@ class WPML extends Integration {
 	 * @return mixed|void
 	 */
 	public function pods_var_post_id( $id ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'wpml_object_id', $id, get_post_type( $id ), true );
 	}
 
@@ -80,6 +86,7 @@ class WPML extends Integration {
 	 */
 	public function pods_get_current_language( $current_language, $context ) {
 		// Get the global current language (if set).
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$wpml_language = apply_filters( 'wpml_current_language', null );
 		$current_language = ( 'all' !== $wpml_language ) ? $wpml_language : '';
 
@@ -151,6 +158,7 @@ class WPML extends Integration {
 		switch ( $metadata_type ) {
 			case 'post':
 				if ( $this->is_translated_post_type( $pod->pod_data['name'] ) ) {
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 					$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
 
 					if ( $master_post_id ) {
@@ -180,6 +188,7 @@ class WPML extends Integration {
 	public function pods_api_get_table_info( $info, $object_type, $object, $name, $pod, $field, $pods_api ) {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		if ( ! apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 			return $info;
 		}
@@ -288,6 +297,7 @@ class WPML extends Integration {
 	public function is_translated_post_type( $object_name ) {
 		global $sitepress;
 		if ( has_filter( 'wpml_is_translated_post_type' ) ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			return apply_filters( 'wpml_is_translated_post_type', false, $object_name );
 		} elseif ( is_callable( [ $sitepress, 'is_translated_post_type' ] ) ) {
 			return $sitepress->is_translated_post_type( $object_name );
@@ -307,6 +317,7 @@ class WPML extends Integration {
 	public function is_translated_taxonomy( $object_name ) {
 		global $sitepress;
 		if ( has_filter( 'wpml_is_translated_taxonomy' ) ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			return apply_filters( 'wpml_is_translated_taxonomy', false, $object_name );
 		} elseif ( is_callable( [ $sitepress, 'is_translated_taxonomy' ] ) ) {
 			return $sitepress->is_translated_taxonomy( $object_name );
@@ -351,6 +362,7 @@ class WPML extends Integration {
 	 * @return array
 	 */
 	public function get_languages() {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'wpml_active_languages', array() );
 	}
 }

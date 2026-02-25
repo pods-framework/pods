@@ -2,6 +2,7 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
@@ -13,6 +14,8 @@ use Pods\Whatsit\Object_Field;
  * @covers Whatsit
  */
 class WhatsitTest extends Pods_WhatsitTestCase {
+
+	use ArraySubsetAsserts;
 
 	/**
 	 * @covers Whatsit::__sleep
@@ -32,9 +35,9 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 		$to = pods_maybe_safely_unserialize( $serialized );
 
-		$this->assertInternalType( 'array', $to );
+		$this->assertIsArray( $to );
 		$this->assertArrayHasKey( 'args', $to );
-		$this->assertInternalType( 'array', $to['args'] );
+		$this->assertIsArray( $to['args'] );
 
 		$to = $to['args'];
 
@@ -55,7 +58,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 		$to = json_decode( $json, true );
 
-		$this->assertInternalType( 'array', $to );
+		$this->assertIsArray( $to );
 		$this->assertEquals( $this->pods_object_field->get_args(), $to );
 		$this->assertEquals( $this->pods_object_field->get_id(), $to['id'] );
 		$this->assertEquals( $this->pods_object_field->get_name(), $to['name'] );
@@ -71,7 +74,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 		$to = (string) $this->pods_object_field;
 
-		$this->assertInternalType( 'string', $to );
+		$this->assertIsString( $to );
 		$this->assertEquals( $this->pods_object_field->get_identifier(), $to );
 	}
 
@@ -103,7 +106,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 		$to = $this->pods_object_field->from_serialized( $serialized, true );
 
-		$this->assertInternalType( 'array', $to );
+		$this->assertIsArray( $to );
 		$this->assertEquals( $this->pods_object_field->get_args(), $to );
 		$this->assertEquals( $this->pods_object_field->get_id(), $to['id'] );
 		$this->assertEquals( $this->pods_object_field->get_name(), $to['name'] );
@@ -139,7 +142,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 		$to = $this->pods_object_field->from_json( $json, true );
 
-		$this->assertInternalType( 'array', $to );
+		$this->assertIsArray( $to );
 		$this->assertEquals( $this->pods_object_field->get_args(), $to );
 		$this->assertEquals( $this->pods_object_field->get_id(), $to['id'] );
 		$this->assertEquals( $this->pods_object_field->get_name(), $to['name'] );

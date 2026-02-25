@@ -2,6 +2,11 @@
 
 namespace Pods\Container;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Prefixed\lucatume\DI52\Container as DI52Container;
 
 /**

@@ -2,6 +2,11 @@
 
 namespace Pods\CLI\Commands;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\REST\V1\Endpoints\Base as Base_Endpoint;
 use WP_CLI;
 use WP_Error;
@@ -378,6 +383,7 @@ abstract class Base {
 						continue;
 					}
 
+					// translators: %s is the parameter name.
 					return new WP_Error( 'cli-missing-positional-argument', sprintf( __( 'Missing positional argument: %s', 'pods' ), $param ) );
 				}
 
@@ -435,6 +441,7 @@ abstract class Base {
 				return $value;
 			}
 
+			// translators: %s is the parameter name.
 			return new WP_Error( 'cli-argument-required', sprintf( __( 'Argument is required: %s', 'pods' ), $param ) );
 		}
 
@@ -463,9 +470,11 @@ abstract class Base {
 				}
 
 				if ( empty( $callable_name ) ) {
+					// translators: %s is the parameter name.
 					return new WP_Error( 'cli-argument-not-valid', sprintf( __( 'Argument not provided as expected: %s', 'pods' ), $param ) );
 				}
 
+				// translators: %1$s is the validation callback name, %2$s is the parameter name.
 				return new WP_Error( 'cli-argument-not-valid-with-callback', sprintf( __( 'Argument not provided as expected (%1$s): %2$s', 'pods' ), $callable_name, $param ) );
 			}
 
@@ -549,8 +558,8 @@ abstract class Base {
 
 		foreach ( $rest_args as $param => $arg ) {
 			$cli_arg = [
-				'type' => 'assoc',
-				'name' => $param,
+				'type'     => 'assoc',
+				'name'     => $param,
 				'optional' => empty( $arg['required'] ),
 			];
 

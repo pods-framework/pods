@@ -18,6 +18,7 @@
 # Dot-files
 .babelrc
 .distignore
+.DS_Store
 .editorconfig
 .env
 .env.example
@@ -43,6 +44,7 @@ codeception.slic.yml
 CODEOWNERS
 composer.json
 composer.lock
+CONTRIBUTING.md
 Gruntfile.js
 jest.config.json
 jest.config.js
@@ -55,6 +57,7 @@ phpstan.neon
 phpunit.xml.dist
 README.md
 rollup.config.js
+slic.json
 TESTS.md
 webpack.common.js
 webpack.dev.js

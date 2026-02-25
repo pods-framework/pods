@@ -2,6 +2,11 @@
 
 namespace Pods\Tools;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use PodsAPI;
 use WP_CLI;
 

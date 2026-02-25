@@ -54,6 +54,7 @@ class PodsTest extends Pods_UnitTestCase {
 		$this->pod_id = $api->save_pod( array(
 			'type'   => 'pod',
 			'name'   => $this->pod_name,
+			'public' => 1,
 		) );
 
 		$params = array(
@@ -139,12 +140,12 @@ class PodsTest extends Pods_UnitTestCase {
 
 		// Test the pagination parameter
 		/** @see http://php.net/manual/en/filter.filters.validate.php FILTER_VALIDATE_BOOLEAN */
-		$this->assertContains( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="1" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="true" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="on" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="yes" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="1" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="true" limit="2"]~[/pods]' ) );
+		$this->assertStringContainsString( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="1" limit="2"]~[/pods]' ) );
+		$this->assertStringContainsString( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="true" limit="2"]~[/pods]' ) );
+		$this->assertStringContainsString( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="on" limit="2"]~[/pods]' ) );
+		$this->assertStringContainsString( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="yes" limit="2"]~[/pods]' ) );
+		$this->assertStringContainsString( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="1" limit="2"]~[/pods]' ) );
+		$this->assertStringContainsString( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="true" limit="2"]~[/pods]' ) );
 
 		$this->assertEquals( '~~', do_shortcode( '[pods name="' . $pod_name . '" pagination="0" limit="2"]~[/pods]' ) );
 		$this->assertEquals( '~~', do_shortcode( '[pods name="' . $pod_name . '" pagination="false" limit="2"]~[/pods]' ) );
@@ -156,7 +157,7 @@ class PodsTest extends Pods_UnitTestCase {
 		$this->assertEquals( '~~', do_shortcode( '[pods name="' . $pod_name . '" pagination="xyzzy" limit="2"]~[/pods]' ) );
 
 		// Not enough records to trigger pagination even if on
-		$this->assertNotContains( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="1" limit="100"]~[/pods]' ) );
+		$this->assertStringNotContainsString( '<a', do_shortcode( '[pods name="' . $pod_name . '" pagination="1" limit="100"]~[/pods]' ) );
 
 		/** @link https://github.com/pods-framework/pods/pull/2807 */
 		$this->assertEquals( '57', do_shortcode( '[pods name="' . $pod_name . '" page="1" limit="2" orderby="t.id"]{@number1}[/pods]' ) );
@@ -199,8 +200,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555"]{@number2}[/pods]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
-		$this->assertNotContains( '555', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
+		$this->assertStringNotContainsString( '555', $output );
 	}
 
 	public function test_shortcode_pods_with_non_public_cpt_using_field_returns_empty() {
@@ -245,8 +246,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555"]{@number2}[/pods]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
-		$this->assertNotContains( '555', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
+		$this->assertStringNotContainsString( '555', $output );
 	}
 
 	public function test_shortcode_pods_with_non_public_cpt_and_user_without_access_and_access_error_disabled() {
@@ -275,8 +276,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555"]{@number2}[/pods]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
-		$this->assertNotContains( '555', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
+		$this->assertStringNotContainsString( '555', $output );
 	}
 
 	public function test_shortcode_pods_with_non_public_cpt_and_admin_user_with_access_and_notice_hidden_by_setting() {
@@ -298,8 +299,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555"]{@number2}[/pods]' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/hidden-by-setting ', $output );
-		$this->assertContains( '555', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/hidden-by-setting ', $output );
+		$this->assertStringContainsString( '555', $output );
 	}
 
 	public function test_shortcode_pods_with_non_public_cpt_and_admin_user_with_access_and_notice_hidden_by_pod() {
@@ -322,8 +323,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555"]{@number2}[/pods]' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/hidden-by-pod ', $output );
-		$this->assertContains( '555', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/hidden-by-pod ', $output );
+		$this->assertStringContainsString( '555', $output );
 	}
 
 	public function test_shortcode_pods_with_non_public_cpt_and_admin_user_with_access_and_notice_shown() {
@@ -346,8 +347,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" where="number2.meta_value=555"]{@number2}[/pods]' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/message ', $output );
-		$this->assertContains( '555', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/message ', $output );
+		$this->assertStringContainsString( '555', $output );
 	}
 
 	public function test_shortcode_pods_form() {
@@ -356,7 +357,7 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( 'Anonymous form submissions are not enabled for this site', $output );
+		$this->assertStringContainsString( 'Anonymous form submissions are not enabled for this site', $output );
 	}
 
 	public function test_shortcode_pods_form_with_anon_enabled() {
@@ -367,7 +368,7 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( 'Anonymous form submissions are not compatible with sessions on this site', $output );
+		$this->assertStringContainsString( 'Anonymous form submissions are not compatible with sessions on this site', $output );
 	}
 
 	public function test_shortcode_pods_form_with_anon_enabled_and_compatible() {
@@ -380,7 +381,7 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<form', $output );
+		$this->assertStringContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_logged_in() {
@@ -391,7 +392,7 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<form', $output );
+		$this->assertStringContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_with_error_hidden_by_setting() {
@@ -400,8 +401,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
-		$this->assertNotContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
+		$this->assertStringNotContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_with_error_shown_by_global() {
@@ -412,8 +413,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/message ', $output );
-		$this->assertNotContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/message ', $output );
+		$this->assertStringNotContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_with_error_hidden_by_pod() {
@@ -425,8 +426,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-pod ', $output );
-		$this->assertNotContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-pod ', $output );
+		$this->assertStringNotContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_with_error_shown_by_pod() {
@@ -438,8 +439,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/message ', $output );
-		$this->assertNotContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/message ', $output );
+		$this->assertStringNotContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_and_user_without_access_with_error_hidden() {
@@ -457,8 +458,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
-		$this->assertNotContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
+		$this->assertStringNotContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_and_user_without_access_with_error_shown() {
@@ -479,8 +480,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/message ', $output );
-		$this->assertNotContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/message ', $output );
+		$this->assertStringNotContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_and_user_without_access_and_access_error_hidden() {
@@ -498,8 +499,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
-		$this->assertNotContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/user/hidden-by-setting ', $output );
+		$this->assertStringNotContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_and_admin_user_with_access_and_notice_hidden_by_setting() {
@@ -512,8 +513,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/hidden-by-setting ', $output );
-		$this->assertContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/hidden-by-setting ', $output );
+		$this->assertStringContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_and_admin_user_with_access_and_notice_hidden_by_pod() {
@@ -527,8 +528,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/hidden-by-pod ', $output );
-		$this->assertContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/hidden-by-pod ', $output );
+		$this->assertStringContainsString( '<form', $output );
 	}
 
 	public function test_shortcode_pods_form_with_non_public_cpt_and_admin_user_with_access_and_notice_shown() {
@@ -542,8 +543,8 @@ class PodsTest extends Pods_UnitTestCase {
 		// test shortcode
 		$output = do_shortcode( '[pods name="' . $pod_name . '" form="1"]' );
 
-		$this->assertContains( '<!-- pods:access-notices/admin/message ', $output );
-		$this->assertContains( '<form', $output );
+		$this->assertStringContainsString( '<!-- pods:access-notices/admin/message ', $output );
+		$this->assertStringContainsString( '<form', $output );
 	}
 
 }

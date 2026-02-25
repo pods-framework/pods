@@ -16,6 +16,11 @@
  * @subpackage Migrate-PHP
  */
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 use Pods\Whatsit\Page;
 use Pods\Whatsit\Template;
@@ -281,12 +286,14 @@ class Pods_Migrate_PHP extends PodsComponent {
 		$extra_headers = '';
 
 		if ( false !== strpos( $template_code, '{@' ) ) {
+			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
 			$extra_headers = <<<PHPTEMPLATE
  * Magic Tags: Enabled
 PHPTEMPLATE;
 
 		}
 
+		// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
 		$contents = <<<PHPTEMPLATE
 <?php
 /**
@@ -354,13 +361,16 @@ PHPTEMPLATE;
 		$precode_template = '';
 
 		if ( ! empty( $precode ) ) {
-			$precode_template = "\n" . <<<PHPTEMPLATE
+			$precode_template .= "\n";
+			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+			$precode_template .= <<<PHPTEMPLATE
 /*
  * Precode goes below.
  */
 ?>
 {$precode}
-PHPTEMPLATE . "\n";
+PHPTEMPLATE;
+			$precode_template .= "\n";
 		}
 
 		$template_code = trim( $object->get_description() );
@@ -387,7 +397,8 @@ PHPTEMPLATE . "\n";
 				$start_tag = "\n<?php\n";
 			}
 
-			$template_code = $start_tag . <<<PHPTEMPLATE
+			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+			$template_code = <<<PHPTEMPLATE
 get_header();
 
 // Pod Page content goes here.
@@ -396,12 +407,16 @@ get_header();
 get_sidebar();
 get_footer();
 PHPTEMPLATE;
+
+			$template_code = $start_tag . $template_code;
 		} else {
 			// Set the code and save it for the content path.
 			$this->setup_file_path( $file_path_for_content );
 
 			if ( '_custom' !== $page_template && 'blank' !== $page_template ) {
-				$extra_notes .= "\n" . <<<PHPTEMPLATE
+				$extra_notes .= "\n";
+				// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+				$extra_notes .= <<<PHPTEMPLATE
  *
  * @see {$page_template} for the template where this will get called from.
 PHPTEMPLATE;
@@ -409,18 +424,23 @@ PHPTEMPLATE;
 
 			// Set the file path we will write to as the one for the content specific template.
 			$file_path = $file_path_for_content;
-			$extra_notes .= "\n" . <<<PHPTEMPLATE
+			$extra_notes .= "\n";
+			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+			$extra_notes .= <<<PHPTEMPLATE
  *
  * This template is only used for pods_content() calls.
 PHPTEMPLATE;
 		}
 
 		if ( false !== strpos( $template_code, '{@' ) ) {
-			$extra_headers = "\n" . <<<PHPTEMPLATE
+			$extra_headers = "\n";
+			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+			$extra_headers .= <<<PHPTEMPLATE
  * Magic Tags: Enabled
 PHPTEMPLATE;
 		}
 
+		// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
 		$contents = <<<PHPTEMPLATE
 <?php
 /**

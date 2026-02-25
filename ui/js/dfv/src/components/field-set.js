@@ -20,9 +20,19 @@ const FieldSet = ( {
 	// Only calculate this once - this assumes that the array of all fields
 	// for the Pod does not change, to save render time.
 	const allPodFieldsMap = useMemo( () => {
-		return new Map(
+		const fieldMap = new Map(
 			allPodFields.map( ( fieldData ) => [ fieldData.name, fieldData ] ),
 		);
+
+		allPodFields.forEach( ( fieldData ) => {
+			if ( 'boolean_group' === fieldData.type ) {
+				fieldData.boolean_group.forEach( ( subFieldData ) => {
+					fieldMap.set( subFieldData.name, subFieldData );
+				} );
+			}
+		} );
+
+		return fieldMap;
 	}, [] );
 
 	// When the set first mounts, apply any defaults to replace any undefined values

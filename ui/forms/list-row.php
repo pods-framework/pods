@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 /**
  * @var Pods                $pod
@@ -23,17 +26,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 			id="heading-<?php echo esc_attr( $field['name'] ); ?>">
 			<?php echo esc_html( $field['label'] ); ?>
 		</<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>>
-		<?php echo PodsForm::comment( $field['name'], pods_v( 'description', $field ), $field ); ?>
+		<?php PodsForm::output_comment( $field['name'], pods_v( 'description', $field ), $field ); ?>
 	<?php elseif ( 'html' === $field['type'] && 1 === (int) $field['html_no_label'] ) : ?>
-		<?php echo PodsForm::field( $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
+		<?php PodsForm::output_field( $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
 	<?php else : ?>
 		<div class="pods-field-label">
-			<?php echo PodsForm::label( $field['name'], $field['label'], pods_v( 'help', $field ), $field ); ?>
+			<?php PodsForm::output_label( $field['name'], $field['label'], pods_v( 'help', $field ), $field ); ?>
 		</div>
 
 		<div class="pods-field-input">
-			<?php echo PodsForm::field( $field['name'], $value, $field['type'], $field, $pod, $pod->id() ); ?>
-			<?php echo PodsForm::comment( $field['name'], null, $field ); ?>
+			<?php PodsForm::output_field( $field['name'], $value, $field['type'], $field, $pod, $pod->id() ); ?>
+			<?php PodsForm::output_comment( $field['name'], null, $field ); ?>
 		</div>
 	<?php endif; ?>
 </li>

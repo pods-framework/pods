@@ -2,6 +2,11 @@
 
 namespace Pods\Admin\Config;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Group configuration class.
  *
@@ -89,7 +94,6 @@ class Group extends Base {
 			'label'       => [
 				'name'     => 'label',
 				'label'    => __( 'Label', 'pods' ),
-				'help'     => __( 'help', 'pods' ),
 				'type'     => 'text',
 				'required' => true,
 				'default'  => '',
@@ -97,7 +101,6 @@ class Group extends Base {
 			'name'        => [
 				'name'     => 'name',
 				'label'    => __( 'Name', 'pods' ),
-				'help'     => __( 'help', 'pods' ),
 				'type'     => 'slug',
 				'required' => true,
 				'default'  => '',
@@ -105,14 +108,12 @@ class Group extends Base {
 			/*'description' => [
 				'name'    => 'description',
 				'label'   => __( 'Description', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],*/
 			/*'type' => [
 				'name'    => 'type',
 				'label'   => __( 'Type', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
 				'type'    => 'pick',
 				'default' => '',
 				'data'    => [],
@@ -165,7 +166,7 @@ class Group extends Base {
 			'roles_allowed'      => [
 				'name'             => 'roles_allowed',
 				'label'            => __( 'Role(s) Allowed', 'pods' ),
-				'help'             => __( 'help', 'pods' ),
+				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
 				'type'             => 'pick',
 				'pick_object'      => 'role',
 				'pick_format_type' => 'multi',
@@ -173,7 +174,6 @@ class Group extends Base {
 				'depends-on'       => [
 					'restrict_role' => true,
 				],
-				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 			'capability_allowed' => [
 				'name'       => 'capability_allowed',
@@ -184,7 +184,6 @@ class Group extends Base {
 				'depends-on' => [
 					'restrict_capability' => true,
 				],
-				'help'       => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 		];
 
@@ -213,7 +212,7 @@ class Group extends Base {
 			];
 
 			if ( $is_comment_type ) {
-				unset( $options['basic']['group_context']['data']['advanced'] );
+				unset( $options['basic']['meta_box_context']['data']['advanced'] );
 			}
 
 			$options['basic']['meta_box_priority'] = [

@@ -2,6 +2,11 @@
 
 namespace Pods\Blocks;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Blocks\Collections\Pods;
 use Pods\Blocks\Types\Field;
 use Pods\Blocks\Types\Form;

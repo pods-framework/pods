@@ -3,6 +3,11 @@
  * @package Pods\Global\Functions\Data
  */
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 
@@ -68,7 +73,7 @@ function pods_sanitize( $input, $params = array() ) {
 		 */
 		global $wpdb;
 
-		$output = $wpdb->prepare( $params['type'], $output );
+		$output = $wpdb->prepare( $params['type'], $output ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	} elseif ( function_exists( 'wp_slash' ) ) {
 		// @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
 		$output = wp_slash( $input );
@@ -171,7 +176,7 @@ function pods_slash( $input, $params = array() ) {
 		 */
 		global $wpdb;
 
-		$output = $wpdb->prepare( $params['type'], $output );
+		$output = $wpdb->prepare( $params['type'], $output ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	} elseif ( function_exists( 'wp_slash' ) ) {
 		$output = wp_slash( $input );
 	} else {
@@ -461,7 +466,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				break;
 			case 'url':
 			case 'uri':
-				$url = parse_url( pods_current_url() );
+				$url = wp_parse_url( pods_current_url() );
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
@@ -483,7 +488,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					$url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
 				}
 
-				$url = parse_url( $url_raw );
+				$url = wp_parse_url( $url_raw );
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
@@ -992,6 +997,24 @@ function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict 
 }
 
 /**
+ * Return the boolean version of a variable.
+ *
+ * @since 3.3.5
+ *
+ * @param mixed               $var     The variable name, can also be a modifier for specific types
+ * @param string|array|object $type    (optional) Super globals, url/url-relative, constants, globals, options,
+ *                                     transients, cache, user data, Pod field values, dates
+ * @param bool                $default (optional) The default value to set if variable doesn't exist
+ *
+ * @return bool The variable (if exists), or default value.
+ */
+function pods_v_bool( $var = null, $type = 'get', bool $default = false ): bool {
+	$value = pods_v( $var, $type, $default );
+
+	return pods_is_truthy( $value );
+}
+
+/**
  * Set a variable
  *
  * @param mixed               $value The value to be set
@@ -1035,7 +1058,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 			$ret = $_REQUEST;
 		} elseif ( 'url' === $type ) {
 			if ( is_numeric( $var ) && function_exists( 'http_build_url' ) ) {
-				$url = parse_url( pods_current_url() );
+				$url = wp_parse_url( pods_current_url() );
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
@@ -1063,7 +1086,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 
 			$ret = $_SERVER;
 		} elseif ( in_array( $type, array( 'global', 'globals' ), true ) ) {
-			$GLOBALS[ $var ] = $value;
+			$GLOBALS[ $var ] = $value; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound,PHPCompatibility.Variables.RemovedIndirectModificationOfGlobals.AssignmentOfGlobals
 
 			$ret = $GLOBALS;
 		} elseif ( 'session' === $type ) {
@@ -1078,7 +1101,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 
 			$ret = $_COOKIE;
 		} elseif ( 'constant' === $type && ! defined( $var ) && ( is_scalar( $value ) || null === $value ) ) {
-			define( $var, $value );
+			define( $var, $value ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound
 
 			$ret = constant( $var );
 		} elseif ( 'user' === $type && is_user_logged_in() ) {
@@ -2570,9 +2593,14 @@ function pods_is_truthy( $value ) {
 		return true === $value;
 	}
 
-	// Check integer / float for 1.
-	if ( is_int( $value ) || is_float( $value ) ) {
+	// Check integer for 1.
+	if ( is_int( $value ) ) {
 		return 1 === $value;
+	}
+
+	// Check float for 1.
+	if ( is_float( $value ) ) {
+		return 1.0 === $value;
 	}
 
 	// We only support strings from this point forward.
@@ -2581,7 +2609,7 @@ function pods_is_truthy( $value ) {
 	}
 
 	// Normalize the string to lowercase.
-	$value = trim( strtolower( $value ) );
+	$value = strtolower( $value );
 
 	// This is the list of strings we will support as truthy.
 	$supported_strings = [
@@ -2620,9 +2648,14 @@ function pods_is_falsey( $value ) {
 		return false === $value;
 	}
 
-	// Check integer / float for 0.
-	if ( is_int( $value ) || is_float( $value ) ) {
+	// Check integer for 0.
+	if ( is_int( $value ) ) {
 		return 0 === $value;
+	}
+
+	// Check float for 0.
+	if ( is_float( $value ) ) {
+		return 0.0 === $value;
 	}
 
 	// We only support strings from this point forward.
@@ -2635,7 +2668,7 @@ function pods_is_falsey( $value ) {
 	}
 
 	// Normalize the string to lowercase.
-	$value = trim( strtolower( $value ) );
+	$value = strtolower( $value );
 
 	// This is the list of strings we will support as falsey.
 	$supported_strings = [
@@ -3050,6 +3083,19 @@ function pods_kses_exclude_p( $content ) {
 }
 
 /**
+ * Filters text content and strips out disallowed HTML including the p tag.
+ *
+ * This function expects unslashed data.
+ *
+ * @since 3.3.5
+ *
+ * @param string $content Text content to filter.
+ */
+function pods_output_kses_exclude_p( $content ) {
+	echo pods_kses_exclude_p( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+/**
  * Key the list of objects by name.
  *
  * @since 3.1.4
@@ -3151,4 +3197,53 @@ function pods_enforce_safe_value_via_regex( ?string $value, string $disallowed_p
 	$value = wp_strip_all_tags( $value );
 
 	return (string) preg_replace( $disallowed_pattern, '', $value );
+}
+
+/**
+ * Replace greater than and less than placeholders in a string or array of strings with the actual characters.
+ *
+ * @since 3.3.5
+ *
+ * @param array|string $value The value to replace the greater than and less than placeholders in.
+ *
+ * @return array|string The value with the greater than and less than placeholders replaced with the actual characters.
+ */
+function pods_replace_gt_et_placeholders( $value ) {
+	if ( is_array( $value ) ) {
+		return array_map( 'pods_replace_gt_et_placeholders', $value );
+	}
+
+	if ( ! $value || ! is_string( $value ) ) {
+		return $value;
+	}
+
+	$gt_lt_find = [
+		// HTML entities.
+		'&lt;', // Entity: Less than.
+		'&le;', // Entity: Less than or equal.
+		'&gt;', // Entity: Greater than.
+		'&ge;', // Entity: Greater than or equal.
+		'&ne;', // Entity: Not equal.
+		// Placeholders.
+		'__LESS_THAN__',
+		'__LESS_THAN_OR_EQUAL__',
+		'__GREATER_THAN__',
+		'__GREATER_THAN_OR_EQUAL__',
+	];
+
+	$gt_lt_replace = [
+		// HTML entities.
+		'<',
+		'<=',
+		'>',
+		'>=',
+		'!=',
+		// Placeholders.
+		'<',
+		'<=',
+		'>',
+		'>=',
+	];
+
+	return str_replace( $gt_lt_find, $gt_lt_replace, $value );
 }

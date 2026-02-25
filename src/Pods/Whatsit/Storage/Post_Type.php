@@ -2,8 +2,14 @@
 
 namespace Pods\Whatsit\Storage;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 use Pods\Whatsit\Store;
+use WP_Error;
 use WP_Post;
 use WP_Query;
 
@@ -211,7 +217,7 @@ class Post_Type extends Collection {
 			'order'            => 'ASC',
 			'orderby'          => 'title',
 			'posts_per_page'   => $limit,
-			'meta_query'       => $meta_query,
+			'meta_query'       => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'post_type'        => 'any',
 			'post_status'      => [
 				'publish',
@@ -793,9 +799,10 @@ class Post_Type extends Collection {
 			return parent::delete_object( $object );
 		}
 
+		/* @var array|false|null|WP_Post|WP_Error $deleted */
 		$deleted = wp_delete_post( $id, true );
 
-		if ( false !== $deleted && ! is_wp_error( $deleted ) ) {
+		if ( false !== $deleted && ! $deleted instanceof WP_Error ) {
 			return parent::delete_object( $object );
 		}
 
@@ -812,13 +819,14 @@ class Post_Type extends Collection {
 	/**
 	 * Setup object from a Post ID or Post object.
 	 *
-	 * @param \WP_Post|array|int $post          Post object or ID of the object.
-	 * @param bool               $force_refresh Whether to force the refresh of the object.
+	 * @param WP_Post|array|int|WP_Error $post          Post object or ID of the object.
+	 * @param bool                       $force_refresh Whether to force the refresh of the object.
 	 *
 	 * @return Whatsit|null
 	 */
 	public function to_object_from_post( $post, $force_refresh = false ) {
 		if ( null !== $post && ! $post instanceof \WP_Post ) {
+			/* @var array|null|WP_Post|WP_Error $post */
 			$post = get_post( $post );
 		}
 
@@ -826,7 +834,7 @@ class Post_Type extends Collection {
 			return null;
 		}
 
-		if ( is_wp_error( $post ) ) {
+		if ( $post instanceof WP_Error ) {
 			return null;
 		}
 

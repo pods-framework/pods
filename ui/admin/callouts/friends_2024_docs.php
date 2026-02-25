@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 /**
  * @var bool $force_callouts Whether to force the callouts.
  */
@@ -49,54 +51,55 @@ $callout_dismiss_link = add_query_arg( [
 	<div class="pods-admin_friends-callout_content-container">
 		<h2 class="pods-admin_friends-callout_headline">
 			<?php
-				printf(
-					esc_html__( 'We need %1$sYOU%2$s', 'pods' ),
-					'<span class="pods-admin_friends-you">',
-					'</span>'
-				);
+			printf(
+				// translators: %1$s is opening span tag, %2$s is closing span tag.
+				esc_html__( 'We need %1$sYOU%2$s', 'pods' ),
+				'<span class="pods-admin_friends-you">',
+				'</span>'
+			);
 			?>
 		</h2>
 
 		<p class="pods-admin_friends-callout_text">
 			🎉&nbsp;
 			<?php
-				esc_html_e( 'Our goal is to be able to focus on revamping our Documentation, Tutorials, and Video content', 'pods' );
+			esc_html_e( 'Our goal is to be able to focus on revamping our Documentation, Tutorials, and Video content', 'pods' );
 
-				/*printf(
-					'%1$s: %2$s',
-					esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
-					esc_html__( 'Conditional Logic for Fields', 'pods' )
-				);*/
-				/*printf(
-					'%1$s: <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>',
-					esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
-					esc_url( $feature_callout_link ),
-					esc_html__( 'Conditional Logic for Fields', 'pods' )
-				);*/
+			/*printf(
+				'%1$s: %2$s',
+				esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
+				esc_html__( 'Conditional Logic for Fields', 'pods' )
+			);*/
+			/*printf(
+				'%1$s: <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>',
+				esc_html__( 'Pods 2.9 is out and we are building the next feature for Pods 3.0', 'pods' ),
+				esc_url( $feature_callout_link ),
+				esc_html__( 'Conditional Logic for Fields', 'pods' )
+			);*/
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
 			🤝&nbsp;
 			<?php
-				esc_html_e( 'Your support makes a direct impact on how quickly our team can finish this important work.', 'pods' );
-				echo ' ';
-				esc_html_e( 'Pods is fully funded by donations and powered by our community contributors.', 'pods' );
-				echo ' ';
-				esc_html_e( 'Help us continue our work and get our development goals met.', 'pods' );
+			esc_html_e( 'Your support makes a direct impact on how quickly our team can finish this important work.', 'pods' );
+			echo ' ';
+			esc_html_e( 'Pods is fully funded by donations and powered by our community contributors.', 'pods' );
+			echo ' ';
+			esc_html_e( 'Help us continue our work and get our development goals met.', 'pods' );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
 			☑︎️&nbsp;
 			<?php
-				esc_html_e( 'Donors get to vote on the next feature we work on, they decide what we do next.', 'pods' );
+			esc_html_e( 'Donors get to vote on the next feature we work on, they decide what we do next.', 'pods' );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
 			<?php
-				printf(
-					'<strong>%s</strong>',
-					esc_html__( 'Pods Docs Refresh Funding Progress', 'pods' )
-				);
+			printf(
+				'<strong>%s</strong>',
+				esc_html__( 'Pods Docs Refresh Funding Progress', 'pods' )
+			);
 			?>
 		</p>
 		<div class="pods-admin_progress-bar_container">
@@ -119,11 +122,11 @@ $callout_dismiss_link = add_query_arg( [
 		<p class="pods-admin_friends-callout_text">
 			🤗&nbsp;
 			<?php
+			printf(
 				// translators: %s: Pods Pro by SKCDEV link.
-				printf(
-					esc_html__( 'You can also check out the new add-ons available from %s which has partnered with Friends of Pods to help bring in more donations.', 'pods' ),
-					'<a href="' . esc_url( $pods_pro_link ) . '" target="_blank" rel="noopener noreferrer">Pods Pro by SKCDEV</a>'
-				);
+				esc_html__( 'You can also check out the new add-ons available from %s which has partnered with Friends of Pods to help bring in more donations.', 'pods' ),
+				'<a href="' . esc_url( $pods_pro_link ) . '" target="_blank" rel="noopener noreferrer">Pods Pro by SKCDEV</a>'
+			);
 			?>
 		</p>
 	</div>

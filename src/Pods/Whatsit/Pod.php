@@ -2,6 +2,11 @@
 
 namespace Pods\Whatsit;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Static_Cache;
 use Pods\Whatsit;
 

@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 /**
  * @var array         $fields
@@ -29,7 +32,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 do_action( 'pods_meta_box_pre', $pod, $obj );
 ?>
-<div id="poststuff" class="poststuff metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
+<div id="poststuff" class="poststuff metabox-holder has-right-sidebar">
+	<!-- class "has-right-sidebar" preps for a sidebar... always present? -->
 	<div id="side-info-column" class="inner-sidebar">
 		<?php
 		/**
@@ -60,7 +64,14 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 									?>
 									<div id="minor-publishing-actions">
 										<div id="preview-action">
-											<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+											<a class="button"
+												href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>"
+												target="_blank" rel="noopener noreferrer">
+												<?php
+												// translators: %s is the item label.
+												echo esc_html( sprintf( __( 'View %s', 'pods' ), $obj->item ) );
+												?>
+											</a>
 										</div>
 										<div class="clear"></div>
 									</div>
@@ -71,13 +82,14 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 									?>
 									<div id="misc-publishing-actions">
 										<?php
-										$datef = __( 'M j, Y @ G:i' );
+										$datef = __( 'M j, Y @ G:i', 'pods' );
 
 										if ( isset( $pod->pod_data['fields']['created'] ) ) {
 											$date = date_i18n( $datef, strtotime( $pod->field( 'created' ) ) );
 											?>
 											<div class="misc-pub-section curtime">
-												<span id="timestamp"><?php _e( 'Created on', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+												<span
+													id="timestamp"><?php esc_html_e( 'Created on', 'pods' ); ?>: <b><?php echo esc_html( $date ); ?></b></span>
 											</div>
 											<?php
 										}
@@ -86,7 +98,8 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 											$date = date_i18n( $datef, strtotime( $pod->field( 'modified' ) ) );
 											?>
 											<div class="misc-pub-section curtime">
-												<span id="timestamp"><?php _e( 'Last Modified', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+												<span
+													id="timestamp"><?php esc_html_e( 'Last Modified', 'pods' ); ?>: <b><?php echo esc_html( $date ); ?></b></span>
 											</div>
 											<?php
 										}
@@ -118,27 +131,31 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 						<div id="major-publishing-actions">
 							<?php
 							if ( pods_is_admin(
-								array(
-									'pods',
-									'pods_delete_' . $pod->pod,
-								)
-							) && null !== $pod->id() && ! $duplicate && ! in_array( 'delete', (array) $obj->actions_disabled, true ) && ! in_array( 'delete', (array) $obj->actions_hidden, true ) ) {
+									 [
+										 'pods',
+										 'pods_delete_' . $pod->pod,
+									 ]
+								 ) && null !== $pod->id() && ! $duplicate && ! in_array( 'delete', (array) $obj->actions_disabled, true ) && ! in_array( 'delete', (array) $obj->actions_hidden, true ) ) {
 								$link = pods_query_arg(
-									array(
+									[
 										'action'   => 'delete',
 										'_wpnonce' => wp_create_nonce( 'pods-ui-action-delete-' . $pod->id() ),
-									)
+									]
 								);
 								?>
 								<div id="delete-action">
-									<a class="submitdelete deletion" href="<?php echo esc_url( $link ); ?>" onclick="return confirm('<?php _e( 'You are about to permanently delete this item. Choose CANCEL to stop, OK to delete.', 'pods' ); ?>');"><?php _e( 'Delete', 'pods' ); ?></a>
+									<a class="submitdelete deletion" href="<?php echo esc_url( $link ); ?>"
+										onclick="return confirm('<?php echo esc_js( __( 'You are about to permanently delete this item. Choose CANCEL to stop, OK to delete.', 'pods' ) ); ?>');"><?php esc_html_e( 'Delete', 'pods' ); ?></a>
 								</div>
 								<!-- /#delete-action -->
 							<?php } ?>
 
 							<div id="publishing-action">
-								<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-								<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php echo esc_attr( $label ); ?>" accesskey="p" />
+								<img class="waiting"
+									src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+								<input type="submit" name="publish" id="publish"
+									class="button button-primary button-large" value="<?php echo esc_attr( $label ); ?>"
+									accesskey="p" />
 								<?php
 								/**
 								 * Action that runs after the publish button for an Advanced Content Type
@@ -189,19 +206,36 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 
 				$pod->params = $obj->get_params( null, 'manage' );
 
-				$prev_next = apply_filters( 'pods_ui_prev_next_ids', array(), $pod, $obj );
+				$prev_next = apply_filters( 'pods_ui_prev_next_ids', [], $pod, $obj );
 
 				if ( empty( $prev_next ) ) {
-					$prev_next = array(
+					$prev_next = [
 						'prev' => $pod->prev_id(),
 						'next' => $pod->next_id(),
-					);
+					];
 				}
 
 				$prev = $prev_next['prev'];
 				$next = $prev_next['next'];
 
-				if ( 0 < $prev || 0 < $next ) {
+				$manage_link = false;
+
+				if ( ! in_array( 'manage', $obj->actions_disabled ) && ! in_array( 'manage', $obj->actions_hidden ) && ! $obj->restricted( 'manage' ) ) {
+					$manage_link = pods_query_arg(
+						[
+							$obj->num_prefix . 'action' . $obj->num => 'manage',
+							$obj->num_prefix . 'id' . $obj->num     => '',
+						],
+						PodsUI::$allowed,
+						$obj->exclusion()
+					);
+
+					if ( ! empty( $obj->action_links['manage'] ) ) {
+						$link = $obj->action_links['manage'];
+					}
+				}
+
+				if ( 0 < $prev || 0 < $next || $manage_link ) {
 					?>
 					<div id="navigatediv" class="postbox">
 						<?php
@@ -225,23 +259,44 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 									<?php
 									if ( 0 < $prev ) {
 										?>
-										<a class="previous-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $prev ), null, 'do' ) ); ?>">
+										<a class="previous-item"
+											href="<?php echo esc_url( pods_query_arg( [ 'id' => $prev ], null, 'do' ) ); ?>">
 											<span>&laquo;</span>
-											<?php echo sprintf( __( 'Previous %s', 'pods' ), $singular_label ); ?>
+											<?php
+											// translators: %s is the singular label for the content type.
+											echo esc_html( sprintf( __( 'Previous %s', 'pods' ), $singular_label ) );
+											?>
 										</a>
 										<?php
 									}
 
 									if ( 0 < $next ) {
 										?>
-										<a class="next-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $next ), null, 'do' ) ); ?>">
-											<?php echo sprintf( __( 'Next %s', 'pods' ), $singular_label ); ?>
+										<a class="next-item"
+											href="<?php echo esc_url( pods_query_arg( [ 'id' => $next ], null, 'do' ) ); ?>">
+											<?php
+											// translators: %s is the singular label for the content type.
+											echo esc_html( sprintf( __( 'Next %s', 'pods' ), $singular_label ) );
+											?>
 											<span>&raquo;</span> </a>
 										<?php
 									}
 									?>
 
 									<div class="clear"></div>
+
+									<?php if ( $manage_link ) : ?>
+										<?php if ( 0 < $prev || 0 < $next ) : ?>
+											<hr />
+										<?php endif; ?>
+
+										<p><a href="<?php echo esc_url( $manage_link ); ?>">
+												<?php
+												// translators: %s is the manage heading label.
+												echo esc_html( sprintf( __( 'Back to %s', 'pods' ), $obj->heading['manage'] ) );
+												?>
+											</a></p>
+									<?php endif; ?>
 								</div>
 								<!-- /#navigation-actions -->
 							</div>
@@ -295,13 +350,13 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 						continue;
 					}
 
-					$more  = true;
-					$extra = '';
+					$more                     = true;
+					$extra_attributes_escaped = '';
 
 					$max_length = (int) pods_v_sanitized( 'maxlength', $field['options'], pods_v_sanitized( $field['type'] . '_max_length', $field['options'], 0 ), null, true );
 
 					if ( 0 < $max_length ) {
-						$extra .= ' maxlength="' . esc_attr( $max_length ) . '"';
+						$extra_attributes_escaped .= ' maxlength="' . esc_attr( $max_length ) . '"';
 					}
 
 					/**
@@ -318,7 +373,13 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 						<div id="titlediv">
 							<div id="titlewrap">
 								<h3><?php echo esc_html( $pod->index() ); ?></h3>
-								<input type="hidden" name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" autocomplete="off"<?php echo $extra; ?> />
+								<input type="hidden"
+									name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
+									data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
+									id="title" size="30" tabindex="1"
+									value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index(), ENT_COMPAT ) ); ?>"
+									class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
+									autocomplete="off"<?php echo $extra_attributes_escaped; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 							</div>
 							<!-- /#titlewrap -->
 						</div>
@@ -341,8 +402,15 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 							do_action( 'pods_act_editor_before_title', $pod, $obj );
 							?>
 							<div id="titlewrap">
-								<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ); ?></label>
-								<input type="text" name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>" autocomplete="off"<?php echo $extra; ?> />
+								<label class="screen-reader-text" id="title-prompt-text"
+									for="title"><?php echo esc_html( apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ) ); ?></label>
+								<input type="text"
+									name="pods_field_<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
+									data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
+									id="title" size="30" tabindex="1"
+									value="<?php echo esc_attr( htmlspecialchars( (string) $pod->index(), ENT_COMPAT ) ); ?>"
+									class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data['field_index'] ); ?>"
+									autocomplete="off"<?php echo $extra_attributes_escaped; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 								<?php
 								/**
 								 * Action that runs after the title field of the editor for an Advanced Content Type
@@ -379,7 +447,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 					$first_group = current( $groups );
 
 					if ( 1 == count( $first_group['fields'] ) && isset( $first_group['fields'][ $pod->pod_data['field_index'] ] ) ) {
-						$groups = array();
+						$groups = [];
 					}
 				}
 
@@ -412,7 +480,8 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 							/** This filter is documented in classes/PodsMeta.php */
 							$title = apply_filters( 'pods_meta_default_box_title', $title, $pod->pod_data, $fields, $pod->pod_data['type'], $pod->pod );
 							?>
-							<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
+							<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>"
+								class="postbox">
 								<?php PodsForm::render_postbox_header( $title ); ?>
 
 								<div class="inside">

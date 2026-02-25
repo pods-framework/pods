@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Global\Functions\Forms
  */
@@ -161,12 +167,12 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 		if ( $is_table_rows_render ) {
 			printf(
 				'<tr><td colspan="2" class="%s">',
-				$wrapper_classes
+				esc_attr( $wrapper_classes )
 			);
 		} elseif ( $is_div_rows_render && $options['wrapper'] ) {
 			printf(
 				'<div class="%s">',
-			    $wrapper_classes
+			    esc_attr( $wrapper_classes )
             );
 		}
 
@@ -230,7 +236,7 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 				'<%1$s class="%2$s">%3$s</%1$s>' . "\n",
 				esc_html( $options['heading'] ),
 				esc_attr( $heading_classes ),
-				$heading_text
+				wp_kses_post( $heading_text )
 			);
 		}
 
@@ -432,6 +438,7 @@ function pods_form_validate_submitted_fields( $name, $object_id = null, array $o
 
 		$value = pods_form_get_submitted_field_value( $field_name );
 
+		/** @var array|bool|WP_Error $field_is_valid */
 		$field_is_valid = $api->handle_field_validation( $value, $field_name, [], $fields, $pod );
 
 		if ( is_wp_error( $field_is_valid ) ) {
@@ -547,4 +554,42 @@ function pods_form_get_submitted_fields( $name, array $options = [] ) {
 
 	// Get fields and save them.
 	return pods_form_get_visible_objects( $pod, $options );
+}
+
+/**
+ * Make a field into a hidden field.
+ *
+ * @since 3.3.5
+ *
+ * @param array|Field $field The field object.
+ *
+ * @return array|Field The field object.
+ */
+function pods_form_field_make_hidden( $field ) {
+	if ( $field instanceof Field ) {
+		$field = clone $field;
+	}
+
+	$field['type'] = 'hidden';
+
+	return $field;
+}
+
+/**
+ * Make a field into a readonly field.
+ *
+ * @since 3.3.5
+ *
+ * @param array|Field $field The field object.
+ *
+ * @return array|Field The field object.
+ */
+function pods_form_field_make_readonly( $field ) {
+	if ( $field instanceof Field ) {
+		$field = clone $field;
+	}
+
+	$field['readonly'] = true;
+
+	return $field;
 }

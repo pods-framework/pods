@@ -2,6 +2,11 @@
 
 namespace Pods\Container;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Describes the interface of a container that exposes methods to read its entries.
  *

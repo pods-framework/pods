@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Upgrade
  */
@@ -20,7 +25,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	 * @return array|bool|int|mixed|null|void
 	 */
 	public function prepare_relationships() {
-		$relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
+		$relationship_fields = $this->api->load_fields( [ 'type' => 'pick' ] );
 
 		$count = 0;
 
@@ -44,13 +49,13 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 
 		$last_id = (int) $this->check_progress( __FUNCTION__ );
 
-		$relationship_fields = $this->api->load_fields( array( 'type' => array( 'pick', 'file' ) ) );
+		$relationship_fields = $this->api->load_fields( [ 'type' => [ 'pick', 'file' ] ] );
 
 		foreach ( $relationship_fields as $field ) {
-			$pod = $this->api->load_pod( array( 'pod' => $field['pod'] ) );
+			$pod = $this->api->load_pod( [ 'pod' => $field['pod'] ] );
 
 			// Only target pods that are meta-enabled
-			if ( ! in_array( $pod['type'], array( 'post_type', 'media', 'user', 'comment' ), true ) ) {
+			if ( ! in_array( $pod['type'], [ 'post_type', 'media', 'user', 'comment' ], true ) ) {
 				continue;
 			}
 
@@ -76,7 +81,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 
 		$last_id = true;
 
-		$rel = array();
+		$rel = [];
 
 		$this->update_progress( __FUNCTION__, $last_id );
 
@@ -105,7 +110,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 		$upgraded = get_option( 'pods_framework_upgraded' );
 
 		if ( empty( $upgraded ) || ! is_array( $upgraded ) ) {
-			$upgraded = array();
+			$upgraded = [];
 		}
 
 		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );

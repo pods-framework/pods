@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div class="wrap pods-admin<?php echo PodsAdmin::$instance->has_horizontal_callout() ? '' : ' pods-admin--flex'; ?>">
 	<?php
@@ -16,18 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="pods-admin-container pods-admin__content-container">
 		<div id="icon-pods" class="icon32"><br /></div>
-		<h2><?php _e( 'Get help with Pods', 'pods' ); ?></h2>
+		<h2><?php esc_html_e( 'Get help with Pods', 'pods' ); ?></h2>
 		<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-		<p><?php _e( 'There are many resources available to help you learn to use Pods <a href="https://pods.io/" target="_blank" rel="noopener noreferrer">on our website</a>', 'pods'); ?>.</p>
+		<p><?php echo wp_kses_post( __( 'There are many resources available to help you learn to use Pods <a href="https://pods.io/" target="_blank" rel="noopener noreferrer">on our website</a>', 'pods') ); ?>.</p>
 		<ul class="ul-disc">
-			<li><?php _e('To learn more about using Pods, see our <a href="https://docs.pods.io/" target="_blank" rel="noopener noreferrer">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank" rel="noopener noreferrer">YouTube Channel</a>', 'pods'); ?>.
+			<li><?php echo wp_kses_post( __( 'To learn more about using Pods, see our <a href="https://docs.pods.io/" target="_blank" rel="noopener noreferrer">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank" rel="noopener noreferrer">YouTube Channel</a>', 'pods') ); ?>.
 
-			<li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank" rel="noopener noreferrer">support forums</a>, or you can join our <a href="https://support.pods.io/chat/" target="_blank" rel="noopener noreferrer">Live Community Slack Chat</a>', 'pods'); ?>.
+			<li><?php echo wp_kses_post( __( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank" rel="noopener noreferrer">support forums</a>, or you can join our <a href="https://support.pods.io/chat/" target="_blank" rel="noopener noreferrer">Live Community Slack Chat</a>', 'pods') ); ?>.
 
-			<li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank" rel="noopener noreferrer">GitHub</a>.', 'pods' ); ?></li>
+			<li><?php echo wp_kses_post( __( 'To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank" rel="noopener noreferrer">GitHub</a>.', 'pods' ) ); ?></li>
 
-			<li><?php _e( 'Pods is open source, so you can get into the code and submit your own fixes or features. We would love to help you contribute on our project over on our <a href="https://github.com/pods-framework/pods/blob/main/docs/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">GitHub</a>', 'pods'); ?>.</li>
+			<li><?php echo wp_kses_post( __( 'Pods is open source, so you can get into the code and submit your own fixes or features. We would love to help you contribute on our project over on our <a href="https://github.com/pods-framework/pods/blob/main/docs/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">GitHub</a>', 'pods') ); ?>.</li>
 
 			<li><?php
 				echo sprintf(
@@ -328,7 +331,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			[
 				'label'       => 'Page Builder Toolkit Add-On',
 				'description' => __( 'Integrates Pods with Beaver Builder, Beaver Themer, Divi Theme, Elementor, GenerateBlocks, and Oxygen Builder', 'pods' ),
-				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/page-builder-toolkit@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/page-builder-toolkit-4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),
@@ -347,7 +350,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			[
 				'label'       => 'Advanced Relationships Storage Add-On',
 				'description' => __( 'Advanced options for relationship storage', 'pods' ),
-				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-relationship-storage@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-relationship-storage-4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),
@@ -366,7 +369,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			[
 				'label'       => 'TablePress Integration Add-On',
 				'description' => __( 'Integrates Pods with TablePress', 'pods' ),
-				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/tablepress-integration@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/tablepress-integration-4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),
@@ -385,7 +388,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			[
 				'label'       => 'Advanced Permalinks Add-On',
 				'description' => __( 'Advanced permalink structures and taxonomy landing pages', 'pods' ),
-				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-permalinks@4x-150x150.png',
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-permalinks-4x-150x150.png',
 				'links'       => [
 					[
 						'label' => __( 'Download', 'pods' ),

@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -39,28 +44,28 @@ class PodsField_Email extends PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			static::$type . '_max_length'  => array(
+		$options = [
+			static::$type . '_max_length'  => [
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			),
-			static::$type . '_html5'       => array(
+			],
+			static::$type . '_html5'       => [
 				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
-			),
-			static::$type . '_placeholder' => array(
+			],
+			static::$type . '_placeholder' => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => array(
+				'help'    => [
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		return $options;
 	}
@@ -94,17 +99,19 @@ class PodsField_Email extends PodsField {
 		$field_type = 'email';
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
-			if ( pods_v( 'read_only', $options, false ) ) {
+			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+		} elseif ( ! pods_has_permissions( $options ) ) {
+			if ( pods_v_bool( 'read_only', $options ) ) {
+				$options['readonly'] = true;
 
-			$field_type = 'text';
+				$field_type = 'text';
+			}
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {
@@ -125,7 +132,7 @@ class PodsField_Email extends PodsField {
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
-		$errors = array();
+		$errors = [];
 
 		if ( is_array( $validate ) ) {
 			$errors = $validate;
@@ -140,8 +147,10 @@ class PodsField_Email extends PodsField {
 				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
 				if ( $this->is_required( $options ) ) {
+					// translators: %s is the field label.
 					$errors[] = sprintf( __( '%s is required', 'pods' ), $label );
 				} else {
+					// translators: %s is the field label.
 					$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
 				}
 			}

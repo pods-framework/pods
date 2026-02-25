@@ -2,6 +2,11 @@
 
 namespace Pods\REST\V1\Endpoints;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\REST\Interfaces\Endpoints\CREATE_Interface;
 use Pods\REST\Interfaces\Endpoints\READ_Interface;
 use Pods\REST\Interfaces\Swagger\Provider_Interface;
@@ -43,7 +48,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 		];
 
 		return [
-			'get' => [
+			'get'  => [
 				'summary'    => 'Retrieve a collection of Pods',
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
@@ -236,6 +241,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 				'enum'        => [
 					'meta',
 					'table',
+					'option',
 					'none',
 				],
 			],
@@ -309,7 +315,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 
 			if ( 'settings' === $params['create_pod_type'] ) {
 				$params['create_setting_name'] = $name;
-				$params['create_storage']      = 'none';
+				$params['create_storage']      = 'option';
 			} else {
 				$params['create_name'] = $name;
 			}
@@ -326,6 +332,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Provider_In
 		}
 
 		if ( empty( $id ) ) {
+			// translators: %s is the object type.
 			return new WP_Error( 'rest-object-not-added', sprintf( __( '%s not added.', 'pods' ), ucwords( $this->object ) ) );
 		}
 

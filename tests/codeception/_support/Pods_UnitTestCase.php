@@ -11,7 +11,7 @@ use PodsView;
 /**
  * Class Pods_UnitTestCase
  */
-class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
+class Pods_UnitTestCase extends \lucatume\WPBrowser\TestCase\WPTestCase {
 
 	/**
 	 * @var array

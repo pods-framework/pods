@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 
 <?php if ( $wrap_pagination ) : ?>
@@ -11,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <span class="pods-pagination-advanced <?php echo esc_attr( $params->class ); ?>">
 	<?php if ( 1 === $params->show_label ) { ?>
-		<span class="pods-pagination-label"><?php echo $params->label; ?></span>
+		<span class="pods-pagination-label"><?php echo esc_html( $params->label ); ?></span>
 		<?php
 	}
 
@@ -19,11 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 		<?php if ( $params->first_last ) { ?>
 			<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => 1 ] ) ); ?>"
-			   class="pods-pagination-label pods-pagination-first <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->first_text; ?></a>
+			   class="pods-pagination-label pods-pagination-first <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->first_text ); ?></a>
 		<?php } ?>
 	<?php if ( $params->prev_next ) { ?>
 			<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page - 1 ) ] ) ); ?>"
-			   class="pods-pagination-label pods-pagination-prev <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->prev_text; ?></a>
+			   class="pods-pagination-label pods-pagination-prev <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->prev_text ); ?></a>
 		<?php } ?>
 
 			<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => 1 ] ) ); ?>"
@@ -34,14 +37,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	if ( 1 < ( $params->page - 100 ) ) {
 		?>
 		<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page - 100 ) ] ) ); ?>"
-		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page - 100 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo( $params->page - 100 ); ?></a>
+		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page - 100 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->page - 100 ); ?></a>
 		<?php
 	}
 
 	if ( 1 < ( $params->page - 10 ) ) {
 		?>
 		<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page - 10 ) ] ) ); ?>"
-		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page - 10 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo( $params->page - 10 ); ?></a>
+		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page - 10 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->page - 10 ); ?></a>
 		<?php
 	}
 
@@ -49,21 +52,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 		if ( 1 < ( $params->page - $i ) ) {
 			?>
 			<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page - $i ) ] ) ); ?>"
-			   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page - $i ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo( $params->page - $i ); ?></a>
+			   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page - $i ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->page - $i ); ?></a>
 			<?php
 		}
 	}
 	?>
 
 	<span
-		class="pods-pagination-number pods-pagination-current <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->page; ?></span>
+		class="pods-pagination-number pods-pagination-current <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->page ); ?></span>
 
 	<?php
 	for ( $i = 1; $i <= $params->mid_size; $i ++ ) {
 		if ( ( $params->page + $i ) < $params->total ) {
 			?>
 			<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page + $i ) ] ) ); ?>"
-			   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + $i ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo( $params->page + $i ); ?></a>
+			   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + $i ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->page + $i ); ?></a>
 			<?php
 		}
 	}
@@ -71,30 +74,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	if ( ( $params->page + 10 ) < $params->total ) {
 		?>
 		<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page + 10 ) ] ) ); ?>"
-		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + 10 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo( $params->page + 10 ); ?></a>
+		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + 10 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->page + 10 ); ?></a>
 		<?php
 	}
 
 	if ( ( $params->page + 100 ) < $params->total ) {
 		?>
 		<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page + 100 ) ] ) ); ?>"
-		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + 100 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo( $params->page + 100 ); ?></a>
+		   class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + 100 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->page + 100 ); ?></a>
 		<?php
 	}
 
 	if ( $params->page < $params->total ) {
 		?>
 		<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => $params->total ] ) ); ?>"
-		   class="pods-pagination-number pods-pagination-last pods-pagination-<?php echo esc_attr( $params->total ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->total; ?></a>
+		   class="pods-pagination-number pods-pagination-last pods-pagination-<?php echo esc_attr( $params->total ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->total ); ?></a>
 		<?php
 		if ( $params->prev_next ) {
 			?>
 			<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => ( $params->page + 1 ) ] ) ); ?>"
-			   class="pods-pagination-label pods-pagination-next <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->next_text; ?></a>
+			   class="pods-pagination-label pods-pagination-next <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->next_text ); ?></a>
 		<?php } ?>
 		<?php if ( $params->first_last ) { ?>
 			<a href="<?php echo esc_url( pods_query_arg( [ $params->page_var => $params->total ] ) ); ?>"
-			   class="pods-pagination-label pods-pagination-last <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->last_text; ?></a>
+			   class="pods-pagination-label pods-pagination-last <?php echo esc_attr( $params->link_class ); ?>"><?php echo esc_html( $params->last_text ); ?></a>
 		<?php } ?>
 		<?php
 	}

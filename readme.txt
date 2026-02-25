@@ -3,9 +3,9 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.3
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.2
-Stable tag: 3.3.4
+Stable tag: 3.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,6 +182,39 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.3.5 - February 24th, 2026 =
+
+* Minimum Requirements Notice: Pods 3.4 coming in 2026 will require new minimum versions of WordPress 6.8+, PHP 8.0+, and MySQL 5.7+
+* Feature: Added support for showing fields as "Read Only" in forms when a user does not have edit access to them while allowing admins to continue editing them. You can find this under the Edit Field modal in Advanced > Visibility > UI Access. (@sc0ttkclark)
+* Enhancement: When detecting malformed shortcodes broken by `<` or `>` characters within the `where` clause, Pods now shows a helpful notice with workaround instructions instead of just breaking. #7451 #7482 (@sc0ttkclark)
+* Enhancement: New replacements within Pods shortcodes clauses for replacing `__LESS_THAN__`, `__LESS_THAN_OR_EQUAL__`, `__GREATER_THAN__`, and `__GREATER_THAN_OR_EQUAL__` with their corresponding `<`, `<=`, `>`, and `>=` characters to work around broken WP shortcodes. This is also available in the `[if]` Pods template shortcode `compare` attribute. #7451 #7482 (@sc0ttkclark)
+* Enhancement: New option for conditional logic that will allow saving conditional field values even when the field is hidden. #7475 #7484 (@faisalahammad, @sc0ttkclark)
+* Enhancement: New setting at Pods Settings > Performance that allows you to "Limit autocomplete search results in Relationship fields" to specify larger numbers if needed. #7454 (@sc0ttkclark)
+* Enhancement: PodsUI > Implement `pods_ui_after_heading` hook for additional UI customizations. (@sc0ttkclark)
+* Enhancement: PodsUI > Move restricted() checks before callbacks to prevent additional unnecessary calls when user doesn't have access. (@sc0ttkclark)
+* Enhancement: Add `pods_v_bool` that uses `pods_is_truthy` to enforce boolean values on variables from various sources. (@sc0ttkclark)
+* Enhancement: Add Manage link to the Navigate section of the Pods content admin forms. (@sc0ttkclark)
+* Enhancement: Underlying code support for multiple condition checks for Conditional Logic. (@sc0ttkclark)
+* Tweak: Remove trim from `pods_is_truthy` and `pods_is_falsey` functions. (@sc0ttkclark)
+* Tweak: In the Edit Field modal, under the Advanced > Visibility section -- the Restrict Access and UI Access are now separate checkbox groups. (@sc0ttkclark)
+* Tweak: Pods now follows WP Admin Theme color schemes more closely using dynamic CSS color references to the scheme colors. (@sc0ttkclark)
+* Fixed: Shortcode unit test issue resolved. #7472 #7473 (@devlamconstructie, @sc0ttkclark)
+* Fixed: Loading a form with WYSIWYG React Quill used as Repeatable fields now loads without breaking the editor. #7465 #7487 (@faisalahammad, @sc0ttkclark)
+* Fixed: Resolved reordering of values for Repeatable Date/Time, Currency, and Number fields. #7471 #7486 (@faisalahammad, @sc0ttkclark)
+* Fixed: Resolve sync associated taxonomy with relationship issues when not using bidirectional relationship field. #7477 #7485 (@faisalahammad, @sc0ttkclark)
+* Fixed: Resolved reordering of values in List View relationship fields. (@sc0ttkclark)
+* Fixed: Allow empty values in email fields when field is not required. #7476 #7483 (@faisalahammad, @sc0ttkclark)
+* Fixed: esc_html_e usage when not used for translating in PodsUI. #7462 (@DAnn2012)
+* Fixed: The default storage type for Settings is set to `option` when creating as it should have been. (@sc0ttkclark)
+* Fixed: When using repeatable fields on a Pod that uses Table-based storage, a notice now shows explaining that it's not an available feature. (@sc0ttkclark)
+* Fixed: Better support when values are sent as WP_Error and now show appropriate errors in save_pod_item validation handling. (@sc0ttkclark)
+* Fixed: Resolve heredoc issue with Migrate PHP component. (@sc0ttkclark)
+* Fixed: WordPress 7.0 compatibility issues fixed. (@sc0ttkclark)
+* Fixed: Conditional logic now works properly for Boolean Group sub fields (used in Edit Field modal and other Pods Admin areas). (@sc0ttkclark)
+* Extensive cleanup to resolve important WP Plugin Checker results, PHPCS, and PHPStan issues across the codebase. (@sc0ttkclark)
+* Extensive testing upgrades to PHPUnit 10+ and wp-browser 4. (@sc0ttkclark, @lucetume)
+* New hourly verification of the Pods PLC DID and FAIR metadata. (@johnbillion)
+
 = 3.3.4 - September 24th, 2025 =
 
 * Feature: Official support for DID `did:plc:e3rm6t7cspgpzaf47kn3nnsl` for optional installation via DID using the FAIR plugin. (@sc0ttkclark)
@@ -260,7 +293,7 @@ REMINDER: PHP support for Pod Templates and Pod Pages been turned off by default
 * Enhanced: Run wpautop on Pods Item List and Pods Related Item List blocks for the "not found" content if they are not already formatted. (@sc0ttkclark)
 * Fixed: Only running wpautop for block the Pods Field block content if it does not contain div, ul, ol, heading, or p HTML tags. (@sc0ttkclark)
 * Fixed: Resolve issue with empty strings showing when using magic tags before/after functionality. (@JoryHogeveen)
-* Fixed: Ignore more internal WP post types and taxonomies plus others from other plugins.
+* Fixed: Ignore more internal WP post types and taxonomies plus others from other plugins. (@sc0ttkclark)
 * Fixed: Move load_plugin_textdomain usage into init and make it optional with the constant `PODS_LOAD_TEXTDOMAIN` set to `true`. It is no longer needed for WordPress.org plugins but may be needed in the future for testing. (@sc0ttkclark)
 * Fixed: When getting plugin data, don't make it translatable. (@sc0ttkclark)
 * Fixed: When saving bidirectional relationship, attempt to save hook up existing related items data in the `wp_podsrel` table with the bidirectional connection. (@sc0ttkclark)

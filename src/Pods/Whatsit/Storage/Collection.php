@@ -2,10 +2,16 @@
 
 namespace Pods\Whatsit\Storage;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use PodsAPI;
 use Pods\Whatsit;
 use Pods\Whatsit\Storage;
 use Pods\Whatsit\Store;
+use WP_Error;
 
 /**
  * Collection class.
@@ -370,8 +376,8 @@ class Collection extends Storage {
 	/**
 	 * Setup object from an identifier.
 	 *
-	 * @param string $value         The identifier.
-	 * @param bool   $force_refresh Whether to force the refresh of the object.
+	 * @param string|WP_Error $value         The identifier.
+	 * @param bool            $force_refresh Whether to force the refresh of the object.
 	 *
 	 * @return Whatsit|null
 	 */

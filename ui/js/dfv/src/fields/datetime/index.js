@@ -250,6 +250,20 @@ const DateTime = ( {
 		},
 	);
 
+	// Sync local state with external value changes (e.g., after drag-and-drop reorder).
+	useEffect( () => {
+		const isCurrentValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '' ].includes( value );
+
+		if ( isCurrentValueEmpty ) {
+			setLocalStringValue( '' );
+			setLocalMomentValue( '' );
+		} else {
+			const momentParsed = moment( value, [ getDBFormat(), getFullFormat() ] );
+			setLocalStringValue( formatMomentObject( momentParsed, value ) );
+			setLocalMomentValue( momentParsed );
+		}
+	}, [ value ] );
+
 	const handleChange = ( newValue ) => {
 		let momentObject = newValue;
 

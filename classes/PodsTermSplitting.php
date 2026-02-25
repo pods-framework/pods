@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods
  */
@@ -327,10 +332,10 @@ class Pods_Term_Splitting {
 		$task = "update_commentmeta_{$field_name}_unserialized";
 		if ( ! $this->have_done( $task ) ) {
 			$table        = $wpdb->commentmeta;
-			$data         = [ 'meta_value' => $this->new_term_id ];
+			$data         = [ 'meta_value' => $this->new_term_id ]; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			$where        = [
-				'meta_key'   => $field_name,
-				'meta_value' => $this->term_id,
+				'meta_key'   => $field_name, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value' => $this->term_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			];
 			$format       = '%s';
 			$where_format = [ '%s', '%s' ];
@@ -374,10 +379,10 @@ class Pods_Term_Splitting {
 		$task = "update_usermeta_{$field_name}_unserialized";
 		if ( ! $this->have_done( $task ) ) {
 			$table        = $wpdb->usermeta;
-			$data         = [ 'meta_value' => $this->new_term_id ];
+			$data         = [ 'meta_value' => $this->new_term_id ]; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			$where        = [
-				'meta_key'   => $field_name,
-				'meta_value' => $this->term_id,
+				'meta_key'   => $field_name, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value' => $this->term_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			];
 			$format       = '%s';
 			$where_format = [ '%s', '%s' ];

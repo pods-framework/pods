@@ -2,6 +2,11 @@
 
 namespace Pods\Admin;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Admin\Config\Pod;
 use Pods\Admin\Config\Group;
 use Pods\Admin\Config\Field;

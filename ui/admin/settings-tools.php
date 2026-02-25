@@ -1,11 +1,18 @@
 <?php
 
-use Pods\Tools\Repair;
-
 // Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+// Prevent non-admins.
+if ( ! pods_is_admin( 'pods_settings' ) ) {
+	die( '-1' );
+}
+
+use Pods\Tools\Repair;
 
 global $wpdb;
 

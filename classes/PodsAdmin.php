@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Admin\Config\Pod as Config_Pod;
 use Pods\Admin\Config\Group as Config_Group;
 use Pods\Admin\Config\Field as Config_Field;
@@ -39,33 +44,33 @@ class PodsAdmin {
 	 * @return \PodsAdmin
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since 2.0.0
+	 * @since   2.0.0
 	 */
 	public function __construct() {
 
 		// Scripts / Stylesheets
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ), 20 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_head' ], 20 );
 
 		// AJAX $_POST fix
-		add_action( 'admin_init', array( $this, 'admin_init' ), 9 );
+		add_action( 'admin_init', [ $this, 'admin_init' ], 9 );
 
 		// Menus
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
+		add_action( 'admin_menu', [ $this, 'admin_menu' ], 9 );
 
 		// AJAX for Admin
-		add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
-		add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
+		add_action( 'wp_ajax_pods_admin', [ $this, 'admin_ajax' ] );
+		add_action( 'wp_ajax_nopriv_pods_admin', [ $this, 'admin_ajax' ] );
 
 		// Add Media Bar button for Shortcode
-		add_action( 'media_buttons', array( $this, 'media_button' ), 12 );
+		add_action( 'media_buttons', [ $this, 'media_button' ], 12 );
 
 		// Add the Pods capabilities
-		add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
+		add_filter( 'members_get_capabilities', [ $this, 'admin_capabilities' ] );
 
-		add_action( 'admin_head-media-upload-popup', array( $this, 'register_media_assets' ) );
+		add_action( 'admin_head-media-upload-popup', [ $this, 'register_media_assets' ] );
 
 		// Add our debug to Site Info.
-		add_filter( 'debug_information', array( $this, 'add_debug_information' ) );
+		add_filter( 'debug_information', [ $this, 'add_debug_information' ] );
 
 		// Add our status tests.
 		add_filter( 'site_status_tests', [ $this, 'site_status_tests' ] );
@@ -84,12 +89,12 @@ class PodsAdmin {
 		// Fix for plugins that *don't do it right* so we don't cause issues for users
 		// @codingStandardsIgnoreLine
 		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) ) {
-			$pods_admin_ajax_actions = array(
+			$pods_admin_ajax_actions = [
 				'pods_admin',
 				'pods_relationship',
 				'pods_upload',
 				'pods_admin_components',
-			);
+			];
 
 			/**
 			 * Admin AJAX Callbacks
@@ -123,7 +128,7 @@ class PodsAdmin {
 	 * @since 2.0.0
 	 */
 	public function admin_head() {
-		wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
+		wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', [], PODS_VERSION, [ 'in_footer' => true ] );
 
 		$page = sanitize_text_field( pods_v( 'page' ) );
 
@@ -189,10 +194,10 @@ class PodsAdmin {
 		$settings               = PodsMeta::$settings;
 
 		if ( ! PodsInit::$upgrade_needed || ( pods_is_admin() && 1 === (int) pods_v( 'pods_upgrade_bypass' ) ) ) {
-			$submenu_items = array();
+			$submenu_items = [];
 
 			if ( ! empty( $advanced_content_types ) ) {
-				$submenu = array();
+				$submenu = [];
 
 				$pods_pages = 0;
 
@@ -200,13 +205,13 @@ class PodsAdmin {
 					if ( ! $pod instanceof Pod ) {
 						continue;
 					} elseif ( ! pods_is_admin(
-						array(
+						[
 							'pods',
 							'pods_content',
 							'pods_add_' . $pod['name'],
 							'pods_edit_' . $pod['name'],
 							'pods_delete_' . $pod['name'],
-						)
+						]
 					) ) {
 						continue;
 					}
@@ -221,7 +226,7 @@ class PodsAdmin {
 						$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 						$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
-						$menu_label = strip_tags( $menu_label );
+						$menu_label = wp_strip_all_tags( $menu_label );
 						$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 						$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
@@ -240,26 +245,26 @@ class PodsAdmin {
 						$parent_page = null;
 
 						if ( pods_is_admin(
-							array(
+							[
 								'pods',
 								'pods_content',
 								'pods_edit_' . $pod['name'],
 								'pods_delete_' . $pod['name'],
-							)
+							]
 						) ) {
 							if ( ! empty( $menu_location_custom ) ) {
 								if ( ! isset( $submenu_items[ $menu_location_custom ] ) ) {
-									$submenu_items[ $menu_location_custom ] = array();
+									$submenu_items[ $menu_location_custom ] = [];
 								}
 
-								$submenu_items[ $menu_location_custom ][] = array(
+								$submenu_items[ $menu_location_custom ][] = [
 									$menu_location_custom,
 									$page_title,
 									$menu_label,
 									'read',
 									'pods-manage-' . $pod['name'],
-									array( $this, 'admin_content' ),
-								);
+									[ $this, 'admin_content' ],
+								];
 
 								continue;
 							} else {
@@ -280,20 +285,21 @@ class PodsAdmin {
 									if ( 'edit' === pods_v( 'action', 'get', 'manage' ) ) {
 										$all_title = pods_v( 'label_edit_item', $pod['options'], __( 'Edit', 'pods' ) . ' ' . $singular_label );
 									} elseif ( 'add' === pods_v( 'action', 'get', 'manage' ) ) {
+										// translators: %s is the singular label.
 										$all_title = pods_v( 'label_add_new_item', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
 									}
 								}
 
 								add_submenu_page(
-									$parent_page, $all_title, $all_label, 'read', $page, array(
+									$parent_page, $all_title, $all_label, 'read', $page, [
 										$this,
 										'admin_content',
-									)
+									]
 								);
 							}//end if
 						}//end if
 
-						if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_add_' . $pod['name'] ) ) ) {
+						if ( pods_is_admin( [ 'pods', 'pods_content', 'pods_add_' . $pod['name'] ] ) ) {
 							$page = 'pods-add-new-' . $pod['name'];
 
 							if ( null === $parent_page ) {
@@ -307,14 +313,16 @@ class PodsAdmin {
 								add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
 							}
 
+							// translators: %s is the singular label.
 							$add_title = pods_v( 'label_add_new_item', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
+							// translators: %s is the singular label.
 							$add_label = pods_v( 'label_add_new', $pod['options'], sprintf( __( 'Add New %s', 'pods' ), $singular_label ) );
 
 							add_submenu_page(
-								$parent_page, $add_title, $add_label, 'read', $page, array(
+								$parent_page, $add_title, $add_label, 'read', $page, [
 									$this,
 									'admin_content',
-								)
+								]
 							);
 						}//end if
 					} elseif ( 1 === (int) pods_v( 'use_submenu_fallback', $pod['options'], 1 ) ) {
@@ -332,12 +340,12 @@ class PodsAdmin {
 						$plural_label   = pods_v( 'label', $item, ucwords( str_replace( '_', ' ', $item['name'] ) ), true );
 
 						if ( pods_is_admin(
-							array(
+							[
 								'pods',
 								'pods_content',
 								'pods_edit_' . $item['name'],
 								'pods_delete_' . $item['name'],
-							)
+							]
 						) ) {
 							$page = 'pods-manage-' . $item['name'];
 
@@ -359,10 +367,10 @@ class PodsAdmin {
 							}
 
 							add_submenu_page(
-								$parent_page, $all_title, $all_label, 'read', $page, array(
+								$parent_page, $all_title, $all_label, 'read', $page, [
 									$this,
 									'admin_content',
-								)
+								]
 							);
 						} elseif ( current_user_can( 'pods_add_' . $item['name'] ) ) {
 							$page = 'pods-add-new-' . $item['name'];
@@ -377,10 +385,10 @@ class PodsAdmin {
 							$add_label = __( 'Manage', 'pods' ) . ' ' . $plural_label;
 
 							add_submenu_page(
-								$parent_page, $add_title, $add_label, 'read', $page, array(
+								$parent_page, $add_title, $add_label, 'read', $page, [
 									$this,
 									'admin_content',
-								)
+								]
 							);
 						}//end if
 					}//end foreach
@@ -400,12 +408,12 @@ class PodsAdmin {
 
 					// Check capabilities.
 					if ( ! pods_is_admin(
-						array(
+						[
 							'pods',
 							'pods_content',
 							'pods_edit_' . $pod['name'],
 							$capability,
-						)
+						]
 					) ) {
 						continue;
 					}
@@ -425,7 +433,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
-					$menu_label = strip_tags( $menu_label );
+					$menu_label = wp_strip_all_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon            = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
@@ -457,24 +465,24 @@ class PodsAdmin {
 						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
 					} elseif ( 'submenu' === $menu_location && ! empty( $menu_location_custom ) ) {
 						if ( ! isset( $submenu_items[ $menu_location_custom ] ) ) {
-							$submenu_items[ $menu_location_custom ] = array();
+							$submenu_items[ $menu_location_custom ] = [];
 						}
 
-						$submenu_items[ $menu_location_custom ][] = array(
+						$submenu_items[ $menu_location_custom ][] = [
 							$menu_location_custom,
 							$page_title,
 							$menu_label,
 							'read',
 							$menu_slug,
 							'',
-						);
+						];
 					}//end if
 				}//end foreach
 			}//end if
 
 			if ( ! empty( $settings ) ) {
 				foreach ( (array) $settings as $pod ) {
-					if ( ! pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod['name'] ) ) ) {
+					if ( ! pods_is_admin( [ 'pods', 'pods_content', 'pods_edit_' . $pod['name'] ] ) ) {
 						continue;
 					}
 
@@ -482,7 +490,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
-					$menu_label = strip_tags( $menu_label );
+					$menu_label = wp_strip_all_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
@@ -495,7 +503,7 @@ class PodsAdmin {
 					$menu_slug            = 'pods-settings-' . $pod['name'];
 					$menu_location        = pods_v( 'menu_location', $pod['options'], 'settings' );
 					$menu_location_custom = pods_v( 'menu_location_custom', $pod['options'], '' );
-					$menu_callback        = array( $this, 'admin_content_settings' );
+					$menu_callback        = [ $this, 'admin_content_settings' ];
 
 					if ( 'settings' === $menu_location ) {
 						add_options_page( $page_title, $menu_label, 'read', $menu_slug, $menu_callback, $menu_position );
@@ -505,10 +513,10 @@ class PodsAdmin {
 						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, $menu_callback, $menu_icon, $menu_position );
 					} elseif ( 'submenu' === $menu_location && ! empty( $menu_location_custom ) ) {
 						if ( ! isset( $submenu_items[ $menu_location_custom ] ) ) {
-							$submenu_items[ $menu_location_custom ] = array();
+							$submenu_items[ $menu_location_custom ] = [];
 						}
 
-						$submenu_items[ $menu_location_custom ][] = array(
+						$submenu_items[ $menu_location_custom ][] = [
 							$menu_location_custom,
 							$page_title,
 							$menu_label,
@@ -516,7 +524,7 @@ class PodsAdmin {
 							$menu_slug,
 							$menu_callback,
 							$menu_position,
-						);
+						];
 					}//end if
 				}//end foreach
 			}//end if
@@ -533,66 +541,66 @@ class PodsAdmin {
 				$edit_pods_title = __( 'Edit Pod', 'pods' );
 			}
 
-			$admin_menus = array(
-				'pods'            => array(
+			$admin_menus = [
+				'pods'                      => [
 					'label'    => __( 'Edit Pods', 'pods' ),
 					'title'    => $edit_pods_title,
-					'function' => array( $this, 'admin_setup' ),
+					'function' => [ $this, 'admin_setup' ],
 					'access'   => 'pods',
-				),
-				'pods-add-new'    => array(
+				],
+				'pods-add-new'              => [
 					'label'    => __( 'Add New', 'pods' ),
 					'title'    => __( 'Add New Pod', 'pods' ),
-					'function' => array( $this, 'admin_setup' ),
+					'function' => [ $this, 'admin_setup' ],
 					'access'   => 'pods',
-				),
-				'pods-components' => array(
+				],
+				'pods-components'           => [
 					'label'    => __( 'Components', 'pods' ),
 					'title'    => __( 'Pods Components', 'pods' ),
-					'function' => array( $this, 'admin_components' ),
+					'function' => [ $this, 'admin_components' ],
 					'access'   => 'pods_components',
-				),
-				'pods-access-rights-review' => array(
+				],
+				'pods-access-rights-review' => [
 					'label'    => __( 'Review Access Rights', 'pods' ),
 					'title'    => __( 'Pods Review Access Rights', 'pods' ),
-					'function' => array( $this, 'admin_access_rights_review' ),
+					'function' => [ $this, 'admin_access_rights_review' ],
 					'access'   => 'pods',
-				),
-				'pods-settings'   => array(
+				],
+				'pods-settings'             => [
 					'label'    => __( 'Settings', 'pods' ),
 					'title'    => __( 'Pods Settings', 'pods' ),
-					'function' => array( $this, 'admin_settings' ),
+					'function' => [ $this, 'admin_settings' ],
 					'access'   => 'pods_settings',
-				),
-				'pods-help'       => array(
+				],
+				'pods-help'                 => [
 					'label'    => __( 'Help', 'pods' ),
 					'title'    => __( 'Pods Help', 'pods' ),
-					'function' => array( $this, 'admin_help' ),
-				),
-			);
+					'function' => [ $this, 'admin_help' ],
+				],
+			];
 
-			add_filter( 'parent_file', array( $this, 'parent_file' ) );
+			add_filter( 'parent_file', [ $this, 'parent_file' ] );
 		} else {
-			$admin_menus = array(
-				'pods-upgrade'  => array(
+			$admin_menus = [
+				'pods-upgrade'  => [
 					'label'    => __( 'Upgrade', 'pods' ),
-					'function' => array( $this, 'admin_upgrade' ),
+					'function' => [ $this, 'admin_upgrade' ],
 					'access'   => 'manage_options',
-				),
-				'pods-settings' => array(
+				],
+				'pods-settings' => [
 					'label'    => __( 'Settings', 'pods' ),
 					'title'    => __( 'Pods Settings', 'pods' ),
-					'function' => array( $this, 'admin_settings' ),
+					'function' => [ $this, 'admin_settings' ],
 					'access'   => 'pods_settings',
-				),
-				'pods-help'     => array(
+				],
+				'pods-help'     => [
 					'label'    => __( 'Help', 'pods' ),
 					'title'    => __( 'Pods Help', 'pods' ),
-					'function' => array( $this, 'admin_help' ),
-				),
-			);
+					'function' => [ $this, 'admin_help' ],
+				],
+			];
 
-			add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
+			add_action( 'admin_notices', [ $this, 'upgrade_notice' ] );
 		}//end if
 
 		/**
@@ -729,12 +737,13 @@ class PodsAdmin {
 	public function admin_content() {
 
 		// @codingStandardsIgnoreLine
-		$pod_name = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET['page'] );
+		$pod_name = str_replace( [ 'pods-manage-', 'pods-add-new-' ], '', $_GET['page'] );
 
 		$pod = pods_get_instance( $pod_name, pods_v( 'id', 'get', null, true ) );
 
 		if ( ! $pod->pod_data->has_fields() ) {
 			pods_message( __( 'This Pod does not have any fields defined.', 'pods' ), 'error' );
+
 			return;
 		}
 
@@ -767,14 +776,14 @@ class PodsAdmin {
 		}
 
 		if ( 'custom' !== pods_v( 'ui_style', $pod->pod_data['options'], 'settings', true ) ) {
-			$actions_disabled = array(
+			$actions_disabled = [
 				'manage'    => 'manage',
 				'add'       => 'add',
 				'delete'    => 'delete',
 				'duplicate' => 'duplicate',
 				'view'      => 'view',
 				'export'    => 'export',
-			);
+			];
 
 			// @codingStandardsIgnoreLine
 			$_GET['action'] = 'edit';
@@ -784,22 +793,22 @@ class PodsAdmin {
 
 			$pod_pod_name = $pod->pod;
 
-			$ui = array(
+			$ui = [
 				'id'               => $pod_pod_name,
 				'pod'              => $pod,
-				'fields'           => array(
+				'fields'           => [
 					'edit' => $pod->pod_data->get_fields(),
-				),
-				'header'           => array(
+				],
+				'header'           => [
 					'edit' => $page_title,
-				),
-				'label'            => array(
+				],
+				'label'            => [
 					'edit' => __( 'Save Changes', 'pods' ),
-				),
+				],
 				'style'            => pods_v( 'ui_style', $pod->pod_data['options'], 'settings', true ),
 				'icon'             => pods_evaluate_tags( pods_v( 'menu_icon', $pod->pod_data['options'] ), true ),
 				'actions_disabled' => $actions_disabled,
-			);
+			];
 
 			$ui = apply_filters( "pods_admin_ui_{$pod_pod_name}", apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
 
@@ -820,7 +829,7 @@ class PodsAdmin {
 	 * @param string $context Media button context.
 	 */
 	public function media_button( $context = null ) {
-		if ( ! empty( $_GET['action'] ) && 'elementor' === $_GET['action'] ) {
+		if ( ! empty( $_GET['action'] ) && 'elementor' === pods_v( 'action' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -841,22 +850,22 @@ class PodsAdmin {
 			return;
 		}
 
-		$current_page = basename( $_SERVER['PHP_SELF'] );
+		$current_page = basename( sanitize_text_field( wp_unslash( $_SERVER['PHP_SELF'] ?? 'index.php' ) ) );
 		$current_page = explode( '?', $current_page );
 		$current_page = explode( '#', $current_page[0] );
 		$current_page = $current_page[0];
 
 		// Only show the button on post type pages
 		if ( ! in_array(
-			$current_page, array(
-				'post-new.php',
-				'post.php',
-			), true
+			$current_page, [
+			'post-new.php',
+			'post.php',
+		], true
 		) ) {
 			return;
 		}
 
-		add_action( 'admin_footer', array( $this, 'mce_popup' ) );
+		add_action( 'admin_footer', [ $this, 'mce_popup' ] );
 
 		echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox button" id="add_pod_button" title="Pods Shortcode"><img style="padding: 0px 6px 0px 0px; margin: -3px 0px 0px;" src="' . esc_url( PODS_URL . 'ui/images/icon16.png' ) . '" alt="' . esc_attr__( 'Pods Shortcode', 'pods' ) . '" />' . esc_html__( 'Pods Shortcode', 'pods' ) . '</a>';
 	}
@@ -885,11 +894,10 @@ class PodsAdmin {
 	public function admin_setup() {
 		$api = pods_api();
 
-		$pods = $api->load_pods( array( 'fields' => false ) );
+		$pods = $api->load_pods( [ 'fields' => false ] );
 
-		$id     = pods_v( 'id' );
-		$action = pods_v( 'action' );
-		$view   = pods_v( 'view', 'get', 'all', true );
+		$id     = pods_v_sanitized( 'id' );
+		$view   = pods_v_sanitized( 'view', 'get', 'all', true );
 
 		// @codingStandardsIgnoreLine
 		if ( empty( $pods ) && ! isset( $_GET['action'] ) ) {
@@ -897,21 +905,23 @@ class PodsAdmin {
 			$_GET['action'] = 'add';
 		}
 
-		if ( 'pods' === $_GET['page'] && empty( $pods ) ) {
-			pods_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
+		if ( 'pods' === pods_v( 'page' ) && empty( $pods ) ) {
+			pods_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods' ) );
 		}
 
+		$action = pods_v_sanitized( 'action' );
+
 		// @codingStandardsIgnoreLine
-		if ( 'pods-add-new' === $_GET['page'] || empty( $pods ) ) {
+		if ( 'pods-add-new' === pods_v( 'page' ) || empty( $pods ) ) {
 			// @codingStandardsIgnoreLine
-			if ( isset( $_GET['action'] ) && 'add' !== $_GET['action'] ) {
+			if ( isset( $_GET['action'] ) && 'add' !== pods_v( 'action' ) ) {
 				pods_redirect(
 					pods_query_arg(
-						array(
-							'page'     => 'pods',
+						[
+							'page'   => 'pods',
 							// @codingStandardsIgnoreLine
-							'action'   => $_GET['action'],
-						)
+							'action' => pods_v_sanitized( 'action' ),
+						]
 					)
 				);
 			} else {
@@ -919,16 +929,16 @@ class PodsAdmin {
 				$_GET['action'] = 'add';
 			}
 			// @codingStandardsIgnoreLine
-		} elseif ( isset( $_GET['action'] ) && 'add' === $_GET['action'] ) {
+		} elseif ( isset( $_GET['action'] ) && 'add' === pods_v( 'action' ) ) {
 			pods_redirect(
 				pods_query_arg(
-					array(
+					[
 						'page'     => 'pods-add-new',
 						'action'   => '',
 						'id'       => '',
 						'do'       => '',
 						'_wpnonce' => '',
-					)
+					]
 				)
 			);
 		}//end if
@@ -1007,11 +1017,11 @@ class PodsAdmin {
 		 */
 		$extend_internal = apply_filters( 'pods_admin_setup_extend_pods_internal', false );
 
-		$pod_list = array();
+		$pod_list = [];
 
 		$is_tableless = pods_tableless();
 
-		$has_source = false;
+		$has_source       = false;
 		$has_storage_type = false;
 
 		foreach ( $pods as $k => $pod ) {
@@ -1027,7 +1037,12 @@ class PodsAdmin {
 				$pod_storage = 'meta';
 			}
 
-			$show_meta_count = 'meta' === $pod_storage || in_array( $pod['type'], [ 'post_type', 'taxonomy', 'user', 'comment' ], true );
+			$show_meta_count = 'meta' === $pod_storage || in_array( $pod['type'], [
+					'post_type',
+					'taxonomy',
+					'user',
+					'comment',
+				], true );
 
 			if ( ! empty( $pod['internal'] ) ) {
 				// Don't show internal if we aren't extending them.
@@ -1060,10 +1075,10 @@ class PodsAdmin {
 			}
 
 			if ( null !== $pod_type_label ) {
-				if ( ! $pod->is_extended() && in_array( $pod_type, array(
+				if ( ! $pod->is_extended() && in_array( $pod_type, [
 						'post_type',
 						'taxonomy',
-					), true ) ) {
+					], true ) ) {
 					if ( 'post_type' === $pod_type ) {
 						$pod_type = 'cpt';
 					} else {
@@ -1302,7 +1317,7 @@ class PodsAdmin {
 
 		if ( $include_row_counts ) {
 			$extra_total_text .= sprintf(
-			', %1$s %2$s, %3$s %4$s, %5$s %6$s',
+				', %1$s %2$s, %3$s %4$s, %5$s %6$s',
 				number_format_i18n( $total_rows ),
 				_n( 'data row', 'data rows', $total_rows, 'pods' ),
 				number_format_i18n( $total_row_meta ),
@@ -1345,17 +1360,17 @@ class PodsAdmin {
 				'delete_pod'    => [
 					'label'             => __( 'Delete', 'pods' ),
 					'confirm'           => __( 'Are you sure you want to delete this Pod?', 'pods' )
-											. "\n\n"
-											. __( 'All of the content and items will remain in the database.', 'pods' )
-											. "\n\n"
-											. __( 'You may want to go to Pods Admin > Settings > Cleanup & Reset > "Delete all content for a Pod" first.', 'pods' ),
+										   . "\n\n"
+										   . __( 'All of the content and items will remain in the database.', 'pods' )
+										   . "\n\n"
+										   . __( 'You may want to go to Pods Admin > Settings > Cleanup & Reset > "Delete all content for a Pod" first.', 'pods' ),
 					'callback'          => [ $this, 'admin_setup_delete' ],
 					'restrict_callback' => [ $this, 'admin_restrict_non_db_type' ],
 					'nonce'             => true,
 					'span_class'        => 'delete',
 				],
 			],
-			'action_links' => [
+			'action_links'     => [
 				'add'           => pods_query_arg( [
 					'page'     => 'pods-add-new',
 					'action'   => '',
@@ -1418,7 +1433,7 @@ class PodsAdmin {
 		// Add our custom callouts.
 		$this->handle_callouts_updates();
 
-		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
+		add_filter( 'pods_ui_manage_custom_container_classes', [ $this, 'admin_manage_container_class' ] );
 
 		if ( $this->has_horizontal_callout() ) {
 			add_action( 'pods_ui_manage_before_container', [ $this, 'admin_manage_callouts' ] );
@@ -1438,7 +1453,7 @@ class PodsAdmin {
 		$pods = $api->load_pods( [ 'fields' => false ] );
 
 		if ( empty( $pods ) ) {
-			pods_message( __( 'You do not have any Pods set up yet.', 'pods ' ) );
+			pods_message( __( 'You do not have any Pods set up yet.', 'pods' ) );
 		}
 
 		$pod_types = $api->get_pod_types();
@@ -1450,7 +1465,7 @@ class PodsAdmin {
 		$restricted_dynamic_features_options = pods_access_get_restricted_dynamic_features_options();
 
 		$other_view_groups = [
-			'public' => [
+			'public'                      => [
 				'label' => __( 'Content Privacy', 'pods' ),
 				'views' => [
 					'1' => [
@@ -1463,7 +1478,7 @@ class PodsAdmin {
 					],
 				],
 			],
-			'dynamic_features_allow' => [
+			'dynamic_features_allow'      => [
 				'label' => __( 'Dynamic Features', 'pods' ),
 				'views' => [],
 			],
@@ -1474,7 +1489,7 @@ class PodsAdmin {
 						'label' => __( 'Unrestricted', 'pods' ),
 						'count' => 0,
 					],
-					'restricted' => [
+					'restricted'   => [
 						'label' => __( 'Restricted', 'pods' ),
 						'count' => 0,
 					],
@@ -1535,7 +1550,7 @@ class PodsAdmin {
 		 */
 		$extend_internal = apply_filters( 'pods_admin_setup_extend_pods_internal', false );
 
-		$pod_list = array();
+		$pod_list = [];
 
 		$has_source = false;
 
@@ -1563,10 +1578,10 @@ class PodsAdmin {
 			$pod_real_type = $pod_type;
 
 			if ( null !== $pod_type_label ) {
-				if ( ! $pod->is_extended() && in_array( $pod_type, array(
+				if ( ! $pod->is_extended() && in_array( $pod_type, [
 						'post_type',
 						'taxonomy',
-					), true ) ) {
+					], true ) ) {
 					if ( 'post_type' === $pod_type ) {
 						$pod_type = 'cpt';
 					} else {
@@ -1615,15 +1630,15 @@ class PodsAdmin {
 						}
 
 						$source .= ' ' . pods_help(
-							sprintf(
-								'<strong>%s:</strong> %s',
-								esc_html__( 'File source', 'pods' ),
-								esc_html( $file_source )
-							),
-							null,
-							'.pods-admin-container',
-							true
-						);
+								sprintf(
+									'<strong>%s:</strong> %s',
+									esc_html__( 'File source', 'pods' ),
+									esc_html( $file_source )
+								),
+								null,
+								'.pods-admin-container',
+								true
+							);
 					}
 				} elseif ( 'collection' === $object_storage_type ) {
 					$code_source = $pod->get_arg( '_pods_code_source' );
@@ -1634,15 +1649,15 @@ class PodsAdmin {
 						}
 
 						$source .= ' ' . pods_help(
-							sprintf(
-								'<strong>%s:</strong> %s',
-								esc_html__( 'Code source', 'pods' ),
-								esc_html( $code_source )
-							),
-							null,
-							'.pods-admin-container',
-							true
-						);
+								sprintf(
+									'<strong>%s:</strong> %s',
+									esc_html__( 'Code source', 'pods' ),
+									esc_html( $code_source )
+								),
+								null,
+								'.pods-admin-container',
+								true
+							);
 					}
 				}
 			}
@@ -1954,7 +1969,7 @@ class PodsAdmin {
 
 		$this->handle_callouts_updates();
 
-		add_action( 'pods_ui_manage_before_filters', static function() {
+		add_action( 'pods_ui_manage_before_filters', static function () {
 			$callout_dismiss_link = add_query_arg( [
 				'pods_callout_dismiss'       => 'access_rights',
 				'pods_callout_dismiss_nonce' => wp_create_nonce( 'pods_callout_dismiss_access_rights' ),
@@ -1963,8 +1978,8 @@ class PodsAdmin {
 			pods_message(
 				wpautop(
 					esc_html__( 'This screen is for reviewing the access rights and settings for your Pods. You can change the access rights for each Pod individually or in bulk.', 'pods' )
-					 . "\n\n" . esc_html__( 'Carefully review whether your content types should be public and if dynamic features should be allowed.', 'pods' )
-					 . "\n\n" . '<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Read the documentation for more information', 'pods' ) . ' &raquo;</a>'
+					. "\n\n" . esc_html__( 'Carefully review whether your content types should be public and if dynamic features should be allowed.', 'pods' )
+					. "\n\n" . '<a href="https://docs.pods.io/displaying-pods/access-rights-in-pods/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Read the documentation for more information', 'pods' ) . ' &raquo;</a>'
 				),
 				'info',
 				false,
@@ -1977,8 +1992,8 @@ class PodsAdmin {
 				pods_message(
 					wpautop(
 						esc_html__( 'You have not confirmed your Pods access rights below yet.', 'pods' )
-						 . "\n\n" . esc_html__( 'Make changes below or confirm them.', 'pods' )
-						 . "\n\n" . '<a href="' . esc_url( $callout_dismiss_link ) . '" class="button button-primary">' . esc_html__( 'Yes, I confirm the access rights below are correct for my site', 'pods' ) . '</a>'
+						. "\n\n" . esc_html__( 'Make changes below or confirm them.', 'pods' )
+						. "\n\n" . '<a href="' . esc_url( $callout_dismiss_link ) . '" class="button button-primary">' . esc_html__( 'Yes, I confirm the access rights below are correct for my site', 'pods' ) . '</a>'
 					),
 					'warning',
 					false,
@@ -2025,7 +2040,7 @@ class PodsAdmin {
 
 		$page = pods_v( 'page' );
 
-		if ( in_array( $page, array( 'pods-settings', 'pods-help' ), true ) ) {
+		if ( in_array( $page, [ 'pods-settings', 'pods-help' ], true ) ) {
 			$force_callouts = true;
 		}
 
@@ -2045,7 +2060,7 @@ class PodsAdmin {
 		}
 
 		// Handle callouts logic.
-		$callouts['access_rights'] = $callouts['access_rights'] ?? 0;
+		$callouts['access_rights']     = $callouts['access_rights'] ?? 0;
 		$callouts['friends_2024_docs'] = ( ! isset( $callouts['friends_2024_docs'] ) || $callouts['friends_2024_docs'] || $force_callouts ) ? 1 : 0;
 
 		/**
@@ -2086,10 +2101,10 @@ class PodsAdmin {
 		$callouts = get_option( 'pods_callouts' );
 
 		if ( ! $callouts ) {
-			$callouts = array();
+			$callouts = [];
 		}
 
-		$callout_dismiss = sanitize_text_field( pods_v( 'pods_callout_dismiss' ) );
+		$callout_dismiss       = sanitize_text_field( pods_v( 'pods_callout_dismiss' ) );
 		$callout_dismiss_nonce = pods_v( 'pods_callout_dismiss_nonce' );
 
 		// Demo mode will auto-update the option for future loads.
@@ -2136,7 +2151,7 @@ class PodsAdmin {
 		$callouts = get_option( 'pods_callouts' );
 
 		if ( ! $callouts ) {
-			$callouts = array();
+			$callouts = [];
 		}
 
 		$callouts[ $callout ] = (int) $enabled;
@@ -2186,7 +2201,7 @@ class PodsAdmin {
 
 		$page = pods_v( 'page' );
 
-		if ( in_array( $page, array( 'pods-settings', 'pods-help' ), true ) ) {
+		if ( in_array( $page, [ 'pods-settings', 'pods-help' ], true ) ) {
 			$force_callouts = true;
 		}
 
@@ -2224,8 +2239,8 @@ class PodsAdmin {
 		$pod = $obj->row['pod_object'];
 
 		if ( ! $pod instanceof Pod ) {
-			$obj->id = null;
-			$obj->row = [];
+			$obj->id     = null;
+			$obj->row    = [];
 			$obj->action = 'manage';
 
 			$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
@@ -2235,8 +2250,8 @@ class PodsAdmin {
 		}
 
 		if ( 'post_type' !== $pod->get_object_storage_type() ) {
-			$obj->id = null;
-			$obj->row = [];
+			$obj->id     = null;
+			$obj->row    = [];
 			$obj->action = 'manage';
 
 			// translators: %s: The pod label.
@@ -2262,7 +2277,7 @@ class PodsAdmin {
 
 		$find_orphan_fields = (
 			1 === (int) pods_v( 'pods_debug_find_orphan_fields', 'get', 0 )
-			&& pods_is_admin( array( 'pods' ) )
+			&& pods_is_admin( [ 'pods' ] )
 		);
 
 		$migrated = false;
@@ -2280,8 +2295,8 @@ class PodsAdmin {
 
 			// Check again in case the pod migrated wrong.
 			if ( ! $pod instanceof Pod ) {
-				$obj->id = null;
-				$obj->row = [];
+				$obj->id     = null;
+				$obj->row    = [];
 				$obj->action = 'manage';
 
 				$obj->error( __( 'Invalid Pod configuration detected.', 'pods' ) );
@@ -2451,7 +2466,7 @@ class PodsAdmin {
 	 * @param null|\Pods\Whatsit $current_pod
 	 *
 	 * @return array Global config array.
-	 *@since 2.8.0
+	 * @since 2.8.0
 	 *
 	 */
 	public function get_global_config( $current_pod = null ) {
@@ -2460,7 +2475,7 @@ class PodsAdmin {
 		$config_field = pods_container( Config_Field::class );
 
 		// Pod: Backwards compatible configs and hooks.
-		$pod_tabs        = $config_pod->get_tabs( $current_pod);
+		$pod_tabs        = $config_pod->get_tabs( $current_pod );
 		$pod_tab_options = $config_pod->get_fields( $current_pod, $pod_tabs );
 
 		$this->backcompat_convert_tabs_to_groups( $pod_tabs, $pod_tab_options, 'pod/_pods_pod' );
@@ -2468,13 +2483,13 @@ class PodsAdmin {
 		// If not types-only mode, handle groups/fields configs.
 		if ( ! pods_is_types_only( false, $current_pod->get_name() ) ) {
 			// Group: Backwards compatible methods and hooks.
-			$group_tabs        = $config_group->get_tabs( $current_pod);
+			$group_tabs        = $config_group->get_tabs( $current_pod );
 			$group_tab_options = $config_group->get_fields( $current_pod, $group_tabs );
 
 			$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
 
 			// Field: Backwards compatible methods and hooks.
-			$field_tabs        = $config_field->get_tabs( $current_pod);
+			$field_tabs        = $config_field->get_tabs( $current_pod );
 			$field_tab_options = $config_field->get_fields( $current_pod, $field_tabs );
 
 			$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
@@ -2512,7 +2527,7 @@ class PodsAdmin {
 				'include_fields'       => false,
 				'include_field_data'   => true,
 				'bypass_cache'         => true,
-                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
+				'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'group'      => $group_object->export( [
 				'include_groups'       => true,
@@ -2520,7 +2535,7 @@ class PodsAdmin {
 				'include_fields'       => false,
 				'include_field_data'   => true,
 				'bypass_cache'         => true,
-                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
+				'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 			'field'      => $field_object->export( [
 				'include_groups'       => true,
@@ -2528,7 +2543,7 @@ class PodsAdmin {
 				'include_fields'       => false,
 				'include_field_data'   => true,
 				'bypass_cache'         => true,
-                'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
+				'ref_id'               => 'global/' . $pod_object->get_type() . '/' . $pod_object->get_name(),
 			] ),
 		];
 
@@ -2572,8 +2587,8 @@ class PodsAdmin {
 				$group_args = $group_label;
 			} else {
 				$group_args = [
-					'name'   => $group_name,
-					'label'  => $group_label,
+					'name'  => $group_name,
+					'label' => $group_label,
 				];
 			}
 
@@ -2638,6 +2653,13 @@ class PodsAdmin {
 							if ( is_string( $bgf_key ) ) {
 								$boolean_group[ $bgf_key ]['name'] = $bgf_key;
 							}
+
+							$boolean_group[ $bgf_key ] = $this->backcompat_convert_tabs_to_groups_setup_field( [
+								'field_name'    => $boolean_group[ $bgf_key ]['name'],
+								'field_options' => $boolean_group[ $bgf_key ],
+								'parent'        => $parent,
+								'group_name'    => $group_name,
+							] );
 						}
 
 						$boolean_group = array_values( $boolean_group );
@@ -2674,14 +2696,14 @@ class PodsAdmin {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param array $args {
-	 * 		The field arguments.
+	 * @param array     $args          {
+	 *                                 The field arguments.
 	 *
-	 *		@type string     $field_name    The field name.
-	 *		@type array      $field_options The field options.
-	 *		@type string|int $parent        The parent group.
-	 *		@type string     $group_name    The group name.
-	 * }
+	 * @type string     $field_name    The field name.
+	 * @type array      $field_options The field options.
+	 * @type string|int $parent        The parent group.
+	 * @type string     $group_name    The group name.
+	 *                                 }
 	 *
 	 * @return \Pods\Whatsit\Field The field object.
 	 */
@@ -2725,17 +2747,17 @@ class PodsAdmin {
 	 * @param PodsUI $obj PodsUI object.
 	 */
 	public function admin_setup_duplicate( $obj ) {
-		$new_id = pods_api()->duplicate_pod( array( 'name' => $obj->row['name'] ) );
+		$new_id = pods_api()->duplicate_pod( [ 'name' => $obj->row['name'] ] );
 
 		if ( 0 < $new_id ) {
 			pods_redirect(
 				pods_query_arg(
-					array(
+					[
 						'action' => 'edit',
 						'id'     => $new_id,
 						'do'     => 'duplicate',
 						'name'   => null,
-					)
+					]
 				)
 			);
 
@@ -2760,11 +2782,11 @@ class PodsAdmin {
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
 		if ( in_array(
-			$row['real_type'], array(
-				'user',
-				'media',
-				'comment',
-			), true
+			$row['real_type'], [
+			'user',
+			'media',
+			'comment',
+		], true
 		) ) {
 			$restricted = true;
 		}
@@ -2782,7 +2804,7 @@ class PodsAdmin {
 	 */
 	public function admin_setup_delete( $obj, $id ) {
 
-		$pod = pods_api()->load_pod( array( 'id' => $id ), false );
+		$pod = pods_api()->load_pod( [ 'id' => $id ], false );
 
 		if ( empty( $pod ) ) {
 			return $obj->error( __( 'Pod not found.', 'pods' ) );
@@ -2792,7 +2814,7 @@ class PodsAdmin {
 			return $obj->error( __( 'Pod cannot be deleted.', 'pods' ) );
 		}
 
-		pods_api()->delete_pod( array( 'id' => $id ) );
+		pods_api()->delete_pod( [ 'id' => $id ] );
 
 		foreach ( $obj->data as $key => $data_pod ) {
 			if ( (int) $id === (int) $data_pod['id'] ) {
@@ -2857,7 +2879,7 @@ class PodsAdmin {
 		}
 
 		$params = [
-			'id' => $id,
+			'id'     => $id,
 			'public' => 1,
 		];
 
@@ -3558,7 +3580,7 @@ class PodsAdmin {
 
 		$view = pods_v( 'view', 'get', 'all', true );
 
-		$recommended = array(
+		$recommended = [
 			'advanced-relationships',
 			'advanced-content-types',
 			'migrate-packages',
@@ -3566,16 +3588,16 @@ class PodsAdmin {
 			'pages',
 			'table-storage',
 			'templates',
-		);
+		];
 
 		foreach ( $components as $component => &$component_data ) {
 			if ( ! in_array(
-				$view, array(
+					$view, [
 					'all',
 					'recommended',
 					'dev',
-				), true
-			) && ( ! isset( $component_data['Category'] ) || sanitize_title( $component_data['Category'] ) !== $view ) ) {
+				], true
+				) && ( ! isset( $component_data['Category'] ) || sanitize_title( $component_data['Category'] ) !== $view ) ) {
 				unset( $components[ $component ] );
 
 				continue;
@@ -3597,15 +3619,16 @@ class PodsAdmin {
 				continue;
 			}//end if
 
-			$component_data['Name'] = strip_tags( $component_data['Name'] );
+			$component_data['Name'] = wp_strip_all_tags( $component_data['Name'] );
 
 			if ( pods_v( 'DeveloperMode', $component_data, false ) ) {
 				$component_data['Name'] .= ' <em style="font-weight: normal; color:#333;">(Developer Preview)</em>';
 			}
 
-			$meta = array();
+			$meta = [];
 
 			if ( ! empty( $component_data['Version'] ) ) {
+				// translators: %s is the version number.
 				$meta[] = sprintf( __( 'Version %s', 'pods' ), $component_data['Version'] );
 			}
 
@@ -3618,6 +3641,7 @@ class PodsAdmin {
 				$component_data['Author'] = '<a href="' . $component_data['AuthorURI'] . '">' . $component_data['Author'] . '</a>';
 			}
 
+			// translators: %s is the author name/link.
 			$meta[] = sprintf( __( 'by %s', 'pods' ), $component_data['Author'] );
 
 			if ( ! empty( $component_data['URI'] ) ) {
@@ -3664,7 +3688,7 @@ class PodsAdmin {
 				$component_data['Description'] .= '<div class="pods-component-meta" ' . $description_style . '>' . implode( '&nbsp;&nbsp;|&nbsp;&nbsp;', $meta ) . '</div>';
 			}
 
-			$component_data = array(
+			$component_data = [
 				'id'          => $component_data['ID'],
 				'name'        => $component_data['Name'],
 				'category'    => $component_data['Category'],
@@ -3672,16 +3696,15 @@ class PodsAdmin {
 				'description' => $component_data['Description'],
 				'mustuse'     => pods_v( 'MustUse', $component_data, false ),
 				'toggle'      => 0,
-			);
+			];
 
 			if ( ! empty( $component_data['category'] ) ) {
 				$category_url = pods_query_arg(
-					array(
+					[
 						'view' => sanitize_title( $component_data['category'] ),
 						'pg'   => '',
-						// @codingStandardsIgnoreLine
-						'page' => $_GET['page'],
-					)
+						'page' => (int) pods_v( 'page' ),
+					]
 				);
 
 				$component_data['category'] = '<a href="' . esc_url( $category_url ) . '">' . $component_data['category'] . '</a>';
@@ -3694,53 +3717,53 @@ class PodsAdmin {
 			}
 		}//end foreach
 
-		$ui = array(
-			'sql'              => array(
+		$ui = [
+			'sql'              => [
 				'field_id' => 'id',
-			),
+			],
 			'data'             => $components,
 			'total'            => count( $components ),
 			'total_found'      => count( $components ),
 			'items'            => __( 'Components', 'pods' ),
 			'item'             => __( 'Component', 'pods' ),
-			'fields'           => array(
-				'manage' => array(
-					'name'        => array(
+			'fields'           => [
+				'manage' => [
+					'name'        => [
 						'label'   => __( 'Name', 'pods' ),
 						'width'   => '30%',
 						'type'    => 'text',
-						'options' => array(
+						'options' => [
 							'text_allow_html' => true,
-						),
-					),
-					'category'    => array(
+						],
+					],
+					'category'    => [
 						'label'   => __( 'Category', 'pods' ),
 						'width'   => '10%',
 						'type'    => 'text',
-						'options' => array(
+						'options' => [
 							'text_allow_html' => true,
-						),
-					),
-					'description' => array(
+						],
+					],
+					'description' => [
 						'label'   => __( 'Description', 'pods' ),
 						'width'   => '60%',
 						'type'    => 'text',
-						'options' => array(
+						'options' => [
 							'text_allow_html'        => true,
 							'text_allowed_html_tags' => 'strong em a ul ol li b i br div',
-						),
-					),
-				),
-			),
-			'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
-			'actions_custom'   => array(
-				'toggle' => array(
-					'callback' => array( $this, 'admin_components_toggle' ),
+						],
+					],
+				],
+			],
+			'actions_disabled' => [ 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ],
+			'actions_custom'   => [
+				'toggle' => [
+					'callback' => [ $this, 'admin_components_toggle' ],
 					'nonce'    => true,
-				),
-			),
+				],
+			],
 			'filters_enhanced' => true,
-			'views'            => array(
+			'views'            => [
 				'all'         => __( 'All', 'pods' ),
 				// 'recommended' => __( 'Recommended', 'pods' ),
 				'field-types' => __( 'Field Types', 'pods' ),
@@ -3748,16 +3771,16 @@ class PodsAdmin {
 				'integration' => __( 'Integration', 'pods' ),
 				'migration'   => __( 'Migration', 'pods' ),
 				'advanced'    => __( 'Advanced', 'pods' ),
-			),
+			],
 			'view'             => $view,
-			'heading'          => array(
+			'heading'          => [
 				'views' => __( 'Category', 'pods' ),
-			),
+			],
 			'search'           => false,
 			'searchable'       => false,
 			'sortable'         => false,
 			'pagination'       => false,
-		);
+		];
 
 		if ( pods_developer() ) {
 			$ui['views']['dev'] = __( 'Developer Preview', 'pods' );
@@ -3766,7 +3789,7 @@ class PodsAdmin {
 		// Add our custom callouts.
 		$this->handle_callouts_updates();
 
-		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
+		add_filter( 'pods_ui_manage_custom_container_classes', [ $this, 'admin_manage_container_class' ] );
 
 		if ( $this->has_horizontal_callout() ) {
 			add_action( 'pods_ui_manage_before_container', [ $this, 'admin_manage_callouts' ] );
@@ -3796,9 +3819,11 @@ class PodsAdmin {
 				}
 
 				if ( ! empty( $website ) ) {
+					// translators: %s is the website URL with link.
 					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $website . '" target="_blank" rel="noopener noreferrer">' . $website . '</a>' );
 				}
 
+				// translators: %1$s is the component name, %2$s is the required plugin name.
 				$message = sprintf( __( 'The %1$s component requires that you have the <strong>%2$s</strong> plugin installed and activated.', 'pods' ), PodsInit::$components->components[ $component ]['Name'], $dependency[0] ) . $website;
 
 				$ui->error( $message );
@@ -3818,9 +3843,11 @@ class PodsAdmin {
 				$website = '';
 
 				if ( isset( $dependency[2] ) ) {
+					// translators: %s is the website URL with link.
 					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $dependency[2] . '" target="_blank" rel="noopener noreferrer">' . $dependency[2] . '</a>' );
 				}
 
+				// translators: %1$s is the component name, %2$s is the required theme name.
 				$message = sprintf( __( 'The %1$s component requires that you have the <strong>%2$s</strong> theme installed and activated.', 'pods' ), PodsInit::$components->components[ $component ]['Name'], $dependency[0] ) . $website;
 
 				$ui->error( $message );
@@ -3832,6 +3859,7 @@ class PodsAdmin {
 		}//end if
 
 		if ( ! empty( PodsInit::$components->components[ $component ]['MustUse'] ) ) {
+			// translators: %s is the component name.
 			$message = sprintf( __( 'The %s component can not be disabled from here. You must deactivate the plugin or theme that added it.', 'pods' ), PodsInit::$components->components[ $component ]['Name'] );
 
 			$ui->error( $message );
@@ -3867,21 +3895,21 @@ class PodsAdmin {
 					}
 				}
 
-				$component_data = array(
+				$component_data = [
 					'id'          => $component_data['ID'],
 					'name'        => $component_data['Name'],
 					'description' => make_clickable( $component_data['Description'] ),
 					'version'     => $component_data['Version'],
 					'author'      => $component_data['Author'],
 					'toggle'      => $toggle,
-				);
+				];
 			}//end foreach
 
 			$ui->data = $components;
 
 			pods_transient_clear( 'pods_components' );
 
-			$url = pods_query_arg( array( 'toggled' => null ) );
+			$url = pods_query_arg( [ 'toggled' => null ] );
 
 			pods_redirect( $url );
 		} elseif ( 1 === (int) pods_v( 'toggle' ) ) {
@@ -3935,22 +3963,22 @@ class PodsAdmin {
 	public function admin_capabilities( $capabilities ) {
 
 		$pods = pods_api()->load_pods(
-			array(
-				'type' => array(
+			[
+				'type' => [
 					'settings',
 					'post_type',
 					'taxonomy',
-				),
-			)
+				],
+			]
 		);
 
 		$other_pods = pods_api()->load_pods(
-			array(
-				'type' => array(
+			[
+				'type' => [
 					'pod',
 					'table',
-				),
-			)
+				],
+			]
 		);
 
 		$pods = array_merge( $pods, $other_pods );
@@ -3990,7 +4018,7 @@ class PodsAdmin {
 				if ( 'custom' === pods_v( 'capability_type', $pod['options'], 'terms' ) ) {
 					$capability_type = pods_v_sanitized( 'capability_type_custom', $pod['options'], pods_v( 'name', $pod ) . 's' );
 
-					$capability_type       .= '_term';
+					$capability_type        .= '_term';
 					$capability_type_plural = $capability_type . 's';
 
 					// Singular
@@ -4024,22 +4052,22 @@ class PodsAdmin {
 				if ( ! empty( $actions_enabled ) ) {
 					$actions_enabled = (array) $actions_enabled;
 				} else {
-					$actions_enabled = array();
+					$actions_enabled = [];
 				}
 
-				$available_actions = array(
+				$available_actions = [
 					'add',
 					'edit',
 					'duplicate',
 					'delete',
 					'reorder',
 					'export',
-				);
+				];
 
 				if ( ! empty( $actions_enabled ) ) {
-					$actions_disabled = array(
+					$actions_disabled = [
 						'view' => 'view',
-					);
+					];
 
 					foreach ( $available_actions as $action ) {
 						if ( ! in_array( $action, $actions_enabled, true ) ) {
@@ -4095,15 +4123,15 @@ class PodsAdmin {
 
 		$params = (object) $params;
 
-		$methods = array(
-			'add_pod'            => array( 'priv' => true ),
-			'save_pod'           => array( 'priv' => true ),
-			'load_sister_fields' => array( 'priv' => true ),
-			'process_form'       => array( 'custom_nonce' => true ),
+		$methods = [
+			'add_pod'            => [ 'priv' => true ],
+			'save_pod'           => [ 'priv' => true ],
+			'load_sister_fields' => [ 'priv' => true ],
+			'process_form'       => [ 'custom_nonce' => true ],
 			// priv handled through nonce
-			'upgrade'            => array( 'priv' => true ),
-			'migrate'            => array( 'priv' => true ),
-		);
+			'upgrade'            => [ 'priv' => true ],
+			'migrate'            => [ 'priv' => true ],
+		];
 
 		/**
 		 * AJAX Callbacks in field editor
@@ -4119,11 +4147,11 @@ class PodsAdmin {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
 		}
 
-		$defaults = array(
+		$defaults = [
 			'priv'         => null,
 			'name'         => $params->method,
 			'custom_nonce' => null,
-		);
+		];
 
 		$method = (object) array_merge( $defaults, (array) $methods[ $params->method ] );
 
@@ -4147,7 +4175,7 @@ class PodsAdmin {
 		}
 
 		// Check permissions (convert to array to support multiple)
-		if ( ! empty( $method->priv ) && ! pods_is_admin( array( 'pods' ) ) ) {
+		if ( ! empty( $method->priv ) && ! pods_is_admin( [ 'pods' ] ) ) {
 			if ( true !== $method->priv && pods_is_admin( $method->priv ) ) {
 				// They have access to the custom priv.
 			} else {
@@ -4192,7 +4220,7 @@ class PodsAdmin {
 			// Dynamically call the API method
 			$params = (array) $params;
 
-			$output = call_user_func( array( $api, $method->name ), $params );
+			$output = call_user_func( [ $api, $method->name ], $params );
 		}//end if
 
 		// Output in json format
@@ -4233,7 +4261,7 @@ class PodsAdmin {
 	 *
 	 * @return array
 	 *
-	 * @since 2.7.0
+	 * @since      2.7.0
 	 * @deprecated 2.8.0
 	 */
 	public function configuration( $pod = null, $full_field_info = false ) {
@@ -4252,12 +4280,12 @@ class PodsAdmin {
 		}
 
 		foreach ( $the_pods as $the_pod ) {
-			$configuration[ $the_pod['name'] ] = array(
+			$configuration[ $the_pod['name'] ] = [
 				'name'    => $the_pod['name'],
 				'ID'      => $the_pod['id'],
 				'storage' => $the_pod['storage'],
 				'fields'  => $the_pod['fields'],
-			);
+			];
 		}
 
 		if ( ! $full_field_info ) {
@@ -4267,10 +4295,10 @@ class PodsAdmin {
 				unset( $configuration[ $the_pod['name'] ]['fields'] );
 
 				foreach ( $fields as $field ) {
-					$info = array(
+					$info = [
 						'name' => $field['name'],
 						'type' => $field['type'],
-					);
+					];
 
 					if ( 'pick' === $info['type'] ) {
 						$info['pick_object'] = $field['pick_object'];
@@ -4307,16 +4335,16 @@ class PodsAdmin {
 
 		if ( function_exists( 'register_rest_field' ) ) {
 			add_filter(
-				'pods_admin_setup_edit_field_options', array(
-					$this,
-					'add_rest_fields_to_field_editor',
-				), 12, 2
+				'pods_admin_setup_edit_field_options', [
+				$this,
+				'add_rest_fields_to_field_editor',
+			], 12, 2
 			);
-			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'add_rest_field_tab' ), 12, 2 );
+			add_filter( 'pods_admin_setup_edit_field_tabs', [ $this, 'add_rest_field_tab' ], 12, 2 );
 		}
 
-		add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'add_rest_settings_tab' ), 12, 2 );
-		add_filter( 'pods_admin_setup_edit_options', array( $this, 'add_rest_settings_tab_fields' ), 12, 2 );
+		add_filter( 'pods_admin_setup_edit_tabs', [ $this, 'add_rest_settings_tab' ], 12, 2 );
+		add_filter( 'pods_admin_setup_edit_options', [ $this, 'add_rest_settings_tab_fields' ], 12, 2 );
 
 	}
 
@@ -4335,12 +4363,12 @@ class PodsAdmin {
 
 		$type = $pod['type'];
 
-		$restable_types = array(
+		$restable_types = [
 			'post_type',
 			'user',
 			'taxonomy',
 			'media',
-		);
+		];
 
 		return in_array( $type, $restable_types, true );
 
@@ -4650,6 +4678,11 @@ class PodsAdmin {
 
 		$auto_start = pods_v( $auto_start, $settings_fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
+		WP_Filesystem();
+
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+
 		global $wpdb;
 
 		$info['pods'] = [
@@ -4670,11 +4703,11 @@ class PodsAdmin {
 				],
 				'pods-server-software'               => [
 					'label' => __( 'Server Software', 'pods' ),
-					'value' => ! empty( $_SERVER['SERVER_SOFTWARE'] ) ? $_SERVER['SERVER_SOFTWARE'] : 'N/A',
+					'value' => ! empty( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'N/A',
 				],
 				'pods-user-agent'                    => [
 					'label' => __( 'Your User Agent', 'pods' ),
-					'value' => ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : 'N/A',
+					'value' => ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : 'N/A',
 				],
 				'pods-session-save-path'             => [
 					'label' => __( 'Session Save Path', 'pods' ),
@@ -4682,11 +4715,11 @@ class PodsAdmin {
 				],
 				'pods-session-save-path-exists'      => [
 					'label' => __( 'Session Save Path Exists', 'pods' ),
-					'value' => file_exists( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => $wp_filesystem->exists( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-session-save-path-writable'    => [
 					'label' => __( 'Session Save Path Writeable', 'pods' ),
-					'value' => is_writable( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => $wp_filesystem->is_writable( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-session-max-lifetime'          => [
 					'label' => __( 'Session Max Lifetime', 'pods' ),
@@ -4745,7 +4778,7 @@ class PodsAdmin {
 					'value' => str_replace( ABSPATH, '/', PODS_DIR ),
 				],
 				'pods-developer'                     => [
-					'label' => __( 'Pods Developer Activated' ),
+					'label' => __( 'Pods Developer Activated', 'pods' ),
 					'value' => ( pods_developer() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-tableless-mode'                => [
@@ -4757,7 +4790,7 @@ class PodsAdmin {
 					'value' => ( pods_podsrel_enabled() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-relationship-table-status'     => [
-					'label' => __( 'Pods Relationship Table Count' ),
+					'label' => __( 'Pods Relationship Table Count', 'pods' ),
 					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
 				],
 				'pods-light-mode'                    => [
@@ -4765,23 +4798,23 @@ class PodsAdmin {
 					'value' => ( pods_light() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-strict'                        => [
-					'label' => __( 'Pods Strict Activated' ),
+					'label' => __( 'Pods Strict Activated', 'pods' ),
 					'value' => ( pods_strict( false ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-allow-deprecated'              => [
-					'label' => __( 'Pods Allow Deprecated' ),
+					'label' => __( 'Pods Allow Deprecated', 'pods' ),
 					'value' => ( pods_allow_deprecated() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-api-cache'                     => [
-					'label' => __( 'Pods API Cache Activated' ),
+					'label' => __( 'Pods API Cache Activated', 'pods' ),
 					'value' => ( pods_api_cache() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-shortcode-allow-evaluate-tags' => [
-					'label' => __( 'Pods Shortcode Allow Evaluate Tags' ),
+					'label' => __( 'Pods Shortcode Allow Evaluate Tags', 'pods' ),
 					'value' => ( pods_shortcode_allow_evaluate_tags() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-can-use-sessions'              => [
-					'label' => __( 'Pods Can Use Sessions' ),
+					'label' => __( 'Pods Can Use Sessions', 'pods' ),
 					'value' => ( pods_can_use_sessions( true ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 			],
@@ -4936,7 +4969,7 @@ class PodsAdmin {
 			return false;
 		}
 
-		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+		$page = pods_v( 'page' );
 
 		// We only show on the plugins.php page or on Pods Admin pages.
 		if (

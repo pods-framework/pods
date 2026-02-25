@@ -44,7 +44,16 @@ class PostTypeTest extends Pods_UnitTestCase {
 		$this->public_pod     = null;
 		$this->non_public_pod = null;
 
+		unset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
+
 		parent::tearDown();
+	}
+
+	private function set_post_password_cookie( string $password ) {
+		require_once ABSPATH . WPINC . '/class-phpass.php';
+		$hasher = new \PasswordHash( 8, true );
+
+		$_COOKIE['wp-postpass_' . COOKIEHASH] = $hasher->HashPassword( wp_unslash( $password ) );
 	}
 
 	public function test_pods_current_user_can_access_object_returns_true_for_admin() {
@@ -675,7 +684,7 @@ class PostTypeTest extends Pods_UnitTestCase {
 			'post_status'   => 'publish',
 		] );
 
-		$_COOKIE[ 'wp-postpass_' . COOKIEHASH ] = wp_hash_password( 'test' );
+		$this->set_post_password_cookie( 'test' );
 
 		$this->assertFalse( pods_access_bypass_post_with_password(
 			[
@@ -720,7 +729,7 @@ class PostTypeTest extends Pods_UnitTestCase {
 			'post_status'   => 'private',
 		] );
 
-		$_COOKIE[ 'wp-postpass_' . COOKIEHASH ] = wp_hash_password( 'test' );
+		$this->set_post_password_cookie( 'some-password' );
 
 		$this->assertTrue( pods_access_bypass_private_post(
 			[

@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Deprecated
  */
@@ -6,49 +12,6 @@
 /**
  *
  */
-
-// JSON support
-if ( ! function_exists( 'json_encode' ) ) {
-	require_once ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php';
-
-	/**
-	 * @param mixed $str Data to encode.
-	 *
-	 * @return mixed
-	 */
-	function json_encode( $str ) {
-		$json = new Moxiecode_JSON();
-
-		return $json->encode( $str );
-	}
-
-	/**
-	 * @param string $str JSON string.
-	 *
-	 * @return mixed
-	 */
-	function json_decode( $str ) {
-		$json = new Moxiecode_JSON();
-
-		return $json->decode( $str );
-	}
-}//end if
-
-// WP 3.4.x support
-if ( ! function_exists( 'wp_send_json' ) ) {
-	/**
-	 * @param array $response Response data.
-	 */
-	function wp_send_json( $response ) {
-		@header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
-		echo json_encode( $response );
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			wp_die();
-		} else {
-			die;
-		}
-	}
-}
 
 /**
  * Get the full URL of the current page
@@ -62,9 +25,11 @@ if ( ! function_exists( 'get_current_url' ) ) {
 	/**
 	 * @return mixed|void
 	 */
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	function get_current_url() {
 		$url = pods_current_url();
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'get_current_url', $url );
 	}
 }
@@ -94,10 +59,12 @@ function pod_query( $sql, $error = 'SQL failed', $results_error = null, $no_resu
 	$sql = str_replace( '@wp_', $wpdb->prefix, $sql );
 	$sql = str_replace( '{prefix}', '@wp_', $sql );
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	$sql = apply_filters( 'pod_query', $sql, $error, $results_error, $no_results_error );
 
 	$result = pods_query( $sql, $error, $results_error, $no_results_error );
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	$result = apply_filters( 'pod_query_return', $result, $sql, $error, $results_error, $no_results_error );
 
 	return $result;
@@ -424,8 +391,6 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
  * @param string $message
  * @param bool   $error Whether or not it is an error message
  *
- * @return bool
- *
  * @since     1.12
  * @deprcated 2.3
  */
@@ -439,8 +404,6 @@ function pods_ui_message( $message, $error = false ) {
  * Output an error in the WP Dashboard UI
  *
  * @param string $message
- *
- * @return bool
  *
  * @since     1.12
  * @deprcated 2.3

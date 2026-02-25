@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <script type="text/javascript">
 	var pods_shortcode_first = true;
@@ -344,22 +347,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="wrap pods-shortcode">
 		<div>
 			<div class="pods-header">
-				<h3 class="popup-header"><?php _e( 'Pods &raquo; Embed', 'pods' ); ?></h3>
+				<h3 class="popup-header"><?php esc_html_e( 'Pods Embed', 'pods' ); ?></h3>
 			</div>
 
 			<form id="pods_shortcode_form_element">
 				<div class="pods-select">
-					<label for="pods_use_case_selector"><?php _e( 'What would you like to do?', 'pods' ); ?></label>
+					<label for="pods_use_case_selector"><?php esc_html_e( 'What would you like to do?', 'pods' ); ?></label>
 
 					<select id="pods_use_case_selector">
-						<option value="single"><?php _e( 'Display a single Pod item', 'pods' ); ?></option>
-						<option value="list"><?php _e( 'List multiple Pod items', 'pods' ); ?></option>
-						<option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>
-						<option value="field-current" SELECTED><?php _e( 'Display a field from this item', 'pods' ); ?></option>
-						<option value="form"><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
-						<option value="view"><?php _e( 'Include a file from a theme, with caching options', 'pods' ); ?></option>
+						<option value="single"><?php esc_html_e( 'Display a single Pod item', 'pods' ); ?></option>
+						<option value="list"><?php esc_html_e( 'List multiple Pod items', 'pods' ); ?></option>
+						<option value="field"><?php esc_html_e( 'Display a field from a single Pod item', 'pods' ); ?></option>
+						<option value="field-current" SELECTED><?php esc_html_e( 'Display a field from this item', 'pods' ); ?></option>
+						<option value="form"><?php esc_html_e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
+						<option value="view"><?php esc_html_e( 'Include a file from a theme, with caching options', 'pods' ); ?></option>
 						<?php if ( class_exists( 'Pods_Pages' ) ) { ?>
-						<option value="page"><?php _e( 'Embed content from a Pods Page', 'pods' ); ?></option>
+						<option value="page"><?php esc_html_e( 'Embed content from a Pods Page', 'pods' ); ?></option>
 						<?php } ?>
 					</select>
 				</div>
@@ -370,7 +373,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					$all_pods  = $api->load_pods( array( 'names' => true ) );
 					$pod_count = count( $all_pods );
 					?>
-					<label for="pod_select"><?php _e( 'Choose a Pod', 'pods' ); ?></label>
+					<label for="pod_select"><?php esc_html_e( 'Choose a Pod', 'pods' ); ?></label>
 
 					<?php
 					if ( $pod_count > 0 ) {
@@ -385,7 +388,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php
 					} else {
 					?>
-					<strong class="red" id="pod_select"><?php _e( 'None Found', 'pods' ); ?></strong> <?php } ?>
+					<strong class="red" id="pod_select"><?php esc_html_e( 'None Found', 'pods' ); ?></strong> <?php } ?>
 				</div>
 
 				<?php if ( class_exists( 'Pods_Templates' ) ) { ?>
@@ -394,10 +397,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					$templates      = $api->load_templates();
 					$template_count = count( $templates );
 					?>
-					<label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
+					<label for="pod_template"><?php esc_html_e( 'Template', 'pods' ); ?></label>
 
 					<select id="pod_template" name="pod_template">
-						<option value="" SELECTED>- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
+						<option value="" SELECTED>- <?php esc_html_e( 'Custom Template', 'pods' ); ?> -</option>
 
 						<?php foreach ( $templates as $tmpl ) { ?>
 						<option value="<?php echo esc_attr( $tmpl['name'] ); ?>">
@@ -410,7 +413,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } else {
 ?>
 <div class="pods-section hide">
-<label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
+<label for="pod_template"><?php esc_html_e( 'Template', 'pods' ); ?></label>
 
 <input type="text" id="pod_template" name="pod_template" />
 </div>
@@ -419,7 +422,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				?>
 
 				<div class="pods-section hide">
-					<label for="pod_template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
+					<label for="pod_template_custom"><?php esc_html_e( 'Custom Template', 'pods' ); ?></label>
 
 					<textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10" class="widefat"></textarea>
 				</div>
@@ -430,7 +433,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					$pages      = $api->load_pages();
 					$page_count = count( $pages );
 					?>
-					<label for="pods_page"><?php _e( 'Pods Page', 'pods' ); ?></label>
+					<label for="pods_page"><?php esc_html_e( 'Pods Page', 'pods' ); ?></label>
 
 					<select id="pods_page" name="pods_page">
 						<?php foreach ( $pages as $page ) { ?>
@@ -443,61 +446,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php } ?>
 
 				<div class="pods-section hide">
-					<label for="pod_slug"><?php _e( 'ID or Slug', 'pods' ); ?></label>
+					<label for="pod_slug"><?php esc_html_e( 'ID or Slug', 'pods' ); ?></label>
 
 					<input type="text" id="pod_slug" name="pod_slug" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_limit"><?php _e( 'Limit', 'pods' ); ?></label>
+					<label for="pod_limit"><?php esc_html_e( 'Limit', 'pods' ); ?></label>
 
 					<input type="text" id="pod_limit" name="pod_limit" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_orderby"><?php _e( 'Order By', 'pods' ); ?></label>
+					<label for="pod_orderby"><?php esc_html_e( 'Order By', 'pods' ); ?></label>
 
 					<input type="text" id="pod_orderby" name="pod_orderby" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_where"><?php _e( 'Where', 'pods' ); ?></label>
+					<label for="pod_where"><?php esc_html_e( 'Where', 'pods' ); ?></label>
 
 					<input type="text" name="pod_where" id="pod_where" />
 				</div>
 
 				<div class="pods-section">
-					<label for="pod_field"><?php _e( 'Field', 'pods' ); ?></label>
+					<label for="pod_field"><?php esc_html_e( 'Field', 'pods' ); ?></label>
 
 					<input type="text" name="pod_field" id="pod_field" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_fields"><?php _e( 'Fields (comma-separated)', 'pods' ); ?></label>
+					<label for="pod_fields"><?php esc_html_e( 'Fields (comma-separated)', 'pods' ); ?></label>
 
 					<input type="text" id="pod_fields" name="pod_fields" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_label"><?php _e( 'Submit Label', 'pods' ); ?></label>
+					<label for="pod_label"><?php esc_html_e( 'Submit Label', 'pods' ); ?></label>
 
 					<input type="text" id="pod_label" name="pod_label" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_thank_you"><?php _e( 'Thank You URL upon submission', 'pods' ); ?></label>
+					<label for="pod_thank_you"><?php esc_html_e( 'Thank You URL upon submission', 'pods' ); ?></label>
 
 					<input type="text" id="pod_thank_you" name="pod_thank_you" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_view"><?php _e( 'File to include', 'pods' ); ?></label>
+					<label for="pod_view"><?php esc_html_e( 'File to include', 'pods' ); ?></label>
 
 					<input type="text" name="pod_view" id="pod_view" />
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
+					<label for="pod_cache_mode"><?php esc_html_e( 'Cache Type', 'pods' ); ?></label>
 
 					<?php
 					$cache_modes = array(
@@ -519,13 +522,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<div class="pods-section hide">
-					<label for="pod_expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
+					<label for="pod_expires"><?php esc_html_e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
 
 					<input type="text" name="pod_expires" id="pod_expires" value="<?php echo( 60 * 5 ); ?>" />
 				</div>
 
 				<div class="pods-section" style="text-align: right;">
-					<a class="button-primary" id="pods_insert_shortcode" href="#insert-shortcode"><?php _e( 'Insert', 'pods' ); ?></a>
+					<a class="button-primary" id="pods_insert_shortcode" href="#insert-shortcode"><?php esc_html_e( 'Insert', 'pods' ); ?></a>
 				</div>
 			</form>
 		</div>

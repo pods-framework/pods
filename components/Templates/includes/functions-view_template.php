@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Utility function for processesing frontier based templates
  *
@@ -25,7 +31,7 @@ add_shortcode( 'pod_if_field', 'frontier_if_block' );
  */
 function frontier_get_shortcodes() {
 
-	$shortcodes = array(
+	$shortcodes = [
 		'each',
 		'pod_sub_template',
 		'once',
@@ -36,7 +42,7 @@ function frontier_get_shortcodes() {
 		'pod_after_template',
 		'if',
 		'pod_if_field',
-	);
+	];
 
 	return $shortcodes;
 }
@@ -92,7 +98,7 @@ function frontier_decode_template( $code, $atts ) {
  * processes if condition within a template
  *
  * @param array  $attributes attributes from template
- * @param string $code encoded template to be decoded
+ * @param string $code       encoded template to be decoded
  *
  * @return string
  * @since 2.4.0
@@ -187,7 +193,7 @@ function frontier_if_block( $attributes, $code ) {
 			$attributes['compare'] = '=';
 		}
 
-		$attributes['compare'] = html_entity_decode( $attributes['compare'] );
+		$attributes['compare'] = pods_replace_gt_et_placeholders( $attributes['compare'] );
 		$attributes['compare'] = strtoupper( $attributes['compare'] );
 
 		// Normalize the compare.
@@ -342,29 +348,29 @@ function frontier_if_block( $attributes, $code ) {
  */
 function frontier_template_blocks( $atts, $code, $slug ) {
 
-	global $template_post_blocks;
-	if ( ! isset( $template_post_blocks ) ) {
-		$template_post_blocks = array(
+	global $pods_template_post_blocks;
+	if ( ! isset( $pods_template_post_blocks ) ) {
+		$pods_template_post_blocks = [
 			'before' => null,
 			'after'  => null,
-		);
+		];
 	}
 	if ( $slug === 'pod_before_template' ) {
-		if ( ! isset( $template_post_blocks['before'][ $atts['pod'] ] ) ) {
-			$template_post_blocks['before'][ $atts['pod'] ] = pods_do_shortcode(
-				frontier_decode_template( $code, $atts ), array(
+		if ( ! isset( $pods_template_post_blocks['before'][ $atts['pod'] ] ) ) {
+			$pods_template_post_blocks['before'][ $atts['pod'] ] = pods_do_shortcode(
+				frontier_decode_template( $code, $atts ), [
 					'if',
 					'else',
-				)
+				]
 			);
 		}
 	} elseif ( $slug === 'pod_after_template' ) {
-		if ( ! isset( $template_post_blocks['after'][ $atts['pod'] ] ) ) {
-			$template_post_blocks['after'][ $atts['pod'] ] = pods_do_shortcode(
-				frontier_decode_template( $code, $atts ), array(
+		if ( ! isset( $pods_template_post_blocks['after'][ $atts['pod'] ] ) ) {
+			$pods_template_post_blocks['after'][ $atts['pod'] ] = pods_do_shortcode(
+				frontier_decode_template( $code, $atts ), [
 					'if',
 					'else',
-				)
+				]
 			);
 		}
 	}
@@ -386,7 +392,7 @@ function frontier_template_once_blocks( $atts, $code ) {
 	global $frontier_once_hashes;
 
 	if ( ! isset( $frontier_once_hashes ) ) {
-		$frontier_once_hashes = array();
+		$frontier_once_hashes = [];
 	}
 
 	$blockhash = md5( $code . $atts['id'] );
@@ -438,11 +444,11 @@ function frontier_do_subtemplate( $atts, $content ) {
 			)
 			&& ! isset( $entries[0] )
 		) {
-			$entries = array( $entries );
+			$entries = [ $entries ];
 		}
 
 		// Object types that could be Pods
-		$object_types = array( 'post_type', 'pod' );
+		$object_types = [ 'post_type', 'pod' ];
 
 		if ( $is_repeatable_field ) {
 			foreach ( $entries as $key => $entry ) {
@@ -452,15 +458,14 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$template = str_replace( '{@_key}', '{@_index}', $template );
 				$template = str_replace( '{_index}', '{@_index}', $template );
 
-				$entry = array(
+				$entry = [
 					'_index' => $key,
 					'_value' => $entry,
-				);
+				];
 
 				$out .= frontier_pseudo_magic_tags( $template, $entry, $pod, true );
 			}
-		}
-		/**
+		} /**
 		 * Note on the change below for issue #3018:
 		 * ... || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ]
 		 *
@@ -480,10 +485,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 					continue;
 				}
 
-				$subatts = array(
+				$subatts = [
 					'id'  => $entry[ $subpod->pod_data['field_id'] ],
 					'pod' => $field['pick_val'],
-				);
+				];
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
 				$template = str_replace( '{_key}', $key, $template );
@@ -503,11 +508,11 @@ function frontier_do_subtemplate( $atts, $content ) {
 				}
 
 				$out .= pods_shortcode_run_safely(
-					array(
+					[
 						'name'  => $field['pick_val'],
 						'slug'  => $target_id,
 						'index' => $key,
-					),
+					],
 					$template,
 					false
 				);
@@ -523,7 +528,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$template = str_replace( '{_index}', $key, $template );
 
 				if ( $media_pod && $media_pod->valid() && $media_pod->fetch( $entry['ID'] ) ) {
-					$template   = str_replace( '{@' . $field_name . '.', '{@', $template );
+					$template = str_replace( '{@' . $field_name . '.', '{@', $template );
 
 					$entry_pod = $media_pod;
 				} else {
@@ -545,17 +550,17 @@ function frontier_do_subtemplate( $atts, $content ) {
 			}
 		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
 			// Relationship to something that is extended by Pods
-			$entries = $pod->field( array( 'name' => $field_name, 'output' => 'pod' ) );
+			$entries = $pod->field( [ 'name' => $field_name, 'output' => 'pod' ] );
 			foreach ( $entries as $key => $entry ) {
 				if ( ! is_object( $entry ) ) {
 					continue;
 				}
 
-				$subatts = array(
-					'id' => $entry->id,
-					'pod' => $entry->pod,
+				$subatts = [
+					'id'    => $entry->id,
+					'pod'   => $entry->pod,
 					'index' => $key,
-				);
+				];
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
 
@@ -578,10 +583,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$template = str_replace( '{_index}', '{@_index}', $template );
 
 				if ( ! is_array( $entry ) ) {
-					$entry = array(
+					$entry = [
 						'_index' => $key,
 						'_value' => $entry,
-					);
+					];
 				}
 
 				$out .= pods_do_shortcode( frontier_pseudo_magic_tags( $template, $entry, $pod ), frontier_get_shortcodes() );
@@ -605,8 +610,8 @@ function frontier_do_subtemplate( $atts, $content ) {
  */
 function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknown = false ) {
 	return preg_replace_callback(
-		'/({@(.*?)})/m', function ( $tag ) use ( $pod, $data, $skip_unknown ) {
-
+		'/({@(.*?)})/m',
+		function ( $tag ) use ( $pod, $data, $skip_unknown ) {
 			// This is essentially Pods->process_magic_tags() but with the Pods specific code ripped out
 			if ( is_array( $tag ) ) {
 				if ( ! isset( $tag[2] ) && strlen( trim( $tag[2] ) ) < 1 ) {
@@ -662,10 +667,10 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 
 			if ( is_array( $value ) ) {
 				$value = pods_serial_comma(
-					$value, array(
+					$value, [
 						'field'  => $field_name,
 						'fields' => $pod->fields,
-					)
+					]
 				);
 			}
 
@@ -674,7 +679,8 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 			}
 
 			return '';
-		}, $template
+		},
+		$template
 	);
 }
 
@@ -693,19 +699,19 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 
 	global $frontier_once_tags;
 
-	$commands = array(
+	$commands = [
 		'each'   => 'pod_sub_template',
 		'once'   => 'pod_once_template',
 		'before' => 'pod_before_template',
 		'after'  => 'pod_after_template',
 		'if'     => 'pod_if_field',
-	);
+	];
 
 	if ( ! shortcode_exists( 'pod_sub_template' ) ) {
 		add_shortcode( 'pod_sub_template', 'frontier_do_subtemplate' );
 	}
 
-	$commands = array_merge( $commands, get_option( 'pods_frontier_extra_commands', array() ) );
+	$commands = array_merge( $commands, get_option( 'pods_frontier_extra_commands', [] ) );
 
 	/**
 	 * Add additional control blocks to Pods templates
@@ -720,21 +726,21 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 	 */
 	$commands = apply_filters( 'pods_frontier_template_commands', $commands );
 
-	$aliases = array();
+	$aliases = [];
 	foreach ( $commands as $command => $shortcode ) {
 		//preg_match_all( '/(\[' . $command . '(?<attributes>.*?)]|\[\/' . $command . '\])/m', $code, $matches );
 		preg_match_all( '/('
-            . '\[' . preg_quote( $command, '/' ) . '\s*'
-            . '(?<field_attr>field="(?<field>[^"]*)")*' . '\s*'
-            . '(?<value_attr>value="(?<value>[^"]*)")*' . '\s*'
-            . '(?<compare_attr>compare="(?<compare>[^"]*)")*' . '\s*'
-            . '(?<other_attributes>[^\]]*)'
-            . ']|\[\/' . preg_quote( $command, '/' ) . '\]'
-            . ')/m', $code, $matches );
+		                . '\[' . preg_quote( $command, '/' ) . '\s*'
+		                . '(?<field_attr>field="(?<field>[^"]*)")*' . '\s*'
+		                . '(?<value_attr>value="(?<value>[^"]*)")*' . '\s*'
+		                . '(?<compare_attr>compare="(?<compare>[^"]*)")*' . '\s*'
+		                . '(?<other_attributes>[^\]]*)'
+		                . ']|\[\/' . preg_quote( $command, '/' ) . '\]'
+		                . ')/m', $code, $matches );
 
 		if ( ! empty( $matches[0] ) ) {
 			// holder for found tags.
-			$tags       = array();
+			$tags       = [];
 			$indexCount = 0;
 			foreach ( $matches[0] as $key => $tag ) {
 				if ( false !== strpos( $tag, '[/' ) ) {
@@ -806,7 +812,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 					}
 				}
 
-				$atts  = ' pod="' . esc_attr( $pod_name ) . '"';
+				$atts = ' pod="' . esc_attr( $pod_name ) . '"';
 				$atts .= ' id="' . esc_attr( $ID ) . '"';
 
 				if ( $field ) {
@@ -914,7 +920,7 @@ function frontier_get_regex( $codes ) {
 	// this makes it easier to cycle through and get the used codes for inclusion
 	$validcodes = join( '|', array_map( 'preg_quote', $codes ) );
 
-	$regex_pieces = array(
+	$regex_pieces = [
 		// Opening bracket
 		'\\[',
 		// 1: Optional second opening bracket for escaping shortcodes: [[tag]]
@@ -949,7 +955,7 @@ function frontier_get_regex( $codes ) {
 		')*+' . ')' . '\\[\\/\\2\\]',
 		// 6: Optional second closing brocket for escaping shortcodes: [[tag]]
 		')?' . ')' . '(\\]?)',
-	);
+	];
 
 	return implode( '', $regex_pieces );
 }
@@ -964,18 +970,18 @@ function frontier_get_regex( $codes ) {
  */
 function frontier_end_template( $code, $base, $template, $pod ) {
 
-	global $template_post_blocks;
+	global $pods_template_post_blocks;
 
-	if ( ! empty( $template_post_blocks['before'][ $pod->pod ] ) ) {
-		$code = $template_post_blocks['before'][ $pod->pod ] . $code;
+	if ( ! empty( $pods_template_post_blocks['before'][ $pod->pod ] ) ) {
+		$code = $pods_template_post_blocks['before'][ $pod->pod ] . $code;
 
-		unset( $template_post_blocks['before'][ $pod->pod ] );
+		unset( $pods_template_post_blocks['before'][ $pod->pod ] );
 	}
 
-	if ( ! empty( $template_post_blocks['after'][ $pod->pod ] ) ) {
-		$code .= $template_post_blocks['after'][ $pod->pod ];
+	if ( ! empty( $pods_template_post_blocks['after'][ $pod->pod ] ) ) {
+		$code .= $pods_template_post_blocks['after'][ $pod->pod ];
 
-		unset( $template_post_blocks['after'][ $pod->pod ] );
+		unset( $pods_template_post_blocks['after'][ $pod->pod ] );
 	}
 
 	return pods_do_shortcode( $code, frontier_get_shortcodes() );

@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 pods_form_enqueue_style( 'pods-form' );
 
@@ -13,7 +16,8 @@ pods_form_enqueue_style( 'pods-form' );
 ?>
 
 <div class="pods-submittable-fields">
-	<div id="poststuff" class="poststuff metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
+	<div id="poststuff" class="poststuff metabox-holder has-right-sidebar">
+		<!-- class "has-right-sidebar" preps for a sidebar... always present? -->
 		<div id="side-info-column" class="inner-sidebar">
 			<div id="side-sortables" class="meta-box-sortables ui-sortable">
 				<!-- BEGIN PUBLISH DIV -->
@@ -31,7 +35,14 @@ pods_form_enqueue_style( 'pods-form' );
 										?>
 										<div id="minor-publishing-actions">
 											<div id="preview-action">
-												<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+												<a class="button"
+													href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>"
+													target="_blank" rel="noopener noreferrer">
+													<?php
+													// translators: %s is the item label.
+													echo esc_html( sprintf( __( 'View %s', 'pods' ), $obj->item ) );
+													?>
+												</a>
 											</div>
 											<div class="clear"></div>
 										</div>
@@ -42,13 +53,14 @@ pods_form_enqueue_style( 'pods-form' );
 										?>
 										<div id="misc-publishing-actions">
 											<?php
-											$datef = __( 'M j, Y @ G:i' );
+											$datef = __( 'M j, Y @ G:i', 'pods' );
 
 											if ( isset( $pod->pod_data['fields']['created'] ) ) {
 												$date = date_i18n( $datef, strtotime( $pod->field( 'created' ) ) );
 												?>
 												<div class="misc-pub-section curtime">
-													<span id="timestamp"><?php _e( 'Created on', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+													<span
+														id="timestamp"><?php esc_html_e( 'Created on', 'pods' ); ?>: <b><?php echo esc_html( $date ); ?></b></span>
 												</div>
 												<?php
 											}
@@ -57,7 +69,7 @@ pods_form_enqueue_style( 'pods-form' );
 												$date = date_i18n( $datef, strtotime( $pod->field( 'modified' ) ) );
 												?>
 												<div class="misc-pub-section curtime">
-													<span id="timestamp"><?php _e( 'Last Modified', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+													<span id="timestamp"><?php esc_html_e( 'Last Modified', 'pods' ); ?>: <b><?php echo esc_html( $date ); ?></b></span>
 												</div>
 												<?php
 											}
@@ -75,14 +87,16 @@ pods_form_enqueue_style( 'pods-form' );
 							<div id="major-publishing-actions">
 								<?php
 								if ( pods_is_admin(
-									array(
-										'pods',
-										'pods_delete_' . $pod->pod,
-									)
-								) && ! in_array( 'delete', $obj->actions_disabled, true ) && ! in_array( 'delete', $obj->actions_hidden, true ) ) {
+										 [
+											 'pods',
+											 'pods_delete_' . $pod->pod,
+										 ]
+									 ) && ! in_array( 'delete', $obj->actions_disabled, true ) && ! in_array( 'delete', $obj->actions_hidden, true ) ) {
 									?>
 									<div id="delete-action">
-										<a class="submitdelete deletion" href="<?php echo esc_url( pods_query_arg( array( 'action' => 'delete' ) ) ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+										<a class="submitdelete deletion"
+											href="<?php echo esc_url( pods_query_arg( [ 'action' => 'delete' ] ) ); ?>"
+											onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php esc_html_e( 'Delete', 'pods' ); ?></a>
 									</div>
 									<!-- /#delete-action -->
 								<?php } ?>
@@ -119,17 +133,25 @@ pods_form_enqueue_style( 'pods-form' );
 										<?php
 										if ( 0 < $prev ) {
 											?>
-											<a class="previous-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $prev ), null, 'do' ) ); ?>">
+											<a class="previous-item"
+												href="<?php echo esc_url( pods_query_arg( [ 'id' => $prev ], null, 'do' ) ); ?>">
 												<span>&laquo;</span>
-												<?php echo sprintf( __( 'Previous %s', 'pods' ), $singular_label ); ?>
+												<?php
+												// translators: %s is the singular label for the content type.
+												echo esc_html( sprintf( __( 'Previous %s', 'pods' ), $singular_label ) );
+												?>
 											</a>
 											<?php
 										}
 
 										if ( 0 < $next ) {
 											?>
-											<a class="next-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $next ), null, 'do' ) ); ?>">
-												<?php echo sprintf( __( 'Next %s', 'pods' ), $singular_label ); ?>
+											<a class="next-item"
+												href="<?php echo esc_url( pods_query_arg( [ 'id' => $next ], null, 'do' ) ); ?>">
+												<?php
+												// translators: %s is the singular label for the content type.
+												echo esc_html( sprintf( __( 'Next %s', 'pods' ), $singular_label ) );
+												?>
 												<span>&raquo;</span> </a>
 											<?php
 										}
@@ -204,13 +226,13 @@ pods_form_enqueue_style( 'pods-form' );
 									foreach ( $fields as $field ) {
 										if ( isset( $field['custom_display'] ) && is_callable( $field['custom_display'] ) ) {
 											$value = call_user_func_array(
-												$field['custom_display'], array(
+												$field['custom_display'], [
 													$pod->row(),
 													$obj,
 													$pod->field( $field['name'] ),
 													$field['name'],
 													$field,
-												)
+												]
 											);
 										} else {
 											$value = $pod->display( $field['name'] );
@@ -218,10 +240,10 @@ pods_form_enqueue_style( 'pods-form' );
 										?>
 										<tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
 											<th scope="row" valign="top">
-												<strong><?php echo $field['label']; ?></strong>
+												<strong><?php echo esc_html( $field['label'] ); ?></strong>
 											</th>
 											<td>
-												<?php echo $value; ?>
+												<?php echo wp_kses_post( $value ); ?>
 											</td>
 										</tr>
 										<?php
@@ -235,9 +257,9 @@ pods_form_enqueue_style( 'pods-form' );
 					</div>
 					<!-- /#normal-sortables -->
 
-				<?php
+					<?php
 				}//end if
-	?>
+				?>
 
 				<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
 				<!-- /#advanced-sortables -->

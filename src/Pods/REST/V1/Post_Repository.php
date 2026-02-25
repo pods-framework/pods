@@ -2,7 +2,13 @@
 
 namespace Pods\REST\V1;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\REST\Interfaces\Messages_Interface;
+use WP_Error;
 use WP_Post;
 
 /**

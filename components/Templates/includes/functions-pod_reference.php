@@ -1,12 +1,25 @@
 <?php
 
-add_action( 'wp_ajax_pq_loadpod', 'pq_loadpod' );
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+add_action( 'wp_ajax_pq_loadpod', 'pods_ajax_pq_loadpod' );
 
 /**
- * @param bool $podname
+ * @param bool|string $podname
+ */
+function pods_ajax_pq_loadpod() {
+	pq_loadpod();
+}
+
+/**
+ * @param bool|string $podname
  *
  * @return array
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function pq_loadpod( $podname = false ) {
 
 	if ( ! pods_is_admin() ) {
@@ -18,7 +31,7 @@ function pq_loadpod( $podname = false ) {
 	if ( ! empty( $_POST['pod'] ) ) {
 		$podname = $_POST['pod'];
 	}
-	$fields = array( __( 'No reference Pod selected', 'pods' ) );
+	$fields = [ __( 'No reference Pod selected', 'pods' ) ];
 
 	if ( ! empty( $podname ) ) {
 		$fields = pq_recurse_pod_fields( $podname );
@@ -34,14 +47,15 @@ function pq_loadpod( $podname = false ) {
 
 /**
  * @param        $pod_name
- * @param string   $prefix
- * @param array    $pods_visited
+ * @param string $prefix
+ * @param array  $pods_visited
  *
  * @return array
  */
-function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array() ) {
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = [] ) {
 
-	$fields = array();
+	$fields = [];
 	if ( empty( $pod_name ) ) {
 		return $fields;
 	}
@@ -52,7 +66,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		return $fields;
 	}
 
-	$recurse_queue = array();
+	$recurse_queue = [];
 
 	$image_sizes   = get_intermediate_image_sizes();
 	$image_sizes[] = 'full';
@@ -106,7 +120,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		}
 	}//end foreach
 
-	sort($fields);
+	sort( $fields );
 
 	if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
 		$fields[] = "{$prefix}post_thumbnail";
@@ -124,7 +138,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 
 	foreach ( $recurse_queue as $recurse_name => $recurse_prefix ) {
 		$fields[] = trim( $recurse_prefix, '.' );
-		$fields = array_merge( $fields, pq_recurse_pod_fields( $recurse_name, $recurse_prefix, $pods_visited ) );
+		$fields   = array_merge( $fields, pq_recurse_pod_fields( $recurse_name, $recurse_prefix, $pods_visited ) );
 	}
 
 	return $fields;

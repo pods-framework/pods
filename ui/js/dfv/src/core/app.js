@@ -22,6 +22,14 @@ const App = ( {
 	const fieldsData = PodsDFVAPI._fieldDataByStoreKeyPrefix[ storeKey ];
 	const allPodFieldsMap = new Map( fieldsData.map( ( field ) => [ field.name, field ] ) );
 
+	fieldsData.forEach( ( fieldData ) => {
+		if ( 'boolean_group' === fieldData.type ) {
+			fieldData.boolean_group.forEach( ( subFieldData ) => {
+				allPodFieldsMap.set( subFieldData.name, subFieldData );
+			} );
+		}
+	} );
+
 	// Initialize Pods Block Editor overrides if available.
 	useBlockEditor();
 

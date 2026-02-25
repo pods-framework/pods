@@ -2,6 +2,11 @@
 
 namespace Pods\Admin;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use PodsForm;
 
 /**
@@ -155,10 +160,6 @@ class Settings {
 		$autoload = apply_filters( 'pods_admin_settings_autoload', 'yes' );
 
 		update_option( self::OPTION_NAME, $settings, $autoload );
-	}
-
-	public function __( string $text, string $domain, bool $did_init ): string {
-		return $did_init ? __( $text, $domain ) : $text;
 	}
 
 	/**
@@ -316,6 +317,19 @@ class Settings {
 				'0' => $did_init ? __( 'Enable', 'pods' ) : '',
 				'1' => $did_init ? __( 'Disable', 'pods' ) : '',
 			],
+			'site_health_include_in_info' => true,
+		];
+
+		$fields['autocomplete_limit'] = [
+			'name'                        => 'autocomplete_limit',
+			'label'                       => $did_init ? __( 'Limit autocomplete search results in Relationship fields', 'pods' ) : '',
+			'help'                        => $did_init ? __( 'This is the default result limit to use for Relationship fields when doing autocomplete searches. For performance reasons, you will want to keep this number low. To remove the limit, set the value to "-1".', 'pods' ) : '',
+			'type'                        => 'number',
+			'default'                     => '15',
+			'number_format_type'          => 'number',
+			'number_format'               => '9999.99',
+			'number_min'                  => -1,
+			'number_html5'                => true,
 			'site_health_include_in_info' => true,
 		];
 

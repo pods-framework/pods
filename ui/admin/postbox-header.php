@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 /**
  * @var string $title The header title.
@@ -43,4 +46,4 @@ $box_id = 'pods-ui-postbox-header-' . sanitize_title( $title );
 		<span><?php echo esc_html( $title ); ?></span>
 	</h3>
 <?php endif; ?>
-
+<?php

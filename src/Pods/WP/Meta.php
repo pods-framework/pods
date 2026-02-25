@@ -2,6 +2,11 @@
 
 namespace Pods\WP;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit\Pod;
 use PodsMeta;
 use PodsForm;
@@ -175,7 +180,7 @@ class Meta {
 
 					$this->registered_meta[] = [
 						'object_type'    => $type,
-						'meta_key'       => $field['name'],
+						'meta_key'       => $field['name'], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 						'object_subtype' => $pod_name,
 					];
 				}

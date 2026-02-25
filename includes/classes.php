@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package  Pods
  * @category Utilities
@@ -261,7 +267,7 @@ function pods_i18n() {
  * @param bool       $return     (optional) Whether to return the view or not, defaults to false and will echo it
  * @param bool       $limited    (optional) Whether to limit the view to only the theme directory, defaults to false
  *
- * @return string|bool The view output
+ * @return string|bool|null The view output
  *
  * @since 2.0.0
  * @link  https://docs.pods.io/code/pods-view/
@@ -273,7 +279,9 @@ function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache'
 		return $view;
 	}
 
-	echo $view;
+	echo $view; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+	return null;
 }
 
 /**

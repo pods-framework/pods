@@ -2,6 +2,11 @@
 
 namespace Pods\Integrations\WPGraphQL;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use GraphQL\Deferred;
 use GraphQL\Type\Definition\ResolveInfo;

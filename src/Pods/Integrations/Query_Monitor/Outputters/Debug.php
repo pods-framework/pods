@@ -2,14 +2,14 @@
 
 namespace Pods\Integrations\Query_Monitor\Outputters;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use QM_Collector;
 use QM_Collectors;
 use QM_Output_Html;
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 /**
  * Class Debug
@@ -50,16 +50,16 @@ class Debug extends QM_Output_Html {
 		<thead>
 		<tr>
 			<th scope="col" class="qm-nowrap qm-filterable-column">
-				<?php echo $this->build_filter( 'function', $functions, __( 'Function/Method', 'pods' ) ); ?>
+				<?php echo $this->build_filter( 'function', $functions, esc_html__( 'Function/Method', 'pods' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</th>
 			<th scope="col" class="qm-nowrap">
 				<?php esc_html_e( 'Line Number', 'pods' ); ?>
 			</th>
 			<th scope="col" class="qm-nowrap qm-filterable-column">
-				<?php echo $this->build_filter( 'context', $contexts, __( 'Context', 'pods' ) ); ?>
+				<?php echo $this->build_filter( 'context', $contexts, esc_html__( 'Context', 'pods' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</th>
 			<th scope='col' class='qm-filterable-column'>
-				<?php echo $this->build_filter( 'debug-log-type', $debug_log_types, __( 'Debug Log', 'pods' ) ); ?>
+				<?php echo $this->build_filter( 'debug-log-type', $debug_log_types, esc_html__( 'Debug Log', 'pods' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</th>
 			<th scope='col'>
 				<?php esc_html_e( 'Trace', 'pods' ); ?>
@@ -120,13 +120,13 @@ class Debug extends QM_Output_Html {
 					'data-qm-debug-log-type' => implode( ' ', $log_type ),
 				];
 
-				$attr = '';
+				$attr_escaped = '';
 
 				foreach ( $row_attr as $a => $v ) {
-					$attr .= ' ' . $a . '="' . esc_attr( $v ) . '"';
+					$attr_escaped .= ' ' . esc_html( $a ) . '="' . esc_attr( $v ) . '"';
 				}
 				?>
-				<tr<?php echo $attr; ?>>
+				<tr<?php echo $attr_escaped; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<td class="qm-nowrap qm-ltr">
 						<code><?php echo esc_html( $debug['function'] ); ?></code>
 					</td>
@@ -145,7 +145,7 @@ class Debug extends QM_Output_Html {
 							$excerpt = preg_replace( '/ +/', ' ', $excerpt );
 							$excerpt = substr( $excerpt, 0, 100 );
 
-							echo self::build_toggler();
+							echo self::build_toggler(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							echo '<div class="qm-inverse-toggled"><pre class="qm-pre-wrap"><code>';
 							echo esc_html( $excerpt ) . '&nbsp;&hellip;';
 							echo '</code></pre></div>';
@@ -170,12 +170,12 @@ class Debug extends QM_Output_Html {
 							$stack[] = self::output_filename( $frame['display'], $frame['calling_file'], $frame['calling_line'] );
 						}
 
-						echo self::build_toggler();
+						echo self::build_toggler(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						echo '<div class="qm-inverse-toggled"><ol>';
-						echo '<li>' . reset( $stack ) . '&nbsp;&hellip;</li>';
+						echo '<li>' . esc_html( reset( $stack ) ) . '&nbsp;&hellip;</li>';
 						echo '</ol></div>';
 						echo '<div class="qm-toggled"><ol>';
-						echo '<li>' . implode( '</li><li>', $stack ) . '</li>';
+						echo '<li>' . wp_kses_post( implode( '</li><li>', $stack ) ) . '</li>';
 						echo '</ol></div>';
 						?>
 					</td>
@@ -198,11 +198,11 @@ class Debug extends QM_Output_Html {
 				?>
 				<td colspan="5">
 					<?php
-					echo sprintf(
+					echo esc_html( sprintf(
 						'%s %s',
 						number_format_i18n( $total_debug_logs ),
 						_n( 'log', 'logs', $total_debug_logs, 'pods' )
-					);
+					) );
 					?>
 				</td>
 			</tr>

@@ -2,10 +2,15 @@
 
 namespace Pods;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Wisdom Tracker class.
  *
- * @link https://wisdomplugin.com/
+ * @link  https://wisdomplugin.com/
  *
  * @since 2.8.0
  */
@@ -138,11 +143,11 @@ class Wisdom_Tracker {
 	public function schedule_weekly_event( $schedules ) {
 		$schedules['weekly']  = [
 			'interval' => 604800,
-			'display'  => __( 'Once Weekly' ),
+			'display'  => __( 'Once Weekly', 'pods' ),
 		];
 		$schedules['monthly'] = [
 			'interval' => 2635200,
-			'display'  => __( 'Once Monthly' ),
+			'display'  => __( 'Once Monthly', 'pods' ),
 		];
 
 		return $schedules;
@@ -275,7 +280,7 @@ class Wisdom_Tracker {
 			include ABSPATH . '/wp-admin/includes/plugin.php';
 		}
 
-		$plugins        = array_keys( get_plugins() );
+		$plugins = array_keys( get_plugins() );
 		// @todo SKC customization: Contribute back to Wisdom project.
 		$active_plugins = (array) get_option( 'active_plugins', [] );
 
@@ -827,9 +832,11 @@ class Wisdom_Tracker {
 			// Decide on notice text
 			if ( $this->marketing != 1 ) {
 				// Standard notice text
+				// translators: %1$s is the type of plugin/theme being tracked.
 				$notice_text = sprintf( __( 'Thank you for installing our %1$s. We would like to track its usage on your site. We don\'t record any sensitive data, only information regarding the WordPress environment and %1$s settings, which we will use to help us make improvements to the %1$s. Tracking is completely optional.', 'pods' ), $this->what_am_i );
 			} else {
 				// If we have option 1 for marketing, we include reference to sending product information here
+				// translators: %1$s is the type of plugin/theme being tracked.
 				$notice_text = sprintf( __( 'Thank you for installing our %1$s. We\'d like your permission to track its usage on your site and subscribe you to our newsletter. We won\'t record any sensitive data, only information regarding the WordPress environment and %1$s settings, which we will use to help us make improvements to the %1$s. Tracking is completely optional.', 'pods' ), $this->what_am_i );
 			}
 			// And we allow you to filter the text anyway
@@ -839,8 +846,10 @@ class Wisdom_Tracker {
 				<p><?php echo '<strong>' . esc_html( $plugin_name ) . '</strong>'; ?></p>
 				<p><?php echo esc_html( $notice_text ); ?></p>
 				<p>
-					<a href="<?php echo esc_url( $url_yes ); ?>" class="button-secondary"><?php _e( 'Allow', 'pods' ); ?></a>
-					<a href="<?php echo esc_url( $url_no ); ?>" class="button-secondary"><?php _e( 'Do Not Allow', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $url_yes ); ?>"
+						class="button-secondary"><?php esc_html_e( 'Allow', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $url_no ); ?>"
+						class="button-secondary"><?php esc_html_e( 'Do Not Allow', 'pods' ); ?></a>
 				</p>
 			</div>
 			<?php
@@ -875,6 +884,7 @@ class Wisdom_Tracker {
 				'marketing_optin' => 'no',
 			] );
 
+			// translators: %s is the type of plugin/theme being tracked.
 			$marketing_text = sprintf( __( 'Thank you for opting in to tracking. Would you like to receive occasional news about this %s, including details of new features and special offers?', 'pods' ), $this->what_am_i );
 			$marketing_text = apply_filters( 'wisdom_marketing_text_' . esc_attr( $this->plugin_name ), $marketing_text ); ?>
 
@@ -882,8 +892,10 @@ class Wisdom_Tracker {
 				<p><?php echo '<strong>' . esc_html( $plugin_name ) . '</strong>'; ?></p>
 				<p><?php echo esc_html( $marketing_text ); ?></p>
 				<p>
-					<a href="<?php echo esc_url( $url_yes ); ?>" data-putnotice="yes" class="button-secondary"><?php _e( 'Yes Please', 'pods' ); ?></a>
-					<a href="<?php echo esc_url( $url_no ); ?>" data-putnotice="no" class="button-secondary"><?php _e( 'No Thank You', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $url_yes ); ?>" data-putnotice="yes"
+						class="button-secondary"><?php esc_html_e( 'Yes Please', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $url_no ); ?>" data-putnotice="no"
+						class="button-secondary"><?php esc_html_e( 'No Thank You', 'pods' ); ?></a>
 				</p>
 			</div>
 		<?php }
@@ -976,17 +988,17 @@ class Wisdom_Tracker {
 		<style type="text/css">
 			.put-form-active .put-goodbye-form-bg {
 				background: rgba(0, 0, 0, .5);
-				position:   fixed;
-				top:        0;
-				left:       0;
-				width:      100%;
-				height:     100%;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
 			}
 
 			.put-goodbye-form-wrapper {
 				position: relative;
-				z-index:  999;
-				display:  none;
+				z-index: 999;
+				display: none;
 			}
 
 			.put-form-active .put-goodbye-form-wrapper {
@@ -998,23 +1010,23 @@ class Wisdom_Tracker {
 			}
 
 			.put-form-active .put-goodbye-form {
-				position:    absolute;
-				bottom:      30px;
-				left:        0;
-				max-width:   400px;
-				background:  #fff;
+				position: absolute;
+				bottom: 30px;
+				left: 0;
+				max-width: 400px;
+				background: #fff;
 				white-space: normal;
 			}
 
 			.put-goodbye-form-head {
 				background: #0073aa;
-				color:      #fff;
-				padding:    8px 18px;
+				color: #fff;
+				padding: 8px 18px;
 			}
 
 			.put-goodbye-form-body {
 				padding: 8px 18px;
-				color:   #444;
+				color: #444;
 			}
 
 			.deactivating-spinner {
@@ -1022,10 +1034,10 @@ class Wisdom_Tracker {
 			}
 
 			.deactivating-spinner .spinner {
-				float:          none;
-				margin:         4px 4px 0 18px;
+				float: none;
+				margin: 4px 4px 0 18px;
 				vertical-align: bottom;
-				visibility:     visible;
+				visibility: visible;
 			}
 
 			.put-goodbye-form-footer {
@@ -1033,39 +1045,46 @@ class Wisdom_Tracker {
 			}
 		</style>
 		<script>
-			jQuery( document ).ready( function ( $ ) {
-				$( "#put-goodbye-link-<?php echo esc_attr( $this->plugin_name ); ?>" ).on( "click", function () {
+			jQuery( document ).ready( function( $ ) {
+				$( "#put-goodbye-link-<?php echo esc_attr( $this->plugin_name ); ?>" ).on( 'click', function() {
 					// We'll send the user to this deactivation link when they've completed or dismissed the form
 					var url = document.getElementById( "put-goodbye-link-<?php echo esc_attr( $this->plugin_name ); ?>" );
 					$( 'body' ).toggleClass( 'put-form-active' );
 					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).fadeIn();
-					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).html( '<?php echo $html; ?>' + '<div class="put-goodbye-form-footer"><p><a id="put-submit-form" class="button primary" href="#"><?php _e( 'Submit and Deactivate', 'pods' ); ?></a>&nbsp;<a class="secondary button" href="' + url + '"><?php _e( 'Just Deactivate', 'pods' ); ?></a></p></div>' );
-					$( '#put-submit-form' ).on( 'click', function ( e ) {
+					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" )
+						.html( '<?php echo wp_kses_post( $html ); ?>'
+							+ '<div class="put-goodbye-form-footer"><p><a id="put-submit-form" class="button primary" href="#"><?php esc_html_e( 'Submit and Deactivate', 'pods' ); ?></a>&nbsp;<a class="secondary button" href="'
+							+ url
+							+ '"><?php esc_html_e( 'Just Deactivate', 'pods' ); ?></a></p></div>' );
+					$( '#put-submit-form' ).on( 'click', function( e ) {
 						// As soon as we click, the body of the form should disappear
-						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .put-goodbye-form-body" ).fadeOut();
-						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .put-goodbye-form-footer" ).fadeOut();
+						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .put-goodbye-form-body" )
+							.fadeOut();
+						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .put-goodbye-form-footer" )
+							.fadeOut();
 						// Fade in spinner
-						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .deactivating-spinner" ).fadeIn();
+						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .deactivating-spinner" )
+							.fadeIn();
 						e.preventDefault();
 						var values = new Array();
-						$.each( $( "input[name='put-goodbye-options[]']:checked" ), function () {
+						$.each( $( 'input[name=\'put-goodbye-options[]\']:checked' ), function() {
 							values.push( $( this ).val() );
 						} );
 						var details = $( '#put-goodbye-reasons' ).val();
 						var data = {
-							'action'   : 'goodbye_form',
-							'values'   : values,
-							'details'  : details,
-							'security' : "<?php echo wp_create_nonce( 'wisdom_goodbye_form' ); ?>",
-							'dataType' : "json"
-						}
-						$.post( ajaxurl, data, function ( response ) {
+							'action': 'goodbye_form',
+							'values': values,
+							'details': details,
+							'security': "<?php echo esc_js( wp_create_nonce( 'wisdom_goodbye_form' ) ); ?>",
+							'dataType': 'json',
+						};
+						$.post( ajaxurl, data, function( response ) {
 							// Redirect to original deactivation URL
 							window.location.href = url;
 						} );
 					} );
 					// If we click outside the form, the form will close
-					$( '.put-goodbye-form-bg' ).on( 'click', function () {
+					$( '.put-goodbye-form-bg' ).on( 'click', function() {
 						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).fadeOut();
 						$( 'body' ).removeClass( 'put-form-active' );
 					} );

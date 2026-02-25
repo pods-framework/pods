@@ -2,6 +2,11 @@
 
 namespace Pods\Tools;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Throwable;
 use PodsForm;
@@ -65,28 +70,24 @@ class Repair extends Base {
 		// Find any pod that has the same name as another pod.
 		global $wpdb;
 
-		$sql = "
-			SELECT DISTINCT
-				`primary`.`ID` AS `primary_id`,
-				`primary`.`post_name` AS `primary_name`,
-				`duplicate`.`ID` AS `duplicate_id`,
-				`duplicate`.`post_name` AS `duplicate_name`
-			FROM `{$wpdb->posts}` AS `primary`
-			LEFT JOIN `{$wpdb->posts}` AS `duplicate`
-				ON `duplicate`.`post_name` = `primary`.`post_name`
-			WHERE
-				`primary`.`post_type` = %s
-				AND `duplicate`.`ID` != `primary`.`ID`
-				AND `duplicate`.`post_type` = `primary`.`post_type`
-			ORDER BY `primary`.`ID`
-		";
-
 		$duplicate_pods = $wpdb->get_results(
 			$wpdb->prepare(
-				$sql,
-				[
-					'_pods_pod',
-				]
+				"
+					SELECT DISTINCT
+						`primary`.`ID` AS `primary_id`,
+						`primary`.`post_name` AS `primary_name`,
+						`duplicate`.`ID` AS `duplicate_id`,
+						`duplicate`.`post_name` AS `duplicate_name`
+					FROM `{$wpdb->posts}` AS `primary`
+					LEFT JOIN `{$wpdb->posts}` AS `duplicate`
+						ON `duplicate`.`post_name` = `primary`.`post_name`
+					WHERE
+						`primary`.`post_type` = %s
+						AND `duplicate`.`ID` != `primary`.`ID`
+						AND `duplicate`.`post_type` = `primary`.`post_type`
+					ORDER BY `primary`.`ID`
+				",
+				'_pods_pod'
 			)
 		);
 
@@ -329,7 +330,7 @@ class Repair extends Base {
 					$pod->get_id()
 				);
 			} catch ( Throwable $exception ) {
-				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $field->get_name() . ' - #' . $field->get_id() . ')';
+				$this->errors[] = ucwords( str_replace( '_', ' ', __FUNCTION__ ) ) . ' > ' . $exception->getMessage() . ' (' . $pod->get_name() . ' - #' . $pod->get_id() . ')';
 			}
 		}
 
@@ -527,25 +528,23 @@ class Repair extends Base {
 		// Find any group on the pod that has the same name as another group.
 		global $wpdb;
 
-		$sql = "
-			SELECT DISTINCT
-				`primary`.`ID`,
-				`primary`.`post_name`
-			FROM `{$wpdb->posts}` AS `primary`
-			LEFT JOIN `{$wpdb->posts}` AS `duplicate`
-				ON `duplicate`.`post_name` = `primary`.`post_name`
-			WHERE
-				`primary`.`post_type` = %s
-				AND `primary`.`post_parent` = %d
-				AND `duplicate`.`ID` != `primary`.`ID`
-				AND `duplicate`.`post_type` = `primary`.`post_type`
-				AND `duplicate`.`post_parent` = `primary`.`post_parent`
-			ORDER BY `primary`.`ID`
-		";
-
 		$duplicate_groups = $wpdb->get_results(
 			$wpdb->prepare(
-				$sql,
+				"
+					SELECT DISTINCT
+						`primary`.`ID`,
+						`primary`.`post_name`
+					FROM `{$wpdb->posts}` AS `primary`
+					LEFT JOIN `{$wpdb->posts}` AS `duplicate`
+						ON `duplicate`.`post_name` = `primary`.`post_name`
+					WHERE
+						`primary`.`post_type` = %s
+						AND `primary`.`post_parent` = %d
+						AND `duplicate`.`ID` != `primary`.`ID`
+						AND `duplicate`.`post_type` = `primary`.`post_type`
+						AND `duplicate`.`post_parent` = `primary`.`post_parent`
+					ORDER BY `primary`.`ID`
+				",
 				[
 					'_pods_group',
 					$pod->get_id(),
@@ -628,27 +627,25 @@ class Repair extends Base {
 		// Find any field on the pod that has the same name as another field.
 		global $wpdb;
 
-		$sql = "
-			SELECT DISTINCT
-				`primary`.`ID` AS `primary_id`,
-				`primary`.`post_name` AS `primary_name`,
-				`duplicate`.`ID` AS `duplicate_id`,
-				`duplicate`.`post_name` AS `duplicate_name`
-			FROM `{$wpdb->posts}` AS `primary`
-			LEFT JOIN `{$wpdb->posts}` AS `duplicate`
-				ON `duplicate`.`post_name` = `primary`.`post_name`
-			WHERE
-				`primary`.`post_type` = %s
-				AND `primary`.`post_parent` = %d
-				AND `duplicate`.`ID` != `primary`.`ID`
-				AND `duplicate`.`post_type` = `primary`.`post_type`
-				AND `duplicate`.`post_parent` = `primary`.`post_parent`
-			ORDER BY `primary`.`ID`
-		";
-
 		$duplicate_fields = $wpdb->get_results(
 			$wpdb->prepare(
-				$sql,
+				"
+					SELECT DISTINCT
+						`primary`.`ID` AS `primary_id`,
+						`primary`.`post_name` AS `primary_name`,
+						`duplicate`.`ID` AS `duplicate_id`,
+						`duplicate`.`post_name` AS `duplicate_name`
+					FROM `{$wpdb->posts}` AS `primary`
+					LEFT JOIN `{$wpdb->posts}` AS `duplicate`
+						ON `duplicate`.`post_name` = `primary`.`post_name`
+					WHERE
+						`primary`.`post_type` = %s
+						AND `primary`.`post_parent` = %d
+						AND `duplicate`.`ID` != `primary`.`ID`
+						AND `duplicate`.`post_type` = `primary`.`post_type`
+						AND `duplicate`.`post_parent` = `primary`.`post_parent`
+					ORDER BY `primary`.`ID`
+				",
 				[
 					'_pods_field',
 					$pod->get_id(),
@@ -750,7 +747,7 @@ class Repair extends Base {
 
 		$fields = $pod->get_fields( [
 			'fallback_mode' => false,
-			'meta_query'    => [
+			'meta_query'    => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				[
 					'key'     => 'group',
 					'value'   => $groups,
@@ -850,7 +847,7 @@ class Repair extends Base {
 
 		$fields = $pod->get_fields( [
 			'fallback_mode' => false,
-			'meta_query'    => [
+			'meta_query'    => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				'relation' => 'OR',
 				[
 					'key'     => 'type',
@@ -942,7 +939,7 @@ class Repair extends Base {
 
 			$fields = $pod->get_fields( [
 				'fallback_mode' => false,
-				'meta_query'    => [
+				'meta_query'    => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 					$meta_query_check,
 				],
 			] );

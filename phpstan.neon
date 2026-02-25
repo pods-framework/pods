@@ -13,6 +13,9 @@ parameters:
     - ui/front
     - init.php
   excludePaths:
-    - vendor/vendor-prefixed
-    - src/Pods/Integrations
     - tests
+  scanDirectories:
+    - vendor/vendor-prefixed
+    - vendor/wordpress-plugin
+    - vendor/wp-cli
+    - tests/codeception

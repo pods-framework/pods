@@ -2,15 +2,16 @@
 
 namespace Pods\CLI\Commands;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods\Tools\Repair;
 use Pods\Tools\Reset;
-use Pods_Migrate_Packages;
-use PodsInit;
-use PodsMigrate;
 use WP_CLI;
 use WP_CLI_Command;
-use function WP_CLI\Utils\make_progress_bar;
 
 /**
  * Pods Tools commands.

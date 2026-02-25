@@ -1,8 +1,11 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 wp_enqueue_script( 'jquery-ui-slider' );
 pods_form_enqueue_style( 'pods-styles' );
@@ -42,7 +45,7 @@ $attributes          = PodsForm::merge_attributes( $attributes, $name, $form_fie
 <div class="pods-slider-field pods-compat-container">
 	<div id="<?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>-range" class="pods-slider-range"></div>
 	<div id="<?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>-amount-display" class="pods-slider-field-display">
-		<?php echo $output_value; ?>
+		<?php echo esc_html( $output_value ); ?>
 	</div>
 </div>
 

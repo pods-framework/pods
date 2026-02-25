@@ -1,36 +1,20 @@
-# Codeception Test Suite Configuration
-
-# suite for WordPress functional tests.
-# Emulate web requests and make application process them.
-class_name: WpunitTester
+actor: WpunitTester
+suite_namespace: \Pods_Unit_Tests
 bootstrap: _bootstrap.php
 modules:
-    enabled:
-        - \Helper\Wpunit
-        - WPDb
-        - WPLoader
-    config:
-        WPDb:
-            dsn: 'mysql:host=%WP_DB_HOST%;dbname=%WP_DB_NAME%'
-            user: %WP_DB_USER%
-            password: %WP_DB_PASSWORD%
-            dump: 'tests/codeception/_data/dump.sql'
-            populate: true
-            cleanup: false
-            url: %WP_URL%
-            tablePrefix: %WP_TABLE_PREFIX%
-            waitlock: 0
-        WPLoader:
-            wpRootFolder: %WP_ROOT_FOLDER%
-            dbName: %WP_TEST_DB_NAME%
-            dbHost: %WP_TEST_DB_HOST%
-            dbUser: %WP_TEST_DB_USER%
-            dbPassword: %WP_TEST_DB_PASSWORD%
-            tablePrefix: %WP_TABLE_PREFIX%
-            domain: %WP_DOMAIN%
-            adminEmail: admin@%WP_DOMAIN%
-            title: 'Pods Tests'
-            plugins:
-                - %PODS_ROOT_FOLDER%/init.php
-            activatePlugins:
-                - %PODS_ROOT_FOLDER%/init.php
+  enabled:
+    - lucatume\WPBrowser\Module\WPLoader
+  config:
+    lucatume\WPBrowser\Module\WPLoader:
+      wpRootFolder: "%WORDPRESS_ROOT_DIR%"
+      dbUrl: '%WORDPRESS_DB_URL%'
+      wpDebug: true
+      tablePrefix: '%TEST_TABLE_PREFIX%'
+      dump: 'tests/codeception/_data/dump.sql'
+      domain: '%WORDPRESS_DOMAIN%'
+      adminEmail: 'admin@%WORDPRESS_DOMAIN%'
+      title: 'Pods Tests'
+      plugins: [
+        'pods/init.php'
+      ]
+      theme: ''

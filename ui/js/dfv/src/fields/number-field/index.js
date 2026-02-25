@@ -62,6 +62,13 @@ const NumberField = ( {
 		addValidationRules( [ numberValidationRule ] );
 	}, [] );
 
+	// Sync local state with external value changes (e.g., after drag-and-drop reorder).
+	useEffect( () => {
+		setFormattedValue(
+			formatNumberWithPodsFormat( value, format, softFormat, decimalHandlingForNumber, decimalMaxLength )
+		);
+	}, [ value ] );
+
 	const handleChange = ( event ) => {
 		if ( isSlider ) {
 			// The "range" (slider) input doesn't support the readonly attribute,

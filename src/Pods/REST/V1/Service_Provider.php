@@ -2,6 +2,11 @@
 
 namespace Pods\REST\V1;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Exception;
 use Pods\REST\V1\Endpoints\Field;
 use Pods\REST\V1\Endpoints\Field_Slug;

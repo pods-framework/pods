@@ -1,6 +1,14 @@
 <?php
+
 // Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+// Prevent non-admins.
+if ( ! pods_is_admin( 'pods_settings' ) ) {
 	die( '-1' );
 }
 ?>
@@ -25,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
 			$tabs = [
 				'settings' => __( 'Settings', 'pods' ),
 				'tools'    => __( 'Tools', 'pods' ),
-				'reset'    => __( 'Cleanup &amp; Reset', 'pods' ),
+				'reset'    => __( 'Cleanup & Reset', 'pods' ),
 			];
 
 			/**
@@ -58,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
 					$url = pods_query_arg( [ 'tab' => $tab ], [ 'page' ] );
 					?>
 					<a href="<?php echo esc_url( $url ); ?>" class="nav-tab<?php echo esc_attr( $class ); ?>">
-						<?php echo $label; ?>
+						<?php echo esc_html( $label ); ?>
 					</a>
 					<?php
 				}

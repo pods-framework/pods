@@ -1,6 +1,14 @@
 <?php
+
 // Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+// Prevent non-admins.
+if ( ! pods_is_admin( 'pods' ) ) {
 	die( '-1' );
 }
 
@@ -24,10 +32,8 @@ $data = [
 	'fieldType'  => 'edit-pod',
 	'fieldEmbed' => false,
 ];
-
-$data = wp_json_encode( $data, JSON_HEX_TAG );
 ?>
 <div class="wrap pods-admin">
 	<div id="icon-pods" class="icon32"><br /></div>
-	<script type="application/json" class="pods-dfv-field-data"><?php echo $data; ?></script>
+	<script type="application/json" class="pods-dfv-field-data"><?php echo wp_json_encode( $data, JSON_HEX_TAG ); ?></script>
 </div>

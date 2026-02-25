@@ -2,6 +2,11 @@
 
 namespace Pods\Data;
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\Whatsit;
 
 /**
@@ -33,15 +38,23 @@ class Conditional_Logic {
 	protected $rules = [];
 
 	/**
+	 * The full list of conditional logic sets.
+	 *
+	 * @var array
+	 */
+	protected $logic_sets = [];
+
+	/**
 	 * Set up the object.
 	 *
 	 * @since 3.0
 	 *
-	 * @param string $action The action to take (show/hide).
-	 * @param string $logic  The logic to use (any/all).
-	 * @param array  $rules  The conditional rules.
+	 * @param string $action     The action to take (show/hide).
+	 * @param string $logic      The logic to use (any/all).
+	 * @param array  $rules      The conditional rules.
+	 * @param array  $logic_sets The full list of conditional logic sets.
 	 */
-	public function __construct( $action = 'show', $logic = 'any', $rules = [] ) {
+	public function __construct( string $action = 'show', string $logic = 'any', array $rules = [], array $logic_sets = [] ) {
 		if ( $action ) {
 			$this->set_action( $action );
 		}
@@ -52,6 +65,10 @@ class Conditional_Logic {
 
 		if ( $rules ) {
 			$this->set_rules( $rules );
+		}
+
+		if ( $logic_sets ) {
+			$this->set_logic_sets( $logic_sets );
 		}
 	}
 
@@ -138,12 +155,13 @@ class Conditional_Logic {
 			$old_syntax[ $old_syntax_key ] = $old_syntax_value;
 		}
 
-		$action = 'show';
-		$logic  = 'any';
-		$rules  = [];
+		$action     = 'show';
+		$rules      = [];
+		$logic_sets = [];
 
 		if ( $old_syntax['depends-on'] ) {
 			$logic = 'all';
+			$rules  = [];
 
 			foreach ( $old_syntax['depends-on'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
@@ -154,9 +172,18 @@ class Conditional_Logic {
 					'value'   => $value,
 				];
 			}
+
+			$logic_sets[] = [
+				'action' => $action,
+				'logic' => $logic,
+				'rules' => $rules,
+			];
 		}
 
 		if ( $old_syntax['depends-on-any'] ) {
+			$logic  = 'any';
+			$rules  = [];
+
 			foreach ( $old_syntax['depends-on-any'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
 
@@ -166,10 +193,19 @@ class Conditional_Logic {
 					'value'   => $value,
 				];
 			}
+
+			if ( ! empty( $rules ) ) {
+				$logic_sets[] = [
+					'action' => $action,
+					'logic'  => $logic,
+					'rules'  => $rules,
+				];
+			}
 		}
 
 		if ( $old_syntax['depends-on-multi'] ) {
 			$logic = 'all';
+			$rules  = [];
 
 			foreach ( $old_syntax['depends-on-multi'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
@@ -180,9 +216,20 @@ class Conditional_Logic {
 					'value'   => $value,
 				];
 			}
+
+			if ( ! empty( $rules ) ) {
+				$logic_sets[] = [
+					'action' => $action,
+					'logic'  => $logic,
+					'rules'  => $rules,
+				];
+			}
 		}
 
 		if ( $old_syntax['excludes-on'] ) {
+			$logic  = 'any';
+			$rules  = [];
+
 			foreach ( $old_syntax['excludes-on'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
 
@@ -192,9 +239,20 @@ class Conditional_Logic {
 					'value'   => $value,
 				];
 			}
+
+			if ( ! empty( $rules ) ) {
+				$logic_sets[] = [
+					'action' => $action,
+					'logic'  => $logic,
+					'rules'  => $rules,
+				];
+			}
 		}
 
 		if ( $old_syntax['wildcard-on'] ) {
+			$logic  = 'any';
+			$rules  = [];
+
 			foreach ( $old_syntax['wildcard-on'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
 
@@ -208,9 +266,17 @@ class Conditional_Logic {
 					];
 				}
 			}
+
+			if ( ! empty( $rules ) ) {
+				$logic_sets[] = [
+					'action' => $action,
+					'logic'  => $logic,
+					'rules'  => $rules,
+				];
+			}
 		}
 
-		if ( empty( $rules ) ) {
+		if ( empty( $logic_sets ) ) {
 			return null;
 		}
 
@@ -218,7 +284,8 @@ class Conditional_Logic {
 			$object,
 			$action,
 			$logic,
-			$rules
+			$rules,
+			$logic_sets
 		);
 	}
 
@@ -227,13 +294,22 @@ class Conditional_Logic {
 	 *
 	 * @since 3.0
 	 *
-	 * @param Whatsit|array $object The object data.
-	 * @param string        $action The action to take (show/hide).
-	 * @param string        $logic  The logic to use (any/all).
-	 * @param array         $rules  The conditional rules.
+	 * @param Whatsit|array $object     The object data.
+	 * @param string        $action     The action to take (show/hide).
+	 * @param string        $logic      The logic to use (any/all).
+	 * @param array         $rules      The conditional rules.
+	 * @param array         $logic_sets The full list of conditional logic sets.
 	 */
-	private static function setup_from_object( $object, $action, $logic, $rules ): Conditional_Logic {
-		$conditional_logic = new self( $action, $logic, $rules );
+	private static function setup_from_object( $object, $action, $logic, array $rules, array $logic_sets = [] ): Conditional_Logic {
+		foreach ( $logic_sets as $key => $logic_set ) {
+			$logic_sets[ $key ] = new self(
+				pods_v( 'action', $logic_set, $action, true ),
+				pods_v( 'logic', $logic_set, $logic, true ),
+				pods_v( 'rules', $logic_set, [] )
+			);
+		}
+
+		$conditional_logic = new self( $action, $logic, $rules, $logic_sets );
 
 		if ( $object instanceof Whatsit ) {
 			/**
@@ -246,8 +322,9 @@ class Conditional_Logic {
 			 * @param string            $action            The action to take (show/hide).
 			 * @param string            $logic             The logic to use (any/all).
 			 * @param array             $rules             The conditional rules.
+			 * @param array             $logic_sets        The full list of conditional logic sets.
 			 */
-			$conditional_logic = apply_filters( 'pods_data_conditional_logic_for_object', $conditional_logic, $object, $action, $logic, $rules );
+			$conditional_logic = apply_filters( 'pods_data_conditional_logic_for_object', $conditional_logic, $object, $action, $logic, $rules, $logic_sets );
 		}
 
 		return $conditional_logic;
@@ -324,6 +401,17 @@ class Conditional_Logic {
 	}
 
 	/**
+	 * Set the conditional logic sets.
+	 *
+	 * @since 3.3.5
+	 *
+	 * @param array $logic_sets The conditional logic sets.
+	 */
+	public function set_logic_sets( array $logic_sets ): void {
+		$this->logic_sets = $logic_sets;
+	}
+
+	/**
 	 * Get the conditional logic data as an array.
 	 *
 	 * @since 3.0
@@ -331,11 +419,22 @@ class Conditional_Logic {
 	 * @return array The conditional logic data as an array.
 	 */
 	public function to_array(): array {
-		return [
+		$conditional_logic = [
 			'action' => $this->action ?: 'show',
 			'logic'  => $this->logic ?: 'any',
 			'rules'  => $this->rules,
 		];
+
+		if ( $this->logic_sets ) {
+			$conditional_logic['logic_sets'] = array_map(
+				function ( Conditional_Logic $logic ) {
+					return $logic->to_array();
+				},
+				$this->logic_sets
+			);
+		}
+
+		return $conditional_logic;
 	}
 
 	/**
@@ -369,6 +468,18 @@ class Conditional_Logic {
 	 * @return bool Whether the rules validate for the field values provided.
 	 */
 	public function validate_rules( array $values ): bool {
+		if ( $this->logic_sets ) {
+			// Validate rules across logic sets.
+			return !! array_filter(
+				array_map(
+					function ( Conditional_Logic $logic ) use ( $values ) {
+						return $logic->validate_rules( $values );
+					},
+					$this->logic_sets
+				)
+			);
+		}
+
 		if ( empty( $this->rules ) ) {
 			return true;
 		}

@@ -1,3 +1,12 @@
+<?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+?>
 <form method="get" class="filterbox filterbox_<?php echo esc_attr( $this->pod ); ?>" action="<?php echo esc_attr( $action ); ?>">
 	<?php
 	if ( ! empty( $filters ) ) {
@@ -81,13 +90,12 @@
 					<option value="">-- <?php echo esc_attr( $field_label ); ?> --</option>
 					<?php
 					foreach ( $field_data as $val ) {
-						$active = ( empty( $val['active'] ) ) ? '' : ' selected';
-						$value  = $val['id'];
+						$value = $val['id'];
 						if ( 'text' === $this->search_mode ) {
 							$value = $val['name'];
 						}
 						?>
-						<option value="<?php echo esc_attr( $value ); ?>"<?php echo $active; ?>><?php echo esc_html( $val['name'] ); ?></option>
+						<option value="<?php echo esc_attr( $value ); ?>"<?php selected( ! empty( $val['active'] ) ); ?>><?php echo esc_html( $val['name'] ); ?></option>
 						<?php
 					}
 					?>

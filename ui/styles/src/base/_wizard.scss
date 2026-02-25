@@ -26,67 +26,79 @@ $button-secondary-background-color-hover: rgba(var(--wp-admin-theme-color--rgb),
 $button-container-background-color-hover: rgba(var(--wp-admin-theme-color--rgb), .04);
 $button-container-outline-color: var(--wp-admin-theme-color);
 
+// Background colors.
+$background-color-dark-text-color: hsl(from var(--wp-admin-theme-color) h s 30%);
+$background-color-dark: var(--wp-admin-theme-color-darker-20);
+$background-color-normal: var(--wp-admin-theme-color);
+$background-color-light: rgba(var(--wp-admin-theme-color--rgb), 50%);
+
 
 // Upgrade wizard specific styles
 #pods-wizard-box {
 	width: breakpoints.$width + 2;
 	color: #555555;
 	margin: 20px 20px 20px 0;
+
 	&.pods-wizard-steps-1 #pods-wizard-heading ul li {
 		min-width: breakpoints.$width;
 	}
+
 	&.pods-wizard-steps-2 #pods-wizard-heading ul li {
 		min-width: 50%;
 	}
+
 	&.pods-wizard-steps-3 #pods-wizard-heading ul li {
 		min-width: calc(breakpoints.$width / 3);
 	}
+
 	&.pods-wizard-steps-4 #pods-wizard-heading ul li {
 		min-width: calc(breakpoints.$width / 4);
 	}
+
 	&.pods-wizard-steps-5 #pods-wizard-heading ul li {
 		min-width: calc(breakpoints.$width / 5);
 	}
+
 	#pods-wizard-heading {
 		ul {
 			margin: 0;
 			padding: 0;
+
 			li {
-				list-style:none;
+				list-style: none;
 				display: block;
 				float: left;
 				/* #7161 */
 				height: 37px;
 				padding-top: 6px;
 				box-sizing: border-box;
-				color: #ababab;
+				color: $background-color-normal;
 				margin-bottom: 0;
 				font-size: 18px;
 				position: relative;
 				@include mixins.vertical-gradient(#f9f9f9, #ededed);
+
 				i {
 					position: absolute;
 					top: 0;
 				}
+
 				&:last-child i {
-					/*
-						#7161
-						Replace png arrow with CSS only arrow.
-						So for step 1 and step 2, we just need to update border color,
-						doing this we can remove the need of two PNG arrow images.
-					*/
 					border: solid transparent;
 					border-color: rgba(194, 225, 245, 0);
-					border-left-color: #6e6e6e;
+					border-left-color: $background-color-dark;
 					border-width: 18.5px;
 					border-left-width: 12px;
 				}
+
 				&:last-child.pods-wizard-menu-current i {
-					border-left-color: #bbddbd;
+					border: none;
 				}
+
 				&.pods-wizard-menu-complete i {
 					display: none;
 				}
+
 				span {
 					display: inline-block;
 					margin: 0 5px 0 20px;
@@ -94,56 +106,66 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 					height: 25px;
 					line-height: 25px;
 					text-align: center;
-					background: #ababab;
+					background: $background-color-normal;
 					color: #f2f2f2;
 					box-shadow: none;
 					font-size: 20px;
 					font-weight: bold;
 					@include mixins.multi-border-radius(30px, 30px, 30px, 30px);
 				}
+
 				&.pods-wizard-menu-current {
 					color: #fff;
 					text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-					background: #6e6e6e;
+					background: $background-color-dark;
+
 					span {
 						text-shadow: none;
 						background: #fff;
-						color: #6f6f6f;
+						color: $background-color-dark-text-color;
 						@include mixins.box-shadow(1px, 1px, 2px, 0.2);
 					}
 				}
+
 				&.pods-wizard-menu-complete {
-					color: colors.$green-dark;
-					border-bottom: 1px solid #bbddbd;
-					background: #bbddbd;
+					color: $background-color-dark-text-color;
+					border-bottom: 1px solid $background-color-light;
+					background: $background-color-light;
+
 					span {
-						background: colors.$green-dark;
-						color: colors.$green-mid;
+						background-color: $background-color-dark-text-color;
+						color: #FFFFFF;
 					}
+
 					em {
 						display: block;
 						top: 10px;
-						right: 5px;
+						right: 10px;
 						background: url(#{asset-paths.$ImagesPath}/tick.png) no-repeat right center;
+						filter: brightness(0%) grayscale(100%) opacity(0.8);
 						width: 17px;
 						height: 17px;
 						position: absolute;
 					}
+
 					&:last-child {
 						em {
 							right: 15px;
 						}
 					}
 				}
+
 				&:first-child {
 					i {
 						background: none;
 					}
+
 					& {
 						border-left: 1px solid colors.$grey-border;
 						@include mixins.multi-border-radius(8px, 0, 0, 0);
 					}
 				}
+
 				&:last-child {
 					border-right: 1px solid colors.$grey-border;
 					@include mixins.multi-border-radius(0, 8px, 0, 0);
@@ -151,48 +173,59 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 			}
 		}
 	}
+
 	#pods-wizard-main {
 		clear: both;
 		overflow: auto;
+
 		p {
 			font-size: 13px;
 			line-height: 22px;
 		}
+
 		p.padded {
 			padding: 0 20px 20px;
 		}
+
 		#pods-wizard-choices {
 			margin: 15px 20px 25px 20px;
 		}
+
 		.pods-advanced-toggle {
 			display: inline-block;
 			text-decoration: underline;
 			padding-left: 15px;
 		}
+
 		#pods-wizard-panel-2 {
 			padding-bottom: 15px;
 		}
+
 		.pods-wizard-option-content {
 			display: none;
 
 			.pods-package-import-group {
 				.pods-field-option-group {
 					padding-top: 0;
+
 					p {
 						margin-top: 0;
 					}
 				}
 			}
 		}
+
 		.stuffbox {
 			margin: 15px 15px 0 15px;
 			padding: 10px;
+
 			h3 {
 				font-size: 15px;
 				font-weight: normal;
 				line-height: 1;
 				padding: 0 10px;
 			}
+
 			/*
 				issue #7118
 				h3 color: inherit - improve color contract (accessibility)
@@ -202,10 +235,12 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 				h3 {
 					color: inherit;
 				}
+
 				a {
 					color: inherit;
 				}
 			}
+
 			.inside {
 				padding: 0;
 
@@ -252,13 +287,16 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 						margin: 1.33em 20px;
 						font-size: 1.35em;
 					}
+
 					h4 {
 						margin: 1.33em 20px;
 						font-size: 1.2em;
 					}
+
 					ul.normal {
 						margin: 15px 20px;
 						list-style: circle;
+
 						li {
 							margin: 0 0 8px 30px;
 							padding-left: 4px;
@@ -270,6 +308,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 				}
 			}
 		}
+
 		.pods-wizard-panel {
 			display: none;
 			border-left: 1px solid colors.$grey-border;
@@ -278,23 +317,29 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 			&:first-child {
 				display: block;
 			}
+
 			a.button-primary,
 			a.button-secondary {
 				padding: 8px 15px;
 				border-radius: 14px 14px 14px 14px;
 			}
+
 			.pods-wizard-content {
 				padding: 20px;
 				background: #fff;
+
 				&.pods-wizard-grey {
 					background: #f9f9f9;
 				}
+
 				p {
 					margin-top: 0;
 				}
+
 				ul.normal {
 					margin: 15px 20px;
 					list-style: circle;
+
 					li {
 						margin: 0 0 8px 30px;
 						padding-left: 4px;
@@ -304,30 +349,38 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 					}
 				}
 			}
+
 			table {
 				width: 100%;
+
 				th, td {
 					height: 47px;
 				}
+
 				th {
 					text-align: left;
 					background: #f9f9f9;
 					text-transform: uppercase;
 					padding-left: 53px;
 				}
+
 				tr {
 					td {
 						font-size: 20px;
+
 						&.pods-wizard-right {
 							text-align: right;
 						}
+
 						&.pods-wizard-name {
 							padding-left: 20px;
+
 							em {
 								color: #777;
 								font-style: normal;
 								font-size: 14px;
 							}
+
 							.pods-wizard-info {
 								float: right;
 								text-align: right;
@@ -335,14 +388,17 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 								padding-right: 15px;
 							}
 						}
+
 						img {
 							display: none;
 						}
 					}
+
 					&.pods-wizard-table-complete td {
 						background: #e6f9e6;
-						color: #6f9472;
+						color: colors.$green-dark;
 						border-top: 1px solid #fff;
+
 						i {
 							display: inline-block;
 							width: 17px;
@@ -350,52 +406,64 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 							background: url(#{asset-paths.$ImagesPath}/tick.png);
 						}
 					}
+
 					&.pods-wizard-table-warning td {
 						background: #ffffe0;
 						border-top: 1px solid #e7dd5f;
 						border-bottom: 1px solid #e7dd5f;
+
 						&:first-child {
 							border-left: 1px solid #e7dd5f;
 						}
+
 						&:last-child {
 							border-right: 1px solid #e7dd5f;
 						}
 					}
+
 					&.pods-wizard-table-error td {
 						background: #ffebe8;
 						border-top: 1px solid #cc0000;
 						border-bottom: 1px solid #cc0000;
+
 						&:first-child {
 							border-left: 1px solid #cc0000;
 						}
+
 						&:last-child {
 							border-right: 1px solid #cc0000;
 						}
 					}
+
 					&.pods-wizard-table-active td {
 						background: #fff4e0;
 						border-top: 1px solid #fff;
 						border-bottom: 1px solid #dfdfdf;
 						color: #eba600;
+
 						img {
 							display: inline;
 						}
 					}
+
 					&.pods-wizard-table-pending td {
 						border-top: 1px solid #fff;
 						border-bottom: 1px solid #dfdfdf;
-						color: #ababab;
+						color: $background-color-normal;
 					}
 				}
 			}
+
 			#pods-wizard-options {
 				text-align: center;
 				background-color: #fff;
 				padding: 0 20px 20px 20px;
+
 				h3 {
 					margin-block-start: 0;
 					text-align: left;
 				}
+
 				.pods-wizard-options-list {
 					display: grid;
 					gap: 1em;
@@ -405,6 +473,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 						border-radius: 8px;
 					}
 				}
+
 				.pods-wizard-option {
 					vertical-align: top;
 
@@ -417,24 +486,29 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 						grid-template-columns: auto auto;
 						align-items: center;
 						gap: 1em;
+
 						h3 {
 							color: #fff;
 						}
 					}
+
 					.pods-wizard-one-click-actions-heading {
 						margin-bottom: .3em;
 						padding-left: 20px;
 						text-align: left;
 						font-size: 1.5em;
 					}
+
 					.pods-wizard-one-click-actions {
 						display: grid;
 						grid-template-columns: 1fr 1fr;
 						padding: 1em 20px;
 						margin: 0;
 						gap: 1em;
+
 						.pods-wizard-one-click-action {
 							margin-bottom: 0;
+
 							a {
 								background-color: $button-secondary-background-color;
 								padding: 1.2em 0.5em;
@@ -452,7 +526,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 
 								&:focus {
 									outline: 2px solid $button-container-outline-color;
-    								outline-offset: 3px;
+									outline-offset: 3px;
 								}
 							}
 						}
@@ -470,12 +544,14 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 						padding-left: 20px;
 						@include mixins.multi-border-radius(8px, 8px, 8px, 8px);
 						box-sizing: border-box;
+
 						h2 {
 							color: inherit;
 							font-size: 1.5em;
 							margin-top: 0;
 							text-decoration: underline;
 						}
+
 						p {
 							font-style: normal;
 							font-size: 14px;
@@ -483,6 +559,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 							margin: 7px 0;
 							line-height: 17px;
 						}
+
 						span {
 							color: $button-primary-text-color;
 							font-size: 4em;
@@ -495,6 +572,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 							border-top-right-radius: 8px;
 							border-bottom-right-radius: 8px;
 						}
+
 						&:hover {
 							background-color: $button-container-background-color-hover;
 
@@ -503,13 +581,16 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 								padding-left: 0.5rem;
 							}
 						}
+
 						&:focus {
 							outline: 2px auto $button-container-outline-color;
 							outline-offset: 4px;
 						}
+
 						&.pods-wizard-option-active {
 							background: #feffe0;
 							color: #D54E21;
+
 							span {
 								width: 290px;
 								height: 30px;
@@ -530,9 +611,11 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 						border-bottom-left-radius: 0;
 						border-bottom-right-radius: 0;
 						border-bottom: 2px solid #e0e0e0;
+
 						span {
 							position: relative;
 							border-bottom-right-radius: 0;
+
 							&::after {
 								content: '';
 								position: absolute;
@@ -554,6 +637,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 						font-size: 12px;
 						line-height: 17px;
 						font-style: italic;
+
 						em {
 							margin: 0;
 							padding: 0;
@@ -563,6 +647,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 			}
 		}
 	}
+
 	#pods-wizard-actions {
 		height: 35px;
 		border: 1px solid colors.$grey-border;
@@ -594,6 +679,7 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 			&.button-primary {
 				right: 2px;
 			}
+
 			&.button-secondary {
 				left: 2px;
 			}
@@ -609,25 +695,30 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 			font-size: 15px;
 			padding: 0;
 			border: none !important;
+
 			&.button-primary {
 				right: 0;
 				color: #fff;
 				@include mixins.vertical-gradient(var(--wp-admin-theme-color), var(--wp-admin-theme-color-darker-20));
 				@include mixins.multi-border-radius(0, 0, 8px, 0);
+
 				&:hover {
 					background: var(--wp-admin-theme-color-darker-20);
 				}
 			}
+
 			&.button-secondary {
 				left: 0;
 				color: #7b7b7b;
 				@include mixins.vertical-gradient(#dfdfdf, #b2b2b2);
 				@include mixins.multi-border-radius(0, 0, 0, 8px);
+
 				&:hover {
 					background: #b2b2b2;
 				}
 			}
 		}
+
 		#pods-wizard-finished {
 			display: none;
 			height: 35px;
@@ -638,22 +729,26 @@ $button-container-outline-color: var(--wp-admin-theme-color);
 			color: #fff;
 			font-weight: bold;
 			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-			@include mixins.vertical-gradient(#808080, #6e6e6e);
+			@include mixins.vertical-gradient($background-color-normal, $background-color-dark);
 			@include mixins.multi-border-radius(0, 0, 8px, 8px);
 		}
+
 		#pods-wizard-next.finished {
 			width: 150px;
 		}
 	}
+
 	&.pods-wizard-hide-first {
 		#pods-wizard-main {
 			border-bottom: 1px solid colors.$grey-border;
 			@include mixins.multi-border-radius(0, 0, 8px, 8px);
 		}
+
 		#pods-wizard-actions {
 			display: none;
 		}
 	}
+
 	&:not(.pods-wizard-hide-first) {
 		.pods-wizard-panel {
 			padding-bottom: 15px !important;

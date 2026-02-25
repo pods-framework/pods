@@ -185,6 +185,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 = 3.3.7 - February 25th, 2026 =
 
 * Fixed: Resolve issues using `WP_Filesystem` to check session paths before starting a session. (@sc0ttkclark)
+* Fixed: Prevent deprecated notices with non-strings being passed to `strpos`. (@sc0ttkclark)
 
 = 3.3.6 - February 25th, 2026 =
 

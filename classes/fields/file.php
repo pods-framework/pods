@@ -1245,7 +1245,7 @@ class PodsField_File extends PodsField {
 
 				// Confirm mime type if we can.
 				if ( ! empty( $file_mime_types_mapping[ $file_info['extension'] ] ) ) {
-					if ( 0 === strpos( $file_mime_types_mapping[ $file_info['extension'] ], 'image/' ) ) {
+					if ( 0 === strpos( (string) $file_mime_types_mapping[ $file_info['extension'] ], 'image/' ) ) {
 						$real_mime = wp_get_image_mime( $file['name'] );
 					} elseif ( extension_loaded( 'fileinfo' ) ) {
 						// Use finfo to get the mime type information.
@@ -1441,7 +1441,7 @@ class PodsField_File extends PodsField {
 	 *                    list of extensions, mime types, and mapping of extensions to mime types.
 	 */
 	public function get_file_mime_types_for_field( $field ) {
-		$media_type = pods_v( $field['type'] . '_type', $field, 'images', true );
+		$media_type = (string) pods_v( $field['type'] . '_type', $field, 'images', true );
 
 		$other_extensions = [];
 

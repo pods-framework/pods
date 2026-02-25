@@ -222,7 +222,7 @@ class PodsComponents {
 			if (
 				(
 					'' !== $menu_data['callback']
-					|| false === strpos( $menu_data['menu_page'], '.php' )
+					|| false === strpos( (string) $menu_data['menu_page'], '.php' )
 				)
 				&& ! is_callable( $menu_data['callback'] )
 			) {

@@ -17,7 +17,7 @@ $has_php = false;
 
 $pods_output = '';
 
-if ( isset( $content ) ) {
+if ( isset( $content ) && is_string( $content ) ) {
 	$has_php = false !== strpos( $content, '<?' );
 
 	// WordPress will already call esc_textarea() if richedit is off, don't escape twice (see #3462)

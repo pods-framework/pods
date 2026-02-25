@@ -297,7 +297,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}
 
 		// Attempt to adjust the version if needed for compatibility.
-		$has_dot_versioning = false !== strpos( $meta['version'], '.' );
+		$has_dot_versioning = false !== strpos( (string) $meta['version'], '.' );
 
 		if ( ! $has_dot_versioning ) {
 			if ( (int) $meta['version'] < 1000 ) {

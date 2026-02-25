@@ -1293,7 +1293,7 @@ class PodsField_DateTime extends PodsField {
 				break;
 		}
 
-		$locale = str_replace( '_', '-', get_locale() );
+		$locale = (string) str_replace( '_', '-', get_locale() );
 
 		if ( isset( $types['date'] ) && ! isset( $done[ 'date-' . $locale ] ) ) {
 			if ( function_exists( 'wp_localize_jquery_ui_datepicker' ) ) {

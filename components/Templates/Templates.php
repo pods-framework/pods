@@ -848,6 +848,8 @@ class Pods_Templates extends PodsComponent {
 
 		$out = '';
 
+		$code = (string) $code;
+
 		if ( false !== strpos( $code, '<?' ) ) {
 			$code = str_replace( '$this->', '$obj->', $code );
 

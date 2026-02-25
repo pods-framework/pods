@@ -196,8 +196,8 @@ class Base implements Validator_Interface {
 		];
 
 		foreach ( $mapped as $prefix_method => $mapped_method ) {
-			if ( 0 === strpos( $name, $prefix_method ) ) {
-				$pod_name = str_replace( $prefix_method, '', $name );
+			if ( 0 === strpos( (string) $name, $prefix_method ) ) {
+				$pod_name = str_replace( $prefix_method, '', (string) $name );
 
 				array_unshift( $pod_name, $arguments );
 

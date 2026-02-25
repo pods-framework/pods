@@ -305,7 +305,7 @@ class PodsField_Website extends PodsField {
 			}
 		}
 
-		if ( false === strpos( $value, '://' ) && 0 !== strpos( $value, '//' ) ) {
+		if ( false === strpos( (string) $value, '://' ) && 0 !== strpos( (string) $value, '//' ) ) {
 			$value = 'http://' . $value;
 		}
 
@@ -328,13 +328,13 @@ class PodsField_Website extends PodsField {
 			if ( 'normal' === pods_v( static::$type . '_format', $options ) ) {
 				$value = $this->build_url( $url, $options );
 			} elseif ( 'no-www' === pods_v( static::$type . '_format', $options ) ) {
-				if ( 0 === strpos( $url['host'], 'www.' ) ) {
-					$url['host'] = substr( $url['host'], 4 );
+				if ( 0 === strpos( (string) $url['host'], 'www.' ) ) {
+					$url['host'] = substr( (string) $url['host'], 4 );
 				}
 
 				$value = $this->build_url( $url, $options );
 			} elseif ( 'force-www' === pods_v( static::$type . '_format', $options ) ) {
-				if ( false !== strpos( $url['host'], '.' ) && false === strpos( $url['host'], 'www', 0 ) ) {
+				if ( false !== strpos( (string) $url['host'], '.' ) && false === strpos( (string) $url['host'], 'www', 0 ) ) {
 					$url['host'] = 'www.' . $url['host'];
 				}
 
@@ -347,8 +347,8 @@ class PodsField_Website extends PodsField {
 					$value = trim( $value, '/' );
 				}
 			} elseif ( 'no-http-no-www' === pods_v( static::$type . '_format', $options ) ) {
-				if ( 0 === strpos( $url['host'], 'www.' ) ) {
-					$url['host'] = substr( $url['host'], 4 );
+				if ( 0 === strpos( (string) $url['host'], 'www.' ) ) {
+					$url['host'] = substr( (string) $url['host'], 4 );
 				}
 
 				$value = $this->build_url( $url, $options );
@@ -358,7 +358,7 @@ class PodsField_Website extends PodsField {
 					$value = trim( $value, '/' );
 				}
 			} elseif ( 'no-http-force-www' === pods_v( static::$type . '_format', $options ) ) {
-				if ( false !== strpos( $url['host'], '.' ) && false === strpos( $url['host'], 'www', 0 ) ) {
+				if ( false !== strpos( (string) $url['host'], '.' ) && false === strpos( (string) $url['host'], 'www', 0 ) ) {
 					$url['host'] = 'www.' . $url['host'];
 				}
 

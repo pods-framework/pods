@@ -108,7 +108,7 @@ class PodsAdmin {
 			if ( in_array( pods_v( 'action' ), $pods_admin_ajax_actions, true ) || in_array( pods_v( 'action', 'post' ), $pods_admin_ajax_actions, true ) ) {
 				// @codingStandardsIgnoreLine
 				foreach ( $_POST as $key => $value ) {
-					if ( 'action' === $key || 0 === strpos( $key, '_podsfix_' ) ) {
+					if ( 'action' === $key || 0 === strpos( (string) $key, '_podsfix_' ) ) {
 						continue;
 					}
 
@@ -747,8 +747,7 @@ class PodsAdmin {
 			return;
 		}
 
-		// @codingStandardsIgnoreLine
-		if ( false !== strpos( $_GET['page'], 'pods-add-new-' ) ) {
+		if ( false !== strpos( pods_v( 'page', 'get', '' ), 'pods-add-new-' ) ) {
 			// @codingStandardsIgnoreLine
 			$_GET['action'] = pods_v( 'action', 'get', 'add' );
 		}
@@ -1167,7 +1166,7 @@ class PodsAdmin {
 				$has_source = true;
 
 				if ( 'file' === $object_storage_type ) {
-					$file_source = $pod->get_arg( '_pods_file_source' );
+					$file_source = (string) $pod->get_arg( '_pods_file_source' );
 
 					if ( $file_source ) {
 						if ( 0 === strpos( $file_source, ABSPATH ) ) {
@@ -1189,7 +1188,7 @@ class PodsAdmin {
 						$source .= ' ' . ob_get_clean();
 					}
 				} elseif ( 'collection' === $object_storage_type ) {
-					$code_source = $pod->get_arg( '_pods_code_source' );
+					$code_source = (string) $pod->get_arg( '_pods_code_source' );
 
 					if ( $code_source ) {
 						if ( 0 === strpos( $code_source, ABSPATH ) ) {
@@ -1622,7 +1621,7 @@ class PodsAdmin {
 				$has_source = true;
 
 				if ( 'file' === $object_storage_type ) {
-					$file_source = $pod->get_arg( '_pods_file_source' );
+					$file_source = (string) $pod->get_arg( '_pods_file_source' );
 
 					if ( $file_source ) {
 						if ( 0 === strpos( $file_source, ABSPATH ) ) {
@@ -1641,7 +1640,7 @@ class PodsAdmin {
 							);
 					}
 				} elseif ( 'collection' === $object_storage_type ) {
-					$code_source = $pod->get_arg( '_pods_code_source' );
+					$code_source = (string) $pod->get_arg( '_pods_code_source' );
 
 					if ( $code_source ) {
 						if ( 0 === strpos( $code_source, ABSPATH ) ) {
@@ -4970,7 +4969,7 @@ class PodsAdmin {
 			return false;
 		}
 
-		$page = pods_v( 'page' );
+		$page = pods_v( 'page', 'get', '' );
 
 		// We only show on the plugins.php page or on Pods Admin pages.
 		if (

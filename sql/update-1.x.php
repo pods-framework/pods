@@ -284,7 +284,7 @@ if ( version_compare( $old_version, '1.7.6', '<' ) ) {
 		$rels    = array();
 
 		foreach ( (array) $items as $item ) {
-			$filename = $item->file;
+			$filename = (string) $item->file;
 
 			if ( strpos( $filename, get_site_url() ) !== false && 0 === strpos( $filename, get_site_url() ) ) {
 				$filename = ltrim( $filename, get_site_url() );

@@ -382,6 +382,8 @@ class Pods_Roles extends PodsComponent {
 		}
 
 		foreach ( $role_capabilities as $capability => $x ) {
+			$capability = (string) $capability;
+
 			if ( ! in_array( $capability, $new_capabilities, true ) && false === strpos( $capability, 'level_' ) ) {
 				$role->remove_cap( $capability );
 			}

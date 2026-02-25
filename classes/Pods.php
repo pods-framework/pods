@@ -2469,8 +2469,11 @@ class Pods implements Iterator {
 			}
 
 			foreach ( $params->orderby as $key => $prefix_orderby ) {
+				$prefix_orderby = (string) $prefix_orderby;
+
 				if (
-					false !== strpos( $prefix_orderby, ',' )
+					empty( $prefix_orderby )
+					|| false !== strpos( $prefix_orderby, ',' )
 					|| false !== strpos( $prefix_orderby, '(' )
 					|| false !== stripos( $prefix_orderby, ' AS ' )
 					|| false !== strpos( $prefix_orderby, '`' )
@@ -3397,7 +3400,7 @@ class Pods implements Iterator {
 
 		$this->page_var = pods_v( 'page_var', $params, $this->page_var );
 
-		$url = pods_query_arg( null, null, $this->page_var );
+		$url = (string) pods_query_arg( null, null, $this->page_var );
 
 		$append = '?';
 
@@ -4761,7 +4764,7 @@ class Pods implements Iterator {
 		}
 
 		// Handle sending previously mapped PodsData properties directly to their correct place.
-		if ( 0 === strpos( $name, 'field_' ) ) {
+		if ( 0 === strpos( (string) $name, 'field_' ) ) {
 			if ( ! is_object( $this->pod_data ) ) {
 				return null;
 			}

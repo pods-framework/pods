@@ -33,8 +33,8 @@ function pods_image_id_from_field( $image ) {
 			} else {
 				$id = pods_image_id_from_field( current( $image ) );
 			}
-		} else {
-			if ( false === strpos( $image, '.' ) && is_numeric( $image ) ) {
+		} elseif ( is_string( $image ) || is_numeric( $image ) ) {
+			if ( false === strpos( (string) $image, '.' ) && is_numeric( $image ) ) {
 				$id = $image;
 
 				$the_post_type = get_post_type( $id );

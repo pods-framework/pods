@@ -527,8 +527,8 @@ class PodsUI {
 		if ( ! is_array( $options ) ) {
 			// @todo need to come back to this and allow for multi-dimensional strings
 			// like: option=value&option2=value2&option3=key[val],key2[val2]&option4=this,that,another
-			if ( false !== strpos( $options, '=' ) || false !== strpos( $options, '&' ) ) {
-				parse_str( $options, $options );
+			if ( false !== strpos( (string) $options, '=' ) || false !== strpos( (string) $options, '&' ) ) {
+				parse_str( (string) $options, $options );
 			} else {
 				$options = [ 'pod' => $options ];
 			}
@@ -1056,7 +1056,7 @@ class PodsUI {
 				if ( 'related' !== $attributes['type'] || ! isset( $attributes['related_sql'] ) ) {
 					$attributes['related_sql'] = false;
 				}
-				if ( 'related' === $attributes['type'] && ( is_array( $attributes['related'] ) || strpos( $attributes['related'], ',' ) ) ) {
+				if ( 'related' === $attributes['type'] && ( is_array( $attributes['related'] ) || strpos( (string) $attributes['related'], ',' ) ) ) {
 					if ( ! is_array( $attributes['related'] ) ) {
 						$attributes['related'] = @explode( ',', $attributes['related'] );
 						$related_items         = [];
@@ -1405,7 +1405,7 @@ class PodsUI {
 								$value = '';
 							} elseif ( isset( $this->orderby['default'] ) ) {
 								// save this if we have a default index set
-								$value = $this->orderby['default'] . ' ' . ( false === strpos( $this->orderby['default'], ' ' ) ? $this->orderby_dir : '' );
+								$value = $this->orderby['default'] . ' ' . ( false === strpos( (string) $this->orderby['default'], ' ' ) ? $this->orderby_dir : '' );
 							} else {
 								$value = '';
 							}
@@ -2426,7 +2426,7 @@ class PodsUI {
 			$this->orderby = (array) $this->orderby;
 
 			foreach ( $this->orderby as $order ) {
-				if ( false !== strpos( $order, ' ' ) ) {
+				if ( false !== strpos( (string) $order, ' ' ) ) {
 					$orderby[] = $order;
 				} elseif ( ! isset( $orderby[ $order ] ) ) {
 					$orderby[ $order ] = $this->orderby_dir;
@@ -3367,6 +3367,8 @@ class PodsUI {
 
 						<?php
 						foreach ( $this->views as $view => $label ) {
+							$label = (string) $label;
+
 							if ( false === strpos( $label, '<a' ) ) {
 								$link = pods_query_arg(
 									[
@@ -5060,7 +5062,7 @@ class PodsUI {
 		];
 
 		$total_pages = ceil( $this->total_found / $this->limit );
-		$request_uri = pods_query_arg(
+		$request_uri = (string) pods_query_arg(
 			[ $this->num_prefix . 'pg' . $this->num => '' ], $allowed_query_args, $this->exclusion()
 		);
 
@@ -5518,6 +5520,8 @@ class PodsUI {
 					}
 
 					foreach ( $match as $the_field => $the_match ) {
+						$the_match = (string) $the_match;
+
 						if ( 'relation' === $the_field ) {
 							continue;
 						}
@@ -5580,6 +5584,8 @@ class PodsUI {
 						break;
 					}
 				} else {
+					$match = (string) $match;
+
 					$value = null;
 
 					if ( is_object( $this->pod ) ) {

@@ -44,8 +44,8 @@ if ( 0 < $data_count ) {
 
 		$attributes['value'] = $val;
 
-		if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) ) {
-			$name = $primary_name . '[' . ( $counter - 1 ) . ']';
+		if ( 1 < $data_count && false === strpos( (string) $primary_name, '[]' ) ) {
+			$name = (string) $primary_name . '[' . ( $counter - 1 ) . ']';
 		}
 
 		$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
@@ -60,7 +60,7 @@ if ( 0 < $data_count ) {
 			$indent_escaped = ' style="margin-left:' . ( 18 * $indent_count ) . 'px;"';
 		}
 
-		if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) ) {
+		if ( 1 < $data_count && false === strpos( (string) $primary_name, '[]' ) ) {
 			$attributes['class'] .= ' pods-dependent-multi';
 		}
 

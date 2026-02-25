@@ -278,7 +278,7 @@ class PodsMigrate {
 				$data['items'][ $key ] = array();
 
 				foreach ( $data['columns'] as $ckey => $column ) {
-					$column_value = ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
+					$column_value = (string) ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
 
 					if ( 'NULL' === $column_value ) {
 						// Maybe set the value as null.
@@ -637,7 +637,7 @@ class PodsMigrate {
 					);
 				}
 
-				$value = str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
+				$value = (string) str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
 
 				// Maybe escape the first character to prevent formulas from getting used when opening the file with a spreadsheet app.
 				if (
@@ -805,7 +805,7 @@ class PodsMigrate {
 		$extension = 'txt';
 
 		if ( ! empty( $params['file'] ) ) {
-			$export_file = $params['file'];
+			$export_file = (string) $params['file'];
 
 			if ( false !== strpos( $export_file, '.' ) ) {
 				$extension = explode( '.', $export_file );
@@ -1301,16 +1301,16 @@ class PodsMigrate {
 		$path = ABSPATH;
 
 		// Detect path if it is set in the file param.
-		if ( false !== strpos( $file, '/' ) ) {
-			$path = dirname( $file );
-			$file = basename( $file );
+		if ( false !== strpos( (string) $file, '/' ) ) {
+			$path = dirname( (string) $file );
+			$file = basename( (string) $file );
 		}
 
 		$format = 'json';
 
 		// Detect the export format.
-		if ( false !== strpos( $file, '.' ) ) {
-			$format = explode( '.', $file );
+		if ( false !== strpos( (string) $file, '.' ) ) {
+			$format = explode( '.', (string) $file );
 			$format = end( $format );
 		}
 
@@ -1361,16 +1361,16 @@ class PodsMigrate {
 		$path = ABSPATH;
 
 		// Detect path if it is set in the file param.
-		if ( false !== strpos( $file, DIRECTORY_SEPARATOR ) ) {
-			$path = dirname( $file );
-			$file = basename( $file );
+		if ( false !== strpos( (string) $file, DIRECTORY_SEPARATOR ) ) {
+			$path = dirname( (string) $file );
+			$file = basename( (string) $file );
 		}
 
 		$format = 'json';
 
 		// Detect the export format.
-		if ( false !== strpos( $file, '.' ) ) {
-			$format = explode( '.', $file );
+		if ( false !== strpos( (string) $file, '.' ) ) {
+			$format = explode( '.', (string) $file );
 			$format = end( $format );
 		}
 

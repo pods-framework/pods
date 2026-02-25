@@ -170,6 +170,8 @@ class PodsInit {
 	 * @since 2.8.0
 	 */
 	public static function autoload_class( $class ) {
+		$class = (string) $class;
+
 		// Bypass anything that doesn't start with Pods
 		if ( 0 !== strpos( $class, 'Pods' ) ) {
 			return;
@@ -288,7 +290,7 @@ class PodsInit {
 
 		global $pagenow;
 
-		$page_query_var = pods_v( 'page' );
+		$page_query_var = pods_v( 'page', 'get', '' );
 
 		// Only load tracker on Pods manage pages except for add new pod and manage content screens.
 		$is_pods_page = (
@@ -385,7 +387,7 @@ class PodsInit {
 			foreach ( $tlds_to_check as $tld ) {
 				$minus_tld = strlen( (string) $host ) - strlen( (string) $tld );
 
-				if ( $minus_tld === strpos( $host, $tld ) ) {
+				if ( $minus_tld === strpos( (string) $host, $tld ) ) {
 					return true;
 				}
 			}
@@ -2312,7 +2314,7 @@ class PodsInit {
 			// Install Pods
 			pods_upgrade()->install( $_blog_id );
 
-			$old_version = get_option( 'pods_version' );
+			$old_version = (string) get_option( 'pods_version' );
 
 			if ( ! empty( $old_version ) ) {
 				if ( false === strpos( $old_version, '.' ) ) {

@@ -259,7 +259,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 	 *
 	 */
 	public function migrate_1_x() {
-		$old_version = get_option( 'pods_version' );
+		$old_version = (string) get_option( 'pods_version' );
 
 		if ( 0 < strlen( $old_version ) ) {
 			if ( false === strpos( $old_version, '.' ) ) {
@@ -767,6 +767,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 				$caps = $wp_roles[ $role ]['capabilities'];
 
 				foreach ( $data as $cap ) {
+					$cap = (string) $cap;
+
 					if ( 0 === strpos( 'manage_', $cap ) ) {
 						if ( 'manage_roles' === $cap ) {
 							continue;

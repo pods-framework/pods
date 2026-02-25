@@ -465,9 +465,9 @@ class Pods_Deprecated {
 			) );
 
 		if ( is_array( $value ) && ! empty( $value ) ) {
-			if ( false === strpos( $name, '.' ) && ! isset( $value[0] ) ) {
+			if ( false === strpos( (string) $name, '.' ) && ! isset( $value[0] ) ) {
 				$value = array( $value );
-			} elseif ( false !== strpos( $name, '.' ) && 1 == count( $value ) ) {
+			} elseif ( false !== strpos( (string) $name, '.' ) && 1 == count( $value ) ) {
 				// fix for single tableless fields
 				$value = current( $value );
 			}

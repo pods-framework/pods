@@ -358,12 +358,12 @@ class Pods_CLI_Command extends WP_CLI_Command {
 		$find_params = pods_v( 'params', $assoc_args, null, true );
 
 		if ( is_string( $find_params ) ) {
-			$params['params'] = [];
-
-			if ( false !== strpos( $params['params'], '{' ) ) {
+			if ( false !== strpos( (string) $find_params, '{' ) ) {
 				// Pull the find params from JSON format.
-				$params['params'] = json_decode( $params['params'], true );
+				$params['params'] = json_decode( $find_params, true );
 			} else {
+				$params['params'] = [];
+
 				// Pull the find params from string argument format.
 				wp_parse_str( $find_params, $params['params'] );
 			}

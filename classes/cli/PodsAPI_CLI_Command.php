@@ -423,7 +423,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 			$params['pages'] = true;
 		}
 
-		$file = $assoc_args['file'];
+		$file = (string) $assoc_args['file'];
 
 		unset( $assoc_args['file'] );
 
@@ -493,7 +493,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 			$replace = true;
 		}
 
-		$file = $assoc_args['file'];
+		$file = (string) $assoc_args['file'];
 
 		$imported = false;
 

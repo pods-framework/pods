@@ -933,7 +933,7 @@ class Pods_Pages extends PodsComponent {
 			return false;
 		}
 
-		$uri = explode( '?', $uri );
+		$uri = explode( '?', (string) $uri );
 		$uri = explode( '#', $uri[0] );
 		$uri = $uri[0];
 

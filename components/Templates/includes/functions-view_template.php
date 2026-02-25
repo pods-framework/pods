@@ -784,9 +784,9 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 					}
 				}//end if
 
-				if ( $field && false !== strpos( $field, '.' ) ) {
+				if ( $field && false !== strpos( (string) $field, '.' ) ) {
 					// Take the last element off of the array and use the ID.
-					$field_path = explode( '.', $field );
+					$field_path = explode( '.', (string) $field );
 					$last_field = array_pop( $field_path );
 					$field_path = implode( '.', $field_path );
 

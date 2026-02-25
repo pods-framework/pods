@@ -210,7 +210,7 @@ class Config_Handler {
 	 * @param string $path The config file path to use.
 	 */
 	public function register_path( $path ) {
-		$path = trailingslashit( $path );
+		$path = trailingslashit( (string) $path );
 
 		if ( 0 !== strpos( $path, ABSPATH ) ) {
 			$path = ABSPATH . $path;
@@ -227,7 +227,7 @@ class Config_Handler {
 	 * @param string $path The config file path to use.
 	 */
 	public function unregister_path( $path ) {
-		$path = trailingslashit( $path );
+		$path = trailingslashit( (string) $path );
 
 		if ( 0 !== strpos( $path, ABSPATH ) ) {
 			$path = ABSPATH . $path;

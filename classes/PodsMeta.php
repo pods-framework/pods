@@ -494,7 +494,7 @@ class PodsMeta {
 		// Remove internal Pods fields
 		if ( is_array( $meta_fields ) ) {
 			foreach ( $meta_fields as $k => $meta_field ) {
-				if ( 0 === strpos( $meta_field, '_pods_' ) ) {
+				if ( 0 === strpos( (string) $meta_field, '_pods_' ) ) {
 					unset( $meta_fields[ $k ] );
 				}
 			}
@@ -513,7 +513,7 @@ class PodsMeta {
 	public function cpac_post_types( $post_types ) {
 
 		foreach ( $post_types as $post_type => $post_type_name ) {
-			if ( 0 === strpos( $post_type, '_pods_' ) || 0 === strpos( $post_type_name, '_pods_' ) ) {
+			if ( 0 === strpos( (string) $post_type, '_pods_' ) || 0 === strpos( (string) $post_type_name, '_pods_' ) ) {
 				unset( $post_types[ $post_type ] );
 			}
 		}
@@ -3234,7 +3234,7 @@ class PodsMeta {
 	public function get_option() {
 		$args = func_get_args();
 
-		if ( 0 === strpos( $args[2], '_transient_' ) || 0 === strpos( $args[2], '_site_transient_' ) ) {
+		if ( 0 === strpos( (string) $args[2], '_transient_' ) || 0 === strpos( (string) $args[2], '_site_transient_' ) ) {
 			return $args[0];
 		}
 
@@ -3857,9 +3857,9 @@ class PodsMeta {
 			empty( $object_name )
 			|| (
 				'post_type' === $object_type
-				&& 0 === strpos( $object_name, '_pods_' )
+				&& 0 === strpos( (string) $object_name, '_pods_' )
 			)
-			|| in_array( $object_name, $reserved_post_types, true )
+			|| in_array( (string) $object_name, $reserved_post_types, true )
 		) {
 			return false;
 		} elseif ( 'attachment' === $object_name ) {
@@ -3977,7 +3977,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key ) {
-			$first_meta_key = $meta_key;
+			$first_meta_key = (string) $meta_key;
 
 			if ( false !== strpos( $first_meta_key, '.' ) ) {
 				$first_meta_key = current( explode( '.', $first_meta_key ) );
@@ -4067,7 +4067,7 @@ class PodsMeta {
 
 		foreach ( $meta_keys as $meta_k ) {
 			if ( ! empty( $pod ) ) {
-				$first_meta_key = $meta_k;
+				$first_meta_key = (string) $meta_k;
 
 				if ( false !== strpos( $first_meta_key, '.' ) ) {
 					// Get the first meta key.
@@ -4182,7 +4182,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key ) {
-			$first_meta_key = $meta_key;
+			$first_meta_key = (string) $meta_key;
 
 			if ( false !== strpos( $first_meta_key, '.' ) ) {
 				$first_meta_key = current( explode( '.', $first_meta_key ) );
@@ -4303,7 +4303,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key ) {
-			$first_meta_key = $meta_key;
+			$first_meta_key = (string) $meta_key;
 
 			if ( false !== strpos( $first_meta_key, '.' ) ) {
 				$first_meta_key = current( explode( '.', $first_meta_key ) );
@@ -4359,11 +4359,12 @@ class PodsMeta {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
-		if ( null !== $pod->data->row && ( $field_object || false !== strpos( $meta_key, '.' ) ) ) {
-			$key = $meta_key;
+		if ( null !== $pod->data->row && ( $field_object || false !== strpos( (string) $meta_key, '.' ) ) ) {
+			// @todo This var isn't used, should we review the functionality?
+			$key = (string) $meta_key;
 
-			if ( false !== strpos( $meta_key, '.' ) ) {
-				$key = current( explode( '.', $meta_key ) );
+			if ( false !== strpos( (string) $meta_key, '.' ) ) {
+				$key = current( explode( '.', (string) $meta_key ) );
 			}
 
 			$pod->data->row[ $meta_key ] = $meta_value;
@@ -4462,7 +4463,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key ) {
-			$first_meta_key = $meta_key;
+			$first_meta_key = (string) $meta_key;
 
 			if ( false !== strpos( $first_meta_key, '.' ) ) {
 				$first_meta_key = current( explode( '.', $first_meta_key ) );

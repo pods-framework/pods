@@ -199,11 +199,11 @@ class PodsField_Currency extends PodsField_Number {
 		$currency = 'usd';
 
 		if ( isset( static::$currencies[ pods_v( static::$type . '_format_sign', $options, - 1 ) ] ) ) {
-			$currency = pods_v( static::$type . '_format_sign', $options );
+			$currency = (string) pods_v( static::$type . '_format_sign', $options );
 		}
 
-		$currency_sign  = static::$currencies[ $currency ]['sign'];
-		$currency_label = static::$currencies[ $currency ]['label'];
+		$currency_sign  = (string) static::$currencies[ $currency ]['sign'];
+		$currency_label = (string) static::$currencies[ $currency ]['label'];
 
 		$placement = pods_v( static::$type . '_format_placement', $options, 'before', true );
 

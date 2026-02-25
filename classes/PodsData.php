@@ -1077,7 +1077,7 @@ class PodsData {
 			return false;
 		}
 
-		if ( false === strpos( $params->table, '(' ) && false === strpos( $params->table, '`' ) ) {
+		if ( false === strpos( (string) $params->table, '(' ) && false === strpos( (string) $params->table, '`' ) ) {
 			$params->table = '`' . $params->table . '`';
 		}
 
@@ -1138,6 +1138,8 @@ class PodsData {
 		if ( ! empty( $params->orderby ) ) {
 			if ( $is_pod_meta_storage && is_array( $params->orderby ) ) {
 				foreach ( $params->orderby as $i => $orderby ) {
+					$orderby = (string) $orderby;
+
 					if ( strpos( $orderby, '.meta_value_num' ) ) {
 						$params->orderby[ $i ] = 'CAST(' . str_replace( '.meta_value_num', '.meta_value', $orderby ) . ' AS DECIMAL)';
 					} elseif ( strpos( $orderby, '.meta_value_date' ) ) {
@@ -1923,7 +1925,7 @@ class PodsData {
 		} elseif ( 'odd' === $nth ) {
 			$negative = true;
 			$nth      = 2;
-		} elseif ( false !== strpos( $nth, '+' ) ) {
+		} elseif ( false !== strpos( (string) $nth, '+' ) ) {
 			$nth = explode( '+', $nth );
 
 			if ( isset( $nth[1] ) ) {
@@ -1931,7 +1933,7 @@ class PodsData {
 			}
 
 			$nth = (int) trim( $nth[0], ' n' );
-		} elseif ( false !== strpos( $nth, '-' ) ) {
+		} elseif ( false !== strpos( (string) $nth, '-' ) ) {
 			$nth = explode( '-', $nth );
 
 			if ( isset( $nth[1] ) ) {
@@ -2196,8 +2198,8 @@ class PodsData {
 				&& null !== $row
 				&& (
 					! is_numeric( $row )
-					|| 0 === strpos( $row, '0' )
-					|| (string) $row !== (string) preg_replace( '/[^0-9]/', '', $row )
+					|| 0 === strpos( (string) $row, '0' )
+					|| (string) $row !== (string) preg_replace( '/[^0-9]/', '', (string) $row )
 				)
 			) {
 				$mode = 'slug';

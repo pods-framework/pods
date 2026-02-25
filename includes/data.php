@@ -67,7 +67,7 @@ function pods_sanitize( $input, $params = array() ) {
 		foreach ( $input as $key => $val ) {
 			$output[ pods_sanitize( $key ) ] = pods_sanitize( $val, $n_params );
 		}
-	} elseif ( ! empty( $params['type'] ) && false !== strpos( $params['type'], '%' ) ) {
+	} elseif ( ! empty( $params['type'] ) && false !== strpos( (string) $params['type'], '%' ) ) {
 		/**
 		 * @var $wpdb wpdb
 		 */
@@ -170,7 +170,7 @@ function pods_slash( $input, $params = array() ) {
 		foreach ( $input as $key => $val ) {
 			$output[ $key ] = pods_slash( $val, $params );
 		}
-	} elseif ( ! empty( $params['type'] ) && false !== strpos( $params['type'], '%' ) ) {
+	} elseif ( ! empty( $params['type'] ) && false !== strpos( (string) $params['type'], '%' ) ) {
 		/**
 		 * @var $wpdb wpdb
 		 */
@@ -1266,7 +1266,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 			foreach ( $allowed as $allow ) {
 				if ( $allow === $key ) {
 					$allow_it = true;
-				} elseif ( false !== strpos( $allow, '*' ) && 0 === strpos( $key, trim( $allow, '*' ) ) ) {
+				} elseif ( false !== strpos( (string) $allow, '*' ) && 0 === strpos( (string) $key, trim( (string) $allow, '*' ) ) ) {
 					$allow_it = true;
 				}
 			}
@@ -1289,7 +1289,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 		foreach ( $array as $key => $val ) {
 			$is_value_null = null === $val;
 
-			if ( ! $is_value_null || false === strpos( $key, '*' ) ) {
+			if ( ! $is_value_null || false === strpos( (string) $key, '*' ) ) {
 				$is_value_array = is_array( $val );
 
 				if ( $is_value_array && ! empty( $val ) ) {
@@ -1303,7 +1303,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 				$key = str_replace( '*', '', $key );
 
 				foreach ( $query_args as $k => $v ) {
-					if ( false !== strpos( $k, $key ) ) {
+					if ( false !== strpos( (string) $k, $key ) ) {
 						$query_args[ $k ] = false;
 					}
 				}
@@ -2816,7 +2816,7 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 		$path = str_replace( '..' . DIRECTORY_SEPARATOR, '', $path, $match_count );
 	}
 
-	$real_path = realpath( $path );
+	$real_path = (string) realpath( $path );
 
 	$path_match = false;
 
@@ -2928,11 +2928,11 @@ function pods_host_from_url( $url ) {
 	}
 
 	// Check if we should remove the www from the host.
-	if ( 0 === strpos( $url_parsed['host'], 'www.' ) ) {
-		$url_parsed['host'] = substr( $url_parsed['host'], 4 );
+	if ( 0 === strpos( (string) $url_parsed['host'], 'www.' ) ) {
+		$url_parsed['host'] = substr( (string) $url_parsed['host'], 4 );
 	}
 
-	return esc_html( $url_parsed['host'] );
+	return esc_html( (string) $url_parsed['host'] );
 }
 
 /**

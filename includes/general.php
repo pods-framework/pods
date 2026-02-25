@@ -386,7 +386,7 @@ function pods_error( $error, $obj = null ) {
 			}
 
 			// die with error
-			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
+			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( (string) $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
 				wp_die( wp_kses_post( $error ), '', [ 'back_link' => true ] );
 			} else {
 				die( wp_kses_post( sprintf( '<e>%s</e>', $error ) ) );
@@ -521,13 +521,13 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	$debug = ob_get_clean();
 
-	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) ) {
+	if ( false === strpos( (string) $debug, "<pre class='xdebug-var-dump'" ) ) {
 		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 			$debug = esc_html( $debug );
 		}
 
 		$debug = '<pre>' . $debug . '</pre>';
-	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+	} elseif ( false !== strpos( (string) $debug, $debug_line_check ) ) {
 		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 
@@ -606,11 +606,11 @@ function pods_debug_log( $debug ) {
 
 	$debug = ob_get_clean();
 
-	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) ) {
+	if ( false === strpos( (string) $debug, "<pre class='xdebug-var-dump'" ) ) {
 		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 			$debug = esc_html( $debug );
 		}
-	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+	} elseif ( false !== strpos( (string) $debug, $debug_line_check ) ) {
 		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 
@@ -1297,6 +1297,8 @@ function pods_access( $privs, $method = 'OR' ) {
 
 	// Loop through the user's roles
 	foreach ( $privs as $priv ) {
+		$priv = (string) $priv;
+
 		if ( 0 === strpos( $priv, 'pod_' ) ) {
 			$priv = pods_str_replace( 'pod_', 'pods_edit_', $priv, 1 );
 		}
@@ -1557,10 +1559,10 @@ function pods_shortcode_detect_context( array $attributes ): ?string {
 	} elseif ( $attributes['related_field'] ?? null ) {
 		$context = 'related-item-list';
 	} else {
-		$template_custom = $attributes['template_custom'] ?? '';
-		$field           = $attributes['field'] ?? $attributes['col'] ?? '';
-		$slug            = $attributes['slug'] ?? '';
-		$id              = $attributes['id'] ?? '';
+		$template_custom = (string) ( $attributes['template_custom'] ?? '' );
+		$field           = (string) ( $attributes['field'] ?? $attributes['col'] ?? '' );
+		$slug            = (string) ( $attributes['slug'] ?? '' );
+		$id              = (string) ( $attributes['id'] ?? '' );
 
 		if ( false !== strpos( $template_custom, '{@_all_fields' ) ) {
 			$context = 'item-single-list-fields';
@@ -2313,8 +2315,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	if ( $is_form ) {
 		if ( 'user' === $pod->pod ) {
 			if (
-				false !== strpos( $tags['fields'], '_capabilities' )
-				|| false !== strpos( $tags['fields'], 'role' )
+				false !== strpos( (string) $tags['fields'], '_capabilities' )
+				|| false !== strpos( (string) $tags['fields'], 'role' )
 			) {
 				// Further hardening of User-based forms
 				return pods_get_access_user_notice( $info, false, __( 'You cannot edit role or capabilities for users with Pods', 'pods' ) );
@@ -2409,8 +2411,9 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			}
 
 			if (
-				false !== strpos( $link_field_value, '://' )
-				&& false === strpos( $link_field_value, ' ' )
+				$link_field_value
+				&& false !== strpos( (string) $link_field_value, '://' )
+				&& false === strpos( (string) $link_field_value, ' ' )
 			) {
 				$return = sprintf( '<a href="%s">%s</a>', esc_url( $link_field_value ), $return );
 			}
@@ -2594,7 +2597,7 @@ function pods_do_shortcode( $content, $shortcodes = [], $ignored_shortcodes = []
 	global $shortcode_tags;
 
 	// No shortcodes in content
-	if ( false === strpos( $content, '[' ) ) {
+	if ( empty( $content ) || false === strpos( (string) $content, '[' ) ) {
 		return $content;
 	}
 
@@ -5196,8 +5199,8 @@ function pods_is_types_only( $check_constant_only = false, $content_type = null 
 	if (
 		$content_type
 		&& (
-			0 === strpos( $content_type, '_pods_' )
-			|| 0 === strpos( $content_type, 'pod/_pods_' )
+			0 === strpos( (string) $content_type, '_pods_' )
+			|| 0 === strpos( (string) $content_type, 'pod/_pods_' )
 		)
 	) {
 		return false;

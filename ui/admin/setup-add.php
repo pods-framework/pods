@@ -454,6 +454,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$post_types = get_post_types();
 
 										foreach ( $post_types as $post_type => $label ) {
+											$post_type = (string) $post_type;
+
 											if ( empty( $post_type ) || isset( $ignore[ $post_type ] ) || 0 === strpos( $post_type, '_pods_' ) || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 												// Post type is ignored
 												unset( $post_types[ $post_type ] );
@@ -496,6 +498,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$taxonomies = get_taxonomies();
 
 										foreach ( $taxonomies as $taxonomy => $label ) {
+											$taxonomy = (string) $taxonomy;
+
 											if ( empty( $taxonomy ) || isset( $ignore[ $taxonomy ] ) || 0 === strpos( $taxonomy, '_pods_' ) || ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
 												// Taxonomy is ignored
 												unset( $taxonomies[ $taxonomy ] );

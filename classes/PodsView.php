@@ -244,6 +244,8 @@ class PodsView {
 			$view_key = realpath( $view_key );
 		}
 
+		$view_key = (string) $view_key;
+
 		$pods_ui_dir         = realpath( PODS_DIR . 'ui/' );
 		$pods_components_dir = realpath( PODS_DIR . 'components/' );
 		$abspath_dir         = realpath( ABSPATH );
@@ -847,7 +849,7 @@ class PodsView {
 		if ( is_array( $_view ) ) {
 			$_views = [];
 
-			if ( isset( $_view[0] ) && false === strpos( $_view[0], '.php' ) ) {
+			if ( isset( $_view[0] ) && false === strpos( (string) $_view[0], '.php' ) ) {
 				$_view_count = count( $_view );
 
 				for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x -- ) {

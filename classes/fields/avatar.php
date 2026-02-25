@@ -319,7 +319,7 @@ class PodsField_Avatar extends PodsField_File {
 			$user_id = $id_or_email->user_id;
 		} elseif ( is_object( $id_or_email ) && isset( $id_or_email->ID ) && isset( $id_or_email->user_login ) && 0 < $id_or_email->ID ) {
 			$user_id = $id_or_email->ID;
-		} elseif ( ! is_object( $id_or_email ) && false !== strpos( $id_or_email, '@' ) ) {
+		} elseif ( ! is_object( $id_or_email ) && false !== strpos( (string) $id_or_email, '@' ) ) {
 			$_user = get_user_by( 'email', $id_or_email );
 
 			if ( ! empty( $_user ) ) {

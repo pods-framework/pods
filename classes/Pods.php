@@ -4197,7 +4197,7 @@ class Pods implements Iterator {
 	/**
 	 * Render a singular view for the Pod item content.
 	 *
-	 * @since TBD
+	 * @since 3.3.5
 	 *
 	 * @param array|string|null $view_fields (optional) Fields to show in the view, defaults to all fields.
 	 */

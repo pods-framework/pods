@@ -272,12 +272,13 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 	$perms = $stat['mode'] & 0000666;
 
 	require_once ABSPATH . '/wp-admin/includes/file.php';
-	WP_Filesystem();
 
 	/** @var WP_Filesystem_Base $wp_filesystem */
 	global $wp_filesystem;
 
-	$wp_filesystem->chmod( $new_file, $perms );
+	if ( WP_Filesystem() && $wp_filesystem ) {
+		$wp_filesystem->chmod( $new_file, $perms );
+	}
 
 	$wp_filetype = wp_check_filetype( $filename );
 

@@ -858,10 +858,13 @@ class PodsMigrate {
 		$perms = $stat['mode'] & 0000666;
 
 		require_once ABSPATH . '/wp-admin/includes/file.php';
-		WP_Filesystem();
 
 		/** @var WP_Filesystem_Base $wp_filesystem */
 		global $wp_filesystem;
+
+		if ( ! WP_Filesystem() || ! $wp_filesystem ) {
+			return pods_error( __( 'Error: There was a problem accessing the filesystem.', 'pods' ) );
+		}
 
 		$wp_filesystem->chmod( $new_file, $perms );
 

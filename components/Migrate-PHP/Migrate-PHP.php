@@ -130,7 +130,13 @@ class Pods_Migrate_PHP extends PodsComponent {
 	 */
 	public function ajax_migrate( $params ) {
 		require_once ABSPATH . '/wp-admin/includes/file.php';
-		WP_Filesystem();
+
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+
+		if ( ! WP_Filesystem() || ! $wp_filesystem ) {
+			return '<e>' . esc_html__( 'Error: There was a problem accessing the filesystem.', 'pods' );
+		}
 
 		[
 			'pod_templates' => $pod_templates_available_to_migrate,

@@ -4678,7 +4678,8 @@ class PodsAdmin {
 		$auto_start = pods_v( $auto_start, $settings_fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
 		require_once ABSPATH . '/wp-admin/includes/file.php';
-		WP_Filesystem();
+
+		$filesystem_ok = WP_Filesystem();
 
 		/** @var WP_Filesystem_Base $wp_filesystem */
 		global $wp_filesystem;
@@ -4715,11 +4716,11 @@ class PodsAdmin {
 				],
 				'pods-session-save-path-exists'      => [
 					'label' => __( 'Session Save Path Exists', 'pods' ),
-					'value' => $wp_filesystem->exists( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => ( $filesystem_ok && $wp_filesystem && $wp_filesystem->exists( session_save_path() ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-session-save-path-writable'    => [
 					'label' => __( 'Session Save Path Writeable', 'pods' ),
-					'value' => $wp_filesystem->is_writable( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => ( $filesystem_ok && $wp_filesystem && $wp_filesystem->is_writable( session_save_path() ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-session-max-lifetime'          => [
 					'label' => __( 'Session Max Lifetime', 'pods' ),

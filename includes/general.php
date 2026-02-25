@@ -4687,12 +4687,11 @@ function pods_can_use_sessions( $only_env_check = false ) {
 			// This is OK, but we don't want to check if file_exists on next statement.
 		} else {
 			require_once ABSPATH . '/wp-admin/includes/file.php';
-			WP_Filesystem();
 
 			/** @var WP_Filesystem_Base $wp_filesystem */
 			global $wp_filesystem;
 
-			if ( empty( $save_path ) || ! $wp_filesystem->exists( $save_path ) || ! $wp_filesystem->is_writable( $save_path ) ) {
+			if ( ! WP_Filesystem() || ! $wp_filesystem || empty( $save_path ) || ! $wp_filesystem->exists( $save_path ) || ! $wp_filesystem->is_writable( $save_path ) ) {
 				// Check if session path exists and can be written to, avoiding PHP fatal errors.
 				return false;
 			}

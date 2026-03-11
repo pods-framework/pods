@@ -11,7 +11,10 @@ import {
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core';
-import { restrictToParentElement } from '@dnd-kit/modifiers';
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis,
+} from '@dnd-kit/modifiers';
 import {
 	arrayMove,
 	SortableContext,
@@ -142,6 +145,7 @@ const ListSelectValues = ( {
 				onDragCancel={ handleDragCancel }
 				modifiers={ [
 					restrictToParentElement,
+					restrictToVerticalAxis,
 				] }
 			>
 				<SortableContext

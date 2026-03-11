@@ -293,11 +293,7 @@ class Pods_Migrate_PHP extends PodsComponent {
 		$extra_headers = '';
 
 		if ( false !== strpos( $template_code, '{@' ) ) {
-			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
-			$extra_headers = <<<PHPTEMPLATE
- * Magic Tags: Enabled
-PHPTEMPLATE;
-
+			$extra_headers = "\n * Magic Tags: Enabled";
 		}
 
 		// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
@@ -421,30 +417,16 @@ PHPTEMPLATE;
 			$this->setup_file_path( $file_path_for_content );
 
 			if ( '_custom' !== $page_template && 'blank' !== $page_template ) {
-				$extra_notes .= "\n";
-				// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
-				$extra_notes .= <<<PHPTEMPLATE
- *
- * @see {$page_template} for the template where this will get called from.
-PHPTEMPLATE;
+				$extra_notes .= "\n *\n * @see {$page_template} for the template where this will get called from.";
 			}
 
 			// Set the file path we will write to as the one for the content specific template.
 			$file_path = $file_path_for_content;
-			$extra_notes .= "\n";
-			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
-			$extra_notes .= <<<PHPTEMPLATE
- *
- * This template is only used for pods_content() calls.
-PHPTEMPLATE;
+			$extra_notes .= "\n *\n * This template is only used for pods_content() calls.";
 		}
 
 		if ( false !== strpos( $template_code, '{@' ) ) {
-			$extra_headers = "\n";
-			// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed
-			$extra_headers .= <<<PHPTEMPLATE
- * Magic Tags: Enabled
-PHPTEMPLATE;
+			$extra_headers = "\n * Magic Tags: Enabled";
 		}
 
 		// phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed

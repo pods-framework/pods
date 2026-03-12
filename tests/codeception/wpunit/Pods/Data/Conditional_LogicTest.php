@@ -964,44 +964,44 @@ class Conditional_LogicTest extends WPTestCase {
 	public function test_numeric_comparison_less_than() : void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertTrue( $sut->numeric_comparison( '<', '100', 99 ) );
-		$this->assertTrue( $sut->numeric_comparison( '<', '100', '99' ) );
-		$this->assertFalse( $sut->numeric_comparison( '<', '100', 100 ) );
-		$this->assertFalse( $sut->numeric_comparison( '<', '100', 101 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '<', 99 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '<', '99' ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '<', 100 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '<', 101 ) );
 	}
 
 	public function test_numeric_comparison_less_than_or_equal() : void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertTrue( $sut->numeric_comparison( '<=', '100', 99 ) );
-		$this->assertTrue( $sut->numeric_comparison( '<=', '100', '99' ) );
-		$this->assertTrue( $sut->numeric_comparison( '<=', '100', 100 ) );
-		$this->assertFalse( $sut->numeric_comparison( '<=', '100', 101 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '<=', 99 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '<=', '99' ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '<=', 100 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '<=', 101 ) );
 	}
 
 	public function test_numeric_comparison_greater_than() : void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertFalse( $sut->numeric_comparison( '>', '100', 99 ) );
-		$this->assertFalse( $sut->numeric_comparison( '>', '100', '99' ) );
-		$this->assertFalse( $sut->numeric_comparison( '>', '100', 100 ) );
-		$this->assertTrue( $sut->numeric_comparison( '>', '100', 101 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>',  99 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>',  '99' ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>',  100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>',  101 ) );
 	}
 
 	public function test_numeric_comparison_greater_than_or_equal() : void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertFalse( $sut->numeric_comparison( '>=', '100', 99 ) );
-		$this->assertFalse( $sut->numeric_comparison( '>=', '100', '99' ) );
-		$this->assertTrue( $sut->numeric_comparison( '>=', '100', 100 ) );
-		$this->assertTrue( $sut->numeric_comparison( '>=', '100', 101 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>=',  99 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>=',  '99' ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>=',  100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>=',  101 ) );
 	}
 
 	public function test_numeric_comparison_non_scalar() : void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertFalse( $sut->numeric_comparison( '<', '100', [ 99 ] ) );
-		$this->assertFalse( $sut->numeric_comparison( '>', '100', [ 101 ] ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '<',  [ 99 ] ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>',  [ 101 ] ) );
 	}
 
 	private function sut( string $action, string $logic, array $rules ) : Conditional_Logic {

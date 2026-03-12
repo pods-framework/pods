@@ -50,6 +50,7 @@ const ListItem = ( {
 	setFieldItemData,
 	defaultIcon,
 	showIcon = false,
+	largeIcons = false,
 	showDownloadLink = false,
 	showViewLink = false,
 	showEditLink = false,
@@ -178,23 +179,24 @@ const ListItem = ( {
 					! isDraggable && 'pods-list-select-item--non-draggable',
 					showEditTitle && 'pods-list-select-item--editable-title',
 					! showEditTitle && 'pods-list-select-item--non-editable-title',
+					largeIcons && 'pods-list-select-item--large-icons',
+					! largeIcons && 'pods-list-select-item--small-icons',
 				) }
 			>
 				<div className="pods-list-select-item__inner">
 					{ icon ? (
-						<div className="pods-list-select-item__col pods-list-select-item__icon">
+						<div className={ `pods-list-select-item__col pods-list-select-item__icon pods-list-select-item__icon--${ largeIcons ? 'large' : 'small' }` }>
 							{ isDashIcon ? (
 								<Dashicon
-									className="pinkynail"
+									className="pods-list-select-item__icon--pinkynail"
 									icon={ dashIconName }
-									size={ 32 }
+									size={ largeIcons ? 150 : 50 }
 									aria-label={ __( 'Icon', 'pods' ) }
 								/>
 							) : (
 								<img
-									className="pinkynail"
-									width={ 32 }
-									height={ 32 }
+									className="pods-list-select-item__icon--pinkynail"
+									width={ largeIcons ? 150 : 50 }
 									src={ icon }
 									alt={ __( 'Icon', 'pods' ) }
 								/>
@@ -336,6 +338,7 @@ ListItem.propTypes = {
 	setFieldItemData: PropTypes.func.isRequired,
 	defaultIcon: PropTypes.string,
 	showIcon: PropTypes.bool,
+	largeIcons: PropTypes.bool,
 	showDownloadLink: PropTypes.bool,
 	showViewLink: PropTypes.bool,
 	showEditLink: PropTypes.bool,

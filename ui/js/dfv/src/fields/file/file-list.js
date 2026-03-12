@@ -38,6 +38,7 @@ const FileList = ( props ) => {
 			file_show_edit_link: fileShowEditLink = false,
 			file_edit_title: fileShowEditTitle = false,
 			file_uploader: fileUploader = 'attachment',
+			file_field_template: fileFieldTemplate = 'rows',
 			limit_extensions: limitExtensions,
 			limit_types: limitTypes,
 			file_post_id: filePostId,
@@ -184,7 +185,9 @@ const FileList = ( props ) => {
 	}
 
 	return (
-		<div className="pods-file-new-container">
+		<div
+			className={ `pods-file-container pods-file-container--template-${ fileFieldTemplate }` }
+		>
 			<ListValues
 				fieldName={ name }
 				htmlAttrs={ htmlAttributes }
@@ -196,6 +199,7 @@ const FileList = ( props ) => {
 				limit={ parseInt( correctedLimit, 10 ) || 0 }
 				defaultIcon="dashicons-media-default"
 				showIcon={ true }
+				largeIcons={ fileFieldTemplate === 'tiles' }
 				showDownloadLink={ toBool( fileShowDownloadLink ) }
 				showEditLink={ toBool( fileShowEditLink ) }
 				showEditTitle={ toBool( fileShowEditTitle ) }
@@ -209,7 +213,7 @@ const FileList = ( props ) => {
 			) }
 
 			{ ! isAtLimit ? (
-				<div className="pods-file-new-add-button" style={ { marginTop: '10px' } }>
+				<div className="pods-file-add-button" style={ { marginTop: '10px' } }>
 					<AddFileButton
 						fileUploader={ fileUploader }
 						fileLimit={ correctedLimit }

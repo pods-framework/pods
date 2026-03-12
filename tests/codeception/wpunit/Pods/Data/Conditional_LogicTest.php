@@ -12,14 +12,14 @@ use Pods\Data\Conditional_Logic;
  */
 class Conditional_LogicTest extends WPTestCase {
 
-	public function test_constructor_with_empty_action_and_logic() : void {
+	public function test_constructor_with_empty_action_and_logic(): void {
 		$sut = $this->sut( '', '', [] );
 
 		$this->assertEquals( 'show', $sut->get_action() );
 		$this->assertEquals( 'any', $sut->get_logic() );
 	}
 
-	public function test_get_and_set_action() : void {
+	public function test_get_and_set_action(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertEquals( 'show', $sut->get_action() );
@@ -29,7 +29,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertEquals( 'something-else', $sut->get_action() );
 	}
 
-	public function test_get_and_set_logic() : void {
+	public function test_get_and_set_logic(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertEquals( 'any', $sut->get_logic() );
@@ -39,7 +39,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertEquals( 'something-else', $sut->get_logic() );
 	}
 
-	public function test_get_and_set_rules() : void {
+	public function test_get_and_set_rules(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertEquals( [], $sut->get_rules() );
@@ -61,7 +61,7 @@ class Conditional_LogicTest extends WPTestCase {
 		], $sut->get_rules() );
 	}
 
-	public function test_to_array() : void {
+	public function test_to_array(): void {
 		$sut = $this->sut( 'show', 'any', [
 			[
 				'field'   => 'field_one',
@@ -83,19 +83,19 @@ class Conditional_LogicTest extends WPTestCase {
 		], $sut->to_array() );
 	}
 
-	public function test_is_visible_with_show_action_and_empty_rules() : void {
+	public function test_is_visible_with_show_action_and_empty_rules(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->is_visible( [] ) );
 	}
 
-	public function test_is_visible_with_hide_action_and_empty_rules() : void {
+	public function test_is_visible_with_hide_action_and_empty_rules(): void {
 		$sut = $this->sut( 'hide', 'any', [] );
 
 		$this->assertFalse( $sut->is_visible( [] ) );
 	}
 
-	public function test_is_visible_with_show_action() : void {
+	public function test_is_visible_with_show_action(): void {
 		$sut = $this->sut( 'show', 'any', [
 			[
 				'field'   => 'field_one',
@@ -112,7 +112,7 @@ class Conditional_LogicTest extends WPTestCase {
 		] ) );
 	}
 
-	public function test_is_visible_with_hide_action() : void {
+	public function test_is_visible_with_hide_action(): void {
 		$sut = $this->sut( 'hide', 'any', [
 			[
 				'field'   => 'field_one',
@@ -129,7 +129,7 @@ class Conditional_LogicTest extends WPTestCase {
 		] ) );
 	}
 
-	public function test_validate_rules_with_any_logic() : void {
+	public function test_validate_rules_with_any_logic(): void {
 		$sut = $this->sut( 'show', 'any', [
 			[
 				'field'   => 'field_one',
@@ -164,7 +164,7 @@ class Conditional_LogicTest extends WPTestCase {
 		] ) );
 	}
 
-	public function test_validate_rules_with_all_logic() : void {
+	public function test_validate_rules_with_all_logic(): void {
 		$sut = $this->sut( 'show', 'all', [
 			[
 				'field'   => 'field_one',
@@ -602,7 +602,7 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * @dataProvider provider_validate_rule_comparison_provider
 	 */
-	public function test_validate_rule( array $test ) : void {
+	public function test_validate_rule( array $test ): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$rule_with_readable_compare = [
@@ -643,13 +643,13 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test loose_string_equality_check method
 	 */
-	public function test_loose_string_equality_check_identical_strings() : void {
+	public function test_loose_string_equality_check_identical_strings(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->loose_string_equality_check( 'test', 'test' ) );
 	}
 
-	public function test_loose_string_equality_check_case_insensitive() : void {
+	public function test_loose_string_equality_check_case_insensitive(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->loose_string_equality_check( 'Test', 'test' ) );
@@ -657,7 +657,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->loose_string_equality_check( 'abc', 'ABC' ) );
 	}
 
-	public function test_loose_string_equality_check_string_number_coercion() : void {
+	public function test_loose_string_equality_check_string_number_coercion(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->loose_string_equality_check( '123', 123 ) );
@@ -665,7 +665,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->loose_string_equality_check( '456', 456 ) );
 	}
 
-	public function test_loose_string_equality_check_boolean_number_coercion() : void {
+	public function test_loose_string_equality_check_boolean_number_coercion(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->loose_string_equality_check( true, 1 ) );
@@ -674,7 +674,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->loose_string_equality_check( 0, false ) );
 	}
 
-	public function test_loose_string_equality_check_boolean_string_coercion() : void {
+	public function test_loose_string_equality_check_boolean_string_coercion(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->loose_string_equality_check( true, '1' ) );
@@ -683,7 +683,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->loose_string_equality_check( '0', false ) );
 	}
 
-	public function test_loose_string_equality_check_arrays() : void {
+	public function test_loose_string_equality_check_arrays(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->loose_string_equality_check( [ 1, 2 ], [ 1, 2 ] ) );
@@ -691,7 +691,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->loose_string_equality_check( [ 'a' => 1 ], [ 'a' => 1 ] ) );
 	}
 
-	public function test_loose_string_equality_check_not_matching() : void {
+	public function test_loose_string_equality_check_not_matching(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->loose_string_equality_check( 'abc', 'def' ) );
@@ -702,26 +702,26 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test convert_string_to_array method
 	 */
-	public function test_convert_string_to_array_comma_separated() : void {
+	public function test_convert_string_to_array_comma_separated(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertEquals( [ '123', '456', '789' ], $sut->convert_string_to_array( '123,456,789' ) );
 	}
 
-	public function test_convert_string_to_array_with_whitespace() : void {
+	public function test_convert_string_to_array_with_whitespace(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertEquals( [ '123', '456', '789' ], $sut->convert_string_to_array( '123, 456, 789' ) );
 		$this->assertEquals( [ '123', '456', '789' ], $sut->convert_string_to_array( ' 123 , 456 , 789 ' ) );
 	}
 
-	public function test_convert_string_to_array_already_array() : void {
+	public function test_convert_string_to_array_already_array(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertEquals( [ '123', '456' ], $sut->convert_string_to_array( [ '123', '456' ] ) );
 	}
 
-	public function test_convert_string_to_array_non_string() : void {
+	public function test_convert_string_to_array_non_string(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertEquals( [ 123 ], $sut->convert_string_to_array( 123 ) );
@@ -731,7 +731,7 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test is_value_empty method
 	 */
-	public function test_is_value_empty_returns_true() : void {
+	public function test_is_value_empty_returns_true(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->is_value_empty( '' ) );
@@ -740,7 +740,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->is_value_empty( false ) );
 	}
 
-	public function test_is_value_empty_returns_false() : void {
+	public function test_is_value_empty_returns_false(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->is_value_empty( 'value' ) );
@@ -755,7 +755,7 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test string_comparison method
 	 */
-	public function test_string_comparison_contains() : void {
+	public function test_string_comparison_contains(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->string_comparison( 'contains', 'word', 'sentence with word in it' ) );
@@ -765,7 +765,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->string_comparison( 'contains', '', 'anything' ) ); // Empty search
 	}
 
-	public function test_string_comparison_starts_with() : void {
+	public function test_string_comparison_starts_with(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->string_comparison( 'starts_with', 'word', 'word starts' ) );
@@ -775,7 +775,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->string_comparison( 'starts_with', '', 'anything' ) ); // Empty search
 	}
 
-	public function test_string_comparison_ends_with() : void {
+	public function test_string_comparison_ends_with(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->string_comparison( 'ends_with', 'word', 'ends with word' ) );
@@ -785,20 +785,20 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->string_comparison( 'ends_with', '', 'anything' ) ); // Empty search
 	}
 
-	public function test_string_comparison_non_scalar() : void {
+	public function test_string_comparison_non_scalar(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->string_comparison( 'contains', 'word', [ 'word' ] ) );
 		$this->assertTrue( $sut->string_comparison( 'contains', [ 'word' ], 'word' ) );
 
-		$this->assertFalse( $sut->string_comparison( 'contains', 'word', (object)[ 'property' => 'word' ] ) );
-		$this->assertFalse( $sut->string_comparison( 'contains', (object)[ 'property' => 'word' ], 'word' ) );
+		$this->assertFalse( $sut->string_comparison( 'contains', 'word', (object) [ 'property' => 'word' ] ) );
+		$this->assertFalse( $sut->string_comparison( 'contains', (object) [ 'property' => 'word' ], 'word' ) );
 	}
 
 	/**
 	 * Test regex_match method
 	 */
-	public function test_regex_match_pattern() : void {
+	public function test_regex_match_pattern(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->regex_match( '^[a-z]+$', 'onlyletters' ) );
@@ -807,14 +807,14 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertFalse( $sut->regex_match( '^\d+$', 'abc' ) );
 	}
 
-	public function test_regex_match_partial() : void {
+	public function test_regex_match_partial(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->regex_match( 'test', 'this is a test' ) );
 		$this->assertFalse( $sut->regex_match( 'test', 'no match' ) );
 	}
 
-	public function test_regex_match_array() : void {
+	public function test_regex_match_array(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		// ANY match in array
@@ -825,7 +825,7 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test in_comparison method
 	 */
-	public function test_in_comparison_any_match() : void {
+	public function test_in_comparison_any_match(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_comparison( [ '123', '456' ], '123', false ) );
@@ -833,21 +833,21 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertFalse( $sut->in_comparison( [ '123', '456' ], '789', false ) );
 	}
 
-	public function test_in_comparison_loose_equality() : void {
+	public function test_in_comparison_loose_equality(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_comparison( [ '123', '456' ], 123, false ) );
 		$this->assertTrue( $sut->in_comparison( [ 123, 456 ], '123', false ) );
 	}
 
-	public function test_in_comparison_string_to_array() : void {
+	public function test_in_comparison_string_to_array(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_comparison( '123,456', [ '123', '999' ], false ) );
 		$this->assertFalse( $sut->in_comparison( '123,456', [ '999', '000' ], false ) );
 	}
 
-	public function test_in_comparison_all_match() : void {
+	public function test_in_comparison_all_match(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_comparison( [ '123' ], '123', true ) );
@@ -855,7 +855,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertFalse( $sut->in_comparison( [ '123', '456' ], '123', true ) );
 	}
 
-	public function test_in_comparison_all_with_string_to_array() : void {
+	public function test_in_comparison_all_with_string_to_array(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_comparison( '123,456', [ '123', '456' ], true ) );
@@ -866,7 +866,7 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test in_values_comparison method
 	 */
-	public function test_in_values_comparison_any_match() : void {
+	public function test_in_values_comparison_any_match(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_values_comparison( '123', [ '123', '456' ], false ) );
@@ -874,27 +874,27 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertFalse( $sut->in_values_comparison( '789', [ '123', '456' ], false ) );
 	}
 
-	public function test_in_values_comparison_loose_equality() : void {
+	public function test_in_values_comparison_loose_equality(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_values_comparison( 123, [ '123', '456' ], false ) );
 		$this->assertTrue( $sut->in_values_comparison( '123', [ 123, 456 ], false ) );
 	}
 
-	public function test_in_values_comparison_empty_array() : void {
+	public function test_in_values_comparison_empty_array(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->in_values_comparison( '123', [], false ) );
 	}
 
-	public function test_in_values_comparison_non_array() : void {
+	public function test_in_values_comparison_non_array(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->in_values_comparison( '123', '123', false ) );
 		$this->assertFalse( $sut->in_values_comparison( '123', 123, false ) );
 	}
 
-	public function test_in_values_comparison_all_match() : void {
+	public function test_in_values_comparison_all_match(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->in_values_comparison( '123', [ '123' ], true ) );
@@ -902,7 +902,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertFalse( $sut->in_values_comparison( '123', [ '123', '456' ], true ) );
 	}
 
-	public function test_in_values_comparison_all_empty_array() : void {
+	public function test_in_values_comparison_all_empty_array(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		// Empty array with "all" returns true (vacuous truth)
@@ -912,21 +912,21 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test equality_comparison method
 	 */
-	public function test_equality_comparison_identical() : void {
+	public function test_equality_comparison_identical(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->equality_comparison( '123', '123' ) );
 		$this->assertTrue( $sut->equality_comparison( 123, 123 ) );
 	}
 
-	public function test_equality_comparison_type_coercion() : void {
+	public function test_equality_comparison_type_coercion(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->equality_comparison( '123', 123 ) );
 		$this->assertTrue( $sut->equality_comparison( 123, '123' ) );
 	}
 
-	public function test_equality_comparison_boolean_number() : void {
+	public function test_equality_comparison_boolean_number(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->equality_comparison( true, 1 ) );
@@ -935,7 +935,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->equality_comparison( 0, false ) );
 	}
 
-	public function test_equality_comparison_boolean_string() : void {
+	public function test_equality_comparison_boolean_string(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertTrue( $sut->equality_comparison( true, '1' ) );
@@ -944,7 +944,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->equality_comparison( '0', false ) );
 	}
 
-	public function test_equality_comparison_not_matching() : void {
+	public function test_equality_comparison_not_matching(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->equality_comparison( '123', '456' ) );
@@ -952,7 +952,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertFalse( $sut->equality_comparison( true, false ) );
 	}
 
-	public function test_equality_comparison_non_scalar() : void {
+	public function test_equality_comparison_non_scalar(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->equality_comparison( '123', [ '123' ] ) );
@@ -961,7 +961,7 @@ class Conditional_LogicTest extends WPTestCase {
 	/**
 	 * Test numeric_comparison method
 	 */
-	public function test_numeric_comparison_less_than() : void {
+	public function test_numeric_comparison_less_than(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->numeric_comparison( '100', '<', 99 ) );
@@ -970,7 +970,7 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->numeric_comparison( '100', '<', 101 ) );
 	}
 
-	public function test_numeric_comparison_less_than_or_equal() : void {
+	public function test_numeric_comparison_less_than_or_equal(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$this->assertFalse( $sut->numeric_comparison( '100', '<=', 99 ) );
@@ -979,32 +979,34 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertTrue( $sut->numeric_comparison( '100', '<=', 101 ) );
 	}
 
-	public function test_numeric_comparison_greater_than() : void {
+	public function test_numeric_comparison_greater_than(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertTrue( $sut->numeric_comparison( '100', '>',  99 ) );
-		$this->assertTrue( $sut->numeric_comparison( '100', '>',  '99' ) );
-		$this->assertFalse( $sut->numeric_comparison( '100', '>',  100 ) );
-		$this->assertFalse( $sut->numeric_comparison( '100', '>',  101 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>', 99 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>', '99' ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>', 100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>', 101 ) );
 	}
 
-	public function test_numeric_comparison_greater_than_or_equal() : void {
+	public function test_numeric_comparison_greater_than_or_equal(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertTrue( $sut->numeric_comparison( '100', '>=',  99 ) );
-		$this->assertTrue( $sut->numeric_comparison( '100', '>=',  '99' ) );
-		$this->assertTrue( $sut->numeric_comparison( '100', '>=',  100 ) );
-		$this->assertFalse( $sut->numeric_comparison( '100', '>=',  101 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>=', 99 ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>=', '99' ) );
+		$this->assertTrue( $sut->numeric_comparison( '100', '>=', 100 ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>=', 101 ) );
 	}
 
-	public function test_numeric_comparison_non_scalar() : void {
+	public function test_numeric_comparison_non_scalar(): void {
 		$sut = $this->sut( 'show', 'any', [] );
 
-		$this->assertFalse( $sut->numeric_comparison( '100', '<',  [ 99 ] ) );
-		$this->assertFalse( $sut->numeric_comparison( '100', '>',  [ 101 ] ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '<', [ 99 ] ) );
+		$this->assertFalse( $sut->numeric_comparison( '100', '>', [ 101 ] ) );
+		$this->assertFalse( $sut->numeric_comparison( [ '100' ], '<', 99 ) );
+		$this->assertFalse( $sut->numeric_comparison( [ '100' ], '>', 101 ) );
 	}
 
-	private function sut( string $action, string $logic, array $rules ) : Conditional_Logic {
+	private function sut( string $action, string $logic, array $rules ): Conditional_Logic {
 		return new Conditional_Logic( $action, $logic, $rules );
 	}
 

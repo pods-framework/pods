@@ -11511,7 +11511,7 @@ class PodsAPI {
 		 * @param bool           $flush_object_cache      Whether to fully flush object caches.
 		 * @param bool           $delete_transients       Whether to fully delete transients.
 		 */
-		do_action( 'pods_cache_flushed', $pod, $flush_rewrites, $flush_groups_and_fields, $static_only, $flush_object_cache, $flush_transients );
+		do_action( 'pods_cache_flushed', $pod, $flush_rewrites, $flush_groups_and_fields, $static_only, $flush_object_cache, $delete_transients );
 	}
 
 	/**

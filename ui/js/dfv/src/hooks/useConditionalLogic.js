@@ -206,15 +206,15 @@ const equalityComparison = ( ruleValue, valueToTest ) => {
 /**
  * Perform a numeric comparison operation.
  *
+ * @param {any}    valueToTest The value to be tested.
  * @param {string} operator    The comparison operator: '<', '<=', '>', or '>='.
  * @param {any}    ruleValue   The value to compare against.
- * @param {any}    valueToTest The value to be tested.
  *
  * @return {boolean} True if the test passes.
  */
-const numericComparison = ( operator, ruleValue, valueToTest ) => {
+const numericComparison = ( valueToTest, operator, ruleValue ) => {
 	// Don't compare arrays.
-	if ( Array.isArray( ruleValue ) || Array.isArray( valueToTest ) ) {
+	if ( Array.isArray( valueToTest ) || Array.isArray( ruleValue ) ) {
 		return false;
 	}
 
@@ -301,7 +301,7 @@ const validateConditionalValue = ( rule, ruleValue, valueToTest ) => {
 		case '<=':
 		case '>':
 		case '>=':
-			return numericComparison( rule, ruleValue, valueToTest );
+			return numericComparison( valueToTest, rule, ruleValue );
 		default: {
 			console.debug( 'Conditional logic: rule is unsupported' );
 			console.debug( { rule, ruleValue, valueToTest } );

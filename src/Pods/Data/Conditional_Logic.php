@@ -870,29 +870,29 @@ class Conditional_Logic {
 	 *
 	 * @since 3.0
 	 *
-	 * @param string $operator    The comparison operator: '<', '<=', '>', or '>='.
 	 * @param mixed  $rule_value  The value to compare against.
+	 * @param string $operator    The comparison operator: '<', '<=', '>', or '>='.
 	 * @param mixed  $value_to_test The value to be tested.
 	 *
 	 * @return bool True if the test passes.
 	 */
-	public function numeric_comparison( string $operator, $rule_value, $value_to_test ): bool {
+	public function numeric_comparison( $value_to_test, string $operator, $rule_value ): bool {
 		if ( ! is_scalar( $rule_value ) || ! is_scalar( $value_to_test ) ) {
 			return false;
 		}
 
-		$num_rule  = (float) $rule_value;
 		$num_value = (float) $value_to_test;
+		$num_rule  = (float) $rule_value;
 
 		switch ( $operator ) {
 			case '<':
-				return $num_rule < $num_value;
+				return $num_value < $num_rule;
 			case '<=':
-				return $num_rule <= $num_value;
+				return $num_value <= $num_rule;
 			case '>':
-				return $num_rule > $num_value;
+				return $num_value > $num_rule;
 			case '>=':
-				return $num_rule >= $num_value;
+				return $num_value >= $num_rule;
 			default:
 				return false;
 		}
@@ -982,7 +982,7 @@ class Conditional_Logic {
 			case '<=':
 			case '>':
 			case '>=':
-				return $this->numeric_comparison( $compare, $value, $check_value );
+				return $this->numeric_comparison( $check_value, $compare, $value );
 			default:
 				return false;
 		}

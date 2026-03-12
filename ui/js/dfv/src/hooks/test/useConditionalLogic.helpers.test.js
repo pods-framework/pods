@@ -360,59 +360,59 @@ describe( 'Conditional Logic Helper Functions - Unit Tests', () => {
 
 	describe( 'numericComparison', () => {
 		describe( 'less than (<)', () => {
-			it( 'should return true when ruleValue < valueToTest', () => {
-				expect( numericComparison( '<', '100', 99 ) ).toBe( true );
-				expect( numericComparison( '<', '100', '99' ) ).toBe( true );
+			it( 'should return true when valueToTest < ruleValue', () => {
+				expect( numericComparison( 99, '<', '100' ) ).toBe( true );
+				expect( numericComparison( '99', '<', '100' ) ).toBe( true );
 			} );
 
-			it( 'should return false when ruleValue >= valueToTest', () => {
-				expect( numericComparison( '<', '100', 100 ) ).toBe( false );
-				expect( numericComparison( '<', '100', 101 ) ).toBe( false );
+			it( 'should return false when valueToTest >= ruleValue', () => {
+				expect( numericComparison( 100, '<', '100' ) ).toBe( false );
+				expect( numericComparison( 101, '<', '100' ) ).toBe( false );
 			} );
 		} );
 
 		describe( 'less than or equal (<=)', () => {
-			it( 'should return true when ruleValue <= valueToTest', () => {
-				expect( numericComparison( '<=', '100', 99 ) ).toBe( true );
-				expect( numericComparison( '<=', '100', 100 ) ).toBe( true );
+			it( 'should return true when valueToTest <= ruleValue', () => {
+				expect( numericComparison( 99, '<=', '100' ) ).toBe( true );
+				expect( numericComparison( 100, '<=', '100' ) ).toBe( true );
 			} );
 
-			it( 'should return false when ruleValue > valueToTest', () => {
-				expect( numericComparison( '<=', '100', 101 ) ).toBe( false );
+			it( 'should return false when valueToTest > ruleValue', () => {
+				expect( numericComparison( 101, '<=', '100' ) ).toBe( false );
 			} );
 		} );
 
 		describe( 'greater than (>)', () => {
-			it( 'should return true when ruleValue > valueToTest', () => {
-				expect( numericComparison( '>', '100', 101 ) ).toBe( true );
-				expect( numericComparison( '>', '100', '101' ) ).toBe( true );
+			it( 'should return true when valueToTest > ruleValue', () => {
+				expect( numericComparison( 101, '>', '100' ) ).toBe( true );
+				expect( numericComparison( '101', '>', '100' ) ).toBe( true );
 			} );
 
-			it( 'should return false when ruleValue <= valueToTest', () => {
-				expect( numericComparison( '>', '100', 100 ) ).toBe( false );
-				expect( numericComparison( '>', '100', 99 ) ).toBe( false );
+			it( 'should return false when valueToTest <= ruleValue', () => {
+				expect( numericComparison( 100, '>', '100' ) ).toBe( false );
+				expect( numericComparison( 99, '>', '100' ) ).toBe( false );
 			} );
 		} );
 
 		describe( 'greater than or equal (>=)', () => {
-			it( 'should return true when ruleValue >= valueToTest', () => {
-				expect( numericComparison( '>=', '100', 101 ) ).toBe( true );
-				expect( numericComparison( '>=', '100', 100 ) ).toBe( true );
+			it( 'should return true when valueToTest >= ruleValue', () => {
+				expect( numericComparison( 101, '>=', '100' ) ).toBe( true );
+				expect( numericComparison( 100, '>=', '100' ) ).toBe( true );
 			} );
 
-			it( 'should return false when ruleValue < valueToTest', () => {
-				expect( numericComparison( '>=', '100', 99 ) ).toBe( false );
+			it( 'should return false when valueToTest < ruleValue', () => {
+				expect( numericComparison( 99, '>=', '100' ) ).toBe( false );
 			} );
 		} );
 
 		it( 'should convert strings to numbers', () => {
-			expect( numericComparison( '<', '100', '99' ) ).toBe( true );
-			expect( numericComparison( '>', '100', '101' ) ).toBe( true );
+			expect( numericComparison( '99', '<', '100' ) ).toBe( true );
+			expect( numericComparison( '101', '>', '100' ) ).toBe( true );
 		} );
 
 		it( 'should return false for non-scalar values', () => {
-			expect( numericComparison( '<', '100', [ 99 ] ) ).toBe( false );
-			expect( numericComparison( '>', '100', [ 101 ] ) ).toBe( false );
+			expect( numericComparison( [ 99 ], '<', '100' ) ).toBe( false );
+			expect( numericComparison( [ 101 ], '>', '100' ) ).toBe( false );
 		} );
 	} );
 } );

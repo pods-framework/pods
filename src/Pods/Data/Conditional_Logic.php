@@ -844,6 +844,15 @@ class Conditional_Logic {
 			return false;
 		}
 
+		// Convert booleans to numbers to normalize.
+		if ( is_bool( $rule_value ) ) {
+			$rule_value = (int) $rule_value;
+		}
+
+		if ( is_bool( $value_to_test ) ) {
+			$value_to_test = (int) $value_to_test;
+		}
+
 		// Numeric comparisons enforce floats on numeric values for strict checks.
 		if ( is_numeric( $rule_value ) ) {
 			$rule_value = (float) $rule_value;
@@ -868,12 +877,12 @@ class Conditional_Logic {
 	 * @return bool True if the test passes.
 	 */
 	public function numeric_comparison( string $operator, $rule_value, $value_to_test ): bool {
-		if ( ! is_scalar( $value_to_test ) ) {
+		if ( ! is_scalar( $rule_value ) || ! is_scalar( $value_to_test ) ) {
 			return false;
 		}
 
-		$num_value = (float) $value_to_test;
 		$num_rule  = (float) $rule_value;
+		$num_value = (float) $value_to_test;
 
 		switch ( $operator ) {
 			case '<':

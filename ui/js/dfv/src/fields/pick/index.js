@@ -17,7 +17,7 @@ import FullSelect from './full-select';
 import SimpleSelect from './simple-select';
 import RadioSelect from './radio-select';
 import CheckboxSelect from './checkbox-select';
-import ListSelectValues from './list-select-values';
+import ListValues from './list-values';
 
 import IframeModal from 'dfv/src/components/iframe-modal';
 
@@ -421,7 +421,7 @@ const Pick = ( props ) => {
 					/>
 
 					{ isListSelect ? (
-						<ListSelectValues
+						<ListValues
 							fieldName={ name }
 							value={ formattedValue }
 							setValue={ setValueWithLimit }

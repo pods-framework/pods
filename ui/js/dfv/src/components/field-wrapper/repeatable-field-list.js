@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
 	DndContext,
@@ -58,6 +58,22 @@ const RepeatableFieldList = ( {
 	setFullValue,
 	setHasBlurred,
 } ) => {
+	// Stable unique IDs for React keys. These move with items during
+	// drag-and-drop reorder so React correctly tracks component instances,
+	// preventing both focus loss (text fields) and stale internal state
+	// (datetime/currency/number fields).
+	const nextIdRef = useRef( valuesArray.length );
+	const itemIdsRef = useRef( valuesArray.map( ( _, i ) => i ) );
+
+	// Ensure IDs array stays in sync if valuesArray length changes externally.
+	if ( itemIdsRef.current.length < valuesArray.length ) {
+		while ( itemIdsRef.current.length < valuesArray.length ) {
+			itemIdsRef.current.push( nextIdRef.current++ );
+		}
+	} else if ( itemIdsRef.current.length > valuesArray.length ) {
+		itemIdsRef.current = itemIdsRef.current.slice( 0, valuesArray.length );
+	}
+
 	// Helper functions for setting, moving, adding, and deleting the value
 	// or subvalues.
 	const createSetValueAtIndex = ( index ) => ( newValue ) => {
@@ -68,6 +84,11 @@ const RepeatableFieldList = ( {
 	};
 
 	const deleteValueAtIndex = ( index ) => {
+		itemIdsRef.current = [
+			...itemIdsRef.current.slice( 0, index ),
+			...itemIdsRef.current.slice( index + 1 ),
+		];
+
 		const newValues = [
 			...(
 				valuesArray || []
@@ -81,6 +102,8 @@ const RepeatableFieldList = ( {
 	};
 
 	const addValue = () => {
+		itemIdsRef.current = [ ...itemIdsRef.current, nextIdRef.current++ ];
+
 		const newValues = [
 			...valuesArray,
 			// @todo does an empty string always work?
@@ -97,6 +120,12 @@ const RepeatableFieldList = ( {
 		) {
 			return;
 		}
+
+		const newIds = [ ...itemIdsRef.current ];
+		const tempId = newIds[ secondIndex ];
+		newIds[ secondIndex ] = newIds[ firstIndex ];
+		newIds[ firstIndex ] = tempId;
+		itemIdsRef.current = newIds;
 
 		const newValues = [ ...valuesArray ];
 		const tempValue = newValues[ secondIndex ];
@@ -127,6 +156,8 @@ const RepeatableFieldList = ( {
 
 		const oldIndex = parseInt( active.id, 10 );
 		const newIndex = parseInt( over.id, 10 );
+
+		itemIdsRef.current = arrayMove( itemIdsRef.current, oldIndex, newIndex );
 
 		setFullValue(
 			arrayMove( valuesArray, oldIndex, newIndex ),
@@ -215,7 +246,7 @@ const RepeatableFieldList = ( {
 											showTooltip
 										/>
 									) : null }
-									key={ `${ fieldConfig.name }-${ JSON.stringify( valueItem ) }-${ index }` }
+									key={ `${ fieldConfig.name }-${ itemIdsRef.current[ index ] }` }
 								/>
 							);
 						} ) }

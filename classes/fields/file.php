@@ -243,8 +243,8 @@ class PodsField_File extends PodsField {
 				'data'                  => apply_filters(
 					"pods_form_ui_field_{$type}_type_templates",
 					[
-						'rows'  => __( 'Rows', 'pods' ),
-						'tiles' => __( 'Tiles', 'pods' ),
+						'rows'  => __( 'Rows (small)', 'pods' ),
+						'tiles' => __( 'Rows (large)', 'pods' ),
 					]
 				),
 				'pick_format_single'    => 'dropdown',

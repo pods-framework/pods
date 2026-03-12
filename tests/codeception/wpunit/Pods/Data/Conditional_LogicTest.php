@@ -607,36 +607,44 @@ class Conditional_LogicTest extends WPTestCase {
 
 		$rule_with_readable_compare = [
 			'field'   => 'field_one',
-			'compare' => $test['compare'],
 			'value'   => $test['rule_value'],
+			'compare' => $test['compare'],
 		];
 
 		$rule_with_basic_compare = [
 			'field'   => 'field_one',
-			'compare' => str_replace( ' ', '-', strtolower( $test['compare'] ) ),
 			'value'   => $test['rule_value'],
+			'compare' => str_replace( ' ', '-', strtolower( $test['compare'] ) ),
 		];
 
-		foreach ( $test['value_assertions']['pass'] as $pass_value ) {
+		foreach ( $test['value_assertions']['pass'] as $value_to_test ) {
 			$values = [
-				'value_to_test' => $pass_value,
-				'compare'       => $test['compare'],
-				'rule_value'    => $test['rule_value'],
+				'field_one' => $value_to_test,
 			];
 
-			$this->assertTrue( $sut->validate_rule( $rule_with_readable_compare, $values ), 'Debug: ' . var_export( $values, true ) );
-			$this->assertTrue( $sut->validate_rule( $rule_with_basic_compare, $values ), 'Debug: ' . var_export( $values, true ) );
+			$debug = [
+				'rule_value'    => $test['rule_value'],
+				'compare'       => $test['compare'],
+				'value_to_test' => $value_to_test,
+			];
+
+			$this->assertTrue( $sut->validate_rule( $rule_with_readable_compare, $values ), 'Debug: ' . var_export( $debug, true ) );
+			$this->assertTrue( $sut->validate_rule( $rule_with_basic_compare, $values ), 'Debug: ' . var_export( $debug, true ) );
 		}
 
-		foreach ( $test['value_assertions']['fail'] as $fail_value ) {
+		foreach ( $test['value_assertions']['fail'] as $value_to_test ) {
 			$values = [
-				'value_to_test' => $fail_value,
-				'compare'       => $test['compare'],
-				'rule_value'    => $test['rule_value'],
+				'field_one' => $value_to_test,
 			];
 
-			$this->assertFalse( $sut->validate_rule( $rule_with_readable_compare, $values ), 'Debug: ' . var_export( $values, true ) );
-			$this->assertFalse( $sut->validate_rule( $rule_with_basic_compare, $values ), 'Debug: ' . var_export( $values, true ) );
+			$debug = [
+				'rule_value'    => $test['rule_value'],
+				'compare'       => $test['compare'],
+				'value_to_test' => $value_to_test,
+			];
+
+			$this->assertFalse( $sut->validate_rule( $rule_with_readable_compare, $values ), 'Debug: ' . var_export( $debug, true ) );
+			$this->assertFalse( $sut->validate_rule( $rule_with_basic_compare, $values ), 'Debug: ' . var_export( $debug, true ) );
 		}
 	}
 

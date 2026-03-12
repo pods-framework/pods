@@ -512,29 +512,72 @@ class Conditional_LogicTest extends WPTestCase {
 
 		yield 'validate rule with <' => [
 			[
-				'compare'          => '<',
-				'rule_value'       => '123456',
 				'value_assertions' => [
 					'pass' => [
-						123457,
-						'123457',
+						123455,
+						'123455',
+						1234,
+						'1234',
 					],
 					'fail' => [
-						123455,
+						123457,
 						123456,
-						1234,
 						[
-							123457,
+							123455,
 						],
 					],
 				],
+				'compare'          => '<',
+				'rule_value'       => '123456',
 			],
 		];
 
 		yield 'validate rule with <=' => [
 			[
+				'value_assertions' => [
+					'pass' => [
+						123455,
+						'123455',
+						123456,
+						'123456',
+						1234,
+						'1234',
+					],
+					'fail' => [
+						123457,
+						[
+							123455,
+						],
+					],
+				],
 				'compare'          => '<=',
 				'rule_value'       => '123456',
+			],
+		];
+
+		yield 'validate rule with >' => [
+			[
+				'value_assertions' => [
+					'pass' => [
+						123457,
+						'123457',
+					],
+					'fail' => [
+						123455,
+						123456,
+						1234,
+						[
+							123457,
+						],
+					],
+				],
+				'compare'          => '>',
+				'rule_value'       => '123456',
+			],
+		];
+
+		yield 'validate rule with >=' => [
+			[
 				'value_assertions' => [
 					'pass' => [
 						123457,
@@ -550,51 +593,8 @@ class Conditional_LogicTest extends WPTestCase {
 						],
 					],
 				],
-			],
-		];
-
-		yield 'validate rule with >' => [
-			[
-				'compare'          => '>',
-				'rule_value'       => '123456',
-				'value_assertions' => [
-					'pass' => [
-						123455,
-						'123455',
-						1234,
-						'1234',
-					],
-					'fail' => [
-						123457,
-						123456,
-						[
-							123455,
-						],
-					],
-				],
-			],
-		];
-
-		yield 'validate rule with >=' => [
-			[
 				'compare'          => '>=',
 				'rule_value'       => '123456',
-				'value_assertions' => [
-					'pass' => [
-						123455,
-						'123455',
-						123456,
-						'123456',
-						1234,
-						'1234',
-					],
-					'fail' => [
-						123457,
-						[
-							123455,
-						],
-					],
-				],
 			],
 		];
 	}
@@ -606,15 +606,15 @@ class Conditional_LogicTest extends WPTestCase {
 		$sut = $this->sut( 'show', 'any', [] );
 
 		$rule_with_readable_compare = [
-			'field'   => 'field_one',
-			'value'   => $test['rule_value'],
-			'compare' => $test['compare'],
+			'field'      => 'field_one',
+			'compare'    => $test['compare'],
+			'rule_value' => $test['rule_value'],
 		];
 
 		$rule_with_basic_compare = [
-			'field'   => 'field_one',
-			'value'   => $test['rule_value'],
-			'compare' => str_replace( ' ', '-', strtolower( $test['compare'] ) ),
+			'field'      => 'field_one',
+			'compare'    => str_replace( ' ', '-', strtolower( $test['compare'] ) ),
+			'rule_value' => $test['rule_value'],
 		];
 
 		foreach ( $test['value_assertions']['pass'] as $value_to_test ) {
@@ -623,9 +623,9 @@ class Conditional_LogicTest extends WPTestCase {
 			];
 
 			$debug = [
-				'rule_value'    => $test['rule_value'],
-				'compare'       => $test['compare'],
 				'value_to_test' => $value_to_test,
+				'compare'       => $test['compare'],
+				'rule_value'    => $test['rule_value'],
 			];
 
 			$this->assertTrue( $sut->validate_rule( $rule_with_readable_compare, $values ), 'Debug: ' . var_export( $debug, true ) );
@@ -638,9 +638,9 @@ class Conditional_LogicTest extends WPTestCase {
 			];
 
 			$debug = [
-				'rule_value'    => $test['rule_value'],
-				'compare'       => $test['compare'],
 				'value_to_test' => $value_to_test,
+				'compare'       => $test['compare'],
+				'rule_value'    => $test['rule_value'],
 			];
 
 			$this->assertFalse( $sut->validate_rule( $rule_with_readable_compare, $values ), 'Debug: ' . var_export( $debug, true ) );

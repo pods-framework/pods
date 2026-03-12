@@ -161,7 +161,7 @@ class Conditional_Logic {
 
 		if ( $old_syntax['depends-on'] ) {
 			$logic = 'all';
-			$rules  = [];
+			$rules = [];
 
 			foreach ( $old_syntax['depends-on'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
@@ -175,14 +175,14 @@ class Conditional_Logic {
 
 			$logic_sets[] = [
 				'action' => $action,
-				'logic' => $logic,
-				'rules' => $rules,
+				'logic'  => $logic,
+				'rules'  => $rules,
 			];
 		}
 
 		if ( $old_syntax['depends-on-any'] ) {
-			$logic  = 'any';
-			$rules  = [];
+			$logic = 'any';
+			$rules = [];
 
 			foreach ( $old_syntax['depends-on-any'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
@@ -205,7 +205,7 @@ class Conditional_Logic {
 
 		if ( $old_syntax['depends-on-multi'] ) {
 			$logic = 'all';
-			$rules  = [];
+			$rules = [];
 
 			foreach ( $old_syntax['depends-on-multi'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
@@ -227,8 +227,8 @@ class Conditional_Logic {
 		}
 
 		if ( $old_syntax['excludes-on'] ) {
-			$logic  = 'any';
-			$rules  = [];
+			$logic = 'any';
+			$rules = [];
 
 			foreach ( $old_syntax['excludes-on'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
@@ -250,8 +250,8 @@ class Conditional_Logic {
 		}
 
 		if ( $old_syntax['wildcard-on'] ) {
-			$logic  = 'any';
-			$rules  = [];
+			$logic = 'any';
+			$rules = [];
 
 			foreach ( $old_syntax['wildcard-on'] as $field_name => $value ) {
 				$field_name = self::maybe_migrate_field_name( $field_name );
@@ -470,7 +470,7 @@ class Conditional_Logic {
 	public function validate_rules( array $values ): bool {
 		if ( $this->logic_sets ) {
 			// Validate rules across logic sets.
-			return !! array_filter(
+			return ! ! array_filter(
 				array_map(
 					function ( Conditional_Logic $logic ) use ( $values ) {
 						return $logic->validate_rules( $values );
@@ -581,12 +581,12 @@ class Conditional_Logic {
 	 *
 	 * @since 3.0
 	 *
-	 * @param mixed $value The value to check.
+	 * @param mixed $value_to_test The value to check.
 	 *
 	 * @return bool True if the value is empty.
 	 */
-	public function is_value_empty( $value ): bool {
-		return in_array( $value, [ '', null, [], false ], true );
+	public function is_value_empty( $value_to_test ): bool {
+		return in_array( $value_to_test, [ '', null, [], false ], true );
 	}
 
 	/**
@@ -594,8 +594,8 @@ class Conditional_Logic {
 	 *
 	 * @since 3.0
 	 *
-	 * @param string $operation   The operation to perform: 'contains', 'starts_with', or 'ends_with'.
-	 * @param mixed  $rule_value  The value to compare against.
+	 * @param string $operation     The operation to perform: 'contains', 'starts_with', or 'ends_with'.
+	 * @param mixed  $rule_value    The value to compare against.
 	 * @param mixed  $value_to_test The value to be tested.
 	 *
 	 * @return bool True if the test passes.
@@ -629,18 +629,21 @@ class Conditional_Logic {
 				if ( function_exists( 'str_contains' ) ) {
 					return str_contains( $value_str, $rule_str );
 				}
+
 				return false !== stripos( $value_str, $rule_str );
 
 			case 'starts_with':
 				if ( function_exists( 'str_starts_with' ) ) {
 					return str_starts_with( $value_str, $rule_str );
 				}
+
 				return 0 === stripos( $value_str, $rule_str );
 
 			case 'ends_with':
 				if ( function_exists( 'str_ends_with' ) ) {
 					return str_ends_with( $value_str, $rule_str );
 				}
+
 				return 0 === substr_compare( $value_str, $rule_str, - strlen( $rule_str ) );
 
 			default:
@@ -653,7 +656,7 @@ class Conditional_Logic {
 	 *
 	 * @since 3.0
 	 *
-	 * @param mixed $rule_value  The regex pattern to match against.
+	 * @param mixed $rule_value    The regex pattern to match against.
 	 * @param mixed $value_to_test The value to be tested.
 	 *
 	 * @return bool True if the test passes.
@@ -667,6 +670,7 @@ class Conditional_Logic {
 					return true;
 				}
 			}
+
 			return false;
 		}
 
@@ -710,6 +714,7 @@ class Conditional_Logic {
 							return false;
 						}
 					}
+
 					return true;
 				} else {
 					// ANY item in check_rule_value must be found in value_to_test.
@@ -720,6 +725,7 @@ class Conditional_Logic {
 							}
 						}
 					}
+
 					return false;
 				}
 			}
@@ -740,6 +746,7 @@ class Conditional_Logic {
 					return false;
 				}
 			}
+
 			return true;
 		}
 
@@ -786,6 +793,7 @@ class Conditional_Logic {
 							return false;
 						}
 					}
+
 					return true;
 				} else {
 					// ANY item in check_value_to_test must be found in rule_value.
@@ -796,6 +804,7 @@ class Conditional_Logic {
 							}
 						}
 					}
+
 					return false;
 				}
 			}
@@ -816,6 +825,7 @@ class Conditional_Logic {
 					return false;
 				}
 			}
+
 			return true;
 		}
 
@@ -834,7 +844,7 @@ class Conditional_Logic {
 	 *
 	 * @since 3.0
 	 *
-	 * @param mixed $rule_value  The value to compare against.
+	 * @param mixed $rule_value    The value to compare against.
 	 * @param mixed $value_to_test The value to be tested.
 	 *
 	 * @return bool True if the test passes.
@@ -870,9 +880,9 @@ class Conditional_Logic {
 	 *
 	 * @since 3.0
 	 *
-	 * @param mixed  $rule_value  The value to compare against.
-	 * @param string $operator    The comparison operator: '<', '<=', '>', or '>='.
 	 * @param mixed  $value_to_test The value to be tested.
+	 * @param string $operator      The comparison operator: '<', '<=', '>', or '>='.
+	 * @param mixed  $rule_value    The value to compare against.
 	 *
 	 * @return bool True if the test passes.
 	 */
@@ -909,9 +919,9 @@ class Conditional_Logic {
 	 * @return bool Whether the rule passes.
 	 */
 	public function validate_rule( array $rule, array $values ): bool {
-		$field   = $rule['field'];
-		$compare = ! empty( $rule['compare'] ) ? $rule['compare'] : '=';
-		$value   = $rule['value'];
+		$field      = $rule['field'];
+		$compare    = ! empty( $rule['compare'] ) ? $rule['compare'] : '=';
+		$rule_value = $rule['rule_value'] ?? $rule['value'];
 
 		if ( empty( $field ) || empty( $compare ) ) {
 			return true;
@@ -920,69 +930,69 @@ class Conditional_Logic {
 		// Format for easier readability.
 		$compare = strtoupper( str_replace( '-', ' ', $compare ) );
 
-		$check_value = pods_v( $field, $values );
+		$value_to_test = pods_v( $field, $values );
 
 		// Normalize values for non-empty comparisons.
 		if ( ! in_array( $compare, [ 'EMPTY', 'NOT EMPTY' ], true ) ) {
-			if ( null === $value ) {
-				$value = '';
-			} elseif ( is_bool( $value ) ) {
-				$value = (int) $value;
+			if ( null === $rule_value ) {
+				$rule_value = '';
+			} elseif ( is_bool( $rule_value ) ) {
+				$rule_value = (int) $rule_value;
 			}
 
-			if ( null === $check_value ) {
-				$check_value = '';
-			} elseif ( is_bool( $check_value ) ) {
-				$check_value = (int) $check_value;
+			if ( null === $value_to_test ) {
+				$value_to_test = '';
+			} elseif ( is_bool( $value_to_test ) ) {
+				$value_to_test = (int) $value_to_test;
 			}
 		}
 
 		switch ( $compare ) {
 			case 'LIKE':
-				return $this->string_comparison( 'contains', $value, $check_value );
+				return $this->string_comparison( 'contains', $rule_value, $value_to_test );
 			case 'NOT LIKE':
-				return ! $this->string_comparison( 'contains', $value, $check_value );
+				return ! $this->string_comparison( 'contains', $rule_value, $value_to_test );
 			case 'BEGINS':
-				return $this->string_comparison( 'starts_with', $value, $check_value );
+				return $this->string_comparison( 'starts_with', $rule_value, $value_to_test );
 			case 'NOT BEGINS':
-				return ! $this->string_comparison( 'starts_with', $value, $check_value );
+				return ! $this->string_comparison( 'starts_with', $rule_value, $value_to_test );
 			case 'ENDS':
-				return $this->string_comparison( 'ends_with', $value, $check_value );
+				return $this->string_comparison( 'ends_with', $rule_value, $value_to_test );
 			case 'NOT ENDS':
-				return ! $this->string_comparison( 'ends_with', $value, $check_value );
+				return ! $this->string_comparison( 'ends_with', $rule_value, $value_to_test );
 			case 'MATCHES':
-				return $this->regex_match( $value, $check_value );
+				return $this->regex_match( $rule_value, $value_to_test );
 			case 'NOT MATCHES':
-				return ! $this->regex_match( $value, $check_value );
+				return ! $this->regex_match( $rule_value, $value_to_test );
 			case 'IN':
-				return $this->in_comparison( $value, $check_value );
+				return $this->in_comparison( $rule_value, $value_to_test );
 			case 'NOT IN':
-				return ! $this->in_comparison( $value, $check_value );
+				return ! $this->in_comparison( $rule_value, $value_to_test );
 			case 'IN VALUES':
-				return $this->in_values_comparison( $value, $check_value );
+				return $this->in_values_comparison( $rule_value, $value_to_test );
 			case 'NOT IN VALUES':
-				return ! $this->in_values_comparison( $value, $check_value );
+				return ! $this->in_values_comparison( $rule_value, $value_to_test );
 			case 'ALL':
-				return $this->in_comparison( $value, $check_value, true );
+				return $this->in_comparison( $rule_value, $value_to_test, true );
 			case 'NOT ALL':
-				return ! $this->in_comparison( $value, $check_value, true );
+				return ! $this->in_comparison( $rule_value, $value_to_test, true );
 			case 'ALL VALUES':
-				return $this->in_values_comparison( $value, $check_value, true );
+				return $this->in_values_comparison( $rule_value, $value_to_test, true );
 			case 'NOT ALL VALUES':
-				return ! $this->in_values_comparison( $value, $check_value, true );
+				return ! $this->in_values_comparison( $rule_value, $value_to_test, true );
 			case 'EMPTY':
-				return $this->is_value_empty( $check_value );
+				return $this->is_value_empty( $value_to_test );
 			case 'NOT EMPTY':
-				return ! $this->is_value_empty( $check_value );
+				return ! $this->is_value_empty( $value_to_test );
 			case '=':
-				return $this->equality_comparison( $value, $check_value );
+				return $this->equality_comparison( $rule_value, $value_to_test );
 			case '!=':
-				return ! $this->equality_comparison( $value, $check_value );
+				return ! $this->equality_comparison( $rule_value, $value_to_test );
 			case '<':
 			case '<=':
 			case '>':
 			case '>=':
-				return $this->numeric_comparison( $check_value, $compare, $value );
+				return $this->numeric_comparison( $value_to_test, $compare, $rule_value );
 			default:
 				return false;
 		}

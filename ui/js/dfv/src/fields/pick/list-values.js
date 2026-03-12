@@ -39,6 +39,7 @@ const ListValues = ( {
 	limit,
 	defaultIcon,
 	showIcon = false,
+	largeIcons = false,
 	showDownloadLink = false,
 	showViewLink = false,
 	showEditLink = false,
@@ -185,6 +186,7 @@ const ListValues = ( {
 										setFieldItemData={ setFieldItemData }
 										defaultIcon={ defaultIcon }
 										showIcon={ showIcon }
+										largeIcons={ largeIcons }
 										showDownloadLink={ showDownloadLink }
 										showViewLink={ showViewLink }
 										showEditLink={ ! readOnly && showEditLink }
@@ -230,6 +232,7 @@ ListValues.propTypes = {
 	limit: PropTypes.number.isRequired,
 	defaultIcon: PropTypes.string,
 	showIcon: PropTypes.bool,
+	largeIcons: PropTypes.bool,
 	showDownloadLink: PropTypes.bool,
 	showViewLink: PropTypes.bool,
 	showEditLink: PropTypes.bool,

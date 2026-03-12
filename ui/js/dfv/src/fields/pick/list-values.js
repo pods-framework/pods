@@ -45,6 +45,8 @@ const ListValues = ( {
 	showEditTitle = false,
 	editIframeTitle,
 	readOnly = false,
+	onTitleChange,
+	htmlAttrs = {},
 } ) => {
 	// Stable unique IDs for React keys. These move with items during
 	// drag-and-drop reorder so React correctly tracks component instances.
@@ -188,6 +190,7 @@ const ListValues = ( {
 										showEditLink={ ! readOnly && showEditLink }
 										showEditTitle={ ! readOnly && showEditTitle }
 										editIframeTitle={ editIframeTitle }
+										onTitleChange={ onTitleChange }
 										moveUp={
 											( isDraggable && index !== 0 )
 												? () => swapValues( index, index - 1 )
@@ -198,6 +201,7 @@ const ListValues = ( {
 												? () => swapValues( index, index + 1 )
 												: undefined
 										}
+										htmlAttrs={ htmlAttrs }
 									/>
 								);
 							} ) }
@@ -232,6 +236,8 @@ ListValues.propTypes = {
 	showEditTitle: PropTypes.bool,
 	editIframeTitle: PropTypes.string,
 	readOnly: PropTypes.bool,
+	onTitleChange: PropTypes.func,
+	htmlAttrs: PropTypes.object,
 };
 
 export default ListValues;

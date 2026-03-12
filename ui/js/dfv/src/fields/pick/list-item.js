@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSortable } from '@dnd-kit/sortable';
@@ -54,6 +55,8 @@ const ListItem = ( {
 	showEditLink = false,
 	showEditTitle = false,
 	editIframeTitle,
+	onTitleChange,
+	htmlAttrs = {},
 } ) => {
 	// Set up useSortable hook
 	const {
@@ -90,6 +93,8 @@ const ListItem = ( {
 	const editLink = showEditLink ? moreData?.edit_link : undefined;
 	const viewLink = showViewLink ? moreData?.link : undefined;
 	const [ showEditModal, setShowEditModal ] = useState( false );
+
+	const htmlFieldName = htmlAttrs?.name || fieldName;
 
 	useEffect( () => {
 		const listenForIframeMessages = ( event ) => {
@@ -165,7 +170,14 @@ const ListItem = ( {
 				</div>
 			) : null }
 
-			<div className="pods-field-wrapper__field pods-list-select-item">
+			<div
+				className={ classnames(
+					'pods-field-wrapper__field',
+					'pods-list-select-item',
+					isDraggable && 'pods-list-select-item--draggable',
+					! isDraggable && 'pods-list-select-item--not-draggable',
+				) }
+			>
 				<div className="pods-list-select-item__inner">
 					{ icon ? (
 						<div className="pods-list-select-item__col pods-list-select-item__icon">
@@ -188,12 +200,30 @@ const ListItem = ( {
 						</div>
 					) : null }
 
-					<div className="pods-list-select-item__col pods-list-select-item__name">
+					<div
+						className={
+							classnames(
+								'pods-list-select-item__col',
+								'pods-list-select-item__name',
+								showEditTitle && 'pods-list-select-item__name-editable'
+							)
+						}
+					>
 						{ showEditTitle ? (
 							<Text
-								name={ `${ fieldName }[${ id }][title]` }
-								key={ `${ fieldName }-${ id }` }
+								fieldConfig={ {
+									name: `${ htmlFieldName }-${ id }`,
+									htmlAttr: {
+										name: `${ htmlFieldName }[${ id }][title]`,
+									},
+								} }
 								value={ value.label }
+								setValue={ ( newTitle ) => {
+									if ( onTitleChange ) {
+										onTitleChange( id, newTitle );
+									}
+								} }
+								setHasBlurred={ () => {} }
 							/>
 						) : value.label }
 					</div>
@@ -309,6 +339,8 @@ ListItem.propTypes = {
 	showEditLink: PropTypes.bool,
 	showEditTitle: PropTypes.bool,
 	editIframeTitle: PropTypes.string,
+	onTitleChange: PropTypes.func,
+	htmlAttrs: PropTypes.object,
 };
 
 export default ListItem;

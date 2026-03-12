@@ -175,7 +175,9 @@ const ListItem = ( {
 					'pods-field-wrapper__field',
 					'pods-list-select-item',
 					isDraggable && 'pods-list-select-item--draggable',
-					! isDraggable && 'pods-list-select-item--not-draggable',
+					! isDraggable && 'pods-list-select-item--non-draggable',
+					showEditTitle && 'pods-list-select-item--editable-title',
+					! showEditTitle && 'pods-list-select-item--non-editable-title',
 				) }
 			>
 				<div className="pods-list-select-item__inner">

@@ -12,7 +12,11 @@ import SettingsModal from './settings-modal';
 import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
+import {
+	SAVE_STATUSES,
+	DUPLICATE_STATUSES,
+	DELETE_STATUSES,
+} from 'dfv/src/store/constants';
 
 import './field-group.scss';
 
@@ -31,8 +35,10 @@ const FieldGroup = ( props ) => {
 		hasMovedFields,
 		saveStatus,
 		saveMessage,
+		duplicateStatus,
 		deleteStatus,
 		resetGroupSaveStatus,
+		duplicateGroup,
 		deleteGroup,
 		removeGroupFromPod,
 		saveGroup,
@@ -48,6 +54,8 @@ const FieldGroup = ( props ) => {
 		fields,
 	} = group;
 
+	const isDuplicating = DUPLICATE_STATUSES.DUPLICATING === duplicateStatus;
+	const hasDuplicateFailed = DUPLICATE_STATUSES.DUPLICATE_ERROR === duplicateStatus;
 	const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
 	const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
 
@@ -129,6 +137,21 @@ const FieldGroup = ( props ) => {
 		);
 	};
 
+	const onDuplicateGroupClick = ( event ) => {
+		event.stopPropagation();
+
+		if ( hasMovedFields ) {
+			// eslint-disable-next-line no-alert
+			alert(
+				__( 'You moved fields outside of this group but did not save your changes to the Pod yet. To duplicate this Group, save changes for your Pod first.', 'pods' ),
+			);
+
+			return;
+		}
+
+		duplicateGroup( groupID, groupName );
+	};
+
 	const onDeleteGroupClick = ( event ) => {
 		event.stopPropagation();
 
@@ -159,6 +182,8 @@ const FieldGroup = ( props ) => {
 				classnames(
 					'pods-field-group-wrapper',
 					hasMoved && 'pods-field-group-wrapper--unsaved',
+					isDuplicating && 'pods-field-group-wrapper--duplicating',
+					hasDuplicateFailed && 'pods-field-group-wrapper--errored',
 					isDeleting && 'pods-field-group-wrapper--deleting',
 					hasDeleteFailed && 'pods-field-group-wrapper--errored',
 				)
@@ -187,6 +212,12 @@ const FieldGroup = ( props ) => {
 					</div>
 
 					{ groupLabel }
+
+					{ hasDuplicateFailed ? (
+						<div className="pods-field-group_name__error">
+							{ __( 'Duplication failed. Try again?', 'pods' ) }
+						</div>
+					) : null }
 
 					{ hasDeleteFailed ? (
 						<div className="pods-field-group_name__error">
@@ -221,6 +252,14 @@ const FieldGroup = ( props ) => {
 						aria-label={ __( 'Edit this field group for the Pod', 'pods' ) }
 					>
 						{ __( 'Edit', 'pods' ) }
+					</button>
+					|
+					<button
+						className="pods-field-group_button pods-field-group_duplicate"
+						onClick={ ( event ) => onDuplicateGroupClick( event ) }
+						aria-label={ __( 'Duplicate this field group for the Pod', 'pods' ) }
+					>
+						{ __( 'Duplicate', 'pods' ) }
 					</button>
 					|
 					<button
@@ -305,9 +344,11 @@ FieldGroup.propTypes = {
 	hasMovedFields: PropTypes.bool.isRequired,
 	saveStatus: PropTypes.string,
 	saveMessage: PropTypes.string,
+	duplicateStatus: PropTypes.string,
 	deleteStatus: PropTypes.string,
 
 	toggleExpanded: PropTypes.func.isRequired,
+	duplicateGroup: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
 	removeGroupFromPod: PropTypes.func.isRequired,
 	saveGroup: PropTypes.func.isRequired,

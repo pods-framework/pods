@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $acf_backwards_compatibility = apply_filters( 'pods_acf_backwards_compatibility', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
-if ( $acf_backwards_compatibility ) {
+if ( $acf_backwards_compatibility && ! class_exists( 'ACF' ) ) {
 	if ( ! function_exists( 'the_field' ) ) {
 		/**
 		 * Backwards compatibility function for the_field() from ACF.

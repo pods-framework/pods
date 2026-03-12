@@ -19,13 +19,17 @@
 
 .pods-list-select-values-container {
 	margin-top: 10px;
+
+	.pods-field-wrapper__repeatable {
+		text-align: right;
+	}
 }
 
 .pods-field-wrapper__repeatable .pods-field-wrapper__field.pods-list-select-item--draggable {
 	padding: 8px 0;
 }
 
-.pods-field-wrapper__repeatable .pods-field-wrapper__field.pods-list-select-item--not-draggable {
+.pods-field-wrapper__repeatable .pods-field-wrapper__field.pods-list-select-item--non-draggable {
 	padding: 8px 0 8px 14px;
 }
 
@@ -80,7 +84,7 @@
 	padding: 3px 0;
 	user-select: none;
 	flex-grow: 1;
-	word-break: break-word;
+	word-break: break-all;
 }
 
 .pods-list-select-item__name.pods-list-select-item__name-editable {

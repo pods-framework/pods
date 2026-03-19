@@ -13,8 +13,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * Pods components
  */
-// @todo move ListSelectValues out of the Pick field because it's now reusable.
-import ListSelectValues from '../pick/list-select-values';
+// @todo move ListValues out of the Pick field because it's now reusable.
+import ListValues from '../pick/list-values';
 
 /**
  * Other Pods dependencies
@@ -60,7 +60,7 @@ const FileReadOnly = ( props ) => {
 	}
 
 	return (
-		<ListSelectValues
+		<ListValues
 			fieldName={ name }
 			value={ formattedValues }
 			setValue={ () => {} }

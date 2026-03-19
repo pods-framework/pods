@@ -11,34 +11,38 @@
 	}
 }
 
-// List Items
-.pods-list-select-item {
-	display: block;
-	padding: 6px 10px;
-	margin: 0;
-	border-bottom: 1px solid #efefef;
-
-	&:nth-child(even) {
-		background: #fcfcfc;
-	}
-
-	&:hover {
-		background: #f5f5f5;
-	}
-
-	&:last-of-type {
-		border-bottom: 0;
-	}
-}
-
-.pods-list-select-item--is-dragging {
-	background: #efefef;
-}
-
 .pods-list-select-item--overlay {
-	box-shadow:  0 0 0 3px rgba(63, 63, 68, 0.05),
-		-1px 0 4px 0 rgba(34, 33, 81, 0.01),
-		0px 4px 4px 0 rgba(34, 33, 81, 0.25);
+	box-shadow: 0 0 0 3px rgba(63, 63, 68, 0.05),
+	-1px 0 4px 0 rgba(34, 33, 81, 0.01),
+	0px 4px 4px 0 rgba(34, 33, 81, 0.25);
+}
+
+.pods-list-select-values-container {
+	margin-top: 10px;
+
+	.pods-field-wrapper__repeatable {
+		text-align: right;
+	}
+}
+
+.pods-field-wrapper__repeatable .pods-field-wrapper__field {
+	align-content: center;
+
+	&.pods-list-select-item--draggable {
+		padding: 8px 0;
+	}
+
+	&.pods-list-select-item--non-draggable {
+		padding: 8px 0 8px 14px;
+	}
+
+	&.pods-list-select-item--large-icons {
+		height: 150px;
+	}
+
+	&.pods-list-select-item--small-icons {
+		height: 50px;
+	}
 }
 
 .pods-list-select-item__inner {
@@ -55,37 +59,20 @@
 	text-align: left;
 }
 
-.pods-list-select-item__drag-handle {
-	width: 30px;
-	flex: 0 0 30px;
-	opacity: .2;
-	padding: 4px 0;
-}
-
-.pods-list-select-item__move-buttons {
-	display: flex;
-	flex-flow: column nowrap;
-	// 1px padding fixes WP outline on buttons from being cut off
-	padding-left: 1px;
-
-	.pods-list-select-item__move-button {
-		background: transparent;
-		border: none;
-		height: 16px;
-		padding: 0;
-	}
-
-	.pods-list-select-item__move-button--disabled {
-		opacity: 0.3;
-	}
-}
-
 .pods-list-select-item__icon {
-	width: 40px;
+	width: 50px;
 	margin: 0 10px;
 	font-size: 0; /* for aligning image */
-	line-height: 32px;
+	line-height: 50px;
 	text-align: center;
+
+	&.pods-list-select-item__icon--large {
+		width: 150px;
+
+		& > img {
+			width: 150px;
+		}
+	}
 
 	&:first-child {
 		margin-left: 0;
@@ -102,10 +89,10 @@
 		width: auto;
 	}
 
-	& > span.pinkynail {
-		font-size: 32px;
-		width: 32px;
-		height: 32px;
+	& > span.pods-list-select-item__icon--pinkynail {
+		font-size: 50px;
+		width: 50px;
+		height: 50px;
 	}
 }
 
@@ -117,12 +104,15 @@
 	padding: 3px 0;
 	user-select: none;
 	flex-grow: 1;
-	word-break: break-word;
+	word-break: break-all;
+}
+
+.pods-list-select-item__name.pods-list-select-item__name-editable {
+	overflow: inherit;
 }
 
 .pods-list-select-item__edit,
-.pods-list-select-item__view,
-.pods-list-select-item__remove {
+.pods-list-select-item__view {
 	width: 25px;
 }
 

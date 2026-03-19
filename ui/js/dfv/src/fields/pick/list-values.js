@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import {
 	DndContext,
-	DragOverlay,
 	closestCenter,
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core';
-import { restrictToParentElement } from '@dnd-kit/modifiers';
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis,
+} from '@dnd-kit/modifiers';
 import {
 	arrayMove,
 	SortableContext,
@@ -23,12 +25,11 @@ import PropTypes from 'prop-types';
 /**
  * Other Pods dependencies
  */
-import DraggableListSelectItem from './draggable-list-select-item';
-import ListSelectItem from './list-select-item';
+import ListItem from './list-item';
 
 import './list-select.scss';
 
-const ListSelectValues = ( {
+const ListValues = ( {
 	fieldName,
 	value: arrayOfValues,
 	fieldItemData,
@@ -37,15 +38,34 @@ const ListSelectValues = ( {
 	isMulti,
 	limit,
 	defaultIcon,
-	showIcon,
-	showViewLink,
-	showEditLink,
+	showIcon = false,
+	showDownloadLink = false,
+	showViewLink = false,
+	showEditLink = false,
+	showEditTitle = false,
 	editIframeTitle,
 	readOnly = false,
 } ) => {
-	const [ activeItem, setActiveItem ] = useState( null );
+	// Stable unique IDs for React keys. These move with items during
+	// drag-and-drop reorder so React correctly tracks component instances.
+	const nextIdRef = useRef( arrayOfValues.length );
+	const itemIdsRef = useRef( arrayOfValues.map( ( _, i ) => i ) );
+
+	// Ensure IDs array stays in sync if arrayOfValues length changes externally.
+	if ( itemIdsRef.current.length < arrayOfValues.length ) {
+		while ( itemIdsRef.current.length < arrayOfValues.length ) {
+			itemIdsRef.current.push( nextIdRef.current++ );
+		}
+	} else if ( itemIdsRef.current.length > arrayOfValues.length ) {
+		itemIdsRef.current = itemIdsRef.current.slice( 0, arrayOfValues.length );
+	}
 
 	const removeValueAtIndex = ( index = 0 ) => {
+		itemIdsRef.current = [
+			...itemIdsRef.current.slice( 0, index ),
+			...itemIdsRef.current.slice( index + 1 ),
+		];
+
 		if ( isMulti ) {
 			setValue(
 				[
@@ -58,16 +78,29 @@ const ListSelectValues = ( {
 		}
 	};
 
-	const swapItems = ( oldIndex, newIndex ) => {
+	const swapValues = ( firstIndex, secondIndex ) => {
 		if ( ! isMulti ) {
-			throw 'Swap items shouldn\'nt be called on a single ListSelect';
+			return;
 		}
 
-		const newValues = [ ...arrayOfValues ];
-		const tempValue = newValues[ newIndex ];
+		if (
+			typeof arrayOfValues?.[ firstIndex ] === 'undefined' ||
+			typeof arrayOfValues?.[ secondIndex ] === 'undefined'
+		) {
+			return;
+		}
 
-		newValues[ newIndex ] = newValues[ oldIndex ];
-		newValues[ oldIndex ] = tempValue;
+		const newIds = [ ...itemIdsRef.current ];
+		const tempId = newIds[ secondIndex ];
+		newIds[ secondIndex ] = newIds[ firstIndex ];
+		newIds[ firstIndex ] = tempId;
+		itemIdsRef.current = newIds;
+
+		const newValues = [ ...arrayOfValues ];
+		const tempValue = newValues[ secondIndex ];
+
+		newValues[ secondIndex ] = newValues[ firstIndex ];
+		newValues[ firstIndex ] = tempValue;
 
 		setValue(
 			newValues.map( ( item ) => item.value ),
@@ -81,12 +114,6 @@ const ListSelectValues = ( {
 		} ),
 	);
 
-	const handleDragStart = ( event ) => {
-		const { active } = event;
-
-		setActiveItem( active?.data?.current );
-	};
-
 	const handleDragEnd = ( event ) => {
 		const { active, over } = event;
 
@@ -99,25 +126,16 @@ const ListSelectValues = ( {
 			return;
 		}
 
-		const oldIndex = arrayOfValues.findIndex(
-			( item ) => ( item.value === active.id ),
-		);
+		const oldIndex = parseInt( active.id, 10 );
+		const newIndex = parseInt( over.id, 10 );
 
-		const newIndex = arrayOfValues.findIndex(
-			( item ) => ( item.value === over.id ),
-		);
+		itemIdsRef.current = arrayMove( itemIdsRef.current, oldIndex, newIndex );
 
 		const reorderedItems = arrayMove( arrayOfValues, oldIndex, newIndex );
 
 		setValue( reorderedItems.map(
 			( item ) => item.value )
 		);
-
-		setActiveItem( null );
-	};
-
-	const handleDragCancel = () => {
-		setActiveItem( null );
 	};
 
 	// May need to change the label, if it differs from the fieldItemData.
@@ -132,88 +150,66 @@ const ListSelectValues = ( {
 		};
 	};
 
+	const isDraggable = ! readOnly && isMulti && ( 1 !== limit );
+
 	return (
 		<div className="pods-list-select-values-container">
 			<DndContext
 				sensors={ sensors }
 				collisionDetection={ closestCenter }
-				onDragStart={ handleDragStart }
 				onDragEnd={ handleDragEnd }
-				onDragCancel={ handleDragCancel }
 				modifiers={ [
 					restrictToParentElement,
+					restrictToVerticalAxis,
 				] }
 			>
 				<SortableContext
-					items={ arrayOfValues.map( ( item ) => item.value.toString() ) }
+					items={ arrayOfValues.map( ( valueItem, index ) => index.toString() ) }
 					strategy={ verticalListSortingStrategy }
 				>
 					{ arrayOfValues.length ? (
-						<ul className="pods-list-select-values">
+						<div className="pods-list-select-values">
 							{ arrayOfValues.map( ( valueItem, index ) => {
-								// There may be additional data in an object from the fieldItemData
-								// array.
-								const moreData = fieldItemData.find(
-									( item ) => item?.id === valueItem.value
-								);
-
-								const icon = showIcon ? ( moreData?.icon || defaultIcon ) : undefined;
-
 								return (
-									<DraggableListSelectItem
-										key={ `${ fieldName }-${ JSON.stringify( valueItem ) }-${ index }` }
+									<ListItem
+										key={ `${ fieldName }-${ itemIdsRef.current[ index ] }` }
 										fieldName={ fieldName }
 										value={ getValueWithCorrectedLabel( valueItem ) }
-										isDraggable={ ! readOnly && ( 1 !== limit ) }
+										index={ index }
+										isDraggable={ isDraggable }
 										isRemovable={ ! readOnly }
-										editLink={ ! readOnly && showEditLink ? moreData?.edit_link : undefined }
-										viewLink={ showViewLink ? moreData?.link : undefined }
-										editIframeTitle={ editIframeTitle }
-										icon={ icon }
 										removeItem={ () => removeValueAtIndex( index ) }
+										fieldItemData={ fieldItemData }
 										setFieldItemData={ setFieldItemData }
+										defaultIcon={ defaultIcon }
+										showIcon={ showIcon }
+										showDownloadLink={ showDownloadLink }
+										showViewLink={ showViewLink }
+										showEditLink={ ! readOnly && showEditLink }
+										showEditTitle={ ! readOnly && showEditTitle }
+										editIframeTitle={ editIframeTitle }
 										moveUp={
-											( ! readOnly && index !== 0 )
-												? () => swapItems( index, index - 1 )
+											( isDraggable && index !== 0 )
+												? () => swapValues( index, index - 1 )
 												: undefined
 										}
 										moveDown={
-											( ! readOnly && index !== ( arrayOfValues.length - 1 ) )
-												? () => swapItems( index, index + 1 )
+											( isDraggable && index !== ( arrayOfValues.length - 1 ) )
+												? () => swapValues( index, index + 1 )
 												: undefined
 										}
 									/>
 								);
 							} ) }
-						</ul>
+						</div>
 					) : null }
 				</SortableContext>
-
-				<DragOverlay>
-					{ activeItem ? (
-						<ListSelectItem
-							fieldName={ fieldName }
-							value={ getValueWithCorrectedLabel( activeItem ) }
-							isOverlay={ true }
-							isDraggable={ true }
-							isRemovable={ false }
-							editLink={ undefined }
-							viewLink={ undefined }
-							editIframeTitle={ '' }
-							icon={ undefined }
-							removeItem={ () => {} }
-							setFieldItemData={ () => {} }
-							moveUp={ () => {} }
-							moveDown={ () => {} }
-						/>
-					) : null }
-				</DragOverlay>
 			</DndContext>
 		</div>
 	);
 };
 
-ListSelectValues.propTypes = {
+ListValues.propTypes = {
 	fieldName: PropTypes.string.isRequired,
 	value: PropTypes.arrayOf(
 		PropTypes.shape( {
@@ -229,11 +225,13 @@ ListSelectValues.propTypes = {
 	isMulti: PropTypes.bool.isRequired,
 	limit: PropTypes.number.isRequired,
 	defaultIcon: PropTypes.string,
-	showIcon: PropTypes.bool.isRequired,
-	showViewLink: PropTypes.bool.isRequired,
-	showEditLink: PropTypes.bool.isRequired,
+	showIcon: PropTypes.bool,
+	showDownloadLink: PropTypes.bool,
+	showViewLink: PropTypes.bool,
+	showEditLink: PropTypes.bool,
+	showEditTitle: PropTypes.bool,
 	editIframeTitle: PropTypes.string,
 	readOnly: PropTypes.bool,
 };
 
-export default ListSelectValues;
+export default ListValues;

@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.3
 Tested up to: 7.0
 Requires PHP: 7.2
-Stable tag: 3.3.7
+Stable tag: 3.3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,6 +182,14 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.3.8 - March 19th, 2026 =
+
+* Feature: Reuse the same UI that Repeatable Fields use for the Relationship fields using "List View" list items. The UI is now consistent and Pods 3.4 will include the same UI treatment for the File fields. (@sc0ttkclark)
+* Fixed: Resolve issue with reordering repeatable fields and prevent rendering incorrectly when typing in the field which causes focus to be lost. #7498 #7499 (@pdclark, @sc0ttkclark)
+* Fixed: Resolve problems with reordering Relationship fields using "List View" list items. (@sc0ttkclark)
+* Fixed: Resolve issue with Migrate PHP component not placing magic tags on the correct separate new line of the file header. (@sc0ttkclark)
+* Fixed: Prevent conflicts with ACF/SCF when ACF compatibility functions are enabled.
+
 = 3.3.7 - February 25th, 2026 =
 
 * Fixed: Resolve issues using `WP_Filesystem` to check session paths before starting a session. (@sc0ttkclark)
@@ -282,7 +290,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Name check handling when duplicating pod now works as expected and prevents weirdly named duplicate pod names. (@sc0ttkclark)
 * Tooling: Generate build provenance attestation during deployment for .org zip. #7419 (@johnbillion)
 
-Our GitHub has the full list of all prior releases of Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
+Our GitHub has the full list of all prior releases and changelogs for Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
 
 == Upgrade Notice ==
 

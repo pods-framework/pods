@@ -1,6 +1,14 @@
 Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 
-Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
+Our GitHub has the full list of all prior releases and changelogs for Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
+
+= 3.3.8 - March 19th, 2026 =
+
+* Feature: Reuse the same UI that Repeatable Fields use for the Relationship fields using "List View" list items. The UI is now consistent and Pods 3.4 will include the same UI treatment for the File fields. (@sc0ttkclark)
+* Fixed: Resolve issue with reordering repeatable fields and prevent rendering incorrectly when typing in the field which causes focus to be lost. #7498 #7499 (@pdclark, @sc0ttkclark)
+* Fixed: Resolve problems with reordering Relationship fields using "List View" list items. (@sc0ttkclark)
+* Fixed: Resolve issue with Migrate PHP component not placing magic tags on the correct separate new line of the file header. (@sc0ttkclark)
+* Fixed: Prevent conflicts with ACF/SCF when ACF compatibility functions are enabled.
 
 = 3.3.7 - February 25th, 2026 =
 

@@ -766,6 +766,9 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
+			// Form submitted: remove pending upload flag.
+			delete_post_meta( $attachment_id, '_pods_pending_form_upload' );
+
 			// Check whether attachment is a valid image type.
 			if ( null === $first_attachment_id && 'image/' === substr( $attachment->post_mime_type, 0, 6 ) ) {
 				$first_attachment_id = $attachment_id;
@@ -1341,6 +1344,9 @@ class PodsField_File extends PodsField {
 
 					pods_error( '<div style="color:#FF0000">Error: ' . implode( '</div><div>', $errors ) . '</div>' );
 				} else {
+					// Mark as pending so incomplete form uploads can be cleaned up later.
+					update_post_meta( $attachment_id, '_pods_pending_form_upload', time() );
+
 					$attachment = get_post( $attachment_id, ARRAY_A );
 
 					$attachment['filename'] = basename( $attachment['guid'] );

@@ -1768,6 +1768,7 @@ class PodsInit {
 
 				new PodsRESTFields( $post_type_name );
 			}
+
 		}//end foreach
 
 		foreach ( $existing_taxonomies as $taxonomy_name => $taxonomy_name_again ) {
@@ -1797,6 +1798,7 @@ class PodsInit {
 
 				new PodsRESTFields( $taxonomy_name );
 			}
+
 		}//end foreach
 
 		if ( ! empty( PodsMeta::$user ) ) {
@@ -2217,6 +2219,8 @@ class PodsInit {
 
 		delete_option( 'pods_callouts' );
 
+		wp_clear_scheduled_hook( 'pods_cleanup_pending_form_uploads' );
+
 		pods_api()->cache_flush_pods();
 
 	}
@@ -2551,6 +2555,13 @@ class PodsInit {
 		add_filter( 'post_updated_messages', [ $this, 'setup_updated_messages' ], 10, 1 );
 		add_action( 'delete_attachment', [ $this, 'delete_attachment' ] );
 
+		// Schedule daily cleanup of attachments uploaded to forms that were never completed.
+		if ( ! wp_next_scheduled( 'pods_cleanup_pending_form_uploads' ) ) {
+			wp_schedule_event( time(), 'daily', 'pods_cleanup_pending_form_uploads' );
+		}
+
+		add_action( 'pods_cleanup_pending_form_uploads', [ $this, 'cleanup_pending_form_uploads' ] );
+
 		// Register widgets
 		add_action( 'widgets_init', [ $this, 'register_widgets' ] );
 
@@ -2683,6 +2694,37 @@ class PodsInit {
 		 * @param int $_ID The attachment ID being deleted.
 		 */
 		do_action( 'pods_init_delete_attachment', $_ID );
+	}
+
+	/**
+	 * Delete attachments that were uploaded to Pods forms that were never completed.
+	 *
+	 * Skips recently uploaded attachments to avoid removing
+	 * files for forms still being filled out.
+	 */
+	public function cleanup_pending_form_uploads() {
+		$time_threshold = time() - 12 * HOUR_IN_SECONDS;
+
+		$attachments = get_posts( [
+			'post_type'  => 'attachment',
+			'meta_key'   => '_pods_pending_form_upload',
+			'fields'     => 'ids',
+			'nopaging'   => true,
+		] );
+
+		if ( empty( $attachments ) ) {
+			return;
+		}
+
+		foreach ( $attachments as $attachment_id ) {
+			$uploaded_at = (int) get_post_meta( $attachment_id, '_pods_pending_form_upload', true );
+
+			if ( $uploaded_at > $time_threshold ) {
+				continue;
+			}
+
+			wp_delete_attachment( (int) $attachment_id, true );
+		}
 	}
 
 	/**

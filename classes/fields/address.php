@@ -229,6 +229,7 @@ class PodsField_Address extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+		$form_field_type = PodsForm::$field_type;
 
 		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
@@ -243,10 +244,13 @@ class PodsField_Address extends PodsField {
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {
-			$form_field_type = PodsForm::$field_type;
 			$type            = pods_v( static::$type . '_type', $options, 'address' );
 
-			return pods_view( PODS_DIR . 'ui/fields/address.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/fields/address.php', compact( array_keys( get_defined_vars() ) ) );
+
+			do_action( 'pods_ui_field_address_input_view_extra', PODS_DIR . 'ui/fields/address.php', $type, $name, $value, $options, $pod, $id );
+
+			return;
 		}
 
 		$type = pods_v( 'type', $options, static::$type );
@@ -255,6 +259,8 @@ class PodsField_Address extends PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
+
+		do_action( 'pods_ui_field_address_input_view_extra', PODS_DIR . 'ui/fields/address.php', $type, $name, $value, $options, $pod, $id );
 	}
 
 	/**

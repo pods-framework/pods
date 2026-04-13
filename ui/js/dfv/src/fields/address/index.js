@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 
 import BaseInput from 'dfv/src/fields/base-input';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 import { toBool } from 'dfv/src/helpers/booleans';
+
+import './address.scss';
 
 const normalizeValue = ( value, addressType ) => {
 	if ( value && 'object' === typeof value && ! Array.isArray( value ) ) {
@@ -49,6 +52,15 @@ const mapToOptions = ( data = {} ) => {
 		value: optionValue,
 		label: optionLabel,
 	} ) );
+};
+
+const ADDRESS_LABELS = {
+	line_1: __( 'Address Line 1', 'pods' ),
+	line_2: __( 'Address Line 2', 'pods' ),
+	city: __( 'City', 'pods' ),
+	postal_code: __( 'ZIP / Postal Code', 'pods' ),
+	region: __( 'State / Province', 'pods' ),
+	country: __( 'Country', 'pods' ),
 };
 
 const Address = ( {
@@ -98,10 +110,6 @@ const Address = ( {
 		} );
 	};
 
-	const onBlur = () => {
-		setHasBlurred();
-	};
-
 	const makeSubFieldConfig = ( inputName, inputId ) => ( {
 		...fieldConfig,
 		name: inputName,
@@ -114,6 +122,60 @@ const Address = ( {
 		type,
 	} );
 
+	const renderTextInput = ( partName, inputId ) => {
+		const inputName = `${ baseName }[address][${ partName }]`;
+
+		return (
+			<div className="pods-address-field__row">
+				<label className="pods-form-ui-label" htmlFor={ inputId }>
+					{ ADDRESS_LABELS[ partName ] }
+				</label>
+				<BaseInput
+					fieldConfig={ makeSubFieldConfig( inputName, inputId ) }
+					type="text"
+					value={ addressValue[ partName ] || '' }
+					onChange={ ( event ) => setAddressValue( partName, event.target.value ) }
+					setValue={ ( nextValue ) => setAddressValue( partName, nextValue ) }
+					setHasBlurred={ setHasBlurred }
+				/>
+			</div>
+		);
+	};
+
+	const renderSelectInput = ( partName, inputId, options ) => {
+		const inputName = `${ baseName }[address][${ partName }]`;
+
+		return (
+			<div className="pods-address-field__row">
+				<label className="pods-form-ui-label" htmlFor={ inputId }>
+					{ ADDRESS_LABELS[ partName ] }
+				</label>
+				<select
+					id={ inputId }
+					name={ inputName }
+					className={ `pods-address-field__select ${ htmlAttributes.class || '' }`.trim() }
+					value={ addressValue[ partName ] || '' }
+					disabled={ isReadOnly }
+					onChange={ ( event ) => {
+						if ( isReadOnly ) {
+							return;
+						}
+
+						setAddressValue( partName, event.target.value );
+					} }
+					onBlur={ () => setHasBlurred() }
+				>
+					<option value=""></option>
+					{ options.map( ( option ) => (
+						<option key={ option.value } value={ option.value }>
+							{ option.label }
+						</option>
+					) ) }
+				</select>
+			</div>
+		);
+	};
+
 	if ( 'text' === addressTypeOption ) {
 		return (
 			<BaseInput
@@ -121,7 +183,6 @@ const Address = ( {
 				type="text"
 				value={ normalizedValue.text || '' }
 				onChange={ ( event ) => setTextValue( event.target.value ) }
-				onBlur={ onBlur }
 				setValue={ setTextValue }
 				setHasBlurred={ setHasBlurred }
 			/>
@@ -132,127 +193,39 @@ const Address = ( {
 	const countries = mapToOptions( fieldItemData.countries || {} );
 
 	return (
-		<>
+		<div className="pods-address-field">
 			{ toBool( enableLine1 ) && (
-				<BaseInput
-					fieldConfig={ makeSubFieldConfig( `${ baseName }[address][line_1]`, baseId ) }
-					type="text"
-					value={ addressValue.line_1 || '' }
-					onChange={ ( event ) => setAddressValue( 'line_1', event.target.value ) }
-					onBlur={ onBlur }
-					setValue={ ( nextValue ) => setAddressValue( 'line_1', nextValue ) }
-					setHasBlurred={ setHasBlurred }
-				/>
+				renderTextInput( 'line_1', baseId )
 			) }
 
 			{ toBool( enableLine2 ) && (
-				<BaseInput
-					fieldConfig={ makeSubFieldConfig( `${ baseName }[address][line_2]`, `${ baseId }-line-2` ) }
-					type="text"
-					value={ addressValue.line_2 || '' }
-					onChange={ ( event ) => setAddressValue( 'line_2', event.target.value ) }
-					onBlur={ onBlur }
-					setValue={ ( nextValue ) => setAddressValue( 'line_2', nextValue ) }
-					setHasBlurred={ setHasBlurred }
-				/>
+				renderTextInput( 'line_2', `${ baseId }-line-2` )
 			) }
 
 			{ toBool( enableCity ) && (
-				<BaseInput
-					fieldConfig={ makeSubFieldConfig( `${ baseName }[address][city]`, `${ baseId }-city` ) }
-					type="text"
-					value={ addressValue.city || '' }
-					onChange={ ( event ) => setAddressValue( 'city', event.target.value ) }
-					onBlur={ onBlur }
-					setValue={ ( nextValue ) => setAddressValue( 'city', nextValue ) }
-					setHasBlurred={ setHasBlurred }
-				/>
+				renderTextInput( 'city', `${ baseId }-city` )
 			) }
 
 			{ toBool( enablePostalCode ) && (
-				<BaseInput
-					fieldConfig={ makeSubFieldConfig( `${ baseName }[address][postal_code]`, `${ baseId }-postal-code` ) }
-					type="text"
-					value={ addressValue.postal_code || '' }
-					onChange={ ( event ) => setAddressValue( 'postal_code', event.target.value ) }
-					onBlur={ onBlur }
-					setValue={ ( nextValue ) => setAddressValue( 'postal_code', nextValue ) }
-					setHasBlurred={ setHasBlurred }
-				/>
+				renderTextInput( 'postal_code', `${ baseId }-postal-code` )
 			) }
 
 			{ toBool( enableRegion ) && 'pick' === regionInputType && (
-				<select
-					id={ `${ baseId }-region` }
-					name={ `${ baseName }[address][region]` }
-					className={ htmlAttributes.class || '' }
-					value={ addressValue.region || '' }
-					onChange={ ( event ) => {
-						if ( isReadOnly ) {
-							return;
-						}
-
-						setAddressValue( 'region', event.target.value );
-					} }
-					onBlur={ onBlur }
-				>
-					<option value=""></option>
-					{ regions.map( ( option ) => (
-						<option key={ option.value } value={ option.value }>
-							{ option.label }
-						</option>
-					) ) }
-				</select>
+				renderSelectInput( 'region', `${ baseId }-region`, regions )
 			) }
 
 			{ toBool( enableRegion ) && 'pick' !== regionInputType && (
-				<BaseInput
-					fieldConfig={ makeSubFieldConfig( `${ baseName }[address][region]`, `${ baseId }-region` ) }
-					type="text"
-					value={ addressValue.region || '' }
-					onChange={ ( event ) => setAddressValue( 'region', event.target.value ) }
-					onBlur={ onBlur }
-					setValue={ ( nextValue ) => setAddressValue( 'region', nextValue ) }
-					setHasBlurred={ setHasBlurred }
-				/>
+				renderTextInput( 'region', `${ baseId }-region` )
 			) }
 
 			{ toBool( enableCountry ) && 'pick' === countryInputType && (
-				<select
-					id={ `${ baseId }-country` }
-					name={ `${ baseName }[address][country]` }
-					className={ htmlAttributes.class || '' }
-					value={ addressValue.country || '' }
-					onChange={ ( event ) => {
-						if ( isReadOnly ) {
-							return;
-						}
-
-						setAddressValue( 'country', event.target.value );
-					} }
-					onBlur={ onBlur }
-				>
-					<option value=""></option>
-					{ countries.map( ( option ) => (
-						<option key={ option.value } value={ option.value }>
-							{ option.label }
-						</option>
-					) ) }
-				</select>
+				renderSelectInput( 'country', `${ baseId }-country`, countries )
 			) }
 
 			{ toBool( enableCountry ) && 'pick' !== countryInputType && (
-				<BaseInput
-					fieldConfig={ makeSubFieldConfig( `${ baseName }[address][country]`, `${ baseId }-country` ) }
-					type="text"
-					value={ addressValue.country || '' }
-					onChange={ ( event ) => setAddressValue( 'country', event.target.value ) }
-					onBlur={ onBlur }
-					setValue={ ( nextValue ) => setAddressValue( 'country', nextValue ) }
-					setHasBlurred={ setHasBlurred }
-				/>
+				renderTextInput( 'country', `${ baseId }-country` )
 			) }
-		</>
+		</div>
 	);
 };
 

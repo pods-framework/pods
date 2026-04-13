@@ -92,7 +92,7 @@ jQuery(document).ready(function($){
 	    }
 	};
 
-	// Validate that we have the right resourses
+	// Validate that we have the right resources
 	if ( typeof wpLink !== 'undefined' && $('#wp-link-wrap').length ) {
 		$('.pods-field .link-existing-content').show();
 		podsLink.init();

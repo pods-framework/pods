@@ -1,21 +1,29 @@
 <?php
-$attributes = array();
-$attributes[ 'type' ] = 'text';
-$attributes[ 'value' ] = $value;
-$attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+$attributes             = array();
+$attributes['type']     = 'text';
+$attributes['value']    = $value;
+$attributes['tabindex'] = 2;
+$attributes             = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 <script>
-    jQuery( function ( $ ) {
-        $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).change( function () {
-            var newval = $( this )
-                .val()
-                .toLowerCase()
-                .replace( /([_ ])/g, '-' )
-                .replace( /([`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/])/g, '' )
-                .replace( /(-){2,}/g, '-' );
-            $( this ).val( newval );
-        } );
-    } );
+	jQuery( function ( $ ) {
+		$( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).on( 'change', function () {
+			var newval = $( this )
+				.val()
+				.toLowerCase()
+				.replace( /([_ ])/g, '-' )
+				.replace( /([`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/])/g, '' )
+				.replace( /(-){2,}/g, '-' );
+			$( this ).val( newval );
+		} );
+	} );
 </script>

@@ -1,15 +1,26 @@
 <?php
-    echo $before_widget;
 
-    if ( !empty( $title ) )
-        echo $before_title . $title . $after_title;
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
 
-    if ( !empty( $before_content ) )
-        echo $before_content;
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
-    echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
+echo wp_kses_post( $before_widget );
 
-    if ( !empty( $after_content ) )
-        echo $after_content;
+if ( ! empty( $title ) ) {
+	echo wp_kses_post( $before_title . $title . $after_title );
+}
 
-    echo $after_widget;
+if ( ! empty( $before_content ) ) {
+	echo wp_kses_post( $before_content );
+}
+
+echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+if ( ! empty( $after_content ) ) {
+	echo wp_kses_post( $after_content );
+}
+
+echo wp_kses_post( $after_widget );

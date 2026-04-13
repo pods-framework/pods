@@ -1,0 +1,36 @@
+.pods-color-buttons__buttons {
+	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+
+	.button {
+		margin-right: .5em;
+	}
+}
+
+.pods-color-buttons__buttons--disabled .component-color-indicator {
+	margin-left: 0;
+}
+
+.button.pods-color-select-button {
+	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+
+	> .component-color-indicator {
+		display: block;
+		margin-right: 0.5em;
+	}
+}
+
+/* @todo Maybe remove since we switched to a popover. */
+.pods-color-picker {
+	padding: 0.5em;
+	border: 1px solid #ccd0d4;
+	max-width: 550px;
+}
+
+.pods-color-buttons__value {
+	display: block;
+	padding-left: 0.5em;
+}

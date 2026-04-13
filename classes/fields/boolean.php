@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * Handles boolean field type data and operations.
  *
@@ -6,271 +12,286 @@
  */
 class PodsField_Boolean extends PodsField {
 
-    /**
-     * Field Type Identifier
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $type = 'boolean';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $type = 'boolean';
 
-    /**
-     * Field Type Label
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $label = 'Yes / No';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $label = 'Yes / No';
 
-    /**
-     * Field Type Preparation
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $prepare = '%s';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $prepare = '%d';
 
-    /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
-     */
-    public function __construct () {
-	    self::$label = __( 'Yes / No', 'pods' );
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setup() {
 
-    /**
-     * Add options and set defaults to
-     *
-     * @return array Array of available options
-     *
-     * @since 2.0
-     */
-    public function options () {
-        $options = array(
-            self::$type . '_format_type' => array(
-                'label' => __( 'Input Type', 'pods' ),
-                'default' => 'checkbox',
-                'type' => 'pick',
-                'data' => array(
-                    'checkbox' => __( 'Checkbox', 'pods' ),
-                    'radio' => __( 'Radio Buttons', 'pods' ),
-                    'dropdown' => __( 'Drop Down', 'pods' )
-                ),
-                'dependency' => true
-            ),
-            self::$type . '_yes_label' => array(
-                'label' => __( 'Yes Label', 'pods' ),
-                'default' => __( 'Yes', 'pods' ),
-                'type' => 'text'
-            ),
-            self::$type . '_no_label' => array(
-                'label' => __( 'No Label', 'pods' ),
-                'default' => __( 'No', 'pods' ),
-                'type' => 'text'
-            )
-        );
-        return $options;
-    }
+		static::$label = __( 'Yes / No', 'pods' );
+	}
 
-    /**
-     * Define the current field's schema for DB table storage
-     *
-     * @param array $options
-     *
-     * @return array
-     * @since 2.0
-     */
-    public function schema ( $options = null ) {
-        $schema = 'BOOL DEFAULT 0';
+	/**
+	 * {@inheritdoc}
+	 */
+	public function options() {
 
-        return $schema;
-    }
+		$options = [
+			static::$type . '_format_type' => [
+				'label'                 => __( 'Input Type', 'pods' ),
+				'default'               => 'checkbox',
+				'type'                  => 'pick',
+				'data'                  => [
+					'checkbox' => __( 'Checkbox', 'pods' ),
+					'radio'    => __( 'Radio Buttons', 'pods' ),
+					'dropdown' => __( 'Drop Down', 'pods' ),
+				],
+				'pick_format_single'    => 'dropdown',
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
+			],
+			static::$type . '_yes_label'   => [
+				'label'   => __( 'Yes Label', 'pods' ),
+				'default' => __( 'Yes', 'pods' ),
+				'type'    => 'text',
+			],
+			static::$type . '_no_label'    => [
+				'label'   => __( 'No Label', 'pods' ),
+				'default' => __( 'No', 'pods' ),
+				'type'    => 'text',
+			],
+		];
 
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null
-     * @since 2.0
-     */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $yesno = array(
-            1 => pods_var_raw( self::$type . '_yes_label', $options ),
-            0 => pods_var_raw( self::$type . '_no_label', $options )
-        );
+		return $options;
+	}
 
-        // Deprecated handling for 1.x
-        if ( !parent::$deprecated && isset( $yesno[ (int) $value ] ) )
-            $value = $yesno[ (int) $value ];
+	/**
+	 * {@inheritdoc}
+	 */
+	public function schema( $options = null ) {
 
-        return $value;
-    }
+		$schema = 'BOOL DEFAULT 0';
 
-    /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
-     */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
-        $form_field_type = PodsForm::$field_type;
+		return $schema;
+	}
 
-        if ( is_array( $value ) )
-            $value = !empty( $value );
+	/**
+	 * {@inheritdoc}
+	 */
+	public function is_empty( $value = null ) {
 
-        $field_type = 'checkbox';
+		$is_empty = false;
 
-        if ( 'radio' == pods_v( self::$type . '_format_type', $options ) )
-            $field_type = 'radio';
-        elseif ( 'dropdown' == pods_v( self::$type . '_format_type', $options ) )
-            $field_type = 'select';
+		// is_empty() is used for if/else statements. Value should be true to pass.
+		$value = $this->pre_save( $value );
 
-        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_v( 'read_only', $options, false ) )
-                $options[ 'readonly' ] = true;
-            else
-                return;
-        }
-        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) )
-            $options[ 'readonly' ] = true;
+		if ( ! $value ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
+		$yesno = [
+			1 => pods_v( static::$type . '_yes_label', $options ),
+			0 => pods_v( static::$type . '_no_label', $options ),
+		];
+
+		// Deprecated handling for 1.x
+		if ( ! parent::$deprecated && isset( $yesno[ (int) $value ] ) ) {
+			$value = $yesno[ (int) $value ];
+		}
+
+		return $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+		$form_field_type = PodsForm::$field_type;
+
+		if ( is_array( $value ) ) {
+			if ( ! empty( $value ) ) {
+				$value = true;
+			} else {
+				$value = false;
+			}
+		}
+
+		$field_type = 'checkbox';
+
+		if ( 'radio' === pods_v( static::$type . '_format_type', $options ) ) {
+			$field_type = 'radio';
+		} elseif ( 'dropdown' === pods_v( static::$type . '_format_type', $options ) ) {
+			$field_type = 'select';
+		}
+
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
+			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
+				$options['readonly'] = true;
+			} else {
+				return;
+			}
+		} elseif ( ! pods_has_permissions( $options ) ) {
+			if ( pods_v_bool( 'read_only', $options ) ) {
+				$options['readonly'] = true;
+			}
+		}
 
 		if ( 1 === $value || '1' === $value || true === $value ) {
-            $value = 1;
-        }
-        else {
-            $value = 0;
-        }
+			$value = 1;
+		} else {
+			$value = 0;
+		}
 
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
-    }
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
-    /**
-     * Get the data from the field
-     *
-     * @param string $name The name of the field
-     * @param string|array $value The value of the field
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     * @param boolean $in_form
-     *
-     * @return array Array of possible field data
-     *
-     * @since 2.0
-     */
-    public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-        if ( 'checkbox' != pods_v( self::$type . '_format_type', $options ) ) {
-            $data = array(
-                1 => pods_var_raw( self::$type . '_yes_label', $options ),
-                0 => pods_var_raw( self::$type . '_no_label', $options )
-            );
-        }
-        else {
-            $data = array(
-                1 => pods_var_raw( self::$type . '_yes_label', $options )
-            );
-        }
+		$type = pods_v( 'type', $options, static::$type );
 
-        return $data;
-    }
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
 
-    /**
-     * Build regex necessary for JS validation
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param string $pod
-     * @param int $id
-     *
-     * @return bool
-     * @since 2.0
-     */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        return false;
-    }
+		$this->render_input_script( $args );
+	}
 
-    /**
-     * Validate a value before it's saved
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     * @param null $params
-     *
-     * @return bool
-     * @since 2.0
-     */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        return true;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 
-    /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @return int|mixed
-     * @since 2.0
-     */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        // Only allow 0 / 1
-        if ( 'yes' === strtolower( $value ) || '1' === (string) $value )
-            $value = 1;
-        elseif ( 'no' === strtolower( $value ) || '0' === (string) $value )
-            $value = 0;
-        elseif ( strtolower( pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ) ) === strtolower( $value ) )
-            $value = 1;
-        elseif ( strtolower( pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true ) ) === strtolower( $value ) )
-            $value = 0;
-        else
-            $value = ( 0 === (int) $value ? 0 : 1 );
+		if ( 'checkbox' !== pods_v( static::$type . '_format_type', $options ) ) {
+			$data = [
+				1 => pods_v( static::$type . '_yes_label', $options ),
+				0 => pods_v( static::$type . '_no_label', $options ),
+			];
+		} else {
+			$data = [
+				1 => pods_v( static::$type . '_yes_label', $options ),
+			];
+		}
 
-        return $value;
-    }
+		return $data;
+	}
 
-    /**
-     * Customize the Pods UI manage table column output
-     *
-     * @param int $id
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     *
-     * @since 2.0
-     */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        $yesno = array(
-            1 => pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ),
-            0 => pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true )
-        );
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
-        if ( isset( $yesno[ (int) $value ] ) )
-            $value = strip_tags( $yesno[ (int) $value ], '<strong><a><em><span><img>' );
+		if ( ! $this->is_required( $options ) ) {
+			// Any value can be parsed to boolean.
+			return $validate;
+		}
 
-        return $value;
-    }
+		$errors = [];
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
+
+		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+		$yes_required = ( 'checkbox' === pods_v( static::$type . '_format_type', $options ) );
+
+		if ( $yes_required && ! $check ) {
+			$errors[] = __( 'This field is required.', 'pods' );
+		}
+
+		if ( ! empty( $errors ) ) {
+			return $errors;
+		}
+
+		return $validate;
+	}
+
+	/**
+	 * Replicates filter_var() with `FILTER_VALIDATE_BOOLEAN` and adds custom input for yes/no values.
+	 *
+	 * {@inheritdoc}
+	 */
+	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+		$yes = strtolower( pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ) );
+		$no  = strtolower( pods_v( static::$type . '_no_label', $options, __( 'No', 'pods' ), true ) );
+
+		if ( is_string( $value ) ) {
+			$value = strtolower( $value );
+		}
+
+		if ( $yes === $value ) {
+			$value = 1;
+		} else {
+			// Validate: 1, "1", true, "true", "on", and "yes" as 1, all others are 0.
+			$value = (int) filter_var( $value, FILTER_VALIDATE_BOOLEAN );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
+		$yesno = [
+			1 => pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ),
+			0 => pods_v( static::$type . '_no_label', $options, __( 'No', 'pods' ), true ),
+		];
+
+		if ( isset( $yesno[ (int) $value ] ) ) {
+			$value = strip_tags( $yesno[ (int) $value ], '<strong><a><em><span><img>' );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_item_data( $args ) {
+		if ( empty( $args->options['data'] ) || ! is_array( $args->options['data'] ) ) {
+			return [];
+		}
+
+		$boolean_data = $args->options['data'];
+
+		$value = 0;
+
+		// If we have values, let's cast them.
+		if ( isset( $args->value ) ) {
+			$value = (int) $args->value;
+		}
+
+		$data = [];
+
+		foreach ( $boolean_data as $key => $label ) {
+			$data[] = [
+				'id'        => esc_html( $key ),
+				'icon'      => '',
+				'name'      => wp_strip_all_tags( html_entity_decode( $label, ENT_COMPAT ) ),
+				'edit_link' => '',
+				'link'      => '',
+				'download'  => '',
+				'selected'  => (int) $key === $value,
+			];
+		}
+
+		return $data;
+	}
 }

@@ -1,0 +1,34 @@
+.pods-dfv-container .pods-tinymce-editor-container {
+	border: none;
+	background: transparent;
+
+	.mce-tinymce {
+		border: 1px solid #e5e5e5;
+		box-sizing: border-box;
+	}
+
+	.pods-tinymce-reinit {
+		text-align: right;
+		max-width: 100%;
+		margin-top: 10px;
+	}
+}
+
+.pods-alternate-editor {
+	width: 100%;
+}
+
+#profile-page .form-table .pods-field-option,
+.pods-field-option {
+	.wp-editor-container textarea.wp-editor-area,
+	.wp-editor-container textarea.components-textarea-control__input {
+		width: 100%;
+		border: none;
+		margin-bottom: 0;
+		box-sizing: border-box;
+	}
+}
+
+.pods-field-wrapper__repeatable-field-table div.quill {
+	background-color: #FFF;
+}

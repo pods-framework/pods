@@ -1,0 +1,73 @@
+$color--grey: #82878c;
+$background--hover: #f0f0f0;
+
+.pods-field-wrapper__repeatable-field-table {
+	margin-bottom: 10px;
+}
+
+.pods-field-wrapper__item {
+	display: flex;
+	flex-flow: row nowrap;
+	margin-bottom: 1em;
+}
+
+.pods-field-wrapper__repeatable {
+	align-items: center;
+	background: #f9f9f9;
+	border: 1px solid $color--grey;
+	margin-bottom: 0;
+	padding: 0;
+	position: relative;
+	margin-top: -1px;
+	transition: 0.1s background ease-in-out;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&:hover {
+		background: $background--hover;
+	}
+
+	.pods-field-wrapper__field {
+		padding: 8px;
+	}
+
+	.components-accessible-toolbar {
+		border: 0;
+	}
+
+	.components-toolbar-group {
+		background: transparent;
+	}
+}
+
+.pods-field-wrapper__controls {
+	flex: 0 1 auto;
+}
+
+.pods-field-wrapper__field {
+	flex: 1 1 auto;
+}
+
+.pods-field-wrapper__controls--start {
+	padding-right: 1em;
+}
+
+.pods-field-wrapper__controls--end {
+	padding-left: 1em;
+}
+
+.pods-field-wrapper__drag-handle {
+	cursor: grab;
+}
+
+.pods-field-wrapper__movers {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+}
+
+.components-accessible-toolbar .components-button.pods-field-wrapper__mover {
+	height: 20px;
+}

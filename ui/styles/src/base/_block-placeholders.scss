@@ -1,0 +1,59 @@
+
+.editor-styles-wrapper {
+	.pods-block-placeholder_container {
+		padding: 1em;
+		background-color: rgba(139,139,150,.1);
+		border-radius: 9px;
+
+		.pods-block-placeholder_image {
+			width: 100%;
+			max-width: 750px;
+			margin: 2em auto 1em;
+			display: block;
+		}
+
+		.pods-block-placeholder_content-container {
+			display: flex;
+			align-items: flex-start;
+		}
+
+		.pods-block-placeholder_content {
+			overflow: auto;
+		}
+
+		.pods-block-placeholder_title {
+			margin-top: 0;
+			font-size: 1em;
+			font-weight: bold;
+
+			&:before {
+				display: none;
+			}
+		}
+
+		p {
+			font-family: sans-serif;
+			font-size: .7em;
+			margin-top: 0;
+			line-height: 1.7;
+		}
+
+		details summary {
+			font-size: .8em;
+			text-decoration: underline;
+			cursor: pointer;
+		}
+
+		.pods-logo {
+			width: 120px;
+			margin: 8px 40px 8px 8px;
+		}
+
+		pre {
+			font-size: 0.7em;
+			white-space: break-spaces;
+			background-color: #E7E7E7;
+			padding: 10px;
+		}
+	}
+}

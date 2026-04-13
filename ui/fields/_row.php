@@ -1,5 +1,12 @@
-<?php echo PodsForm::label( $name, $options ); ?>
+<?php
 
-<?php echo PodsForm::field( $name, $value, $type, $options, $pod, $id ); ?>
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
 
-<?php echo PodsForm::comment( $name, null, $options ); ?>
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+PodsForm::output_label( $name, $options ) . "\n";
+PodsForm::output_field( $name, $value, $type, $options, $pod, $id ) . "\n";
+PodsForm::output_comment( $name, null, $options ) . "\n";

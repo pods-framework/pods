@@ -1,4 +1,14 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+use Pods\Whatsit\Pod;
+use Pods\Whatsit\Field;
+use Pods\WP\Revisions;
+
 /**
  * Class PodsRESTFields
  *
@@ -10,25 +20,24 @@
 class PodsRESTFields {
 
 	/**
-	 * Pods object
+	 * Pod object
 	 *
-	 * @since 2.5.6
+	 * @since  2.5.6
 	 *
 	 * @access protected
 	 *
-	 * @var Pods
+	 * @var null|Pod
 	 */
-	protected $pod;
+	protected $pod = null;
 
 	/**
 	 * Constructor for class
 	 *
 	 * @since 2.5.6
 	 *
-	 * @param string|object|Pods $pod Pods object
+	 * @param string|object|Pods|Pod $pod Pods object
 	 */
 	public function __construct( $pod ) {
-
 		if ( ! function_exists( 'register_rest_field' ) ) {
 			return;
 		}
@@ -36,55 +45,117 @@ class PodsRESTFields {
 		$this->set_pod( $pod );
 
 		if ( $this->pod ) {
-			$this->add_fields();
-		}
+			if ( 'object' !== $this->pod->get_arg( 'rest_api_field_location', 'object', true ) ) {
+				return;
+			}
 
+			add_action( 'rest_api_init', [ $this, 'add_fields' ] );
+		}
 	}
 
 	/**
-	 * Set the Pods object
+	 * Get the Pod object.
 	 *
-	 * @since  2.5.6
+	 * @since 3.2.6
 	 *
-	 * @access protected
-	 *
-	 * @param string|Pods $pod Pods object or name of Pods object
+	 * @return Pod|null The Pod object.
 	 */
-	private function set_pod( $pod ) {
+	public function get_pod(): ?Pod {
+		return $this->pod;
+	}
 
-		if ( is_string( $pod ) ) {
-			$this->set_pod( pods( $pod, null, true ) );
+	/**
+	 * Set the Pod object.
+	 *
+	 * @since 2.5.6
+	 *
+	 * @param string|object|Pods|Pod $pod The Pod object which will be normalized and stored.
+	 */
+	public function set_pod( $pod ) {
+		$this->pod = null;
 
-		} else {
-			$type = $pod->pod_data['type'];
+		// Normalize the $pod object.
+		$pod = pods_config_for_pod( $pod );
 
-			if ( in_array( $type, array( 'post_type', 'user', 'taxonomy', 'media', 'comment' ) ) ) {
-				$this->pod = $pod;
-			} else {
-				$this->pod = false;
-			}
+		// Check if the $pod is valid.
+		if ( false === $pod ) {
+			return;
 		}
 
+		$type = $pod->get_type();
+
+		$supported_pod_types = [
+			'post_type' => true,
+			'taxonomy'  => true,
+			'media'     => true,
+			'user'      => true,
+			'comment'   => true,
+		];
+
+		// Check if the $type is supported.
+		if ( ! isset( $supported_pod_types[ $type ] ) ) {
+			return;
+		}
+
+		$rest_enable = filter_var( $pod->get_arg( 'rest_enable', false ), FILTER_VALIDATE_BOOLEAN );
+
+		// Check if this Pod has REST API integration enabled.
+		if ( ! $rest_enable ) {
+			return;
+		}
+
+		$this->pod = $pod;
+	}
+
+	/**
+	 * Validates if a current user or application is logged in.
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_authenticated(): bool {
+		$is_rest_authenticated = (bool) pods_static_cache_get( __FUNCTION__, __CLASS__ );
+
+		if ( $is_rest_authenticated ) {
+			return true;
+		}
+
+		$is_rest_authenticated = (
+			is_user_logged_in()
+			|| wp_validate_application_password( get_current_user_id() )
+		);
+
+		pods_static_cache_set( __FUNCTION__, (int) $is_rest_authenticated, __CLASS__ );
+
+		return $is_rest_authenticated;
 	}
 
 	/**
 	 * Add fields, based on options to REST read/write requests
 	 *
 	 * @since  2.5.6
-	 *
-	 * @access protected
 	 */
-	protected function add_fields() {
+	public function add_fields() {
+		$pod_name = $this->pod->get_name();
+		$pod_type = $this->pod->get_type();
+		$fields   = $this->pod->get_fields();
 
-		$fields = $this->pod->fields();
+		$rest_hook_name = $pod_name;
 
-		foreach ( $fields as $field_name => $field ) {
-			$read  = self::field_allowed_to_extend( $field_name, $this->pod, 'read' );
-			$write = self::field_allowed_to_extend( $field_name, $this->pod, 'write' );
-
-			$this->register( $field_name, $read, $write );
+		if ( 'media' === $pod_name ) {
+			$rest_hook_name = 'attachment';
+		} elseif ( 'comment' === $pod_type ) {
+			$rest_hook_name = 'comment';
 		}
 
+		$rest_hook_name = 'rest_insert_' . $rest_hook_name;
+
+		if ( ! has_action( $rest_hook_name, [ 'PodsRESTHandlers', 'save_handler' ] ) ) {
+			add_action( $rest_hook_name, [ 'PodsRESTHandlers', 'save_handler' ], 10, 3 );
+		}
+
+		foreach ( $fields as $field ) {
+			$this->register( $field );
+		}
 	}
 
 	/**
@@ -92,50 +163,71 @@ class PodsRESTFields {
 	 *
 	 * @since  2.5.6
 	 *
-	 * @access protected
-	 *
-	 * @param string            $field_name Name of fields.
-	 * @param bool|string|array $read       Allowing reading?
-	 * @param bool|string|array $write      Allow writing?
+	 * @param Field $field The field object.
 	 */
-	protected function register( $field_name, $read, $write ) {
+	public function register( $field ) {
+		$rest_read  = self::field_allowed_to_extend( $field, $this->pod, 'read' );
+		$rest_write = self::field_allowed_to_extend( $field, $this->pod, 'write' );
 
-		$args = array();
-
-		switch ( $read ) {
-			case true === $read :
-				$args['get_callback'] = array( 'PodsRESTHandlers', 'get_handler' );
-				break;
-			case is_callable( $read ) :
-				$args['get_callback'] = $read;
-				$read                 = true;
-				break;
+		// Check if we have any access.
+		if ( ! $rest_read && ! $rest_write ) {
+			return;
 		}
 
-		switch ( $write ) {
-			case true === $write :
-				$args['update_callback'] = array( 'PodsRESTHandlers', 'write_handler' );
-				break;
-			case is_callable( $write ) :
-				$args['update_callback'] = $write;
-				$write                   = true;
-				break;
+		$rest_args = [];
+
+		if ( $rest_read ) {
+			$rest_args['get_callback'] = [ 'PodsRESTHandlers', 'get_handler' ];
 		}
 
-		$object_type = $this->pod->pod;
+		if ( $rest_write ) {
+			$rest_args['pods_update'] = true;
+		}
 
-		if ( 'media' == $object_type ) {
+		// Get the object type for register_rest_field(), this is documented weird and we should just pass the object name.
+		$object_type = $this->pod->get_name();
+
+		// Use the "attachment" post type if the Pod name is "media".
+		if ( 'media' === $object_type ) {
 			$object_type = 'attachment';
 		}
 
-		if ( $read || $write ) {
-			if ( function_exists( 'register_rest_field' ) ) {
-				register_rest_field( $object_type, $field_name, $args );
-			} elseif ( function_exists( 'register_api_field' ) ) {
-				register_api_field( $object_type, $field_name, $args );
-			}
-		}
+		if ( ! empty( $rest_args ) ) {
+			$disallowed_field_names = [
+				'id',
+				'date',
+				'date_gmt',
+				'guid',
+				'modified',
+				'modified_gmt',
+				'slug',
+				'status',
+				'type',
+				'link',
+				'title',
+				'content',
+				'excerpt',
+				'author',
+				'featured_media',
+				'comment_status',
+				'ping_status',
+				'sticky',
+				'template',
+				'format',
+				'meta',
+				'categories',
+				'tags',
+				'_links',
+			];
 
+			$field_name = $field->get_name();
+
+			if ( in_array( $field_name, $disallowed_field_names, true ) ) {
+				return;
+			}
+
+			register_rest_field( $object_type, $field_name, $rest_args );
+		}
 	}
 
 	/**
@@ -143,38 +235,69 @@ class PodsRESTFields {
 	 *
 	 * @since 2.5.6
 	 *
-	 * @param string      $field_name The field name.
-	 * @param object|Pods $pod        Pods object.
-	 * @param string      $mode       Are we checking read or write?
+	 * @param string|Field $field The field object or name.
+	 * @param Pod|Pods     $pod   The Pod object.
+	 * @param string       $mode  The mode to use (read or write).
 	 *
 	 * @return bool If supports, true, else false.
 	 */
-	public static function field_allowed_to_extend( $field_name, $pod, $mode = 'read' ) {
+	public static function field_allowed_to_extend( $field, $pod, $mode ) {
+		// Normalize the $pod object.
+		$pod = pods_config_for_pod( $pod );
 
-		$allowed = false;
-
-		if ( is_object( $pod ) ) {
-			$fields = $pod->fields();
-
-			if ( array_key_exists( $field_name, $fields ) ) {
-				$pod_options = $pod->pod_data['options'];
-
-				if ( 'read' === $mode && pods_v( 'read_all', $pod_options, false ) ) {
-					$allowed = true;
-				} elseif ( 'write' === $mode && pods_v( 'write_all', $pod_options, false ) ) {
-					$allowed = true;
-				} elseif ( isset( $fields[ $field_name ] ) ) {
-					if ( 'read' === $mode && 1 == (int) $pod->fields( $field_name, 'rest_read' ) ) {
-						$allowed = true;
-					} elseif ( 'write' === $mode && 1 == (int) $pod->fields( $field_name, 'rest_write' ) ) {
-						$allowed = true;
-					}
-				}
-			}
+		// Check if the $pod is valid.
+		if ( false === $pod ) {
+			return false;
 		}
 
-		return $allowed;
+		$pod_mode_arg = $mode . '_all';
 
+		$pod_mode = $pod->get_arg( $pod_mode_arg, false );
+
+		// Backcompat for a previous bug in Pods < 3.2.7 where the default value was the pod name instead of '0'.
+		if ( $pod_mode === $pod->get_name() ) {
+			$pod_mode = 0;
+		}
+
+		$all_fields_can_use_mode = filter_var( $pod_mode, FILTER_VALIDATE_BOOLEAN );
+		$all_fields_access       = 'read' === $mode && filter_var( $pod->get_arg( 'read_all_access', false ), FILTER_VALIDATE_BOOLEAN );
+
+		// Check if user must be logged in to access all fields and override whether they can use it.
+		if ( $all_fields_can_use_mode && $all_fields_access ) {
+			$all_fields_can_use_mode = self::is_rest_authenticated();
+		}
+
+		// Maybe get the Field object from the Pod.
+		if ( is_string( $field ) ) {
+			$field = $pod->get_field( $field );
+		}
+
+		// Check if we have a valid $field.
+		if ( ! $field instanceof Field ) {
+			return $all_fields_can_use_mode;
+		}
+
+		// Field arguments are prefixed with `rest`;
+		$mode_arg        = 'rest_' . $mode;
+		$mode_access_arg = 'rest_' . $mode . '_access';
+
+		$can_use_mode_value     = $field->get_arg( $mode_arg );
+		$can_use_mode_has_value = null !== $can_use_mode_value;
+
+		// Check if we have a value for this mode on the field itself.
+		if ( ! $can_use_mode_has_value ) {
+			return $all_fields_can_use_mode;
+		}
+
+		$can_use_mode = filter_var( $can_use_mode_value, FILTER_VALIDATE_BOOLEAN );
+		$access       = 'read' === $mode && filter_var( $field->get_arg( $mode_access_arg, false ), FILTER_VALIDATE_BOOLEAN );
+
+		// Check if user must be logged in to access field and override whether they can use it.
+		if ( $can_use_mode && $access ) {
+			$can_use_mode = self::is_rest_authenticated();
+		}
+
+		return $can_use_mode;
 	}
 
 }

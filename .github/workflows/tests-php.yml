@@ -1,0 +1,134 @@
+name: 'Codeception Tests'
+on:
+  pull_request:
+    paths:
+      - 'classes/**.php'
+      - 'components/**.php'
+      - 'includes/**.php'
+      - 'src/**.php'
+      - 'sql/**.php'
+      - 'tests/codeception/**'
+      - 'ui/**.php'
+      - '*.php'
+      - 'composer.json'
+      - 'codeception.*.yml'
+      - '.github/workflows/tests-php.yml'
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - wpunit --skip-group=pods-shortcode
+          - wpunit --group=pods-shortcode
+          - wpunit-traversal
+          - restv1
+    runs-on: ubuntu-latest
+    steps:
+      # ------------------------------------------------------------------------------
+      # Checkout the repo
+      # ------------------------------------------------------------------------------
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1000
+          submodules: recursive
+      # ------------------------------------------------------------------------------
+      # Set up PHP to run slic
+      # ------------------------------------------------------------------------------
+      - name: Configure PHP environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+      # ------------------------------------------------------------------------------
+      # Checkout slic
+      # ------------------------------------------------------------------------------
+      - name: Checkout slic
+        uses: actions/checkout@v3
+        with:
+          repository: stellarwp/slic
+          ref: main
+          path: slic
+          fetch-depth: 1
+      # ------------------------------------------------------------------------------
+      # Prepare our composer cache directory
+      # ------------------------------------------------------------------------------
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      # ------------------------------------------------------------------------------
+      # Initialize slic
+      # ------------------------------------------------------------------------------
+      - name: Set up slic env vars
+        run: |
+          echo "SLIC_BIN=${GITHUB_WORKSPACE}/slic/slic" >> $GITHUB_ENV
+          echo "SLIC_WP_DIR=${GITHUB_WORKSPACE}/slic/_wordpress" >> $GITHUB_ENV
+          echo "SLIC_WORDPRESS_DOCKERFILE=Dockerfile.base" >> $GITHUB_ENV
+      - name: Set run context for slic
+        run: echo "SLIC=1" >> $GITHUB_ENV && echo "CI=1" >> $GITHUB_ENV
+      - name: Start ssh-agent
+        run: |
+          mkdir -p "${HOME}/.ssh";
+          ssh-agent -a /tmp/ssh_agent.sock;
+      - name: Export SSH_AUTH_SOCK env var
+        run: echo "SSH_AUTH_SOCK=/tmp/ssh_agent.sock" >> $GITHUB_ENV
+      - name: Set up slic for CI
+        run: |
+          cd ${GITHUB_WORKSPACE}/..
+          ${SLIC_BIN} here
+          ${SLIC_BIN} interactive off
+          ${SLIC_BIN} build-prompt off
+          ${SLIC_BIN} build-subdir off
+          ${SLIC_BIN} php-version set 8.2 --skip-rebuild
+          ${SLIC_BIN} xdebug off
+          ${SLIC_BIN} composer-cache set /home/runner/.cache/composer
+          ${SLIC_BIN} debug on
+          ${SLIC_BIN} info
+          ${SLIC_BIN} config
+      # ------------------------------------------------------------------------------
+      # Set up Pods
+      # ------------------------------------------------------------------------------
+      - name: Set up pods
+        run: |
+          docker network prune -f
+          ${SLIC_BIN} use ${GITHUB_REPOSITORY#*/}
+          ${SLIC_BIN} composer set-version 2
+          ${SLIC_BIN} composer install --ignore-platform-reqs
+      # ------------------------------------------------------------------------------
+      # Init WordPress container
+      # ------------------------------------------------------------------------------
+      - name: Init the WordPress container
+        run: |
+          ${SLIC_BIN} up wordpress
+          ${SLIC_BIN} wp core version
+          ${SLIC_BIN} wp core update --version=6.9 --force
+          ${SLIC_BIN} wp core update-db
+          ${SLIC_BIN} wp core version
+      # ------------------------------------------------------------------------------
+      # Install and activate TwentyTwenty
+      # ------------------------------------------------------------------------------
+      - name: Install and activate TwentyTwenty
+        if: ${{ matrix.suite == 'acceptance' }}
+        run:  ${SLIC_BIN} wp theme install twentytwenty --activate
+      # ------------------------------------------------------------------------------
+      # Run tests
+      # ------------------------------------------------------------------------------
+      - name: Run suite tests
+        run: ${SLIC_BIN} run ${{ matrix.suite }} --ext DotReporter
+      # ------------------------------------------------------------------------------
+      # Upload artifacts (On failure)
+      # ------------------------------------------------------------------------------
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: output ${{ matrix.suite }}
+          path: tests/_output/
+          retention-days: 7

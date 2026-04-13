@@ -1,61 +1,127 @@
 {
-    "name": "pods-framework/pods",
-    "type": "wordpress-plugin",
-    "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
-    "keywords": [
-        "pods",
-        "custom",
-        "fields"
-    ],
-    "homepage": "http://pods.io/",
-    "license": "GPL-2.0+",
-    "authors": [
-        {
-            "name": "Scott Kingsley Clark",
-            "email": "scott@pods.io",
-            "homepage": "http://scottkclark.com/",
-            "role": "Lead Developer"
-        },
-        {
-            "name": "Phil Lewis",
-            "email": "phil@pods.io",
-            "role": "Developer"
-        },
-        {
-            "name": "Josh Pollock",
-            "email": "josh@pods.io",
-            "role": "Developer"
-        },
-        {
-            "name": "Dan Stefan Oprean",
-            "role": "Developer"
-        },
-        {
-            "name": "David Cramer",
-            "role": "Developer"
-        },
-        {
-            "name": "Mike Green",
-            "role": "Developer"
-        },
-        {
-            "name": "Jonathan Christopher",
-            "role": "Developer"
-        },
-        {
-            "name": "Matt Gibbs",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "composer/installers": "1.2.*",
-        "php": ">=5.2.4"
+  "name": "pods-framework/pods",
+  "type": "wordpress-plugin",
+  "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
+  "keywords": [
+    "wordpress",
+    "content",
+    "fields"
+  ],
+  "homepage": "https://pods.io/",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Scott Kingsley Clark",
+      "homepage": "https://www.scottkclark.com/",
+      "role": "Lead Developer"
     },
-    "require-dev": {
-        "phpunit/phpunit": "4.8.*",
-        "mockery/mockery": "0.9.*"
+    {
+      "name": "Jory Hogeveen",
+      "homepage": "https://www.keraweb.nl/",
+      "role": "Contributing Developer and Community Support"
     },
-    "extra": {
-        "installer-name": "pods"
+    {
+      "name": "Zack Rothauser",
+      "homepage": "https://zackrothauser.com/",
+      "role": "React Contributor and Contributing Developer"
+    },
+    {
+      "name": "Jim True",
+      "homepage": "https://jimtrue.com/",
+      "role": "Community Support"
+    },
+    {
+      "name": "Matt Gibbs",
+      "homepage": "https://facetwp.com/",
+      "role": "Founding Developer"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/pods-framework/pods/issues",
+    "forum": "https://wordpress.org/support/plugin/pods",
+    "source": "https://github.com/pods-framework/pods",
+    "docs": "https://docs.pods.io/"
+  },
+  "require": {
+    "composer/installers": "2.2.*",
+    "erusev/parsedown": "^1.7.4",
+    "lucatume/di52": "^4.0.1",
+    "mustangostang/spyc": "^0.6.3",
+    "php": ">=7.2"
+  },
+  "require-dev": {
+    "automattic/vipwpcs": "^3.0.0",
+    "bvanhoekelen/performance": "^2.5.1",
+    "codeception/module-rest": "^3.4",
+    "codeception/util-universalframework": "^1.0",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+    "dms/phpunit-arraysubset-asserts": "^0.5",
+    "fzaninotto/faker": "^1.9",
+    "johnbillion/query-monitor": "dev-develop",
+    "lucatume/codeception-snapshot-assertions": "^1.4",
+    "lucatume/function-mocker": "^2.0",
+    "lucatume/function-mocker-le": "^1.0",
+    "lucatume/wp-browser": "^4.5",
+    "lucatume/wp-snaphot-assertions": "^2.0",
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^1.12",
+    "phpstan/phpstan-deprecation-rules": "^1.2",
+    "spatie/phpunit-snapshot-assertions": "^4.2",
+    "stellarwp/coding-standards": "dev-main",
+    "szepeviktor/phpstan-wordpress": "*",
+    "wp-cli/wp-cli": "2.*",
+    "wp-coding-standards/wpcs": "^3.1",
+    "wp-graphql/wp-graphql": "^v2.5.4",
+    "wpsyntex/polylang": "dev-master"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "suggest": {
+    "wp-cli/wp-cli": "Enables access to Pods CLI commands."
+  },
+  "scripts": {
+    "strauss": [
+      "test -f ./bin/strauss.phar || curl -o bin/strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/latest/download/strauss.phar",
+      "@php bin/strauss.phar"
+    ],
+    "post-install-cmd": [
+      "@strauss"
+    ],
+    "post-update-cmd": [
+      "@strauss"
+    ]
+  },
+  "extra": {
+    "installer-name": "pods",
+    "installer-paths": {
+      "vendor/wordpress-plugin/{$name}/": [
+        "type:wordpress-plugin"
+      ]
+    },
+    "strauss": {
+      "target_directory": "vendor/vendor-prefixed",
+      "namespace_prefix": "Pods\\Prefixed",
+      "classmap_prefix": "Pods__Prefixed__",
+      "constant_prefix": "PODS_PREFIXED_",
+      "function_prefix": "pods_prefixed_",
+      "packages": [
+        "erusev/parsedown",
+        "lucatume/di52",
+        "mustangostang/spyc"
+      ],
+      "exclude_from_prefix": {
+        "file_patterns": []
+      },
+      "delete_vendor_files": false
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "kylekatarnls/update-helper": true,
+      "phpstan/extension-installer": true
+    }
+  }
 }

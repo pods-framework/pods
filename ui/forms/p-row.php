@@ -1,0 +1,42 @@
+<?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+/**
+ * @var Pods                $pod
+ * @var mixed               $id
+ * @var string              $field_prefix
+ * @var \Pods\Whatsit\Field $field
+ * @var string              $row_classes
+ * @var mixed               $value
+ * @var string|null         $heading_tag
+ */
+?>
+<div class="pods-field__container pods-field-option" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
+	<?php if ( 'heading' === $field['type'] ) : ?>
+		<?php $heading_tag = PodsField_Heading::get_heading_tag( $field, 'h2' ); ?>
+		<<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>
+			class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>"
+			id="heading-<?php echo esc_attr( $field['name'] ); ?>">
+			<?php echo esc_html( $field['label'] ); ?>
+		</<?php echo esc_html( sanitize_key( $heading_tag ) ); ?>>
+		<?php PodsForm::output_comment( $field['name'], pods_v( 'description', $field ), $field ); ?>
+	<?php elseif ( 'html' === $field['type'] && 1 === (int) $field['html_no_label'] ) : ?>
+		<?php PodsForm::output_field( $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
+	<?php else : ?>
+		<p<?php if ( ! empty( $row_classes ) ) : ?>
+			class="<?php echo esc_attr( $row_classes ); ?>
+					<?php endif; ?>>
+					<?php
+			PodsForm::output_label( $field['name'], $field['label'], pods_v( 'help', $field ), $field );
+			PodsForm::output_field( $field['name'], $value, $field['type'], $field, $pod, $id );
+			PodsForm::output_comment( $field['name'], pods_v( 'description', $field ), $field );
+			?>
+		</p>
+	<?php endif; ?>
+</div>

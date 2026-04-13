@@ -1,282 +1,276 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
 class PodsField_Phone extends PodsField {
 
-    /**
-     * Field Type Group
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $group = 'Text';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $group = 'Text';
 
-    /**
-     * Field Type Identifier
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $type = 'phone';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $type = 'phone';
 
-    /**
-     * Field Type Label
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $label = 'Phone';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $label = 'Phone';
 
-    /**
-     * Field Type Preparation
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $prepare = '%s';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $prepare = '%s';
 
-    /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
-     */
-    public function __construct () {
-	    self::$label = __( 'Phone', 'pods' );
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setup() {
 
-    /**
-     * Add options and set defaults to
-     *
-     * @param array $options
-     *
-     * @since 2.0
-     */
-    public function options () {
-        $options = array(
-            self::$type . '_repeatable' => array(
-                'label' => __( 'Repeatable Field', 'pods' ),
-                'default' => 0,
-                'type' => 'boolean',
-                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
-                'boolean_yes_label' => '',
-                'dependency' => true,
-                'developer_mode' => true
-            ),
-            self::$type . '_format' => array(
-                'label' => __( 'Format', 'pods' ),
-                'default' => '999-999-9999 x999',
-                'type' => 'pick',
-                'data' => array(
-                    __( 'US', 'pods' ) => array(
-                        '999-999-9999 x999' => '123-456-7890 x123',
-                        '(999) 999-9999 x999' => '(123) 456-7890 x123',
-                        '999.999.9999 x999' => '123.456.7890 x123'
-                    ),
-                    __( 'International', 'pods' ) => array(
-                        'international' => __( 'Any (no validation available)', 'pods' )
-                    )
-                )
-            ),
-            self::$type . '_options' => array(
-                'label' => __( 'Phone Options', 'pods' ),
-                'group' => array(
-                    self::$type . '_enable_phone_extension' => array(
-                        'label' => __( 'Enable Phone Extension?', 'pods' ),
-                        'default' => 1,
-                        'type' => 'boolean'
-                    )
-                )
-            ),
-            self::$type . '_max_length' => array(
-                'label' => __( 'Maximum Length', 'pods' ),
-                'default' => 25,
-                'type' => 'number',
-                'help' => __( 'Set to -1 for no limit', 'pods' )
-            ),
-            self::$type . '_html5' => array(
-                'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
-                'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
-                'type' => 'boolean'
-            )/*,
-            self::$type . '_size' => array(
-                'label' => __( 'Field Size', 'pods' ),
-                'default' => 'medium',
-                'type' => 'pick',
-                'data' => array(
-                    'small' => __( 'Small', 'pods' ),
-                    'medium' => __( 'Medium', 'pods' ),
-                    'large' => __( 'Large', 'pods' )
-                )
-            )*/
-        );
-        return $options;
-    }
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Phone', 'pods' );
+	}
 
-    /**
-     * Define the current field's schema for DB table storage
-     *
-     * @param array $options
-     *
-     * @return array
-     * @since 2.0
-     */
-    public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 25, null, true );
+	/**
+	 * {@inheritdoc}
+	 */
+	public function options() {
 
-        $schema = 'VARCHAR(' . $length . ')';
+		$options = [
+			static::$type . '_format'      => [
+				'label'                 => __( 'Format', 'pods' ),
+				'default'               => '999-999-9999 x999',
+				'type'                  => 'pick',
+				'data'                  => [
+					__( 'US', 'pods' )            => [
+						'999-999-9999 x999'   => '123-456-7890 x123',
+						'(999) 999-9999 x999' => '(123) 456-7890 x123',
+						'999.999.9999 x999'   => '123.456.7890 x123',
+					],
+					__( 'International', 'pods' ) => [
+						'international' => __( 'Any (no validation available)', 'pods' ),
+					],
+				],
+				'pick_format_single'    => 'dropdown',
+				'pick_show_select_text' => 0,
+			],
+			static::$type . '_options'     => [
+				'label'         => __( 'Phone Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_enable_phone_extension' => [
+						'label'   => __( 'Enable Phone Extension', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					],
+				],
+			],
+			static::$type . '_max_length'  => [
+				'label'   => __( 'Maximum Length', 'pods' ),
+				'default' => 25,
+				'type'    => 'number',
+				'help'    => __( 'Set to -1 for no limit', 'pods' ),
+			],
+			static::$type . '_html5'       => [
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
+				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
+				'type'    => 'boolean',
+			],
+			static::$type . '_placeholder' => [
+				'label'   => __( 'HTML Placeholder', 'pods' ),
+				'default' => '',
+				'type'    => 'text',
+				'help'    => [
+					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
+					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
+				],
+			],
+		];
 
-        if ( 255 < $length || $length < 1 )
-            $schema = 'LONGTEXT';
+		return $options;
+	}
 
-        return $schema;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function schema( $options = null ) {
 
-    /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
-     */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
-        $form_field_type = PodsForm::$field_type;
+		$length = (int) pods_v( static::$type . '_max_length', $options, 25, true );
 
-        if ( is_array( $value ) )
-            $value = implode( ' ', $value );
+		$schema = 'VARCHAR(' . $length . ')';
 
-        $field_type = 'phone';
+		if ( 255 < $length || $length < 1 ) {
+			$schema = 'LONGTEXT';
+		}
 
-        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
-                $options[ 'readonly' ] = true;
+		return $schema;
+	}
 
-                $field_type = 'text';
-            }
-            else
-                return;
-        }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
-            $options[ 'readonly' ] = true;
+	/**
+	 * {@inheritdoc}
+	 */
+	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-            $field_type = 'text';
-        }
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+		$form_field_type = PodsForm::$field_type;
 
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
-    }
+		$value = $this->normalize_value_for_input( $value, $options );
 
-    /**
-     * Validate a value before it's saved
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
-     */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        $errors = array();
+		$field_type = 'phone';
 
-        $label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
+			if ( pods_v_bool( 'read_only_restricted', $options ) ) {
+				$options['readonly'] = true;
 
-        $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+				$field_type = 'text';
+			} else {
+				return;
+			}
+		} elseif ( ! pods_has_permissions( $options ) ) {
+			if ( pods_v_bool( 'read_only', $options ) ) {
+				$options['readonly'] = true;
 
-        if ( is_array( $check ) )
-            $errors = $check;
-        else {
-            if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-                if ( 1 == pods_var( 'required', $options ) )
-                    $errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
-                else
-                    $errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
-            }
-        }
+				$field_type = 'text';
+			}
+		}
 
-        if ( !empty( $errors ) )
-            return $errors;
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/phone.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
-        return true;
-    }
+		$type = pods_v( 'type', $options, static::$type );
 
-    /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0
-     */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $options = (array) $options;
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
 
-        if ( 'international' == pods_var( self::$type . '_format', $options ) ) {
-            // no validation/changes
-        }
-        else {
-            // Clean input
-            $number = preg_replace( '/([^0-9ext])/', '', $value );
+		$this->render_input_script( $args );
+	}
 
-            $number = str_replace(
-                array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ),
-                array( '', '', '|', '|', '', '', '', '', ),
-                $number
-            );
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
-            // Get extension
-            $extension = explode( '|', $number );
-            if ( 1 < count( $extension ) ) {
-                $number = preg_replace( '/([^0-9])/', '', $extension[ 0 ] );
-                $extension = preg_replace( '/([^0-9])/', '', $extension[ 1 ] );
-            }
-            else
-                $extension = '';
+		$errors = [];
 
-            // Build number array
-            $numbers = str_split( $number, 3 );
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
-            if ( isset( $numbers[ 3 ] ) ) {
-                $numbers[ 2 ] .= $numbers[ 3 ];
-                $numbers = array( $numbers[ 0 ], $numbers[ 1 ], $numbers[ 2 ] );
-            }
-            elseif ( isset( $numbers[ 1 ] ) )
-                $numbers = array( $numbers[ 0 ], $numbers[ 1 ] );
+		$label = wp_strip_all_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
-            // Format number
-            if ( '(999) 999-9999 x999' == pods_var( self::$type . '_format', $options ) ) {
-                if ( 2 == count( $numbers ) )
-                    $value = implode( '-', $numbers );
-                else
-                    $value = '(' . $numbers[ 0 ] . ') ' . $numbers[ 1 ] . '-' . $numbers[ 2 ];
-            }
-            elseif ( '999.999.9999 x999' == pods_var( self::$type . '_format', $options ) )
-                $value = implode( '.', $numbers );
-            else //if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
-                $value = implode( '-', $numbers );
+		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
-            // Add extension
-            if ( 1 == pods_var( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) )
-                $value .= ' x' . $extension;
-        }
+		if ( is_array( $check ) ) {
+			$errors = $check;
+		} elseif ( '' === $check && 0 < strlen( (string) $value ) ) {
+			if ( $this->is_required( $options ) ) {
+				// translators: %s is the field label.
+				$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
+			} else {
+				// translators: %s is the field label.
+				$errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
+			}
+		}
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 25 );
+		if ( ! empty( $errors ) ) {
+			return $errors;
+		}
 
-		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+		return $validate;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+
+		$phone_format = pods_v( static::$type . '_format', $options, '999-999-9999 x999', true );
+
+		if ( 'international' !== $phone_format ) {
+			// Clean input
+			$number = preg_replace( '/(\+\d+)/', '', $value );
+			$number = preg_replace( '/([^0-9ext])/', '', $number );
+
+			$number = str_replace(
+				[
+					'ext',
+					'x',
+					't',
+					'e',
+				],
+				[
+					'|',
+					'|',
+					'',
+					'',
+				],
+				$number
+			);
+
+			$extension = '';
+
+			// Get extension
+			$extension_data = explode( '|', $number );
+
+			if ( 1 < count( $extension_data ) ) {
+				$number    = $extension_data[0];
+				$extension = $extension_data[1];
+			}
+
+			// Build number array
+			$numbers = str_split( $number, 3 );
+
+			// Split up the numbers: 123-456-7890: 123[0] 456[1] 789[2]0[3]
+			if ( isset( $numbers[3] ) ) {
+				$numbers[2] .= $numbers[3];
+				$numbers    = [ $numbers[0], $numbers[1], $numbers[2] ];
+			} elseif ( isset( $numbers[1] ) ) {
+				$numbers = [ $numbers[0], $numbers[1] ];
+			}
+
+			// Format number
+			if ( '(999) 999-9999 x999' === $phone_format ) {
+				$number_count = count( $numbers );
+
+				if ( 1 === $number_count ) {
+					// Invalid number.
+					$value = '';
+				} elseif ( 2 === $number_count ) {
+					// Basic number, no area code!
+					$value = implode( '-', $numbers );
+				} else {
+					// Full number.
+					$value = '(' . $numbers[0] . ') ' . $numbers[1] . '-' . $numbers[2];
+				}
+			} elseif ( '999.999.9999 x999' === $phone_format ) {
+				$value = implode( '.', $numbers );
+			} else {
+				$value = implode( '-', $numbers );
+			}
+
+			// Add extension
+			if ( 1 === (int) pods_v( static::$type . '_enable_phone_extension', $options ) && 0 < strlen( (string) $extension ) ) {
+				$value .= ' x' . $extension;
+			}
+		}//end if
+
+		$length = (int) pods_v( static::$type . '_max_length', $options, 25 );
+
+		if ( 0 < $length && $length < pods_mb_strlen( (string) $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );
 		}
 
-        return $value;
-    }
+		return $value;
+	}
 }

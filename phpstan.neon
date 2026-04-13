@@ -1,0 +1,21 @@
+parameters:
+  level: 0
+  paths:
+    - classes
+    - includes
+    - components
+    - deprecated
+    - sql
+    - src
+    - ui/admin
+    - ui/fields
+    - ui/forms
+    - ui/front
+    - init.php
+  excludePaths:
+    - tests
+  scanDirectories:
+    - vendor/vendor-prefixed
+    - vendor/wordpress-plugin
+    - vendor/wp-cli
+    - tests/codeception

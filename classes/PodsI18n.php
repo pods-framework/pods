@@ -1,7 +1,13 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods
- * @since   2.7
+ * @since 2.7.0
  */
 final class PodsI18n {
 
@@ -23,20 +29,19 @@ final class PodsI18n {
 	/**
 	 * @var mixed Current language data
 	 */
-	private static $current_language_data = null;
+	private static $current_language_context = null;
 
 	/**
 	 * Singleton handling for a basic pods_i18n() request
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private function __construct() {
+
 		self::$instance = $this;
 
 		// Hook all enqueue scripts actions
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'pods_before_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
 	/**
@@ -44,7 +49,7 @@ final class PodsI18n {
 	 *
 	 * @return \PodsI18n
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static function get_instance() {
 
@@ -57,12 +62,12 @@ final class PodsI18n {
 	}
 
 	/**
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function enqueue_scripts() {
 
 		// Register our i18n script for JS
-		wp_register_script( 'sprintf', PODS_URL. 'ui/js/sprintf/sprintf.min.js', array(), '1.1.0', true );
+		wp_register_script( 'sprintf', PODS_URL . 'ui/js/sprintf/sprintf.min.js', array(), '1.1.0', true );
 		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array( 'sprintf' ), PODS_VERSION, true );
 
 		self::localize_assets();
@@ -73,7 +78,7 @@ final class PodsI18n {
 	 *     * Build localizations strings from the defaults and those provided via filter
 	 *     * Provide a global JavaScript object with the assembled localization strings via `wp_localize_script`
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private static function localize_assets() {
 
@@ -82,14 +87,14 @@ final class PodsI18n {
 		 * Setting the key of your string to the original (non translated) value is mandatory
 		 * Note: Existing keys in this class will overwrite the ones of this filter!
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 * @see   default_strings()
 		 *
-		 * @param array
+		 * @param array $strings_extra Key/value pairs with label/translation.
 		 *
 		 * @return array format: 'Untranslated string' => 'Translated string with use of WP translate functions'
 		 */
-		$strings_extra = apply_filters( 'pods_localized_strings', array() );
+		$strings_extra = apply_filters( 'pods_localized_strings', [] );
 
 		self::$strings = array_merge( $strings_extra, self::default_strings() );
 
@@ -97,7 +102,7 @@ final class PodsI18n {
 			self::register( $key, $str );
 		}
 
-		// Some other stuff we need to pass through
+		// Some other stuff we need to pass through.
 		$i18n_base = array(
 			'debug' => ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true ) ? true : false,
 		);
@@ -111,7 +116,7 @@ final class PodsI18n {
 	 * @param string $string_key
 	 * @param string $translation
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private static function register( $string_key, $translation ) {
 
@@ -135,71 +140,75 @@ final class PodsI18n {
 	 *
 	 * @return array Key/value pairs with label/translation
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private static function default_strings() {
 
 		return array(
 
-			'%s is required.' =>
-				__( '%s is required.', 'pods' ),
+			// Translators: %s stands for a name/identifier.
+			'%s is required.'                              => __( '%s is required.', 'pods' ),
 
-			'This field is required.' =>
-				__( 'This field is required.', 'pods' ),
+			'This field is required.'                      => __( 'This field is required.', 'pods' ),
 
-			'Add' =>
-				__( 'Add', 'pods' ),
+			'Add'                                          => __( 'Add', 'pods' ),
 
-			'Add New' =>
-				__( 'Add New', 'pods' ),
+			'Add New'                                      => __( 'Add New', 'pods' ),
 
-			'Add New Record' =>
-				__( 'Add New Record', 'pods' ),
+			'Add New Record'                               => __( 'Add New Record', 'pods' ),
 
-			'Added!' =>
-				__( 'Added!', 'pods' ),
+			'Added!'                                       => __( 'Added!', 'pods' ),
 
-			'Added! Choose another or <a href="#">close this box</a>' =>
-				__( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
+			'Added! Choose another or <a href="#">close this box</a>' => __( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
 
-			'Copy' =>
-				__( 'Copy', 'pods' ),
+			'Copy'                                         => __( 'Copy', 'pods' ),
 
-			'Reorder' =>
-				__( 'Reorder', 'pods' ),
+			'Reorder'                                      => __( 'Reorder', 'pods' ),
 
-			'Remove' =>
-				__( 'Remove', 'pods' ),
+			'Remove'                                       => __( 'Remove', 'pods' ),
 
-			'Download' =>
-				__( 'Download', 'pods' ),
+			'Deselect'                                     => __( 'Deselect', 'pods' ),
 
-			'View' =>
-				__( 'View', 'pods' ),
+			'Download'                                     => __( 'Download', 'pods' ),
 
-			'Edit' =>
-				__( 'Edit', 'pods' ),
+			'View'                                         => __( 'View', 'pods' ),
 
-			'Navigating away from this page will discard any changes you have made.' =>
-				__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
+			'Edit'                                         => __( 'Edit', 'pods' ),
 
-			'Unable to process request, please try again.' =>
-				__( 'Unable to process request, please try again.', 'pods' ),
+			'Search'                                       => __( 'Search', 'pods' ),
 
-			'Error uploading file: ' =>
-				__( 'Error uploading file: ', 'pods' ),
+			// Translators: %s stands for a name/identifier.
+			'Search %s'                                    => __( 'Search %s', 'pods' ),
 
-			'Allowed Files' =>
-				__( 'Allowed Files', 'pods' ),
+			'Navigating away from this page will discard any changes you have made.' => __( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
-			'The Title' =>
-				__( 'The Title', 'pods' ),
+			'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' => __( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.', 'pods' ),
 
-			'Select from existing' =>
-				__( 'Select from existing', 'pods' ),
+			'Unable to process request, please try again.' => __( 'Unable to process request, please try again.', 'pods' ),
 
-			'Icon' =>
-				__( 'Icon', 'pods' ),
+			'Error uploading file: '                       => __( 'Error uploading file: ', 'pods' ),
+
+			'Allowed Files'                                => __( 'Allowed Files', 'pods' ),
+
+			'The Title'                                    => __( 'The Title', 'pods' ),
+
+			'Select from existing'                         => __( 'Select from existing', 'pods' ),
+
+			'You can only select'                          => __( 'You can only select', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'%s item'                                      => __( '%s item', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'%s items'                                     => __( '%s items', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'You can only select %s item'                  => __( 'You can only select %s item', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'You can only select %s items'                 => __( 'You can only select %s items', 'pods' ),
+
+			'Icon'                                         => __( 'Icon', 'pods' ),
 
 		);
 
@@ -208,261 +217,199 @@ final class PodsI18n {
 	/**
 	 * Get current locale information from Multilingual plugins
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
-	 * @param array $args (optional) {
-	 *     @type bool $refresh Rerun get_current_language() logic?
+	 * @param array $args    (optional) {
+	 *
+	 * @type bool   $refresh Rerun get_current_language() logic?
 	 * }
 	 *
 	 * @return string
 	 */
 	public function get_current_language( $args = array() ) {
 
-		$args = wp_parse_args( $args, array(
-			'refresh' => false,
-		) );
+		$defaults = array(
+			'refresh' => empty( self::$current_language ),
+		);
 
-		if ( ! $args['refresh'] && ! empty( self::$current_language ) ) {
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( doing_filter( 'pods_get_current_language' ) ) {
+			// Prevent loop.
+			$args['refresh'] = false;
+		}
+
+		if ( ! $args['refresh'] ) {
 			return self::$current_language;
-		}
-
-		$this->get_current_language_data( $args );
-		return self::$current_language;
-	}
-
-	/**
-	 * Get current language information from Multilingual plugins
-	 *
-	 * @since 2.6.6
-	 * @since 2.7 Moved to this class from PodsAPI
-	 *
-	 * @param array $args (optional) {
-	 *     @type bool $refresh Rerun logic?
-	 * }
-	 *
-	 * @return array
-	 */
-	public function get_current_language_data( $args = array() ) {
-
-		$args = wp_parse_args( $args, array(
-			'refresh' => false,
-		) );
-
-		if ( ! $args['refresh'] && ! empty( self::$current_language_data ) ) {
-			return self::$current_language_data;
-		}
-
-		/**
-		 * @var $sitepress SitePress object
-		 * @var $polylang  Polylang object
-		 */
-		/*
-		 * @todo wpml-comp Remove global object usage
-		 */
-		global $sitepress, $polylang;
-
-		$lang_data        = false;
-		$translator       = false;
-		$current_language = false;
-
-		// Multilingual support
-		if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
-			// WPML support
-			$translator = 'WPML';
-
-			// Get the global current language (if set)
-			$wpml_language = apply_filters( 'wpml_current_language', null );
-			$current_language = ( $wpml_language != 'all' ) ? $wpml_language : '';
-
-		} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
-			// Polylang support
-			$translator = 'PLL';
-
-			// Get the global current language (if set)
-			$current_language = pll_current_language( 'slug' );
-		}
-
-		/**
-		 * Admin functions that overwrite the current language
-		 *
-		 * @since 2.6.6
-		 */
-		if ( is_admin() && ! empty( $translator ) ) {
-			if ( $translator == 'PLL' ) {
-				/**
-				 * Polylang support
-				 * Get the current user's preferred language.
-				 * This is a user meta setting that will overwrite the language returned from pll_current_language()
-				 * @see polylang/admin/admin-base.php -> init_user()
-				 */
-				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
-			}
-
-			// Get current language based on the object language if available
-			if ( function_exists( 'get_current_screen' ) ) {
-				$current_screen = get_current_screen();
-
-				/**
-				 * Overwrite the current language if needed for post types
-				 */
-				if ( isset( $current_screen->base ) && ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) ) {
-					if ( ! empty( $_GET['post'] ) ) {
-						/**
-						 * WPML support
-						 * In WPML the current language is always set to default on an edit screen
-						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
-						 */
-						if (   $translator == 'WPML'
-						       && ! apply_filters( 'wpml_is_translated_post_type', false, ( get_post_type( $_GET['post'] ) ) )
-						) {
-							// Overwrite the current language to nothing if this is a NOT-translatable post_type
-							$current_language = '';
-						}
-
-						/**
-						 * Polylang support (1.5.4+)
-						 * In polylang the preferred language could be anything.
-						 * We only want the related objects if they are not translatable OR the same language as the current object
-						 */
-						if (   $translator == 'PLL'
-						       && function_exists( 'pll_get_post_language' )
-						       && pll_is_translated_post_type( get_post_type( $_GET['post'] ) )
-						) {
-							// Overwrite the current language if this is a translatable post_type
-							$current_language = pll_get_post_language( (int) $_GET['post'] );
-						}
-					}
-
-					/**
-					 * Polylang support (1.0.1+)
-					 * In polylang the preferred language could be anything.
-					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
-					 */
-					if (   $translator == 'PLL'
-					       && ! empty( $_GET['new_lang'] )
-					       && ! empty( $_GET['post_type'] )
-					       && pll_is_translated_post_type( sanitize_text_field( $_GET['post_type'] ) )
-					) {
-						$current_language = $_GET['new_lang'];
-					}
-
-					/**
-					 * Overwrite the current language if needed for taxonomies
-					 */
-				} elseif ( isset( $current_screen->base ) && ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) ) {
-					// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
-					if ( ! empty( $_GET['taxonomy'] ) ) {
-						/*
-						 * @todo wpml-comp API call for taxonomy needed!
-						 * Suggested API call:
-						 * add_filter( 'wpml_is_translated_taxonomy', $_GET['taxonomy'], 10, 2 );
-						 */
-						/**
-						 * WPML support
-						 * In WPML the current language is always set to default on an edit screen
-						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
-						 */
-						if (   $translator == 'WPML'
-						       && method_exists( $sitepress, 'is_translated_taxonomy')
-						       && ! $sitepress->is_translated_taxonomy( $_GET['taxonomy'] )
-						) {
-							// Overwrite the current language to nothing if this is a NOT-translatable taxonomy
-							$current_language = '';
-						}
-
-						/**
-						 * Polylang support (1.5.4+)
-						 * In polylang the preferred language could be anything.
-						 * We only want the related objects if they are not translatable OR the same language as the current object
-						 */
-						if (   $translator == 'PLL'
-						       && ! empty( $_GET['tag_ID'] )
-						       && function_exists( 'pll_get_term_language' )
-						       && pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) )
-						) {
-							// Overwrite the current language if this is a translatable taxonomy
-							$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
-						}
-					}
-
-					/**
-					 * Polylang support (1.0.1+)
-					 * In polylang the preferred language could be anything.
-					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
-					 */
-					if (   $translator == 'PLL'
-					       && ! empty( $_GET['new_lang'] )
-					       && ! empty( $_GET['taxonomy'] )
-					       && pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) )
-					) {
-						$current_language = $_GET['new_lang'];
-					}
-				}
-			}
-		}
-
-		$current_language = pods_sanitize( sanitize_text_field( $current_language ) );
-
-		if ( ! empty( $current_language ) ) {
-			// We need to return language data
-			$lang_data = array(
-				'language' => $current_language,
-				't_id'     => 0,
-				'tt_id'    => 0,
-				'term'     => null,
-			);
-
-			/**
-			 * Polylang support
-			 * Get the language taxonomy object for the current language
-			 */
-			if ( $translator == 'PLL' ) {
-				$current_language_t = false;
-
-				// Get the language term object
-				if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
-					// Polylang 1.8 and newer
-					$current_language_t = PLL()->model->get_language( $current_language );
-				} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {
-					// Polylang 1.2 - 1.7.x
-					$current_language_t = $polylang->model->get_language( $current_language );
-				} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_language' ) ) {
-					// Polylang 1.1.x and older
-					$current_language_t = $polylang->get_language( $current_language );
-				}
-
-				// If the language object exists, add it!
-				if ( $current_language_t && ! empty( $current_language_t->term_id ) ) {
-					$lang_data['t_id']  = (int) $current_language_t->term_id;
-					$lang_data['tt_id'] = (int) $current_language_t->term_taxonomy_id;
-					$lang_data['tl_t_id'] = (int) $current_language_t->tl_term_id;
-					$lang_data['tl_tt_id'] = (int) $current_language_t->tl_term_taxonomy_id;
-					$lang_data['term']  = $current_language_t;
-				}
-			}
 		}
 
 		/**
 		 * Override language data used by Pods.
 		 *
-		 * @since 2.6.6
+		 * @since 2.8.0
 		 *
-		 * @param array|false    $lang_data {
-		 *      Language data
-		 *
-		 *      @type string       $language  Language slug
-		 *      @type int          $t_id      Language term_id
-		 *      @type int          $tt_id     Language term_taxonomy_id
-		 *      @type WP_Term      $term      Language term object
-		 * }
-		 * @param string|boolean $translator Language plugin used
+		 * @param string $language Language slug
+		 * @param array  $context  Language context
+		 * @param array  $args     Arguments
 		 */
-		$lang_data = apply_filters( 'pods_get_current_language', $lang_data, $translator );
+		self::$current_language = apply_filters( 'pods_get_current_language', self::$current_language, self::get_current_language_context( $args ), $args );
 
-		self::$current_language = $lang_data['language'];
-		self::$current_language_data = $lang_data;
+		return self::$current_language;
+	}
 
-		return $lang_data;
+	/**
+	 * Get current language context information.
+	 *
+	 * @since 2.6.6
+	 * @since 2.7 Moved to this class from PodsAPI
+	 * @since 2.8.0 Refactored from get_current_language_data()
+	 *
+	 * @param array $args    (optional) {
+	 *     @type bool   $refresh Rerun logic?
+	 * }
+	 *
+	 * @return array $context  {
+	 *     Language data.
+	 *     @type bool   $is_admin            Is admin.
+	 *     @type bool   $is_ajax             Is AJAX call.
+	 *     @type bool   $is_pods_ajax        Is Pods AJAX call.
+	 *     @type string $current_page        Current admin page.
+	 *     @type string $current_object_type Current object type (post / term / comment / user).
+	 *     @type int    $current_item_id     Current item id.
+	 *     @type string $current_item_type   Current item type.
+	 * }
+	 */
+	public function get_current_language_context( $args = array() ) {
+
+		$defaults = array(
+			'refresh' => empty( self::$current_language_context ),
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( doing_filter( 'pods_get_current_language_context' ) ) {
+			// Prevent loop.
+			$args['refresh'] = false;
+		}
+
+		if ( ! $args['refresh'] ) {
+			return self::$current_language_context;
+		}
+
+		$pods_ajax = pods_v( 'pods_ajax', 'request', false );
+
+		$context = [
+			'is_admin'            => is_admin(),
+			'is_ajax'             => defined( 'DOING_AJAX' ) && DOING_AJAX,
+			'is_pods_ajax'        => $pods_ajax,
+			'current_page'        => '',
+			'current_object_type' => '',
+			'current_item_id'     => '',
+			'current_item_type'   => '',
+		];
+
+		/**
+		 * Admin functions that overwrite the current language context.
+		 *
+		 * @since 2.6.6
+		 * @since 2.8.0 Refactored for current context instead of language data.
+		 */
+		if ( is_admin() ) {
+
+			// Get current language based on the object language if available.
+			$page = basename( pods_v( 'SCRIPT_NAME', $_SERVER, '' ) );
+			if ( $pods_ajax && 'admin-ajax.php' === $page ) {
+				$page = basename( pods_v( 'HTTP_REFERER', $_SERVER, '' ) );
+			}
+			$page = explode( '?', $page );
+			$page = reset( $page );
+
+			$context['current_page'] = $page;
+
+			switch ( $page ) {
+
+				case 'post.php':
+				case 'edit.php':
+					$context['current_object_type'] = 'post';
+
+					$current_post_id = (int) pods_v( 'post', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_post_id = (int) pods_v( 'id', 'request', $current_post_id );
+					}
+
+					$current_post_type = pods_v( 'post_type', 'request', '' );
+					if ( ! $current_post_type && $current_post_id ) {
+						$current_post_type = get_post_type( $current_post_id );
+					}
+
+					$context['current_item_id']   = $current_post_id;
+					$context['current_item_type'] = $current_post_type;
+					break;
+
+				case 'term.php':
+				case 'edit-tags.php':
+					$context['current_object_type'] = 'term';
+
+					$current_term_id = (int) pods_v( 'tag_ID', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
+					}
+
+					$current_taxonomy = pods_v( 'taxonomy', 'request', '' );
+					if ( ! $current_taxonomy && $current_term_id ) {
+						$current_taxonomy = pods_v( 'taxonomy', get_term( $current_term_id ), null );
+					}
+
+					$context['current_item_id']   = $current_term_id;
+					$context['current_item_type'] = $current_taxonomy;
+					break;
+
+				case 'comment.php':
+					$context['current_object_type'] = 'comment';
+					$context['current_item_type']   = 'comment';
+
+					$current_comment_id = (int) pods_v( 'c', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_comment_id = (int) pods_v( 'id', 'request', $current_comment_id );
+					}
+
+					$context['current_item_id']   = $current_comment_id;
+					break;
+
+				case 'user-edit.php':
+					$context['current_object_type'] = 'user';
+					$context['current_item_type']   = 'user';
+
+					$current_user_id = (int) pods_v( 'user_id', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_user_id = (int) pods_v( 'id', 'request', $current_user_id );
+					}
+
+					$context['current_item_id']   = $current_user_id;
+					break;
+			}
+
+		}//end if (admin)
+
+		/**
+		 * Override language context used by Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $context  {
+		 *     Language data.
+		 *     @type bool   $is_admin            Is admin.
+		 *     @type bool   $is_ajax             Is AJAX call.
+		 *     @type bool   $is_pods_ajax        Is Pods AJAX call.
+		 *     @type string $current_page        Current admin page.
+		 *     @type string $current_object_type Current object type (post / term / comment / user).
+		 *     @type int    $current_item_id     Current item id.
+		 *     @type string $current_item_type   Current item type.
+		 * }
+		 */
+		self::$current_language_context = apply_filters( 'pods_get_current_language_context', $context );
+
+		return self::$current_language_context;
 
 	}
 

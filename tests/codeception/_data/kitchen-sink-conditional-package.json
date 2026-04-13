@@ -1,0 +1,4500 @@
+{
+  "@meta": {
+    "version": "3.0.0",
+    "build": 1694383526
+  },
+  "pods": [
+    {
+      "name": "kitchen_cpt_clogic",
+      "label": "Kitchen CPT Conditional",
+      "description": "",
+      "type": "post_type",
+      "storage": "meta",
+      "label_singular": "Kitchen CPT Conditional",
+      "public": "1",
+      "show_ui": "1",
+      "rest_enable": "1",
+      "supports_title": "1",
+      "supports_editor": "1",
+      "_migrated_28": "1",
+      "required": "0",
+      "required_help_boolean": "0",
+      "meta_box_context": "normal",
+      "meta_box_priority": "default",
+      "groups": [
+        {
+          "name": "text_test",
+          "label": "Text test",
+          "description": "",
+          "weight": 0,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "text_field",
+              "label": "Text field",
+              "description": "",
+              "weight": 0,
+              "type": "text",
+              "required": "0",
+              "text_allowed_html_tags": "strong em a ul ol li b i",
+              "text_max_length": "255",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "text_field_equals",
+              "label": "Text field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_not_equals",
+              "label": "Text field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_blank",
+              "label": "Text field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_not_blank",
+              "label": "Text field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_contains",
+              "label": "Text field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_not_contains",
+              "label": "Text field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_starts_with",
+              "label": "Text field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_not_starts_with",
+              "label": "Text field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_ends_with",
+              "label": "Text field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_not_ends_with",
+              "label": "Text field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_pattern",
+              "label": "Text field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "text_field_not_pattern",
+              "label": "Text field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Text field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "text_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "website_test",
+          "label": "Website test",
+          "description": "",
+          "weight": 1,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "website_field",
+              "label": "Website field",
+              "description": "",
+              "weight": 0,
+              "type": "website",
+              "required": "0",
+              "website_format": "normal",
+              "website_allow_port": "0",
+              "website_clickable": "0",
+              "website_new_window": "0",
+              "website_nofollow": "0",
+              "website_max_length": "255",
+              "website_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "website_field_equals",
+              "label": "Website field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_not_equals",
+              "label": "Website field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_blank",
+              "label": "Website field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_not_blank",
+              "label": "Website field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_contains",
+              "label": "Website field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_not_contains",
+              "label": "Website field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_starts_with",
+              "label": "Website field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_not_starts_with",
+              "label": "Website field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_ends_with",
+              "label": "Website field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_not_ends_with",
+              "label": "Website field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_pattern",
+              "label": "Website field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "website_field_not_pattern",
+              "label": "Website field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Website field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "website_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "phone_test",
+          "label": "Phone test",
+          "description": "",
+          "weight": 2,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "phone_field",
+              "label": "Phone field",
+              "description": "",
+              "weight": 0,
+              "type": "phone",
+              "required": "0",
+              "phone_format": "999-999-9999 x999",
+              "phone_max_length": "25",
+              "phone_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "phone_field_equals",
+              "label": "Phone field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_not_equals",
+              "label": "Phone field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_blank",
+              "label": "Phone field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_not_blank",
+              "label": "Phone field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_contains",
+              "label": "Phone field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_not_contains",
+              "label": "Phone field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_starts_with",
+              "label": "Phone field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_not_starts_with",
+              "label": "Phone field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_ends_with",
+              "label": "Phone field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_not_ends_with",
+              "label": "Phone field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_pattern",
+              "label": "Phone field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "phone_field_not_pattern",
+              "label": "Phone field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Phone field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "phone_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "email_test",
+          "label": "Email test",
+          "description": "",
+          "weight": 3,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "email_field",
+              "label": "Email field",
+              "description": "",
+              "weight": 0,
+              "type": "email",
+              "required": "0",
+              "email_max_length": "255",
+              "email_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "email_field_equals",
+              "label": "Email field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_not_equals",
+              "label": "Email field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_blank",
+              "label": "Email field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_not_blank",
+              "label": "Email field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_contains",
+              "label": "Email field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_not_contains",
+              "label": "Email field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_starts_with",
+              "label": "Email field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_not_starts_with",
+              "label": "Email field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_ends_with",
+              "label": "Email field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_not_ends_with",
+              "label": "Email field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_pattern",
+              "label": "Email field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_field_not_pattern",
+              "label": "Email field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Email field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "email_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "password_test",
+          "label": "Password test",
+          "description": "",
+          "weight": 4,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "password_field",
+              "label": "Password field",
+              "description": "",
+              "weight": 0,
+              "type": "password",
+              "required": "0",
+              "password_max_length": "255",
+              "password_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "password_field_equals",
+              "label": "Password field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_not_equals",
+              "label": "Password field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_blank",
+              "label": "Password field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_not_blank",
+              "label": "Password field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_contains",
+              "label": "Password field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_not_contains",
+              "label": "Password field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_starts_with",
+              "label": "Password field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_not_starts_with",
+              "label": "Password field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_ends_with",
+              "label": "Password field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_not_ends_with",
+              "label": "Password field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_pattern",
+              "label": "Password field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "password_field_not_pattern",
+              "label": "Password field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Password field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "password_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "paragraph_test",
+          "label": "Paragraph test",
+          "description": "",
+          "weight": 5,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "paragraph_field",
+              "label": "Paragraph field",
+              "description": "",
+              "weight": 0,
+              "type": "paragraph",
+              "required": "0",
+              "paragraph_max_length": "255",
+              "paragraph_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "paragraph_field_equals",
+              "label": "Paragraph field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_not_equals",
+              "label": "Paragraph field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_blank",
+              "label": "Paragraph field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_not_blank",
+              "label": "Paragraph field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_contains",
+              "label": "Paragraph field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_not_contains",
+              "label": "Paragraph field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_starts_with",
+              "label": "Paragraph field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_not_starts_with",
+              "label": "Paragraph field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_ends_with",
+              "label": "Paragraph field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_not_ends_with",
+              "label": "Paragraph field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_pattern",
+              "label": "Paragraph field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "paragraph_field_not_pattern",
+              "label": "Paragraph field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Paragraph field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "paragraph_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "wysiwyg_test",
+          "label": "WYSIWYG test",
+          "description": "",
+          "weight": 6,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "wysiwyg_field",
+              "label": "WYSIWYG field",
+              "description": "",
+              "weight": 0,
+              "type": "wysiwyg",
+              "required": "0",
+              "wysiwyg_max_length": "255",
+              "wysiwyg_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "wysiwyg_field_equals",
+              "label": "WYSIWYG field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_not_equals",
+              "label": "WYSIWYG field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_blank",
+              "label": "WYSIWYG field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_not_blank",
+              "label": "WYSIWYG field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_contains",
+              "label": "WYSIWYG field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_not_contains",
+              "label": "WYSIWYG field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_starts_with",
+              "label": "WYSIWYG field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_not_starts_with",
+              "label": "WYSIWYG field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_ends_with",
+              "label": "WYSIWYG field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_not_ends_with",
+              "label": "WYSIWYG field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_pattern",
+              "label": "WYSIWYG field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "wysiwyg_field_not_pattern",
+              "label": "WYSIWYG field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "WYSIWYG field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "wysiwyg_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "code_test",
+          "label": "Code test",
+          "description": "",
+          "weight": 7,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "code_field",
+              "label": "Code field",
+              "description": "",
+              "weight": 0,
+              "type": "code",
+              "required": "0",
+              "code_max_length": "255",
+              "code_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "code_field_equals",
+              "label": "Code field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_not_equals",
+              "label": "Code field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_blank",
+              "label": "Code field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_not_blank",
+              "label": "Code field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_contains",
+              "label": "Code field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_not_contains",
+              "label": "Code field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_starts_with",
+              "label": "Code field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_not_starts_with",
+              "label": "Code field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_ends_with",
+              "label": "Code field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_not_ends_with",
+              "label": "Code field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_pattern",
+              "label": "Code field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "code_field_not_pattern",
+              "label": "Code field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Code field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "code_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "datetime_test",
+          "label": "Date Time test",
+          "description": "",
+          "weight": 8,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "datetime_field",
+              "label": "Date Time field",
+              "description": "",
+              "weight": 0,
+              "type": "datetime",
+              "required": "0",
+              "datetime_max_length": "255",
+              "datetime_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "datetime_field_equals",
+              "label": "Date Time field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field equals 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "=",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_equals",
+              "label": "Date Time field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not equals 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "!=",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_blank",
+              "label": "Date Time field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "empty",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_blank",
+              "label": "Date Time field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-empty",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_contains",
+              "label": "Date Time field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field contains 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "like",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_contains",
+              "label": "Date Time field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not contains 2023-03-01 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-like",
+                    "value": "2023-03-01 10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_starts_with",
+              "label": "Date Time field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_starts_with",
+              "label": "Date Time field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_ends_with",
+              "label": "Date Time field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field ends with 00:01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "ends",
+                    "value": "00:01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_ends_with",
+              "label": "Date Time field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not ends with 00:01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-ends",
+                    "value": "00:01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_pattern",
+              "label": "Date Time field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field pattern is ^\\d{4}-01-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "matches",
+                    "value": "^\\d{4}-01-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "datetime_field_not_pattern",
+              "label": "Date Time field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date Time field not pattern is ^\\d{4}-01-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "datetime_field",
+                    "compare": "not-matches",
+                    "value": "^\\d{4}-01-"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "date_test",
+          "label": "Date test",
+          "description": "",
+          "weight": 7,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "date_field",
+              "label": "Date field",
+              "description": "",
+              "weight": 0,
+              "type": "date",
+              "required": "0",
+              "date_max_length": "255",
+              "date_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "date_field_equals",
+              "label": "Date field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field equals 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "=",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_equals",
+              "label": "Date field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not equals 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "!=",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_blank",
+              "label": "Date field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "empty",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_blank",
+              "label": "Date field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-empty",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_contains",
+              "label": "Date field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field contains 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "like",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_contains",
+              "label": "Date field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not contains 2023-03-01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-like",
+                    "value": "2023-03-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_starts_with",
+              "label": "Date field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_starts_with",
+              "label": "Date field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not starts with 2023-",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-begins",
+                    "value": "2023-"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_ends_with",
+              "label": "Date field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field ends with -01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "ends",
+                    "value": "-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_ends_with",
+              "label": "Date field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not ends with -01",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-ends",
+                    "value": "-01"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_pattern",
+              "label": "Date field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field pattern is ^\\d{4}-01-\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "matches",
+                    "value": "^\\d{4}-01-\\d{2}$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "date_field_not_pattern",
+              "label": "Date field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Date field not pattern is ^\\d{4}-01-\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "date_field",
+                    "compare": "not-matches",
+                    "value": "^\\d{4}-01-\\d{2}$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "time_test",
+          "label": "Time test",
+          "description": "",
+          "weight": 7,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "time_field",
+              "label": "Time field",
+              "description": "",
+              "weight": 0,
+              "type": "time",
+              "required": "0",
+              "time_max_length": "255",
+              "time_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "time_field_equals",
+              "label": "Time field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field equals 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "=",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_equals",
+              "label": "Time field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not equals 10:00:00",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "!=",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_blank",
+              "label": "Time field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "empty",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_blank",
+              "label": "Time field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-empty",
+                    "value": "10:00:00"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_contains",
+              "label": "Time field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field contains 25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "like",
+                    "value": "25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_contains",
+              "label": "Time field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not contains 25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-like",
+                    "value": "25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_starts_with",
+              "label": "Time field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field starts with 12:",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "begins",
+                    "value": "12:"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_starts_with",
+              "label": "Time field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not starts with 12:",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-begins",
+                    "value": "12:"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_ends_with",
+              "label": "Time field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field ends with :25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "ends",
+                    "value": ":25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_ends_with",
+              "label": "Time field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not ends with :25",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-ends",
+                    "value": ":25"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_pattern",
+              "label": "Time field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field pattern is ^\\d{2}:25:\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "matches",
+                    "value": "^\\d{2}:25:\\d{2}$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "time_field_not_pattern",
+              "label": "Time field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "Time field not pattern is ^\\d{2}:25:\\d{2}$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "time_field",
+                    "compare": "not-matches",
+                    "value": "^\\d{2}:25:\\d{2}$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "number_test",
+          "label": "Number test",
+          "description": "",
+          "weight": 8,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "number_field",
+              "label": "Number field",
+              "description": "",
+              "weight": 0,
+              "type": "number",
+              "required": "0",
+              "number_max_length": "255",
+              "number_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "number_field_equals",
+              "label": "Number field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": "=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "number_field_not_equals",
+              "label": "Number field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field not equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": "!=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "number_field_blank",
+              "label": "Number field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": "empty",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "number_field_not_blank",
+              "label": "Number field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": "not-empty",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "number_field_greater_than",
+              "label": "Number field greater than",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field greater than 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": ">",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "number_field_greater_than_or_equal",
+              "label": "Number field greater than or equal",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field greater than or equal 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": ">=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "number_field_less_than",
+              "label": "Number field less than",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field less than 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": "<",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "number_field_less_than_or_equal",
+              "label": "Number field less than or equal",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Number field less than or equal 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "number_field",
+                    "compare": "<=",
+                    "value": "1"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "currency_test",
+          "label": "Currency test",
+          "description": "",
+          "weight": 9,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "currency_field",
+              "label": "Currency field",
+              "description": "",
+              "weight": 0,
+              "type": "currency",
+              "required": "0",
+              "currency_max_length": "255",
+              "currency_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "currency_field_equals",
+              "label": "Currency field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": "=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "currency_field_not_equals",
+              "label": "Currency field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field not equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": "!=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "currency_field_blank",
+              "label": "Currency field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": "empty",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "currency_field_not_blank",
+              "label": "Currency field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": "not-empty",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "currency_field_greater_than",
+              "label": "Currency field greater than",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field greater than 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": ">",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "currency_field_greater_than_or_equal",
+              "label": "Currency field greater than or equal",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field greater than or equal 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": ">=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "currency_field_less_than",
+              "label": "Currency field less than",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field less than 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": "<",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "currency_field_less_than_or_equal",
+              "label": "Currency field less than or equal",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "Currency field less than or equal 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "currency_field",
+                    "compare": "<=",
+                    "value": "1"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "file_test",
+          "label": "File test",
+          "description": "",
+          "weight": 10,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "file_field",
+              "label": "File field",
+              "description": "",
+              "weight": 0,
+              "type": "file",
+              "required": "0",
+              "file_max_length": "255",
+              "file_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "file_field_equals",
+              "label": "File field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "File field equals 6050",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "file_field",
+                    "compare": "=",
+                    "value": "6050"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "file_field_not_equals",
+              "label": "File field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "File field not equals 6050",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "file_field",
+                    "compare": "!=",
+                    "value": "6050"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "file_field_blank",
+              "label": "File field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "File field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "file_field",
+                    "compare": "empty",
+                    "value": "6050"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "file_field_not_blank",
+              "label": "File field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "File field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "file_field",
+                    "compare": "not-empty",
+                    "value": "6050"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "oembed_test",
+          "label": "oEmbed test",
+          "description": "",
+          "weight": 11,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "oembed_field",
+              "label": "oEmbed field",
+              "description": "",
+              "weight": 0,
+              "type": "oembed",
+              "required": "0",
+              "oembed_enabled_providers_youtubecom": "1",
+              "oembed_restrict_providers":  "0",
+              "oembed_show_preview":  "1",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "oembed_field_equals",
+              "label": "oEmbed field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_not_equals",
+              "label": "oEmbed field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_blank",
+              "label": "oEmbed field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_not_blank",
+              "label": "oEmbed field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_contains",
+              "label": "oEmbed field contains",
+              "description": "",
+              "weight": 5,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_not_contains",
+              "label": "oEmbed field not contains",
+              "description": "",
+              "weight": 6,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field not contains test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "not-like",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_starts_with",
+              "label": "oEmbed field starts with",
+              "description": "",
+              "weight": 7,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_not_starts_with",
+              "label": "oEmbed field not starts with",
+              "description": "",
+              "weight": 8,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field not starts with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "not-begins",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_ends_with",
+              "label": "oEmbed field ends with",
+              "description": "",
+              "weight": 9,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_not_ends_with",
+              "label": "oEmbed field not ends with",
+              "description": "",
+              "weight": 10,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field not ends with t",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "not-ends",
+                    "value": "t"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_pattern",
+              "label": "oEmbed field pattern",
+              "description": "",
+              "weight": 11,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "oembed_field_not_pattern",
+              "label": "oEmbed field not pattern",
+              "description": "",
+              "weight": 12,
+              "type": "html",
+              "required": "0",
+              "html_content": "oEmbed field not pattern is ^tes$",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "oembed_field",
+                    "compare": "not-matches",
+                    "value": "^tes$"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "pick_simple_test",
+          "label": "Relationship (simple) test",
+          "description": "",
+          "weight": 12,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "pick_simple_field",
+              "label": "Relationship (simple) field",
+              "description": "",
+              "weight": 0,
+              "type": "pick",
+              "required": "0",
+              "pick_object": "custom-simple",
+              "pick_custom": "Item 1\nTest Item 2\nTest\ntest\ntest Item 5\nItem 6 test",
+              "pick_max_length": "255",
+              "pick_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "pick_simple_field_equals",
+              "label": "Relationship (simple) field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple) field equals test Item 5",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_field",
+                    "compare": "=",
+                    "value": "test Item 5"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_simple_field_not_equals",
+              "label": "Relationship (simple) field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple) field not equals test Item 5",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_field",
+                    "compare": "!=",
+                    "value": "test Item 5"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_simple_field_blank",
+              "label": "Relationship (simple) field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple) field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_field",
+                    "compare": "empty",
+                    "value": "test Item 5"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_simple_field_not_blank",
+              "label": "Relationship (simple) field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple) field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_field",
+                    "compare": "not-empty",
+                    "value": "test Item 5"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "pick_simple_value_test",
+          "label": "Relationship (simple with custom value) test",
+          "description": "",
+          "weight": 13,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "pick_simple_value_field",
+              "label": "Relationship (simple with custom value) field",
+              "description": "",
+              "weight": 0,
+              "type": "pick",
+              "required": "0",
+              "pick_object": "custom-simple",
+              "pick_custom": "item-1|Item 1\ntest-item-2|Test Item 2\ntest|test\ntest-item-4|test Item 4\nitem-5-test|Item 5 test\nitem-6-test|test",
+              "pick_max_length": "255",
+              "pick_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "pick_simple_value_field_equals",
+              "label": "Relationship (simple with custom value) field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple with custom value) field equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_value_field",
+                    "compare": "=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_simple_value_field_not_equals",
+              "label": "Relationship (simple with custom value) field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple with custom value) field not equals test",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_value_field",
+                    "compare": "!=",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_simple_value_field_blank",
+              "label": "Relationship (simple with custom value) field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple with custom value) field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_value_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_simple_value_field_not_blank",
+              "label": "Relationship (simple with custom value) field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (simple with custom value) field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_simple_value_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "pick_test",
+          "label": "Relationship (user object) test",
+          "description": "",
+          "weight": 14,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "pick_field",
+              "label": "Relationship (user object) field",
+              "description": "",
+              "weight": 0,
+              "type": "pick",
+              "required": "0",
+              "pick_object": "user",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "pick_field_equals",
+              "label": "Relationship (user object) field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (user object) field equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_field",
+                    "compare": "=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_field_not_equals",
+              "label": "Relationship (user object) field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (user object) field not equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_field",
+                    "compare": "!=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_field_blank",
+              "label": "Relationship (user object) field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (user object) field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_field",
+                    "compare": "empty",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "pick_field_not_blank",
+              "label": "Relationship (user object) field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Relationship (user object) field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "pick_field",
+                    "compare": "not-empty",
+                    "value": "1"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "boolean_test",
+          "label": "Boolean test",
+          "description": "",
+          "weight": 15,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "boolean_field",
+              "label": "Boolean field",
+              "description": "",
+              "weight": 0,
+              "type": "boolean",
+              "required": "0",
+              "boolean_max_length": "255",
+              "boolean_html5": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "boolean_field_equals",
+              "label": "Boolean field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Boolean field equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "boolean_field",
+                    "compare": "=",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "boolean_field_not_equals",
+              "label": "Boolean field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Boolean field not equals 1",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "boolean_field",
+                    "compare": "!=",
+                    "value": "1"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "color_test",
+          "label": "Color test",
+          "description": "",
+          "weight": 16,
+          "meta_box_context": "normal",
+          "meta_box_priority": "default",
+          "fields": [
+            {
+              "name": "color_field",
+              "label": "Color field",
+              "description": "",
+              "weight": 0,
+              "type": "color",
+              "required": "0",
+              "repeatable": "0",
+              "repeatable_format": "default",
+              "enable_conditional_logic": "0"
+            },
+            {
+              "name": "color_field_equals",
+              "label": "Color field equals",
+              "description": "",
+              "weight": 1,
+              "type": "html",
+              "required": "0",
+              "html_content": "Color field equals #000000",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "color_field",
+                    "compare": "=",
+                    "value": "#000000"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "color_field_not_equals",
+              "label": "Color field not equals",
+              "description": "",
+              "weight": 2,
+              "type": "html",
+              "required": "0",
+              "html_content": "Color field not equals #000000",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "color_field",
+                    "compare": "!=",
+                    "value": "#000000"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "color_field_blank",
+              "label": "Color field blank",
+              "description": "",
+              "weight": 3,
+              "type": "html",
+              "required": "0",
+              "html_content": "Color field blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "color_field",
+                    "compare": "empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "color_field_not_blank",
+              "label": "Color field not blank",
+              "description": "",
+              "weight": 4,
+              "type": "html",
+              "required": "0",
+              "html_content": "Color field not blank",
+              "html_no_label": "1",
+              "enable_conditional_logic": "1",
+              "conditional_logic": {
+                "action": "show",
+                "logic": "any",
+                "rules": [
+                  {
+                    "field": "color_field",
+                    "compare": "not-empty",
+                    "value": "test"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

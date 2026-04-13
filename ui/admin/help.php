@@ -1,113 +1,422 @@
-<div class="wrap pods-admin">
-    <div id="icon-pods" class="icon32"><br /></div>
-    <h2><?php _e( 'Pods Help', 'pods' ); ?></h2>
-    <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+<?php
 
-    <h3><?php _e( 'Pods Support' , 'pods'); ?></h3>
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
 
-    <p><?php _e( 'There are many resources available to help you learn to use Pods on our site, <a href="http://pods.io/" target="_blank">Pods.io</a>:', 'pods'); ?></p>
-    <ul class="ul-disc">
-        <li><?php _e('To learn more about using Pods, see the <a href="http://pods.io/docs/" target="_blank">documentation</a>, or our <a href="http://pods.io/tutorials/" target="_blank">tutorials section</a>', 'pods'); ?>.
+// phpcs:ignoreFile WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+?>
+<div class="wrap pods-admin<?php echo PodsAdmin::$instance->has_horizontal_callout() ? '' : ' pods-admin--flex'; ?>">
+	<?php
+	/**
+	 * Allow additional output before the container area of the Pods help screen.
+	 *
+	 * @since 3.1.0
+	 */
+	do_action( 'pods_admin_before_help' );
+	?>
 
-        <li><?php _e( 'To get help with a specific issue, you can ask in our <a href="http://pods.io/forums/" target="_blank">support forums</a>, or in <a href="http://pods.io/forums/chat/" target="_blank">our chat</a>', 'pods'); ?>.
+	<div class="pods-admin-container pods-admin__content-container">
+		<div id="icon-pods" class="icon32"><br /></div>
+		<h2><?php esc_html_e( 'Get help with Pods', 'pods' ); ?></h2>
+		<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-        <li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.', 'pods' ); ?></li>
+		<p><?php echo wp_kses_post( __( 'There are many resources available to help you learn to use Pods <a href="https://pods.io/" target="_blank" rel="noopener noreferrer">on our website</a>', 'pods') ); ?>.</p>
+		<ul class="ul-disc">
+			<li><?php echo wp_kses_post( __( 'To learn more about using Pods, see our <a href="https://docs.pods.io/" target="_blank" rel="noopener noreferrer">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank" rel="noopener noreferrer">YouTube Channel</a>', 'pods') ); ?>.
 
-        <li><?php _e( "Pods is open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?", 'pods'); ?></li>
-    </ul>
+			<li><?php echo wp_kses_post( __( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank" rel="noopener noreferrer">support forums</a>, or you can join our <a href="https://support.pods.io/chat/" target="_blank" rel="noopener noreferrer">Live Community Slack Chat</a>', 'pods') ); ?>.
 
-    <hr />
+			<li><?php echo wp_kses_post( __( 'To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank" rel="noopener noreferrer">GitHub</a>.', 'pods' ) ); ?></li>
 
-    <?php
-        include_once( ABSPATH . WPINC . '/feed.php' );
+			<li><?php echo wp_kses_post( __( 'Pods is open source, so you can get into the code and submit your own fixes or features. We would love to help you contribute on our project over on our <a href="https://github.com/pods-framework/pods/blob/main/docs/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">GitHub</a>', 'pods') ); ?>.</li>
 
-        $feed = fetch_feed( 'http://pods.io/forums/forum/pods-2-x/feed/' );
+			<li><?php
+				echo sprintf(
+					// translators: %1$s: The opening tag for the link; %2$s: The ending tag for the link.
+					esc_html__( 'Check out the complete list of %1$sFree and Premium add-ons%2$s to explore great features and integrations.', 'pods'),
+					'<a href="https://pods.io/plugins/" target="_blank" rel="noopener noreferrer">',
+					'</a>'
+				);
+			?></li>
+		</ul>
 
-        if ( !is_wp_error( $feed ) ) {
-            $max_items = $feed->get_item_quantity( 6 );
-            $rss_items = $feed->get_items( 0, $max_items );
+		<hr />
 
-            if ( 0 < $max_items ) {
-    ?>
-        <h3><?php _e( 'Latest Forum Posts at <a href="http://pods.io/forums/forum/general-discussion/pods-2-x/" target="_blank">pods.io</a>', 'pods'); ?></h3>
+		<style>
+			.pods-admin-help-info {
+				max-width: 800px;
+			}
+			.pods-admin-help-info td {
+				vertical-align: middle;
+			}
 
-        <ul class="ul-disc">
-            <?php
-                foreach ( $rss_items as $item ) {
-                    $authors = $item->get_authors();
+			.pods-admin-help-info thead tr th:nth-child(1),
+			.pods-admin-help-info tbody tr td:nth-child(1) {
+				width: 50px;
+			}
+			.pods-admin-help-info thead tr th:nth-child(2),
+			.pods-admin-help-info tbody tr td:nth-child(2) {
+				width: 300px;
+			}
+		</style>
 
-                    $author_text = '';
+		<?php
+		$addons = [
+			[
+				'label' => 'Pods Framework',
+				'icon' => 'https://ps.w.org/pods/assets/icon-256x256.png',
+				'links' => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url' => 'https://downloads.wordpress.org/plugin/pods.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url' => 'https://wordpress.org/plugins/pods/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url' => 'https://wordpress.org/support/plugin/pods/',
+					],
+					[
+						'label' => __( 'Docs', 'pods' ),
+						'title' => __( 'Documentation', 'pods' ),
+						'url' => 'https://docs.pods.io/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url' => 'https://github.com/pods-framework/pods',
+					],
+				],
+			],
+		];
 
-                    foreach ( $authors as $author ) {
-                        $author_text = '<br /> by ';
+		pods_view( PODS_DIR . 'ui/admin/help-addons.php', compact( array_keys( get_defined_vars() ) ) );
+		?>
 
-                        if ( !empty( $author->link ) )
-                            $author_text .= '<a href="' . $author->link . '" target="_blank">';
+		<h2><?php esc_html_e( 'Official Free Add-Ons', 'pods' ); ?></h2>
 
-                        $author_text .= $author->name;
+		<?php
+		$addons = [
+			[
+				'label'       => 'Pods Beaver Themer Add-On',
+				'description' => __( 'Integrates Pods with Beaver Themer', 'pods' ),
+				'icon'        => 'https://ps.w.org/pods-beaver-builder-themer-add-on/assets/icon-256x256.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/pods-beaver-builder-themer-add-on.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/pods-beaver-builder-themer-add-on/',
+					],
+					[
+						'label' => __( 'Docs', 'pods' ),
+						'title' => __( 'Documentation', 'pods' ),
+						'url'   => 'https://docs.pods.io/plugins/pods-beaver-themer-add-on/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/pods-framework/pods-beaver-builder-themer-add-on',
+					],
+				],
+			],
+			[
+				'label'       => 'Pods Gravity Forms Add-On',
+				'description' => __( 'Integrates Pods with Gravity Forms', 'pods' ),
+				'icon'        => 'https://ps.w.org/pods-gravity-forms/assets/icon-256x256.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/pods-gravity-forms.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/pods-gravity-forms/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/pods-gravity-forms/',
+					],
+					[
+						'label' => __( 'Docs', 'pods' ),
+						'title' => __( 'Documentation', 'pods' ),
+						'url'   => 'https://docs.pods.io/plugins/pods-gravity-forms-add-on/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/pods-framework/pods-gravity-forms',
+					],
+				],
+			],
+			[
+				'label'       => 'Pods Alternative Cache Add-On',
+				'description' => __( 'Speed up Pods on servers with limited object caching capabilities', 'pods' ),
+				'icon'        => 'https://ps.w.org/pods-alternative-cache/assets/icon-256x256.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/pods-alternative-cache.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/pods-alternative-cache/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/pods-alternative-cache/',
+					],
+					[
+						'label' => __( 'Docs', 'pods' ),
+						'title' => __( 'Documentation', 'pods' ),
+						'url'   => 'https://docs.pods.io/plugins/pods-alternative-cache/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/pods-framework/pods-alternative-cache',
+					],
+				],
+			],
+			[
+				'label'       => 'Pods SEO Add-On',
+				'description' => __( 'Integrates Pods Advanced Content Types with Yoast SEO', 'pods' ),
+				'icon'        => 'https://ps.w.org/pods-seo/assets/icon-256x256.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/pods-seo.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/pods-seo/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/pods-seo/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/pods-framework/pods-seo',
+					],
+				],
+			],
+			[
+				'label'       => 'Pods AJAX Views Add-On',
+				'description' => __( 'Adds new functions you can use to output template parts that load via AJAX after other page elements', 'pods' ),
+				'icon'        => 'https://ps.w.org/pods-ajax-views/assets/icon-256x256.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/pods-ajax-views.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/pods-ajax-views/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/pods-ajax-views/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/pods-framework/pods-ajax-views',
+					],
+				],
+			],
+		];
 
-                        if ( !empty( $author->link ) )
-                            $author_text .= '</a>';
-                    }
-            ?>
-                <li>
-                    <a href="<?php echo esc_url( $item->get_permalink() ); ?>"><?php echo esc_html( $item->get_title() ); ?></a>
-                    <?php echo $author_text; ?>
-                    <br />
-                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
-                </li>
-            <?php
-                }
-            ?>
-        </ul>
+		pods_view( PODS_DIR . 'ui/admin/help-addons.php', compact( array_keys( get_defined_vars() ) ) );
+		?>
 
-        <hr />
-    <?php
-            }
-        }
+		<h2><?php esc_html_e( 'Third-party Free Add-Ons', 'pods' ); ?></h2>
 
-        $feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/' . PODS_GITHUB_BRANCH . '.atom' );
+		<?php
+		$addons = [
+			[
+				'label'       => 'Paid Memberships Pro - Pods Add-On',
+				'description' => __( 'Integrates Pods with Paid Memberships Pro', 'pods' ),
+				'icon'        => 'https://ps.w.org/pmpro-pods/assets/icon-256x256.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/pmpro-pods.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/pmpro-pods/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/pmpro-pods/',
+					],
+					[
+						'label' => __( 'Docs', 'pods' ),
+						'title' => __( 'Documentation', 'pods' ),
+						'url'   => 'https://www.paidmembershipspro.com/add-ons/pods-integration/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/strangerstudios/pmpro-pods',
+					],
+				],
+			],
+			[
+				'label'       => 'Panda Pods Repeater Field Add-On',
+				'description' => __( '(Advanced setup required) Add groups of fields that repeat and are stored in their own custom database table', 'pods' ),
+				'icon'        => 'https://ps.w.org/panda-pods-repeater-field/assets/icon-128x128.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://downloads.wordpress.org/plugin/panda-pods-repeater-field.zip',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://wordpress.org/plugins/panda-pods-repeater-field/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'title' => __( 'Support Forums', 'pods' ),
+						'url'   => 'https://wordpress.org/support/plugin/panda-pods-repeater-field/',
+					],
+					[
+						'label' => __( 'GitHub', 'pods' ),
+						'url'   => 'https://github.com/coding-panda/panda-pods-repeater-field',
+					],
+				],
+			],
+		];
 
-        if ( !is_wp_error( $feed ) ) {
-            $max_items = $feed->get_item_quantity( 6 );
-            $rss_items = $feed->get_items( 0, $max_items );
+		pods_view( PODS_DIR . 'ui/admin/help-addons.php', compact( array_keys( get_defined_vars() ) ) );
+		?>
 
-            if ( 0 < $max_items ) {
-    ?>
-        <h3><?php _e( 'Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank">GitHub</a>', 'pods' ); ?></h3>
+		<h2><?php esc_html_e( 'Pods Pro by SKCDEV Premium Add-Ons', 'pods' ); ?></h2>
 
-        <ul class="ul-disc">
-            <?php
-                foreach ( $rss_items as $item ) {
-                    $authors = $item->get_authors();
+		<p><?php esc_html_e( 'These add-ons were developed by the Lead Developer of the Pods Framework project as a way to fund development of unique features and integrations that take Pods further.', 'pods' ); ?></p>
 
-                    $author_text = '';
+		<?php
+		$addons = [
+			[
+				'label'       => 'List Tables Add-On',
+				'description' => __( 'A new block and shortcode to list/filter content from Pods in a table format', 'pods' ),
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/List-Tables-150x150.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/downloads/',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/downloads/list-tables/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/get-support/',
+					],
+				],
+			],
+			[
+				'label'       => 'Page Builder Toolkit Add-On',
+				'description' => __( 'Integrates Pods with Beaver Builder, Beaver Themer, Divi Theme, Elementor, GenerateBlocks, and Oxygen Builder', 'pods' ),
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/page-builder-toolkit-4x-150x150.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/downloads/',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/downloads/page-builder-toolkit/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/get-support/',
+					],
+				],
+			],
+			[
+				'label'       => 'Advanced Relationships Storage Add-On',
+				'description' => __( 'Advanced options for relationship storage', 'pods' ),
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-relationship-storage-4x-150x150.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/downloads/',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/downloads/advanced-relationship-storage/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/get-support/',
+					],
+				],
+			],
+			[
+				'label'       => 'TablePress Integration Add-On',
+				'description' => __( 'Integrates Pods with TablePress', 'pods' ),
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/tablepress-integration-4x-150x150.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/downloads/',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/downloads/tablepress-integration/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/get-support/',
+					],
+				],
+			],
+			[
+				'label'       => 'Advanced Permalinks Add-On',
+				'description' => __( 'Advanced permalink structures and taxonomy landing pages', 'pods' ),
+				'icon'        => plugin_dir_url( PODS_FILE ) . 'ui/images/help/advanced-permalinks-4x-150x150.png',
+				'links'       => [
+					[
+						'label' => __( 'Download', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/downloads/',
+					],
+					[
+						'label' => __( 'Learn More', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/downloads/advanced-permalinks/',
+					],
+					[
+						'label' => __( 'Support', 'pods' ),
+						'url'   => 'https://pods-pro.skc.dev/dashboard/get-support/',
+					],
+				],
+			],
+		];
 
-                    foreach ( $authors as $author ) {
-                        $author_text = '<br /> by ';
+		pods_view( PODS_DIR . 'ui/admin/help-addons.php', compact( array_keys( get_defined_vars() ) ) );
+		?>
+	</div>
 
-                        if ( !empty( $author->link ) )
-                            $author_text .= '<a href="' . $author->link . '" target="_blank">';
-
-                        $author_text .= $author->name;
-
-                        if ( !empty( $author->link ) )
-                            $author_text .= '</a>';
-                    }
-            ?>
-                <li>
-                    <a href="<?php echo esc_url( $item->get_permalink() ); ?>">Commit</a>: <?php echo esc_html( $item->get_title() ); ?>
-                    <?php echo $author_text; ?>
-                    <br />
-                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
-                </li>
-            <?php
-                }
-            ?>
-        </ul>
-    <?php
-            }
-        }
-    ?>
+	<?php
+	/**
+	 * Allow additional output after the container area of the Pods help screen.
+	 *
+	 * @since 2.7.17
+	 */
+	do_action( 'pods_admin_after_help' );
+	?>
 
 </div>

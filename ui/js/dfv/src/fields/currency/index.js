@@ -1,0 +1,162 @@
+import React, { useState, useEffect } from 'react';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
+
+import { toBool } from 'dfv/src/helpers/booleans';
+import {
+	parseFloatWithPodsFormat,
+	formatNumberWithPodsFormat,
+} from 'dfv/src/helpers/formatNumberWithPodsFormat';
+
+import { numberValidator } from 'dfv/src/helpers/validators';
+
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
+
+import './currency.scss';
+
+const Currency = ( {
+	addValidationRules,
+	fieldConfig,
+	value = '',
+	setValue,
+	setHasBlurred,
+} ) => {
+	const {
+		htmlAttr: htmlAttributes = {},
+		name,
+		read_only: readOnly,
+		currency_decimal_handling: decimalHandling = 'none',
+		currency_decimals: decimalMaxLength = 'auto',
+		currency_format: format,
+		currency_format_sign: formatSign = 'usd',
+		currency_format_type: type = 'number',
+		currency_html5: html5,
+		currency_max: max,
+		currency_max_length: digitMaxLength,
+		currency_min: min,
+		currency_placeholder: placeholder = fieldConfig.placeholder,
+		currency_step: step,
+	} = fieldConfig;
+
+	const isSlider = 'slider' === type;
+
+	// The actual value from the store could be either a float or
+	// a formatted string, so be able to handle either one, but keep
+	// a formatted version available locally.
+	const [ formattedValue, setFormattedValue ] = useState(
+		formatNumberWithPodsFormat( value, format, false, decimalHandling, decimalMaxLength )
+	);
+
+	useEffect( () => {
+		const numberValidationRule = {
+			rule: numberValidator( digitMaxLength, decimalMaxLength, format ),
+			condition: () => true,
+		};
+
+		addValidationRules( [ numberValidationRule ] );
+	}, [] );
+
+	const handleChange = ( event ) => {
+		if ( isSlider ) {
+			// The "range" (slider) input doesn't support the readonly attribute,
+			// so handle readOnly here.
+			if ( toBool( readOnly ) ) {
+				return;
+			}
+
+			// Slider input is always format: `9999.99`.
+			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, false, decimalHandling, decimalMaxLength ) );
+		} else if ( html5 ) {
+			// HTML5 input is always format: `9999.99` or `9999,99`.
+			setValue( parseFloatWithPodsFormat( event.target.value, 0 <= event.target.value.indexOf( ',' ) ? '9999.99' : '9999,99' ) );
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, false, decimalHandling, decimalMaxLength ) );
+		} else {
+			setValue( parseFloatWithPodsFormat( event.target.value, format ) );
+			setFormattedValue( event.target.value );
+		}
+	};
+
+	const reformatFormattedValue = () => {
+		const newFormattedValue = formatNumberWithPodsFormat(
+			value,
+			format,
+			false,
+			decimalHandling,
+			decimalMaxLength,
+		);
+
+		setFormattedValue( newFormattedValue );
+	};
+
+	const handleBlur = () => {
+		setHasBlurred();
+		reformatFormattedValue();
+	};
+
+	const formatSignSymbol = window?.podsDFVConfig?.currencies[ formatSign ]?.sign || '$';
+
+	if ( 'slider' === type ) {
+		return (
+			<div>
+				<input
+					type="range"
+					id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+					name={ htmlAttributes.name || name }
+					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-currency-slider', htmlAttributes.class ) }
+					placeholder={ placeholder }
+					value={ value || min || 0 }
+					readOnly={ toBool( readOnly ) }
+					onChange={ handleChange }
+					onBlur={ handleBlur }
+					min={ parseInt( min, 10 ) || undefined }
+					max={ parseInt( max, 10 ) || undefined }
+					step={ parseFloat( step ) || undefined }
+				/>
+
+				<div className="pods-slider-field-display">
+					{ formattedValue }
+				</div>
+			</div>
+		);
+	}
+
+	let inputValue = html5 ? value : formattedValue;
+
+	if ( '' === value ) {
+		inputValue = '';
+	}
+
+	return (
+		<div className="pods-currency-container">
+			<code className="pods-currency-sign">
+				{ formatSignSymbol }
+			</code>
+			<input
+				type={ html5 ? 'number' : 'text' }
+				id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+				name={ htmlAttributes.name || name }
+				data-name-clean={ htmlAttributes.name_clean }
+				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-currency', htmlAttributes.class ) }
+				placeholder={ placeholder }
+				value={ inputValue }
+				step={ html5 ? 'any' : undefined }
+				min={ html5 ? ( parseInt( min, 10 ) || undefined ) : undefined }
+				max={ html5 ? ( parseInt( max, 10 ) || undefined ) : undefined }
+				readOnly={ toBool( readOnly ) }
+				onChange={ handleChange }
+				onBlur={ reformatFormattedValue }
+			/>
+		</div>
+	);
+};
+
+Currency.propTypes = {
+	...FIELD_COMPONENT_BASE_PROPS,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
+};
+
+export default Currency;

@@ -1,0 +1,32 @@
+@use 'edit-pod-variables';
+
+#misc-publishing-actions {
+	svg.dashicon {
+		color: edit-pod-variables.$color--grey;
+		vertical-align: middle;
+		margin-right: 0.25em;
+	}
+}
+
+#major-publishing-actions {
+	.editor-post-trash {
+		margin-left: 0;
+		color: edit-pod-variables.$color--red;
+	}
+}
+
+.pods-edit-pod-manage-field .pods-dfv-container {
+	display: block;
+	max-width: 45em;
+	width: 65%;
+
+	@media screen and (max-width: 850px) {
+		max-width: 100%;
+		width: 100%;
+	}
+}
+
+.pods-edit-pod-manage-field .pods-dfv-container-wysiwyg,
+.pods-edit-pod-manage-field .pods-dfv-container-code {
+	width: 100%;
+}

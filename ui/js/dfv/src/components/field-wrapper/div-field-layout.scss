@@ -1,0 +1,17 @@
+.pods-dfv-container {
+	.components-notice {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+.pods-dfv-container-text,
+.pods-dfv-container-website,
+.pods-dfv-container-phone,
+.pods-dfv-container-email,
+.pods-dfv-container-password,
+.pods-dfv-container-paragraph {
+	input {
+		width: 100%;
+	}
+}

@@ -1,234 +1,225 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods\Fields
  */
 class PodsField_HTML extends PodsField {
 
-    /**
-     * Field Type Group
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $group = 'Layout Blocks';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $group = 'Layout Elements';
 
-    /**
-     * Field Type Identifier
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $type = 'html';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $type = 'html';
 
-    /**
-     * Field Type Label
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $label = 'HTML';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $label = 'HTML Content';
 
-    /**
-     * Field Type Preparation
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $prepare = '%s';
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $prepare = '%s';
 
-    /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
-     */
-    public function __construct () {
-	    self::$label = __( 'HTML', 'pods' );
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setup() {
+		static::$group = __( 'Layout Elements', 'pods' );
+		static::$label = __( 'HTML Content', 'pods' );
+	}
 
-    /**
-     * Add options and set defaults to
-     *
-     * @return array
-     *
-     * @since 2.0
-     */
-    public function options () {
-        $options = array(
-            'output_options' => array(
-                'label' => __( 'Output Options', 'pods' ),
-                'group' => array(
-                    self::$type . '_allow_html' => array(
-                        'label' => __( 'Allow HTML?', 'pods' ),
-                        'default' => 1,
-                        'type' => 'boolean',
-                        'dependency' => true
-                    ),
-                    self::$type . '_oembed' => array(
-                        'label' => __( 'Enable oEmbed?', 'pods' ),
-                        'default' => 0,
-                        'type' => 'boolean',
-                        'help' => array(
-                            __( 'Embed videos, images, tweets, and other content.', 'pods' ),
-                            'http://codex.wordpress.org/Embeds'
-                        )
-                    ),
-                    self::$type . '_wptexturize' => array(
-                        'label' => __( 'Enable wptexturize?', 'pods' ),
-                        'default' => 1,
-                        'type' => 'boolean',
-                        'help' => array(
-                            __( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
-                            'http://codex.wordpress.org/Function_Reference/wptexturize'
-                        )
-                    ),
-                    self::$type . '_convert_chars' => array(
-                        'label' => __( 'Enable convert_chars?', 'pods' ),
-                        'default' => 1,
-                        'type' => 'boolean',
-                        'help' => array(
-                            __( 'Converts text into valid XHTML and Unicode', 'pods' ),
-                            'http://codex.wordpress.org/Function_Reference/convert_chars'
-                        )
-                    ),
-                    self::$type . '_wpautop' => array(
-                        'label' => __( 'Enable wpautop?', 'pods' ),
-                        'default' => 1,
-                        'type' => 'boolean',
-                        'help' => array(
-                            __( 'Changes double line-breaks in the text into HTML paragraphs.', 'pods' ),
-                            'http://codex.wordpress.org/Function_Reference/wpautop'
-                        )
-                    ),
-                    self::$type . '_allow_shortcode' => array(
-                        'label' => __( 'Allow Shortcodes?', 'pods' ),
-                        'default' => 0,
-                        'type' => 'boolean',
-                        'dependency' => true,
-                        'help' => array(
-                            __( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
-                            'http://codex.wordpress.org/Shortcode_API'
-                        )
-                    )
-                )
-            )
-        );
+	/**
+	 * {@inheritdoc}
+	 */
+	public function options() {
+		return [
+			static::$type . '_content'  => [
+				'label' => __( 'HTML Content', 'pods' ),
+				'type'  => 'code',
+			],
+			static::$type . '_no_label' => [
+				'label'   => __( 'Disable the form label', 'pods' ),
+				'default' => 1,
+				'type'    => 'boolean',
+				'help'    => __( 'By disabling the form label, the HTML will show as full width without the label text. Only the HTML content will be displayed in the form.', 'pods' ),
+			],
+			'output_options'            => [
+				'label'         => __( 'Output Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_trim'             => [
+						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_lines'       => [
+						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_p_brs'       => [
+						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_trim_extra_lines' => [
+						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+					],
+					static::$type . '_oembed'           => [
+						'label'   => __( 'Enable oEmbed', 'pods' ),
+						'default' => 0,
+						'type'    => 'boolean',
+						'help'    => [
+							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
+							'http://codex.wordpress.org/Embeds',
+						],
+					],
+					static::$type . '_wptexturize'      => [
+						'label'   => __( 'Enable wptexturize', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+						'help'    => [
+							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
+							'http://codex.wordpress.org/Function_Reference/wptexturize',
+						],
+					],
+					static::$type . '_convert_chars'    => [
+						'label'   => __( 'Enable convert_chars', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+						'help'    => [
+							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
+							'http://codex.wordpress.org/Function_Reference/convert_chars',
+						],
+					],
+					static::$type . '_wpautop'          => [
+						'label'   => __( 'Enable wpautop', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+						'help'    => [
+							__( 'Changes double line-breaks in the text into HTML paragraphs.', 'pods' ),
+							'http://codex.wordpress.org/Function_Reference/wpautop',
+						],
+					],
+					static::$type . '_allow_shortcode'  => [
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
+						'default'    => 0,
+						'type'       => 'boolean',
+						'dependency' => true,
+						'help'       => [
+							__( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
+							'http://codex.wordpress.org/Shortcode_API',
+						],
+					],
+				],
+			],
+		];
+	}
 
-        return $options;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function schema( $options = null ) {
+		return false;
+	}
 
-    /**
-     * Define the current field's schema for DB table storage
-     *
-     * @param array $options
-     *
-     * @return array
-     * @since 2.0
-     */
-    public function schema ( $options = null ) {
-        return false;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null|string
-     * @since 2.0
-     */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $value = $this->strip_html( $value, $options );
+		// Enforce boolean.
+		$options[ static::$type . '_no_label' ] = filter_var( pods_v( static::$type . '_no_label', $options, false ), FILTER_VALIDATE_BOOLEAN );
 
-        if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
-            $embed = $GLOBALS[ 'wp_embed' ];
-            $value = $embed->run_shortcode( $value );
-            $value = $embed->autoembed( $value );
-        }
+		// Format content.
+		$options[ static::$type . '_content' ] = $this->display( $options[ static::$type . '_content' ], $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) )
-            $value = wptexturize( $value );
-
-        if ( 1 == pods_var( self::$type . '_convert_chars', $options, 1 ) )
-            $value = convert_chars( $value );
-
-        if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
-            $value = wpautop( $value );
-
-        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) ) {
-            if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
-                $value = shortcode_unautop( $value );
-
-            $value = do_shortcode( $value );
-        }
-
-        return $value;
-    }
-
-    /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
-     */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
-
-		echo $this->display( $value, $name, $options, $pod, $id );
-    }
-
-    /**
-     * Customize the Pods UI manage table column output
-     *
-     * @param int $id
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     *
-     * @return mixed|string
-     * @since 2.0
-     */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        $value = $this->strip_html( $value, $options );
-
-        $value = wp_trim_words( $value );
-
-        return $value;
-    }
-
-    /**
-     * Strip HTML based on options
-     *
-     * @param string $value
-     * @param array $options
-     *
-     * @return string
-     */
-    public function strip_html ( $value, $options = null ) {
-        if ( is_array( $value ) )
-            $value = @implode( ' ', $value );
-
-        $value = trim( $value );
-
-        if ( empty( $value ) )
-            return $value;
-
-        $options = (array) $options;
-
-        if ( 1 != pods_var( self::$type . '_allow_html', $options ) ) {
-            $value = strip_tags( $value );
+		if ( isset( $options['_field_object'] ) && $options['_field_object'] instanceof Field ) {
+			$options['_field_object']->set_arg( static::$type . '_no_label', $options[ static::$type . '_no_label' ] );
+			$options['_field_object']->set_arg( static::$type . '_content', $options[ static::$type . '_content' ] );
 		}
 
-        return $value;
-    }
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+		// Support passing html_content into the options for custom HTML option layouts.
+		if ( in_array( $value, [ '', null ], true ) ) {
+			$value = pods_v( static::$type . '_content', $options, '' );
+		}
+
+		if ( $options ) {
+			$options[ static::$type . '_allow_html' ] = 1;
+		}
+
+		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
+
+		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
+			$embed = $GLOBALS['wp_embed'];
+			$value = $embed->run_shortcode( $value );
+			$value = $embed->autoembed( $value );
+		}
+
+		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
+			$value = wptexturize( $value );
+		}
+
+		if ( 1 === (int) pods_v( static::$type . '_convert_chars', $options, 1 ) ) {
+			$value = convert_chars( $value );
+		}
+
+		if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
+			$value = wpautop( $value );
+		}
+
+		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+			if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
+				$value = shortcode_unautop( $value );
+			}
+
+			$value = do_shortcode( $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+		if ( $options ) {
+			$options[ static::$type . '_allow_html' ] = 1;
+		}
+
+		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
+
+		return wp_trim_words( $value );
+	}
 }

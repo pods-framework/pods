@@ -1,0 +1,20 @@
+actor: WpunitTester
+suite_namespace: \Pods_Unit_Tests
+bootstrap: _bootstrap.php
+modules:
+  enabled:
+    - lucatume\WPBrowser\Module\WPLoader
+  config:
+    lucatume\WPBrowser\Module\WPLoader:
+      wpRootFolder: "%WORDPRESS_ROOT_DIR%"
+      dbUrl: '%WORDPRESS_DB_URL%'
+      wpDebug: true
+      tablePrefix: '%TEST_TABLE_PREFIX%'
+      dump: 'tests/codeception/_data/dump.sql'
+      domain: '%WORDPRESS_DOMAIN%'
+      adminEmail: 'admin@%WORDPRESS_DOMAIN%'
+      title: 'Pods Tests'
+      plugins: [
+        'pods/init.php'
+      ]
+      theme: ''

@@ -9,38 +9,58 @@ import { toBool } from 'dfv/src/helpers/booleans';
 import './address.scss';
 
 const normalizeValue = ( value, addressType ) => {
+	const normalized = {
+		address: {},
+		text: '',
+		lat: '',
+		long: '',
+	};
+
 	if ( value && 'object' === typeof value && ! Array.isArray( value ) ) {
+		const geoValue = value.geo && 'object' === typeof value.geo && ! Array.isArray( value.geo ) ? value.geo : {};
+		const latValue = undefined !== value.lat ? value.lat : ( undefined !== geoValue.lat ? geoValue.lat : '' );
+		const longValue = undefined !== value.long
+			? value.long
+			: ( undefined !== value.lng
+				? value.lng
+				: ( undefined !== geoValue.long ? geoValue.long : ( undefined !== geoValue.lng ? geoValue.lng : '' ) ) );
+
 		if ( Object.prototype.hasOwnProperty.call( value, 'address' ) || Object.prototype.hasOwnProperty.call( value, 'text' ) ) {
 			return {
+				...normalized,
 				address: value.address || {},
 				text: value.text || '',
+				lat: undefined !== value.lat ? value.lat : latValue,
+				long: undefined !== value.long ? value.long : longValue,
+			};
+		}
+
+		if ( 'lat-long' === addressType ) {
+			return {
+				...normalized,
+				lat: latValue,
+				long: longValue,
 			};
 		}
 
 		return {
+			...normalized,
 			address: value,
-			text: '',
 		};
 	}
 
 	if ( 'string' === typeof value ) {
 		if ( 'text' === addressType ) {
 			return {
-				address: {},
+				...normalized,
 				text: value,
 			};
 		}
 
-		return {
-			address: {},
-			text: '',
-		};
+		return normalized;
 	}
 
-	return {
-		address: {},
-		text: '',
-	};
+	return normalized;
 };
 
 const mapToOptions = ( data = {} ) => {
@@ -61,6 +81,11 @@ const ADDRESS_LABELS = {
 	postal_code: __( 'ZIP / Postal Code', 'pods' ),
 	region: __( 'State / Province', 'pods' ),
 	country: __( 'Country', 'pods' ),
+};
+
+const LAT_LONG_LABELS = {
+	lat: __( 'Latitude', 'pods' ),
+	long: __( 'Longitude', 'pods' ),
 };
 
 const Address = ( {
@@ -107,6 +132,13 @@ const Address = ( {
 		setValue( {
 			...normalizedValue,
 			text: textValue,
+		} );
+	};
+
+	const setLatLongValue = ( partName, partValue ) => {
+		setValue( {
+			...normalizedValue,
+			[ partName ]: partValue,
 		} );
 	};
 
@@ -186,6 +218,40 @@ const Address = ( {
 				setValue={ setTextValue }
 				setHasBlurred={ setHasBlurred }
 			/>
+		);
+	}
+
+	if ( 'lat-long' === addressTypeOption ) {
+		return (
+			<div className="pods-address-field">
+				<div className="pods-address-field__row">
+					<label className="pods-form-ui-label" htmlFor={ baseId }>
+						{ LAT_LONG_LABELS.lat }
+					</label>
+					<BaseInput
+						fieldConfig={ makeSubFieldConfig( `${ baseName }[lat]`, baseId ) }
+						type="number"
+						value={ normalizedValue.lat || '' }
+						onChange={ ( event ) => setLatLongValue( 'lat', event.target.value ) }
+						setValue={ ( nextValue ) => setLatLongValue( 'lat', nextValue ) }
+						setHasBlurred={ setHasBlurred }
+					/>
+				</div>
+
+				<div className="pods-address-field__row">
+					<label className="pods-form-ui-label" htmlFor={ `${ baseId }-long` }>
+						{ LAT_LONG_LABELS.long }
+					</label>
+					<BaseInput
+						fieldConfig={ makeSubFieldConfig( `${ baseName }[long]`, `${ baseId }-long` ) }
+						type="number"
+						value={ normalizedValue.long || '' }
+						onChange={ ( event ) => setLatLongValue( 'long', event.target.value ) }
+						setValue={ ( nextValue ) => setLatLongValue( 'long', nextValue ) }
+						setHasBlurred={ setHasBlurred }
+					/>
+				</div>
+			</div>
 		);
 	}
 

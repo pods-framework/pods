@@ -12,40 +12,40 @@ const normalizeValue = ( value, addressType ) => {
 	const normalized = {
 		address: {},
 		text: '',
-		lat: '',
-		long: '',
+		geo: {
+			lat: '',
+			lng: '',
+		},
 	};
 
 	if ( value && 'object' === typeof value && ! Array.isArray( value ) ) {
-		const geoValue = value.geo && 'object' === typeof value.geo && ! Array.isArray( value.geo ) ? value.geo : {};
-		const latValue = undefined !== value.lat ? value.lat : ( undefined !== geoValue.lat ? geoValue.lat : '' );
-		const longValue = undefined !== value.long
-			? value.long
-			: ( undefined !== value.lng
-				? value.lng
-				: ( undefined !== geoValue.long ? geoValue.long : ( undefined !== geoValue.lng ? geoValue.lng : '' ) ) );
+		const incomingGeo = value.geo && 'object' === typeof value.geo && ! Array.isArray( value.geo ) ? value.geo : {};
+		const latValue = undefined !== incomingGeo.lat ? incomingGeo.lat : ( undefined !== value.lat ? value.lat : '' );
+		const lngValue = undefined !== incomingGeo.lng
+			? incomingGeo.lng
+			: ( undefined !== incomingGeo.long
+				? incomingGeo.long
+				: ( undefined !== value.lng ? value.lng : ( undefined !== value.long ? value.long : '' ) ) );
 
 		if ( Object.prototype.hasOwnProperty.call( value, 'address' ) || Object.prototype.hasOwnProperty.call( value, 'text' ) ) {
 			return {
 				...normalized,
 				address: value.address || {},
 				text: value.text || '',
-				lat: undefined !== value.lat ? value.lat : latValue,
-				long: undefined !== value.long ? value.long : longValue,
-			};
-		}
-
-		if ( 'lat-long' === addressType ) {
-			return {
-				...normalized,
-				lat: latValue,
-				long: longValue,
+				geo: {
+					lat: latValue,
+					lng: lngValue,
+				},
 			};
 		}
 
 		return {
 			...normalized,
 			address: value,
+			geo: {
+				lat: latValue,
+				lng: lngValue,
+			},
 		};
 	}
 
@@ -83,9 +83,9 @@ const ADDRESS_LABELS = {
 	country: __( 'Country', 'pods' ),
 };
 
-const LAT_LONG_LABELS = {
+const GEO_LABELS = {
 	lat: __( 'Latitude', 'pods' ),
-	long: __( 'Longitude', 'pods' ),
+	lng: __( 'Longitude', 'pods' ),
 };
 
 const Address = ( {
@@ -107,6 +107,7 @@ const Address = ( {
 		address_address_city: enableCity,
 		address_address_region: enableRegion,
 		address_address_country: enableCountry,
+		address_address_geo: enableGeo,
 		address_address_region_input: regionInputType = 'text',
 		address_address_country_input: countryInputType = 'text',
 	} = fieldConfig;
@@ -135,10 +136,13 @@ const Address = ( {
 		} );
 	};
 
-	const setLatLongValue = ( partName, partValue ) => {
+	const setGeoValue = ( partName, partValue ) => {
 		setValue( {
 			...normalizedValue,
-			[ partName ]: partValue,
+			geo: {
+				...( normalizedValue.geo || {} ),
+				[ partName ]: partValue,
+			},
 		} );
 	};
 
@@ -208,49 +212,59 @@ const Address = ( {
 		);
 	};
 
-	if ( 'text' === addressTypeOption ) {
-		return (
-			<BaseInput
-				fieldConfig={ makeSubFieldConfig( `${ baseName }[text]`, baseId ) }
-				type="text"
-				value={ normalizedValue.text || '' }
-				onChange={ ( event ) => setTextValue( event.target.value ) }
-				setValue={ setTextValue }
-				setHasBlurred={ setHasBlurred }
-			/>
-		);
-	}
+	const renderGeoInputs = () => {
+		if ( ! toBool( enableGeo ) ) {
+			return null;
+		}
 
-	if ( 'lat-long' === addressTypeOption ) {
+		return (
+			<>
+				<div className="pods-address-field__row">
+					<label className="pods-form-ui-label" htmlFor={ `${ baseId }-geo-lat` }>
+						{ GEO_LABELS.lat }
+					</label>
+					<BaseInput
+						fieldConfig={ makeSubFieldConfig( `${ baseName }[geo][lat]`, `${ baseId }-geo-lat` ) }
+						type="number"
+						value={ ( normalizedValue.geo && undefined !== normalizedValue.geo.lat ) ? normalizedValue.geo.lat : '' }
+						onChange={ ( event ) => setGeoValue( 'lat', event.target.value ) }
+						setValue={ ( nextValue ) => setGeoValue( 'lat', nextValue ) }
+						setHasBlurred={ setHasBlurred }
+					/>
+				</div>
+
+				<div className="pods-address-field__row">
+					<label className="pods-form-ui-label" htmlFor={ `${ baseId }-geo-lng` }>
+						{ GEO_LABELS.lng }
+					</label>
+					<BaseInput
+						fieldConfig={ makeSubFieldConfig( `${ baseName }[geo][lng]`, `${ baseId }-geo-lng` ) }
+						type="number"
+						value={ ( normalizedValue.geo && undefined !== normalizedValue.geo.lng ) ? normalizedValue.geo.lng : '' }
+						onChange={ ( event ) => setGeoValue( 'lng', event.target.value ) }
+						setValue={ ( nextValue ) => setGeoValue( 'lng', nextValue ) }
+						setHasBlurred={ setHasBlurred }
+					/>
+				</div>
+			</>
+		);
+	};
+
+	if ( 'text' === addressTypeOption ) {
 		return (
 			<div className="pods-address-field">
 				<div className="pods-address-field__row">
-					<label className="pods-form-ui-label" htmlFor={ baseId }>
-						{ LAT_LONG_LABELS.lat }
-					</label>
 					<BaseInput
-						fieldConfig={ makeSubFieldConfig( `${ baseName }[lat]`, baseId ) }
-						type="number"
-						value={ normalizedValue.lat || '' }
-						onChange={ ( event ) => setLatLongValue( 'lat', event.target.value ) }
-						setValue={ ( nextValue ) => setLatLongValue( 'lat', nextValue ) }
+						fieldConfig={ makeSubFieldConfig( `${ baseName }[text]`, baseId ) }
+						type="text"
+						value={ normalizedValue.text || '' }
+						onChange={ ( event ) => setTextValue( event.target.value ) }
+						setValue={ setTextValue }
 						setHasBlurred={ setHasBlurred }
 					/>
 				</div>
 
-				<div className="pods-address-field__row">
-					<label className="pods-form-ui-label" htmlFor={ `${ baseId }-long` }>
-						{ LAT_LONG_LABELS.long }
-					</label>
-					<BaseInput
-						fieldConfig={ makeSubFieldConfig( `${ baseName }[long]`, `${ baseId }-long` ) }
-						type="number"
-						value={ normalizedValue.long || '' }
-						onChange={ ( event ) => setLatLongValue( 'long', event.target.value ) }
-						setValue={ ( nextValue ) => setLatLongValue( 'long', nextValue ) }
-						setHasBlurred={ setHasBlurred }
-					/>
-				</div>
+				{ renderGeoInputs() }
 			</div>
 		);
 	}
@@ -291,6 +305,8 @@ const Address = ( {
 			{ toBool( enableCountry ) && 'pick' !== countryInputType && (
 				renderTextInput( 'country', `${ baseId }-country` )
 			) }
+
+			{ renderGeoInputs() }
 		</div>
 	);
 };

@@ -144,6 +144,11 @@ class PodsField_Address extends PodsField {
 					'short' => __( 'Country code', 'pods' ),
 				],
 			],
+			$type . '_address_geo'         => [
+				'label'   => __( 'Enable Latitude / Longitude', 'pods' ),
+				'default' => 0,
+				'type'    => 'boolean',
+			],
 			$type . '_display_type'           => [
 				'label'      => __( 'Display Type', 'pods' ),
 				'default'    => 'default',
@@ -301,6 +306,10 @@ class PodsField_Address extends PodsField {
 					$values_to_check = pods_v( 'text', $value, '' );
 				} elseif ( isset( $value['address'] ) ) {
 					$values_to_check = $value['address'];
+
+					if ( pods_v_bool( static::$type . '_address_geo', $options ) && ! empty( $value['geo'] ) && is_array( $value['geo'] ) ) {
+						$values_to_check = array_merge( $values_to_check, $value['geo'] );
+					}
 				}
 			}
 

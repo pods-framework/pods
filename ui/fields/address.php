@@ -9,6 +9,12 @@ if ( empty( $type ) ) {
 	$type = pods_v( 'address_type', $options, 'address' );
 }
 
+$geo = array();
+
+if ( isset( $value['geo'] ) && is_array( $value['geo'] ) ) {
+	$geo = $value['geo'];
+}
+
 if ( 'text' === $type ) {
 	if ( isset( $value['text'] ) ) {
 		$value = $value['text'];
@@ -59,5 +65,13 @@ if ( 'text' === $type ) {
 	<?php endif; ?>
 	<?php
 }
+
+if ( pods_v( $form_field_type . '_address_geo', $options ) ) : ?>
+	<?php echo PodsForm::label( $name . '[geo][lat]', __( 'Latitude', 'pods' ) ); ?>
+	<?php echo PodsForm::field( $name . '[geo][lat]', pods_v( 'lat', $geo ), 'number', array( 'number_decimals' => 10, 'number_format' => '9999.99' ) ); ?>
+
+	<?php echo PodsForm::label( $name . '[geo][lng]', __( 'Longitude', 'pods' ) ); ?>
+	<?php echo PodsForm::field( $name . '[geo][lng]', pods_v( 'lng', $geo, pods_v( 'long', $geo ) ), 'number', array( 'number_decimals' => 10, 'number_format' => '9999.99' ) ); ?>
+<?php endif;
 
 PodsForm::regex( $form_field_type, $options );

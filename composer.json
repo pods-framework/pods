@@ -72,7 +72,7 @@
     "szepeviktor/phpstan-wordpress": "*",
     "wp-cli/wp-cli": "2.*",
     "wp-coding-standards/wpcs": "^3.1",
-    "wp-graphql/wp-graphql": "^v2.5.4",
+    "wp-graphql/wp-graphql": "^v2.11.2",
     "wpsyntex/polylang": "dev-master"
   },
   "minimum-stability": "stable",

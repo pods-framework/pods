@@ -224,7 +224,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 
 <script type="text/javascript">
 	if ( 'undefined' == typeof ajaxurl ) {
-		var ajaxurl = '<?php echo esc_url_raw( admin_url( 'admin-ajax.php' ) ); ?>';
+		var ajaxurl = <?php echo json_encode( esc_url_raw( admin_url( 'admin-ajax.php' ) ) ); ?>;
 	}
 
 	if ( 'undefined' == typeof pods_form_thank_you ) {
@@ -233,13 +233,13 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 
 	<?php if ( $is_settings_pod ) : ?>
 		var pods_admin_submit_callback = function ( id ) {
-			document.location = '<?php echo esc_url_raw( pods_query_arg( array( 'do' => $do ) ) ); ?>';
+			document.location = <?php echo json_encode( esc_url_raw( pods_query_arg( array( 'do' => $do ) ) ) ); ?>;
 		}
 	<?php else : ?>
 		var pods_admin_submit_callback = function ( id ) {
 			id = parseInt( id, 10 );
-			var thank_you = '<?php echo esc_url_raw( $thank_you ); ?>';
-			var thank_you_alt = '<?php echo esc_url_raw( $thank_you_alt ); ?>';
+			var thank_you = <?php echo json_encode( esc_url_raw( $thank_you ) ); ?>;
+			var thank_you_alt = <?php echo json_encode( esc_url_raw( $thank_you_alt ) ); ?>;
 
 			if ( 'undefined' != typeof pods_form_thank_you && null !== pods_form_thank_you ) {
 				thank_you = pods_form_thank_you;

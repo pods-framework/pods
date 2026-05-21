@@ -2809,7 +2809,7 @@ function pods_redirect( $location = null, $status = 302, $die = true ) {
 			die();
 		}
 	} else {
-		echo '<script type="text/javascript">' . 'document.location = "' . esc_attr( str_replace( '&amp;', '&', esc_js( $location ) ) ) . '";' . '</script>';
+		echo '<script type="text/javascript">document.location = ' . json_encode( $location ) . ';</script>';
 		if ( $die ) {
 			die();
 		}

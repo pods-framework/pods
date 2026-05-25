@@ -42,7 +42,7 @@ jobs:
           echo "CURRENT_VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
       - name: Maybe get the next version information
         if: ${{ steps.version-lookup.outputs.CURRENT_VERSION != null && steps.version-lookup.outputs.CURRENT_VERSION != '' }}
-        uses: reecetech/version-increment@2023.10.2
+        uses: reecetech/version-increment@2024.10.1
         id: version-increment
         with:
           scheme: semver

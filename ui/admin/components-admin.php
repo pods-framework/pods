@@ -135,6 +135,6 @@ if ( ! pods_is_admin( 'pods_components' ) ) {
 	} );
 
 	var pods_admin_submit_callback = function ( id ) {
-		document.location = '<?php echo esc_url_raw( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
+		document.location = <?php echo json_encode( esc_url_raw( pods_query_arg( array( 'do' => 'save' ) ) ) ); ?>;
 	}
 </script>

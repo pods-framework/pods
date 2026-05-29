@@ -42,12 +42,22 @@
     "source": "https://github.com/pods-framework/pods",
     "docs": "https://docs.pods.io/"
   },
+  "repositories": [
+    {
+      "name": "wpackagist",
+      "type": "composer",
+      "url": "https://wpackagist.org",
+      "only": [
+        "wpackagist-plugin/*"
+      ]
+    }
+  ],
   "require": {
     "composer/installers": "2.2.*",
     "erusev/parsedown": "^1.7.4",
     "lucatume/di52": "^4.0.1",
     "mustangostang/spyc": "^0.6.3",
-    "php": ">=7.2"
+    "php": ">=8.0"
   },
   "require-dev": {
     "automattic/vipwpcs": "^3.0.0",
@@ -72,7 +82,7 @@
     "szepeviktor/phpstan-wordpress": "*",
     "wp-cli/wp-cli": "2.*",
     "wp-coding-standards/wpcs": "^3.1",
-    "wp-graphql/wp-graphql": "^v2.5.4",
+    "wpackagist-plugin/wp-graphql": "^v2.11.2",
     "wpsyntex/polylang": "dev-master"
   },
   "minimum-stability": "stable",

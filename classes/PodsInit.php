@@ -160,6 +160,7 @@ class PodsInit {
 		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
 		add_action( 'after_setup_theme', [ $this, 'after_setup_theme' ] );
 		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
+		add_filter( 'plugin_action_links_' . PODS_SLUG, [ $this, 'settings_link' ] );
 	}
 
 	/**
@@ -1905,6 +1906,35 @@ class PodsInit {
 
 			pods_transient_clear( 'pods_flush_rewrites' );
 		}
+	}
+
+	/**
+	 * Add custom action links for Pods.
+	 *
+	 * @since TBD
+	 *
+	 * @param string[] $actions An array of plugin action links.
+	 *
+	 * @return string[] An array of plugin action links.
+	 **/
+	public function settings_link( array $links ): array {
+		// Check if the Pods admin menu is disabled.
+		if ( defined( 'PODS_DISABLE_ADMIN_MENU' ) && ! PODS_DISABLE_ADMIN_MENU ) {
+			return $links;
+		}
+
+		// Check if user has access to the Pods Settings page.
+		if ( ! pods_is_admin( 'pods_settings' ) ) {
+			return $links;
+		}
+
+		$links['pods_settings'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'admin.php?page=pods-settings' ) ),
+			esc_html__( 'Settings', 'pods' )
+		);
+
+		return $links;
 	}
 
 	/**

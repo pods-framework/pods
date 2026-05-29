@@ -1768,6 +1768,33 @@ class PodsInit {
 
 				new PodsRESTFields( $post_type_name );
 			}
+
+			// WPGraphQL - set show_in_graphql for existing post types that may have been registered
+			// before the register_post_type_args filter was in place.
+			if ( empty( $wp_post_types[ $post_type_name ]->show_in_graphql ) ) {
+				$wpgraphql_enabled = filter_var( pods_v( 'wpgraphql_enabled', $pod, false ), FILTER_VALIDATE_BOOLEAN );
+
+				if ( $wpgraphql_enabled ) {
+					try {
+						$integration = pods_container( \Pods\Integrations\WPGraphQL\Integration::class );
+
+						$pod_object = pods_api()->load_pod( [ 'name' => $post_type_name ] );
+
+						if ( $pod_object ) {
+							$labels          = isset( $wp_post_types[ $post_type_name ]->labels ) ? (array) $wp_post_types[ $post_type_name ]->labels : [];
+							$pod_graphql_args = $integration->get_graphql_info_for_pod( $pod_object, $labels );
+
+							if ( $pod_graphql_args && $pod_graphql_args['enabled'] ) {
+								$wp_post_types[ $post_type_name ]->show_in_graphql     = true;
+								$wp_post_types[ $post_type_name ]->graphql_single_name = $pod_graphql_args['singular_name'];
+								$wp_post_types[ $post_type_name ]->graphql_plural_name = $pod_graphql_args['plural_name'];
+							}
+						}
+					} catch ( Exception $exception ) {
+						pods_debug_log( $exception );
+					}
+				}
+			}
 		}//end foreach
 
 		foreach ( $existing_taxonomies as $taxonomy_name => $taxonomy_name_again ) {
@@ -1796,6 +1823,33 @@ class PodsInit {
 				}
 
 				new PodsRESTFields( $taxonomy_name );
+			}
+
+			// WPGraphQL - set show_in_graphql for existing taxonomies that may have been registered
+			// before the register_taxonomy_args filter was in place.
+			if ( empty( $wp_taxonomies[ $taxonomy_name ]->show_in_graphql ) ) {
+				$wpgraphql_enabled = filter_var( pods_v( 'wpgraphql_enabled', $pod, false ), FILTER_VALIDATE_BOOLEAN );
+
+				if ( $wpgraphql_enabled ) {
+					try {
+						$integration = pods_container( \Pods\Integrations\WPGraphQL\Integration::class );
+
+						$pod_object = pods_api()->load_pod( [ 'name' => $taxonomy_name ] );
+
+						if ( $pod_object ) {
+							$labels          = isset( $wp_taxonomies[ $taxonomy_name ]->labels ) ? (array) $wp_taxonomies[ $taxonomy_name ]->labels : [];
+							$pod_graphql_args = $integration->get_graphql_info_for_pod( $pod_object, $labels );
+
+							if ( $pod_graphql_args && $pod_graphql_args['enabled'] ) {
+								$wp_taxonomies[ $taxonomy_name ]->show_in_graphql     = true;
+								$wp_taxonomies[ $taxonomy_name ]->graphql_single_name = $pod_graphql_args['singular_name'];
+								$wp_taxonomies[ $taxonomy_name ]->graphql_plural_name = $pod_graphql_args['plural_name'];
+							}
+						}
+					} catch ( Exception $exception ) {
+						pods_debug_log( $exception );
+					}
+				}
 			}
 		}//end foreach
 

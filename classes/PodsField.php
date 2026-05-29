@@ -279,7 +279,7 @@ class PodsField {
 	}
 
 	/**
-	 * Change the way the value of the field is displayed with Pods::get
+	 * Change the way the value of the field is displayed with Pods::field
 	 *
 	 * @param mixed|null      $value   Current value.
 	 * @param string|null     $name    Field name.

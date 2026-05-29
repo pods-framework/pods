@@ -1,4 +1,5 @@
 import Avatar from 'dfv/src/fields/avatar';
+import Address from 'dfv/src/fields/address';
 import Boolean from 'dfv/src/fields/boolean';
 import BooleanGroup from 'dfv/src/fields/boolean-group';
 import Code from 'dfv/src/fields/code';
@@ -25,6 +26,10 @@ import Website from 'dfv/src/fields/website';
 import Wysiwyg from 'dfv/src/fields/wysiwyg';
 
 const FIELD_MAP = {
+	address: {
+		fieldComponent: Address,
+		directRender: false,
+	},
 	avatar: {
 		fieldComponent: Avatar,
 		directRender: false,

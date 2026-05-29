@@ -1294,6 +1294,117 @@ class PodsMeta {
 	}
 
 	/**
+	 * Hydrate a file/pick field value from raw object meta when Pods' own lookup
+	 * returned empty.
+	 *
+	 * This covers the case where a third-party plugin (for example
+	 * Yoast Duplicate Post, Bricks builder copy, a migration/import tool, or any
+	 * direct `update_post_meta()` from user code) wrote values into the native
+	 * *_postmeta / *_termmeta / *_usermeta / *_commentmeta tables but did not
+	 * go through the Pods save pipeline. In that case Pods' internal
+	 * relationship state is out of sync with the raw meta, so
+	 * `Pods::field( ..., in_form => true )` returns `false` and the DFV inline
+	 * JSON renders with `fieldValue: false` / `fieldItemData: []`, leaving
+	 * file fields visually empty even though the IDs are present in meta.
+	 *
+	 * See https://github.com/pods-framework/pods/issues/7363.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @param mixed        $value       Value already resolved by the caller.
+	 * @param int|string   $id          Object ID.
+	 * @param array|Field  $field       Field object or array.
+	 * @param string       $object_type One of: 'post', 'term', 'user', 'comment'.
+	 *
+	 * @return mixed Hydrated value (scalar id or array of ids), or the original
+	 *               $value if no fallback was needed or possible.
+	 */
+	public static function hydrate_file_pick_value_from_meta( $value, $id, $field, $object_type ) {
+		// Only act when the caller got nothing back. Numeric zero is a valid id.
+		if ( ! empty( $value ) || (int) $id <= 0 ) {
+			return $value;
+		}
+
+		$type = pods_v( 'type', $field );
+
+		// Scope: external duplicators typically break file & pick relationships.
+		if ( ! in_array( $type, array( 'file', 'pick' ), true ) ) {
+			return $value;
+		}
+
+		$name = pods_v( 'name', $field );
+
+		if ( empty( $name ) ) {
+			return $value;
+		}
+
+		// Read the raw meta. Pass $single=false to get every row, so we also
+		// cover repeating fields stored as multiple meta rows.
+		switch ( $object_type ) {
+			case 'post':
+				$raw = get_post_meta( $id, $name, false );
+				break;
+			case 'term':
+				$raw = get_term_meta( $id, $name, false );
+				break;
+			case 'user':
+				$raw = get_user_meta( $id, $name, false );
+				break;
+			case 'comment':
+				$raw = get_comment_meta( $id, $name, false );
+				break;
+			default:
+				return $value;
+		}
+
+		if ( empty( $raw ) ) {
+			return $value;
+		}
+
+		// Flatten to a list of integer IDs. Handles: scalar ids, serialized
+		// strings, nested arrays of ids, and arrays of {id|ID => n, ...}.
+		$ids = array();
+
+		foreach ( $raw as $row ) {
+			if ( is_numeric( $row ) ) {
+				$ids[] = (int) $row;
+				continue;
+			}
+
+			if ( is_string( $row ) ) {
+				$maybe = maybe_unserialize( $row );
+				if ( $maybe !== $row ) {
+					$row = $maybe;
+				}
+			}
+
+			if ( is_array( $row ) ) {
+				foreach ( $row as $inner ) {
+					if ( is_numeric( $inner ) ) {
+						$ids[] = (int) $inner;
+					} elseif ( is_array( $inner ) ) {
+						if ( isset( $inner['ID'] ) && is_numeric( $inner['ID'] ) ) {
+							$ids[] = (int) $inner['ID'];
+						} elseif ( isset( $inner['id'] ) && is_numeric( $inner['id'] ) ) {
+							$ids[] = (int) $inner['id'];
+						}
+					}
+				}
+			}
+		}
+
+		$ids = array_values( array_unique( array_filter( $ids ) ) );
+
+		if ( empty( $ids ) ) {
+			return $value;
+		}
+
+		$format_type = pods_v( $type . '_format_type', $field, 'single' );
+
+		return 'multi' === $format_type ? $ids : $ids[0];
+	}
+
+	/**
 	 * @param $post
 	 * @param $metabox
 	 */
@@ -1366,6 +1477,9 @@ class PodsMeta {
 				} elseif ( ! empty( $id ) ) {
 					$value = get_post_meta( $id, $field['name'], true );
 				}
+
+				// Recover file/pick values written by external duplicators/importers. See #7363.
+				$value = self::hydrate_file_pick_value_from_meta( $value, $id, $field, 'post' );
 
 				if ( ! $value && ! is_numeric( $value ) ) {
 					$screen = get_current_screen();
@@ -1942,6 +2056,9 @@ class PodsMeta {
 					$value = get_term_meta( $id, $field['name'], true );
 				}
 
+				// Recover file/pick values written by external duplicators/importers. See #7363.
+				$value = self::hydrate_file_pick_value_from_meta( $value, $id, $field, 'term' );
+
 				pods_no_conflict_off( 'taxonomy' );
 
 				return $value;
@@ -2192,6 +2309,9 @@ class PodsMeta {
 				} elseif ( ! empty( $id ) ) {
 					$value = get_user_meta( $id, $field['name'], true );
 				}
+
+				// Recover file/pick values written by external duplicators/importers. See #7363.
+				$value = self::hydrate_file_pick_value_from_meta( $value, $id, $field, 'user' );
 
 				pods_no_conflict_off( 'user' );
 
@@ -2452,6 +2572,9 @@ class PodsMeta {
 					$value = get_comment_meta( $id, $field['name'], true );
 				}
 
+				// Recover file/pick values written by external duplicators/importers. See #7363.
+				$value = self::hydrate_file_pick_value_from_meta( $value, $id, $field, 'comment' );
+
 				pods_no_conflict_off( 'comment' );
 
 				return $value;
@@ -2613,6 +2736,9 @@ class PodsMeta {
 				} elseif ( ! empty( $id ) ) {
 					$value = get_comment_meta( $id, $field['name'], true );
 				}
+
+				// Recover file/pick values written by external duplicators/importers. See #7363.
+				$value = self::hydrate_file_pick_value_from_meta( $value, $id, $field, 'comment' );
 
 				pods_no_conflict_off( 'comment' );
 

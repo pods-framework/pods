@@ -19,6 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	foreach ( $fields as $name => $field ) {
 		if ( in_array( $field['type'], array( 'pick', 'taxonomy' ), true ) && 'pick-custom' !== $field['pick_object'] && ! empty( $field['pick_object'] ) ) {
+
+			// Relationship field.
+
 			$field['pick_format_type']             = 'single';
 			$field['pick_format_single']           = 'dropdown';
 			$field['pick_select_text']             = '-- ' . $field['label'] . ' --';
@@ -27,11 +30,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			$filter = sanitize_text_field( pods_v( $pod->filter_var . '_' . $name, 'get', '' ) );
 
-			// @todo Support other field types.
 			$field['type'] = 'pick';
 
 			PodsForm::output_field( $pod->filter_var . '_' . $name, $filter, $field['type'], $field, $pod->pod, $pod->id() );
+		} elseif ( in_array( $field['type'], array( 'text', 'number' ), true ) ) {
+
+			// Text / Number fields.
+
+			$filter = sanitize_text_field( pods_v( $pod->filter_var . '_' . $name, 'get', '' ) );
+
+			echo PodsForm::label( $name, $field['label'] );
+			echo PodsForm::field( $pod->filter_var . '_' . $name, $filter, $field['type'], $field, $pod->pod, $pod->id() );
 		}
+		// @todo Support other field types.
 	}
 	?>
 

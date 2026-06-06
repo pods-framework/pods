@@ -225,6 +225,71 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsMeta::save_post
+	 */
+	public function test_save_post_preserves_hidden_field_value() {
+		$api = pods_api();
+
+		// Add a hidden pick field to the existing test pod.
+		$hidden_field_id = $api->save_field( array(
+			'pod_id'           => $this->pod_id,
+			'name'             => 'hidden_pick_field',
+			'label'            => 'Hidden Pick',
+			'type'             => 'pick',
+			'pick_object'      => 'post_type',
+			'pick_val'         => $this->pod_name,
+			'pick_format_type' => 'multi',
+			'hidden'           => '1',
+		) );
+
+		$this->assertNotEmpty( $hidden_field_id, 'Hidden field should be created.' );
+
+		$_POST['pods_meta'] = wp_create_nonce( 'pods_meta_post' );
+
+		pods_no_conflict_on( 'post' );
+
+		$post_id_a = wp_insert_post( array(
+			'post_title'  => 'Hidden Field Test A',
+			'post_type'   => $this->pod_name,
+			'post_status' => 'draft',
+		) );
+
+		$post_id_b = wp_insert_post( array(
+			'post_title'  => 'Hidden Field Test B',
+			'post_type'   => $this->pod_name,
+			'post_status' => 'draft',
+		) );
+
+		pods_no_conflict_off( 'post' );
+
+		// Seed the hidden field with a value via the API.
+		$pod = pods( $this->pod_name, $post_id_a );
+		$pod->save( 'hidden_pick_field', array( $post_id_b ) );
+
+		$saved_value = get_post_meta( $post_id_a, 'hidden_pick_field', true );
+		$this->assertContains( (int) $post_id_b, array_map( 'intval', (array) $saved_value ), 'Hidden field should have seeded value.' );
+
+		// Now simulate a save where the hidden field is NOT in $_POST.
+		// Only a visible field is submitted.
+		$_POST['pods_meta_number1'] = 999;
+		unset( $_POST['pods_meta_hidden_pick_field'] );
+
+		wp_update_post( array(
+			'ID'          => $post_id_a,
+			'post_status' => 'publish',
+		) );
+
+		// The hidden field value must be preserved.
+		$preserved_value = get_post_meta( $post_id_a, 'hidden_pick_field', true );
+		$this->assertNotEmpty( $preserved_value, 'Hidden field value must not be cleared when not in POST.' );
+		$this->assertContains( (int) $post_id_b, array_map( 'intval', (array) $preserved_value ), 'Hidden pick field should still contain seeded post id after save.' );
+
+		// The visible field should still be saved normally.
+		$number1 = get_post_meta( $post_id_a, 'number1', true );
+		$this->assertEquals( '999', $number1, 'Visible field should be saved normally.' );
+	}
+
+	/**
 	 * @covers PodsMeta::save_user
 	 */
 	public function test_save_user_create() {

@@ -159,13 +159,13 @@ class Pods_Migrate_PHP extends PodsComponent {
 		$has_objects_to_migrate = ! empty( $pod_templates_selected ) || ! empty( $pod_pages_selected );
 
 		foreach ( $pod_templates_selected as $object_id => $checked ) {
-			if ( true === (boolean) $checked && isset( $pod_templates_available_to_migrate[ (int) $object_id ] ) ) {
+			if ( true === (bool) $checked && isset( $pod_templates_available_to_migrate[ (int) $object_id ] ) ) {
 				$pod_templates[] = $object_id;
 			}
 		}
 
 		foreach ( $pod_pages_selected as $object_id => $checked ) {
-			if ( true === (boolean) $checked && isset( $pod_pages_available_to_migrate[ (int) $object_id ] ) ) {
+			if ( true === (bool) $checked && isset( $pod_pages_available_to_migrate[ (int) $object_id ] ) ) {
 				$pod_pages[] = $object_id;
 			}
 		}

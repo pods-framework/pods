@@ -1505,7 +1505,7 @@ class PodsMeta {
 		$data = [];
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -1796,7 +1796,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2045,7 +2045,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2283,7 +2283,7 @@ class PodsMeta {
 		$data = [];
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2758,7 +2758,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {

@@ -343,6 +343,45 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
 	// Get groups/fields and render them.
 	$groups = $pod->pod_data->get_groups();
 
+	// Collect current field values to evaluate conditional logic visibility.
+	$field_values = [];
+
+	foreach ( $groups as $group ) {
+		// Skip if the section does not match.
+		if (
+			$options['section']
+			&& $options['section_field']
+			&& (
+				'any' === $options['section']
+				|| ! in_array( $options['section'], (array) $group[ $options['section_field'] ], true )
+			)
+		) {
+			continue;
+		}
+
+		if ( ! pods_permission( $group ) ) {
+			continue;
+		}
+
+		$group_fields = $group->get_fields();
+
+		if ( empty( $group_fields ) ) {
+			continue;
+		}
+
+		foreach ( $group_fields as $group_field ) {
+			if ( ! pods_permission( $group_field ) ) {
+				continue;
+			}
+
+			if ( pods_v( 'hidden', $group_field, false ) ) {
+				continue;
+			}
+
+			$field_values[ $group_field['name'] ] = pods_form_get_submitted_field_value( $group_field['name'] );
+		}
+	}
+
 	foreach ( $groups as $group ) {
 		// Skip if the section does not match.
 		if (
@@ -374,6 +413,11 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
 			}
 
 			if ( pods_v( 'hidden', $field, false ) ) {
+				continue;
+			}
+
+			// Skip if the field is hidden by conditional logic.
+			if ( $field instanceof Field && ! $field->is_visible( $field_values ) ) {
 				continue;
 			}
 

@@ -182,6 +182,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.3.10 - June 8th, 2026 =
+
+* Fixed: Resolved fatal error when calling the `Whatsit::count_groups()` method in some circumstances. (@markofapproval, @sc0ttkclark)
+
 = 3.3.9 - May 20th, 2026 =
 
 * Security: Resolve a XSS vulnerability in the Pods UI forms in the admin area. Props to Bonds through Patchstack for responsibly reporting this. (@sc0ttkclark)

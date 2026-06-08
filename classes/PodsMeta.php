@@ -1545,7 +1545,7 @@ class PodsMeta {
 						}
 
 						// If the field is hidden in forms, skip it to preserve the existing DB value.
-						if ( 1 === (int) pods_v( 'hidden', $field, 0 ) ) {
+						if ( pods_v_bool( 'hidden', $field ) ) {
 							continue;
 						}
 					}
@@ -1800,7 +1800,7 @@ class PodsMeta {
 					}
 
 					// If the field is hidden in forms, skip it to preserve the existing DB value.
-					if ( 1 === (int) pods_v( 'hidden', $field, 0 ) ) {
+					if ( pods_v_bool( 'hidden', $field ) ) {
 						continue;
 					}
 				}
@@ -2062,7 +2062,7 @@ class PodsMeta {
 					}
 
 					// If the field is hidden in forms, skip it to preserve the existing DB value.
-					if ( 1 === (int) pods_v( 'hidden', $field, 0 ) ) {
+					if ( pods_v_bool( 'hidden', $field ) ) {
 						continue;
 					}
 				}
@@ -2353,7 +2353,7 @@ class PodsMeta {
 						}
 
 						// If the field is hidden in forms, skip it to preserve the existing DB value.
-						if ( 1 === (int) pods_v( 'hidden', $field, 0 ) ) {
+						if ( pods_v_bool( 'hidden', $field ) ) {
 							continue;
 						}
 					}
@@ -2801,7 +2801,7 @@ class PodsMeta {
 					}
 
 					// If the field is hidden in forms, skip it to preserve the existing DB value.
-					if ( 1 === (int) pods_v( 'hidden', $field, 0 ) ) {
+					if ( pods_v_bool( 'hidden', $field ) ) {
 						continue;
 					}
 				}

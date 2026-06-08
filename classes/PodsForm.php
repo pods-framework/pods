@@ -1693,6 +1693,7 @@ class PodsForm {
 	public static function field_types_list() {
 		$field_types = [
 			'text',
+			'address',
 			'website',
 			// 'link',
 			'phone',

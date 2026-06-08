@@ -52,6 +52,7 @@
   "require-dev": {
     "automattic/vipwpcs": "^3.0",
     "bvanhoekelen/performance": "^2.6",
+    "codeception/codeception": "^5.3",
     "codeception/module-rest": "^3.4",
     "codeception/util-universalframework": "^1.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.2",

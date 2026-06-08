@@ -111,6 +111,7 @@ jobs:
           ${SLIC_BIN} wp core update --version=6.9 --force
           ${SLIC_BIN} wp core update-db
           ${SLIC_BIN} wp core version
+          ${SLIC_BIN} wp cli info
       # ------------------------------------------------------------------------------
       # Install and activate TwentyTwenty
       # ------------------------------------------------------------------------------

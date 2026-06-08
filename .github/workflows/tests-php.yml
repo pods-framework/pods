@@ -29,7 +29,7 @@ jobs:
       # Checkout the repo
       # ------------------------------------------------------------------------------
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
           submodules: recursive
@@ -44,7 +44,7 @@ jobs:
       # Checkout slic
       # ------------------------------------------------------------------------------
       - name: Checkout slic
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: stellarwp/slic
           ref: main

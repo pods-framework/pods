@@ -31,19 +31,32 @@ class Pod_Type extends AbstractConnectionResolver {
 	protected $pods_api;
 
 	/**
+	 * The IDs in the order they were saved in the Pods field, used to reorder the query result.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @var array
+	 */
+	protected $ordered_ids = [];
+
+	/**
 	 * Pod constructor.
 	 *
 	 * @since 2.9.0
+	 * @since 3.4.0 Added the $ordered_ids parameter.
 	 *
-	 * @param mixed       $source  The source passed down from the resolve tree.
-	 * @param array       $args    List of arguments input in the field as part of the GraphQL query.
-	 * @param AppContext  $context Object containing app context that gets passed down the resolve tree.
-	 * @param ResolveInfo $info    Info about fields passed down the resolve tree.
+	 * @param mixed       $source      The source passed down from the resolve tree.
+	 * @param array       $args        List of arguments input in the field as part of the GraphQL query.
+	 * @param AppContext  $context     Object containing app context that gets passed down the resolve tree.
+	 * @param ResolveInfo $info        Info about fields passed down the resolve tree.
+	 * @param array       $ordered_ids Optional. The IDs in the order they should be returned.
 	 *
 	 * @throws Exception
 	 */
-	public function __construct( $source, array $args, AppContext $context, ResolveInfo $info ) {
+	public function __construct( $source, array $args, AppContext $context, ResolveInfo $info, array $ordered_ids = [] ) {
 		$this->pods_api = pods_api();
+
+		$this->ordered_ids = $ordered_ids;
 
 		/**
 		 * Call the parent construct to setup class data
@@ -144,6 +157,7 @@ class Pod_Type extends AbstractConnectionResolver {
 	 * Returns an array of ids from the query being executed.
 	 *
 	 * @since 2.9.0
+	 * @since 3.4.0 Reorders the result to match the input order when $ordered_ids was provided.
 	 *
 	 * @return array List of IDs from the query.
 	 */
@@ -152,8 +166,33 @@ class Pod_Type extends AbstractConnectionResolver {
 			return [];
 		}
 
-		// Get the IDs from the list of keys.
-		return array_keys( $this->query );
+		$ids = array_keys( $this->query );
+
+		// Reorder to match the Pods-saved order supplied by the caller.
+		if ( ! empty( $this->ordered_ids ) ) {
+			$ordered = [];
+
+			foreach ( $this->ordered_ids as $ordered_id ) {
+				$ordered_id = (int) $ordered_id;
+
+				if ( in_array( $ordered_id, $ids, true ) ) {
+					$ordered[] = $ordered_id;
+				}
+			}
+
+			// Append any IDs the query returned that weren't in the supplied order (defensive).
+			if ( count( $ordered ) < count( $ids ) ) {
+				foreach ( $ids as $id ) {
+					if ( ! in_array( $id, $ordered, true ) ) {
+						$ordered[] = $id;
+					}
+				}
+			}
+
+			$ids = $ordered;
+		}
+
+		return $ids;
 	}
 
 	/**

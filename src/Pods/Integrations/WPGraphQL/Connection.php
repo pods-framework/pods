@@ -169,6 +169,11 @@ class Connection {
 				$connection = new PostObjectConnectionResolver( $source, $args, $context, $info, $object_name );
 				$connection->set_query_arg( 'post__in', $field_value );
 
+				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
+				if ( empty( $args['orderby'] ) ) {
+					$connection->set_query_arg( 'orderby', 'post__in' );
+				}
+
 				return $connection;
 			case 'post_type_object':
 				$connection = new ContentTypeConnectionResolver( $source, $args, $context, $info );
@@ -179,15 +184,30 @@ class Connection {
 				$connection = new TermObjectConnectionResolver( $source, $args, $context, $info, $object_name );
 				$connection->set_query_arg( 'include', $field_value );
 
+				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
+				if ( empty( $args['orderby'] ) ) {
+					$connection->set_query_arg( 'orderby', 'include' );
+				}
+
 				return $connection;
 			case 'taxonomy_object':
 				$connection = new TaxonomyConnectionResolver( $source, $args, $context, $info );
 				$connection->set_query_arg( 'in', $field_value );
 
+				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
+				if ( empty( $args['orderby'] ) ) {
+					$connection->set_query_arg( 'orderby', 'in' );
+				}
+
 				return $connection;
 			case 'user':
 				$connection = new UserConnectionResolver( $source, $args, $context, $info );
 				$connection->set_query_arg( 'include', $field_value );
+
+				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
+				if ( empty( $args['orderby'] ) ) {
+					$connection->set_query_arg( 'orderby', 'include' );
+				}
 
 				return $connection;
 			case 'user_role':
@@ -200,10 +220,20 @@ class Connection {
 				$connection = new PostObjectConnectionResolver( $source, $args, $context, $info, 'attachment' );
 				$connection->set_query_arg( 'post__in', $field_value );
 
+				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
+				if ( empty( $args['orderby'] ) ) {
+					$connection->set_query_arg( 'orderby', 'post__in' );
+				}
+
 				return $connection;
 			case 'comment':
 				$connection = new CommentConnectionResolver( $source, $args, $context, $info );
 				$connection->set_query_arg( 'comment__in', $field_value );
+
+				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
+				if ( empty( $args['orderby'] ) ) {
+					$connection->set_query_arg( 'orderby', 'comment__in' );
+				}
 
 				return $connection;
 			case 'menu':
@@ -214,6 +244,11 @@ class Connection {
 			case 'menu_item':
 				$connection = new MenuItemConnectionResolver( $source, $args, $context, $info );
 				$connection->set_query_arg( 'post__in', $field_value );
+
+				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
+				if ( empty( $args['orderby'] ) ) {
+					$connection->set_query_arg( 'orderby', 'post__in' );
+				}
 
 				return $connection;
 			case 'plugin':
@@ -231,7 +266,7 @@ class Connection {
 
 				return $connection;
 			case 'pod':
-				$connection = new Pod( $source, $args, $context, $info, $object_name );
+				$connection = new Pod( $source, $args, $context, $info, $object_name, $field_value );
 
 				$where = [
 					[
@@ -245,7 +280,7 @@ class Connection {
 
 				return $connection;
 			case 'pod_type':
-				$connection = new Pod_Type( $source, $args, $context, $info );
+				$connection = new Pod_Type( $source, $args, $context, $info, $field_value );
 
 				$connection->set_query_arg( 'id', $field_value );
 

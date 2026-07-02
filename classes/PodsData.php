@@ -1000,7 +1000,7 @@ class PodsData {
 		// Validate.
 		$params->page = pods_absint( $params->page );
 
-		$params->pagination = (boolean) $params->pagination;
+		$params->pagination = (bool) $params->pagination;
 
 		if ( 0 === $params->page || ! $params->pagination ) {
 			$params->page = 1;
@@ -1214,7 +1214,7 @@ class PodsData {
 			$this->search_mode = $params->search_mode;
 		}
 
-		$params->search = (boolean) $params->search;
+		$params->search = (bool) $params->search;
 
 		if ( 1 === (int) pods_v( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( __METHOD__ . ':' . __LINE__ );
@@ -2992,7 +2992,7 @@ class PodsData {
 		}
 
 		$field_compare         = strtoupper( trim( (string) pods_v( 'compare', $q, $field_compare, true ) ) );
-		$field_sanitize        = (boolean) pods_v( 'sanitize', $q, true );
+		$field_sanitize        = (bool) pods_v( 'sanitize', $q, true );
 		$field_sanitize_format = pods_v( 'sanitize_format', $q, null, true );
 		$field_cast            = pods_v( 'cast', $q, null, true );
 

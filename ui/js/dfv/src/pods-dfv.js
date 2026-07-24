@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import { omit } from 'lodash';
+import { createRoot } from 'react-dom/client';
+import omit from 'dfv/src/helpers/omit';
 
 /**
  * WordPress dependencies
@@ -234,7 +234,7 @@ window.PodsDFV = {
 		document.body.appendChild( dfvRootContainer );
 
 		// Set up the DFV app.
-		ReactDOM.render(
+		createRoot( dfvRootContainer ).render(
 			<>
 				{ storeKeys.map( ( storeKey ) => (
 					<App
@@ -242,8 +242,7 @@ window.PodsDFV = {
 						key={ storeKey }
 					/>
 				) ) }
-			</>,
-			dfvRootContainer
+			</>
 		);
 
 		/**

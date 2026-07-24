@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { omit } from 'lodash';
+import omit from 'dfv/src/helpers/omit';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 

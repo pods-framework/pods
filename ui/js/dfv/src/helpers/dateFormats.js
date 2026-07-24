@@ -1,5 +1,3 @@
-import { range } from 'lodash';
-
 // For PHP symbols, see https://www.php.net/manual/en/datetime.format.php
 // For Moment.js symbols, see https://momentjs.com/docs/#/displaying/format/
 const PHP_DATE_FORMAT_REPLACEMENTS = new Map( [
@@ -209,5 +207,8 @@ export const getArrayOfYearsFromJqueryUIYearRange = ( yearRange, thisYear, displ
 	const startYear = determineYear( years[ 0 ] );
 	const endYear = Math.max( startYear, determineYear( years[ 1 ] || '' ) );
 
-	return range( startYear, endYear + 1 );
+	return Array.from(
+		{ length: endYear - startYear + 1 },
+		( _, i ) => startYear + i
+	);
 };

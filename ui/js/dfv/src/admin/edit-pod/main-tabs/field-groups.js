@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { omit } from 'lodash';
+import omit from 'dfv/src/helpers/omit';
 import {
 	DndContext,
 	DragOverlay,

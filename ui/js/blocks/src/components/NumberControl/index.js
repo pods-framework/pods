@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { clamp, noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -14,13 +13,13 @@ export default function NumberControl( {
 	isShiftStepEnabled = true,
 	max = Infinity,
 	min = -Infinity,
-	onChange = noop,
-	onKeyDown = noop,
+	onChange = () => {},
+	onKeyDown = () => {},
 	shiftStep = 10,
 	step = 1,
 	...props
 } ) {
-	const baseValue = clamp( 0, min, max );
+	const baseValue = Math.min( Math.max( 0, min ), max );
 
 	const handleOnKeyDown = ( event ) => {
 		onKeyDown( event );
@@ -42,7 +41,7 @@ export default function NumberControl( {
 				event.preventDefault();
 
 				nextValue = nextValue + incrementalValue;
-				nextValue = clamp( nextValue, min, max );
+				nextValue = Math.min( Math.max( nextValue, min ), max );
 
 				onChange( nextValue.toString(), { event } );
 
@@ -52,7 +51,7 @@ export default function NumberControl( {
 				event.preventDefault();
 
 				nextValue = nextValue - incrementalValue;
-				nextValue = clamp( nextValue, min, max );
+				nextValue = Math.min( Math.max( nextValue, min ), max );
 
 				onChange( nextValue.toString(), { event } );
 

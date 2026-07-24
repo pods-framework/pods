@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useRef } from 'react';
-import { omit } from 'lodash';
+import omit from 'dfv/src/helpers/omit';
 import PropTypes from 'prop-types';
 
 /**

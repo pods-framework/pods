@@ -555,6 +555,9 @@ class Post_Type extends Collection {
 		// Return the list of posts as they are if we are counting.
 		if ( ! empty( $args['count'] ) ) {
 			if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
+				// Unset limit so the collection fallback returns all matches, not just one.
+				unset( $args['limit'] );
+
 				$posts = array_merge( $posts, parent::find( $args ) );
 			}
 

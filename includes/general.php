@@ -2998,8 +2998,8 @@ function pods_data_field( $obj, $field_name ) {
 /**
  * Get a field display value from a Pod.
  *
- * @param string|null  $pod    The pod name, or if you are in The Loop then you can just provide the field name to auto-detect pod/id using loop information.
- * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|null  $type   The pod name, or a Pods object. Leave null to auto-detect from The Loop.
+ * @param mixed|null   $id     (optional) The ID or slug, to load a single record. Provide an array of $params to run 'find'. Or leave null to auto-detect from The Loop.
  * @param string|array $name   The field name, or an associative array of parameters.
  * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
@@ -3007,22 +3007,27 @@ function pods_data_field( $obj, $field_name ) {
  *
  * @since 2.1.0
  */
-function pods_field_display( $pod, $id = null, $name = null, $single = false ) {
-	// allow for pods_field_display( 'field_name' );
-	if ( null === $name ) {
-		$name   = $pod;
-		$single = (boolean) $id;
+function pods_field_display( $type = null, $id = null, $name = null, $single = false ) {
+	// If a Pods object was passed in, use it directly.
+	if ( $type instanceof Pods ) {
+		$pod_object = $type;
+	} else {
+		// allow for pods_field_display( 'field_name' );
+		if ( null === $name ) {
+			$name   = $type;
+			$single = (boolean) $id;
 
-		$pod = null;
-		$id  = null;
+			$type = null;
+			$id   = null;
+		}
+
+		if ( null === $type && null === $id ) {
+			$type = get_post_type();
+			$id   = get_the_ID();
+		}
+
+		$pod_object = pods( $type, $id );
 	}
-
-	if ( null === $pod && null === $id ) {
-		$pod = get_post_type();
-		$id  = get_the_ID();
-	}
-
-	$pod_object = pods( $pod, $id );
 
 	if ( is_object( $pod_object ) && $pod_object->exists() ) {
 		return $pod_object->display( $name, $single );

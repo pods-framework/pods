@@ -76,7 +76,8 @@ class Meta {
 		$can_use_dynamic_feature_display = pods_can_use_dynamic_feature( 'display' );
 
 		$pods_to_register = [
-			'post' => [],
+			'post'     => [],
+			'term'     => [],
 		];
 
 		foreach ( PodsMeta::$post_types as $pod ) {
@@ -85,6 +86,14 @@ class Meta {
 			}
 
 			$pods_to_register['post'][] = $pod;
+		}
+
+		foreach ( PodsMeta::$taxonomies as $pod ) {
+			if ( ! $pod instanceof Pod || ! pods_can_use_dynamic_features( $pod ) ) {
+				continue;
+			}
+
+			$pods_to_register['term'][] = $pod;
 		}
 
 		foreach ( $pods_to_register as $type => $pods ) {

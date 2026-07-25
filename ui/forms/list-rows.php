@@ -59,6 +59,10 @@ foreach ( $fields as $field ) {
 
 	$row_classes = $field_row_classes . ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true );
 
+	if ( ! empty( $field['class'] ) ) {
+		$row_classes .= ' ' . $field['class'];
+	}
+
 	/**
 	 * Filter the html class used on form field list item element.
 	 *

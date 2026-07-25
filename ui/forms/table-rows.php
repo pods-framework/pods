@@ -60,6 +60,11 @@ foreach ( $fields as $field ) {
 	}
 
 	$row_classes = $field_row_classes . ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true );
+
+	if ( ! empty( $field['class'] ) ) {
+		$row_classes .= ' ' . $field['class'];
+	}
+
 	$row_classes = trim( $row_classes );
 
 	if ( ! empty( $pre_callback ) && is_callable( $pre_callback ) ) {

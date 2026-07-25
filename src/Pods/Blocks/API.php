@@ -53,6 +53,23 @@ class API {
 	}
 
 	/**
+	 * Invalidate the JS-side block config cache and the per-request static
+	 * cache. Wired to WP locale-change actions by the service provider so the
+	 * next admin request rebuilds the block configs under the new locale;
+	 * otherwise the 7-day `pods_blocks_js` transient serves strings from the
+	 * previous locale. See issue #7290.
+	 *
+	 * @internal Called via WP hooks registered in Service_Provider. Public so
+	 *           test code can invoke it directly.
+	 *
+	 * @return void
+	 */
+	public function invalidate_js_block_cache() {
+		pods_transient_clear( 'pods_blocks_js' );
+		pods_static_cache_clear( true, self::class );
+	}
+
+	/**
 	 * @return void
 	 */
 	public function register_assets() {

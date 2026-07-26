@@ -1868,7 +1868,7 @@ class PodsField_Pick extends PodsField {
 			}//end if
 		}//end if
 
-		if ( ! empty( $related_data ) ) {
+		if ( ! empty( $related_data ) && ! empty( $related_field ) ) {
 			$related_data['related_pod']        = $related_pod;
 			$related_data['related_field']      = $related_field;
 			$related_data['related_pick_limit'] = $related_pick_limit;

@@ -482,7 +482,20 @@ class PodsAdmin {
 
 			if ( ! empty( $settings ) ) {
 				foreach ( (array) $settings as $pod ) {
-					if ( ! pods_is_admin( [ 'pods', 'pods_content', 'pods_edit_' . $pod['name'] ] ) ) {
+					$settings_capabilities = [
+						'pods',
+						'pods_content',
+						'pods_edit_' . $pod['name'],
+					];
+
+					if (
+						'custom' === pods_v( 'capability_type', $pod['options'] )
+						&& ! empty( $pod['options']['capability_type_custom'] )
+					) {
+						$settings_capabilities[] = (string) $pod['options']['capability_type_custom'];
+					}
+
+					if ( ! pods_is_admin( $settings_capabilities ) ) {
 						continue;
 					}
 
@@ -3990,6 +4003,13 @@ class PodsAdmin {
 		foreach ( $pods as $pod ) {
 			if ( 'settings' === $pod['type'] ) {
 				$capabilities[] = 'pods_edit_' . $pod['name'];
+
+				if (
+					'custom' === pods_v( 'capability_type', $pod['options'] )
+					&& ! empty( $pod['options']['capability_type_custom'] )
+				) {
+					$capabilities[] = (string) $pod['options']['capability_type_custom'];
+				}
 			} elseif ( 'post_type' === $pod['type'] ) {
 				$capability_type = pods_v_sanitized( 'capability_type_custom', $pod['options'], pods_v( 'name', $pod ) );
 

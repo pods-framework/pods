@@ -414,8 +414,11 @@ class PodsField {
 
 		$dfv_field_data = $this->build_dfv_field_data( $args );
 		$script_content = wp_json_encode( $dfv_field_data, JSON_HEX_TAG );
+
+		// Surface the id on the loader so the sibling <label for="..."> resolves before hydration.
+		$field_id = isset( $dfv_field_data['htmlAttr']['id'] ) ? (string) $dfv_field_data['htmlAttr']['id'] : '';
 		?>
-		<div class="<?php echo esc_attr( $field_class ); ?>">
+		<div class="<?php echo esc_attr( $field_class ); ?>"<?php if ( '' !== $field_id ) : ?> id="<?php echo esc_attr( $field_id ); ?>"<?php endif; ?>>
 			<?php if ( ! $disable_dfv ) : ?>
 				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
 			<?php endif; ?>

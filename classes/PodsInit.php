@@ -565,6 +565,8 @@ class PodsInit {
 			add_filter( 'get_avatar_data', [ $avatar, 'get_avatar_data' ], 10, 2 );
 		}
 
+		add_filter( 'get_the_archive_title', [ $this, 'filter_archive_title' ], 20, 3 );
+
 		if ( defined( 'PODS_TEXTDOMAIN' ) && PODS_TEXTDOMAIN ) {
 		}
 	}
@@ -1880,6 +1882,58 @@ class PodsInit {
 		}
 
 		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$taxonomies[ $taxonomy ], true );
+	}
+
+	/**
+	 * Last-resort fallback for archive titles on Pods post types when upstream
+	 * filters (e.g. Polylang Pro translating missing labels) return empty.
+	 *
+	 * Runs at priority 20 — after WP core (10) and most third-party filters do.
+	 * Bails out unchanged whenever the post type is not a Pods post type, when
+	 * the title is non-empty, or when no stored label is available.
+	 *
+	 * @since 3.3.10
+	 *
+	 * @param string $title          Archive title after upstream filters.
+	 * @param string $original_title Archive title before the prefix is applied.
+	 * @param string $prefix         Archive title prefix.
+	 *
+	 * @return string Possibly-replaced archive title.
+	 */
+	public function filter_archive_title( $title, $original_title = '', $prefix = '' ) {
+		if ( ! empty( $title ) ) {
+			return $title;
+		}
+
+		if ( ! is_post_type_archive() ) {
+			return $title;
+		}
+
+		$queried = get_queried_object();
+
+		if ( ! ( $queried instanceof WP_Post_Type ) ) {
+			return $title;
+		}
+
+		$post_type_slug = $queried->name;
+
+		if ( ! isset( PodsMeta::$post_types[ $post_type_slug ] ) ) {
+			return $title;
+		}
+
+		$pod = PodsMeta::$post_types[ $post_type_slug ];
+
+		$label = pods_v( 'label', $pod, '', true );
+
+		if ( '' === $label ) {
+			return $title;
+		}
+
+		if ( $prefix ) {
+			return sprintf( '%1$s %2$s', $prefix, '<span>' . $label . '</span>' );
+		}
+
+		return $label;
 	}
 
 	/**

@@ -1384,7 +1384,15 @@ function pods_doing_json() {
  * @return string
  */
 function pods_shortcode( $tags, $content = null ) {
-	return pods_shortcode_run_safely( $tags, $content );
+	$tags = pods_shortcode_parse_labels( $tags );
+
+	try {
+		$return = pods_shortcode_run_safely( $tags, $content );
+	} finally {
+		PodsForm::clear_form_labels();
+	}
+
+	return $return;
 }
 
 /**
@@ -1716,6 +1724,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		'form_key'         => null,
 		'fields'           => null,
 		'label'            => null,
+		'labels'           => null,
 		'thank_you'        => null,
 		'not_found'        => null,
 		'view'             => null,
@@ -2559,16 +2568,68 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 }
 
 /**
+ * Parse the `labels` shortcode attribute into per-field label overrides.
+ *
+ * Converts "field_a:Label A,field_b:Label B" into an array and stores
+ * it via {@see PodsForm::set_form_labels()} so the overrides are picked
+ * up by {@see PodsForm::label()} during form rendering.
+ *
+ * @since 3.4.0
+ *
+ * @param array $tags Shortcode attributes (may contain 'labels' key).
+ *
+ * @return array The cleaned-up tags with 'labels' removed.
+ */
+function pods_shortcode_parse_labels( $tags ) {
+	if ( empty( $tags['labels'] ) || ! is_string( $tags['labels'] ) ) {
+		return $tags;
+	}
+
+	$labels = array();
+
+	foreach ( explode( ',', $tags['labels'] ) as $piece ) {
+		$piece = trim( $piece );
+
+		if ( '' === $piece ) {
+			continue;
+		}
+
+		$parts = explode( ':', $piece, 2 );
+
+		if ( 2 !== count( $parts ) ) {
+			continue;
+		}
+
+		$field_name = trim( $parts[0] );
+		$label_text = trim( $parts[1] );
+
+		if ( '' !== $field_name && '' !== $label_text ) {
+			$labels[ $field_name ] = $label_text;
+		}
+	}
+
+	PodsForm::set_form_labels( $labels );
+
+	unset( $tags['labels'] );
+
+	return $tags;
+}
+
+/**
  * Form Shortcode support for use anywhere that support WP Shortcodes.
+ *
+ * @since 2.3.0
+ * @since 3.4.0 Added support for the `labels` attribute.
  *
  * @param array  $tags    An associative array of shortcode properties.
  * @param string $content Not currently used.
  *
  * @return string
- * @since 2.3.0
  */
 function pods_shortcode_form( $tags, $content = null ) {
 	$tags['form'] = 1;
+
+	$tags = pods_shortcode_parse_labels( $tags );
 
 	return pods_shortcode( $tags, $content );
 }

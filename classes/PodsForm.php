@@ -49,6 +49,17 @@ class PodsForm {
 	public static $form_counter = 0;
 
 	/**
+	 * Per-form label overrides keyed by field name.
+	 *
+	 * Populated from the `[pods-form labels="field:Label,..."]` shortcode attribute
+	 * (or by direct PHP calls to {@see PodsForm::set_form_labels()}). Cleared after
+	 * each shortcode render so overrides do not leak across forms on the same page.
+	 *
+	 * @var array<string,string>
+	 */
+	public static $form_labels = array();
+
+	/**
 	 * Singleton handling for a basic pods_form() request
 	 *
 	 * @return \PodsForm
@@ -116,6 +127,10 @@ class PodsForm {
 	public static function label( $name, $label, $help = '', $options = null ) {
 		$prefix = pods_v( 'name_prefix', $options );
 
+		if ( ! is_array( $label ) && ! is_object( $label ) && isset( self::$form_labels[ $name ] ) ) {
+			$label = self::$form_labels[ $name ];
+		}
+
 		if ( is_array( $label ) || is_object( $label ) ) {
 			$options = $label;
 			$label   = $options['label'];
@@ -148,6 +163,56 @@ class PodsForm {
 		$output = ob_get_clean();
 
 		return apply_filters( "pods_form_ui_{$type}", $output, $name, $label, $help, $attributes, $options );
+	}
+
+	/**
+	 * Set per-form label overrides used by {@see PodsForm::label()}.
+	 *
+	 * Non-string keys and non-scalar values are dropped. Values are run through
+	 * sanitize_text_field() because they end up as user-facing HTML.
+	 *
+	 * @param array $labels Map of field name to override label.
+	 *
+	 * @return array Sanitized labels actually stored.
+	 *
+	 * @since 3.4.0
+	 */
+	public static function set_form_labels( $labels ) {
+		if ( ! is_array( $labels ) ) {
+			self::$form_labels = array();
+
+			return array();
+		}
+
+		$clean = array();
+
+		foreach ( $labels as $field_name => $label_text ) {
+			if ( ! is_string( $field_name ) || '' === $field_name ) {
+				continue;
+			}
+
+			if ( ! is_scalar( $label_text ) ) {
+				continue;
+			}
+
+			$clean[ $field_name ] = sanitize_text_field( (string) $label_text );
+		}
+
+		self::$form_labels = $clean;
+
+		return $clean;
+	}
+
+	/**
+	 * Clear any per-form label overrides.
+	 *
+	 * Called by shortcode handlers after rendering so overrides do not leak
+	 * to subsequent forms on the same page.
+	 *
+	 * @since 3.4.0
+	 */
+	public static function clear_form_labels() {
+		self::$form_labels = array();
 	}
 
 	/**

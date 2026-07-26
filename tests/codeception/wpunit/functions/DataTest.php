@@ -168,6 +168,51 @@ class DataTest extends Pods_UnitTestCase {
 	/**
 	 * @covers ::pods_trim
 	 */
+	public function test_pods_trim_null() {
+		// Scalar null returns null unchanged (covers PHP 8.1+ trim() deprecation).
+		$this->assertSame( null, pods_trim( null ) );
+
+		$this->assertSame( null, pods_trim( null, null, 'r' ) );
+
+		$this->assertSame( null, pods_trim( null, ' &', 'r' ) );
+
+		// Empty string and scalars covered by the new guard must pass through unchanged.
+		$this->assertSame( '', pods_trim( '' ) );
+
+		$this->assertSame( '0', pods_trim( '0' ) );
+
+		$this->assertSame( 0, pods_trim( 0 ) );
+
+		$this->assertSame( 0.0, pods_trim( 0.0 ) );
+
+		// Null leaf inside an array.
+		$array = [
+			' test ',
+			null,
+		];
+
+		$result = [
+			'test',
+			null,
+		];
+
+		$this->assertEquals( $result, pods_trim( $array ) );
+
+		// Null leaf inside an object.
+		$object        = new stdClass();
+		$object->test  = ' test ';
+		$object->test2 = null;
+
+		$result        = new stdClass();
+		$result->test  = 'test';
+		$result->test2 = null;
+
+		$this->assertEquals( $result, pods_trim( $object ) );
+	}
+
+	/**
+	 * @covers ::pods_trim
+	 */
 	public function test_pods_trim() {
 		$string = ' test ';
 

@@ -56,7 +56,7 @@
     "codeception/util-universalframework": "^1.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
     "dms/phpunit-arraysubset-asserts": "^0.5",
-    "fzaninotto/faker": "^1.9",
+    "fakerphp/faker": "^1.9.1",
     "johnbillion/query-monitor": "dev-develop",
     "lucatume/codeception-snapshot-assertions": "^1.4",
     "lucatume/function-mocker": "^2.0",
@@ -73,10 +73,19 @@
     "wp-cli/wp-cli": "^v2.12",
     "wp-coding-standards/wpcs": "^3.3",
     "wp-graphql/wp-graphql": "^v2.6",
-    "wpsyntex/polylang": "dev-master"
+    "wpsyntex/polylang": "^3.8.6"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
+  "conflict": {
+    "symfony/console": ">=8",
+    "symfony/event-dispatcher": ">=8",
+    "symfony/finder": ">=8",
+    "symfony/property-info": ">=8",
+    "symfony/string": ">=8",
+    "symfony/type-info": ">=8",
+    "symfony/var-dumper": ">=8"
+  },
   "suggest": {
     "wp-cli/wp-cli": "Enables access to Pods CLI commands."
   },
@@ -117,11 +126,24 @@
     }
   },
   "config": {
+    "platform": {
+      "php": "8.2.99"
+    },
     "allow-plugins": {
       "composer/installers": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "kylekatarnls/update-helper": true,
       "phpstan/extension-installer": true
+    },
+    "policy": {
+      "advisories": {
+        "ignore": {
+          "webonyx/graphql-php": {
+            "constraint": "15.29.3",
+            "reason": "wp-graphql v2.6.0 (latest release) pins this exact version; dev/test dependency only"
+          }
+        }
+      }
     }
   }
 }

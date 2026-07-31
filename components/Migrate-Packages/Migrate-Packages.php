@@ -208,6 +208,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}//end if
 
 		if ( isset( $data['pods'] ) && is_array( $data['pods'] ) ) {
+			// Map source-site field IDs to pod/field names before import strips them.
+			$package_field_ids = self::get_package_field_ids( $data['pods'] );
+
 			foreach ( $data['pods'] as $pod_data ) {
 				$pod = self::import_pod( $pod_data, $replace );
 
@@ -221,6 +224,12 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 				$found['pods'][ $pod['name'] ] = $pod['label'];
 			}//end foreach
+
+			// Second pass once all pods exist: remap bi-directional references,
+			// which the package stores as source-site sister_id post IDs.
+			if ( ! empty( $found['pods'] ) ) {
+				self::import_remap_sister_fields( self::get_package_sister_refs( $data['pods'] ), $package_field_ids );
+			}
 		}//end if
 
 		if ( isset( $data['templates'] ) && is_array( $data['templates'] ) ) {
@@ -313,6 +322,185 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}
 
 		return $meta;
+	}
+
+	/**
+	 * Map field IDs in the package data to their pod and field names.
+	 *
+	 * @since 3.3.2
+	 *
+	 * @param array $pods The list of pod data from the package.
+	 *
+	 * @return array Map of source-site field ID => [ 'pod' => pod name, 'field' => field name ].
+	 */
+	public static function get_package_field_ids( array $pods ) {
+		$field_ids = [];
+
+		foreach ( $pods as $pod_data ) {
+			$pod_name = pods_v( 'name', $pod_data );
+
+			if ( empty( $pod_name ) ) {
+				continue;
+			}
+
+			$field_lists = [];
+
+			if ( ! empty( $pod_data['groups'] ) && is_array( $pod_data['groups'] ) ) {
+				foreach ( $pod_data['groups'] as $group ) {
+					if ( ! empty( $group['fields'] ) && is_array( $group['fields'] ) ) {
+						$field_lists[] = $group['fields'];
+					}
+				}
+			}
+
+			if ( ! empty( $pod_data['fields'] ) && is_array( $pod_data['fields'] ) ) {
+				$field_lists[] = $pod_data['fields'];
+			}
+
+			foreach ( $field_lists as $fields ) {
+				foreach ( $fields as $field ) {
+					$field_id   = (int) pods_v( 'id', $field, 0 );
+					$field_name = pods_v( 'name', $field );
+
+					if ( 0 < $field_id && ! empty( $field_name ) ) {
+						$field_ids[ $field_id ] = [
+							'pod'   => $pod_name,
+							'field' => $field_name,
+						];
+					}
+				}
+			}
+		}
+
+		return $field_ids;
+	}
+
+	/**
+	 * Collect the bi-directional references the package data carries.
+	 *
+	 * @since 3.3.2
+	 *
+	 * @param array $pods The list of pod data from the package.
+	 *
+	 * @return array Map of pod name => [ field name => [ 'sister_id' => int, 'sister_field' => string|null ] ].
+	 */
+	public static function get_package_sister_refs( array $pods ) {
+		$refs = [];
+
+		foreach ( $pods as $pod_data ) {
+			$pod_name = pods_v( 'name', $pod_data );
+
+			if ( empty( $pod_name ) ) {
+				continue;
+			}
+
+			$field_lists = [];
+
+			if ( ! empty( $pod_data['groups'] ) && is_array( $pod_data['groups'] ) ) {
+				foreach ( $pod_data['groups'] as $group ) {
+					if ( ! empty( $group['fields'] ) && is_array( $group['fields'] ) ) {
+						$field_lists[] = $group['fields'];
+					}
+				}
+			}
+
+			if ( ! empty( $pod_data['fields'] ) && is_array( $pod_data['fields'] ) ) {
+				$field_lists[] = $pod_data['fields'];
+			}
+
+			foreach ( $field_lists as $fields ) {
+				foreach ( $fields as $field ) {
+					$field_name   = pods_v( 'name', $field );
+					$sister_id    = (int) pods_v( 'sister_id', $field, 0 );
+					$sister_field = pods_v( 'sister_field', $field );
+
+					if ( empty( $field_name ) || ( $sister_id < 1 && empty( $sister_field ) ) ) {
+						continue;
+					}
+
+					$refs[ $pod_name ][ $field_name ] = [
+						'sister_id'    => $sister_id,
+						'sister_field' => $sister_field,
+					];
+				}
+			}
+		}
+
+		return $refs;
+	}
+
+	/**
+	 * Remap bi-directional (sister_id) references the package carried.
+	 *
+	 * The package stores sister_id as a source-site post ID. After all pods are
+	 * saved, resolve each reference to the destination site's field ID — by the
+	 * portable sister_field name when present, else by the package's old field
+	 * ID — and save it. Unresolvable references are cleared to 0: a stale
+	 * pointer is worse than none. Fields whose package data carried no sister
+	 * reference are left untouched.
+	 *
+	 * @since 3.3.2
+	 *
+	 * @param array $package_sister_refs Map of pod name => [ field name => [ 'sister_id', 'sister_field' ] ].
+	 * @param array $package_field_ids   Map of source-site field ID => [ 'pod', 'field' ] names.
+	 */
+	public static function import_remap_sister_fields( array $package_sister_refs, array $package_field_ids ) {
+		// The pods were just saved; cached pod objects still carry pre-import args.
+		self::$api->cache_flush_pods();
+
+		foreach ( $package_sister_refs as $pod_name => $field_refs ) {
+			$pod = self::$api->load_pod( [ 'name' => $pod_name ], false );
+
+			if ( ! $pod instanceof \Pods\Whatsit\Pod ) {
+				continue;
+			}
+
+			foreach ( $field_refs as $field_name => $ref ) {
+				$field = $pod->get_field( $field_name );
+
+				if ( ! $field instanceof \Pods\Whatsit\Field || 'pick' !== $field->get_type() ) {
+					continue;
+				}
+
+				$related_pod = $field->get_related_object_name();
+
+				$resolved = null;
+
+				if ( $related_pod ) {
+					try {
+						// Prefer the portable name reference.
+						if ( ! empty( $ref['sister_field'] ) ) {
+							$resolved = self::$api->load_field( [
+								'name' => $ref['sister_field'],
+								'pod'  => $related_pod,
+							] );
+						}
+
+						// Fall back to the package's source-site field ID.
+						if ( ! $resolved instanceof \Pods\Whatsit\Field && isset( $package_field_ids[ $ref['sister_id'] ] ) ) {
+							$resolved = self::$api->load_field( [
+								'name' => $package_field_ids[ $ref['sister_id'] ]['field'],
+								'pod'  => $related_pod,
+							] );
+						}
+					} catch ( Exception $exception ) {
+						$resolved = null;
+					}
+				}
+
+				$new_sister_id = $resolved instanceof \Pods\Whatsit\Field ? (int) $resolved->get_id() : 0;
+
+				if ( $new_sister_id === (int) $field->get_arg( 'sister_id', 0 ) ) {
+					continue;
+				}
+
+				self::$api->save_field( [
+					'pod'       => $pod,
+					'id'        => $field->get_id(),
+					'sister_id' => $new_sister_id,
+				] );
+			}
+		}
 	}
 
 	/**
@@ -1037,6 +1225,20 @@ class Pods_Migrate_Packages extends PodsComponent {
 										}
 									}
 								}//end foreach
+
+								// sister_id is a source-site post ID; also emit the sister field name
+								// so import can resolve the bi-directional reference on the new site.
+								if ( 'pick' === pods_v( 'type', $field ) && 0 < (int) pods_v( 'sister_id', $field ) ) {
+									try {
+										$sister_field_obj = self::$api->load_field( [ 'id' => (int) pods_v( 'sister_id', $field ) ] );
+
+										if ( $sister_field_obj instanceof \Pods\Whatsit\Field ) {
+											$field['sister_field'] = $sister_field_obj->get_name();
+										}
+									} catch ( Exception $exception ) {
+										// Leave the field args unchanged if the sister field cannot be loaded.
+									}
+								}
 
 								$group['fields'][ $field_key ] = $field;
 							}//end foreach

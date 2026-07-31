@@ -4059,7 +4059,11 @@ class PodsAPI {
 				}
 			}
 		} elseif ( 0 < $sister_id ) {
-			update_post_meta( $sister_id, 'sister_id', $params->id );
+			// sister_id can be stale (e.g. from an imported package); only write
+			// the reciprocal reference onto an actual Pods field post.
+			if ( '_pods_field' === get_post_type( $sister_id ) ) {
+				update_post_meta( $sister_id, 'sister_id', $params->id );
+			}
 
 			if ( true === $db && pods_podsrel_enabled( $field, 'save' ) ) {
 				$sister_field = $this->load_field( [ 'id' => $sister_id ] );

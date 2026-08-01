@@ -122,7 +122,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * Setup object from a serialized string.
 	 *
 	 * @param string  $serialized Serialized representation of the object.
-	 * @param boolean $to_args    Return as arguments array.
+	 * @param bool    $to_args    Return as arguments array.
 	 *
 	 * @return Whatsit|array|null
 	 */
@@ -157,7 +157,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * Setup object from a JSON string.
 	 *
 	 * @param string  $json    JSON representation of the object.
-	 * @param boolean $to_args Return as arguments array.
+	 * @param bool    $to_args Return as arguments array.
 	 *
 	 * @return Whatsit|array|null
 	 */
@@ -176,7 +176,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * Setup object from an array configuration.
 	 *
 	 * @param array   $array   Array configuration.
-	 * @param boolean $to_args Return as arguments array.
+	 * @param bool    $to_args Return as arguments array.
 	 *
 	 * @return Whatsit|array|null
 	 */

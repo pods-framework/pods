@@ -195,7 +195,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 *
 	 * @param string  $variant_id   Testing variant identification
 	 * @param array   $options      Data config to test
-	 * @param boolean $query_fields Whether to test query_fields WHERE syntax
+	 * @param bool    $query_fields Whether to test query_fields WHERE syntax
 	 */
 	private function _test_find_base( $variant_id, $options, $query_fields = false ) {
 		pods_debug( $variant_id );
@@ -289,8 +289,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 *
 	 * @param string  $variant_id   Testing variant identification
 	 * @param array   $options      Data config to test
-	 * @param boolean $deep         Whether to test deep traversal
-	 * @param boolean $query_fields Whether to test query_fields WHERE syntax
+	 * @param bool    $deep         Whether to test deep traversal
+	 * @param bool    $query_fields Whether to test query_fields WHERE syntax
 	 */
 	private function _test_find_traversal( $variant_id, $options, $deep = false, $query_fields = false ) {
 		pods_debug( $variant_id );

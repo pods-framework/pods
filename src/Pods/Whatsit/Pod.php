@@ -27,7 +27,7 @@ class Pod extends Whatsit {
 	 *
 	 * @since 2.8.1
 	 *
-	 * @param boolean $strict Whether to only get the argument, otherwise the default will be returned.
+	 * @param bool $strict Whether to only get the argument, otherwise the default will be returned.
 	 *
 	 * @return string The storage used for the Pod data (meta, table, etc).
 	 */

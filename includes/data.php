@@ -1474,8 +1474,8 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
  * Return a lowercase alphanumeric name (use pods_js_name if you want "_" instead of "-" )
  *
  * @param string  $orig             Input string to clean
- * @param boolean $lower            Force lowercase
- * @param boolean $trim_underscores Whether to trim off underscores
+ * @param bool    $lower            Force lowercase
+ * @param bool    $trim_underscores Whether to trim off underscores
  *
  * @return string Sanitized name
  *
@@ -1508,7 +1508,7 @@ function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
  * Return a lowercase alphanumeric name (with underscores) for safe JavaScript variable names.
  *
  * @param string  $orig  Input string to clean.
- * @param boolean $lower Whether to force lowercase.
+ * @param bool    $lower Whether to force lowercase.
  *
  * @return string The sanitized name.
  *

@@ -994,8 +994,8 @@ class PodsField_File extends PodsField {
 			$link = '{{link}}';
 		}
 
-		$editable = (boolean) $editable;
-		$linked   = (boolean) $linked;
+		$editable = (bool) $editable;
+		$linked   = (bool) $linked;
 		?>
 		<li class="pods-file hidden" id="pods-file-<?php echo esc_attr( $id ); ?>">
 			<?php

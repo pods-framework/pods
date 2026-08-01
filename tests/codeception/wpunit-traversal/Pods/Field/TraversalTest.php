@@ -194,7 +194,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @param string  $variant_id Testing variant identification
 	 * @param array   $options    Data config to test
 	 * @param string  $method     Method to test
-	 * @param boolean $deep       Whether to test deep traversal
+	 * @param bool    $deep       Whether to test deep traversal
 	 */
 	private function _test_field_traversal( $variant_id, $options, $method, $deep ) {
 		pods_debug( $variant_id );

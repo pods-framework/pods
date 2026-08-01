@@ -249,7 +249,7 @@ function pods_error_exception( $error ) {
  * Error Handling which throws / displays errors
  *
  * @param string|array        $error The error message(s) to be thrown / displayed.
- * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors,
+ * @param object|bool|null $obj   If $obj->display_errors is set and is set to true it will display errors,
  *                                   if boolean and is set to true it will display errors.
  *
  * @return mixed
@@ -308,7 +308,7 @@ function pods_error( $error, $obj = null ) {
 	 *
 	 * @param string                     $error_mode Error mode
 	 * @param string|array               $error      Error message(s)
-	 * @param object|boolean|string|null $obj
+	 * @param object|bool|string|null $obj
 	 */
 	$error_mode = apply_filters( 'pods_error_mode', $error_mode, $error, $obj );
 
@@ -954,7 +954,7 @@ function pods_strict( $include_debug = true ) {
 	/**
 	 * Allow filtering of whether strict mode is enabled.
 	 *
-	 * @param boolean $strict Whether strict mode is enabled.
+	 * @param bool $strict Whether strict mode is enabled.
 	 *
 	 * @since 2.8.0
 	 */
@@ -995,7 +995,7 @@ function pods_api_cache() {
 	/**
 	 * Filter whether to use the Pods API cache.
 	 *
-	 * @param boolean $use_cache Whether to use the Pods API cache.
+	 * @param bool $use_cache Whether to use the Pods API cache.
 	 *
 	 * @since 2.8.0
 	 */
@@ -2796,7 +2796,7 @@ function pods_function_or_file( $function_or_file, $function_name = null, $file_
  *
  * @param string|null $location The path to redirect to.
  * @param int         $status   Status code to use.
- * @param boolean     $die      If true, PHP code execution will stop.
+ * @param bool        $die      If true, PHP code execution will stop.
  */
 function pods_redirect( $location = null, $status = 302, $die = true ) {
 	if ( empty( $location ) ) {
@@ -2915,7 +2915,7 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
  * @param string|null  $pod    The pod name, or if you are in The Loop then you can just provide the field name to auto-detect pod/id using loop information.
  * @param mixed|null   $id     The ID or slug of the item.
  * @param string|array $name   The field name, or an associative array of parameters.
- * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
+ * @param bool         $single For tableless fields, to return the whole array or the just the first item.
  *
  * @return mixed Field value.
  *
@@ -2925,7 +2925,7 @@ function pods_field( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
-		$single = (boolean) $id;
+		$single = (bool) $id;
 
 		$pod = null;
 		$id  = null;
@@ -3001,7 +3001,7 @@ function pods_data_field( $obj, $field_name ) {
  * @param string|null  $pod    The pod name, or if you are in The Loop then you can just provide the field name to auto-detect pod/id using loop information.
  * @param mixed|null   $id     The ID or slug of the item.
  * @param string|array $name   The field name, or an associative array of parameters.
- * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
+ * @param bool         $single For tableless fields, to return the whole array or the just the first item.
  *
  * @return mixed Field value.
  *
@@ -3011,7 +3011,7 @@ function pods_field_display( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field_display( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
-		$single = (boolean) $id;
+		$single = (bool) $id;
 
 		$pod = null;
 		$id  = null;
@@ -3037,7 +3037,7 @@ function pods_field_display( $pod, $id = null, $name = null, $single = false ) {
  * @param string|null  $pod    The pod name.
  * @param mixed|null   $id     The ID or slug of the item.
  * @param string|array $name   The field name, or an associative array of parameters.
- * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
+ * @param bool         $single For tableless fields, to return the whole array or the just the first item.
  *
  * @return mixed Field value.
  *
@@ -3047,7 +3047,7 @@ function pods_field_raw( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field_raw( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
-		$single = (boolean) $id;
+		$single = (bool) $id;
 
 		$pod = null;
 		$id  = null;
@@ -3074,7 +3074,7 @@ function pods_field_raw( $pod, $id = null, $name = null, $single = false ) {
  * @param string|null  $pod   The pod name.
  * @param mixed|null   $id    The ID or slug of the item.
  * @param string|array $name  The field name, or an associative array of parameters.
- * @param boolean      $value Value to save.
+ * @param bool         $value Value to save.
  *
  * @return int|false The item ID or false if not saved.
  *
@@ -3438,9 +3438,9 @@ function pods_template_part( $template, $data = null, $return = false ) {
  * @param string $type The pod type ('post_type', 'taxonomy', 'media', 'user', 'comment')
  * @param string $name The pod name
  *
- * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
+ * @return array|bool|WP_Error Field data or WP_Error if unsuccessful.
  *
- * @return array|boolean Pod data or false if unsuccessful
+ * @return array|bool Pod data or false if unsuccessful
  * @since 2.1.0
  */
 function pods_register_type( $type, $name, $object = null ) {
@@ -3545,7 +3545,7 @@ function pods_register_type( $type, $name, $object = null ) {
  * @param string       $name   The name of the Pod
  * @param array        $object (optional) Pod array, including any 'fields' arrays
  *
- * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
+ * @return array|bool|WP_Error Field data or WP_Error if unsuccessful.
  * @since 2.1.0
  */
 function pods_register_field( $pod, $name, $field = null ) {
@@ -3586,7 +3586,7 @@ function pods_register_field_type( $type, $file = null ) {
  * @param string $label   Object label
  * @param array  $options Object options
  *
- * @return array|boolean Object array or false if unsuccessful
+ * @return array|bool Object array or false if unsuccessful
  * @since 2.3.0
  */
 function pods_register_related_object( $name, $label, $options = null ) {

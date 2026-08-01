@@ -63,6 +63,13 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 
 					$results = $tool->repair_groups_and_fields_for_pod( $pod, $mode );
 
+					if ( ! empty( $results['conflicts'] ) ) {
+						pods_message( $results['message_html'], 'error' );
+
+						// Another plugin is conflicting, repairing the remaining Pods would hit the same problem.
+						break;
+					}
+
 					pods_message( $results['message_html'] );
 				}
 			}
@@ -78,7 +85,7 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 
 		$results = $tool->repair_pods( $mode );
 
-		pods_message( $results['message_html'] );
+		pods_message( $results['message_html'], empty( $results['conflicts'] ) ? null : 'error' );
 	} elseif ( isset( $_POST['pods_recreate_tables'] ) ) {
 		pods_upgrade()->delta_tables();
 
@@ -103,6 +110,7 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 	<li><?php esc_html_e( 'All orphaned Fields that do not belong to a Group will be auto-assigned to the first available Group', 'pods' ); ?></li>
 	<li><?php esc_html_e( 'All Fields that have an invalid Field type set will be changed to Plain Text', 'pods' ); ?></li>
 	<li><?php esc_html_e( 'All Fields that have invalid arguments set will have those arguments removed (conditional logic saved with serialized data and other arguments not intended for the DB used by early Pods 2.x releases)', 'pods' ); ?></li>
+	<li><?php esc_html_e( 'Before each repair is made, it is confirmed against a direct database query. If another plugin is altering what Pods sees, the tool stops and tells you instead of repairing the wrong things', 'pods' ); ?></li>
 </ul>
 
 <?php

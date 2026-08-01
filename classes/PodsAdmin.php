@@ -2447,7 +2447,10 @@ class PodsAdmin {
 
 		$results = $tool->repair_groups_and_fields_for_pod( $pod, 'upgrade' );
 
-		if ( '' !== $results['message_html'] ) {
+		if ( ! empty( $results['conflicts'] ) ) {
+			// Always show the conflict, refreshing the page would hide why the Pod was not migrated.
+			pods_message( $results['message_html'], 'error' );
+		} elseif ( '' !== $results['message_html'] ) {
 			if ( 'pods' === pods_v( 'page' ) && 'edit' === pods_v( 'action' ) && 'create' === pods_v( 'do' ) ) {
 				// Refresh the page if we just added the Pod.
 				pods_redirect();

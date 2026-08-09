@@ -1439,6 +1439,10 @@ class PodsForm {
 
 			if ( $default !== $default_value && 1 === (int) pods_v( 'default_evaluate_tags', $options, 1 ) ) {
 				$default = pods_evaluate_tags( $default );
+
+				if ( 1 === (int) pods_v( $type . '_allow_shortcode', $options, 0 ) ) {
+					$default = do_shortcode( $default );
+				}
 			}
 		}
 

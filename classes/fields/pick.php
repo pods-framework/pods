@@ -2730,12 +2730,31 @@ class PodsField_Pick extends PodsField {
 					$params['select'] .= ', `t`.`path`';
 				}
 
+				$evaluate_tag_args = [
+					'sanitize' => true,
+				];
+
+				if (
+					! empty( $id )
+					&& ( is_string( $pod ) || is_array( $pod ) || $pod instanceof Pod || $pod instanceof Pods )
+				) {
+					if ( $pod instanceof Pods && (int) $pod->id() === (int) $id ) {
+						$current_pods_obj = $pod;
+					} else {
+						$current_pods_obj = pods( $pod, $id );
+					}
+
+					if ( $current_pods_obj instanceof Pods ) {
+						$evaluate_tag_args['pod'] = $current_pods_obj;
+					}
+				}
+
 				if ( ! empty( $params['where'] ) && (array) $table_info['where_default'] !== $params['where'] ) {
-					$params['where'] = pods_evaluate_tags( $params['where'], true );
+					$params['where'] = pods_evaluate_tags( $params['where'], $evaluate_tag_args );
 				}
 
 				if ( ! empty( $params['having'] ) ) {
-					$params['having'] = pods_evaluate_tags( $params['having'], true );
+					$params['having'] = pods_evaluate_tags( $params['having'], $evaluate_tag_args );
 				}
 
 				if ( empty( $params['where'] ) || ( ! is_array( $params['where'] ) && '' === trim( $params['where'] ) ) ) {

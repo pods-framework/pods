@@ -182,6 +182,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.4.0 - TBD =
+
+* Fixed: Resolve magic tags like `{@id}`, `{@post_title}`, and `{@name}` in Relationship / Pick field `pick_where` and `pick_having` clauses against the current item context. #7406
+
 = 3.3.9 - May 20th, 2026 =
 
 * Security: Resolve a XSS vulnerability in the Pods UI forms in the admin area. Props to Bonds through Patchstack for responsibly reporting this. (@sc0ttkclark)

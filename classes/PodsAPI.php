@@ -1810,6 +1810,12 @@ class PodsAPI {
 
 		$params->overwrite = ! empty( $params->overwrite ) ? (boolean) $params->overwrite : false;
 
+		// Skip auto-created default groups (used when duplicating a Pod so the
+		// loop below recreates the original groups fully).
+		$bypass_default_groups = ! empty( $params->bypass_default_groups );
+
+		unset( $params->bypass_default_groups );
+
 		$order_group_fields = null;
 
 		if ( isset( $params->order ) ) {
@@ -2108,7 +2114,7 @@ class PodsAPI {
 
 			$save_groups_for_pod = false;
 
-			if ( empty( $pod['groups'] ) || ! is_array( $pod['groups'] ) ) {
+			if ( ! $bypass_default_groups && ( empty( $pod['groups'] ) || ! is_array( $pod['groups'] ) ) ) {
 				$default_group_label  = __( 'More Fields', 'pods' );
 				$default_group_fields = [];
 
@@ -6614,6 +6620,11 @@ class PodsAPI {
 		$groups = $pod['groups'];
 
 		unset( $pod['id'], $pod['parent'], $pod['object_type'], $pod['object_storage_type'], $pod['groups'] );
+
+		// Don't auto-create the default "Details" group for ACT pods here, as
+		// the original groups are recreated in the loop below. Auto-creating it
+		// would collide with an original group named "details" and drop its fields.
+		$pod['bypass_default_groups'] = true;
 
 		try {
 			$pod_id = $this->save_pod( $pod );

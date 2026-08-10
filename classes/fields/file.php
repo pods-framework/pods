@@ -1275,61 +1275,37 @@ class PodsField_File extends PodsField {
 
 			if ( null === $custom_handler ) {
 
-				// Start custom directory.
-				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field, 'wp' );
+				$context_pod = null;
 
-				if ( 'wp' !== $upload_dir ) {
-					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field, '' );
-					$context_pod = null;
+				if ( $params->post_id ) {
+					$context_pod = pods_get_instance( pods_v( 'name', $pod, false ), $params->post_id );
 
-					if ( $params->post_id ) {
-						$context_pod = pods_get_instance( pods_v( 'name', $pod, false ), $params->post_id );
-
-						if ( ! $context_pod->exists() ) {
-							$context_pod = null;
-						}
+					if ( ! $context_pod->exists() ) {
+						$context_pod = null;
 					}
-
-					/**
-					 * Filter the custom upload directory Pod context.
-					 *
-					 * @since 2.7.28
-					 *
-					 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
-					 * @param object $params      The POSTed parameters for the request.
-					 * @param array  $field       The field configuration associated to the upload field.
-					 * @param array  $pod         The pod configuration associated to the upload field.
-					 */
-					$context_pod = apply_filters( 'pods_upload_dir_custom_context_pod', $context_pod, $params, $field, $pod );
-
-					$custom_dir = pods_evaluate_tags( $custom_dir, [ 'pod' => $context_pod ] );
-
-					/**
-					 * Filter the custom Pod upload directory.
-					 *
-					 * @since 2.7.28
-					 *
-					 * @param string $custom_dir  The directory to use for the uploaded file.
-					 * @param object $params      The POSTed parameters for the request.
-					 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
-					 * @param array  $field       The field configuration associated to the upload field.
-					 * @param array  $pod         The pod configuration associated to the upload field.
-					 */
-					$custom_dir = apply_filters( 'pods_upload_dir_custom', $custom_dir, $params, $context_pod, $field, $pod );
-
-					self::$tmp_upload_dir = $custom_dir;
-
-					add_filter( 'upload_dir', [ $this, 'filter_upload_dir' ] );
 				}
+
+				/**
+				 * Filter the custom upload directory Pod context.
+				 *
+				 * @since 2.7.28
+				 *
+				 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
+				 * @param object $params      The POSTed parameters for the request.
+				 * @param array  $field       The field configuration associated to the upload field.
+				 * @param array  $pod         The pod configuration associated to the upload field.
+				 */
+				$context_pod = apply_filters( 'pods_upload_dir_custom_context_pod', $context_pod, $params, $field, $pod );
+
+				// Start custom directory.
+				$is_custom_dir = static::use_custom_upload_dir( $field, $context_pod, $params, $pod );
 
 				// Upload file.
 				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
 				// End custom directory.
-				if ( 'wp' !== $upload_dir ) {
-					remove_filter( 'upload_dir', [ $this, 'filter_upload_dir' ] );
-
-					self::$tmp_upload_dir = null;
+				if ( $is_custom_dir ) {
+					static::use_custom_upload_dir_teardown();
 				}
 
 				if ( is_object( $attachment_id ) ) {
@@ -1369,6 +1345,64 @@ class PodsField_File extends PodsField {
 	}
 
 	/**
+	 * Prepare the custom upload directory for an upload.
+	 *
+	 * Sets the temporary upload directory and registers the upload_dir filter
+	 * when the field is configured to use a custom directory. Call
+	 * use_custom_upload_dir_teardown() after the upload completes.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param array    $field       The field configuration associated to the upload field.
+	 * @param Pods|null $context_pod The Pods object of the associated pod, or null if not available.
+	 * @param object|array $params  The upload parameters, for filter back-compat.
+	 * @param array|null $pod       The pod configuration, for filter back-compat.
+	 *
+	 * @return bool Whether a custom directory was set up.
+	 */
+	public static function use_custom_upload_dir( $field, $context_pod = null, $params = [], $pod = null ) {
+		$upload_dir = pods_v( $field['type'] . '_upload_dir', $field, 'wp' );
+
+		if ( 'wp' === $upload_dir ) {
+			return false;
+		}
+
+		$custom_dir = pods_v( $field['type'] . '_upload_dir_custom', $field, '' );
+
+		$custom_dir = pods_evaluate_tags( $custom_dir, [ 'pod' => $context_pod ] );
+
+		/**
+		 * Filter the custom Pod upload directory.
+		 *
+		 * @since 2.7.28
+		 *
+		 * @param string $custom_dir  The directory to use for the uploaded file.
+		 * @param object $params      The POSTed parameters for the request.
+		 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
+		 * @param array  $field       The field configuration associated to the upload field.
+		 * @param array  $pod         The pod configuration associated to the upload field.
+		 */
+		$custom_dir = apply_filters( 'pods_upload_dir_custom', $custom_dir, $params, $context_pod, $field, $pod );
+
+		self::$tmp_upload_dir = $custom_dir;
+
+		add_filter( 'upload_dir', [ self::class, 'filter_upload_dir' ] );
+
+		return true;
+	}
+
+	/**
+	 * Tear down the temporary custom upload directory setup.
+	 *
+	 * @since 3.4.0
+	 */
+	public static function use_custom_upload_dir_teardown() {
+		remove_filter( 'upload_dir', [ self::class, 'filter_upload_dir' ] );
+
+		self::$tmp_upload_dir = null;
+	}
+
+	/**
 	 * Modify the upload directory.
 	 *
 	 * @since 2.7.28
@@ -1379,7 +1413,7 @@ class PodsField_File extends PodsField {
 	 *
 	 * @return array The filtered uploads directory information.
 	 */
-	public function filter_upload_dir( $uploads ) {
+	public static function filter_upload_dir( $uploads ) {
 		if ( empty( self::$tmp_upload_dir ) ) {
 			return $uploads;
 		}

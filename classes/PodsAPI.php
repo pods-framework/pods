@@ -5471,18 +5471,25 @@ class PodsAPI {
 
 				// Handle Simple Relationships
 				if ( $simple ) {
+					$pick_limit = (int) pods_v( 'pick_limit', $options, 0 );
+
+					$is_single_format = 'single' === pods_v( 'pick_format_type', $options );
+
+					if ( $is_single_format ) {
+						$pick_limit = 1;
+					}
+
 					if ( ! is_array( $value ) ) {
 						if ( is_string( $value ) && 0 < strlen( $value ) ) {
-							$value = explode( ',', $value );
+							if ( $is_single_format ) {
+								// Single select values can contain commas, so keep the value intact.
+								$value = [ $value ];
+							} else {
+								$value = explode( ',', $value );
+							}
 						} else {
 							$value = [];
 						}
-					}
-
-					$pick_limit = (int) pods_v( 'pick_limit', $options, 0 );
-
-					if ( 'single' === pods_v( 'pick_format_type', $options ) ) {
-						$pick_limit = 1;
 					}
 
 					if ( 'custom-simple' === pods_v( 'pick_object', $field_data ) ) {

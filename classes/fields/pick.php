@@ -2541,7 +2541,7 @@ class PodsField_Pick extends PodsField {
 		$id           = $object_params['id'];
 		$context      = $object_params['context'];
 		$data_params  = $object_params['data_params'];
-		$page         = min( 1, (int) $object_params['page'] );
+		$page         = max( 1, (int) $object_params['page'] );
 		$limit        = (int) $object_params['limit'];
 		$autocomplete = false;
 
@@ -3336,7 +3336,8 @@ class PodsField_Pick extends PodsField {
 		$items = apply_filters( 'pods_field_pick_data_ajax_items', $items, $field['name'], null, $field, $pod, $id );
 
 		$items = [
-			'results' => $items,
+			'results'  => $items,
+			'has_more' => $limit > 0 && count( $items ) >= $limit,
 		];
 
 		wp_send_json( $items );

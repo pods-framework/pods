@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import AsyncCreatableSelect from 'react-select/async-creatable';
@@ -91,6 +91,69 @@ const FullSelect = ( {
 } ) => {
 	const useAsyncSelectComponent = isTaggable || ajaxData?.ajax;
 	const AsyncSelectComponent = isTaggable ? AsyncCreatableSelect : AsyncSelect;
+	const [ asyncOptions, setAsyncOptions ] = useState( formattedOptions );
+	const [ asyncPage, setAsyncPage ] = useState( 1 );
+	const [ asyncHasMore, setAsyncHasMore ] = useState( true );
+	const asyncQuery = useRef( '' );
+	const asyncLoadCallback = useRef( null );
+	const asyncRequest = useRef( false );
+	const asyncRequestId = useRef( 0 );
+
+	const loadOptions = ( inputValue = '', callback ) => {
+		if ( callback ) {
+			asyncLoadCallback.current = callback;
+		}
+
+		if ( ! ajaxData?.ajax ) {
+			callback( formattedOptions );
+			return;
+		}
+
+		if ( asyncRequest.current && inputValue === asyncQuery.current ) {
+			return;
+		}
+
+		const isNewQuery = inputValue !== asyncQuery.current;
+		const page = isNewQuery ? 1 : asyncPage;
+		const requestId = ++asyncRequestId.current;
+		asyncRequest.current = true;
+
+		loadAjaxOptions( ajaxData )( inputValue, page ).then( ( results ) => {
+			if ( requestId !== asyncRequestId.current ) {
+				return;
+			}
+
+			const nextOptions = isNewQuery ? results : [ ...asyncOptions, ...results ];
+
+			asyncQuery.current = inputValue;
+			setAsyncPage( page + 1 );
+			setAsyncOptions( nextOptions );
+			setAsyncHasMore( results.hasMore );
+			callback( nextOptions );
+		} ).catch( () => callback( [] ) ).finally( () => {
+			asyncRequest.current = false;
+		} );
+	};
+
+	const loadMoreOptions = () => {
+		if ( ajaxData?.ajax && asyncHasMore && asyncLoadCallback.current ) {
+			loadOptions( asyncQuery.current, asyncLoadCallback.current );
+		}
+	};
+
+	const AsyncMenuList = ( props ) => (
+		<components.MenuList
+			{ ...props }
+			innerProps={ {
+				...props.innerProps,
+				onScroll: ( event ) => {
+					if ( event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 5 ) {
+						loadMoreOptions();
+					}
+				},
+			} }
+		/>
+	);
 
 	const sensors = useSensors(
 		useSensor( PointerSensor, {
@@ -168,8 +231,8 @@ const FullSelect = ( {
 				{ useAsyncSelectComponent ? (
 					<AsyncSelectComponent
 						controlShouldRenderValue={ shouldRenderValue }
-						defaultOptions={ formattedOptions }
-						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
+						defaultOptions={ ajaxData?.ajax ? asyncOptions : formattedOptions }
+						loadOptions={ ajaxData?.ajax ? loadOptions : undefined }
 						value={ value }
 						placeholder={ placeholder }
 						isMulti={ isMulti }
@@ -178,6 +241,7 @@ const FullSelect = ( {
 						isDisabled={ isReadOnly }
 						components={ {
 							MultiValue: SortableMultiValue,
+							...( ajaxData?.ajax ? { MenuList: AsyncMenuList } : {} ),
 						} }
 						menuPortalTarget={ document.body }
 						menuPosition="fixed"

@@ -487,7 +487,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 				if ( 0 < $pod_id ) {
 					$last_id = $pod_type->id;
 				} else {
-					pods_error( 'Error: ' . $pod_id );
+					return pods_error( 'Error: ' . $pod_id );
 				}
 			}//end foreach
 		}//end if

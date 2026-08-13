@@ -222,6 +222,11 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		echo PodsForm::field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' );
 		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
 
+		// Nonce for the non-AJAX/direct-POST save path. With JavaScript the form submits via AJAX to process_form(); without JS it posts directly and is handled by PodsUI::go() -> save().
+		if ( $obj instanceof PodsUI ) {
+			PodsForm::output_field( $obj->num_prefix . '_wpnonce' . $obj->num, wp_create_nonce( 'pods-ui-save' ), 'hidden' );
+		}
+
 		pods_view( PODS_DIR . 'ui/forms/type/' . sanitize_title( $form_type ) . '.php', compact( array_keys( get_defined_vars() ) ) );
 		?>
 	</div>

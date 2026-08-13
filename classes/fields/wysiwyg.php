@@ -428,8 +428,13 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		// Allow HTML tags.
+		// Allow HTML tags on this field type, but it relies on the wysiwyg_allowed_html_tags option in the parent method.
 		$options[ static::$type . '_allow_html' ] = 1;
+
+		// If not set, use the default.
+		if ( ! isset( $options[ static::$type . '_sanitize_html' ] ) ) {
+			$options[ static::$type . '_sanitize_html' ] = 1;
+		}
 
 		return parent::strip_html( $value, $options );
 	}

@@ -6,8 +6,25 @@ on:
   release:
     types: [published]
 jobs:
+  check-latest:
+    name: Check if latest release
+    runs-on: ubuntu-latest
+    outputs:
+      is-latest: ${{ steps.check.outputs.is-latest }}
+    steps:
+      - name: Query GitHub for isLatest
+        id: check
+        run: |
+          IS_LATEST=$(gh release view "${{ github.event.release.tag_name }}" \
+            --json isLatest --jq '.isLatest')
+          echo "is-latest=$IS_LATEST" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   tag:
     name: New tag
+    needs: check-latest
+    if: needs.check-latest.outputs.is-latest == 'true'
     runs-on: ubuntu-latest
     steps:
     - name: Check the version number from package.json

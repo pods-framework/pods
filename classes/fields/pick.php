@@ -3242,11 +3242,11 @@ class PodsField_Pick extends PodsField {
 		$params = (object) $params;
 
 		if ( ! isset( $params->_wpnonce, $params->pod_name, $params->field_name, $params->uri_hash, $params->id ) ) {
-			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
 		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
-			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 		}
 
 		$_wpnonce   = $params->_wpnonce;
@@ -3268,7 +3268,7 @@ class PodsField_Pick extends PodsField {
 		$nonce_name = 'pods_relationship:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
 
 		if ( false === wp_verify_nonce( $_wpnonce, $nonce_name ) ) {
-			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
 		if ( empty( self::$api ) ) {
@@ -3280,17 +3280,17 @@ class PodsField_Pick extends PodsField {
 		] );
 
 		if ( ! $pod ) {
-			pods_error( __( 'Invalid Pod configuration', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Invalid Pod configuration', 'pods' ), PodsInit::$admin );
 		}
 
 		$field = $pod->get_field( $field_name );
 
 		if ( ! $field ) {
-			pods_error( __( 'Invalid Field configuration', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Invalid Field configuration', 'pods' ), PodsInit::$admin );
 		}
 
 		if ( ! $field->is_autocomplete_relationship() ) {
-			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
 		}
 
 		$object_params = [

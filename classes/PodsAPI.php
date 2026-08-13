@@ -9651,6 +9651,8 @@ class PodsAPI {
 			$pod = null;
 		}
 
+		$pod_name = pods_v( 'name', $pod );
+		$pod_type = pods_v( 'type', $pod );
 		$type  = $options['type'];
 		$label = $options['label'];
 		$label = empty( $label ) ? $field : $label;
@@ -9701,9 +9703,14 @@ class PodsAPI {
 
 			if ( ! in_array( $type, $tableless_field_types, true ) ) {
 				$exclude = '';
+				$prepare = [
+					$field,
+					$check_value,
+				];
 
 				if ( ! empty( $id ) ) {
-					$exclude = "AND `id` != {$id}";
+					$exclude = 'AND `id` != %d';
+					$prepare[] = $id;
 				}
 
 				$check = false;
@@ -9713,7 +9720,17 @@ class PodsAPI {
 				// @todo handle meta-based fields
 				// Trigger an error if not unique
 				if ( 'table' === $pod['storage'] ) {
-					$check = pods_query( "SELECT `id` FROM `@wp_pods_" . $pod['name'] . "` WHERE `{$field}` = '{$check_value}' {$exclude} LIMIT 1", $this );
+					$check = pods_query(
+						[
+							'
+								SELECT `id` FROM `@wp_pods_' . sanitize_key( $pod['name'] ) . '`
+								WHERE %i = %s ' . $exclude . '
+								LIMIT 1
+							',
+							$prepare,
+						],
+						$this
+					);
 				}
 
 				if ( ! empty( $check ) ) {
@@ -9729,6 +9746,20 @@ class PodsAPI {
 		if ( $value instanceof WP_Error || is_object( $value ) ) {
 			// translators: %s is the field label.
 			return pods_error( sprintf( __( '%s is an unexpected value', 'pods' ), $label ), $this );
+		}
+
+		// Check whether user fields can be edited.
+		if (
+			0 < $id
+			&& in_array( $field, [ 'user_login', 'user_email', 'user_pass' ], true )
+			&& in_array( 'user', [ $pod_name, $pod_type ], true )
+			(
+				! is_user_logged_in()
+				|| ! current_user_can( 'edit_user', $id )
+			)
+		) {
+			// translators: %s is the field label.
+			return pods_error( sprintf( __( '%s cannot be changed, you do not have access to this user', 'pods' ), $label ), $this );
 		}
 
 		$validate = PodsForm::validate( $options['type'], $value, $field, $options, $fields, $pod, $id, $params );
@@ -11167,13 +11198,34 @@ class PodsAPI {
 									'media',
 									'attachment',
 								], true ) ) {
-								$where = "`guid` = '" . pods_sanitize( $pick_value ) . "'";
+								$sql_where_field = 'guid';
+								$sql_where_value = $pick_value;
 
 								if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode ) {
-									$where = "`ID` = " . pods_absint( $pick_value );
+									$sql_where_field = 'ID';
+									$sql_where_value = pods_absint( $pick_value );
 								}
 
-								$result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = 'attachment' AND {$where} ORDER BY `ID`", $this );
+								$sql = [
+									'
+												SELECT `ID` AS `id`
+												FROM %i
+												WHERE `post_type` = %s AND %i = %s
+												ORDER BY `ID`
+												LIMIT 1
+										',
+									[
+										$wpdb->posts,
+										'attachment',
+										$sql_where_field,
+										$sql_where_value,
+									],
+								];
+
+								$result = pods_query(
+									$sql,
+									$this
+								);
 
 								if ( ! empty( $result ) ) {
 									$pick_values[] = $result[0]->id;
@@ -11196,13 +11248,39 @@ class PodsAPI {
 								}
 
 								if ( in_array( 'taxonomy', [ $pick_object, $related_pod['type'] ] ) ) {
-									$where = "`t`.`name` = '" . pods_sanitize( $pick_value ) . "'";
+									$sql_where_alias = 't';
+									$sql_where_field = 'name';
+									$sql_where_value = $pick_value;
 
 									if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode ) {
-										$where = "`tt`.`term_id` = " . pods_absint( $pick_value );
+										$sql_where_alias = 'tt';
+										$sql_where_field = 'term_id';
+										$sql_where_value = pods_absint( $pick_value );
 									}
 
-									$result = pods_query( "SELECT `t`.`term_id` AS `id` FROM `{$wpdb->term_taxonomy}` AS `tt` LEFT JOIN `{$wpdb->terms}` AS `t` ON `t`.`term_id` = `tt`.`term_id` WHERE `taxonomy` = '{$pick_val}' AND {$where} ORDER BY `t`.`term_id` LIMIT 1", $this );
+									$sql = [
+										'
+												SELECT `t`.`term_id` AS `id`
+												FROM %i AS `tt`
+												LEFT JOIN %i AS `t` ON `t`.`term_id` = `tt`.`term_id`
+												WHERE `tt`.`taxonomy` = %s AND %i.%i = %s
+												ORDER BY `t`.`term_id`
+												LIMIT 1
+										',
+										[
+											$wpdb->term_taxonomy,
+											$wpdb->terms,
+											$pick_val,
+											$sql_where_alias,
+											$sql_where_field,
+											$sql_where_value,
+										],
+									];
+
+									$result = pods_query(
+										$sql,
+										$this
+									);
 
 									if ( ! empty( $result ) ) {
 										$pick_values[] = $result[0]->id;
@@ -11211,33 +11289,89 @@ class PodsAPI {
 										$pick_object,
 										$related_pod['type'],
 									] ) || in_array( 'media', [ $pick_object, $related_pod['type'] ] ) ) {
-									$where = "`post_title` = '" . pods_sanitize( $pick_value ) . "'";
+									$sql_where_field = 'post_title';
+									$sql_where_value = $pick_value;
 
 									if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode ) {
-										$where = "`ID` = " . pods_absint( $pick_value );
+										$sql_where_field = 'ID';
+										$sql_where_value = pods_absint( $pick_value );
 									}
 
-									$result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = '{$pick_val}' AND {$where} ORDER BY `ID` LIMIT 1", $this );
+									$sql = [
+										'
+												SELECT `ID` AS `id`
+												FROM %i
+												WHERE `post_type` = %s AND %i = %s
+												ORDER BY `ID`
+												LIMIT 1
+										',
+										[
+											$wpdb->posts,
+											$pick_val,
+											$sql_where_field,
+											$sql_where_value,
+										],
+									];
+
+									$result = pods_query(
+										$sql,
+										$this
+									);
 
 									if ( ! empty( $result ) ) {
 										$pick_values[] = $result[0]->id;
 									}
 								} elseif ( in_array( 'user', [ $pick_object, $related_pod['type'] ] ) ) {
-									$where = "`user_login` = '" . pods_sanitize( $pick_value ) . "'";
+									$sql_where_field = 'user_login';
+									$sql_where_value = $pick_value;
 
 									if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode ) {
-										$where = "`ID` = " . pods_absint( $pick_value );
+										$sql_where_field = 'ID';
+										$sql_where_value = pods_absint( $pick_value );
 									}
 
-									$result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->users}` WHERE {$where} ORDER BY `ID` LIMIT 1", $this );
+									$sql = [
+										'
+												SELECT `ID` AS `id`
+												FROM %i
+												WHERE %i = %s
+												ORDER BY `ID`
+												LIMIT 1
+										',
+										[
+											$wpdb->users,
+											$sql_where_field,
+											$sql_where_value,
+										],
+									];
+
+									$result = pods_query(
+										$sql,
+										$this
+									);
 
 									if ( ! empty( $result ) ) {
 										$pick_values[] = $result[0]->id;
 									}
 								} elseif ( in_array( 'comment', [ $pick_object, $related_pod['type'] ] ) ) {
-									$where = "`comment_ID` = " . pods_absint( $pick_value );
+									$sql = [
+										'
+												SELECT `comment_ID` AS `id`
+												FROM %i
+												WHERE `comment_ID` = %d
+												ORDER BY `comment_ID`
+												LIMIT 1
+										',
+										[
+											$wpdb->comments,
+											$pick_value,
+										],
+									];
 
-									$result = pods_query( "SELECT `comment_ID` AS `id` FROM `{$wpdb->comments}` WHERE {$where} ORDER BY `ID` LIMIT 1", $this );
+									$result = pods_query(
+										$sql,
+										$this
+									);
 
 									if ( ! empty( $result ) ) {
 										$pick_values[] = $result[0]->id;
@@ -11245,13 +11379,35 @@ class PodsAPI {
 								} elseif ( in_array( $pick_object, $simple_tableless_objects, true ) ) {
 									$pick_values[] = $pick_value;
 								} elseif ( ! empty( $related_pod['id'] ) ) {
-									$where = "`" . $related_pod['field_index'] . "` = '" . pods_sanitize( $pick_value ) . "'";
+									$sql_where_field = $related_pod['field_index'];
+									$sql_where_value = $pick_value;
 
 									if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode ) {
-										$where = "`" . $related_pod['field_id'] . "` = " . pods_absint( $pick_value );
+										$sql_where_field = $related_pod['field_id'];
+										$sql_where_value = pods_absint( $pick_value );
 									}
 
-									$result = pods_query( "SELECT `" . $related_pod['field_id'] . "` AS `id` FROM `" . $related_pod['table'] . "` WHERE {$where} ORDER BY `" . $related_pod['field_id'] . "` LIMIT 1", $this );
+									$sql = [
+										'
+												SELECT %i AS `id`
+												FROM %i
+												WHERE %i = %s
+												ORDER BY %i
+												LIMIT 1
+										',
+										[
+											$related_pod['field_id'],
+											$related_pod['table'],
+											$sql_where_field,
+											$sql_where_value,
+											$related_pod['field_id'],
+										],
+									];
+
+									$result = pods_query(
+										$sql,
+										$this
+									);
 
 									if ( ! empty( $result ) ) {
 										$pick_values[] = $result[0]->id;

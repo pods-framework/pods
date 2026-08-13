@@ -142,7 +142,26 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		register_rest_route( $this->namespace, '/doc', [
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ $endpoint, 'get' ],
-			'permission_callback' => '__return_true',
+			'permission_callback' => static function () {
+				/**
+				 * Filter whether the REST API documentation (/doc) endpoint is public.
+				 *
+				 * The Swagger/OpenAPI schema is public by default for API
+				 * discoverability. Return false to restrict access (the request
+				 * will then require authentication/capabilities as enforced here).
+				 *
+				 * @since 3.3.9.1
+				 *
+				 * @param bool $is_public Whether the /doc endpoint is publicly accessible.
+				 */
+				$is_public = (bool) apply_filters( 'pods_rest_api_doc_is_public', true );
+
+				if ( $is_public ) {
+					return true;
+				}
+
+				return current_user_can( 'manage_options' );
+			},
 		] );
 
 		//$endpoint->register_definition_provider( 'XYZ', new XYZ_Definition_Provider() );

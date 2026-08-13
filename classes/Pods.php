@@ -2550,6 +2550,11 @@ class Pods implements Iterator {
 			}//end foreach
 		}//end if
 
+		$params->fragment_info = pods_info_from_args( [
+			'item_id' => $this->id ? $this->id : null,
+			'pods'    => $this,
+		] );
+
 		$this->data->select( $params );
 
 		return $this;

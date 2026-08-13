@@ -161,7 +161,7 @@ class Block_Field extends Field {
 
 		$block_args['name'] = $name;
 
-		$block_args['fieldOptions']['help'] = $this->get_arg( 'description' );
+		$block_args['fieldOptions']['help'] = wp_kses_post( $this->get_arg( 'description' ) );
 
 		if ( 'html' === $type ) {
 			$block_args['fieldOptions']['html_content'] = $this->get_arg( 'html_content' );

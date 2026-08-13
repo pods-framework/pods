@@ -23,7 +23,7 @@ import {
 	close,
 	download,
 	external,
-	edit,
+	pencil as edit,
 } from '@wordpress/icons';
 
 /**

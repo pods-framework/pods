@@ -176,7 +176,7 @@ function pods_user_can_access_object( array $args, ?int $user_id, string $access
 	// Check if the user exists.
 	$user = get_userdata( $user_id );
 
-	if ( ! $user || is_wp_error( $user ) ) {
+	if ( ! $user instanceof WP_User ) {
 		// If the user does not exist and it was not anonymous, do not allow access to an invalid user.
 		if ( 0 < $user_id ) {
 			return false;
@@ -761,7 +761,6 @@ function pods_is_type_public( array $args, string $context = 'shortcode' ): bool
 	 *      @type Pod|null        $pod         The Pod object (if built or provided).
 	 * }
 	 * @param string|null $context     The context we are checking from (shortcode or null).
-	 * @param Pod|null    $pod         The Pod object if set.
 	 */
 	return (bool) apply_filters(
 		'pods_is_type_public',
@@ -864,7 +863,18 @@ function pods_access_bypass_private_post( array $args ): bool {
 	$bypass_private_post = false;
 
 	if ( ! is_post_publicly_viewable( $post ) ) {
-		$bypass_private_post = ! pods_current_user_can_access_object( $info, 'read' );
+		$can_use_unrestricted = false;
+
+		// Check Pod dynamic features if the status is public.
+		if ( is_post_status_viewable( $post->post_status ) ) {
+			$can_use_unrestricted = pods_can_use_dynamic_feature_unrestricted( $info, 'display', 'read' );
+		}
+
+		if ( $can_use_unrestricted ) {
+			$bypass_private_post = false;
+		} else {
+			$bypass_private_post = ! pods_current_user_can_access_object( $info, 'read' );
+		}
 	}
 
 	/**
@@ -1110,7 +1120,7 @@ function pods_can_use_dynamic_feature_unrestricted( array $args, string $type, ?
  *
  * @since 3.1.0
  *
- * @param array $args {
+ * @param array       $args {
  *      The arguments to use.
  *
  *      @type string|null     $object_type The object type.
@@ -1121,11 +1131,12 @@ function pods_can_use_dynamic_feature_unrestricted( array $args, string $type, ?
  *      @type bool            $build_pods  Whether to try to build a Pods object from the object type/name/ID (false by default).
  *      @type bool            $build_pod   Whether to try to build a Pod object from the object type/name (false by default).
  * }
- * @param bool  $force_message Whether to force the message to show even if messages are hidden by a setting.
+ * @param bool        $force_message Whether to force the message to show even if messages are hidden by a setting.
+ * @param string|null $message       A custom message to use for the notice text.
  *
  * @return string The access notice for admin user based on object type and object name.
  */
-function pods_get_access_admin_notice( array $args, bool $force_message = false ): string {
+function pods_get_access_admin_notice( array $args, bool $force_message = false, ?string $message = null ): string {
 	$args['build_pod'] = true;
 
 	$info = pods_info_from_args( $args );
@@ -1166,23 +1177,27 @@ function pods_get_access_admin_notice( array $args, bool $force_message = false 
 
 	$summary = esc_html__( 'Pods Access Rights: Admin-only Notice', 'pods' );
 
-	$content = sprintf(
-		'
-			<p>
-				%1$s
-				<br />
-				<span class="pods-ui-notice-action-links">
-					<a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>
-					| <a href="%4$s" target="_blank" rel="noopener noreferrer">%5$s</a>
-				</span>
-			</p>
-		',
-		esc_html__( 'The content below is not public and may not be available to everyone else.', 'pods' ),
-		esc_url( 'https://docs.pods.io/displaying-pods/access-rights-in-pods/' ),
-		esc_html__( 'How access rights work with Pods (Documentation)', 'pods' ),
-		esc_url( admin_url( 'admin.php?page=pods-settings#heading-security' ) ),
-		esc_html__( 'Edit other access right options', 'pods' )
-	);
+	if ( $message ) {
+		$content = wpautop( $message );
+	} else {
+		$content = sprintf(
+			'
+				<p>
+					%1$s
+					<br />
+					<span class="pods-ui-notice-action-links">
+						<a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>
+						| <a href="%4$s" target="_blank" rel="noopener noreferrer">%5$s</a>
+					</span>
+				</p>
+			',
+			esc_html__( 'The content type or the content below is not public and may not be available to everyone else.', 'pods' ),
+			esc_url( 'https://docs.pods.io/displaying-pods/access-rights-in-pods/' ),
+			esc_html__( 'How access rights work with Pods (Documentation)', 'pods' ),
+			esc_url( admin_url( 'admin.php?page=pods-settings#heading-security' ) ),
+			esc_html__( 'Edit other access right options', 'pods' )
+		);
+	}
 
 	return '<!-- pods:access-notices/admin/message ' . $identifier_for_html . ' -->'
 		. pods_message(
@@ -1336,6 +1351,12 @@ function pods_can_use_dynamic_feature_sql_clauses( ?string $clause_type = null )
 /**
  * Determine whether a callback can be used.
  *
+ * Only plain function-name string callbacks are permitted by default. Closures,
+ * invokable objects, array callables ( [ $object, 'method' ] / [ 'Class', 'method' ] ),
+ * and string class method references ( "Class::method" ) are rejected unless
+ * class callbacks are enabled via the PODS_ALLOW_CLASS_CALLBACKS constant or the
+ * "pods_access_allow_class_callbacks" filter.
+ *
  * @since 3.1.0
  *
  * @param string|callable $callback The callback to check.
@@ -1344,9 +1365,23 @@ function pods_can_use_dynamic_feature_sql_clauses( ?string $clause_type = null )
  * @return bool Whether the callback can be used.
  */
 function pods_access_callback_allowed( $callback, array $params = [] ): bool {
-	// Real callables are allowed because they are done through PHP calls.
+	// Class-based callbacks are disabled by default; only plain function-name string callbacks are permitted. Set the PODS_ALLOW_CLASS_CALLBACKS constant to true (or use the "pods_access_allow_class_callbacks" filter) to permit closures, invokable objects, array callables, and "Class::method" strings.
+	$allow_class_callbacks = defined( 'PODS_ALLOW_CLASS_CALLBACKS' ) && PODS_ALLOW_CLASS_CALLBACKS;
+
+	/**
+	 * Filter whether class-based callbacks are permitted (closures, invokable
+	 * objects, array callables, and "Class::method" strings).
+	 *
+	 * @since 3.3.9.1
+	 *
+	 * @param bool            $allow_class_callbacks Whether class-based callbacks are allowed.
+	 * @param string|callable $callback              The callback being checked.
+	 * @param array           $params                Parameters used by Pods::helper() method.
+	 */
+	$allow_class_callbacks = (bool) apply_filters( 'pods_access_allow_class_callbacks', $allow_class_callbacks, $callback, $params );
+
 	if ( ! is_string( $callback ) ) {
-		return true;
+		return $allow_class_callbacks;
 	}
 
 	if ( ! pods_can_use_dynamic_feature( 'display' ) ) {
@@ -1374,36 +1409,133 @@ function pods_access_callback_allowed( $callback, array $params = [] ): bool {
 		return false;
 	}
 
+	// Disallowed callbacks. A callback listed here can never be used, even if it also appears in the allowed list. Comparison is case- and namespace-insensitive, so entries are lowercase.
 	$disallowed = [
-		// Regex related.
+		// Regex related (callback execution + ReDoS).
 		'preg_replace',
 		'preg_replace_array',
 		'preg_replace_callback',
 		'preg_replace_callback_array',
 		'preg_match',
 		'preg_match_all',
-		// Shell/Eval related.
+		'mb_ereg_replace_callback',
+
+		// Shell / command execution.
 		'system',
 		'exec',
 		'passthru',
+		'shell_exec',
+		'popen',
+		'proc_open',
 		'proc_close',
 		'proc_get_status',
 		'proc_nice',
-		'proc_open',
 		'proc_terminate',
-		'shell_exec',
-		'system',
+		'pcntl_exec',
+		'escapeshellarg',
+		'escapeshellcmd',
+		'dl',
+
+		// Code evaluation / dynamic invocation.
 		'eval',
+		'assert',
 		'create_function',
-		// File related.
-		'popen',
+		'call_user_func',
+		'call_user_func_array',
+		'forward_static_call',
+		'forward_static_call_array',
+		'array_map',
+		'array_filter',
+		'array_walk',
+		'array_walk_recursive',
+		'array_reduce',
+		'usort',
+		'uasort',
+		'uksort',
+		'ob_start',
+		'register_shutdown_function',
+		'register_tick_function',
+		'set_error_handler',
+		'set_exception_handler',
+		'spl_autoload_register',
+		'iterator_apply',
+		'header_register_callback',
+		'stream_filter_register',
+		'stream_wrapper_register',
+
+		// Deserialization.
+		'unserialize',
+		'maybe_unserialize',
+
+		// Variable / scope handling.
+		'extract',
+		'compact',
+		'parse_str',
+		'mb_parse_str',
+		'import_request_variables',
+
+		// File read / write / delete / manipulation.
 		'include',
 		'include_once',
 		'require',
 		'require_once',
 		'file_get_contents',
 		'file_put_contents',
+		'readfile',
+		'fopen',
+		'fread',
+		'fgets',
+		'fgetcsv',
+		'fscanf',
+		'fwrite',
+		'fputs',
+		'fpassthru',
+		'file',
+		'unlink',
+		'copy',
+		'rename',
+		'rmdir',
+		'mkdir',
+		'chmod',
+		'chown',
+		'chgrp',
+		'touch',
+		'symlink',
+		'link',
+		'tempnam',
+		'tmpfile',
+		'move_uploaded_file',
+		'scandir',
+		'glob',
+		'opendir',
+		'readdir',
+		'realpath',
+		'parse_ini_file',
+		'parse_ini_string',
+		'highlight_file',
+		'show_source',
+		'php_strip_whitespace',
+
+		// Network / HTTP.
+		'fsockopen',
+		'pfsockopen',
+		'stream_socket_client',
+		'stream_socket_server',
+		'curl_init',
+		'curl_exec',
+		'curl_multi_exec',
+		'curl_setopt',
+		'curl_setopt_array',
+
+		// Template / include (WordPress).
 		'get_template_part',
+		'load_template',
+		'locate_template',
+		'get_header',
+		'get_footer',
+		'get_sidebar',
+		'comments_template',
+
 		// Nonce related.
 		'wp_nonce_url',
 		'wp_nonce_field',
@@ -1411,7 +1543,8 @@ function pods_access_callback_allowed( $callback, array $params = [] ): bool {
 		'check_admin_referer',
 		'check_ajax_referer',
 		'wp_verify_nonce',
-		// PHP related.
+
+		// PHP environment.
 		'constant',
 		'defined',
 		'get_current_user',
@@ -1424,8 +1557,18 @@ function pods_access_callback_allowed( $callback, array $params = [] ): bool {
 		'get_loaded_extensions',
 		'get_required_files',
 		'get_resources',
+		'getcwd',
+		'sys_get_temp_dir',
+		'get_cfg_var',
+		'getmypid',
+		'getmyuid',
+		'getmygid',
+		'getmyinode',
+		'getlastmod',
+		'getrusage',
 		'getenv',
 		'getopt',
+		'putenv',
 		'ini_alter',
 		'ini_get',
 		'ini_get_all',
@@ -1437,13 +1580,91 @@ function pods_access_callback_allowed( $callback, array $params = [] ): bool {
 		'php_uname',
 		'phpinfo',
 		'phpversion',
-		'putenv',
-		// WordPress related.
+		'phpcredits',
+		'debug_backtrace',
+		'debug_print_backtrace',
+		'error_log',
+		'error_get_last',
+		'apache_setenv',
+		'apache_getenv',
+		'apache_note',
+		'posix_getpwuid',
+		'posix_getuid',
+		'posix_geteuid',
+		'posix_getgid',
+		'posix_kill',
+
+		// WordPress data access / modification.
 		'get_userdata',
 		'get_currentuserinfo',
+		'wp_get_current_user',
 		'get_post',
+		'get_posts',
 		'get_term',
+		'get_terms',
 		'get_comment',
+		'get_users',
+		'get_option',
+		'add_option',
+		'update_option',
+		'delete_option',
+		'get_site_option',
+		'update_site_option',
+		'get_user_meta',
+		'add_user_meta',
+		'update_user_meta',
+		'delete_user_meta',
+		'get_post_meta',
+		'update_post_meta',
+		'delete_post_meta',
+		'wp_insert_post',
+		'wp_update_post',
+		'wp_delete_post',
+		'wp_insert_user',
+		'wp_create_user',
+		'wp_update_user',
+		'wp_delete_user',
+		'wp_set_password',
+		'wp_set_auth_cookie',
+		'wp_set_current_user',
+		'wp_signon',
+
+		// WordPress filesystem / uploads / HTTP.
+		'wp_filesystem',
+		'request_filesystem_credentials',
+		'wp_upload_bits',
+		'wp_handle_upload',
+		'wp_remote_get',
+		'wp_remote_post',
+		'wp_remote_request',
+		'wp_remote_head',
+		'wp_safe_remote_get',
+		'wp_safe_remote_post',
+		'wp_safe_remote_request',
+		'wp_safe_remote_head',
+		'wp_mail',
+
+		// WordPress hooks / shortcodes.
+		'do_action',
+		'add_action',
+		'remove_action',
+		'add_filter',
+		'remove_filter',
+		'apply_filters',
+		'do_shortcode',
+
+		// Additional disallowed callbacks (Pods tag/shortcode rendering wrappers).
+		'pods_do_shortcode',
+		'pods_evaluate_tag',
+		'pods_evaluate_tags',
+		'pods_evaluate_tag_sanitized',
+		'pods_evaluate_tags_sql',
+
+		// Debug / introspection output.
+		'print_r',
+		'var_dump',
+		'var_export',
+		'debug_zval_dump',
 	];
 
 	$allowed = [];
@@ -1508,11 +1729,32 @@ function pods_access_callback_allowed( $callback, array $params = [] ): bool {
 		$callback = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $callback ) );
 	}
 
+	/*
+	 * Normalize for comparison. PHP function/method names are case-insensitive
+	 * and may be written with a leading namespace separator, so "SYSTEM",
+	 * "System", and "\system" must all be treated as "system". The allowed and
+	 * disallowed lists are normalized the same way so matching is consistent.
+	 */
+	$normalized_callback = ltrim( strtolower( trim( (string) $callback ) ), '\\' );
+
+	/*
+	 * Reject class method callbacks expressed as strings unless class callbacks
+	 * are explicitly enabled. The scope resolution operator "::" only appears in
+	 * static method references such as "Class::method", "\Namespace\Class::method",
+	 * or "parent::method".
+	 */
+	if ( ! $allow_class_callbacks && false !== strpos( $normalized_callback, '::' ) ) {
+		return false;
+	}
+
+	$disallowed = array_map( 'strtolower', $disallowed );
+	$allowed    = array_map( 'strtolower', $allowed );
+
 	return (
-		! in_array( $callback, $disallowed, true )
+		! in_array( $normalized_callback, $disallowed, true )
 		&& (
 			empty( $allowed )
-			|| in_array( $callback, $allowed, true )
+			|| in_array( $normalized_callback, $allowed, true )
 		)
 	);
 }
@@ -2006,7 +2248,7 @@ function pods_access_settings_config(): array {
 		'default'            => 'esc_attr,esc_html',
 		'depends-on'         => [
 			'dynamic_features_allow'   => '1',
-			'display_callbacks'        => 'allowed',
+			'display_callbacks'        => 'customized',
 		],
 		'depends-on-multi'     => [
 			'dynamic_features_enabled' => 'display',
@@ -2155,37 +2397,69 @@ function pods_access_sql_fragment_is_allowed( string $sql, string $context, arra
 }
 
 add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_mismatch_parenthesis', 10, 2 );
+add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_comments', 10, 2 );
 add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_unsafe_functions', 10, 2 );
+add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_unsafe_keywords', 10, 2 );
 add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_unsafe_tables', 10, 2 );
 add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_double_hyphens', 10, 2 );
 add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_subqueries', 10, 2 );
 add_filter( 'pods_access_sql_fragment_is_allowed', 'pods_access_sql_fragment_disallow_post_status', 10, 4 );
 
 /**
- * Disallow mismatched parenthesis from being used in SQL fragments.
+ * Disallow parenthesis in SQL fragments that are not balanced at every position.
  *
  * @since 3.1.0
- *
  * @param bool   $allowed Whether the SQL fragment is allowed to be used.
  * @param string $sql     The SQL fragment to check.
- *
  * @return bool Whether the SQL fragment is allowed to be used.
  */
 function pods_access_sql_fragment_disallow_mismatch_parenthesis( bool $allowed, string $sql ): bool {
-	return (
-		$allowed
-		&& substr_count( $sql, '(' ) === substr_count( $sql, ')' )
+	if ( ! $allowed ) {
+		return $allowed;
+	}
+
+	// Remove quoted string literals ('' and "" quoting, with backslash/doubled-quote escaping).
+	$stripped = preg_replace(
+		[
+			"/'(?:[^'\\\\]|\\\\.|'')*'/s",
+			'/"(?:[^"\\\\]|\\\\.|"")*"/s',
+		],
+		'',
+		$sql
 	);
+
+	if ( null === $stripped ) {
+		// preg_replace failed (e.g. malformed input); fail closed.
+		return false;
+	}
+
+	$depth  = 0;
+	$length = strlen( $stripped );
+
+	for ( $i = 0; $i < $length; $i++ ) {
+		$char = $stripped[ $i ];
+
+		if ( '(' === $char ) {
+			$depth++;
+		} elseif ( ')' === $char ) {
+			$depth--;
+
+			// More closes than opens at this point: the fragment escapes its wrapping.
+			if ( $depth < 0 ) {
+				return false;
+			}
+		}
+	}
+
+	return 0 === $depth;
 }
 
 /**
  * Disallow unsafe functions from being used in SQL fragments.
  *
  * @since 3.1.0
- *
  * @param bool   $allowed Whether the SQL fragment is allowed to be used.
  * @param string $sql     The SQL fragment to check.
- *
  * @return bool Whether the SQL fragment is allowed to be used.
  */
 function pods_access_sql_fragment_disallow_unsafe_functions( bool $allowed, string $sql ): bool {
@@ -2194,30 +2468,79 @@ function pods_access_sql_fragment_disallow_unsafe_functions( bool $allowed, stri
 	}
 
 	$unsafe_functions = [
+		// Server / database / session information functions.
 		'USER',
+		'CURRENT_USER',
+		'SESSION_USER',
+		'SYSTEM_USER',
 		'DATABASE',
+		'SCHEMA',
 		'VERSION',
-		'FROM_BASE64',
-		'TO_BASE64',
+		'CONNECTION_ID',
+		'CURRENT_ROLE',
+		'ROW_COUNT',
+		'LAST_INSERT_ID',
+		'CHARSET',
+		'COLLATION',
+		'COERCIBILITY',
+		'STATEMENT_DIGEST',
+		'STATEMENT_DIGEST_TEXT',
+
+		// Filesystem access.
+		'LOAD_FILE',
+
+		// Timing / locking functions.
 		'SLEEP',
+		'BENCHMARK',
+		'GET_LOCK',
+		'RELEASE_LOCK',
+		'RELEASE_ALL_LOCKS',
+		'IS_FREE_LOCK',
+		'IS_USED_LOCK',
 		'WAIT_FOR_EXECUTED_GTID_SET',
 		'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS',
 		'MASTER_POS_WAIT',
 		'SOURCE_POS_WAIT',
-		'LOAD_FILE',
+		'GTID_SUBSET',
+		'GTID_SUBTRACT',
+
+		// Encoding / encryption / compression functions.
+		'FROM_BASE64',
+		'TO_BASE64',
+		'UNHEX',
+		'AES_ENCRYPT',
+		'AES_DECRYPT',
+		'DES_ENCRYPT',
+		'DES_DECRYPT',
+		'ENCODE',
+		'DECODE',
+		'COMPRESS',
+		'UNCOMPRESS',
+		'UNCOMPRESSED_LENGTH',
+
+		// Error-based extraction (leak data through forced XPath / other errors).
+		'EXTRACTVALUE',
+		'UPDATEXML',
+
+		// Deprecated analysis clause.
+		'ANALYSE',
+
+		// Common lib_mysqludf_sys UDFs.
+		'SYS_EXEC',
+		'SYS_EVAL',
 	];
 
 	/**
-	 * Allow filtering the list of unsafe functions to disallow.
+	 * Allow filtering the list of additional unsafe functions to disallow.
 	 *
 	 * @since 3.1.0
 	 *
 	 * @param array  $unsafe_functions The list of unsafe functions to disallow.
 	 * @param string $sql              The SQL fragment to check.
 	 */
-	$unsafe_functions = (array) apply_filters( 'pods_access_sql_fragment_disallow_unsafe_functions', $unsafe_functions, $sql );
+	$additional_unsafe_functions = (array) apply_filters( 'pods_access_sql_fragment_disallow_unsafe_functions', $unsafe_functions, $sql );
 
-	$unsafe_functions = array_filter( $unsafe_functions );
+	$unsafe_functions = array_unique( array_filter( array_merge( $unsafe_functions, $additional_unsafe_functions ) ) );
 
 	foreach ( $unsafe_functions as $unsafe_function ) {
 		if ( 1 === (int) preg_match( '/\s*' . preg_quote( $unsafe_function, '/' ) . '\s*\(/i', $sql ) ) {
@@ -2262,8 +2585,17 @@ function pods_access_sql_fragment_disallow_unsafe_tables( bool $allowed, string 
 
 	$unsafe_tables = array_filter( $unsafe_tables );
 
+	/*
+	 * Normalize the fragment before matching so that identifier quoting and
+	 * spacing around the "." separator cannot be used to evade the check, e.g.
+	 * "`information_schema`.`tables`" or "information_schema . tables" both
+	 * normalize to "information_schema.tables".
+	 */
+	$normalized_sql = str_replace( '`', '', $sql );
+	$normalized_sql = preg_replace( '/\s*\.\s*/', '.', $normalized_sql );
+
 	foreach ( $unsafe_tables as $unsafe_table ) {
-		if ( 1 === (int) preg_match( '/\s*' . preg_quote( $unsafe_table, '/' ) . '/i', $sql ) ) {
+		if ( 1 === (int) preg_match( '/' . preg_quote( $unsafe_table, '/' ) . '/i', $normalized_sql ) ) {
 			return false;
 		}
 	}
@@ -2286,6 +2618,95 @@ function pods_access_sql_fragment_disallow_double_hyphens( bool $allowed, string
 		$allowed
 		&& false === strpos( $sql, '--' )
 	);
+}
+
+/**
+ * Disallow SQL comment markers from being used in SQL fragments.
+ *
+ * @since 3.1.0
+ * @param bool   $allowed Whether the SQL fragment is allowed to be used.
+ * @param string $sql     The SQL fragment to check.
+ * @return bool Whether the SQL fragment is allowed to be used.
+ */
+function pods_access_sql_fragment_disallow_comments( bool $allowed, string $sql ): bool {
+	if ( ! $allowed ) {
+		return $allowed;
+	}
+
+	if (
+		false !== strpos( $sql, '--' )
+		|| false !== strpos( $sql, '/*' )
+		|| false !== strpos( $sql, '*/' )
+	) {
+		return false;
+	}
+
+	// Strip quoted string literals so a "#" inside a value is not treated as a comment.
+	$stripped = preg_replace(
+		[
+			"/'(?:[^'\\\\]|\\\\.|'')*'/s",
+			'/"(?:[^"\\\\]|\\\\.|"")*"/s',
+		],
+		'',
+		$sql
+	);
+
+	if ( null === $stripped ) {
+		// preg_replace failed (e.g. malformed input); fail closed.
+		return false;
+	}
+
+	return false === strpos( $stripped, '#' );
+}
+
+/**
+ * Disallow unsafe keywords from being used in SQL fragments.
+ *
+ * @since 3.1.0
+ * @param bool   $allowed Whether the SQL fragment is allowed to be used.
+ * @param string $sql     The SQL fragment to check.
+ * @return bool Whether the SQL fragment is allowed to be used.
+ */
+function pods_access_sql_fragment_disallow_unsafe_keywords( bool $allowed, string $sql ): bool {
+	if ( ! $allowed ) {
+		return $allowed;
+	}
+
+	$unsafe_patterns = [
+		// System / session variables.
+		'/@@/',
+		// Combining result sets.
+		'/\bUNION\b/i',
+		// File output keywords.
+		'/\bINTO\s+(?:OUTFILE|DUMPFILE)\b/i',
+		// File read keywords.
+		'/\bLOAD\s+DATA\b/i',
+		// Statement separator.
+		'/;/',
+	];
+
+	/**
+	 * Allow filtering the list of unsafe keyword patterns to disallow.
+	 *
+	 * Each entry is a full PCRE pattern (including delimiters and flags) that is
+	 * tested against the SQL fragment; a match disallows the fragment.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param array  $unsafe_patterns The list of unsafe keyword patterns to disallow.
+	 * @param string $sql             The SQL fragment to check.
+	 */
+	$unsafe_patterns = (array) apply_filters( 'pods_access_sql_fragment_disallow_unsafe_keywords', $unsafe_patterns, $sql );
+
+	$unsafe_patterns = array_filter( $unsafe_patterns );
+
+	foreach ( $unsafe_patterns as $unsafe_pattern ) {
+		if ( 1 === (int) preg_match( $unsafe_pattern, $sql ) ) {
+			return false;
+		}
+	}
+
+	return $allowed;
 }
 
 /**
@@ -2318,7 +2739,7 @@ function pods_access_sql_fragment_disallow_subqueries( bool $allowed, string $sq
  * @return bool Whether the SQL fragment is allowed to be used.
  */
 function pods_access_sql_fragment_disallow_post_status( bool $allowed, string $sql, string $context, array $info ): bool {
-	if ( 'WHERE' !== $context && 'HAVING' !== $context ) {
+	if ( 'WHERE' !== $context && 'HAVING' !== $context && 'FIELD' !== $context ) {
 		return $allowed;
 	}
 
@@ -2343,6 +2764,11 @@ function pods_access_sql_fragment_disallow_post_status( bool $allowed, string $s
 function pods_maybe_safely_unserialize( $data ) {
 	// The $options parameter of unserialize() requires PHP 7.0+.
 	if ( version_compare( PHP_VERSION, '7.0', '<' ) ) {
+		// On PHP < 7, refuse payloads that contain a serialized object; other data falls back to the normal WP function, to help prevent security issues.
+		if ( is_string( $data ) && preg_match( '/(?:^|;|{)[OC]:\d+:"/', $data ) ) {
+			return $data;
+		}
+
 		// Fall back to normal WP function.
 		return maybe_unserialize( $data );
 	}

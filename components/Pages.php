@@ -1380,8 +1380,11 @@ class Pods_Pages extends PodsComponent {
 			foreach ( $paths_to_check as $path_to_check ) {
 				$file_path = $path_to_check . DIRECTORY_SEPARATOR . $template;
 
-				if ( file_exists( $file_path ) ) {
-					$template = $file_path;
+				// The page_template comes from stored admin config; confirm the resolved file stays within an allowed theme/content path before including it, to help prevent security issues.
+				$safe_path = pods_validate_safe_path( $file_path, [ 'theme', 'content' ] );
+
+				if ( $safe_path ) {
+					$template = $safe_path;
 
 					break;
 				}

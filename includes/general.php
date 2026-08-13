@@ -224,7 +224,7 @@ $GLOBALS['pods_errors'] = array();
  * @param string|array $error The error message(s) to be thrown / displayed.
  */
 function pods_error_exception( $error ) {
-	pods_error( $error, 'final_exception' );
+	return pods_error( $error, 'final_exception' );
 }
 
 /**
@@ -380,8 +380,21 @@ function pods_error( $error, $obj = null ) {
 
 			// Check if this is a back-compat meta box save request.
 			if ( 1 === $meta_box_loader_compat ) {
+				check_admin_referer( 'meta-box-loader', 'meta-box-loader-nonce' );
+
 				// Do not block this page.
-				error_log( 'Pods Meta Save Error:' . $error );
+				error_log( 'PodsMeta Save Error: ' . $error );
+
+				if ( ! is_scalar( $error ) ) {
+					$error = wp_json_encode( $error );
+				}
+
+				# Remove illegal characters (Header value may not contain NUL bytes)
+				if ( is_string( $error ) ) {
+					$error = str_replace( chr( 0 ), '', $error );
+				}
+
+				@header( 'X-Pods-Error: ' . $error );
 			} else {
 				wp_send_json( [
 					'message' => $error,
@@ -1090,7 +1103,7 @@ function pods_help( $text, $url = null, $container = null, $return = false ) {
 		$text .= '<br /><br /><a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 
-	$text = wpautop( $text );
+	$text = wp_kses_post( wpautop( $text ) );
 
 	$output = '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
 
@@ -1898,7 +1911,13 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		if ( $tags['where'] && 0 < strlen( (string) $tags['where'] ) ) {
 			$tags['where'] = ltrim( $tags['where'], ')' );
 
-			if ( ! $can_use_dynamic_feature_simple_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['where'], 'WHERE', $info ) ) {
+			$params['where'] = $tags['where'];
+
+			if ( $shortcode_allow_evaluate_tags ) {
+				$params['where'] = pods_evaluate_tags_sql( $params['where'], $evaluate_tags_args );
+			}
+
+			if ( ! $can_use_dynamic_feature_simple_sql_clauses || ! pods_access_sql_fragment_is_allowed( $params['where'], 'WHERE', $info ) ) {
 				return pods_message(
 					sprintf(
 						'<strong>%1$s:</strong> %2$s',
@@ -1908,12 +1927,6 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 					'error',
 					true
 				);
-			}
-
-			$params['where'] = $tags['where'];
-
-			if ( $shortcode_allow_evaluate_tags ) {
-				$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
 			}
 		}
 
@@ -1936,7 +1949,13 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 		if ( $tags['having'] && 0 < strlen( (string) $tags['having'] ) ) {
 			$tags['having'] = ltrim( $tags['having'], ')' );
 
-			if ( ! $can_use_dynamic_feature_all_sql_clauses || ! pods_access_sql_fragment_is_allowed( $tags['having'], 'HAVING', $info ) ) {
+			$params['having'] = $tags['having'];
+
+			if ( $shortcode_allow_evaluate_tags ) {
+				$params['having'] = pods_evaluate_tags_sql( $params['having'], $evaluate_tags_args );
+			}
+
+			if ( ! $can_use_dynamic_feature_all_sql_clauses || ! pods_access_sql_fragment_is_allowed( $params['having'], 'HAVING', $info ) ) {
 				return pods_message(
 					sprintf(
 						'<strong>%1$s:</strong> %2$s',
@@ -1946,12 +1965,6 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 					'error',
 					true
 				);
-			}
-
-			$params['having'] = $tags['having'];
-
-			if ( $shortcode_allow_evaluate_tags ) {
-				$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
 			}
 		}
 

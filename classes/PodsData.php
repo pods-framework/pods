@@ -649,6 +649,8 @@ class PodsData {
 		$cache_key = false;
 		$results   = false;
 
+		$instance = $this;
+
 		/**
 		 * Filter select parameters before the query
 		 *
@@ -657,11 +659,66 @@ class PodsData {
 		 *
 		 * @since unknown
 		 */
-		$params = apply_filters( 'pods_data_pre_select_params', $params, $this );
+		$params = (object) apply_filters( 'pods_data_pre_select_params', $params, $instance );
 
 		// Debug purposes.
 		if ( 1 === (int) pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( $params );
+		}
+
+		$is_search = pods_v( $this->search_var );
+
+		if ( empty( $params->bypass_fragment_checks ) ) {
+			$fragments_to_check = [
+				'select'  => 'SELECT',
+				'join'    => 'JOIN',
+				'where'   => 'WHERE',
+				'groupby' => 'GROUP BY',
+				'having'  => 'HAVING',
+				'orderby' => 'ORDER BY',
+				'sql'     => 'FULL SQL',
+			];
+
+			$fragment_info = ! empty( $params->fragment_info ) ? $params->fragment_info : [];
+
+			foreach ( $fragments_to_check as $fragment => $fragment_context ) {
+				if ( ! empty( $params->{$fragment} ) ) {
+					$sql_fragment = (array) $params->{$fragment};
+
+					if ( ! isset( $sql_fragment[0] ) ) {
+						continue;
+					}
+
+					foreach ( $sql_fragment as $sql_fragment_to_check ) {
+						if ( ! is_string( $sql_fragment_to_check ) || pods_access_sql_fragment_is_allowed( $sql_fragment_to_check, $fragment_context, $fragment_info ) ) {
+							continue;
+						}
+
+						if ( pods_is_admin() ) {
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Notice HTML is escaped within pods_get_access_admin_notice().
+							echo pods_get_access_admin_notice(
+								$fragment_info,
+								true,
+								esc_html( sprintf(
+									/* translators: %s is the fragment SQL clause that was not allowed */
+									__( 'This query contains disallowed SQL fragments. It has been disabled for security purposes. The disallowed fragment was for %1$s: %2$s', 'pods' ),
+									$fragment,
+									$sql_fragment_to_check
+								) )
+							) ?: '';
+						}
+
+						// Stop processing the query.
+						return [];
+					}
+				}
+			}
+		}
+
+		// Disable caching for searches.
+		if ( null !== $is_search ) {
+			$params->expires = 0;
+			$params->cache_mode = null;
 		}
 
 		// Get from cache if enabled.
@@ -2873,7 +2930,7 @@ class PodsData {
 					$tableless_field_types = PodsForm::tableless_field_types();
 
 					if ( $the_field ) {
-						$field_name = $the_field->get_name();
+						$field_name = sanitize_key( $the_field->get_name() );
 
 						// @todo Implement get_db_field here in the future.
 
@@ -2893,10 +2950,10 @@ class PodsData {
 
 								if ( ! empty( $table ) ) {
 									if ( is_int( $field_value ) ) {
-										$field_cast = "`{$field_name}`.`" . $table['field_id'] . '`';
+										$field_cast = "`{$field_name}`.`" . sanitize_key( $table['field_id'] ) . '`';
 									} else {
 										// Prior to 2.8 this was the default query, retain backwards compatibility
-										$field_cast = "`{$field_name}`.`" . $table['field_index'] . '`';
+										$field_cast = "`{$field_name}`.`" . sanitize_key( $table['field_index'] ) . '`';
 									}
 								}
 							}
@@ -2930,9 +2987,31 @@ class PodsData {
 
 			// Cast field if needed.
 			if ( 'CHAR' !== $field_type ) {
-				$field_cast = 'CAST( ' . $field_cast . ' AS ' . $field_type . ' )';
+				$field_cast = 'CAST( ' . $field_cast . ' AS ' . strtoupper( sanitize_key( $field_type ) ) . ' )';
 			}
 		}//end if
+
+		// Validate this expression before it is used, to help prevent security issues.
+		if ( ! pods_access_sql_fragment_is_allowed( (string) $field_cast, 'FIELD' ) ) {
+			if ( pods_is_admin() ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Notice HTML is escaped within pods_get_access_admin_notice().
+				echo pods_get_access_admin_notice(
+					! empty( $params->fragment_info ) ? $params->fragment_info : [
+						'pod' => $pod,
+					],
+					true,
+					esc_html( sprintf(
+						/* translators: %s is the fragment SQL clause that was not allowed */
+						__( 'This query contains disallowed SQL fragments. It has been disabled for security purposes. The disallowed fragment was for %1$s: %2$s', 'pods' ),
+						'query_field',
+						(string) $field_cast
+					) )
+				) ?: '';
+			}
+
+			// Fragment not allowed.
+			return null;
+		}
 
 		// Setup string sanitizing for $wpdb->prepare().
 		if ( empty( $field_sanitize_format ) ) {
@@ -3106,7 +3185,7 @@ class PodsData {
 							&& ! in_array( "t.{$pod['field_id']}", $params->groupby, true )
 						)
 					) {
-						$params->groupby[] = "`t`.`{$pod['field_id']}`";
+						$params->groupby[] = '`t`.`' . sanitize_key( $pod['field_id'] ) . '`';
 					}
 				}
 			}

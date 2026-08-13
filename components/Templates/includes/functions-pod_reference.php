@@ -8,9 +8,13 @@ add_action( 'wp_ajax_pq_loadpod', 'pq_loadpod' );
  * @return array
  */
 function pq_loadpod( $podname = false ) {
+	if ( doing_action( 'wp_ajax_pq_loadpod' ) ) {
+		// This is the AJAX entry point; pq_loadpod() is also called server-side (see element-pod_reference-content.php).
+		check_ajax_referer( 'pods_pq_loadpod', 'nonce' );
+	}
 
 	if ( ! pods_is_admin() ) {
-		pods_error( __( 'Unauthorized request', 'pods' ) );
+		return pods_error( __( 'Unauthorized request', 'pods' ) );
 	}
 	if ( ! empty( $_POST['pod_reference']['pod'] ) ) {
 		$podname = $_POST['pod_reference']['pod'];

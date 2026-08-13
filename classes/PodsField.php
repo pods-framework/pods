@@ -898,6 +898,11 @@ class PodsField {
 		if ( $options ) {
 			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
+			// If not set, use the default.
+			if ( ! isset( $options[ static::$type . '_sanitize_html' ] ) ) {
+				$options[ static::$type . '_sanitize_html' ] = 1;
+			}
+
 			// Strip HTML
 			if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
 				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );

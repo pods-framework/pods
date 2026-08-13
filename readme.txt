@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.8.23.3
+Stable tag: 2.8.23.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -155,6 +155,26 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.23.4 - August 14th, 2026 =
+
+This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.
+
+Additional releases with these security fixes have been backported to each major version of Pods from Pods 2.7 and above.
+
+* Security: Further restrictions on error handling and fallbacks. (Nhien Pham @nhienit - GalaxyOne, @thevietronin - GalaxyOne, @sc0ttkclark)
+* Security: General hardening improvements to how data queries are built and validated. (HaoNH @haoit, @onebitious, @sc0ttkclark)
+* Security: Additional restrictions on how certain values are processed when displayed. (@sc0ttkclark)
+* Security: Improved safety when handling previously stored data. (@sc0ttkclark)
+* Security: Removed a legacy request-handling path that is no longer needed. (HaoNH @haoit, @sc0ttkclark)
+* Security: Tightened access requirements for certain background requests. (HaoNH @haoit, @sc0ttkclark)
+* Security: Improved consistency and enforcement of access and validation checks. (Youness HFA from AGBS Pentest Team @YounesHfa, HaoNH @haoit, @onebitious, @sc0ttkclark)
+* Security: Hardening improvements to file and media handling. (@sc0ttkclark)
+* Security: Additional safeguards for file and template handling. (@sc0ttkclark)
+* Security: Improved handling of displayed content. (@sc0ttkclark)
+* Security: Added extra verification for admin forms and actions. (@sc0ttkclark)
+* Security: Additional validation for imported content. (@sc0ttkclark)
+* Security: Improved handling of content based on user permissions. (@sc0ttkclark)
 
 = 2.8.23.3 - May 8th, 2024 =
 

@@ -584,7 +584,16 @@ class PodsView {
 		}
 
 		if ( ! empty( $_data ) && is_array( $_data ) ) {
-			extract( $_data, EXTR_SKIP );
+			// Only expose array entries whose keys are valid PHP variable names as template variables (EXTR_SKIP prevents overwriting existing scope), to help prevent security issues.
+			$_safe_data = array_filter(
+				$_data,
+				static function ( $key ) {
+					return is_string( $key ) && preg_match( '/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$/', $key );
+				},
+				ARRAY_FILTER_USE_KEY
+			);
+
+			extract( $_safe_data, EXTR_SKIP );
 		}
 
 		ob_start();

@@ -9109,6 +9109,8 @@ class PodsAPI {
 			$pod = null;
 		}
 
+		$pod_name = pods_v( 'name', $pod );
+		$pod_type = pods_v( 'type', $pod );
 		$type  = $options['type'];
 		$label = $options['label'];
 		$label = empty( $label ) ? $field : $label;
@@ -9178,6 +9180,26 @@ class PodsAPI {
 			} else {
 				// @todo handle tableless check
 			}
+		}
+
+		// Some values are just not valid and cause errors in other areas.
+		if ( $value instanceof WP_Error || is_object( $value ) ) {
+			// translators: %s is the field label.
+			return pods_error( sprintf( __( '%s is an unexpected value', 'pods' ), $label ), $this );
+		}
+
+		// Check whether user fields can be edited.
+		if (
+			0 < $id
+			&& in_array( $field, [ 'user_login', 'user_email', 'user_pass' ], true )
+			&& in_array( 'user', [ $pod_name, $pod_type ], true )
+			(
+				! is_user_logged_in()
+				|| ! current_user_can( 'edit_user', $id )
+			)
+		) {
+			// translators: %s is the field label.
+			return pods_error( sprintf( __( '%s cannot be changed, you do not have access to this user', 'pods' ), $label ), $this );
 		}
 
 		$validate = PodsForm::validate( $options['type'], $value, $field, $options, $fields, $pod, $id, $params );

@@ -135,7 +135,7 @@ class PodsField_File extends PodsField {
 				 *
 				 * @since 2.7.28
 				 *
-				 * @param string @default_directory The custom upload directory to use by default for new fields.
+				 * @param string $default_directory The custom upload directory to use by default for new fields.
 				 */
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_upload_dir_custom", '' ),
 				'type'        => 'text',
@@ -336,6 +336,35 @@ class PodsField_File extends PodsField {
 	}
 
 	/**
+	 * Determine whether someone has access to upload/browse for a file field in general.
+	 *
+	 * @return bool Whether someone has access to upload/browse for a file field in general.
+	 */
+	public function has_access_to_upload_browse() {
+		/**
+		 * Access Checking
+		 */
+		$is_user_logged_in = is_user_logged_in();
+
+		$file_upload_requirements = [
+			'disabled'          => ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ),
+			'require_login'     => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! $is_user_logged_in ),
+			'require_login_cap' => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_string( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ),
+		];
+
+		$file_browser_requirements = [
+			'disabled'          => ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER ),
+			'require_login'     => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && true === PODS_FILES_REQUIRE_LOGIN && ! $is_user_logged_in ),
+			'require_login_cap' => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_string( PODS_FILES_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ),
+		];
+
+		$file_upload_requirements  = array_filter( $file_upload_requirements );
+		$file_browser_requirements = array_filter( $file_browser_requirements );
+
+		return empty( $file_upload_requirements ) || empty( $file_browser_requirements );
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
@@ -347,27 +376,7 @@ class PodsField_File extends PodsField {
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
 
-		/**
-		 * Access Checking
-		 */
-		$is_user_logged_in = is_user_logged_in();
-
-		$file_upload_requirements = array(
-			'disabled'          => ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ),
-			'require_login'     => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! $is_user_logged_in ),
-			'require_login_cap' => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_string( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ),
-		);
-
-		$file_browser_requirements = array(
-			'disabled'          => ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER ),
-			'require_login'     => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && true === PODS_FILES_REQUIRE_LOGIN && ! $is_user_logged_in ),
-			'require_login_cap' => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_string( PODS_FILES_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ),
-		);
-
-		$file_upload_requirements  = array_filter( $file_upload_requirements );
-		$file_browser_requirements = array_filter( $file_browser_requirements );
-
-		if ( ! empty( $file_upload_requirements ) && ! empty( $file_browser_requirements ) ) {
+		if ( ! $this->has_access_to_upload_browse() ) {
 			?>
 			<p><?php esc_html_e( 'You do not have access to upload / browse files. Contact your website admin to resolve.', 'pods' ); ?></p>
 			<?php
@@ -538,8 +547,10 @@ class PodsField_File extends PodsField {
 				$uid = pods_session_id();
 			}
 
-			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
-			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
+			$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
+
+			$nonce_name  = 'pods_upload:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
+			$field_nonce = wp_create_nonce( $nonce_name );
 
 			$plupload_init = [
 				'runtimes'            => 'html5,silverlight,flash,html4',
@@ -1005,32 +1016,12 @@ class PodsField_File extends PodsField {
 		);
 
 		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		}
-
-		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
-		// @codingStandardsIgnoreLine
-		if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
-			// @codingStandardsIgnoreLine
-			$_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST['auth_cookie'];
-			// @codingStandardsIgnoreLine
-		} elseif ( empty( $_COOKIE[ AUTH_COOKIE ] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
-			// @codingStandardsIgnoreLine
-			$_COOKIE[ AUTH_COOKIE ] = $_REQUEST['auth_cookie'];
-		}
-
-		// @codingStandardsIgnoreLine
-		if ( empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) && ! empty( $_REQUEST['logged_in_cookie'] ) ) {
-			// @codingStandardsIgnoreLine
-			$_COOKIE[ LOGGED_IN_COOKIE ] = $_REQUEST['logged_in_cookie'];
-		}
-
-		global $current_user;
-		unset( $current_user );
 
 		/**
 		 * Access Checking
@@ -1057,7 +1048,7 @@ class PodsField_File extends PodsField {
 		$nonce_check = 'pods_upload_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
 
 		if ( true === $upload_disabled || ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
-			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+			return pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
 		$pod   = array();
@@ -1077,11 +1068,11 @@ class PodsField_File extends PodsField {
 			$field = self::$api->load_field( array( 'id' => (int) $params->field ) );
 
 			if ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
-				pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+				return pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 			}
 
 			if ( ! in_array( $field['type'], PodsForm::file_field_types(), true ) ) {
-				pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+				return pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
 			}
 		}
 
@@ -1123,7 +1114,7 @@ class PodsField_File extends PodsField {
 					$error = __( 'File size too large, max size is %s', 'pods' );
 					$error = sprintf( $error, pods_v( $field['type'] . '_restrict_filesize', $field['options'] ) );
 
-					pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
+					return pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
 				}
 			}//end if
 
@@ -1229,7 +1220,7 @@ class PodsField_File extends PodsField {
 					$error = __( 'File type not allowed, please use one of the following: %s', 'pods' );
 					$error = sprintf( $error, '.' . implode( ', .', $limit_types ) );
 
-					pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
+					return pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
 				}
 			}//end if
 
@@ -1306,7 +1297,7 @@ class PodsField_File extends PodsField {
 						$errors[] = '[' . $error_code . '] ' . $error_message;
 					}
 
-					pods_error( '<div style="color:#FF0000">Error: ' . implode( '</div><div>', $errors ) . '</div>' );
+					return pods_error( '<div style="color:#FF0000">Error: ' . implode( '</div><div>', $errors ) . '</div>' );
 				} else {
 					$attachment = get_post( $attachment_id, ARRAY_A );
 

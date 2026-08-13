@@ -90,15 +90,23 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 				if ( 0 !== (int) $file['error'] ) {
 					$content .= '<p>' . esc_html__( 'Import Error: Package upload failed', 'pods' ) . '</p>';
-				} elseif (
-					! in_array( $file['type'], [ 'application/json', 'text/json' ], true )
-					|| '.json' !== substr( $file['name'], -5, 5 )
-				) {
-					$content .= '<p>' . esc_html__( 'Import Error: Package upload is not a valid JSON file', 'pods' ) . '</p>';
-				} elseif ( ! is_file( $file['tmp_name'] ) ) {
+				} elseif ( ! is_uploaded_file( $file['tmp_name'] ) ) {
 					$content .= '<p>' . esc_html__( 'Import Error: Package upload not completed', 'pods' ) . '</p>';
 				} else {
 					$data = file_get_contents( $file['tmp_name'] );
+
+					// Validate on the actual content rather than the client-provided MIME type / filename: the payload must decode as a JSON array (matching how import() reads it).
+					if (
+						! in_array( $file['type'], [ 'application/json', 'text/json' ], true )
+						|| '.json' !== substr( $file['name'], -5, 5 )
+						|| (
+							! is_array( @json_decode( $data, true ) )
+							&& ! is_array( @json_decode( pods_unslash( $data ), true ) )
+						)
+					) {
+						$data     = null;
+						$content .= '<p>' . esc_html__( 'Import Error: Package upload is not a valid JSON file', 'pods' ) . '</p>';
+					}
 				}
 			}
 
@@ -119,6 +127,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 						$content .= '</ul>';
 					}
+				} else {
+					$content .= '<p>' . esc_html__( 'Import Error: Nothing found in package to import', 'pods' ) . '</p>';
 				}
 			} elseif ( null === $file ) {
 				$content .= '<p>' . esc_html__( 'Import Error: Invalid Package', 'pods' ) . '</p>';

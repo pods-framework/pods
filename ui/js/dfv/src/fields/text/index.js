@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import BaseInput from 'dfv/src/fields/base-input';
+import BaseInput from '../base-input';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Text = ( props ) => {

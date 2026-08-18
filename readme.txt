@@ -2,10 +2,10 @@
 Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, dan.stefan, Desertsnowman, mgibbs189, Shelob9, clubduece, curtismchale, mikedamage, jchristopher, pcfreak30
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
-Requires at least: 6.3
+Requires at least: 6.8
 Tested up to: 7.0
-Requires PHP: 7.2
-Stable tag: 3.3.9
+Requires PHP: 8.0
+Stable tag: 3.4.0-a-2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -186,6 +186,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 * Fixed: Resolve magic tags like `{@id}`, `{@post_title}`, and `{@name}` in Relationship / Pick field `pick_where` and `pick_having` clauses against the current item context. #7406
 
+= 3.3.10 - June 8th, 2026 =
+
+* Fixed: Resolved fatal error when calling the `Whatsit::count_groups()` method in some circumstances. (@markofapproval, @sc0ttkclark)
+
 = 3.3.9 - May 20th, 2026 =
 
 * Security: Resolve a XSS vulnerability in the Pods UI forms in the admin area. Props to Bonds through Patchstack for responsibly reporting this. (@sc0ttkclark)
@@ -301,6 +305,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 Our GitHub has the full list of all prior releases and changelogs for Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
 
 == Upgrade Notice ==
+
+= 3.4 =
+This upgrade requires a minimum versions of PHP 8.0+, WordPress 6.8+, and MySQL 5.7+.
 
 = 3.1 =
 This upgrade is security focused.

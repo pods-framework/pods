@@ -239,21 +239,17 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
  * @since 2.3.0
  */
 function pods_attachment_import( $url, $post_parent = null, $featured = false, $strict = false, $field = null, $pod = null ) {
-	$filename = explode( '?', $url );
-	$filename = $filename[0];
+	// Only allow http(s).
+	$scheme = wp_parse_url( $url, PHP_URL_SCHEME );
 
-	$filename = explode( '#', $filename );
-	$filename = $filename[0];
-
-	$filename = substr( $filename, ( strrpos( $filename, '/' ) ) + 1 );
-
-	$title = substr( $filename, 0, ( strrpos( $filename, '.' ) ) );
+	if ( ! in_array( $scheme, [ 'http', 'https' ], true ) ) {
+		return $strict ? (int) pods_error( __( 'Invalid file URL.', 'pods' ) ) : 0;
+	}
 
 	$is_custom_dir = false;
 
 	if ( $field ) {
-		$pod_name = pods_v( 'name', $pod, false );
-
+		$pod_name    = pods_v( 'name', $pod, false );
 		$context_pod = null;
 
 		if ( $pod_name ) {
@@ -267,88 +263,36 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 		$is_custom_dir = PodsField_File::use_custom_upload_dir( $field, $context_pod, [], $pod );
 	}
 
-	$uploads = wp_upload_dir( current_time( 'mysql' ) );
-
-	if ( ! ( $uploads && false === $uploads['error'] ) ) {
-		if ( $strict ) {
-			throw new Exception( esc_html( sprintf( 'Attachment import failed, uploads directory has a problem: %s', wp_json_encode( $uploads, JSON_PRETTY_PRINT ) ) ) );
-		}
-
-		if ( $is_custom_dir ) {
-			PodsField_File::use_custom_upload_dir_teardown();
-		}
-
-		return 0;
-	}
-
-	$filename = wp_unique_filename( $uploads['path'], $filename );
-	$new_file = $uploads['path'] . '/' . $filename;
-
-	if ( ! copy( $url, $new_file ) ) {
-        if ( $strict ) {
-            throw new Exception( esc_html( sprintf( 'Attachment import failed, could not copy file from %s to %s', $url, $new_file ) ) );
-        }
-
-        if ( $is_custom_dir ) {
-            PodsField_File::use_custom_upload_dir_teardown();
-        }
-
-        return 0;
-    }
-
-	$stat  = stat( dirname( $new_file ) );
-	$perms = $stat['mode'] & 0000666;
-
-	require_once ABSPATH . '/wp-admin/includes/file.php';
-
-	/** @var WP_Filesystem_Base $wp_filesystem */
-	global $wp_filesystem;
-
-	if ( WP_Filesystem() && $wp_filesystem ) {
-		$wp_filesystem->chmod( $new_file, $perms );
-	}
-
-	$wp_filetype = wp_check_filetype( $filename );
-
-	if ( ! $wp_filetype['type'] || ! $wp_filetype['ext'] ) {
-		if ( $strict ) {
-			throw new Exception( esc_html( sprintf( 'Attachment import failed, filetype check failed: %s', wp_json_encode( $wp_filetype, JSON_PRETTY_PRINT ) ) ) );
-		}
-
-		if ( $is_custom_dir ) {
-			PodsField_File::use_custom_upload_dir_teardown();
-		}
-
-		return 0;
-	}
-
-	$attachment = array(
-		'post_mime_type' => $wp_filetype['type'],
-		'guid'           => $uploads['url'] . '/' . $filename,
-		'post_parent'    => null,
-		'post_title'     => $title,
-		'post_content'   => '',
-	);
-
-	/** @var int|WP_Error $attachment_id */
-	$attachment_id = wp_insert_attachment( $attachment, $new_file, $post_parent );
-
-	if ( is_wp_error( $attachment_id ) ) {
-		if ( $strict ) {
-			throw new Exception( esc_html( sprintf( 'Attachment import failed, wp_insert_attachment failed: %s', wp_json_encode( $attachment_id, JSON_PRETTY_PRINT ) ) ) );
-		}
-
-		if ( $is_custom_dir ) {
-			PodsField_File::use_custom_upload_dir_teardown();
-		}
-
-		return 0;
-	}
-
+	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/media.php';
 	require_once ABSPATH . 'wp-admin/includes/image.php';
 
-	wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $new_file ) );
+	$tmp = download_url( $url );
+
+	if ( is_wp_error( $tmp ) ) {
+		if ( $is_custom_dir ) {
+			PodsField_File::use_custom_upload_dir_teardown();
+		}
+
+		return $strict ? (int) pods_error( $tmp->get_error_message() ) : 0;
+	}
+
+	$file_array = [
+		'name'     => basename( wp_parse_url( $url, PHP_URL_PATH ) ),
+		'tmp_name' => $tmp,
+	];
+
+	$attachment_id = media_handle_sideload( $file_array, (int) $post_parent );
+
+	if ( is_wp_error( $attachment_id ) ) {
+		wp_delete_file( $tmp );
+
+		if ( $is_custom_dir ) {
+			PodsField_File::use_custom_upload_dir_teardown();
+		}
+
+		return $strict ? (int) pods_error( $attachment_id->get_error_message() ) : 0;
+	}
 
 	// End custom directory now that all attachment file sizes have been generated.
 	if ( $is_custom_dir ) {

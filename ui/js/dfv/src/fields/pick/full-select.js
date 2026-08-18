@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import AsyncCreatableSelect from 'react-select/async-creatable';
+import CreatableSelect from 'react-select/creatable';
 import {
 	DndContext,
 	closestCenter,
@@ -89,71 +90,87 @@ const FullSelect = ( {
 	isClearable,
 	isReadOnly,
 } ) => {
-	const useAsyncSelectComponent = isTaggable || ajaxData?.ajax;
+	const isAjax = Boolean( ajaxData?.ajax );
+	const useAsyncSelectComponent = isTaggable || isAjax;
 	const AsyncSelectComponent = isTaggable ? AsyncCreatableSelect : AsyncSelect;
-	const [ asyncOptions, setAsyncOptions ] = useState( formattedOptions );
-	const [ asyncPage, setAsyncPage ] = useState( 1 );
-	const [ asyncHasMore, setAsyncHasMore ] = useState( true );
-	const asyncQuery = useRef( '' );
-	const asyncLoadCallback = useRef( null );
-	const asyncRequest = useRef( false );
-	const asyncRequestId = useRef( 0 );
 
-	const loadOptions = ( inputValue = '', callback ) => {
-		if ( callback ) {
-			asyncLoadCallback.current = callback;
-		}
+	// For AJAX-backed relationships we drive the option list ourselves so that
+	// scrolling can append additional pages. react-select's Async components hand
+	// loadOptions a single-use callback (see useAsync: it stores the pending
+	// request and ignores any callback whose request is no longer current), so an
+	// appended page can never be delivered through it.
+	const PaginatedSelectComponent = isTaggable ? CreatableSelect : Select;
 
-		if ( ! ajaxData?.ajax ) {
-			callback( formattedOptions );
+	const [ ajaxOptions, setAjaxOptions ] = useState( formattedOptions );
+	const [ ajaxIsLoading, setAjaxIsLoading ] = useState( false );
+	const [ ajaxHasMore, setAjaxHasMore ] = useState( true );
+	const ajaxQuery = useRef( '' );
+	const ajaxPage = useRef( 1 );
+	const ajaxRequestId = useRef( 0 );
+	const ajaxDebounce = useRef( null );
+
+	const fetchAjaxOptions = useCallback( ( inputValue, page ) => {
+		const requestId = ++ajaxRequestId.current;
+
+		setAjaxIsLoading( true );
+
+		loadAjaxOptions( ajaxData )( inputValue, page )
+			.then( ( results ) => {
+				if ( requestId !== ajaxRequestId.current ) {
+					return;
+				}
+
+				ajaxQuery.current = inputValue;
+				ajaxPage.current = page;
+
+				setAjaxOptions( ( previousOptions ) => (
+					1 === page ? results : [ ...previousOptions, ...results ]
+				) );
+				setAjaxHasMore( Boolean( results.hasMore ) );
+			} )
+			.catch( () => {
+				if ( requestId === ajaxRequestId.current ) {
+					setAjaxHasMore( false );
+				}
+			} )
+			.finally( () => {
+				if ( requestId === ajaxRequestId.current ) {
+					setAjaxIsLoading( false );
+				}
+			} );
+	}, [ ajaxData ] );
+
+	const handleAjaxInputChange = ( inputValue, { action } ) => {
+		if ( 'input-change' !== action ) {
 			return;
 		}
 
-		if ( asyncRequest.current && inputValue === asyncQuery.current ) {
+		if ( ajaxDebounce.current ) {
+			clearTimeout( ajaxDebounce.current );
+		}
+
+		ajaxDebounce.current = setTimeout( () => fetchAjaxOptions( inputValue, 1 ), 300 );
+	};
+
+	const handleAjaxMenuOpen = () => {
+		if ( ! ajaxIsLoading && 0 === ajaxOptions.length ) {
+			fetchAjaxOptions( ajaxQuery.current, 1 );
+		}
+	};
+
+	const handleAjaxMenuScrollToBottom = () => {
+		if ( ajaxIsLoading || ! ajaxHasMore ) {
 			return;
 		}
 
-		const isNewQuery = inputValue !== asyncQuery.current;
-		const page = isNewQuery ? 1 : asyncPage;
-		const requestId = ++asyncRequestId.current;
-		asyncRequest.current = true;
-
-		loadAjaxOptions( ajaxData )( inputValue, page ).then( ( results ) => {
-			if ( requestId !== asyncRequestId.current ) {
-				return;
-			}
-
-			const nextOptions = isNewQuery ? results : [ ...asyncOptions, ...results ];
-
-			asyncQuery.current = inputValue;
-			setAsyncPage( page + 1 );
-			setAsyncOptions( nextOptions );
-			setAsyncHasMore( results.hasMore );
-			callback( nextOptions );
-		} ).catch( () => callback( [] ) ).finally( () => {
-			asyncRequest.current = false;
-		} );
+		fetchAjaxOptions( ajaxQuery.current, ajaxPage.current + 1 );
 	};
 
-	const loadMoreOptions = () => {
-		if ( ajaxData?.ajax && asyncHasMore && asyncLoadCallback.current ) {
-			loadOptions( asyncQuery.current, asyncLoadCallback.current );
+	useEffect( () => () => {
+		if ( ajaxDebounce.current ) {
+			clearTimeout( ajaxDebounce.current );
 		}
-	};
-
-	const AsyncMenuList = ( props ) => (
-		<components.MenuList
-			{ ...props }
-			innerProps={ {
-				...props.innerProps,
-				onScroll: ( event ) => {
-					if ( event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 5 ) {
-						loadMoreOptions();
-					}
-				},
-			} }
-		/>
-	);
+	}, [] );
 
 	const sensors = useSensors(
 		useSensor( PointerSensor, {
@@ -228,11 +245,15 @@ const FullSelect = ( {
 				items={ Array.isArray( value ) ? value.map( ( item ) => item.value ) : [] }
 				strategy={ horizontalListSortingStrategy }
 			>
-				{ useAsyncSelectComponent ? (
-					<AsyncSelectComponent
+				{ isAjax ? (
+					<PaginatedSelectComponent
 						controlShouldRenderValue={ shouldRenderValue }
-						defaultOptions={ ajaxData?.ajax ? asyncOptions : formattedOptions }
-						loadOptions={ ajaxData?.ajax ? loadOptions : undefined }
+						options={ ajaxOptions }
+						isLoading={ ajaxIsLoading }
+						filterOption={ null }
+						onInputChange={ handleAjaxInputChange }
+						onMenuOpen={ handleAjaxMenuOpen }
+						onMenuScrollToBottom={ handleAjaxMenuScrollToBottom }
 						value={ value }
 						placeholder={ placeholder }
 						isMulti={ isMulti }
@@ -241,7 +262,24 @@ const FullSelect = ( {
 						isDisabled={ isReadOnly }
 						components={ {
 							MultiValue: SortableMultiValue,
-							...( ajaxData?.ajax ? { MenuList: AsyncMenuList } : {} ),
+						} }
+						menuPortalTarget={ document.body }
+						menuPosition="fixed"
+						styles={ selectStyles }
+						classNamePrefix="pods-dfv-pick-full-select"
+					/>
+				) : useAsyncSelectComponent ? (
+					<AsyncSelectComponent
+						controlShouldRenderValue={ shouldRenderValue }
+						defaultOptions={ formattedOptions }
+						value={ value }
+						placeholder={ placeholder }
+						isMulti={ isMulti }
+						isClearable={ isClearable }
+						onChange={ addNewItem }
+						isDisabled={ isReadOnly }
+						components={ {
+							MultiValue: SortableMultiValue,
 						} }
 						menuPortalTarget={ document.body }
 						menuPosition="fixed"

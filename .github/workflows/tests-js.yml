@@ -15,11 +15,12 @@ jobs:
         suite: [ 'jest' ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Setup Node.js using nvmrc file
+        uses: actions/setup-node@v7
         with:
-          node-version: '16.x'
+          node-version-file: '.nvmrc'
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: bash
@@ -33,5 +34,15 @@ jobs:
             ${{ runner.os }}-node-
       - name: Install dependencies
         run: npm ci --force --legacy-peer-deps
+      # ------------------------------------------------------------------------------
+      # @wordpress/scripts (via read-pkg / normalize-package-data) requires a valid semver
+      # "version" in package.json. Pods ships a 4-part hotfix version (e.g. 3.3.9.1), which is not
+      # valid semver and makes jest throw before it starts. Strip the 4th segment here (after
+      # npm ci, so the committed package-lock.json still matches during install), preserving any
+      # pre-release/build suffix (e.g. 3.3.9.1-a-1 -> 3.3.9-a-1).
+      - name: Normalize package.json version to valid semver
+        run: |
+          perl -i -pe 's/"version":\s*"(\d+\.\d+\.\d+)\.\d+/"version": "$1/' package.json
+          echo "Using version: $(node -p "require('./package.json').version")"
       - name: Run JS test suite
         run: npm run ${{ matrix.suite }}

@@ -2,6 +2,7 @@ import { omit } from 'lodash';
 
 import {
 	SAVE_STATUSES,
+	DUPLICATE_STATUSES,
 	DELETE_STATUSES,
 	UI_ACTIONS,
 	CURRENT_POD_ACTIONS,
@@ -47,6 +48,24 @@ export const resetGroupSaveStatus = ( groupName ) => {
 		type: UI_ACTIONS.SET_GROUP_SAVE_STATUS,
 		previousGroupName: groupName,
 		saveStatus: SAVE_STATUSES.NONE,
+		result: {},
+	};
+};
+
+export const setGroupDuplicateStatus = ( duplicateStatus, name ) => ( result = {} ) => {
+	return {
+		type: UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS,
+		name,
+		duplicateStatus,
+		result,
+	};
+};
+
+export const resetGroupDuplicateStatus = ( name ) => {
+	return {
+		type: UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS,
+		name,
+		saveStatus: DUPLICATE_STATUSES.NONE,
 		result: {},
 	};
 };
@@ -130,6 +149,13 @@ export const moveGroup = ( oldIndex, newIndex ) => {
 export const addGroup = ( result ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.ADD_GROUP,
+		result,
+	};
+};
+
+export const addDuplicateGroup = ( result ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.DUPLICATE_GROUP,
 		result,
 	};
 };
@@ -269,6 +295,22 @@ export const saveGroup = (
 			],
 			onFailure: setGroupSaveStatus( SAVE_STATUSES.SAVE_ERROR, previousName ),
 			onStart: setGroupSaveStatus( SAVE_STATUSES.SAVING, previousName ),
+		},
+	};
+};
+
+export const duplicateGroup = ( groupId, name ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.API_REQUEST,
+		payload: {
+			url: `/pods/v1/groups/${ groupId }/duplicate`,
+			method: 'POST',
+			onSuccess: [
+				setGroupDuplicateStatus( DUPLICATE_STATUSES.DUPLICATE_SUCCESS, name ),
+				addDuplicateGroup,
+			],
+			onFailure: setGroupDuplicateStatus( DUPLICATE_STATUSES.DUPLICATE_ERROR, name ),
+			onStart: setGroupDuplicateStatus( DUPLICATE_STATUSES.DUPLICATING, name ),
 		},
 	};
 };

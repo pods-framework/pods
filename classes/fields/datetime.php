@@ -263,10 +263,27 @@ class PodsField_DateTime extends PodsField {
 
 		$is_empty = false;
 
-		$value = trim( $value );
+		$value = pods_trim( (string) $value );
 
-		if ( empty( $value ) || in_array( $value, [ '0000-00-00', '0000-00-00 00:00:00' ], true ) ) {
+		if ( empty( $value ) ) {
 			$is_empty = true;
+		}
+
+		$empty_values = [
+			'0000-00-00',
+			'0000-00-00 00:00:00',
+		];
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $v ) {
+				if ( ! empty( $v ) && ! in_array( (string) $v, $empty_values, true ) ) {
+					$is_empty = false;
+
+					break;
+				}
+			}
+		} elseif ( ! empty( $v ) && ! in_array( (string) $v, $empty_values, true ) ) {
+			$is_empty = false;
 		}
 
 		return $is_empty;

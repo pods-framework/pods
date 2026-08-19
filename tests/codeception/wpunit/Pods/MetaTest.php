@@ -266,6 +266,19 @@ class MetaTest extends Pods_UnitTestCase {
 		$pod = pods( $this->pod_name, $post_id_a );
 		$pod->save( 'hidden_pick_field', array( $post_id_b ) );
 
+		// Negative control. number2 is an ordinary visible field, seeded the same way and
+		// likewise left out of $_POST below. Without it this test cannot distinguish
+		// "the hidden field was deliberately skipped" from "the save loop never saw the
+		// field set at all", in which case nothing would be cleared and the assertions
+		// below would pass vacuously.
+		$pod->save( 'number2', 42 );
+
+		$this->assertEquals(
+			'42',
+			get_post_meta( $post_id_a, 'number2', true ),
+			'Control field should have seeded value.'
+		);
+
 		$saved_value = get_post_meta( $post_id_a, 'hidden_pick_field', true );
 		$this->assertContains( (int) $post_id_b, array_map( 'intval', (array) $saved_value ), 'Hidden field should have seeded value.' );
 
@@ -287,6 +300,14 @@ class MetaTest extends Pods_UnitTestCase {
 		// The visible field should still be saved normally.
 		$number1 = get_post_meta( $post_id_a, 'number1', true );
 		$this->assertEquals( '999', $number1, 'Visible field should be saved normally.' );
+
+		// Negative control: a non-hidden field that was also absent from $_POST must be
+		// cleared. This proves the save loop actually reached fields missing from the
+		// submission, which is what makes the hidden-field assertion above meaningful.
+		$this->assertEmpty(
+			get_post_meta( $post_id_a, 'number2', true ),
+			'A visible field absent from POST should be cleared -- if it was not, the save loop never reached the field set and this test proves nothing.'
+		);
 	}
 
 	/**

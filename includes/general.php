@@ -3011,7 +3011,8 @@ function pods_data_field( $obj, $field_name ) {
 /**
  * Get a field display value from a Pod.
  *
- * @param string|null  $type   The pod name, or a Pods object. Leave null to auto-detect from The Loop.
+ * @param string|Pods|WP_Post|WP_Term|WP_User|null $type The pod name, a Pods object, or any object
+ *                                                        pods() accepts. Leave null to auto-detect from The Loop.
  * @param mixed|null   $id     (optional) The ID or slug, to load a single record. Provide an array of $params to run 'find'. Or leave null to auto-detect from The Loop.
  * @param string|array $name   The field name, or an associative array of parameters.
  * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
@@ -3028,7 +3029,7 @@ function pods_field_display( $type = null, $id = null, $name = null, $single = f
 		// allow for pods_field_display( 'field_name' );
 		if ( null === $name ) {
 			$name   = $type;
-			$single = (boolean) $id;
+			$single = (bool) $id;
 
 			$type = null;
 			$id   = null;

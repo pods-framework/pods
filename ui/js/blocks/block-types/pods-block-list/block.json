@@ -2,6 +2,7 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": "3",
   "name": "pods/pods-block-list",
+  "textdomain": "pods",
   "title": "Pods Item List",
   "description": "List multiple Pod items.",
   "category": "pods",

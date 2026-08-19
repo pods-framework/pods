@@ -38,20 +38,24 @@ class Issue7133Test extends Pods_WhatsitTestCase {
 	 */
 	public function test_count_fields_returns_all_collection_matches() {
 		// Register a second field on the same pod/group.
+		// Pods_WhatsitTestCase defaults object_storage_type to 'post_type'. Leaving it
+		// there would let WP_Query find this field directly, so the collection fallback
+		// -- the path the limit=1 leak actually broke -- would never be exercised and the
+		// test would pass with the fix reverted. Register it in collection storage so it
+		// is only reachable through the fallback.
 		$field_args = array(
-			'object_type' => 'field',
-			'name'        => 'test-field-2',
-			'label'       => 'Test field 2',
-			'description' => 'Testing field 2',
-			'parent'      => $this->pods_object_pod->get_id(),
-			'group'       => $this->pods_object_group->get_id(),
-			'type'        => 'text',
+			'object_type'         => 'field',
+			'object_storage_type' => 'collection',
+			'name'                => 'test-field-2',
+			'label'               => 'Test field 2',
+			'description'         => 'Testing field 2',
+			'parent'              => $this->pods_object_pod->get_id(),
+			'group'               => $this->pods_object_group->get_id(),
+			'type'                => 'text',
 		);
 
 		$second_field = $this->setup_pods_object( $field_args, 'field' );
 
-		// Storage type is 'post_type' by default in Pods_WhatsitTestCase; the
-		// collection fallback is what makes the second field visible.
 		$this->pods_object_storage->fallback_mode( true );
 
 		$args = array(
@@ -74,33 +78,57 @@ class Issue7133Test extends Pods_WhatsitTestCase {
 	}
 
 	/**
-	 * Bug 2 regression: explicit non-count find should still apply the 300
-	 * default cap on collection storage when no limit is passed.
+	 * Bug 2 regression: the limit must still constrain non-count finds.
 	 *
-	 * Confirms we did not accidentally remove the cap for non-count paths
-	 * when fixing the count path.
+	 * The fix skips the limit only in count mode. This asserts the two modes really do
+	 * differ, which is the actual invariant -- the previous version of this test passed
+	 * an explicit limit (bypassing the default it claimed to check) and then asserted a
+	 * bound the fixture could never exceed, so it held regardless of the fix.
 	 *
 	 * @covers Collection::find
 	 */
-	public function test_non_count_collection_find_still_applies_default_cap() {
-		// Force the 300 cap to apply by passing a large limit.
-		$args = array(
+	public function test_limit_constrains_non_count_find_but_not_count_find() {
+		$field_args = array(
+			'object_type'         => 'field',
+			'object_storage_type' => 'collection',
+			'name'                => 'test-field-limit',
+			'label'               => 'Test field limit',
+			'description'         => 'Testing field limit',
+			'parent'              => $this->pods_object_pod->get_id(),
+			'group'               => $this->pods_object_group->get_id(),
+			'type'                => 'text',
+		);
+
+		$extra_field = $this->setup_pods_object( $field_args, 'field' );
+
+		$this->pods_object_storage->fallback_mode( true );
+
+		$base_args = array(
 			'object_type' => 'field',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'parent_name' => $this->pods_object_pod->get_name(),
 			'refresh'     => true,
-			'limit'       => 1000,
 		);
 
-		$objects = $this->pods_object_storage->find( $args );
+		// Non-count mode honours the limit.
+		$limited = $this->pods_object_storage->find( array_merge( $base_args, array( 'limit' => 1 ) ) );
 
-		$this->assertIsArray( $objects );
-		// Without the cap, all matches are returned; the cap stays in
-		// place for non-count paths.
-		$this->assertLessThanOrEqual( 1000, count( $objects ),
-			'Non-count find with explicit large limit returns up to that limit.'
+		$this->assertLessThanOrEqual(
+			1,
+			count( $limited ),
+			'A non-count find must still respect an explicit limit.'
 		);
-		$this->assertLessThanOrEqual( 300, count( $objects ),
-			'Non-count find is still capped by the default 300-post limit when no limit is given.'
+
+		// Count mode ignores it, which is the whole point of the fix.
+		$counted = $this->pods_object_storage->find( array_merge( $base_args, array( 'count' => true ) ) );
+
+		$this->assertGreaterThan(
+			1,
+			count( $counted ),
+			'Count mode must not be capped by the internal limit=1 it sets for itself.'
 		);
+
+		unset( $extra_field );
 	}
 
 	/**

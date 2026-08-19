@@ -15,10 +15,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          # Always check the plugin out into a "pods" directory regardless of the repository slug
+          # (e.g. private mirrors / forks), so slic, the WPLoader plugins list, and the committed
+          # dump.sql all resolve it uniformly as "pods".
+          path: pods
 
       - name: Run plugin check
         uses: wordpress/plugin-check-action@v1
         with:
+          # The repository is checked out into a "pods" subdirectory above, but the action defaults
+          # build-dir to "./" (the workspace root), which is empty and yields "no files to check".
+          # Point it at the checked-out plugin so PLUGIN_DIR/PLUGIN_SLUG resolve to "pods".
+          build-dir: './pods'
           ignore-warnings: 'true'

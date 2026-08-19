@@ -41,15 +41,13 @@ class Bindings {
 	 * @since 3.2.0
 	 */
 	public function register_block_bindings() {
-		if ( ! function_exists( 'register_block_bindings_source' ) || ! pods_can_use_dynamic_feature( 'display' ) ) {
-			return;
+		if ( function_exists( 'register_block_bindings_source' ) && pods_can_use_dynamic_feature( 'display' ) ) {
+			register_block_bindings_source( 'pods/bindings-field', [
+				'label'              => __( 'Pods Field', 'pods' ),
+				'get_value_callback' => [ $this, 'get_value' ],
+				'uses_context'       => [ 'postId', 'postType' ],
+			] );
 		}
-
-		register_block_bindings_source( 'pods/bindings-field', [
-			'label'              => __( 'Pods Field', 'pods' ),
-			'get_value_callback' => [ $this, 'get_value' ],
-			'uses_context'       => [ 'postId', 'postType' ],
-		] );
 	}
 
 	/**
@@ -58,11 +56,9 @@ class Bindings {
 	 * @since 3.2.0
 	 */
 	public function unregister_block_bindings() {
-		if ( ! function_exists( 'unregister_block_bindings_source' ) || ! pods_can_use_dynamic_feature( 'display' ) ) {
-			return;
+		if ( function_exists( 'unregister_block_bindings_source' ) && pods_can_use_dynamic_feature( 'display' ) ) {
+			unregister_block_bindings_source( 'pods/bindings-field' );
 		}
-
-		unregister_block_bindings_source( 'pods/bindings-field' );
 	}
 
 	/**
@@ -78,7 +74,7 @@ class Bindings {
 	 */
 	public function get_value( $source_args, $block_instance, $attribute_name ) {
 		if ( empty( $source_args['field'] ) ) {
-			if ( is_admin() || wp_is_rest_endpoint() || pods_is_admin() ) {
+			if ( is_admin() || ( function_exists( 'wp_is_rest_endpoint' ) && wp_is_rest_endpoint() ) || pods_is_admin() ) {
 				return __( 'You must provide the "field" of the field to bind.', 'pods' );
 			}
 
@@ -89,7 +85,7 @@ class Bindings {
 		$field_block = pods_container( 'pods.blocks.field' );
 
 		if ( ! $field_block ) {
-			if ( is_admin() || wp_is_rest_endpoint() || pods_is_admin() ) {
+			if ( is_admin() || ( function_exists( 'wp_is_rest_endpoint' ) && wp_is_rest_endpoint() ) || pods_is_admin() ) {
 				return __( 'Pods blocks are not enabled.', 'pods' );
 			}
 

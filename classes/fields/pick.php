@@ -2750,11 +2750,11 @@ class PodsField_Pick extends PodsField {
 				}
 
 				if ( ! empty( $params['where'] ) && (array) $table_info['where_default'] !== $params['where'] ) {
-					$params['where'] = pods_evaluate_tags( $params['where'], $evaluate_tag_args );
+					$params['where'] = pods_evaluate_tags_in_context( $params['where'], $evaluate_tag_args );
 				}
 
 				if ( ! empty( $params['having'] ) ) {
-					$params['having'] = pods_evaluate_tags( $params['having'], $evaluate_tag_args );
+					$params['having'] = pods_evaluate_tags_in_context( $params['having'], $evaluate_tag_args );
 				}
 
 				if ( empty( $params['where'] ) || ( ! is_array( $params['where'] ) && '' === trim( $params['where'] ) ) ) {

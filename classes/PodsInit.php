@@ -1892,7 +1892,7 @@ class PodsInit {
 	 * Bails out unchanged whenever the post type is not a Pods post type, when
 	 * the title is non-empty, or when no stored label is available.
 	 *
-	 * @since 3.3.10
+	 * @since 3.4.0
 	 *
 	 * @param string $title          Archive title after upstream filters.
 	 * @param string $original_title Archive title before the prefix is applied.
@@ -1930,10 +1930,25 @@ class PodsInit {
 		}
 
 		if ( $prefix ) {
-			return sprintf( '%1$s %2$s', $prefix, '<span>' . $label . '</span>' );
+			$title = sprintf( '%1$s %2$s', $prefix, '<span>' . $label . '</span>' );
+		} else {
+			$title = $label;
 		}
 
-		return $label;
+		/**
+		 * Filter the fallback archive title used for a Pods post type archive.
+		 *
+		 * A site that deliberately blanks archive titles has no other way to opt out,
+		 * since this filter runs at priority 20 and would otherwise re-add the title
+		 * unconditionally. Return an empty string to keep the title blank.
+		 *
+		 * @since 3.4.0
+		 *
+		 * @param string $title          The fallback archive title.
+		 * @param string $post_type_slug The post type slug.
+		 * @param string $prefix         Archive title prefix.
+		 */
+		return apply_filters( 'pods_filter_archive_title', $title, $post_type_slug, $prefix );
 	}
 
 	/**

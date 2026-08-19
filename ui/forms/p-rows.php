@@ -59,8 +59,10 @@ foreach ( $fields as $field ) {
 
 	$row_classes = $field_row_classes . ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true );
 
-	if ( ! empty( $field['class'] ) ) {
-		$row_classes .= ' ' . $field['class'];
+	$field_row_class = pods_form_normalize_field_class( $field['class'] );
+
+	if ( '' !== $field_row_class ) {
+		$row_classes .= ' ' . $field_row_class;
 	}
 
 	$row_classes = trim( $row_classes );

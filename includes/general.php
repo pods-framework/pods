@@ -399,7 +399,10 @@ function pods_error( $error, $obj = null ) {
 				 * The error string itself is already sanitized earlier in this function
 				 * (see the non-array and array branches above).
 				 */
-				die( sprintf( '<e>%s</e>', $error ) );
+				// The <e> marker must sit outside wp_kses_post(), which strips unknown tags.
+				// JS consumers match on it by position (see PluploadUploader.js and jquery.pods.js).
+				// $error itself is still escaped, matching pods_debug() below.
+				die( '<e>' . wp_kses_post( $error ) . '</e>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		} elseif ( 'wp_error' === $error_mode ) {
 			return $wp_error;

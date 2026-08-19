@@ -243,8 +243,8 @@ class PodsField_File extends PodsField {
 				'data'                  => apply_filters(
 					"pods_form_ui_field_{$type}_type_templates",
 					[
-						'rows'  => __( 'Rows', 'pods' ),
-						'tiles' => __( 'Tiles', 'pods' ),
+						'rows'  => __( 'Rows (small)', 'pods' ),
+						'tiles' => __( 'Rows (large)', 'pods' ),
 					]
 				),
 				'pick_format_single'    => 'dropdown',
@@ -1025,8 +1025,8 @@ class PodsField_File extends PodsField {
 			$link = '{{link}}';
 		}
 
-		$editable = (boolean) $editable;
-		$linked   = (boolean) $linked;
+		$editable = (bool) $editable;
+		$linked   = (bool) $linked;
 		?>
 		<li class="pods-file hidden" id="pods-file-<?php echo esc_attr( $id ); ?>">
 			<?php

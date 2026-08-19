@@ -2938,7 +2938,7 @@ function pods_field( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
-		$single = (boolean) $id;
+		$single = (bool) $id;
 
 		$pod = null;
 		$id  = null;
@@ -3024,7 +3024,7 @@ function pods_field_display( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field_display( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
-		$single = (boolean) $id;
+		$single = (bool) $id;
 
 		$pod = null;
 		$id  = null;
@@ -3060,7 +3060,7 @@ function pods_field_raw( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field_raw( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
-		$single = (boolean) $id;
+		$single = (bool) $id;
 
 		$pod = null;
 		$id  = null;

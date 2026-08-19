@@ -194,7 +194,7 @@ class Post_Type extends Collection {
 		$fallback_mode = $this->fallback_mode;
 
 		if ( isset( $args['fallback_mode'] ) ) {
-			$fallback_mode = (boolean) $args['fallback_mode'];
+			$fallback_mode = (bool) $args['fallback_mode'];
 		}
 
 		$meta_query = [];

@@ -208,29 +208,30 @@ class PodsField_Paragraph extends PodsField {
 		$value = $this->trim_whitespace( $value, $options );
 
 		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
+			/** @var WP_Embed $embed */
 			$embed = $GLOBALS['wp_embed'];
-			$value = $embed->run_shortcode( $value );
+			$value = $embed->run_shortcode( (string) $value );
 			$value = $embed->autoembed( $value );
 		}
 
 		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
-			$value = wptexturize( $value );
+			$value = wptexturize( (string) $value );
 		}
 
 		if ( 1 === (int) pods_v( static::$type . '_convert_chars', $options, 1 ) ) {
-			$value = convert_chars( $value );
+			$value = convert_chars( (string) $value );
 		}
 
 		if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
-			$value = wpautop( $value );
+			$value = wpautop( (string) $value );
 		}
 
 		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
 			if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
-				$value = shortcode_unautop( $value );
+				$value = shortcode_unautop( (string) $value );
 			}
 
-			$value = do_shortcode( $value );
+			$value = do_shortcode( (string) $value );
 		}
 
 		/**

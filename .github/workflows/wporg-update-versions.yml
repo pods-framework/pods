@@ -60,7 +60,7 @@ jobs:
           plugin_path: ${{ github.workspace }}
       - name: Commit changes
         id: auto-commit-action
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: ${{ env.WPORG_PLUGIN_FILE }} readme.txt package.json
           commit_message: Update wporg version(s)

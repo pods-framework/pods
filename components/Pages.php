@@ -554,7 +554,7 @@ class Pods_Pages extends PodsComponent {
 			10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		];
 
-		if ( false === (boolean) $post_type->public ) {
+		if ( false === (bool) $post_type->public ) {
 			// translators: %s is the singular label.
 			$messages[ $post_type->name ][1] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
 			// translators: %s is the singular label.
@@ -1045,13 +1045,13 @@ class Pods_Pages extends PodsComponent {
 				'page_template' => get_post_meta( $object['ID'], 'page_template', true ),
 				'title'         => get_post_meta( $object['ID'], 'page_title', true ),
 				'options'       => [
-					'admin_only'              => (boolean) get_post_meta( $object['ID'], 'admin_only', true ),
-					'restrict_role'           => (boolean) get_post_meta( $object['ID'], 'restrict_role', true ),
-					'restrict_capability'     => (boolean) get_post_meta( $object['ID'], 'restrict_capability', true ),
+					'admin_only'              => (bool) get_post_meta( $object['ID'], 'admin_only', true ),
+					'restrict_role'           => (bool) get_post_meta( $object['ID'], 'restrict_role', true ),
+					'restrict_capability'     => (bool) get_post_meta( $object['ID'], 'restrict_capability', true ),
 					'roles_allowed'           => get_post_meta( $object['ID'], 'roles_allowed', true ),
 					'capability_allowed'      => get_post_meta( $object['ID'], 'capability_allowed', true ),
-					'restrict_redirect'       => (boolean) get_post_meta( $object['ID'], 'restrict_redirect', true ),
-					'restrict_redirect_login' => (boolean) get_post_meta( $object['ID'], 'restrict_redirect_login', true ),
+					'restrict_redirect'       => (bool) get_post_meta( $object['ID'], 'restrict_redirect', true ),
+					'restrict_redirect_login' => (bool) get_post_meta( $object['ID'], 'restrict_redirect_login', true ),
 					'restrict_redirect_url'   => get_post_meta( $object['ID'], 'restrict_redirect_url', true ),
 					'pod'                     => get_post_meta( $object['ID'], 'pod', true ),
 					'pod_slug'                => get_post_meta( $object['ID'], 'pod_slug', true ),
@@ -1091,13 +1091,13 @@ class Pods_Pages extends PodsComponent {
 			'page_template' => get_post_meta( $id, 'page_template', true ),
 			'title'         => get_post_meta( $id, 'page_title', true ),
 			'options'       => [
-				'admin_only'              => (boolean) get_post_meta( $id, 'admin_only', true ),
-				'restrict_role'           => (boolean) get_post_meta( $id, 'restrict_role', true ),
-				'restrict_capability'     => (boolean) get_post_meta( $id, 'restrict_capability', true ),
+				'admin_only'              => (bool) get_post_meta( $id, 'admin_only', true ),
+				'restrict_role'           => (bool) get_post_meta( $id, 'restrict_role', true ),
+				'restrict_capability'     => (bool) get_post_meta( $id, 'restrict_capability', true ),
 				'roles_allowed'           => get_post_meta( $id, 'roles_allowed', true ),
 				'capability_allowed'      => get_post_meta( $id, 'capability_allowed', true ),
-				'restrict_redirect'       => (boolean) get_post_meta( $id, 'restrict_redirect', true ),
-				'restrict_redirect_login' => (boolean) get_post_meta( $id, 'restrict_redirect_login', true ),
+				'restrict_redirect'       => (bool) get_post_meta( $id, 'restrict_redirect', true ),
+				'restrict_redirect_login' => (bool) get_post_meta( $id, 'restrict_redirect_login', true ),
 				'restrict_redirect_url'   => get_post_meta( $id, 'restrict_redirect_url', true ),
 				'pod'                     => get_post_meta( $id, 'pod', true ),
 				'pod_slug'                => get_post_meta( $id, 'pod_slug', true ),
@@ -1281,7 +1281,7 @@ class Pods_Pages extends PodsComponent {
 		if ( false !== self::$exists ) {
 			$permission = pods_permission( self::$exists );
 
-			$permission = (boolean) apply_filters( 'pods_pages_permission', $permission, self::$exists );
+			$permission = (bool) apply_filters( 'pods_pages_permission', $permission, self::$exists );
 
 			if ( $permission ) {
 				$content = false;
@@ -1576,8 +1576,11 @@ class Pods_Pages extends PodsComponent {
 			foreach ( $paths_to_check as $path_to_check ) {
 				$file_path = $path_to_check . DIRECTORY_SEPARATOR . $template;
 
-				if ( file_exists( $file_path ) ) {
-					$template = $file_path;
+				// The page_template comes from stored admin config; confirm the resolved file stays within an allowed theme/content path before including it, to help prevent security issues.
+				$safe_path = pods_validate_safe_path( $file_path, [ 'theme', 'content' ] );
+
+				if ( $safe_path ) {
+					$template = $safe_path;
 
 					break;
 				}

@@ -112,12 +112,6 @@ class Wisdom_Tracker {
 		// Display the admin notice on activation
 		add_action( 'admin_init', [ $this, 'set_notification_time' ] );
 		add_action( 'admin_notices', [ $this, 'optin_notice' ] );
-		add_action( 'admin_notices', [ $this, 'marketing_notice' ] );
-
-		// Deactivation
-		add_filter( 'plugin_action_links_' . plugin_basename( $this->plugin_file ), [ $this, 'filter_action_links' ] );
-		add_action( 'admin_footer-plugins.php', [ $this, 'goodbye_ajax' ] );
-		add_action( 'wp_ajax_goodbye_form', [ $this, 'goodbye_form_callback' ] );
 	}
 
 	/**
@@ -758,10 +752,15 @@ class Wisdom_Tracker {
 	 */
 	public function optin_notice() {
 		// Check for plugin args
-		if ( isset( $_GET['plugin'] ) && isset( $_GET['plugin_action'] ) ) {
-			$plugin = sanitize_text_field( $_GET['plugin'] );
-			$action = sanitize_text_field( $_GET['plugin_action'] );
-			if ( $action == 'yes' ) {
+		if (
+			! empty( $_GET['wisdom_plugin'] )
+			&& ! empty( $_GET['wisdom_plugin_action'] )
+			&& ! empty( $_GET['wisdom_plugin_nonce'] )
+			&& wp_verify_nonce( $_GET['wisdom_plugin_nonce'], 'wisdom_plugin_action' )
+		) {
+			$plugin = sanitize_text_field( $_GET['wisdom_plugin'] );
+			$action = sanitize_text_field( $_GET['wisdom_plugin_action'] );
+			if ( $action === 'yes' ) {
 				$this->set_is_tracking_allowed( true, $plugin );
 				// Run this straightaway
 				add_action( 'admin_init', [ $this, 'force_tracking' ] );
@@ -809,24 +808,28 @@ class Wisdom_Tracker {
 			$plugin      = $this->plugin_data();
 			$plugin_name = $plugin['Name'];
 
+			$nonce = wp_create_nonce( 'wisdom_plugin_action' );
+
 			// Args to add to query if user opts in to tracking
 			$yes_args = [
-				'plugin'        => $this->plugin_name,
-				'plugin_action' => 'yes',
+				'wisdom_plugin'        => $this->plugin_name,
+				'wisdom_plugin_action' => 'yes',
+				'wisdom_plugin_nonce'  => $nonce,
 			];
 
 			// Decide how to request permission to collect email addresses
-			if ( $this->marketing == 1 ) {
+			if ( (int) $this->marketing === 1 ) {
 				// Option 1 combines permissions to track and collect email
-				$yes_args['marketing_optin'] = 'yes';
-			} elseif ( $this->marketing == 2 ) {
+				$yes_args['wisdom_marketing_optin'] = 'yes';
+			} elseif ( (int) $this->marketing === 2 ) {
 				// Option 2 enables a second notice that fires after the user opts in to tracking
-				$yes_args['marketing'] = 'yes';
+				$yes_args['wisdom_marketing'] = 'yes';
 			}
 			$url_yes = add_query_arg( $yes_args );
 			$url_no  = add_query_arg( [
-				'plugin'        => $this->plugin_name,
-				'plugin_action' => 'no',
+				'wisdom_plugin'        => $this->plugin_name,
+				'wisdom_plugin_action' => 'no',
+				'wisdom_plugin_nonce'  => $nonce,
 			] );
 
 			// Decide on notice text
@@ -854,263 +857,6 @@ class Wisdom_Tracker {
 			</div>
 			<?php
 		}
-	}
-
-	/**
-	 * Display the marketing notice to users if enabled
-	 * Only displays after the user has opted in to tracking
-	 *
-	 * @since 1.0.0
-	 */
-	public function marketing_notice() {
-		// Check if user has opted in to marketing
-		if ( isset( $_GET['marketing_optin'] ) ) {
-			// Set marketing optin
-			$this->set_can_collect_email( sanitize_text_field( $_GET['marketing_optin'] ), $this->plugin_name );
-			// Do tracking
-			$this->do_tracking( true );
-		} elseif ( isset( $_GET['marketing'] ) && $_GET['marketing'] == 'yes' ) {
-			// Display the notice requesting permission to collect email address
-			// Retrieve current plugin information
-			$plugin      = $this->plugin_data();
-			$plugin_name = $plugin['Name'];
-
-			$url_yes = add_query_arg( [
-				'plugin'          => $this->plugin_name,
-				'marketing_optin' => 'yes',
-			] );
-			$url_no  = add_query_arg( [
-				'plugin'          => $this->plugin_name,
-				'marketing_optin' => 'no',
-			] );
-
-			// translators: %s is the type of plugin/theme being tracked.
-			$marketing_text = sprintf( __( 'Thank you for opting in to tracking. Would you like to receive occasional news about this %s, including details of new features and special offers?', 'pods' ), $this->what_am_i );
-			$marketing_text = apply_filters( 'wisdom_marketing_text_' . esc_attr( $this->plugin_name ), $marketing_text ); ?>
-
-			<div class="notice notice-info updated put-dismiss-notice">
-				<p><?php echo '<strong>' . esc_html( $plugin_name ) . '</strong>'; ?></p>
-				<p><?php echo esc_html( $marketing_text ); ?></p>
-				<p>
-					<a href="<?php echo esc_url( $url_yes ); ?>" data-putnotice="yes"
-						class="button-secondary"><?php esc_html_e( 'Yes Please', 'pods' ); ?></a>
-					<a href="<?php echo esc_url( $url_no ); ?>" data-putnotice="no"
-						class="button-secondary"><?php esc_html_e( 'No Thank You', 'pods' ); ?></a>
-				</p>
-			</div>
-		<?php }
-	}
-
-	/**
-	 * Filter the deactivation link to allow us to present a form when the user deactivates the plugin
-	 *
-	 * @since 1.0.0
-	 */
-	public function filter_action_links( $links ) {
-		// Check to see if the user has opted in to tracking
-		if ( ! $this->get_is_tracking_allowed() ) {
-			return $links;
-		}
-		if ( isset( $links['deactivate'] ) && $this->include_goodbye_form ) {
-			$deactivation_link = $links['deactivate'];
-			// Insert an onClick action to allow form before deactivating
-			$deactivation_link   = str_replace( '<a ', '<div class="put-goodbye-form-wrapper"><span class="put-goodbye-form" id="put-goodbye-form-' . esc_attr( $this->plugin_name ) . '"></span></div><a onclick="javascript:event.preventDefault();" id="put-goodbye-link-' . esc_attr( $this->plugin_name ) . '" ', $deactivation_link );
-			$links['deactivate'] = $deactivation_link;
-		}
-
-		return $links;
-	}
-
-	/*
-	 * Form text strings
-	 * These are non-filterable and used as fallback in case filtered strings aren't set correctly
-	 * @since 1.0.0
-	 */
-	public function form_default_text() {
-		$form            = [];
-		$form['heading'] = __( 'Sorry to see you go', 'pods' );
-		$form['body']    = __( 'Before you deactivate the plugin, would you quickly give us your reason for doing so?', 'pods' );
-		$form['options'] = [
-			__( 'Set up is too difficult', 'pods' ),
-			__( 'Lack of documentation', 'pods' ),
-			__( 'Not the features I wanted', 'pods' ),
-			__( 'Found a better plugin', 'pods' ),
-			__( 'Installed by mistake', 'pods' ),
-			__( 'Only required temporarily', 'pods' ),
-			__( 'Didn\'t work', 'pods' ),
-		];
-		$form['details'] = __( 'Details (optional)', 'pods' );
-
-		return $form;
-	}
-
-	/**
-	 * Form text strings
-	 * These can be filtered
-	 * The filter hook must be unique to the plugin
-	 *
-	 * @since 1.0.0
-	 */
-	public function form_filterable_text() {
-		$form = $this->form_default_text();
-
-		return apply_filters( 'wisdom_form_text_' . esc_attr( $this->plugin_name ), $form );
-	}
-
-	/**
-	 * Form text strings
-	 * These can be filtered
-	 *
-	 * @since 1.0.0
-	 */
-	public function goodbye_ajax() {
-		// Get our strings for the form
-		$form = $this->form_filterable_text();
-		if ( ! isset( $form['heading'] ) || ! isset( $form['body'] ) || ! isset( $form['options'] ) || ! is_array( $form['options'] ) || ! isset( $form['details'] ) ) {
-			// If the form hasn't been filtered correctly, we revert to the default form
-			$form = $this->form_default_text();
-		}
-		// Build the HTML to go in the form
-		$html = '<div class="put-goodbye-form-head"><strong>' . esc_html( $form['heading'] ) . '</strong></div>';
-		$html .= '<div class="put-goodbye-form-body"><p>' . esc_html( $form['body'] ) . '</p>';
-		if ( is_array( $form['options'] ) ) {
-			$html .= '<div class="put-goodbye-options"><p>';
-			foreach ( $form['options'] as $option ) {
-				$html .= '<input type="checkbox" name="put-goodbye-options[]" id="' . str_replace( " ", "", esc_attr( $option ) ) . '" value="' . esc_attr( $option ) . '"> <label for="' . str_replace( " ", "", esc_attr( $option ) ) . '">' . esc_attr( $option ) . '</label><br>';
-			}
-			$html .= '</p><label for="put-goodbye-reasons">' . esc_html( $form['details'] ) . '</label><textarea name="put-goodbye-reasons" id="put-goodbye-reasons" rows="2" style="width:100%"></textarea>';
-			$html .= '</div><!-- .put-goodbye-options -->';
-		}
-		$html .= '</div><!-- .put-goodbye-form-body -->';
-		$html .= '<p class="deactivating-spinner"><span class="spinner"></span> ' . __( 'Submitting form', 'pods' ) . '</p>';
-		?>
-		<div class="put-goodbye-form-bg"></div>
-		<style type="text/css">
-			.put-form-active .put-goodbye-form-bg {
-				background: rgba(0, 0, 0, .5);
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-			}
-
-			.put-goodbye-form-wrapper {
-				position: relative;
-				z-index: 999;
-				display: none;
-			}
-
-			.put-form-active .put-goodbye-form-wrapper {
-				display: block;
-			}
-
-			.put-goodbye-form {
-				display: none;
-			}
-
-			.put-form-active .put-goodbye-form {
-				position: absolute;
-				bottom: 30px;
-				left: 0;
-				max-width: 400px;
-				background: #fff;
-				white-space: normal;
-			}
-
-			.put-goodbye-form-head {
-				background: #0073aa;
-				color: #fff;
-				padding: 8px 18px;
-			}
-
-			.put-goodbye-form-body {
-				padding: 8px 18px;
-				color: #444;
-			}
-
-			.deactivating-spinner {
-				display: none;
-			}
-
-			.deactivating-spinner .spinner {
-				float: none;
-				margin: 4px 4px 0 18px;
-				vertical-align: bottom;
-				visibility: visible;
-			}
-
-			.put-goodbye-form-footer {
-				padding: 8px 18px;
-			}
-		</style>
-		<script>
-			jQuery( document ).ready( function( $ ) {
-				$( "#put-goodbye-link-<?php echo esc_attr( $this->plugin_name ); ?>" ).on( 'click', function() {
-					// We'll send the user to this deactivation link when they've completed or dismissed the form
-					var url = document.getElementById( "put-goodbye-link-<?php echo esc_attr( $this->plugin_name ); ?>" );
-					$( 'body' ).toggleClass( 'put-form-active' );
-					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).fadeIn();
-					$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" )
-						.html( '<?php echo wp_kses_post( $html ); ?>'
-							+ '<div class="put-goodbye-form-footer"><p><a id="put-submit-form" class="button primary" href="#"><?php esc_html_e( 'Submit and Deactivate', 'pods' ); ?></a>&nbsp;<a class="secondary button" href="'
-							+ url
-							+ '"><?php esc_html_e( 'Just Deactivate', 'pods' ); ?></a></p></div>' );
-					$( '#put-submit-form' ).on( 'click', function( e ) {
-						// As soon as we click, the body of the form should disappear
-						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .put-goodbye-form-body" )
-							.fadeOut();
-						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .put-goodbye-form-footer" )
-							.fadeOut();
-						// Fade in spinner
-						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?> .deactivating-spinner" )
-							.fadeIn();
-						e.preventDefault();
-						var values = new Array();
-						$.each( $( 'input[name=\'put-goodbye-options[]\']:checked' ), function() {
-							values.push( $( this ).val() );
-						} );
-						var details = $( '#put-goodbye-reasons' ).val();
-						var data = {
-							'action': 'goodbye_form',
-							'values': values,
-							'details': details,
-							'security': "<?php echo esc_js( wp_create_nonce( 'wisdom_goodbye_form' ) ); ?>",
-							'dataType': 'json',
-						};
-						$.post( ajaxurl, data, function( response ) {
-							// Redirect to original deactivation URL
-							window.location.href = url;
-						} );
-					} );
-					// If we click outside the form, the form will close
-					$( '.put-goodbye-form-bg' ).on( 'click', function() {
-						$( "#put-goodbye-form-<?php echo esc_attr( $this->plugin_name ); ?>" ).fadeOut();
-						$( 'body' ).removeClass( 'put-form-active' );
-					} );
-				} );
-			} );
-		</script>
-	<?php }
-
-	/**
-	 * AJAX callback when the form is submitted
-	 *
-	 * @since 1.0.0
-	 */
-	public function goodbye_form_callback() {
-		check_ajax_referer( 'wisdom_goodbye_form', 'security' );
-		if ( isset( $_POST['values'] ) ) {
-			$values = json_encode( wp_unslash( $_POST['values'] ) );
-			update_option( 'wisdom_deactivation_reason_' . $this->plugin_name, $values );
-		}
-		if ( isset( $_POST['details'] ) ) {
-			$details = sanitize_text_field( $_POST['details'] );
-			update_option( 'wisdom_deactivation_details_' . $this->plugin_name, $details );
-		}
-		$this->do_tracking(); // Run this straightaway
-		echo 'success';
-		wp_die();
 	}
 
 }

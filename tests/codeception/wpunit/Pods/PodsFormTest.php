@@ -121,4 +121,54 @@ class PodsFormTest extends Pods_UnitTestCase {
 
 		$this->assertSame( '[fooshortcode]', $value );
 	}
+
+	/**
+	 * Shortcode expansion must not be coupled to magic tag evaluation: a default that
+	 * contains a magic tag AND a shortcode must still have both applied.
+	 *
+	 * @covers PodsForm::default_value
+	 */
+	public function test_default_value_evaluates_both_magic_tags_and_shortcodes() {
+		add_shortcode( 'fooshortcode', static function () {
+			return 'foobar';
+		} );
+
+		$value = PodsForm::default_value(
+			'',
+			'text',
+			'my_field',
+			array(
+				'default'              => '{@user.ID} [fooshortcode]',
+				'text_allow_shortcode' => 1,
+			)
+		);
+
+		$this->assertStringContainsString( 'foobar', $value );
+		$this->assertStringNotContainsString( '[fooshortcode]', $value );
+	}
+
+	/**
+	 * default_evaluate_tags only governs magic tags. Turning it off must not silently
+	 * disable shortcode expansion, which is a separate opt-in.
+	 *
+	 * @covers PodsForm::default_value
+	 */
+	public function test_default_value_evaluates_shortcode_when_tag_evaluation_disabled() {
+		add_shortcode( 'fooshortcode', static function () {
+			return 'foobar';
+		} );
+
+		$value = PodsForm::default_value(
+			'',
+			'text',
+			'my_field',
+			array(
+				'default'               => '[fooshortcode]',
+				'text_allow_shortcode'  => 1,
+				'default_evaluate_tags' => 0,
+			)
+		);
+
+		$this->assertSame( 'foobar', $value );
+	}
 }

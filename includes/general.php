@@ -389,7 +389,20 @@ function pods_error( $error, $obj = null ) {
 			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( (string) $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
 				wp_die( wp_kses_post( $error ), '', [ 'back_link' => true ] );
 			} else {
-				die( wp_kses_post( sprintf( '<e>%s</e>', $error ) ) );
+				/*
+				 * The <e>...</e> marker is part of a contract with the JS admin form
+				 * (ui/js/jquery.pods.js, ui/js/jquery.pods.upgrade.js, and the plupload
+				 * file uploader) — they detect the marker to short-circuit the AJAX
+				 * success path and surface the error. Do not run the body through
+				 * wp_kses_post() here, as it would strip the unknown <e> tag.
+				 *
+				 * The error string itself is already sanitized earlier in this function
+				 * (see the non-array and array branches above).
+				 */
+				// The <e> marker must sit outside wp_kses_post(), which strips unknown tags.
+				// JS consumers match on it by position (see PluploadUploader.js and jquery.pods.js).
+				// $error itself is still escaped, matching pods_debug() below.
+				die( '<e>' . wp_kses_post( $error ) . '</e>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		} elseif ( 'wp_error' === $error_mode ) {
 			return $wp_error;

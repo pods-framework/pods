@@ -170,7 +170,11 @@ class Connection {
 				$connection->set_query_arg( 'post__in', $field_value );
 
 				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
-				if ( empty( $args['orderby'] ) ) {
+				// WPGraphQL exposes filtering arguments under `where`, so the client's ordering lives at
+				// $args['where']['orderby'] (see PostObjectConnectionResolver::get_query_args()). Checking
+				// $args['orderby'] would read a key that is never populated, making this unconditional and
+				// silently overriding any orderby the client asked for.
+				if ( empty( $args['where']['orderby'] ) ) {
 					$connection->set_query_arg( 'orderby', 'post__in' );
 				}
 
@@ -185,7 +189,7 @@ class Connection {
 				$connection->set_query_arg( 'include', $field_value );
 
 				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
-				if ( empty( $args['orderby'] ) ) {
+				if ( empty( $args['where']['orderby'] ) ) {
 					$connection->set_query_arg( 'orderby', 'include' );
 				}
 
@@ -195,7 +199,7 @@ class Connection {
 				$connection->set_query_arg( 'in', $field_value );
 
 				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
-				if ( empty( $args['orderby'] ) ) {
+				if ( empty( $args['where']['orderby'] ) ) {
 					$connection->set_query_arg( 'orderby', 'in' );
 				}
 
@@ -205,7 +209,7 @@ class Connection {
 				$connection->set_query_arg( 'include', $field_value );
 
 				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
-				if ( empty( $args['orderby'] ) ) {
+				if ( empty( $args['where']['orderby'] ) ) {
 					$connection->set_query_arg( 'orderby', 'include' );
 				}
 
@@ -221,7 +225,7 @@ class Connection {
 				$connection->set_query_arg( 'post__in', $field_value );
 
 				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
-				if ( empty( $args['orderby'] ) ) {
+				if ( empty( $args['where']['orderby'] ) ) {
 					$connection->set_query_arg( 'orderby', 'post__in' );
 				}
 
@@ -231,7 +235,7 @@ class Connection {
 				$connection->set_query_arg( 'comment__in', $field_value );
 
 				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
-				if ( empty( $args['orderby'] ) ) {
+				if ( empty( $args['where']['orderby'] ) ) {
 					$connection->set_query_arg( 'orderby', 'comment__in' );
 				}
 
@@ -246,7 +250,7 @@ class Connection {
 				$connection->set_query_arg( 'post__in', $field_value );
 
 				// Preserve the Pods-saved order; mirrors WPGraphQL's native behavior for `in:` connections.
-				if ( empty( $args['orderby'] ) ) {
+				if ( empty( $args['where']['orderby'] ) ) {
 					$connection->set_query_arg( 'orderby', 'post__in' );
 				}
 

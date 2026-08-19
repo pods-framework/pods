@@ -172,11 +172,29 @@ class Pod_Type extends AbstractConnectionResolver {
 		if ( ! empty( $this->ordered_ids ) ) {
 			$ordered = [];
 
-			foreach ( $this->ordered_ids as $ordered_id ) {
-				$ordered_id = (int) $ordered_id;
+			// PodsAPI::load_pods() returns objects keyed by *name* (see
+			// pods_objects_keyed_by_name()), so $ids holds name strings while the caller
+			// may supply either object IDs or names. Build an id => name map so both work;
+			// comparing the raw values would never match and left the order untouched.
+			$keys_by_id = [];
 
-				if ( in_array( $ordered_id, $ids, true ) ) {
-					$ordered[] = $ordered_id;
+			foreach ( $this->query as $key => $object ) {
+				if ( is_object( $object ) && method_exists( $object, 'get_id' ) ) {
+					$keys_by_id[ (int) $object->get_id() ] = $key;
+				}
+			}
+
+			foreach ( $this->ordered_ids as $ordered_id ) {
+				$key = null;
+
+				if ( isset( $keys_by_id[ (int) $ordered_id ] ) ) {
+					$key = $keys_by_id[ (int) $ordered_id ];
+				} elseif ( in_array( (string) $ordered_id, $ids, true ) ) {
+					$key = (string) $ordered_id;
+				}
+
+				if ( null !== $key && ! in_array( $key, $ordered, true ) ) {
+					$ordered[] = $key;
 				}
 			}
 

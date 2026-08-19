@@ -94,6 +94,11 @@ class Item_List extends Base {
 								'source'    => 'shortcode',
 								'attribute' => 'limit',
 							],
+							'offset'  => [
+								'type'      => 'integer',
+								'source'    => 'shortcode',
+								'attribute' => 'offset',
+							],
 							'orderby'  => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
@@ -269,6 +274,13 @@ class Item_List extends Base {
 				'type'        => 'number',
 				'default'     => 15,
 				'description' => __( 'Specify the number of items to show but keep in mind that the more items you show the longer it may take for the page to load. You should avoid using "-1" here unless you know what you\'re doing. If your pod has many items, it could stop the page from loading and cause errors. Default number of items to show is to show 15 items. See also: find()', 'pods' ),
+			],
+			'offset' => [
+				'name'        => 'offset',
+				'label'       => __( 'Offset', 'pods' ),
+				'type'        => 'number',
+				'default'     => 0,
+				'description' => __( 'Specify the number of items to skip before listing items. This is useful when you want to show different items from the same pod in different places on the same page. See also: find()', 'pods' ),
 			],
 			'orderby' => [
 				'name'        => 'orderby',

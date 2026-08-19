@@ -77,6 +77,10 @@
       "type": "number",
       "default": 15
     },
+    "offset": {
+      "type": "number",
+      "default": 0
+    },
     "orderby": {
       "type": "string"
     },

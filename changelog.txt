@@ -2,6 +2,29 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases and changelogs for Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
 
+= 3.3.9.1 - August 14th, 2026 =
+
+This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.
+
+Additional releases with these security fixes have been backported to each major version of Pods from Pods 2.7 and above.
+
+* Security: Further restrictions on error handling and fallbacks. (Nhien Pham @nhienit - GalaxyOne, @thevietronin - GalaxyOne, @sc0ttkclark)
+* Security: General hardening improvements to how data queries are built and validated. (HaoNH @haoit, @onebitious, @sc0ttkclark)
+* Security: Additional restrictions on how certain values are processed when displayed. (@sc0ttkclark)
+* Security: Improved safety when handling previously stored data. (@sc0ttkclark)
+* Security: Removed a legacy request-handling path that is no longer needed. (HaoNH @haoit, @sc0ttkclark)
+* Security: Tightened access requirements for certain background requests. (HaoNH @haoit, @sc0ttkclark)
+* Security: Improved consistency and enforcement of access and validation checks. (Youness HFA from AGBS Pentest Team @YounesHfa, HaoNH @haoit, @onebitious, @sc0ttkclark)
+* Security: Hardening improvements to file and media handling. (@sc0ttkclark)
+* Security: Additional safeguards for file and template handling. (@sc0ttkclark)
+* Security: Improved handling of displayed content. (@sc0ttkclark)
+* Security: Added extra verification for admin forms and actions. (@sc0ttkclark)
+* Security: Additional validation for imported content. (@sc0ttkclark)
+* Security: Improved handling of content based on user permissions. (@sc0ttkclark)
+* Security: Updated bundled third-party JavaScript dependencies. (@sc0ttkclark)
+* Security: Added a filter to optionally restrict access to the REST API documentation endpoint, which remains public by default. (@sc0ttkclark)
+* Security: Additional automated test coverage for the changes in this release. (@sc0ttkclark)
+
 = 3.3.9 - May 20th, 2026 =
 
 * Security: Resolve a XSS vulnerability in the Pods UI forms in the admin area. Props to Bonds through Patchstack for responsibly reporting this. (@sc0ttkclark)

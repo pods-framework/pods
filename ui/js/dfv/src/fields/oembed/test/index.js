@@ -69,6 +69,8 @@ describe( 'Oembed field component', () => {
 		global.fetch = jest.fn( () =>
 			Promise.resolve( {
 				status: 200,
+				ok: true,
+				headers: { get: () => null },
 				json: () => Promise.resolve( {
 					title: 'Embed Result',
 					html: '<iframe title=\'Embed Title\' width=\'200\' height=\'113\' src=\'https://www.youtube.com/embed/test?feature=oembed\' frameborder=\'0\' allow=\'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\' allowfullscreen></iframe>',

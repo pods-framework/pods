@@ -159,13 +159,13 @@ class Pods_Migrate_PHP extends PodsComponent {
 		$has_objects_to_migrate = ! empty( $pod_templates_selected ) || ! empty( $pod_pages_selected );
 
 		foreach ( $pod_templates_selected as $object_id => $checked ) {
-			if ( true === (boolean) $checked && isset( $pod_templates_available_to_migrate[ (int) $object_id ] ) ) {
+			if ( true === (bool) $checked && isset( $pod_templates_available_to_migrate[ (int) $object_id ] ) ) {
 				$pod_templates[] = $object_id;
 			}
 		}
 
 		foreach ( $pod_pages_selected as $object_id => $checked ) {
-			if ( true === (boolean) $checked && isset( $pod_pages_available_to_migrate[ (int) $object_id ] ) ) {
+			if ( true === (bool) $checked && isset( $pod_pages_available_to_migrate[ (int) $object_id ] ) ) {
 				$pod_pages[] = $object_id;
 			}
 		}
@@ -241,23 +241,23 @@ class Pods_Migrate_PHP extends PodsComponent {
 
 			if ( ! $wp_filesystem->is_dir( $pods_path ) && ! $wp_filesystem->mkdir( $pods_path, FS_CHMOD_DIR ) ) {
 				// translators: %s is the directory path.
-				pods_error( sprintf( esc_html__( 'Unable to create the directory: %s', 'pods' ), $pods_path ) );
+				return pods_error( sprintf( esc_html__( 'Unable to create the directory: %s', 'pods' ), $pods_path ) );
 			}
 
 			$grandparent_path = dirname( dirname( $file_path ) );
 
 			if ( $pods_path !== $grandparent_path && ! $wp_filesystem->is_dir( $grandparent_path ) && ! $wp_filesystem->mkdir( $grandparent_path, FS_CHMOD_DIR ) ) {
 				// translators: %s is the directory path.
-				pods_error( sprintf( esc_html__( 'Unable to create the directory: %s', 'pods' ), $grandparent_path ) );
+				return pods_error( sprintf( esc_html__( 'Unable to create the directory: %s', 'pods' ), $grandparent_path ) );
 			}
 
 			if ( ! $wp_filesystem->mkdir( dirname( $file_path ), FS_CHMOD_DIR ) ) {
 				// translators: %s is the directory path.
-				pods_error( sprintf( esc_html__( 'Unable to create the directory: %s', 'pods' ), $file_path ) );
+				return pods_error( sprintf( esc_html__( 'Unable to create the directory: %s', 'pods' ), $file_path ) );
 			}
 		} elseif ( ! $wp_filesystem->is_writable( dirname( $file_path ) ) ) {
 			// translators: %s is the directory path.
-			pods_error( sprintf( esc_html__( 'Unable to write to the directory: %s', 'pods' ), $file_path ) );
+			return pods_error( sprintf( esc_html__( 'Unable to write to the directory: %s', 'pods' ), $file_path ) );
 		}
 	}
 
@@ -274,14 +274,14 @@ class Pods_Migrate_PHP extends PodsComponent {
 
 		if ( ! $object ) {
 			// translators: %s is the object ID.
-			pods_error( sprintf( esc_html__( 'Unable to find the Pod Template by ID: %s', 'pods' ), $object_id ) );
+			return pods_error( sprintf( esc_html__( 'Unable to find the Pod Template by ID: %s', 'pods' ), $object_id ) );
 		}
 
 		$files = Pods_Templates::get_templates_for_pod_template( $object );
 
 		if ( count( $files ) < 2 ) {
 			// translators: %s is the file paths found.
-			pods_error( sprintf( esc_html__( 'Unable to detect the file path: %s', 'pods' ), json_encode( $files, JSON_PRETTY_PRINT ) ) );
+			return pods_error( sprintf( esc_html__( 'Unable to detect the file path: %s', 'pods' ), json_encode( $files, JSON_PRETTY_PRINT ) ) );
 		}
 
 		$file_path = trailingslashit( get_stylesheet_directory() ) . array_shift( $files );
@@ -311,7 +311,7 @@ PHPTEMPLATE;
 
 		if ( ! $wp_filesystem->put_contents( $file_path, $contents, FS_CHMOD_FILE ) ) {
 			// translators: %s is the file path.
-			pods_error( sprintf( esc_html__( 'Unable to write to the file: %s', 'pods' ), $file_path ) );
+			return pods_error( sprintf( esc_html__( 'Unable to write to the file: %s', 'pods' ), $file_path ) );
 		}
 
 		if ( $cleanup ) {
@@ -338,7 +338,7 @@ PHPTEMPLATE;
 
 		if ( ! $object ) {
 			// translators: %s is the object ID.
-			pods_error( sprintf( esc_html__( 'Unable to find the Pod Page by ID: %s', 'pods' ), $object_id ) );
+			return pods_error( sprintf( esc_html__( 'Unable to find the Pod Page by ID: %s', 'pods' ), $object_id ) );
 		}
 
 		$files             = Pods_Pages::get_templates_for_pod_page( $object );
@@ -346,7 +346,7 @@ PHPTEMPLATE;
 
 		if ( count( $files ) < 2 ) {
 			// translators: %s is the file paths found.
-			pods_error( sprintf( esc_html__( 'Unable to detect the file path: %s', 'pods' ), json_encode( $files, JSON_PRETTY_PRINT ) ) );
+			return pods_error( sprintf( esc_html__( 'Unable to detect the file path: %s', 'pods' ), json_encode( $files, JSON_PRETTY_PRINT ) ) );
 		}
 
 		$file_path             = trailingslashit( get_stylesheet_directory() ) . array_shift( $files );
@@ -450,7 +450,7 @@ PHPTEMPLATE;
 
 		if ( ! $wp_filesystem->put_contents( $file_path, $contents, FS_CHMOD_FILE ) ) {
 			// translators: %s is the file path.
-			pods_error( sprintf( esc_html__( 'Unable to write to the file: %s', 'pods' ), $file_path ) );
+			return pods_error( sprintf( esc_html__( 'Unable to write to the file: %s', 'pods' ), $file_path ) );
 		}
 
 		if ( $cleanup ) {

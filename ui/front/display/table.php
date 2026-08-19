@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<tr class="pods-all-fields-row pods-all-fields-row-name-<?php echo esc_attr( PodsForm::clean( $field_path, true ) ); ?>">
 			<th scope="row">
 				<strong>
-					<?php echo $field_label; // @codingStandardsIgnoreLine ?>
+					<?php echo esc_html( $field_label ); ?>
 				</strong>
 			</th>
 			<td>

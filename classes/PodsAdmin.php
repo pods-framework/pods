@@ -59,7 +59,6 @@ class PodsAdmin {
 
 		// AJAX for Admin
 		add_action( 'wp_ajax_pods_admin', [ $this, 'admin_ajax' ] );
-		add_action( 'wp_ajax_nopriv_pods_admin', [ $this, 'admin_ajax' ] );
 
 		// Add Media Bar button for Shortcode
 		add_action( 'media_buttons', [ $this, 'media_button' ], 12 );
@@ -2110,7 +2109,9 @@ class PodsAdmin {
 		$is_demo = pods_is_demo();
 
 		// Handle reset dismiss separately.
-		if ( 'reset' === $callout_dismiss ) {
+		if ( 'reset' === $callout_dismiss && pods_is_admin() ) {
+			// Internal-only action.
+
 			// Reset callouts.
 			update_option( 'pods_callouts', [] );
 
@@ -4143,7 +4144,7 @@ class PodsAdmin {
 		$methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
 		if ( ! isset( $params->method ) || ! isset( $methods[ $params->method ] ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
+			return pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
 		}
 
 		$defaults = [
@@ -4162,7 +4163,7 @@ class PodsAdmin {
 				|| false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method )
 			)
 		) {
-			pods_error( __( 'Unauthorized request', 'pods' ), $this );
+			return pods_error( __( 'Unauthorized request', 'pods' ), $this );
 		}
 
 		// Cleaning up $params
@@ -4179,7 +4180,7 @@ class PodsAdmin {
 				// They have access to the custom priv.
 			} else {
 				// They do not have access.
-				pods_error( __( 'Access denied', 'pods' ), $this );
+				return pods_error( __( 'Access denied', 'pods' ), $this );
 			}
 		}
 
@@ -4199,7 +4200,7 @@ class PodsAdmin {
 			$output = (string) apply_filters( 'pods_api_migrate_run', $params );
 		} else {
 			if ( ! method_exists( $api, $method->name ) ) {
-				pods_error( __( 'API method does not exist', 'pods' ), $this );
+				return pods_error( __( 'API method does not exist', 'pods' ), $this );
 			} elseif ( 'save_pod' === $method->name ) {
 				if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
 					$params->fields = $params->field_data_json;
@@ -4242,7 +4243,7 @@ class PodsAdmin {
 				echo $output;
 			}
 		} else {
-			pods_error( __( 'There was a problem with your request.', 'pods' ) );
+			return pods_error( __( 'There was a problem with your request.', 'pods' ) );
 		}//end if
 
 		die();

@@ -3,17 +3,11 @@ import deepFreeze from 'deep-freeze';
 import * as paths from '../state-paths';
 
 import {
-	SAVE_STATUSES,
-	DELETE_STATUSES,
-	CURRENT_POD_ACTIONS,
-	UI_ACTIONS,
-	INITIAL_UI_STATE,
+	SAVE_STATUSES, DUPLICATE_STATUSES, DELETE_STATUSES, CURRENT_POD_ACTIONS, UI_ACTIONS, INITIAL_UI_STATE,
 } from '../constants';
 
 import {
-	ui,
-	currentPod,
-	global,
+	ui, currentPod, global,
 } from '../reducer';
 
 describe( 'UI reducer', () => {
@@ -59,15 +53,31 @@ describe( 'UI reducer', () => {
 		expect( newState.saveMessage ).toEqual( 'Saving...' );
 	} );
 
-	it( 'uses the default for an unknown save status', () => {
+	it( 'changes the group duplicate status', () => {
 		const action = {
-			type: UI_ACTIONS.SET_SAVE_STATUS,
-			saveStatus: 'xyzzy',
+			type: UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS,
+			name: 'group_abc',
+			duplicateStatus: DUPLICATE_STATUSES.DUPLICATING,
+			result: {
+				message: 'Duplicating...',
+			},
 		};
 
 		const newState = ui( state, action );
 
-		expect( newState.saveStatus ).toEqual( INITIAL_UI_STATE.saveStatus );
+		expect( newState.groupDuplicateStatuses.group_abc ).toEqual( action.duplicateStatus );
+		expect( newState.groupDuplicateMessages.group_abc ).toEqual( 'Duplicating...' );
+	} );
+
+	it( 'uses the default for an unknown group duplicate status', () => {
+		const action = {
+			type: UI_ACTIONS.SET_GROUP_DUPLICATE_STATUS,
+			duplicateStatus: 'xyzzy',
+		};
+
+		const newState = ui( state, action );
+
+		expect( newState.duplicateStatus ).toEqual( INITIAL_UI_STATE.duplicateStatus );
 	} );
 
 	it( 'changes the delete status', () => {

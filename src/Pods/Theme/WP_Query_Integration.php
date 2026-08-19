@@ -541,7 +541,7 @@ class WP_Query_Integration {
 
 		$compare = strtoupper( (string) ( $meta_query['compare'] ?? '=' ) );
 		$value   = $meta_query['value'] ?? '';
-		$type    = $meta_query['type'] ?? 'CHAR';
+		$type    = $this->get_cast_for_type( $meta_query['type'] ?? '' );
 
 		// Coerce value into the same shape WP_Meta_Query expects, then prepare() it via $wpdb.
 		$prepared = $this->prepare_meta_query_value( $value, $type );
@@ -622,6 +622,42 @@ class WP_Query_Integration {
 		}
 
 		return $is_string ? $wpdb->prepare( '%s', (string) $value ) : $wpdb->prepare( '%d', (int) $value );
+	}
+
+	/**
+	 * Resolve a meta_query "type" into a cast type that is safe to interpolate.
+	 *
+	 * The result is placed directly inside a CAST( ... AS %s ) expression, so it can
+	 * never be taken from the caller verbatim -- doing so allows arbitrary SQL to be
+	 * injected through the meta_query "type" key.
+	 *
+	 * This mirrors WP_Meta_Query::get_cast_for_type() so that table-based Pod fields
+	 * cast exactly the way postmeta does, including mapping NUMERIC to SIGNED
+	 * (NUMERIC is not valid MySQL CAST syntax). Anything unrecognised falls back to
+	 * CHAR rather than being passed through.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param string $type The requested cast type.
+	 *
+	 * @return string A cast type that is safe to interpolate into SQL.
+	 */
+	protected function get_cast_for_type( $type = '' ) {
+		if ( empty( $type ) ) {
+			return 'CHAR';
+		}
+
+		$meta_type = strtoupper( (string) $type );
+
+		if ( ! preg_match( '/^(?:BINARY|CHAR|DATE|DATETIME|SIGNED|UNSIGNED|TIME|NUMERIC(?:\(\d+(?:,\s?\d+)?\))?|DECIMAL(?:\(\d+(?:,\s?\d+)?\))?)$/', $meta_type ) ) {
+			return 'CHAR';
+		}
+
+		if ( 'NUMERIC' === $meta_type ) {
+			$meta_type = 'SIGNED';
+		}
+
+		return $meta_type;
 	}
 
 }

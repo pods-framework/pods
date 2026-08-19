@@ -1,6 +1,6 @@
 /* global ajaxurl */
 
-const loadAjaxOptions = ( ajaxData = {} ) => async ( inputValue = '' ) => {
+const loadAjaxOptions = ( ajaxData = {} ) => async ( inputValue = '', page = 1 ) => {
 	const data = {
 		_wpnonce: ajaxData?._wpnonce,
 		action: 'pods_relationship',
@@ -10,6 +10,7 @@ const loadAjaxOptions = ( ajaxData = {} ) => async ( inputValue = '' ) => {
 		uri_hash: ajaxData?.uri_hash ?? '',
 		id: ajaxData?.id ?? 0,
 		query: inputValue,
+		page,
 	};
 
 	const formData = new FormData();
@@ -35,10 +36,12 @@ const loadAjaxOptions = ( ajaxData = {} ) => async ( inputValue = '' ) => {
 
 		const formattedResults = resultBody.results.map( ( result ) => (
 			{
-				label: result?.name,
+				label: result?.name ?? result?.text,
 				value: result?.id,
 			}
 		) );
+
+		formattedResults.hasMore = Boolean( resultBody.has_more );
 
 		return formattedResults;
 	} catch ( e ) {

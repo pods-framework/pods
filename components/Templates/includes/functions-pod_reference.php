@@ -11,6 +11,9 @@ add_action( 'wp_ajax_pq_loadpod', 'pods_ajax_pq_loadpod' );
  * @param bool|string $podname
  */
 function pods_ajax_pq_loadpod() {
+	// This is the AJAX entry point; pq_loadpod() is also called server-side (see element-pod_reference-content.php).
+	check_ajax_referer( 'pods_pq_loadpod', 'nonce' );
+
 	pq_loadpod();
 }
 
@@ -23,7 +26,7 @@ function pods_ajax_pq_loadpod() {
 function pq_loadpod( $podname = false ) {
 
 	if ( ! pods_is_admin() ) {
-		pods_error( __( 'Unauthorized request', 'pods' ) );
+		return pods_error( __( 'Unauthorized request', 'pods' ) );
 	}
 	if ( ! empty( $_POST['pod_reference']['pod'] ) ) {
 		$podname = $_POST['pod_reference']['pod'];

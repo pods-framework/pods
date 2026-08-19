@@ -280,6 +280,10 @@ function pods_unslash( $input ) {
  * @since 1.2.0
  */
 function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+		return $input;
+	}
+
 	if ( is_object( $input ) ) {
 		$input = get_object_vars( $input );
 

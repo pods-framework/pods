@@ -10,7 +10,9 @@
 # supported CodeQL languages.
 #
 name: "CodeQL"
-
+permissions:
+  contents: read
+  security-events: read
 on:
   push:
     # The branches below must be a subset of the branches above
@@ -40,7 +42,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v6
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

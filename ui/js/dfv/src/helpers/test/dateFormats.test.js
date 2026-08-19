@@ -3,6 +3,7 @@ import {
 	convertjQueryUIDateFormatToMomentFormat,
 	convertjQueryUITimeFormatToMomentFormat,
 	convertPodsDateFormatToMomentFormat,
+	getArrayOfYearsFromJqueryUIYearRange,
 } from '../dateFormats';
 
 describe( 'convertPHPDateFormatToMomentFormat', () => {
@@ -124,5 +125,50 @@ describe( 'convertPodsDateFormatToMomentFormat', () => {
 		expect( convertPodsDateFormatToMomentFormat( '' ) ).toEqual( '' );
 
 		expect( convertPodsDateFormatToMomentFormat( 'invalid' ) ).toEqual( '' );
+	} );
+} );
+
+describe( 'getArrayOfYearsFromJqueryUIYearRange', () => {
+	const THIS_YEAR = 2020;
+	const DISPLAYED_YEAR = 2015;
+
+	it( 'returns undefined without a range', () => {
+		expect( getArrayOfYearsFromJqueryUIYearRange( '', THIS_YEAR, DISPLAYED_YEAR ) ).toBeUndefined();
+	} );
+
+	it( 'includes both endpoints of an absolute range', () => {
+		expect(
+			getArrayOfYearsFromJqueryUIYearRange( '2000:2003', THIS_YEAR, DISPLAYED_YEAR )
+		).toEqual( [ 2000, 2001, 2002, 2003 ] );
+	} );
+
+	it( 'returns a single year when start and end match', () => {
+		expect(
+			getArrayOfYearsFromJqueryUIYearRange( '2000:2000', THIS_YEAR, DISPLAYED_YEAR )
+		).toEqual( [ 2000 ] );
+	} );
+
+	it( 'clamps an inverted range to the start year', () => {
+		expect(
+			getArrayOfYearsFromJqueryUIYearRange( '2005:2000', THIS_YEAR, DISPLAYED_YEAR )
+		).toEqual( [ 2005 ] );
+	} );
+
+	it( 'resolves offsets relative to the current year', () => {
+		expect(
+			getArrayOfYearsFromJqueryUIYearRange( '-2:+1', THIS_YEAR, DISPLAYED_YEAR )
+		).toEqual( [ 2018, 2019, 2020, 2021 ] );
+	} );
+
+	it( 'resolves c-prefixed offsets relative to the displayed year', () => {
+		expect(
+			getArrayOfYearsFromJqueryUIYearRange( 'c-1:c+1', THIS_YEAR, DISPLAYED_YEAR )
+		).toEqual( [ 2014, 2015, 2016 ] );
+	} );
+
+	it( 'falls back to the current year for unparseable bounds', () => {
+		expect(
+			getArrayOfYearsFromJqueryUIYearRange( 'nope:nope', THIS_YEAR, DISPLAYED_YEAR )
+		).toEqual( [ 2020 ] );
 	} );
 } );

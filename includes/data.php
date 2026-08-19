@@ -2824,7 +2824,7 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 
 	$path_match = false;
 
-	foreach ( $paths_to_check as $check_type ) {
+	foreach ( (array) $paths_to_check as $check_type ) {
 		if ( ! isset( $available_checks[ $check_type ] ) ) {
 			continue;
 		}
@@ -2834,7 +2834,18 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 		$is_theme = 'theme' === $check_type;
 
 		foreach ( $check_type_paths as $path_to_check ) {
-			if ( $real_path && 0 === strpos( $real_path, $path_to_check ) && file_exists( $real_path ) ) {
+			/*
+			 * Separator-anchored prefix so a sibling directory whose name merely
+			 * starts with the allowed path (e.g. ".../plugins/pods-evil" vs the
+			 * "pods" root ".../plugins/pods") cannot satisfy the check.
+			 */
+			$path_to_check_prefix = rtrim( $path_to_check, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+
+			if (
+				$real_path
+				&& ( $real_path === $path_to_check || 0 === strpos( $real_path, $path_to_check_prefix ) )
+				&& file_exists( $real_path )
+			) {
 				// Check the path starts with the one we are checking for and that the file exists.
 				$path_match = true;
 
@@ -2845,11 +2856,17 @@ function pods_validate_safe_path( $path, $paths_to_check = null ) {
 				// Check the theme directories.
 				$path_localized_for_theme = trim( $path, DIRECTORY_SEPARATOR );
 
-				// Confirm the file exists.
-				if ( file_exists( $path_to_check . DIRECTORY_SEPARATOR . $path_localized_for_theme ) ) {
+				// Resolve the candidate with realpath() and confirm it still lives inside the theme directory before accepting it, to help prevent security issues.
+				$theme_real_path = (string) realpath( $path_to_check . DIRECTORY_SEPARATOR . $path_localized_for_theme );
+
+				if (
+					$theme_real_path
+					&& 0 === strpos( $theme_real_path, $path_to_check_prefix )
+					&& file_exists( $theme_real_path )
+				) {
 					$path_match = true;
 
-					$path = $path_to_check . DIRECTORY_SEPARATOR . $path_localized_for_theme;
+					$path = $theme_real_path;
 
 					break;
 				}

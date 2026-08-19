@@ -1578,4 +1578,77 @@ class DataTest extends Pods_UnitTestCase {
 		);
 	}
 
+	// Exercises pods_validate_safe_path(): real paths inside allowed roots are accepted while out-of-root / non-existent paths are rejected.
+
+	/**
+	 * @covers ::pods_validate_safe_path
+	 */
+	public function test_pods_validate_safe_path_allows_existing_file_within_pods_dir() {
+		$file = PODS_DIR . 'init.php';
+
+		$this->assertFileExists( $file, 'Expected a known file to exist inside PODS_DIR.' );
+
+		$result = pods_validate_safe_path( $file, 'pods' );
+
+		$this->assertNotFalse( $result, 'A real file inside PODS_DIR should be allowed.' );
+		$this->assertSame( realpath( $file ), $result );
+	}
+
+	/**
+	 * @covers ::pods_validate_safe_path
+	 */
+	public function test_pods_validate_safe_path_rejects_path_outside_allowed_root() {
+		// A real file that exists but is not inside PODS_DIR.
+		$outside = ABSPATH . 'wp-load.php';
+
+		if ( ! file_exists( $outside ) ) {
+			$this->markTestSkipped( 'wp-load.php not found for out-of-root check.' );
+		}
+
+		$this->assertFalse(
+			pods_validate_safe_path( $outside, 'pods' ),
+			'A file outside the allowed root must be rejected.'
+		);
+	}
+
+	/**
+	 * @covers ::pods_validate_safe_path
+	 */
+	public function test_pods_validate_safe_path_strips_traversal_and_rejects_escape() {
+		// Segments are stripped so the path stays within PODS_DIR; it does not resolve to a real file and is rejected.
+		$this->assertFalse(
+			pods_validate_safe_path( PODS_DIR . '../../../../etc/passwd', 'pods' )
+		);
+	}
+
+	/**
+	 * @covers ::pods_validate_safe_path
+	 */
+	public function test_pods_validate_safe_path_rejects_nonexistent_file() {
+		$this->assertFalse(
+			pods_validate_safe_path( PODS_DIR . 'this-file-does-not-exist-xyz.php', 'pods' )
+		);
+	}
+
+	/**
+	 * @covers ::pods_validate_safe_path
+	 */
+	public function test_pods_validate_safe_path_rejects_when_no_paths_to_check() {
+		$this->assertFalse(
+			pods_validate_safe_path( PODS_DIR . 'init.php', [] )
+		);
+	}
+
+	/**
+	 * @covers ::pods_validate_safe_path
+	 */
+	public function test_pods_validate_safe_path_allows_via_all() {
+		$file = PODS_DIR . 'init.php';
+
+		$this->assertNotFalse(
+			pods_validate_safe_path( $file, 'all' ),
+			'The "all" keyword should include the pods root.'
+		);
+	}
+
 }

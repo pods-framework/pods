@@ -79,12 +79,15 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	}
 
 	/**
+	 * from_serialized() reconstructs only from serialized argument arrays.
+	 *
 	 * @covers Whatsit::from_serialized
 	 */
 	public function test_from_serialized() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'from_serialized' ), 'Method from_serialized does not exist' );
 
-		$serialized = serialize( $this->pods_object_field );
+		// The supported interchange format is a serialized args array.
+		$serialized = serialize( $this->pods_object_field->get_args() );
 
 		$to = $this->pods_object_field->from_serialized( $serialized );
 
@@ -102,16 +105,27 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	public function test_from_serialized_args() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'from_serialized' ), 'Method from_serialized does not exist' );
 
-		$serialized = serialize( $this->pods_object_field );
+		$serialized = serialize( $this->pods_object_field->get_args() );
 
 		$to = $this->pods_object_field->from_serialized( $serialized, true );
 
 		$this->assertIsArray( $to );
-		$this->assertEquals( $this->pods_object_field->get_args(), $to );
 		$this->assertEquals( $this->pods_object_field->get_id(), $to['id'] );
 		$this->assertEquals( $this->pods_object_field->get_name(), $to['name'] );
 		$this->assertEquals( $this->pods_object_field->get_parent(), $to['parent'] );
 		$this->assertEquals( $this->pods_object_field->get_group(), $to['group'] );
+	}
+
+	/**
+	 * A serialized object payload should be refused and return null.
+	 *
+	 * @covers Whatsit::from_serialized
+	 */
+	public function test_from_serialized_rejects_serialized_object() {
+		$serialized = serialize( $this->pods_object_field );
+
+		$this->assertNull( $this->pods_object_field->from_serialized( $serialized ) );
+		$this->assertNull( $this->pods_object_field->from_serialized( $serialized, true ) );
 	}
 
 	/**

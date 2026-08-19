@@ -19,16 +19,17 @@
 	}
 }
 
-.pods-field-group-wrapper--unsaved  {
+.pods-field-group-wrapper--unsaved {
 	border-left: 5px #95BF3B;
 }
 
-.pods-field-group-wrapper--deleting  {
+.pods-field-group-wrapper--duplicating,
+.pods-field-group-wrapper--deleting {
 	opacity: 0.5;
 	user-select: none;
 }
 
-.pods-field-group-wrapper--errored  {
+.pods-field-group-wrapper--errored {
 	border-left: 5px edit-pod-variables.$color--red solid;
 }
 

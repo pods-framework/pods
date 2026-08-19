@@ -160,6 +160,7 @@ class PodsInit {
 		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
 		add_action( 'after_setup_theme', [ $this, 'after_setup_theme' ] );
 		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
+		add_filter( 'plugin_action_links_' . PODS_SLUG, [ $this, 'settings_link' ] );
 	}
 
 	/**
@@ -1178,18 +1179,18 @@ class PodsInit {
 
 				// Supported
 				$cpt_supported = [
-					'title'           => (boolean) pods_v( 'supports_title', $post_type, false ),
-					'editor'          => (boolean) pods_v( 'supports_editor', $post_type, false ),
-					'author'          => (boolean) pods_v( 'supports_author', $post_type, false ),
-					'thumbnail'       => (boolean) pods_v( 'supports_thumbnail', $post_type, false ),
-					'excerpt'         => (boolean) pods_v( 'supports_excerpt', $post_type, false ),
-					'trackbacks'      => (boolean) pods_v( 'supports_trackbacks', $post_type, false ),
-					'custom-fields'   => (boolean) pods_v( 'supports_custom_fields', $post_type, false ),
-					'comments'        => (boolean) pods_v( 'supports_comments', $post_type, false ),
-					'revisions'       => (boolean) pods_v( 'supports_revisions', $post_type, false ),
-					'page-attributes' => (boolean) pods_v( 'supports_page_attributes', $post_type, false ),
-					'post-formats'    => (boolean) pods_v( 'supports_post_formats', $post_type, false ),
-					'quick-edit'      => (boolean) pods_v( 'supports_quick_edit', $post_type, true ),
+					'title'           => (bool) pods_v( 'supports_title', $post_type, false ),
+					'editor'          => (bool) pods_v( 'supports_editor', $post_type, false ),
+					'author'          => (bool) pods_v( 'supports_author', $post_type, false ),
+					'thumbnail'       => (bool) pods_v( 'supports_thumbnail', $post_type, false ),
+					'excerpt'         => (bool) pods_v( 'supports_excerpt', $post_type, false ),
+					'trackbacks'      => (bool) pods_v( 'supports_trackbacks', $post_type, false ),
+					'custom-fields'   => (bool) pods_v( 'supports_custom_fields', $post_type, false ),
+					'comments'        => (bool) pods_v( 'supports_comments', $post_type, false ),
+					'revisions'       => (bool) pods_v( 'supports_revisions', $post_type, false ),
+					'page-attributes' => (bool) pods_v( 'supports_page_attributes', $post_type, false ),
+					'post-formats'    => (bool) pods_v( 'supports_post_formats', $post_type, false ),
+					'quick-edit'      => (bool) pods_v( 'supports_quick_edit', $post_type, true ),
 				];
 
 				// Custom Supported
@@ -1206,20 +1207,20 @@ class PodsInit {
 
 				// Genesis Support
 				if ( function_exists( 'genesis' ) ) {
-					$cpt_supported['genesis-seo']             = (boolean) pods_v( 'supports_genesis_seo', $post_type, false );
-					$cpt_supported['genesis-layouts']         = (boolean) pods_v( 'supports_genesis_layouts', $post_type, false );
-					$cpt_supported['genesis-simple-sidebars'] = (boolean) pods_v( 'supports_genesis_simple_sidebars', $post_type, false );
+					$cpt_supported['genesis-seo']             = (bool) pods_v( 'supports_genesis_seo', $post_type, false );
+					$cpt_supported['genesis-layouts']         = (bool) pods_v( 'supports_genesis_layouts', $post_type, false );
+					$cpt_supported['genesis-simple-sidebars'] = (bool) pods_v( 'supports_genesis_simple_sidebars', $post_type, false );
 				}
 
 				// YARPP Support
 				if ( defined( 'YARPP_VERSION' ) ) {
-					$cpt_supported['yarpp_support'] = (boolean) pods_v( 'supports_yarpp_support', $post_type, false );
+					$cpt_supported['yarpp_support'] = (bool) pods_v( 'supports_yarpp_support', $post_type, false );
 				}
 
 				// Jetpack Support
 				if ( class_exists( 'Jetpack' ) ) {
-					$cpt_supported['supports_jetpack_publicize'] = (boolean) pods_v( 'supports_jetpack_publicize', $post_type, false );
-					$cpt_supported['supports_jetpack_markdown']  = (boolean) pods_v( 'supports_jetpack_markdown', $post_type, false );
+					$cpt_supported['supports_jetpack_publicize'] = (bool) pods_v( 'supports_jetpack_publicize', $post_type, false );
+					$cpt_supported['supports_jetpack_markdown']  = (bool) pods_v( 'supports_jetpack_markdown', $post_type, false );
 				}
 
 				$cpt_supports = [];
@@ -1239,12 +1240,12 @@ class PodsInit {
 				}
 
 				// Rewrite
-				$cpt_rewrite       = (boolean) pods_v( 'rewrite', $post_type, true );
+				$cpt_rewrite       = (bool) pods_v( 'rewrite', $post_type, true );
 				$cpt_rewrite_array = [
 					'slug'       => pods_v( 'rewrite_custom_slug', $post_type, str_replace( '_', '-', $post_type_name ), true ),
-					'with_front' => (boolean) pods_v( 'rewrite_with_front', $post_type, true ),
-					'feeds'      => (boolean) pods_v( 'rewrite_feeds', $post_type, (boolean) pods_v( 'has_archive', $post_type, false ) ),
-					'pages'      => (boolean) pods_v( 'rewrite_pages', $post_type, true ),
+					'with_front' => (bool) pods_v( 'rewrite_with_front', $post_type, true ),
+					'feeds'      => (bool) pods_v( 'rewrite_feeds', $post_type, (bool) pods_v( 'has_archive', $post_type, false ) ),
+					'pages'      => (bool) pods_v( 'rewrite_pages', $post_type, true ),
 				];
 
 				if ( false !== $cpt_rewrite ) {
@@ -1260,7 +1261,7 @@ class PodsInit {
 					$capability_type = pods_v( 'capability_type_custom', $post_type, pods_v( 'name', $post_type, 'post', true ), true );
 				}
 
-				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );
+				$show_in_menu = (bool) pods_v( 'show_in_menu', $post_type, true );
 
 				if ( $show_in_menu && 0 < strlen( (string) pods_v( 'menu_location_custom', $post_type ) ) ) {
 					$show_in_menu = (string) pods_v( 'menu_location_custom', $post_type );
@@ -1277,31 +1278,31 @@ class PodsInit {
 					'label'               => $cpt_label,
 					'labels'              => $cpt_labels,
 					'description'         => esc_html( pods_v( 'description', $post_type ) ),
-					'public'              => (boolean) pods_v( 'public', $post_type, true ),
-					'publicly_queryable'  => (boolean) pods_v( 'publicly_queryable', $post_type, (boolean) pods_v( 'public', $post_type, true ) ),
-					'exclude_from_search' => (boolean) pods_v( 'exclude_from_search', $post_type, ( (boolean) pods_v( 'public', $post_type, true ) ? false : true ) ),
-					'show_ui'             => (boolean) pods_v( 'show_ui', $post_type, (boolean) pods_v( 'public', $post_type, true ) ),
+					'public'              => (bool) pods_v( 'public', $post_type, true ),
+					'publicly_queryable'  => (bool) pods_v( 'publicly_queryable', $post_type, (bool) pods_v( 'public', $post_type, true ) ),
+					'exclude_from_search' => (bool) pods_v( 'exclude_from_search', $post_type, ( (bool) pods_v( 'public', $post_type, true ) ? false : true ) ),
+					'show_ui'             => (bool) pods_v( 'show_ui', $post_type, (bool) pods_v( 'public', $post_type, true ) ),
 					'show_in_menu'        => $show_in_menu,
-					'show_in_nav_menus'   => (boolean) pods_v( 'show_in_nav_menus', $post_type, (boolean) pods_v( 'public', $post_type, true ) ),
-					'show_in_admin_bar'   => (boolean) pods_v( 'show_in_admin_bar', $post_type, (boolean) pods_v( 'show_in_menu', $post_type, true ) ),
+					'show_in_nav_menus'   => (bool) pods_v( 'show_in_nav_menus', $post_type, (bool) pods_v( 'public', $post_type, true ) ),
+					'show_in_admin_bar'   => (bool) pods_v( 'show_in_admin_bar', $post_type, (bool) pods_v( 'show_in_menu', $post_type, true ) ),
 					'menu_position'       => (int) pods_v( 'menu_position', $post_type, 0, true ),
 					'menu_icon'           => $menu_icon,
 					'capability_type'     => $capability_type,
 					// 'capabilities' => $cpt_capabilities,
-					'map_meta_cap'        => (boolean) pods_v( 'capability_type_extra', $post_type, true ),
-					'hierarchical'        => (boolean) pods_v( 'hierarchical', $post_type, false ),
-					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
+					'map_meta_cap'        => (bool) pods_v( 'capability_type_extra', $post_type, true ),
+					'hierarchical'        => (bool) pods_v( 'hierarchical', $post_type, false ),
+					'can_export'          => (bool) pods_v( 'can_export', $post_type, true ),
 					'supports'            => $cpt_supports,
 					// 'register_meta_box_cb' => array($this, 'manage_meta_box'),
 					// 'permalink_epmask' => EP_PERMALINK,
-					'has_archive'         => ( (boolean) pods_v( 'has_archive', $post_type, false ) ) ? pods_v( 'has_archive_slug', $post_type, true, true ) : false,
+					'has_archive'         => ( (bool) pods_v( 'has_archive', $post_type, false ) ) ? pods_v( 'has_archive_slug', $post_type, true, true ) : false,
 					'rewrite'             => $cpt_rewrite,
-					'query_var'           => ( false !== (boolean) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
-					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
+					'query_var'           => ( false !== (bool) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
+					'delete_with_user'    => (bool) pods_v( 'delete_with_user', $post_type, true ),
 					'_provider'           => 'pods',
 				];
 
-				if ( (boolean) pods_v( 'disable_create_posts', $post_type, false ) ) {
+				if ( (bool) pods_v( 'disable_create_posts', $post_type, false ) ) {
 					$pods_post_types[ $post_type_name ]['capabilities'] = [
 						'create_posts' => false,
 					];
@@ -1314,7 +1315,7 @@ class PodsInit {
 				}
 
 				// REST API
-				$rest_enabled = (boolean) pods_v( 'rest_enable', $post_type, false );
+				$rest_enabled = (bool) pods_v( 'rest_enable', $post_type, false );
 
 				if ( $rest_enabled ) {
 					$rest_base = sanitize_title( pods_v( 'rest_base', $post_type, $post_type_name ) );
@@ -1375,7 +1376,7 @@ class PodsInit {
 						continue;
 					}
 
-					if ( false !== (boolean) pods_v( 'built_in_taxonomies_' . $taxonomy, $post_type, false ) ) {
+					if ( false !== (bool) pods_v( 'built_in_taxonomies_' . $taxonomy, $post_type, false ) ) {
 						$cpt_taxonomies[] = $taxonomy;
 
 						if ( isset( $supported_post_types[ $taxonomy ] ) && ! in_array( $post_type_name, $supported_post_types[ $taxonomy ], true ) ) {
@@ -1437,11 +1438,11 @@ class PodsInit {
 				$ct_labels['desc_field_description']     = pods_v( 'label_desc_field_description', $taxonomy, '', true );
 
 				// Rewrite
-				$ct_rewrite       = (boolean) pods_v( 'rewrite', $taxonomy, true );
+				$ct_rewrite       = (bool) pods_v( 'rewrite', $taxonomy, true );
 				$ct_rewrite_array = [
 					'slug'         => pods_v( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', $taxonomy_name ), true ),
-					'with_front'   => (boolean) pods_v( 'rewrite_with_front', $taxonomy, true ),
-					'hierarchical' => (boolean) pods_v( 'rewrite_hierarchical', $taxonomy, (boolean) pods_v( 'hierarchical', $taxonomy, false ) ),
+					'with_front'   => (bool) pods_v( 'rewrite_with_front', $taxonomy, true ),
+					'hierarchical' => (bool) pods_v( 'rewrite_hierarchical', $taxonomy, (bool) pods_v( 'hierarchical', $taxonomy, false ) ),
 				];
 
 				if ( false !== $ct_rewrite ) {
@@ -1483,22 +1484,22 @@ class PodsInit {
 					'label'                 => $ct_label,
 					'labels'                => $ct_labels,
 					'description'           => esc_html( pods_v( 'description', $taxonomy ) ),
-					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
-					'publicly_queryable'    => (boolean) pods_v( 'publicly_queryable', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
-					'show_ui'               => (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
-					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
-					'show_in_nav_menus'     => (boolean) pods_v( 'show_in_nav_menus', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
-					'show_tagcloud'         => (boolean) pods_v( 'show_tagcloud', $taxonomy, (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ) ),
-					'show_in_quick_edit'    => (boolean) pods_v( 'show_in_quick_edit', $taxonomy, (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ) ),
-					'hierarchical'          => (boolean) pods_v( 'hierarchical', $taxonomy, false ),
+					'public'                => (bool) pods_v( 'public', $taxonomy, true ),
+					'publicly_queryable'    => (bool) pods_v( 'publicly_queryable', $taxonomy, (bool) pods_v( 'public', $taxonomy, true ) ),
+					'show_ui'               => (bool) pods_v( 'show_ui', $taxonomy, (bool) pods_v( 'public', $taxonomy, true ) ),
+					'show_in_menu'          => (bool) pods_v( 'show_in_menu', $taxonomy, (bool) pods_v( 'public', $taxonomy, true ) ),
+					'show_in_nav_menus'     => (bool) pods_v( 'show_in_nav_menus', $taxonomy, (bool) pods_v( 'public', $taxonomy, true ) ),
+					'show_tagcloud'         => (bool) pods_v( 'show_tagcloud', $taxonomy, (bool) pods_v( 'show_ui', $taxonomy, (bool) pods_v( 'public', $taxonomy, true ) ) ),
+					'show_in_quick_edit'    => (bool) pods_v( 'show_in_quick_edit', $taxonomy, (bool) pods_v( 'show_ui', $taxonomy, (bool) pods_v( 'public', $taxonomy, true ) ) ),
+					'hierarchical'          => (bool) pods_v( 'hierarchical', $taxonomy, false ),
 					// 'capability_type'       => $capability_type,
 					'capabilities'          => $tax_capabilities,
-					// 'map_meta_cap'          => (boolean) pods_v( 'capability_type_extra', $taxonomy, true ),
+					// 'map_meta_cap'          => (bool) pods_v( 'capability_type_extra', $taxonomy, true ),
 					'update_count_callback' => pods_v( 'update_count_callback', $taxonomy, null, true ),
-					'query_var'             => ( false !== (boolean) pods_v( 'query_var', $taxonomy, true ) ? pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true ) : false ),
+					'query_var'             => ( false !== (bool) pods_v( 'query_var', $taxonomy, true ) ? pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true ) : false ),
 					'rewrite'               => $ct_rewrite,
-					'show_admin_column'     => (boolean) pods_v( 'show_admin_column', $taxonomy, false ),
-					'sort'                  => (boolean) pods_v( 'sort', $taxonomy, false ),
+					'show_admin_column'     => (bool) pods_v( 'show_admin_column', $taxonomy, false ),
+					'sort'                  => (bool) pods_v( 'sort', $taxonomy, false ),
 					'_provider'             => 'pods',
 				];
 
@@ -1522,7 +1523,7 @@ class PodsInit {
 				}
 
 				// REST API
-				$rest_enabled = (boolean) pods_v( 'rest_enable', $taxonomy, false );
+				$rest_enabled = (bool) pods_v( 'rest_enable', $taxonomy, false );
 
 				if ( $rest_enabled ) {
 					$rest_base = sanitize_title( pods_v( 'rest_base', $taxonomy, $taxonomy_name ) );
@@ -1551,8 +1552,8 @@ class PodsInit {
 
 				// Integration for Single Value Taxonomy UI
 				if ( function_exists( 'tax_single_value_meta_box' ) ) {
-					$pods_taxonomies[ $taxonomy_name ]['single_value'] = (boolean) pods_v( 'single_value', $taxonomy, false );
-					$pods_taxonomies[ $taxonomy_name ]['required']     = (boolean) pods_v( 'single_value_required', $taxonomy, false );
+					$pods_taxonomies[ $taxonomy_name ]['single_value'] = (bool) pods_v( 'single_value', $taxonomy, false );
+					$pods_taxonomies[ $taxonomy_name ]['required']     = (bool) pods_v( 'single_value_required', $taxonomy, false );
 				}
 
 				// Hide the default meta box on associated post types when configured.
@@ -1571,7 +1572,7 @@ class PodsInit {
 						continue;
 					}
 
-					if ( false !== (boolean) pods_v( 'built_in_post_types_' . $post_type, $taxonomy, false ) ) {
+					if ( false !== (bool) pods_v( 'built_in_post_types_' . $post_type, $taxonomy, false ) ) {
 						$ct_post_types[] = $post_type;
 
 						if ( isset( $supported_taxonomies[ $post_type ] ) && ! in_array( $taxonomy_name, $supported_taxonomies[ $post_type ], true ) ) {
@@ -1760,7 +1761,7 @@ class PodsInit {
 			$pod = $post_types[ $post_type_name ];
 
 			// REST API
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
+			$rest_enabled = (bool) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				if ( empty( $wp_post_types[ $post_type_name ]->show_in_rest ) ) {
@@ -1789,7 +1790,7 @@ class PodsInit {
 			$pod = $taxonomies[ $taxonomy_name ];
 
 			// REST API
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
+			$rest_enabled = (bool) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				if ( empty( $wp_taxonomies[ $taxonomy_name ]->show_in_rest ) ) {
@@ -1807,7 +1808,7 @@ class PodsInit {
 		if ( ! empty( PodsMeta::$user ) ) {
 			$pod = current( PodsMeta::$user );
 
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
+			$rest_enabled = (bool) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				new PodsRESTFields( $pod );
@@ -1817,7 +1818,7 @@ class PodsInit {
 		if ( ! empty( PodsMeta::$media ) ) {
 			$pod = current( PodsMeta::$media );
 
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
+			$rest_enabled = (bool) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				new PodsRESTFields( $pod );
@@ -1862,7 +1863,7 @@ class PodsInit {
 			return $enable;
 		}
 
-		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$post_types[ $post_type ], true );
+		return (bool) pods_v( 'supports_quick_edit', PodsMeta::$post_types[ $post_type ], true );
 	}
 
 	/**
@@ -1884,7 +1885,7 @@ class PodsInit {
 			return $enable;
 		}
 
-		return (boolean) pods_v( 'supports_quick_edit', PodsMeta::$taxonomies[ $taxonomy ], true );
+		return (bool) pods_v( 'supports_quick_edit', PodsMeta::$taxonomies[ $taxonomy ], true );
 	}
 
 	/**
@@ -1910,6 +1911,35 @@ class PodsInit {
 
 			pods_transient_clear( 'pods_flush_rewrites' );
 		}
+	}
+
+	/**
+	 * Add custom action links for Pods.
+	 *
+	 * @since TBD
+	 *
+	 * @param string[] $actions An array of plugin action links.
+	 *
+	 * @return string[] An array of plugin action links.
+	 **/
+	public function settings_link( array $links ): array {
+		// Check if the Pods admin menu is disabled.
+		if ( defined( 'PODS_DISABLE_ADMIN_MENU' ) && ! PODS_DISABLE_ADMIN_MENU ) {
+			return $links;
+		}
+
+		// Check if user has access to the Pods Settings page.
+		if ( ! pods_is_admin( 'pods_settings' ) ) {
+			return $links;
+		}
+
+		$links['pods_settings'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'admin.php?page=pods-settings' ) ),
+			esc_html__( 'Settings', 'pods' )
+		);
+
+		return $links;
 	}
 
 	/**
@@ -1988,7 +2018,7 @@ class PodsInit {
 				10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
 			];
 
-			if ( false === (boolean) $pods_cpt_ct['post_types'][ $post_type['name'] ]['public'] ) {
+			if ( false === (bool) $pods_cpt_ct['post_types'][ $post_type['name'] ]['public'] ) {
 				// translators: %s is the singular label.
 				$messages[ $post_type['name'] ][1] = sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] );
 				// translators: %s is the singular label.

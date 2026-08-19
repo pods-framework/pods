@@ -1407,7 +1407,7 @@ class PodsForm {
 		 * @since 2.0.0
 		 * @deprecated 2.8.0
 		 */
-		return (boolean) apply_filters( 'pods_form_field_permission', $permission, $type, $name, $options, $fields, $pod, $id, $params );
+		return (bool) apply_filters( 'pods_form_field_permission', $permission, $type, $name, $options, $fields, $pod, $id, $params );
 	}
 
 	/**

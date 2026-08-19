@@ -52,6 +52,9 @@ module.exports = [
 							loader: 'sass-loader',
 							options: {
 								implementation: require('sass'),
+								// Use Sass's modern JS API; the legacy API is
+								// deprecated and removed in Dart Sass 2.0.
+								api: 'modern-compiler',
 							},
 						},
 					],

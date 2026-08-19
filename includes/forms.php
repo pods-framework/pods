@@ -328,9 +328,10 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
  */
 function pods_form_get_visible_objects( $pod, array $options = [] ) {
 	$defaults = [
-		'section_field' => null,
-		'section'       => null,
-		'return_type'   => 'group',
+		'section_field'           => null,
+		'section'                 => null,
+		'return_type'             => 'group',
+		'check_conditional_logic' => false,
 	];
 
 	$options = array_merge( $defaults, $options );
@@ -342,6 +343,52 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
 
 	// Get groups/fields and render them.
 	$groups = $pod->pod_data->get_groups();
+
+	// Collect current field values to evaluate conditional logic visibility.
+	//
+	// This is opt-in because it is only correct for paths that inspect a *submission*.
+	// Rendering must not use it: Pods evaluates conditional logic in the browser, so a
+	// field that is never rendered can never be revealed, and on an initial GET there is
+	// no submitted data at all -- every conditionally shown field would resolve to hidden
+	// and be dropped from the markup permanently.
+	$field_values            = [];
+	$check_conditional_logic = (bool) $options['check_conditional_logic'];
+
+	foreach ( $check_conditional_logic ? $groups : [] as $group ) {
+		// Skip if the section does not match.
+		if (
+			$options['section']
+			&& $options['section_field']
+			&& (
+				'any' === $options['section']
+				|| ! in_array( $options['section'], (array) $group[ $options['section_field'] ], true )
+			)
+		) {
+			continue;
+		}
+
+		if ( ! pods_permission( $group ) ) {
+			continue;
+		}
+
+		$group_fields = $group->get_fields();
+
+		if ( empty( $group_fields ) ) {
+			continue;
+		}
+
+		foreach ( $group_fields as $group_field ) {
+			if ( ! pods_permission( $group_field ) ) {
+				continue;
+			}
+
+			if ( pods_v( 'hidden', $group_field, false ) ) {
+				continue;
+			}
+
+			$field_values[ $group_field['name'] ] = pods_form_get_submitted_field_value( $group_field['name'] );
+		}
+	}
 
 	foreach ( $groups as $group ) {
 		// Skip if the section does not match.
@@ -374,6 +421,15 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
 			}
 
 			if ( pods_v( 'hidden', $field, false ) ) {
+				continue;
+			}
+
+			// Skip if the field is hidden by conditional logic.
+			if (
+				$check_conditional_logic
+				&& $field instanceof Field
+				&& ! $field->is_visible( $field_values )
+			) {
 				continue;
 			}
 
@@ -422,6 +478,11 @@ function pods_form_validate_submitted_fields( $name, $object_id = null, array $o
 
 	// Get the fields.
 	$options['return_type'] = 'field';
+
+	// Required checks must not fire for fields the user could not see, so this path
+	// evaluates conditional logic against the submitted values. This mirrors
+	// PodsAPI::save_pod_item(), which already excludes conditionally hidden fields.
+	$options['check_conditional_logic'] = true;
 
 	// Get fields and save them.
 	$fields = pods_form_get_visible_objects( $pod, $options );

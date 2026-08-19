@@ -77,6 +77,7 @@ const SortableMultiValue = ( props ) => {
 };
 
 const FullSelect = ( {
+	inputId,
 	isTaggable,
 	ajaxData,
 	shouldRenderValue,
@@ -167,6 +168,7 @@ const FullSelect = ( {
 			>
 				{ useAsyncSelectComponent ? (
 					<AsyncSelectComponent
+						inputId={ inputId }
 						controlShouldRenderValue={ shouldRenderValue }
 						defaultOptions={ formattedOptions }
 						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
@@ -186,6 +188,7 @@ const FullSelect = ( {
 					/>
 				) : (
 					<Select
+						inputId={ inputId }
 						controlShouldRenderValue={ shouldRenderValue }
 						options={ formattedOptions }
 						value={ value }
@@ -214,6 +217,12 @@ const REACT_SELECT_VALUE_PROP_TYPE = PropTypes.shape( {
 } );
 
 FullSelect.propTypes = {
+	/**
+	 * ID applied to the underlying react-select input so that the field's
+	 * `<label for="...">` resolves to a labelable control.
+	 */
+	inputId: PropTypes.string,
+
 	/**
 	 * True if new values can be created.
 	 */

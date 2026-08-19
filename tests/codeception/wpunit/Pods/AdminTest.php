@@ -702,7 +702,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 
 			$registered = get_taxonomy( $taxonomy_disabled );
 			$this->assertNotNull( $registered, 'Taxonomy was not registered.' );
-			$this->assertNull( $registered->meta_box_cb, 'meta_box_cb should be empty when hide_meta_box is disabled.' );
+			// WP_Taxonomy::set_props() replaces a null meta_box_cb with the default
+			// hierarchy-appropriate callback, so it is never null after registration.
+			// What matters is that it is not false, i.e. the meta box is still shown.
+			$this->assertNotFalse( $registered->meta_box_cb, 'meta_box_cb should not be disabled when hide_meta_box is off.' );
 
 			// 3. A separate pod saved with hide_meta_box enabled must register with meta_box_cb=false.
 			$pod_id = $this->api->save_pod( [

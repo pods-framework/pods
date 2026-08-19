@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { isEqual, uniq } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -476,13 +476,11 @@ const MemoizedFieldWrapper = React.memo(
 			const nextLevelSlugs = parentDependencySlugs.length
 				? unstackParentDependencies( parentDependencySlugs )
 				: [];
-			return uniq(
-				[
-					...dependencyFieldSlugs,
-					...parentDependencySlugs,
-					...nextLevelSlugs,
-				],
-			);
+			return [ ...new Set( [
+				...dependencyFieldSlugs,
+				...parentDependencySlugs,
+				...nextLevelSlugs,
+			] ) ];
 		};
 
 		const unstackedDependencySlugs = unstackParentDependencies(

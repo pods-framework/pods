@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import { omit } from 'lodash';
+import { flushSync } from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import omit from 'dfv/src/helpers/omit';
 
 /**
  * WordPress dependencies
@@ -234,17 +235,26 @@ window.PodsDFV = {
 		document.body.appendChild( dfvRootContainer );
 
 		// Set up the DFV app.
-		ReactDOM.render(
-			<>
-				{ storeKeys.map( ( storeKey ) => (
-					<App
-						storeKey={ storeKey }
-						key={ storeKey }
-					/>
-				) ) }
-			</>,
-			dfvRootContainer
-		);
+		//
+		// createRoot() renders asynchronously, unlike the ReactDOM.render() this
+		// replaced. The pods_init_complete action below is a documented extension
+		// point and consumers expect the fields to be in the DOM when it fires, so
+		// the initial mount is flushed synchronously to keep that contract. Dropping
+		// flushSync here would fire the action before any field had mounted.
+		const dfvRoot = createRoot( dfvRootContainer );
+
+		flushSync( () => {
+			dfvRoot.render(
+				<>
+					{ storeKeys.map( ( storeKey ) => (
+						<App
+							storeKey={ storeKey }
+							key={ storeKey }
+						/>
+					) ) }
+				</>
+			);
+		} );
 
 		/**
 		 * Run an action after Pods DFV init has completed.

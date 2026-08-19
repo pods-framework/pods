@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import omit from 'dfv/src/helpers/omit';
 
 import { combineReducers } from '@wordpress/data';
 

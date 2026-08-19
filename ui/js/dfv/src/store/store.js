@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { configureStore } from '@reduxjs/toolkit';
-import { omit } from 'lodash';
+import omit from 'dfv/src/helpers/omit';
 
 /**
  * WordPress dependencies

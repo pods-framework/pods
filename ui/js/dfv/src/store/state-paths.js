@@ -1,6 +1,4 @@
-import { tail } from 'lodash';
-
-const tailPath = ( dotPath ) => tail( dotPath.split( '.' ) ).join( '.' );
+const tailPath = ( dotPath ) => dotPath.split( '.' ).slice( 1 ).join( '.' );
 
 const createTree = ( value, dotPath ) => {
 	return dotPath.split( '.' ).reduceRight(

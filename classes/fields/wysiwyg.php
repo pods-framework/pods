@@ -438,7 +438,8 @@ class PodsField_WYSIWYG extends PodsField {
 
 				if ( 0 < $len && $len < $min_length ) {
 					$label    = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
-					$errors[] = sprintf( __( '%s must be at least %d characters long.', 'pods' ), $label, $min_length );
+					// translators: %1$s is the field label, %2$d is the minimum number of characters.
+					$errors[] = sprintf( __( '%1$s must be at least %2$d characters long.', 'pods' ), $label, $min_length );
 				}
 			}
 		}

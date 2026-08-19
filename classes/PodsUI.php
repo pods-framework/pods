@@ -1325,14 +1325,20 @@ class PodsUI {
 			$this->ui_page[] = 'form';
 			if ( 'create' === $this->do && $this->save && ! in_array( $this->do, $this->actions_disabled ) && ! empty( $_POST ) ) {
 				$this->ui_page[] = $this->do;
-				$this->save( true );
-				$this->manage();
+
+				if ( false === $this->save( true ) ) {
+					// Save did not complete; re-output the form.
+					$this->add();
+				} else {
+					$this->manage();
+				}
 			} else {
 				$this->add();
 			}
 		} elseif ( ( 'edit' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) || ( 'duplicate' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) ) {
 			$this->ui_page[] = 'form';
 			if ( 'save' === $this->do && $this->save && ! empty( $_POST ) ) {
+				// A failed save falls through to edit() below, which re-outputs the form with the queued error message.
 				$this->save();
 			}
 			$this->edit( ( 'duplicate' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) ? true : false );
@@ -1341,18 +1347,32 @@ class PodsUI {
 			$this->manage();
 		} elseif ( 'reorder' === $this->action && ! in_array( $this->action, $this->actions_disabled ) && false !== $this->reorder['on'] ) {
 			if ( 'save' === $this->do ) {
-				$this->ui_page[] = $this->do;
-				$this->reorder();
+				if ( false !== wp_verify_nonce( $this->_nonce, 'pods-ui-reorder' ) ) {
+					$this->ui_page[] = $this->do;
+					$this->reorder();
+				} else {
+					$this->error( __( '<strong>Error:</strong> Your session has expired or the request could not be verified. Please try reordering again.', 'pods' ) );
+				}
 			}
 			$this->manage( true );
 		} elseif ( 'save' === $this->do && $this->save && ! in_array( $this->do, $this->actions_disabled ) && ! empty( $_POST ) ) {
 			$this->ui_page[] = $this->do;
-			$this->save();
-			$this->manage();
+
+			if ( false === $this->save() ) {
+				// Save did not complete; re-output the form.
+				$this->edit();
+			} else {
+				$this->manage();
+			}
 		} elseif ( 'create' === $this->do && $this->save && ! in_array( $this->do, $this->actions_disabled ) && ! empty( $_POST ) ) {
 			$this->ui_page[] = $this->do;
-			$this->save( true );
-			$this->manage();
+
+			if ( false === $this->save( true ) ) {
+				// Save did not complete; re-output the form.
+				$this->add();
+			} else {
+				$this->manage();
+			}
 		} elseif ( 'view' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) {
 			$this->view();
 		} else {
@@ -1428,6 +1448,31 @@ class PodsUI {
 				$this->manage();
 			}//end if
 		}//end if
+	}
+
+	/**
+	 * Verify a direct (non-AJAX) PodsUI save/create request.
+	 *
+	 * @since 3.3.9.1
+	 * @return bool Whether the save/create request is allowed to proceed.
+	 */
+	public function save_nonce_is_valid() {
+		$is_valid = false !== wp_verify_nonce( $this->_nonce, 'pods-ui-save' );
+
+		/**
+		 * Allow overriding whether a direct PodsUI save/create request is considered valid. Intended as an escape hatch for custom PodsUI integrations that submit outside of ui/forms/form.php.
+		 *
+		 * @since 3.3.9.1
+		 * @param bool   $is_valid Whether the nonce check passed.
+		 * @param PodsUI $obj      The current PodsUI instance.
+		 */
+		$is_valid = (bool) apply_filters( 'pods_ui_save_nonce_is_valid', $is_valid, $this );
+
+		if ( ! $is_valid ) {
+			$this->error( __( '<strong>Error:</strong> Your session has expired or the request could not be verified. Please reload the page and try again.', 'pods' ) );
+		}
+
+		return $is_valid;
 	}
 
 	/**
@@ -1914,6 +1959,7 @@ class PodsUI {
 
 		// loop through order
 		$order = (array) pods_v( 'order', 'post', [], true );
+		$order = array_map( 'sanitize_text_field', $order );
 
 		$params = [
 			'pod'   => $this->pod->pod,
@@ -1933,9 +1979,10 @@ class PodsUI {
 	}
 
 	/**
-	 * @param bool $insert
+	 * Save (or create) an item from a submitted PodsUI form.
 	 *
-	 * @return mixed
+	 * @param bool $insert Whether this is a create (true) or an update (false).
+	 * @return mixed Null when a custom "save" callback handled the request, false
 	 */
 	public function save( $insert = false ) {
 
@@ -1943,6 +1990,11 @@ class PodsUI {
 
 		if ( $this->callback( 'save', $insert ) ) {
 			return null;
+		}
+
+		// Verify the direct-POST save/create request. Placed after the custom "save" callback so custom save actions can handle their own verification; returning false lets go() re-render the form.
+		if ( ! $this->save_nonce_is_valid() ) {
+			return false;
 		}
 
 		global $wpdb;
@@ -2006,6 +2058,7 @@ class PodsUI {
 			}//end if
 
 			if ( isset( $attributes['custom_save'] ) && false !== $attributes['custom_save'] && is_callable( $attributes['custom_save'] ) ) {
+				// This is OK, this is functionality called by trusted code.
 				$value = call_user_func_array(
 					$attributes['custom_save'], [
 						$value,
@@ -2051,6 +2104,8 @@ class PodsUI {
 		}
 
 		$this->do_hook( 'post_save', $this->insert_id, $data, $insert );
+
+		return (bool) $check;
 	}
 
 	/**
@@ -2928,7 +2983,11 @@ class PodsUI {
 						$this->sort_data();
 					}
 
-					if ( 'export' === $this->action && ! in_array( 'export', $this->actions_disabled, true ) ) {
+					if (
+						'export' === $this->action
+						&& ! in_array( 'export', $this->actions_disabled, true )
+						&& false !== wp_verify_nonce( $this->_nonce, 'pods-ui-action-bulk' )
+					) {
 						$this->export();
 					}
 
@@ -4004,6 +4063,7 @@ class PodsUI {
 		);
 		?>
 		" method="post" class="admin_ui_reorder_form">
+			<?php wp_nonce_field( 'pods-ui-reorder', $this->num_prefix . '_wpnonce' . $this->num, false ); ?>
 			<?php
 			}//end if
 			$table_fields = $this->fields['manage'];
@@ -4177,6 +4237,7 @@ class PodsUI {
 
 									if ( ! empty( $attributes['custom_display'] ) ) {
 										if ( is_callable( $attributes['custom_display'] ) ) {
+											// This is OK, this is functionality called by trusted code.
 											$row_value = call_user_func_array(
 												$attributes['custom_display'], [
 													$row,
@@ -4334,6 +4395,7 @@ class PodsUI {
 									$row_value = $this->do_hook( 'field_value', $row_value, $field, $attributes, $row );
 
 									if ( ! empty( $attributes['custom_display_formatted'] ) && is_callable( $attributes['custom_display_formatted'] ) ) {
+										// This is OK, this is functionality called by trusted code.
 										$row_value = call_user_func_array(
 											$attributes['custom_display_formatted'], [
 												$row,
@@ -5300,7 +5362,7 @@ class PodsUI {
 
 		$value = $this->get_field( $field_name );
 
-		if ( isset( $tag[1] ) && ! empty( $tag[1] ) && is_callable( $tag[1] ) ) {
+		if ( isset( $tag[1] ) && ! empty( $tag[1] ) && is_callable( $tag[1] ) && pods_access_callback_allowed( $tag[1] ) ) {
 			$value = call_user_func_array( $tag[1], [ $value, $field_name, $this->row, &$this ] );
 		}
 
@@ -5780,6 +5842,7 @@ class PodsUI {
 		array_unshift( $callback_args, null );
 		array_unshift( $callback_args, $action );
 
+		// This is OK, this is functionality called by trusted code.
 		$callback = call_user_func_array( [ $this, 'do_hook' ], $callback_args );
 
 		if ( null === $callback ) {
@@ -5790,8 +5853,10 @@ class PodsUI {
 
 		if ( isset( $this->actions_custom[ $action ] ) ) {
 			if ( is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ]['callback'] ) && is_callable( $this->actions_custom[ $action ]['callback'] ) ) {
+				// This is OK, this is functionality called by trusted code.
 				$callback = call_user_func_array( $this->actions_custom[ $action ]['callback'], $args );
 			} elseif ( is_callable( $this->actions_custom[ $action ] ) ) {
+				// This is OK, this is functionality called by trusted code.
 				$callback = call_user_func_array( $this->actions_custom[ $action ], $args );
 			}
 		}
@@ -5828,6 +5893,7 @@ class PodsUI {
 		array_unshift( $callback_args, null );
 		array_unshift( $callback_args, 'action_' . $action );
 
+		// This is OK, this is functionality called by trusted code.
 		$callback = call_user_func_array( [ $this, 'do_hook' ], $callback_args );
 
 		if ( null === $callback ) {
@@ -5843,8 +5909,10 @@ class PodsUI {
 
 		if ( isset( $this->actions_custom[ $action ] ) ) {
 			if ( is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ]['callback'] ) && is_callable( $this->actions_custom[ $action ]['callback'] ) ) {
+				// This is OK, this is functionality called by trusted code.
 				$callback = call_user_func_array( $this->actions_custom[ $action ]['callback'], $args );
 			} elseif ( is_callable( $this->actions_custom[ $action ] ) ) {
+				// This is OK, this is functionality called by trusted code.
 				$callback = call_user_func_array( $this->actions_custom[ $action ], $args );
 			}
 		}
@@ -5881,6 +5949,7 @@ class PodsUI {
 		array_unshift( $callback_args, null );
 		array_unshift( $callback_args, 'bulk_action_' . $action );
 
+		// This is OK, this is functionality called by trusted code.
 		$callback = call_user_func_array( [ $this, 'do_hook' ], $callback_args );
 
 		if ( null === $callback ) {
@@ -5896,8 +5965,10 @@ class PodsUI {
 
 		if ( isset( $this->actions_bulk[ $action ] ) ) {
 			if ( is_array( $this->actions_bulk[ $action ] ) && isset( $this->actions_bulk[ $action ]['callback'] ) && is_callable( $this->actions_bulk[ $action ]['callback'] ) ) {
+				// This is OK, this is functionality called by trusted code.
 				$callback = call_user_func_array( $this->actions_bulk[ $action ]['callback'], $args );
 			} elseif ( is_callable( $this->actions_bulk[ $action ] ) ) {
+				// This is OK, this is functionality called by trusted code.
 				$callback = call_user_func_array( $this->actions_bulk[ $action ], $args );
 			}
 		}

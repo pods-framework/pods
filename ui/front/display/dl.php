@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php $field_label = $field->get_label(); ?>
 		<dt class="pods-all-fields-row-label pods-all-fields-row-label-<?php echo esc_attr( PodsForm::clean( $field_path, true ) ); ?>">
 			<strong>
-				<?php echo $field_label; // @codingStandardsIgnoreLine ?>
+				<?php echo esc_html( $field_label ); ?>
 			</strong>
 		</dt>
 		<dd class="pods-all-fields-row-value pods-all-fields-row-value-<?php echo esc_attr( PodsForm::clean( $field_path, true ) ); ?>">

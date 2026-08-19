@@ -74,26 +74,36 @@ class BlocksApiLocaleCacheTest extends Pods_UnitTestCase {
 	/**
 	 * @dataProvider provideLocaleChangeActions
 	 */
-	public function test_locale_change_action_clears_js_blocks_cache( string $action, array $args ) {
-		// First ensure hooks are wired (Service_Provider::hooks() may not have
-		// run in this test bootstrap). Idempotent — has_action is true on
-		// each repeat.
-		if ( ! has_action( $action, [ $this->api, 'invalidate_js_block_cache' ] ) ) {
-			add_action( $action, [ $this->api, 'invalidate_js_block_cache' ] );
-		}
+	public function test_js_blocks_cache_is_keyed_per_locale() {
+		$api = pods_container( 'pods.blocks' );
 
-		$this->assertNotFalse(
-			has_action( $action, [ $this->api, 'invalidate_js_block_cache' ] ),
-			"Expected invalidate_js_block_cache to be hooked to {$action}."
+		$locale = determine_locale();
+
+		// Seed the current locale's cache with a recognisable payload.
+		pods_transient_set( 'pods_blocks_js_' . $locale, [ 'sentinel' => [ 'title' => 'from-' . $locale ] ], 60 );
+
+		$this->assertArrayHasKey(
+			'sentinel',
+			$api->get_js_blocks(),
+			'The current locale should be served from its own cache entry.'
 		);
 
-		pods_transient_set( 'pods_blocks_js', [ 'fixture' => 'stale' ] );
+		// A different locale must not see it. Before the fix a single global key meant
+		// every locale shared one payload, so this returned the seeded value.
+		$switched = switch_to_locale( 'fr_FR' );
 
-		do_action_ref_array( $action, $args );
+		if ( ! $switched ) {
+			$this->markTestSkipped( 'Could not switch locale in this environment.' );
+		}
 
-		$this->assertFalse(
-			pods_transient_get( 'pods_blocks_js' ),
-			"After {$action} fires, the cached JS block config must be gone."
+		$other = $api->get_js_blocks();
+
+		restore_previous_locale();
+
+		$this->assertArrayNotHasKey(
+			'sentinel',
+			$other,
+			'A different locale must not be served cached block configs from another locale.'
 		);
 	}
 }

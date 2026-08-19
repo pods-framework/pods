@@ -1451,6 +1451,21 @@ class PodsMeta {
 
 		$nonced = wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_post' );
 
+		// Only process submitted Pods meta when the request is verified (including for new items), to help prevent security issues.
+		$has_pods_meta_data = false;
+
+		foreach ( array_keys( (array) $_POST ) as $post_key ) {
+			if ( is_string( $post_key ) && 0 === strpos( $post_key, 'pods_meta' ) ) {
+				$has_pods_meta_data = true;
+
+				break;
+			}
+		}
+
+		if ( $has_pods_meta_data && false === $nonced ) {
+			return;
+		}
+
 		if ( ! $is_new_item && false === $nonced ) {
 			return;
 		}
@@ -1505,7 +1520,7 @@ class PodsMeta {
 		$data = [];
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -1796,7 +1811,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2045,7 +2060,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2283,7 +2298,7 @@ class PodsMeta {
 		$data = [];
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2765,7 +2780,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+			$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {

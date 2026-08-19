@@ -4676,7 +4676,11 @@ class PodsAdmin {
 
 		$settings_values = $settings->get_settings();
 
-		$auto_start = pods_v( $auto_start, $settings_fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
+		$session_auto_start_data = ( isset( $settings_fields['session_auto_start'] ) && isset( $settings_fields['session_auto_start']['data'] ) )
+			? $settings_fields['session_auto_start']['data']
+			: [];
+
+		$auto_start = pods_v( $auto_start, $session_auto_start_data, __( 'Unknown', 'pods' ) );
 
 		require_once ABSPATH . '/wp-admin/includes/file.php';
 
@@ -4686,6 +4690,13 @@ class PodsAdmin {
 		global $wp_filesystem;
 
 		global $wpdb;
+
+		// Cache session_save_path() once and guard the FS checks below. Hosts that
+		// restrict /var/lib/php/sessions through open_basedir (or run memcached/redis
+		// handlers with tcp:// handlers) would otherwise trigger file_exists()
+		// warnings on every Site Health request -- see issue #7263.
+		$save_path             = session_save_path();
+		$can_check_session_fs  = $filesystem_ok && $wp_filesystem && ! empty( $save_path ) && 0 !== strpos( $save_path, 'tcp://' );
 
 		$info['pods'] = [
 			'label'       => 'Pods',
@@ -4717,11 +4728,11 @@ class PodsAdmin {
 				],
 				'pods-session-save-path-exists'      => [
 					'label' => __( 'Session Save Path Exists', 'pods' ),
-					'value' => ( $filesystem_ok && $wp_filesystem && $wp_filesystem->exists( session_save_path() ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => ( $can_check_session_fs && $wp_filesystem->exists( $save_path ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-session-save-path-writable'    => [
 					'label' => __( 'Session Save Path Writeable', 'pods' ),
-					'value' => ( $filesystem_ok && $wp_filesystem && $wp_filesystem->is_writable( session_save_path() ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => ( $can_check_session_fs && $wp_filesystem->is_writable( $save_path ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-session-max-lifetime'          => [
 					'label' => __( 'Session Max Lifetime', 'pods' ),

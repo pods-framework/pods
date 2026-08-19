@@ -42,7 +42,6 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		$this->container->singleton( 'pods.integration.genesis', Genesis::class );
 		$this->container->singleton( 'pods.integration.yarpp', YARPP::class );
 		$this->container->singleton( 'pods.integration.jetpack', Jetpack::class );
-		$this->container->singleton( 'pods.integration.yoast', Yoast::class );
 
 		$this->hooks();
 	}
@@ -56,7 +55,6 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 		add_filter( 'pods_admin_config_pod_fields_post_type_supported_features', $this->container->callback( 'pods.integration.genesis', 'add_post_type_supports' ) );
 		add_filter( 'pods_admin_config_pod_fields_post_type_supported_features', $this->container->callback( 'pods.integration.yarpp', 'add_post_type_supports' ) );
 		add_filter( 'pods_admin_config_pod_fields_post_type_supported_features', $this->container->callback( 'pods.integration.jetpack', 'add_post_type_supports' ) );
-		add_filter( 'pods_admin_config_pod_fields_post_type_supported_features', $this->container->callback( 'pods.integration.yoast', 'add_post_type_supports' ) );
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ] );

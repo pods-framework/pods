@@ -76,8 +76,8 @@ class Meta {
 		$can_use_dynamic_feature_display = pods_can_use_dynamic_feature( 'display' );
 
 		$pods_to_register = [
-			'post'     => [],
-			'term'     => [],
+			'post' => [],
+			'term' => [],
 		];
 
 		foreach ( PodsMeta::$post_types as $pod ) {
@@ -109,16 +109,25 @@ class Meta {
 
 				$pod_rest_field_location = $pod->get_arg( 'rest_api_field_location', 'object', true );
 
-				$post_type_has_custom_fields = (
+				// Post types only expose meta through REST when they support custom fields.
+				// Taxonomies have no equivalent support flag, so term meta is eligible as long
+				// as REST is enabled on the Pod itself. For post types this is identical to the
+				// previous post_type_supports() check, so their behaviour is unchanged.
+				$object_supports_rest_meta = (
 					$pod_rest_enabled
-					&& 'post_type' === $pod_type
-					&& post_type_supports( $pod_name, 'custom-fields' )
+					&& (
+						(
+							'post_type' === $pod_type
+							&& post_type_supports( $pod_name, 'custom-fields' )
+						)
+						|| 'taxonomy' === $pod_type
+					)
 				);
 
 				$all_fields_have_rest = (
 					$can_use_dynamic_feature_display
 					&& $pod_rest_enabled
-					&& $post_type_has_custom_fields
+					&& $object_supports_rest_meta
 					&& filter_var( $pod->get_arg( 'read_all', false ), FILTER_VALIDATE_BOOLEAN )
 				);
 
@@ -140,7 +149,7 @@ class Meta {
 					// REST API field config.
 					$field_has_rest = (
 						'meta' === $pod_rest_field_location
-						&& $post_type_has_custom_fields
+						&& $object_supports_rest_meta
 						&& $can_use_dynamic_feature_display
 						&& (
 							$all_fields_have_rest

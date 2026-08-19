@@ -1083,17 +1083,32 @@ class PodsField {
 		$allowed = wp_kses_allowed_html( 'post' );
 
 		// External <script src="..."> embeds (SimpleShop, ads, analytics widgets, etc.).
-		$allowed['script'] = [
-			'src'          => true,
-			'type'         => true,
-			'async'        => true,
-			'defer'        => true,
-			'integrity'    => true,
-			'crossorigin'  => true,
-			'nonce'        => true,
-			'charset'      => true,
-			'data-*'       => true,
-		];
+		//
+		// This is deliberately gated. wp_kses() filters tags and attributes but never
+		// the *text content* of an element, so allowing <script> unconditionally would
+		// let anyone able to edit this field store executable JavaScript that then runs
+		// for every visitor -- and code_sanitize_html is the very option an admin turns
+		// on to prevent that. Allowing it only for unfiltered_html keeps the capability
+		// boundary WordPress already uses for raw HTML.
+		//
+		// Note this is an output-time check, so it reflects the *viewer*: script-based
+		// embeds render for users holding unfiltered_html, while iframe-based embeds
+		// (YouTube, Vimeo, most third-party forms) keep working for everyone. Sites that
+		// genuinely need public script embeds can re-add them via the
+		// pods_code_field_sanitize_allowed_html filter below.
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			$allowed['script'] = [
+				'src'         => true,
+				'type'        => true,
+				'async'       => true,
+				'defer'       => true,
+				'integrity'   => true,
+				'crossorigin' => true,
+				'nonce'       => true,
+				'charset'     => true,
+				'data-*'      => true,
+			];
+		}
 
 		// Inline <iframe> embeds (YouTube, Vimeo, third-party forms). wp_kses_allowed_html
 		// already permits iframe; this widens the allowed attributes that embeds actually use.

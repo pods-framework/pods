@@ -2,10 +2,12 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use Pods\Admin\Config\Pod as Pod_Config;
 use Pods\Whatsit\Pod;
 use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use PodsAdmin;
 use PodsAPI;
+use PodsInit;
 
 /**
  * @group  pods
@@ -652,5 +654,91 @@ class AdminTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $test['config']['group']['groups'], $group_names );
 		$this->assertEquals( '_pods_field', $config['field']['name'] );
 		$this->assertEquals( $test['config']['field']['groups'], $field_names );
+	}
+
+	/**
+	 * Verifies the new "hide_meta_box" option is exposed in the Admin UI tab
+	 * for taxonomy pods, and that when enabled it results in meta_box_cb=false
+	 * being passed to register_taxonomy().
+	 *
+	 * @covers \PodsInit::setup_content_types
+	 */
+	public function test_taxonomy_hide_meta_box_option() {
+		$taxonomy_disabled = 'test-hide-meta-box-tax-off';
+		$taxonomy_enabled  = 'test-hide-meta-box-tax-on';
+		$taxonomies        = [ $taxonomy_disabled, $taxonomy_enabled ];
+
+		// Clean up if a previous run left the pods behind.
+		foreach ( $taxonomies as $existing_name ) {
+			$existing = $this->api->load_pod( [ 'name' => $existing_name ] );
+			if ( $existing ) {
+				$this->api->delete_pod( [ 'name' => $existing_name ] );
+			}
+		}
+
+		try {
+			// 1. Verify the option is exposed in the admin-ui config for taxonomy pods.
+			$pod_id = $this->api->save_pod( [
+				'name'    => $taxonomy_disabled,
+				'type'    => 'taxonomy',
+				'storage' => 'meta',
+			] );
+			$this->assertNotEmpty( $pod_id, 'Taxonomy pod was not created.' );
+
+			$pod = $this->api->load_pod( [ 'name' => $taxonomy_disabled ] );
+			$this->assertInstanceOf( Pod::class, $pod );
+
+			$pod_config = new Pod_Config();
+			$tabs       = $pod_config->get_tabs( $pod );
+			$fields     = $pod_config->get_fields( $pod, $tabs );
+
+			$this->assertArrayHasKey( 'admin-ui', $fields, 'admin-ui tab missing from config.' );
+			$this->assertArrayHasKey( 'hide_meta_box', $fields['admin-ui'], 'hide_meta_box option missing from admin-ui tab.' );
+			$this->assertSame( 'boolean', $fields['admin-ui']['hide_meta_box']['type'] );
+			$this->assertFalse( $fields['admin-ui']['hide_meta_box']['default'] );
+
+			// 2. With hide_meta_box disabled (default), the registered taxonomy must NOT carry meta_box_cb.
+			pods_init()->setup_content_types( true );
+
+			$registered = get_taxonomy( $taxonomy_disabled );
+			$this->assertNotNull( $registered, 'Taxonomy was not registered.' );
+			// WP_Taxonomy::set_props() replaces a null meta_box_cb with the default
+			// hierarchy-appropriate callback, so it is never null after registration.
+			// What matters is that it is not false, i.e. the meta box is still shown.
+			$this->assertNotFalse( $registered->meta_box_cb, 'meta_box_cb should not be disabled when hide_meta_box is off.' );
+
+			// 3. A separate pod saved with hide_meta_box enabled must register with meta_box_cb=false.
+			$pod_id = $this->api->save_pod( [
+				'name'          => $taxonomy_enabled,
+				'type'          => 'taxonomy',
+				'storage'       => 'meta',
+				'hide_meta_box' => true,
+			] );
+			$this->assertNotEmpty( $pod_id, 'Enabled taxonomy pod was not created.' );
+
+			pods_init()->setup_content_types( true );
+
+			$registered = get_taxonomy( $taxonomy_enabled );
+			$this->assertNotNull( $registered, 'Taxonomy was not registered with hide_meta_box enabled.' );
+			$this->assertFalse( $registered->meta_box_cb, 'meta_box_cb should be false when hide_meta_box is enabled.' );
+		} finally {
+			// Clean up: delete pods, unregister taxonomies, and clear the
+			// registration guard so later tests start with clean state.
+			foreach ( $taxonomies as $taxonomy_name ) {
+				$this->api->delete_pod( [ 'name' => $taxonomy_name ] );
+
+				if ( taxonomy_exists( $taxonomy_name ) ) {
+					unregister_taxonomy( $taxonomy_name );
+				}
+			}
+
+			$registered = isset( PodsInit::$content_types_registered['taxonomies'] )
+				? PodsInit::$content_types_registered['taxonomies']
+				: [];
+
+			$registered = array_values( array_diff( $registered, $taxonomies ) );
+
+			PodsInit::$content_types_registered['taxonomies'] = $registered;
+		}
 	}
 }

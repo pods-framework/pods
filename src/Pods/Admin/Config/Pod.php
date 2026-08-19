@@ -1177,6 +1177,14 @@ class Pod extends Base {
 				'boolean_yes_label' => '',
 			];
 
+			$options['admin-ui']['hide_meta_box'] = [
+				'label'             => __( 'Hide meta box on Post Types', 'pods' ),
+				'help'              => __( 'Whether to hide the default meta box for selecting this taxonomy on the associated post types edit screens. Useful when connecting taxonomies to CPTs via Pods relationships instead of the default meta box. In the block editor, terms may still appear in the document sidebar.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'boolean_yes_label' => '',
+			];
+
 			// Integration for Single Value Taxonomy UI
 			if ( function_exists( 'tax_single_value_meta_box' ) ) {
 				$options['admin-ui']['single_value'] = [

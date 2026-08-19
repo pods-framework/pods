@@ -127,7 +127,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return Whatsit|array|null
 	 */
 	public static function from_serialized( $serialized, $to_args = false ) {
-		$object = maybe_unserialize( $serialized );
+		// Use the safe unserializer for the array-based Whatsit data, to help prevent security issues.
+		$object = pods_maybe_safely_unserialize( $serialized );
 
 		if ( $object instanceof self ) {
 			if ( $to_args ) {
@@ -1387,7 +1388,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$has_custom_args = ! empty( $args );
 
 		if ( null !== $this->_groups && ! $has_custom_args ) {
-			return $this->_groups;
+			return count( $this->_groups );
 		}
 
 		$filtered_args = [

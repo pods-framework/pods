@@ -16,10 +16,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_BOT_PUSH }}
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
+      - name: Setup Node.js using nvmrc file
+        uses: actions/setup-node@v7
         with:
-          node-version: '16.13.2'
+          node-version-file: '.nvmrc'
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: bash
@@ -35,7 +35,7 @@ jobs:
         run: npm install
       - name: Maybe build Pods Blocks JS API, Pods DFV, and styles assets
         run: npm run build-production
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: ui/js/blocks/pods-blocks-api.min.* ui/js/dfv/pods-dfv.min.* ui/styles/dist/*.css
           commit_message: Auto rebuild assets

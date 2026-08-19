@@ -482,6 +482,18 @@ class PodsField_OEmbed extends PodsField {
 		$params = pods_unslash( (array) $_POST );
 
 		if ( ! empty( $params['_nonce_pods_oembed'] ) && ! empty( $params['pods_field_oembed_value'] ) && wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) ) {
+			/**
+			 * Filter the capability required to generate an oEmbed preview. Generating a preview triggers a server-side fetch, so it can be gated behind a capability by default. Set to a different capability, or an empty/false value, to only require the nonce (e.g. for front-end forms).
+			 *
+			 * @since 3.3.9.1
+			 * @param string|null $capability The capability required. Default off.
+			 */
+			$preview_capability = apply_filters( 'pods_field_oembed_preview_capability', null );
+
+			if ( $preview_capability && ! current_user_can( $preview_capability ) ) {
+				wp_send_json_error( __( 'Unauthorized request', 'pods' ) );
+			}
+
 			$name    = '';
 			$value   = '';
 			$options = [];

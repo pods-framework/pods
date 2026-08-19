@@ -557,6 +557,33 @@ function pods_form_get_submitted_fields( $name, array $options = [] ) {
 }
 
 /**
+ * Normalize a field's `class` option into a safe class attribute string.
+ *
+ * The option is documented as accepting either a string or an array -- see
+ * PodsForm::merge_attributes(), which implodes arrays -- so row templates cannot
+ * concatenate it directly without risking an "Array to string conversion" warning.
+ * The value is also run through pods_enforce_safe_class(), matching every other
+ * consumer of this option.
+ *
+ * @since 3.4.0
+ *
+ * @param string|string[]|null $class The field class option.
+ *
+ * @return string A safe, space separated class string (empty when there is nothing to add).
+ */
+function pods_form_normalize_field_class( $class ): string {
+	if ( is_array( $class ) ) {
+		$class = implode( ' ', $class );
+	}
+
+	if ( ! is_string( $class ) || '' === $class ) {
+		return '';
+	}
+
+	return (string) pods_enforce_safe_class( $class );
+}
+
+/**
  * Make a field into a hidden field.
  *
  * @since 3.3.5

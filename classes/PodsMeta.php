@@ -1552,10 +1552,15 @@ class PodsMeta {
 						}
 					}
 
-					// Check if field wasn't submitted (likely hidden by conditional logic).
+					// Check if field wasn't submitted (likely hidden by conditional logic or the "Hide field in forms" setting).
 					if ( ! isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
 						// If save_value_when_hidden is enabled, skip this field to preserve existing DB value.
 						if ( pods_v_bool( 'conditional_logic_save_value', $field ) ) {
+							continue;
+						}
+
+						// If the field is hidden in forms, skip it to preserve the existing DB value.
+						if ( pods_v_bool( 'hidden', $field ) ) {
 							continue;
 						}
 					}
@@ -1798,6 +1803,19 @@ class PodsMeta {
 
 				if ( ! pods_permission( $field ) ) {
 					if ( ! pods_v( 'hidden', $field, false ) ) {
+						continue;
+					}
+				}
+
+				// Check if field wasn't submitted (likely hidden by conditional logic or the "Hide field in forms" setting).
+				if ( ! isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
+					// If save_value_when_hidden is enabled, skip this field to preserve existing DB value.
+					if ( pods_v_bool( 'conditional_logic_save_value', $field ) ) {
+						continue;
+					}
+
+					// If the field is hidden in forms, skip it to preserve the existing DB value.
+					if ( pods_v_bool( 'hidden', $field ) ) {
 						continue;
 					}
 				}
@@ -2047,6 +2065,19 @@ class PodsMeta {
 
 				if ( ! pods_permission( $field ) ) {
 					if ( ! pods_v( 'hidden', $field, false ) ) {
+						continue;
+					}
+				}
+
+				// Check if field wasn't submitted (likely hidden by conditional logic or the "Hide field in forms" setting).
+				if ( ! isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
+					// If save_value_when_hidden is enabled, skip this field to preserve existing DB value.
+					if ( pods_v_bool( 'conditional_logic_save_value', $field ) ) {
+						continue;
+					}
+
+					// If the field is hidden in forms, skip it to preserve the existing DB value.
+					if ( pods_v_bool( 'hidden', $field ) ) {
 						continue;
 					}
 				}
@@ -2325,6 +2356,19 @@ class PodsMeta {
 
 					if ( ! pods_permission( $field ) ) {
 						if ( 1 !== (int) pods_v( 'hidden', $field, 0 ) ) {
+							continue;
+						}
+					}
+
+					// Check if field wasn't submitted (likely hidden by conditional logic or the "Hide field in forms" setting).
+					if ( ! isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
+						// If save_value_when_hidden is enabled, skip this field to preserve existing DB value.
+						if ( pods_v_bool( 'conditional_logic_save_value', $field ) ) {
+							continue;
+						}
+
+						// If the field is hidden in forms, skip it to preserve the existing DB value.
+						if ( pods_v_bool( 'hidden', $field ) ) {
 							continue;
 						}
 					}
@@ -2760,6 +2804,19 @@ class PodsMeta {
 
 				if ( ! pods_permission( $field ) ) {
 					if ( ! pods_v( 'hidden', $field, false ) ) {
+						continue;
+					}
+				}
+
+				// Check if field wasn't submitted (likely hidden by conditional logic or the "Hide field in forms" setting).
+				if ( ! isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
+					// If save_value_when_hidden is enabled, skip this field to preserve existing DB value.
+					if ( pods_v_bool( 'conditional_logic_save_value', $field ) ) {
+						continue;
+					}
+
+					// If the field is hidden in forms, skip it to preserve the existing DB value.
+					if ( pods_v_bool( 'hidden', $field ) ) {
 						continue;
 					}
 				}

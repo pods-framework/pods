@@ -1773,6 +1773,162 @@ function pods_evaluate_tags( $tags, $args = array() ) {
 }
 
 /**
+ * Determine whether a magic tag addresses an ambient context rather than the current item.
+ *
+ * Tags such as `{@get.foo}`, `{@user.ID}` or `{@option.blogname}` read from
+ * superglobals, options and similar sources. They must not be resolved through a
+ * Pods object, because Pods::process_magic_tags() only falls back to the general
+ * resolver when PODS_SHORTCODE_ALLOW_EVALUATE_TAGS is enabled, and that fallback
+ * calls pods_evaluate_tag() with no arguments -- dropping the sanitize flag and
+ * putting raw request data into whatever the caller builds, including SQL clauses.
+ *
+ * A field that actually exists on the Pod always wins, so item traversal such as
+ * `{@author.display_name}` keeps resolving against the item.
+ *
+ * @since 3.4.0
+ *
+ * @param string|array $tag The magic tag (with or without the surrounding `{@}`).
+ * @param null|Pods    $pod Optional. Pod used to check whether the prefix is a real field.
+ *
+ * @return bool Whether the tag addresses an ambient context.
+ */
+function pods_tag_is_context_scoped( $tag, $pod = null ) {
+	if ( is_array( $tag ) ) {
+		$tag = isset( $tag[2] ) ? $tag[2] : '';
+	}
+
+	$tag = trim( (string) $tag, ' {@}' );
+
+	if ( '' === $tag ) {
+		return false;
+	}
+
+	// Only the tag name matters; helper/before/after are comma separated.
+	$parts = pods_trim( explode( ',', $tag ) );
+	$name  = isset( $parts[0] ) ? $parts[0] : '';
+
+	if ( '' === $name ) {
+		return false;
+	}
+
+	$segments = pods_trim( explode( '.', $name ) );
+	$prefix   = strtolower( $segments[0] );
+
+	// These resolve on their own, with no second segment.
+	$standalone = array(
+		'template-url',
+		'stylesheet-url',
+		'site-url',
+		'home-url',
+		'admin-url',
+		'includes-url',
+		'content-url',
+		'plugins-url',
+		'network-site-url',
+		'network-home-url',
+		'network-admin-url',
+		'user-admin-url',
+		'prefix',
+	);
+
+	if ( in_array( $prefix, $standalone, true ) ) {
+		return true;
+	}
+
+	// Everything else needs an explicit context prefix plus a variable name.
+	if ( 2 > count( $segments ) ) {
+		return false;
+	}
+
+	$contexts = array(
+		'get',
+		'post',
+		'request',
+		'query',
+		'url',
+		'uri',
+		'url-relative',
+		'server',
+		'session',
+		'global',
+		'globals',
+		'cookie',
+		'constant',
+		'user',
+		'option',
+		'site-option',
+		'transient',
+		'site-transient',
+		'cache',
+		'pods-transient',
+		'pods-site-transient',
+		'pods-cache',
+		'pods-option-cache',
+		'date',
+		'pods',
+		'pods_display',
+		'post_id',
+	);
+
+	if ( ! in_array( $prefix, $contexts, true ) ) {
+		return false;
+	}
+
+	// A real field on the Pod takes precedence over the ambient context.
+	if ( $pod instanceof Pods && $pod->fields( $segments[0] ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Evaluate magic tags, routing ambient-context tags away from the Pod object.
+ *
+ * Behaves like {@see pods_evaluate_tags()} except that any tag identified by
+ * {@see pods_tag_is_context_scoped()} is evaluated without the `pod` argument, so
+ * it reaches the general resolver with the caller's sanitize setting intact.
+ *
+ * @since 3.4.0
+ *
+ * @param string|array|object $tags The content to evaluate.
+ * @param array               $args Arguments passed through to pods_evaluate_tag().
+ *
+ * @return string|array|object Evaluated content.
+ */
+function pods_evaluate_tags_in_context( $tags, $args = array() ) {
+	if ( ! is_array( $args ) ) {
+		$args = array();
+	}
+
+	if ( is_array( $tags ) ) {
+		foreach ( $tags as $k => $tag ) {
+			$tags[ $k ] = pods_evaluate_tags_in_context( $tag, $args );
+		}
+
+		return $tags;
+	}
+
+	if ( is_object( $tags ) ) {
+		return (object) pods_evaluate_tags_in_context( get_object_vars( $tags ), $args );
+	}
+
+	$pod = isset( $args['pod'] ) ? $args['pod'] : null;
+
+	return preg_replace_callback(
+		'/({@(.*?)})/m',
+		static function ( $tag ) use ( $args, $pod ) {
+			if ( pods_tag_is_context_scoped( $tag, $pod ) ) {
+				unset( $args['pod'] );
+			}
+
+			return pods_evaluate_tag( $tag, $args );
+		},
+		(string) $tags
+	);
+}
+
+/**
  * Evaluate tag like magic tag but sanitized.
  *
  * @since 2.1

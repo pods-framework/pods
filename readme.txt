@@ -182,6 +182,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.4.0 - TBD =
+
+* Fixed: Resolve magic tags like `{@id}`, `{@post_title}`, and `{@name}` in Relationship / Pick field `pick_where` and `pick_having` clauses against the current item context. #7406
+
 = 3.3.10 - June 8th, 2026 =
 
 * Fixed: Resolved fatal error when calling the `Whatsit::count_groups()` method in some circumstances. (@markofapproval, @sc0ttkclark)

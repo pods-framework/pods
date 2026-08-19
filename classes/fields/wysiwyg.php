@@ -170,6 +170,12 @@ class PodsField_WYSIWYG extends PodsField {
 				'type'    => 'text',
 				'help'    => __( 'Format: strong em a ul ol li b i', 'pods' ),
 			],
+			static::$type . '_min_length'        => [
+				'label'   => __( 'Minimum Length', 'pods' ),
+				'default' => 0,
+				'type'    => 'number',
+				'help'    => __( 'Set to 0 for no minimum', 'pods' ),
+			],
 		];
 
 		return $options;
@@ -400,6 +406,49 @@ class PodsField_WYSIWYG extends PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
+		$errors = [];
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
+
+		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+		if ( is_array( $check ) ) {
+			$errors = array_merge( $errors, $check );
+		} else {
+			if ( '' !== $value && '' === $check ) {
+				if ( $this->is_required( $options ) ) {
+					$errors[] = __( 'This field is required.', 'pods' );
+				}
+			}
+
+			$min_length = (int) pods_v( static::$type . '_min_length', $options, 0 );
+
+			if ( 0 < $min_length ) {
+				$len = pods_mb_strlen( (string) $check );
+
+				if ( 0 < $len && $len < $min_length ) {
+					$label    = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+					// translators: %1$s is the field label, %2$d is the minimum number of characters.
+					$errors[] = sprintf( __( '%1$s must be at least %2$d characters long.', 'pods' ), $label, $min_length );
+				}
+			}
+		}
+
+		if ( ! empty( $errors ) ) {
+			return $errors;
+		}
+
+		return $validate;
 	}
 
 	/**

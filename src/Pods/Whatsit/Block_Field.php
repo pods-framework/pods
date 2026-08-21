@@ -307,7 +307,7 @@ class Block_Field extends Field {
 		];
 
 		$label   = $this->get_arg( 'label' );
-		$default = (boolean) $this->get_arg( 'default', 0 );
+		$default = (bool) $this->get_arg( 'default', 0 );
 
 		if ( 'radio' === $format_type ) {
 			return [

@@ -3978,7 +3978,31 @@ class PodsData {
 		 */
 		$sql = apply_filters( 'pods_data_get_sql', $sql, $this );
 
-		$sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
+		$sql = str_replace(
+			[
+				'@wp_blogs',
+				'@wp_blogmeta',
+				'@wp_registration_log',
+				'@wp_signups',
+				'@wp_site',
+				'@wp_sitemeta',
+				'@wp_users',
+				'@wp_usermeta',
+				'@wp_',
+			],
+			[
+				$wpdb->blogs,
+				$wpdb->blogmeta,
+				$wpdb->registration_log,
+				$wpdb->signups,
+				$wpdb->site,
+				$wpdb->sitemeta,
+				$wpdb->users,
+				$wpdb->usermeta,
+				$wpdb->prefix,
+			],
+			$sql
+		);
 
 		$sql = str_replace( '{prefix}', '@wp_', $sql );
 		$sql = str_replace( '{/prefix/}', '{prefix}', $sql );

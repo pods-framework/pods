@@ -1115,6 +1115,54 @@ class PodsMeta {
 	}
 
 	/**
+	 * Build a safe metabox slug for a Pods group.
+	 *
+	 * Sanitize_title() percent-encodes non-ASCII labels (e.g. Cyrillic),
+	 * and WP 7.1 passes metabox IDs through wp_get_tooltip()/sprintf()
+	 * where %d, %b, etc. become format placeholders. This helper produces
+	 * a %-free, HTML-valid slug. See #7615.
+	 *
+	 * @param array $group      Group data with optional keys `name` and `label`.
+	 * @param array $used_slugs Slugs already used on the screen, passed by
+	 *                          reference so every group gets a unique ID.
+	 *
+	 * @return string
+	 */
+	public static function get_meta_box_slug( array $group, array &$used_slugs = [] ): string {
+		$slug = '';
+
+		if ( ! empty( $group['name'] ) ) {
+			$slug = sanitize_key( $group['name'] );
+		}
+
+		if ( '' === $slug && ! empty( $group['label'] ) ) {
+			$slug = pods_create_slug( $group['label'], true );
+		}
+
+		$slug = trim( (string) preg_replace( '/-+/', '-', $slug ), '-' );
+
+		if ( '' === $slug ) {
+			$slug = 'more-fields';
+		}
+
+		$slug = str_replace( '%', '', $slug );
+
+		// Make sure each group on the screen gets a unique metabox ID.
+		$base_slug = $slug;
+		$suffix    = 2;
+
+		while ( isset( $used_slugs[ $slug ] ) ) {
+			$slug = $base_slug . '-' . $suffix;
+			++$suffix;
+		}
+
+
+		$used_slugs[ $slug ] = true;
+
+		return $slug;
+	}
+
+	/**
 	 * @param      $post_type
 	 * @param null $post
 	 */
@@ -1133,6 +1181,7 @@ class PodsMeta {
 
 		$groups           = $this->groups_get( 'post_type', $post_type, null, false, $post_id );
 		$pods_field_found = false;
+		$used_slugs       = [];
 
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
@@ -1165,7 +1214,7 @@ class PodsMeta {
 
 			if ( $field_found ) {
 				$pods_field_found = true;
-				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), wp_kses_post( $group['label'] ), [
+				add_meta_box( 'pods-meta-' . self::get_meta_box_slug( $group, $used_slugs ), wp_kses_post( $group['label'] ), [
 					$this,
 					'meta_post',
 				], $post_type, $group['context'], $group['priority'], [ 'group' => $group ] );
@@ -2547,7 +2596,8 @@ class PodsMeta {
 			$comment_type = 'comment';
 		}
 
-		$groups = $this->groups_get( 'comment', $comment_type );
+		$groups     = $this->groups_get( 'comment', $comment_type );
+		$used_slugs = [];
 
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
@@ -2575,7 +2625,7 @@ class PodsMeta {
 			}
 
 			if ( $field_found ) {
-				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), wp_kses_post( $group['label'] ), [
+				add_meta_box( 'pods-meta-' . self::get_meta_box_slug( $group, $used_slugs ), wp_kses_post( $group['label'] ), [
 					$this,
 					'meta_comment',
 				], $comment_type, $group['context'], $group['priority'], [ 'group' => $group ] );

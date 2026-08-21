@@ -443,6 +443,8 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 			}//end if
 
 			if ( 0 < count( $groups ) ) {
+				$used_slugs = [];
+
 				if ( $more && 1 == count( $groups ) ) {
 					$first_group = current( $groups );
 
@@ -480,7 +482,7 @@ do_action( 'pods_meta_box_pre', $pod, $obj );
 							/** This filter is documented in classes/PodsMeta.php */
 							$title = apply_filters( 'pods_meta_default_box_title', $title, $pod->pod_data, $fields, $pod->pod_data['type'], $pod->pod );
 							?>
-							<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>"
+							<div id="pods-meta-box-<?php echo esc_attr( PodsMeta::get_meta_box_slug( $group, $used_slugs ) ); ?>"
 								class="postbox">
 								<?php PodsForm::render_postbox_header( $title ); ?>
 

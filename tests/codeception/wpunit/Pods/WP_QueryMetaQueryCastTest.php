@@ -150,4 +150,94 @@ class WP_QueryMetaQueryCastTest extends Pods_UnitTestCase {
 		$this->assertStringContainsString( 'AS SIGNED)', $sql );
 		$this->assertStringNotContainsString( 'AS NUMERIC)', $sql );
 	}
+
+	/**
+	 * @return array[]
+	 */
+	public function provider_like_values() {
+		return [
+			'plain value'      => [ 'Alpha', 'LIKE', 'LIKE \'%Alpha%\'' ],
+			'escaped percent' => [ '50%', 'LIKE', 'LIKE \'%50\\\\%%\'' ],
+			'escaped underscore' => [ 'a_b', 'LIKE', 'LIKE \'%a\\\\_b%\'' ],
+			'not like'        => [ 'Beta', 'NOT LIKE', 'NOT LIKE \'%Beta%\'' ],
+		];
+	}
+
+	/**
+	 * LIKE / NOT LIKE must escape the value and wrap it in wildcards so a table
+	 * field matches the way the same clause does against postmeta. Without the
+	 * escape a value such as "50%" is read as a SQL wildcard, and without the
+	 * surrounding "%" the clause matches exactly instead of as a substring.
+	 *
+	 * @dataProvider provider_like_values
+	 *
+	 * @param string $value    Raw value.
+	 * @param string $compare  Comparison operator.
+	 * @param string $expected Expected LIKE fragment in the SQL.
+	 */
+	public function test_like_value_gets_wildcards_and_esc_like( $value, $compare, $expected ) {
+		$method = $this->accessible( 'build_meta_query_where' );
+
+		$sql = $method->invoke(
+			$this->integration,
+			[
+				'compare' => $compare,
+				'value'   => $value,
+				'type'    => 'CHAR',
+			],
+			'alias',
+			'',
+			'subtitle',
+			false
+		);
+
+		$this->assertStringContainsString( $expected, $sql );
+	}
+
+	/**
+	 * REGEXP binds a plain value with no added wildcards or escaping, the same
+	 * as WP_Meta_Query.
+	 */
+	public function test_regexp_value_has_no_added_wildcards() {
+		$method = $this->accessible( 'build_meta_query_where' );
+
+		$sql = $method->invoke(
+			$this->integration,
+			[
+				'compare' => 'REGEXP',
+				'value'   => '^beta',
+				'type'    => 'CHAR',
+			],
+			'alias',
+			'',
+			'subtitle',
+			false
+		);
+
+		$this->assertStringContainsString( 'REGEXP \'^beta\'', $sql );
+		$this->assertStringNotContainsString( '%^beta%', $sql );
+	}
+
+	/**
+	 * A LIKE clause given an array value has no single literal meaning; the
+	 * clause is skipped rather than emitted as malformed SQL.
+	 */
+	public function test_like_with_array_value_bails_closed() {
+		$method = $this->accessible( 'build_meta_query_where' );
+
+		$sql = $method->invoke(
+			$this->integration,
+			[
+				'compare' => 'LIKE',
+				'value'   => [ 'Alpha', 'Beta' ],
+				'type'    => 'CHAR',
+			],
+			'alias',
+			'',
+			'subtitle',
+			false
+		);
+
+		$this->assertSame( '', $sql );
+	}
 }

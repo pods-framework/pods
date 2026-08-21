@@ -564,8 +564,15 @@ class WP_Query_Integration {
 
 			case 'LIKE':
 			case 'NOT LIKE':
-				// LIKE compares strings; cast to CHAR even if WP asked for a numeric type so MySQL doesn't compare numbers.
-				return "CAST({$field_expr} AS CHAR) {$compare} {$prepared}";
+				if ( is_array( $value ) ) {
+					// An array has no single literal meaning for a LIKE clause; skip it.
+					return '';
+				}
+				// Escape the value and wrap it in wildcards so a table field matches
+				// the way the same clause does against postmeta. WP_Meta_Query relies
+				// on %s binding plus its own esc_like() here, so mirror it.
+				$like_value = '%' . $wpdb->esc_like( (string) $value ) . '%';
+				return "CAST({$field_expr} AS CHAR) {$compare} {$wpdb->prepare( '%s', $like_value )}";
 
 			case 'IN':
 			case 'NOT IN':

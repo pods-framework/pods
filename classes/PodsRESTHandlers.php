@@ -282,7 +282,7 @@ class PodsRESTHandlers {
 
 		global $wp_rest_additional_fields;
 
-		$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
+		$rest_enable = (bool) pods_v( 'rest_enable', $pod->pod_data, false );
 
 		if ( $pod && $rest_enable && ! empty( $wp_rest_additional_fields[ $type ] ) ) {
 			$fields = $pod->fields();

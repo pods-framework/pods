@@ -107,7 +107,7 @@ function pods_get_instance( $type = null, $id = null, $strict = null ) {
  * @see   PodsUI
  *
  * @param array|string|Pods $obj        (optional) Configuration options for the UI
- * @param boolean           $deprecated (optional) Whether to enable deprecated options (used by pods_ui_manage)
+ * @param bool              $deprecated (optional) Whether to enable deprecated options (used by pods_ui_manage)
  *
  * @return PodsUI
  *

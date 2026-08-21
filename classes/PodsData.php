@@ -883,7 +883,7 @@ class PodsData {
 		/**
 		 * Filters whether the total_found should be calculated right away or not.
 		 *
-		 * @param boolean  $auto_calculate_total_found Whether to auto calculate total_found.
+		 * @param bool     $auto_calculate_total_found Whether to auto calculate total_found.
 		 * @param object   $params                     Select parameters.
 		 * @param PodsData $instance                   The current PodsData instance.
 		 *
@@ -1000,7 +1000,7 @@ class PodsData {
 		// Validate.
 		$params->page = pods_absint( $params->page );
 
-		$params->pagination = (boolean) $params->pagination;
+		$params->pagination = (bool) $params->pagination;
 
 		if ( 0 === $params->page || ! $params->pagination ) {
 			$params->page = 1;
@@ -1214,7 +1214,7 @@ class PodsData {
 			$this->search_mode = $params->search_mode;
 		}
 
-		$params->search = (boolean) $params->search;
+		$params->search = (bool) $params->search;
 
 		if ( 1 === (int) pods_v( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( __METHOD__ . ':' . __LINE__ );
@@ -2016,7 +2016,7 @@ class PodsData {
 	 *
 	 * @param string  $table         Table name.
 	 * @param string  $fields
-	 * @param boolean $if_not_exists Check if the table exists.
+	 * @param bool    $if_not_exists Check if the table exists.
 	 *
 	 * @return array|bool|mixed|null|void
 	 *
@@ -2688,8 +2688,8 @@ class PodsData {
 	 * Gets all tables in the WP database, optionally exclude WP core
 	 * tables, and/or Pods table by settings the parameters to false.
 	 *
-	 * @param boolean $wp_core
-	 * @param boolean $pods_tables restrict Pods 2x tables.
+	 * @param bool $wp_core
+	 * @param bool $pods_tables restrict Pods 2x tables.
 	 *
 	 * @return array
 	 *
@@ -2992,7 +2992,7 @@ class PodsData {
 		}
 
 		$field_compare         = strtoupper( trim( (string) pods_v( 'compare', $q, $field_compare, true ) ) );
-		$field_sanitize        = (boolean) pods_v( 'sanitize', $q, true );
+		$field_sanitize        = (bool) pods_v( 'sanitize', $q, true );
 		$field_sanitize_format = pods_v( 'sanitize_format', $q, null, true );
 		$field_cast            = pods_v( 'cast', $q, null, true );
 

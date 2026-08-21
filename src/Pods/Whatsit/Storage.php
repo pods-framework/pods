@@ -486,7 +486,7 @@ abstract class Storage {
 	 * @param bool $enabled Whether to enable fallback mode.
 	 */
 	public function fallback_mode( $enabled = true ) {
-		$this->fallback_mode = (boolean) $enabled;
+		$this->fallback_mode = (bool) $enabled;
 	}
 
 	/**

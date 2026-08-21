@@ -227,7 +227,7 @@ class PodsField {
 	 * Check if the field values are empty.
 	 *
 	 * @param array|mixed $values Field values.
-	 * @param boolean     $strict Whether to check if any of the values are non-empty in an array.
+	 * @param bool        $strict Whether to check if any of the values are non-empty in an array.
 	 *
 	 * @return bool
 	 *
@@ -686,7 +686,7 @@ class PodsField {
 	 * @param array|null      $options Field options.
 	 * @param array|null      $pod     Pod information.
 	 * @param int|string|null $id      Current item ID.
-	 * @param boolean         $in_form Whether we are in the form context.
+	 * @param bool            $in_form Whether we are in the form context.
 	 *
 	 * @return array Array of possible field data.
 	 *

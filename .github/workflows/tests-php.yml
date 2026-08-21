@@ -29,7 +29,7 @@ jobs:
       # Checkout the repo
       # ------------------------------------------------------------------------------
       - name: Checkout the repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # Always check the plugin out into a "pods" directory regardless of the repository slug
           # (e.g. private mirrors / forks), so slic, the WPLoader plugins list, and the committed
@@ -48,7 +48,7 @@ jobs:
       # Checkout slic
       # ------------------------------------------------------------------------------
       - name: Checkout slic
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: stellarwp/slic
           ref: main

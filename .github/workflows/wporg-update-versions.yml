@@ -38,7 +38,7 @@ jobs:
           echo minimum_php_version: ${{ github.event.inputs.minimum_php_version }}
           echo minimum_mysql_version: ${{ github.event.inputs.minimum_mysql_version }}
       - name: Checkout the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GH_BOT_PUSH }}
       - name: Check the version number from package.json

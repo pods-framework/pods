@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 use Pods\API\Whatsit\Value_Field;
 use Pods\Pod_Manager;
 use Pods\Whatsit\Field;
@@ -85,7 +90,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * Store and retrieve data programatically
+	 * Store and retrieve data programmatically
 	 *
 	 * @param string $pod    (optional) The pod name
 	 * @param string $format (deprecated) Format for import/export, "php" or "csv"
@@ -96,7 +101,7 @@ class PodsAPI {
 	 * @since   1.7.1
 	 */
 	public function __construct( $pod = null, $format = null ) {
-		if ( null === $pod || '' === (string) $pod  ) {
+		if ( null === $pod || '' === (string) $pod ) {
 			return;
 		}
 
@@ -4934,10 +4939,10 @@ class PodsAPI {
 		$custom_data   = array();
 		$custom_fields = array();
 
-		$is_process_form = in_array( $params->from, [
-			'process_form',
-			'process_form_meta',
-		], true );
+		$is_process_form = ! empty( $params->from ) && in_array( $params->from, array(
+				'process_form',
+				'process_form_meta',
+			), true );
 
 		// Find the active fields (loop through $params->data to retain order)
 		if ( ! empty( $params->data ) && is_array( $params->data ) ) {
@@ -9559,6 +9564,11 @@ class PodsAPI {
 		$label = $options['label'];
 		$label = empty( $label ) ? $field : $label;
 
+		$is_process_form = $params && ! empty( $params->from ) && in_array( $params->from, array(
+			'process_form',
+			'process_form_meta',
+		), true );
+
 		/**
 		 * Allow filtering whether to check the required fields for values.
 		 *
@@ -9632,18 +9642,86 @@ class PodsAPI {
 			return pods_error( sprintf( __( '%s is an unexpected value', 'pods' ), $label ), $this );
 		}
 
-		// Check whether user fields can be edited.
-		if (
-			0 < $id
-			&& in_array( $field, [ 'user_login', 'user_email', 'user_pass' ], true )
-			&& in_array( 'user', [ $pod_name, $pod_type ], true )
-			(
-				! is_user_logged_in()
-				|| ! current_user_can( 'edit_user', $id )
-			)
-		) {
-			// translators: %s is the field label.
-			return pods_error( sprintf( __( '%s cannot be changed, you do not have access to this user', 'pods' ), $label ), $this );
+		$submitted_fields = ! empty( $params->submitted_fields ) ? (array) $params->submitted_fields : array();
+
+		if ( $is_process_form && in_array( $field, $submitted_fields, true ) ) {
+			// Check whether certain user fields can be edited during form processing.
+			if (
+				0 < $id
+				&& in_array( 'user', array(
+					$pod_name,
+					$pod_type,
+				), true )
+			) {
+				$can_edit_user_field = true;
+
+				if (
+					in_array( $field, array(
+						'user_login',
+						'user_email',
+						'user_pass',
+					), true )
+					&& (
+						! is_user_logged_in()
+						|| ! current_user_can( 'edit_user', $id )
+					)
+				) {
+					$can_edit_user_field = false;
+				} elseif (
+					in_array( $field, array(
+						'user_activation_key',
+						'spam',
+						'deleted',
+						'caps',
+						'cap_key',
+						'roles',
+						'role',
+						'allcaps',
+					), true )
+					&& (
+						! is_user_logged_in()
+						|| ! current_user_can( 'edit_users' )
+					)
+				) {
+					$can_edit_user_field = false;
+				}
+
+				if ( ! $can_edit_user_field ) {
+					// translators: %s is the field label.
+					return pods_error( sprintf( __( '%s cannot be changed, you do not have access to this user', 'pods' ), $label ), $this );
+				}
+			} elseif ( 'post_type' === $pod_type ) {
+				// Check whether certain post fields can be edited during form processing.
+				$can_edit_post_field = true;
+
+				if ( 'post_type' === $field ) {
+					$can_edit_post_field = false;
+				} elseif (
+					0 < $id
+					&& 'post_password' === $field
+					&& (
+						! is_user_logged_in()
+						|| ! current_user_can( 'edit_post', $id )
+					)
+				) {
+					$can_edit_post_field = false;
+				} elseif ( 'post_status' === $field ) {
+					if ( ! is_user_logged_in() ) {
+						$can_edit_post_field = false;
+					} elseif ( 0 < $id ) {
+						$can_edit_post_field = current_user_can( 'publish_post', $id );
+					} else {
+						$can_edit_post_field = current_user_can( 'publish_posts', $id );
+					}
+
+					$can_edit_post_field = (bool) $this->do_hook( 'field_validation_allow_post_status', $can_edit_post_field, $value, $field, $object_fields, $fields, $pod, $params );
+				}
+
+				if ( ! $can_edit_post_field ) {
+					// translators: %s is the field label.
+					return pods_error( sprintf( __( '%s cannot be changed, you do not have access to this post', 'pods' ), $label ), $this );
+				}
+			}
 		}
 
 		$validate = PodsForm::validate( $options['type'], $value, $field, $options, $fields, $pod, $id, $params );
@@ -11451,11 +11529,13 @@ class PodsAPI {
 
 		$this->display_errors = false;
 
-		$nonce    = pods_v_sanitized( '_pods_nonce', $form_params );
-		$pod      = pods_v_sanitized( '_pods_pod', $form_params );
-		$id       = pods_v_sanitized( '_pods_id', $form_params );
-		$uri      = pods_v_sanitized( '_pods_uri', $form_params );
-		$form     = pods_v_sanitized( '_pods_form', $form_params );
+		$nonce_field_names = pods_access_form_field_names( 'form' );
+
+		$nonce    = pods_v_sanitized( $nonce_field_names['nonce'], $form_params );
+		$pod      = pods_v_sanitized( $nonce_field_names['pod'], $form_params );
+		$id       = pods_v_sanitized( $nonce_field_names['id'], $form_params );
+		$uri      = pods_v_sanitized( $nonce_field_names['uri'], $form_params );
+		$form     = pods_v_sanitized( $nonce_field_names['form'], $form_params );
 		$form_key = pods_v_sanitized( '_pods_form_key', $form_params );
 		$location = pods_v_sanitized( '_pods_location', $form_params );
 
@@ -11486,25 +11566,21 @@ class PodsAPI {
 			$fields = [];
 		}
 
-		if ( empty( $nonce ) || empty( $pod ) || empty( $uri ) || empty( $fields ) ) {
+		if (
+			! pods_access_form_nonce_present_in_request( 'form', '', $form_params )
+			|| empty( $nonce )
+			|| empty( $pod )
+			|| empty( $uri )
+			|| empty( $fields )
+		) {
 			return pods_error( __( 'Invalid submission', 'pods' ), $this );
 		}
 
-		$uid = pods_session_id();
-
-		if ( is_user_logged_in() ) {
-			$uid = 'user_' . get_current_user_id();
-		}
-
-		$field_hash = wp_create_nonce( 'pods_fields_' . $form );
-
-		$action = 'pods_form_' . $pod . '_' . $uid . '_' . $id . '_' . $uri . '_' . $field_hash;
-
-		if ( empty( $uid ) ) {
+		if ( empty( pods_access_form_uid() ) ) {
 			return pods_error( __( 'Access denied for your session, please refresh and try again.', 'pods' ), $this );
 		}
 
-		if ( false === wp_verify_nonce( $nonce, $action ) ) {
+		if ( ! pods_access_verify_form_nonce( $nonce, $pod, $id, $form, $uri ) ) {
 			return pods_error( __( 'Access denied, please refresh and try again.', 'pods' ), $this );
 		}
 
@@ -11557,11 +11633,12 @@ class PodsAPI {
 		}
 
 		$params = array(
-			'pod'      => $pod,
-			'id'       => $id,
-			'data'     => $data,
-			'from'     => 'process_form',
-			'location' => $location
+			'pod'              => $pod,
+			'id'               => $id,
+			'data'             => $data,
+			'from'             => 'process_form',
+			'location'         => $location,
+			'submitted_fields' => array_keys( $data ),
 		);
 
 		$id = $this->save_pod_item( $params );

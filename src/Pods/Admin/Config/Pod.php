@@ -841,6 +841,7 @@ class Pod extends Base {
 					'label'            => __( 'Custom User Capability', 'pods' ),
 					'help'             => __( 'help', 'pods' ),
 					'type'             => 'text',
+					'default'          => $pod_name,
 					'text_placeholder' => $pod_name,
 					'depends-on'       => [ 'capability_type' => 'custom' ],
 				],

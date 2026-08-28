@@ -149,9 +149,7 @@ class PodsUpgrade {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		pods_debug( $sql );
-
-		pods_debug( dbDelta( $sql ) );
+		dbDelta( $sql );
 	}
 
 	/**

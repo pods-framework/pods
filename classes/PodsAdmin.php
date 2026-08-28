@@ -53,6 +53,7 @@ class PodsAdmin {
 
 		// AJAX for Admin
 		add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
+		add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
 
 		// Add Media Bar button for Shortcode
 		add_action( 'media_buttons', array( $this, 'media_button' ), 12 );
@@ -2091,7 +2092,7 @@ class PodsAdmin {
 				pods_message(
 					sprintf(
 						'⚠️ %s <a href="%s">%s</a>',
-						__( 'You are running an outdated version of Pods. Upgrade to Pods 3.1 to get the most out of Access Rights, security fixes, and future features.', 'pods' ),
+						__( 'You are running an outdated version of Pods. Upgrade to the latest version of Pods to get the most out of Access Rights, security fixes, and future features.', 'pods' ),
 						esc_url( add_query_arg( [ 'hide_notice_31' => 1, 'hide_notice_31_nonce' => wp_create_nonce( 'hide_notice_31' ) ] ) ),
 						__( 'Hide this notice', 'pods' )
 					),
@@ -2100,6 +2101,8 @@ class PodsAdmin {
 			}
 		}
 
+		$this->maybe_handle_display_callback_notice_dismiss();
+
 		/**
 		 * Allow hooking into our settings page to set up hooks.
 		 *
@@ -2107,10 +2110,72 @@ class PodsAdmin {
 		 */
 		do_action( 'pods_admin_settings_init' );
 
+		add_action( 'pods_admin_before_settings', array( $this, 'show_display_callback_notice' ) );
+
 		// Add our custom callouts.
 		add_action( 'pods_admin_after_settings', array( $this, 'admin_manage_callouts' ) );
 
 		pods_view( PODS_DIR . 'ui/admin/settings.php', compact( array_keys( get_defined_vars() ) ) );
+	}
+
+	/**
+	 * Clear the cached disallowed display callbacks when the notice is dismissed.
+	 *
+	 * @since 3.3.9.2
+	 */
+	public function maybe_handle_display_callback_notice_dismiss() {
+		$dismiss = pods_v( 'pods_dismiss_display_callback_notice' );
+		$nonce   = pods_v( 'pods_dismiss_display_callback_notice_nonce' );
+
+		if ( ! $dismiss || ! $nonce ) {
+			return;
+		}
+
+		if ( false === wp_verify_nonce( $nonce, 'pods_dismiss_display_callback_notice' ) ) {
+			return;
+		}
+
+		if ( ! pods_is_admin( 'pods_settings' ) ) {
+			return;
+		}
+
+		pods_access_clear_disallowed_display_callbacks();
+	}
+
+	/**
+	 * Show an admin notice on the Pods Settings page listing detected disallowed display callbacks.
+	 *
+	 * @since 3.3.9.2
+	 */
+	public function show_display_callback_notice() {
+		if ( 0 === (int) pods_get_setting( 'show_display_callback_notices', '1' ) ) {
+			return;
+		}
+
+		$callbacks = pods_get_disallowed_display_callbacks();
+
+		if ( empty( $callbacks ) ) {
+			return;
+		}
+
+		$escaped_callbacks = array_map( 'esc_html', $callbacks );
+
+		$dismiss_link = add_query_arg( array(
+			'pods_dismiss_display_callback_notice'       => '1',
+			'pods_dismiss_display_callback_notice_nonce' => wp_create_nonce( 'pods_dismiss_display_callback_notice' ),
+		) );
+
+		pods_message(
+			wpautop(
+				esc_html__( 'Disallowed display callbacks were detected on this site. These callbacks were blocked and were not run.', 'pods' )
+				. "\n\n" . '<strong>' . esc_html__( 'Disallowed callbacks:', 'pods' ) . '</strong> ' . implode( ', ', $escaped_callbacks )
+				. "\n\n" . esc_html__( 'Review your Display callbacks setting if you expected these functions to be allowed, or dismiss this notice after you have reviewed the list.', 'pods' )
+				. "\n\n" . '<a href="' . esc_url( $dismiss_link ) . '" class="button">' . esc_html__( 'Dismiss and clear list', 'pods' ) . '</a>'
+			),
+			'warning',
+			false,
+			false
+		);
 	}
 
 	/**
@@ -2652,7 +2717,7 @@ class PodsAdmin {
 		$methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
 		if ( ! isset( $params->method ) || ! isset( $methods[ $params->method ] ) ) {
-			return pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
+			return pods_error( __( 'Invalid AJAX request method', 'pods' ), $this );
 		}
 
 		$defaults = array(
@@ -2663,6 +2728,10 @@ class PodsAdmin {
 
 		$method = (object) array_merge( $defaults, (array) $methods[ $params->method ] );
 
+		if ( empty( $method->priv ) && empty( $method->custom_nonce ) ) {
+			return pods_error( __( 'Invalid AJAX request nonce handling', 'pods' ), $this );
+		}
+
 		if (
 			true !== $method->custom_nonce
 			&& (
@@ -2671,7 +2740,7 @@ class PodsAdmin {
 				|| false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method )
 			)
 		) {
-			return pods_error( __( 'Unauthorized request', 'pods' ), $this );
+			return pods_error( __( 'Unauthorized form request', 'pods' ), $this );
 		}
 
 		// Cleaning up $params

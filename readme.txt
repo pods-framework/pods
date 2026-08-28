@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.2
-Stable tag: 3.0.10.4
+Stable tag: 3.0.10.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,11 +181,23 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.0.10.5 - August 31st, 2026 =
+
+This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.
+
+Additional releases with these security fixes have been backported to each major version of Pods from Pods 2.7 and above to make it easy to update.
+
+* Security: Restricted display callbacks to an explicit allow list of safe functions, with optional customized additions requiring a dedicated prefix. Added detection and admin notices when disallowed display callbacks are used on a site. (Jakub Herman, @sc0ttkclark)
+* Security: Refactored form nonce handling to harden against submission misuse. (Jakub Herman, @sc0ttkclark)
+* Security: Hardened shortcode and block logic against output and query misuse. (Wordfence PRISM - Wordfence, @sc0ttkclark)
+* Security: Fixed post_status handling in the last security release so it only applies to user-provided inputs (not Pods internal logic). (@sc0ttkclark)
+* Security: Added anonymous form post handling back that had unintentionally been disabled in the last security release. (@sc0ttkclark)
+
 = 3.0.10.4 - August 14th, 2026 =
 
 This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.
 
-Additional releases with these security fixes have been backported to each major version of Pods from Pods 2.7 and above.
+Additional releases with these security fixes have been backported to each major version of Pods from Pods 2.8 and above.
 
 * Security: Further restrictions on error handling and fallbacks. (Nhien Pham @nhienit - GalaxyOne, @thevietronin - GalaxyOne, @sc0ttkclark)
 * Security: General hardening improvements to how data queries are built and validated. (HaoNH @haoit, @onebitious, @sc0ttkclark)

@@ -690,7 +690,12 @@ class PodsData {
 					}
 
 					foreach ( $sql_fragment as $sql_fragment_to_check ) {
-						if ( ! is_string( $sql_fragment_to_check ) || pods_access_sql_fragment_is_allowed( $sql_fragment_to_check, $fragment_context, $fragment_info ) ) {
+						if (
+							! is_string( $sql_fragment_to_check )
+							|| empty( $params->from )
+							|| 'dynamic-embed' !== $params->from
+							|| pods_access_sql_fragment_is_allowed( $sql_fragment_to_check, $fragment_context, $fragment_info, $params )
+						) {
 							continue;
 						}
 
@@ -847,7 +852,7 @@ class PodsData {
 	/**
 	 * Build/Rewrite dynamic SQL and handle search/filter/sort
 	 *
-	 * @param array $params
+	 * @param array|object $params
 	 *
 	 * @return bool|mixed|string
 	 * @since 2.0.0
@@ -2992,7 +2997,13 @@ class PodsData {
 		}//end if
 
 		// Validate this expression before it is used, to help prevent security issues.
-		if ( ! pods_access_sql_fragment_is_allowed( (string) $field_cast, 'FIELD' ) ) {
+		if (
+			! empty( $params->from )
+			&& 'dynamic-embed' === $params->from
+			&& ! pods_access_sql_fragment_is_allowed( (string) $field_cast, 'FIELD', ! empty( $params->fragment_info ) ? $params->fragment_info : array(
+				'pod' => $pod,
+			), $params )
+		) {
 			if ( pods_is_admin() ) {
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Notice HTML is escaped within pods_get_access_admin_notice().
 				echo pods_get_access_admin_notice(
@@ -3866,7 +3877,31 @@ class PodsData {
 		 */
 		$sql = apply_filters( 'pods_data_get_sql', $sql, $this );
 
-		$sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
+		$sql = str_replace(
+			array(
+				'@wp_blogs',
+				'@wp_blogmeta',
+				'@wp_registration_log',
+				'@wp_signups',
+				'@wp_site',
+				'@wp_sitemeta',
+				'@wp_users',
+				'@wp_usermeta',
+				'@wp_',
+			),
+			array(
+				$wpdb->blogs,
+				$wpdb->blogmeta,
+				$wpdb->registration_log,
+				$wpdb->signups,
+				$wpdb->site,
+				$wpdb->sitemeta,
+				$wpdb->users,
+				$wpdb->usermeta,
+				$wpdb->prefix,
+			),
+			$sql
+		);
 
 		$sql = str_replace( '{prefix}', '@wp_', $sql );
 		$sql = str_replace( '{/prefix/}', '{prefix}', $sql );

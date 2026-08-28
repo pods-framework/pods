@@ -1,4 +1,5 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
@@ -94,29 +95,19 @@ if ( ! isset( $thank_you_alt ) ) {
 	$thank_you_alt = $thank_you;
 }
 
-$uri_hash   = wp_create_nonce( 'pods_uri_' . pods_current_path() );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
-
-if ( is_user_logged_in() ) {
-	$uid = 'user_' . get_current_user_id();
-} else {
-	$uid = pods_session_id();
-}
-
-$item_id = $duplicate ? 0 : $pod->id();
-
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $item_id . '_' . $uri_hash . '_' . $field_hash );
+$uri_hash = pods_access_form_uri_hash();
+$item_id  = $duplicate ? 0 : $pod->id();
 
 $submit_result = null;
 
-if ( isset( $_POST['_pods_nonce'] ) ) {
+if ( pods_access_form_nonce_present_in_request( 'form' ) ) {
 	try {
 		$params = pods_unslash( (array) $_POST );
 		$new_id     = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 
 		$submit_result = 0 < $new_id;
 	} catch ( Exception $e ) {
-		echo $obj->error( $e->getMessage() );
+		$obj->error( wp_kses_post( $e->getMessage() ) );
 	}
 } elseif ( isset( $_GET['do'] ) ) {
 	$submit_result = 0 < $pod->id();
@@ -167,11 +158,11 @@ if ( null !== $submit_result ) {
 			);
 		}
 
-		echo $obj->message( $message );
+		echo $obj->message( wp_kses_post( $message ) );
 	} else {
 		$error = sprintf( $error_message, $obj->item );
 
-		echo $obj->error( $error );
+		echo $obj->error( wp_kses_post( $error ) );
 	}
 }
 
@@ -214,16 +205,13 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		echo PodsForm::field( 'action', 'pods_admin', 'hidden' );
 		echo PodsForm::field( 'method', 'process_form', 'hidden' );
 		echo PodsForm::field( 'do', $do, 'hidden' );
-		echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' );
-		echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' );
-		echo PodsForm::field( '_pods_id', $item_id, 'hidden' );
-		echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' );
-		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
+		pods_access_output_form_nonce_fields( $pod->pod, $item_id, $submittable_fields, pods_access_form_field_names( 'form' ), $uri_hash );
+		echo PodsForm::field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' );
 		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
 
 		// Nonce for the non-AJAX/direct-POST save path. With JavaScript the form submits via AJAX to process_form(); without JS it posts directly and is handled by PodsUI::go() -> save().
 		if ( $obj instanceof PodsUI ) {
-			PodsForm::output_field( $obj->num_prefix . '_wpnonce' . $obj->num, wp_create_nonce( 'pods-ui-save' ), 'hidden' );
+			echo PodsForm::field( $obj->num_prefix . '_wpnonce' . $obj->num, wp_create_nonce( 'pods-ui-save' ), 'hidden' );
 		}
 
 		pods_view( PODS_DIR . 'ui/forms/type/' . sanitize_title( $form_type ) . '.php', compact( array_keys( get_defined_vars() ) ) );
@@ -233,7 +221,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 
 <script type="text/javascript">
 	if ( 'undefined' == typeof ajaxurl ) {
-		var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
+		var ajaxurl = <?php echo json_encode( esc_url_raw( admin_url( 'admin-ajax.php' ) ) ); ?>;
 	}
 
 	if ( 'undefined' == typeof pods_form_thank_you ) {
@@ -242,13 +230,13 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 
 	<?php if ( $is_settings_pod ) : ?>
 		var pods_admin_submit_callback = function ( id ) {
-			document.location = '<?php echo pods_slash( pods_query_arg( array( 'do' => $do ) ) ); ?>';
+			document.location = <?php echo json_encode( esc_url_raw( pods_query_arg( array( 'do' => $do ) ) ) ); ?>;
 		}
 	<?php else : ?>
 		var pods_admin_submit_callback = function ( id ) {
 			id = parseInt( id, 10 );
-			var thank_you = '<?php echo esc_url_raw( $thank_you ); ?>';
-			var thank_you_alt = '<?php echo esc_url_raw( $thank_you_alt ); ?>';
+			var thank_you = <?php echo json_encode( esc_url_raw( $thank_you ) ); ?>;
+			var thank_you_alt = <?php echo json_encode( esc_url_raw( $thank_you_alt ) ); ?>;
 
 			if ( 'undefined' != typeof pods_form_thank_you && null !== pods_form_thank_you ) {
 				thank_you = pods_form_thank_you;

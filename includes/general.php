@@ -1,4 +1,10 @@
 <?php
+
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Global\Functions\General
  */
@@ -224,7 +230,7 @@ function pods_error( $error, $obj = null ) {
 
 			set_exception_handler( 'pods_error' );
 
-			throw new Exception( $error );
+			throw new Exception( wp_kses_post( $error ) );
 		} elseif ( 'exit' === $error_mode ) {
 			$die_bypass = apply_filters( 'pods_error_die', null, $error );
 
@@ -233,10 +239,10 @@ function pods_error( $error, $obj = null ) {
 			}
 
 			// die with error
-			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
-				wp_die( $error, '', array( 'back_link' => true ) );
+			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( (string) $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
+				wp_die( '<e>' . wp_kses_post( $error ) . '</e>', '', array( 'back_link' => true ) );
 			} else {
-				die( sprintf( '<e>%s</e>', $error ) );
+				die( '<e>' . wp_kses_post( $error ) . '</e>' );
 			}
 		} elseif ( 'wp_error' === $error_mode ) {
 			return $wp_error;
@@ -298,7 +304,7 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		$debug = '<pre>' . $debug . '</pre>';
 	}
 
-	$debug = '<e>' . $debug;
+	$debug = '<e>' . wp_kses_post( $debug );
 
 	if ( 2 === $die ) {
 		wp_die( $debug, '', array( 'back_link' => true ) );
@@ -524,7 +530,7 @@ function pods_deprecated( $function, $version, $replacement = null ) {
 			$error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available.', 'pods' );
 		}
 
-		trigger_error( sprintf( $error, $function, $version, $replacement ) );
+		trigger_error( wp_kses_post( sprintf( $error, $function, $version, $replacement ) ), E_USER_DEPRECATED ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 	}
 }
 
@@ -541,7 +547,8 @@ function pods_deprecated( $function, $version, $replacement = null ) {
 function pods_help( $text, $url = null ) {
 
 	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
-		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/qtip/jquery.qtip.min.js', array( 'jquery' ), '3.0.3' );
+		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/qtip/jquery.qtip.min.js', array( 'jquery' ), '3.0.3', array( 'in_footer' => true ) );
+		wp_enqueue_script( 'jquery-qtip2' );
 	} elseif ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
 		wp_enqueue_script( 'jquery-qtip2' );
 	}
@@ -701,6 +708,8 @@ function pods_access( $privs, $method = 'OR' ) {
 
 	// Loop through the user's roles
 	foreach ( $privs as $priv ) {
+		$priv = (string) $priv;
+
 		if ( 0 === strpos( $priv, 'pod_' ) ) {
 			$priv = pods_str_replace( 'pod_', 'pods_edit_', $priv, 1 );
 		}
@@ -1264,7 +1273,9 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	}
 
 	if ( ! $is_singular ) {
-		$params = array();
+		$params = array(
+			'from' => 'dynamic-embed',
+		);
 
 		if ( ! defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || ! PODS_DISABLE_SHORTCODE_SQL ) {
 			$shortcode_allow_evaluate_tags = pods_shortcode_allow_evaluate_tags();
@@ -1276,7 +1287,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			];
 
 			if ( $tags['select'] && 0 < strlen( (string) $tags['select'] ) ) {
-				if ( ! pods_access_sql_fragment_is_allowed( $tags['select'], 'SELECT', $info ) ) {
+				if ( ! pods_access_sql_fragment_is_allowed( $tags['select'], 'SELECT', $info, (object) $params ) ) {
 					return pods_message(
 						sprintf(
 							'<strong>%1$s:</strong> %2$s',
@@ -1292,7 +1303,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			}
 
 			if ( $tags['join'] && 0 < strlen( (string) $tags['join'] ) ) {
-				if ( ! pods_access_sql_fragment_is_allowed( $tags['join'], 'JOIN', $info ) ) {
+				if ( ! pods_access_sql_fragment_is_allowed( $tags['join'], 'JOIN', $info, (object) $params ) ) {
 					return pods_message(
 						sprintf(
 							'<strong>%1$s:</strong> %2$s',
@@ -1310,7 +1321,13 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			if ( $tags['where'] && 0 < strlen( (string) $tags['where'] ) ) {
 				$tags['where'] = ltrim( $tags['where'], ')' );
 
-				if ( ! pods_access_sql_fragment_is_allowed( $tags['where'], 'WHERE', $info ) ) {
+				$params['where'] = $tags['where'];
+
+				if ( $shortcode_allow_evaluate_tags ) {
+					$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
+				}
+
+				if ( ! pods_access_sql_fragment_is_allowed( $params['where'], 'WHERE', $info, (object) $params ) ) {
 					return pods_message(
 						sprintf(
 							'<strong>%1$s:</strong> %2$s',
@@ -1321,16 +1338,10 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 						true
 					);
 				}
-
-				$params['where'] = $tags['where'];
-
-				if ( $shortcode_allow_evaluate_tags ) {
-					$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
-				}
 			}
 
 			if ( $tags['groupby'] && 0 < strlen( (string) $tags['groupby'] ) ) {
-				if ( ! pods_access_sql_fragment_is_allowed( $tags['groupby'], 'GROUP BY', $info ) ) {
+				if ( ! pods_access_sql_fragment_is_allowed( $tags['groupby'], 'GROUP BY', $info, (object) $params ) ) {
 					return pods_message(
 						sprintf(
 							'<strong>%1$s:</strong> %2$s',
@@ -1348,7 +1359,13 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			if ( $tags['having'] && 0 < strlen( (string) $tags['having'] ) ) {
 				$tags['having'] = ltrim( $tags['having'], ')' );
 
-				if ( ! pods_access_sql_fragment_is_allowed( $tags['having'], 'HAVING', $info ) ) {
+				$params['having'] = $tags['having'];
+
+				if ( $shortcode_allow_evaluate_tags ) {
+					$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
+				}
+
+				if ( ! pods_access_sql_fragment_is_allowed( $params['having'], 'HAVING', $info, (object) $params ) ) {
 					return pods_message(
 						sprintf(
 							'<strong>%1$s:</strong> %2$s',
@@ -1359,16 +1376,10 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 						true
 					);
 				}
-
-				$params['having'] = $tags['having'];
-
-				if ( $shortcode_allow_evaluate_tags ) {
-					$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
-				}
 			}
 
 			if ( $tags['orderby'] && 0 < strlen( (string) $tags['orderby'] ) ) {
-				if ( ! pods_access_sql_fragment_is_allowed( $tags['orderby'], 'ORDER BY', $info ) ) {
+				if ( ! pods_access_sql_fragment_is_allowed( $tags['orderby'], 'ORDER BY', $info, (object) $params ) ) {
 					return pods_message(
 						sprintf(
 							'<strong>%1$s:</strong> %2$s',
@@ -1389,8 +1400,8 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 			$filters = $pod->filters( $tags['filters'], $tags['filters_label'] );
 		}
 
-		// Forms require params set
-		if ( ! empty( $params ) || empty( $tags['form'] ) ) {
+		// Forms require params set (there's always a "from" key set in $params).
+		if ( 1 < count( $params ) || empty( $tags['form'] ) ) {
 			if ( ! empty( $tags['limit'] ) ) {
 				$params['limit'] = (int) $tags['limit'];
 			}
@@ -1600,7 +1611,7 @@ function pods_shortcode_run( $tags, $content = null, $blog_is_switched = false, 
 	$content = $pod->template( $tags['template'], $content, false, true );
 
 	if ( '' === trim( $content ) && ! empty( $tags['not_found'] ) ) {
-		$content = $pod->do_magic_tags( $tags['not_found'] );
+		$content = wp_kses_post( $pod->do_magic_tags( $tags['not_found'] ) );
 	}
 
 	// phpcs:ignore

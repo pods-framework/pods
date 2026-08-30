@@ -698,6 +698,66 @@ class PodsData {
 			pods_debug( $params );
 		}
 
+		$is_search = pods_v( $this->search_var );
+
+		if ( empty( $params->bypass_fragment_checks ) ) {
+			$fragments_to_check = array(
+				'select'  => 'SELECT',
+				'join'    => 'JOIN',
+				'where'   => 'WHERE',
+				'groupby' => 'GROUP BY',
+				'having'  => 'HAVING',
+				'orderby' => 'ORDER BY',
+				'sql'     => 'FULL SQL',
+			);
+
+			$fragment_info = ! empty( $params->fragment_info ) ? $params->fragment_info : array();
+
+			foreach ( $fragments_to_check as $fragment => $fragment_context ) {
+				if ( ! empty( $params->{$fragment} ) ) {
+					$sql_fragment = (array) $params->{$fragment};
+
+					if ( ! isset( $sql_fragment[0] ) ) {
+						continue;
+					}
+
+					foreach ( $sql_fragment as $sql_fragment_to_check ) {
+						if (
+							! is_string( $sql_fragment_to_check )
+							|| empty( $params->from )
+							|| 'dynamic-embed' !== $params->from
+							|| pods_access_sql_fragment_is_allowed( $sql_fragment_to_check, $fragment_context, $fragment_info, $params )
+						) {
+							continue;
+						}
+
+						if ( pods_is_admin() ) {
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Notice HTML is escaped within pods_get_access_admin_notice().
+							echo pods_get_access_admin_notice(
+								$fragment_info,
+								true,
+								esc_html( sprintf(
+									/* translators: %s is the fragment SQL clause that was not allowed */
+									__( 'This query contains disallowed SQL fragments. It has been disabled for security purposes. The disallowed fragment was for %1$s: %2$s', 'pods' ),
+									$fragment,
+									$sql_fragment_to_check
+								) )
+							) ?: '';
+						}
+
+						// Stop processing the query.
+						return [];
+					}
+				}
+			}
+		}
+
+		// Disable caching for searches.
+		if ( null !== $is_search ) {
+			$params->expires = 0;
+			$params->cache_mode = null;
+		}
+
 		// Get from cache if enabled.
 		if ( null !== pods_v( 'expires', $params, null, true ) ) {
 			$cache_key = md5( (string) $this->pod . serialize( $params ) );
@@ -835,7 +895,7 @@ class PodsData {
 	/**
 	 * Build/Rewrite dynamic SQL and handle search/filter/sort
 	 *
-	 * @param array $params
+	 * @param array|object $params
 	 *
 	 * @return bool|mixed|string
 	 * @since 2.0.0
@@ -844,11 +904,11 @@ class PodsData {
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 		$file_field_types         = PodsForm::file_field_types();
-		$pick_field_types         = [
+		$pick_field_types         = array(
 			'pick',
 			'comment',
 			'taxonomy',
-		];
+		);
 
 		$defaults = array(
 			'select'              => '*',
@@ -2815,6 +2875,34 @@ class PodsData {
 			}
 		}//end if
 
+		// Validate this expression before it is used, to help prevent security issues.
+		if (
+			! empty( $params->from )
+			&& 'dynamic-embed' === $params->from
+			&& ! pods_access_sql_fragment_is_allowed( (string) $field_cast, 'FIELD', ! empty( $params->fragment_info ) ? $params->fragment_info : array(
+				'pod' => $pod,
+			), $params )
+		) {
+			if ( pods_is_admin() ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Notice HTML is escaped within pods_get_access_admin_notice().
+				echo pods_get_access_admin_notice(
+					! empty( $params->fragment_info ) ? $params->fragment_info : [
+						'pod' => $pod,
+					],
+					true,
+					esc_html( sprintf(
+						/* translators: %s is the fragment SQL clause that was not allowed */
+						__( 'This query contains disallowed SQL fragments. It has been disabled for security purposes. The disallowed fragment was for %1$s: %2$s', 'pods' ),
+						'query_field',
+						(string) $field_cast
+					) )
+				) ?: '';
+			}
+
+			// Fragment not allowed.
+			return null;
+		}
+
 		// Setup string sanitizing for $wpdb->prepare().
 		if ( empty( $field_sanitize_format ) ) {
 			// Sanitize as string.
@@ -3597,7 +3685,31 @@ class PodsData {
 		 */
 		$sql = apply_filters( 'pods_data_get_sql', $sql, $this );
 
-		$sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
+		$sql = str_replace(
+			array(
+				'@wp_blogs',
+				'@wp_blogmeta',
+				'@wp_registration_log',
+				'@wp_signups',
+				'@wp_site',
+				'@wp_sitemeta',
+				'@wp_users',
+				'@wp_usermeta',
+				'@wp_',
+			),
+			array(
+				$wpdb->blogs,
+				$wpdb->blogmeta,
+				$wpdb->registration_log,
+				$wpdb->signups,
+				$wpdb->site,
+				$wpdb->sitemeta,
+				$wpdb->users,
+				$wpdb->usermeta,
+				$wpdb->prefix,
+			),
+			$sql
+		);
 
 		$sql = str_replace( '{prefix}', '@wp_', $sql );
 		$sql = str_replace( '{/prefix/}', '{prefix}', $sql );

@@ -1,4 +1,5 @@
 <?php
+
 // Don't load directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
@@ -52,24 +53,14 @@ foreach ( $submittable_fields as $k => $field ) {
 	}
 }
 
-$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
+$uri_hash = pods_access_form_uri_hash();
 
-$uid = pods_session_id();
-
-if ( is_user_logged_in() ) {
-	$uid = 'user_' . get_current_user_id();
-}
-
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
-
-if ( isset( $_POST[ '_pods_nonce' ] ) ) {
-    try {
-        $id = $pod->api->process_form( $_POST, $pod, $submittable_fields, $thank_you );
-    }
-    catch ( Exception $e ) {
-        echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
-    }
+if ( pods_access_form_nonce_present_in_request( 'form' ) ) {
+	try {
+		$id = $pod->api->process_form( $_POST, $pod, $submittable_fields, $thank_you );
+	} catch ( Exception $e ) {
+		pods_message( esc_html( $e->getMessage() ), 'error' );
+	}
 }
 
 $field_prefix = '';
@@ -82,10 +73,7 @@ if ( !$fields_only ) {
 			<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
 			<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
 			<?php echo PodsForm::field( 'do', ( 0 < $pod->id() ? 'save' : 'create' ), 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
+			<?php pods_access_output_form_nonce_fields( $pod->pod, $pod->id(), $submittable_fields, pods_access_form_field_names( 'form' ), $uri_hash ); ?>
 			<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
 			<?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 <?php
@@ -208,9 +196,9 @@ if ( !$fields_only ) {
 		document.addEventListener( "DOMContentLoaded", function() {
 			if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
-				if ( 'undefined' === typeof ajaxurl ) {
-					window.ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
-				}
+					if ( 'undefined' === typeof ajaxurl ) {
+						window.ajaxurl = <?php echo json_encode( esc_url_raw( admin_url( 'admin-ajax.php' ) ) ); ?>;
+					}
 
 				jQuery( document ).Pods( 'validate' );
 				jQuery( document ).Pods( 'submit' );

@@ -2561,6 +2561,8 @@ class Pods implements Iterator {
 			// Caching parameters.
 			'expires'             => null,
 			'cache_mode'          => 'cache',
+			// Other info
+			'from'                => null,
 		);
 
 		if ( is_array( $params ) ) {

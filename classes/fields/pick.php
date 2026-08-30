@@ -1,5 +1,10 @@
 <?php
 
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @package Pods\Fields
  */
@@ -457,6 +462,8 @@ class PodsField_Pick extends PodsField {
 			$ignore = array( 'attachment', 'revision', 'nav_menu_item' );
 
 			foreach ( $post_types as $post_type => $label ) {
+				$post_type = (string) $post_type;
+
 				if ( in_array( $post_type, $ignore, true ) || empty( $post_type ) ) {
 					unset( $post_types[ $post_type ] );
 
@@ -483,6 +490,8 @@ class PodsField_Pick extends PodsField {
 			$ignore = array( 'nav_menu', 'post_format' );
 
 			foreach ( $taxonomies as $taxonomy => $label ) {
+				$taxonomy = (string) $taxonomy;
+
 				/**
 				 * Prevent ability to extend core Pods content types.
 				 *
@@ -1334,14 +1343,14 @@ class PodsField_Pick extends PodsField {
 
 		// Image icons always overwrite default icons
 		if ( ! empty( $img_icon ) ) {
-			$icon = $img_icon;
+			$icon = (string) $img_icon;
 		}
 
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
-			$icon         = '';
+			$icon = '';
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
-			$icon         = sanitize_html_class( $icon );
+			$icon = sanitize_html_class( $icon );
 		}
 
 		// #5740 Check for WP_Error object.
@@ -1393,11 +1402,11 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$item = array(
-			'id'        => html_entity_decode( esc_html( $item_id ) ),
-			'icon'      => esc_attr( $icon ),
-			'name'      => wp_strip_all_tags( html_entity_decode( $item_title ) ),
-			'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
-			'link'      => html_entity_decode( esc_url( $link ) ),
+			'id'        => null !== $item_id ? html_entity_decode( esc_html( $item_id ), ENT_COMPAT ) : '',
+			'icon'      => null !== $icon ? esc_attr( (string) $icon ) : '',
+			'name'      => null !== $item_title ? wp_strip_all_tags( html_entity_decode( $item_title, ENT_COMPAT ) ) : '',
+			'edit_link' => null !== $edit_link ? html_entity_decode( esc_url( $edit_link ), ENT_COMPAT ) : '',
+			'link'      => null !== $link ? html_entity_decode( esc_url( $link ), ENT_COMPAT ) : '',
 			'selected'  => $selected,
 		);
 
@@ -2154,12 +2163,56 @@ class PodsField_Pick extends PodsField {
 				$params = array(
 					'select'     => "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`",
 					'table'      => $search_data->table,
-					'where'      => pods_v( static::$type . '_where', $options, (array) $options['table_info']['where_default'], true ),
+					'where'      => pods_v( static::$type . '_where', $options, null, true ),
 					'orderby'    => pods_v( static::$type . '_orderby', $options, null, true ),
 					'groupby'    => pods_v( static::$type . '_groupby', $options, null, true ),
 					'pagination' => false,
 					'search'     => false,
 				);
+
+				$access_args   = array();
+				$access_params = (object) array(
+					'from' => 'pick/get_object_data',
+				);
+
+				if ( ! empty( $pick_object ) && ! empty( $pick_val ) ) {
+					$access_args['object_type'] = $pick_object;
+					$access_args['object_name'] = $pick_val;
+				}
+
+				// Determine whether pick_where fragment is allowed.
+				if ( $params['where'] && ! pods_access_sql_fragment_is_allowed( $params['where'], 'WHERE', $access_args, $access_params ) ) {
+					/*
+					 * Don't default to empty, default to a false check so it doesn't return unexpected data that wasn't intended.
+					 *
+					 * Returning no results is better than more results than intended for security purposes.
+					 */
+					$params['where'] = '0=1';
+				}
+
+				// Determine whether pick_orderby fragment is allowed.
+				if ( $params['orderby'] && ! pods_access_sql_fragment_is_allowed( $params['orderby'], 'ORDER BY', $access_args, $access_params ) ) {
+					$params['orderby'] = null;
+				}
+
+				// Determine whether pick_having fragment is allowed.
+				if ( $params['having'] && ! pods_access_sql_fragment_is_allowed( $params['having'], 'HAVING', $access_args, $access_params ) ) {
+					/*
+					 * Don't default to empty, default to a false check so it doesn't return unexpected data that wasn't intended.
+					 *
+					 * Returning no results is better than more results than intended for security purposes.
+					 */
+					$params['having'] = '0=1';
+				}
+
+				// Determine whether pick_orderby fragment is allowed.
+				if ( $params['groupby'] && ! pods_access_sql_fragment_is_allowed( $params['groupby'], 'GROUP BY', $access_args, $access_params ) ) {
+					$params['groupby'] = null;
+				}
+
+				if ( null === $params['where'] ) {
+					$params['where'] = (array) $options['table_info']['where_default'];
+				}
 
 				if ( in_array( $options[ static::$type . '_object' ], array( 'site', 'network' ), true ) ) {
 					$params['select'] .= ', `t`.`path`';
@@ -2229,8 +2282,7 @@ class PodsField_Pick extends PodsField {
 							'multiselect',
 							'checkbox',
 						), true
-					)
-					) {
+					) ) {
 						$hierarchy = true;
 					}
 				}
@@ -2311,7 +2363,9 @@ class PodsField_Pick extends PodsField {
 					$extra = ', `t`.`comment_type`';
 				}
 
-				$params['select'] .= $extra;
+				if ( '' !== $extra && false === strpos( (string) $params['select'], $extra ) ) {
+					$params['select'] .= ', ' . $extra;
+				}
 
 				if ( 'user' === pods_v( static::$type . '_object', $options ) ) {
 					$roles = pods_v( static::$type . '_user_role', $options );
@@ -2338,6 +2392,12 @@ class PodsField_Pick extends PodsField {
 						}
 					}//end if
 				}//end if
+
+				if ( empty( $params['where'] ) ) {
+					$params['where'] = null;
+				}
+
+				$params['from'] = 'pick/get_object_data';
 
 				$results = $search_data->select( $params );
 

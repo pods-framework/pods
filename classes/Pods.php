@@ -673,7 +673,7 @@ class Pods implements Iterator {
 		}
 
 		if ( null !== $params->single ) {
-			$params->single = (boolean) $params->single;
+			$params->single = (bool) $params->single;
 		}
 
 		$params->name = trim( (string) $params->name );
@@ -2404,9 +2404,9 @@ class Pods implements Iterator {
 			'offset'              => null,
 			'page'                => (int) $this->page,
 			'page_var'            => $this->page_var,
-			'pagination'          => (boolean) $this->pagination,
+			'pagination'          => (bool) $this->pagination,
 			// Search parameters.
-			'search'              => (boolean) $this->search,
+			'search'              => (bool) $this->search,
 			'search_var'          => $this->search_var,
 			'search_query'        => null,
 			'search_mode'         => $this->search_mode,
@@ -2449,8 +2449,8 @@ class Pods implements Iterator {
 		$this->offset     = (int) $params->offset;
 		$this->page       = (int) $params->page;
 		$this->page_var   = $params->page_var;
-		$this->pagination = (boolean) $params->pagination;
-		$this->search     = (boolean) $params->search;
+		$this->pagination = (bool) $params->pagination;
+		$this->search     = (bool) $params->search;
 		$this->search_var = $params->search_var;
 		$this->filter_var = $params->filter_var;
 		$params->join     = (array) $params->join;
@@ -3642,7 +3642,7 @@ class Pods implements Iterator {
 		 *
 		 * @since 2.8.0
 		 */
-		$include_obj = (boolean) apply_filters( 'pods_helper_include_obj', false, $params );
+		$include_obj = (bool) apply_filters( 'pods_helper_include_obj', false, $params );
 
 		// Clean up helper callback (if string).
 		if ( is_string( $params['helper'] ) ) {

@@ -54,5 +54,24 @@ class Service_Provider extends \Pods\Service_Provider_Base {
 	protected function hooks() {
 		add_action( 'pods_setup_content_types', pods_container_callback( 'pods.blocks', 'register_blocks' ) );
 		add_filter( 'widget_types_to_hide_from_legacy_widget_block', pods_container_callback( 'pods.blocks', 'remove_from_legacy_widgets' ) );
+
+		// Invalidate the cached JS-side block config whenever the active
+		// locale changes. Without this, the 7-day `pods_blocks_js` transient
+		// serves strings from the previous locale, leaving the block inserter
+		// and block sidebar labels stuck in the old language. See issue
+		// #7290.
+		$blocks_api = pods_container( 'pods.blocks' );
+
+		$locale_change_actions = [
+			'switch_to_locale',
+			'restore_previous_locale',
+			'change_user_locale',
+			'update_option_WPLANG',
+			'update_option_site_lang',
+		];
+
+		foreach ( $locale_change_actions as $action ) {
+			add_action( $action, [ $blocks_api, 'invalidate_js_block_cache' ] );
+		}
 	}
 }

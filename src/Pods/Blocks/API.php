@@ -53,6 +53,27 @@ class API {
 	}
 
 	/**
+	 * Invalidate the JS-side block config cache and the per-request static
+	 * cache. Wired to WP locale-change actions by the service provider so the
+	 * next admin request rebuilds the block configs under the new locale;
+	 * otherwise the 7-day `pods_blocks_js` transient serves strings from the
+	 * previous locale. See issue #7290.
+	 *
+	 * @internal Called via WP hooks registered in Service_Provider. Public so
+	 *           test code can invoke it directly.
+	 *
+	 * @return void
+	 */
+	public function invalidate_js_block_cache() {
+		// The stale-strings problem is handled by the cache key itself (see
+		// get_js_blocks()), which is keyed per locale. This clears the current locale's
+		// entry plus the pre-3.4 global key so upgrades do not serve a stale payload.
+		pods_transient_clear( 'pods_blocks_js_' . determine_locale() );
+		pods_transient_clear( 'pods_blocks_js' );
+		pods_static_cache_clear( true, self::class );
+	}
+
+	/**
 	 * @return void
 	 */
 	public function register_assets() {
@@ -285,17 +306,29 @@ class API {
 	 * @return array List of registered blocks prepared for JavaScript registerBlockType().
 	 */
 	public function get_js_blocks() {
-		static $js_blocks = [];
+		// Cached per locale. Block configs carry translated labels, and a single global
+		// key served one locale's strings to everyone. Keying on determine_locale() also
+		// covers the per-user language setting, which no locale-change action fires for --
+		// two admins with different profile languages hit the same request lifecycle.
+		static $js_blocks_by_locale = [];
 
-		if ( ! empty( $js_blocks ) ) {
-			return $js_blocks;
+		$locale = determine_locale();
+
+		if ( ! empty( $js_blocks_by_locale[ $locale ] ) ) {
+			return $js_blocks_by_locale[ $locale ];
 		}
 
-		$cached = pods_transient_get( 'pods_blocks_js' );
+		$transient_key = 'pods_blocks_js_' . $locale;
+
+		$cached = pods_transient_get( $transient_key );
 
 		if ( is_array( $cached ) ) {
+			$js_blocks_by_locale[ $locale ] = $cached;
+
 			return $cached;
 		}
+
+		$js_blocks = [];
 
 		$blocks = $this->get_blocks();
 
@@ -327,7 +360,9 @@ class API {
 			$js_blocks[ $block_key ] = $js_block;
 		}
 
-		pods_transient_set( 'pods_blocks_js', $js_blocks, DAY_IN_SECONDS * 7 );
+		pods_transient_set( $transient_key, $js_blocks, DAY_IN_SECONDS * 7 );
+
+		$js_blocks_by_locale[ $locale ] = $js_blocks;
 
 		return $js_blocks;
 	}

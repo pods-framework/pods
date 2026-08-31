@@ -79,6 +79,11 @@ class Form extends Base {
 								'source'    => 'shortcode',
 								'attribute' => 'label',
 							],
+							'labels'           => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'labels',
+							],
 							'thank_you'        => [
 								'type'      => 'string',
 								'source'    => 'shortcode',
@@ -125,6 +130,11 @@ class Form extends Base {
 								'type'      => 'string',
 								'source'    => 'shortcode',
 								'attribute' => 'label',
+							],
+							'labels'           => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'labels',
 							],
 							'thank_you'        => [
 								'type'      => 'string',

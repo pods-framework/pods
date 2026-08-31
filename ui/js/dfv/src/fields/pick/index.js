@@ -407,6 +407,7 @@ const Pick = ( props ) => {
 			return (
 				<>
 					<FullSelect
+						inputId={ htmlAttributes.id || `pods-form-ui-${ name }` }
 						isTaggable={ isTaggable }
 						ajaxData={ ajaxData }
 						shouldRenderValue={ ! isListSelect }

@@ -79,7 +79,7 @@ function frontier_do_other_shortcodes( $content ) {
  * @since 2.4.0
  */
 function frontier_decode_template( $code, $atts ) {
-	$code = base64_decode( $code );
+	$code = (string) base64_decode( (string) $code );
 
 	if ( isset( $atts['pod'] ) ) {
 		$code = str_replace( '{@pod}', $atts['pod'], $code );

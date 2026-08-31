@@ -1808,7 +1808,7 @@ class PodsAPI {
 			$params->name = pods_clean_name( $params->name );
 		}
 
-		$params->overwrite = ! empty( $params->overwrite ) ? (boolean) $params->overwrite : false;
+		$params->overwrite = ! empty( $params->overwrite ) ? (bool) $params->overwrite : false;
 
 		$order_group_fields = null;
 
@@ -3250,8 +3250,8 @@ class PodsAPI {
 		$params->pod_id = $pod['id'];
 		$params->pod    = $pod['name'];
 
-		$params->is_new    = isset( $params->is_new ) ? (boolean) $params->is_new : false;
-		$params->overwrite = isset( $params->overwrite ) ? (boolean) $params->overwrite : false;
+		$params->is_new    = isset( $params->is_new ) ? (bool) $params->is_new : false;
+		$params->overwrite = isset( $params->overwrite ) ? (bool) $params->overwrite : false;
 
 		$reserved_keywords = pods_reserved_keywords( 'wp-post' );
 
@@ -4268,13 +4268,13 @@ class PodsAPI {
 		$id_required = false;
 
 		if ( isset( $params->id_required ) ) {
-			$id_required = (boolean) $params->id_required;
+			$id_required = (bool) $params->id_required;
 
 			unset( $params->id_required );
 		}
 
-		$params->is_new    = isset( $params->is_new ) ? (boolean) $params->is_new : false;
-		$params->overwrite = isset( $params->overwrite ) ? (boolean) $params->overwrite : false;
+		$params->is_new    = isset( $params->is_new ) ? (bool) $params->is_new : false;
+		$params->overwrite = isset( $params->overwrite ) ? (bool) $params->overwrite : false;
 
 		if ( ! $pod && ( ! isset( $params->pod ) || empty( $params->pod ) ) && ( ! isset( $params->pod_id ) || empty( $params->pod_id ) ) ) {
 			return pods_error( __( 'Pod ID or name is required', 'pods' ), $this );
@@ -4938,7 +4938,7 @@ class PodsAPI {
 		}
 
 		if ( isset( $params->is_new_item ) ) {
-			$is_new_item = (boolean) $params->is_new_item;
+			$is_new_item = (bool) $params->is_new_item;
 		}
 
 		// Allow Helpers to bypass subsequent helpers in recursive save_pod_item calls
@@ -5448,7 +5448,7 @@ class PodsAPI {
 						|| in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true )
 					)
 				);
-				$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
+				$simple = (bool) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
 
 				$is_repeatable_field = (
 					(
@@ -6678,6 +6678,7 @@ class PodsAPI {
 	 * $params['id'] int The Group ID.
 	 * $params['name'] string The Group name.
 	 * $params['new_name'] string The new Group name.
+	 * $params['duplicate_fields'] bool Whether to duplicate the fields.
 	 *
 	 * @since 2.8.0
 	 *
@@ -6716,7 +6717,11 @@ class PodsAPI {
 			return false;
 		}
 
+		$pod_data = null;
+
 		if ( $group instanceof Group ) {
+			$pod_data = $group->get_parent_object();
+
 			$group = $group->export(
 				[
 					'include_fields' => true,
@@ -6747,7 +6752,13 @@ class PodsAPI {
 
 		$fields = $group['fields'];
 
-		unset( $group['id'], $group['parent'], $group['object_type'], $group['object_storage_type'], $group['fields'] );
+		unset( $group['id'], $group['object_type'], $group['object_storage_type'], $group['fields'] );
+
+		if ( $pod_data ) {
+			unset( $group['parent'] );
+
+			$group['pod_data'] = $pod_data;
+		}
 
 		try {
 			$group_id = $this->save_group( $group );
@@ -6761,16 +6772,24 @@ class PodsAPI {
 			return false;
 		}
 
-		foreach ( $fields as $field => $field_data ) {
-			unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['object_storage_type'], $field_data['group'] );
+		$group_data = $this->load_group( [ 'id' => $group_id ] );
 
-			$field_data['group_id'] = $group_id;
+		if ( ! empty( $params->duplicate_fields ) ) {
+			foreach ( $fields as $field_data ) {
+				try {
+					$field_params = [
+						'pod' => $pod_data,
+						'id' => $field_data['id'],
+						'name' => $field_data['name'],
+						'new_group' => $group_data,
+						'new_group_id' => $group_id,
+					];
 
-			try {
-				$this->save_field( $field_data );
-			} catch ( Exception $exception ) {
-				// Field not saved.
-				pods_debug_log( $exception );
+					$this->duplicate_field( $field_params, true || $strict );
+				} catch ( Exception $exception ) {
+					// Field not saved.
+					pods_debug_log( $exception );
+				}
 			}
 		}
 
@@ -7049,7 +7068,7 @@ class PodsAPI {
 		$params['fields']        = (array) pods_v( 'fields', $params, [], true );
 		$params['depth']         = (int) pods_v( 'depth', $params, 2, true );
 		$params['object_fields'] = (array) pods_v( 'object_fields', $pod->pod_data, [], true );
-		$params['flatten']       = (boolean) pods_v( 'flatten', $params, false, true );
+		$params['flatten']       = (bool) pods_v( 'flatten', $params, false, true );
 		$params['context']       = pods_v( 'context', $params, null, true );
 
 		if ( empty( $params['fields'] ) ) {
@@ -7526,7 +7545,7 @@ class PodsAPI {
 			$params->delete_all = $delete_all;
 		}
 
-		$params->delete_all = (boolean) $params->delete_all;
+		$params->delete_all = (bool) $params->delete_all;
 
 		// Reset content
 		if ( true === $params->delete_all ) {
@@ -7740,7 +7759,7 @@ class PodsAPI {
 		}
 
 		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
-		$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
+		$simple = (bool) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
 		// @todo Push this logic into pods_object_storage_delete_pod action.
 		if ( $table_operation && $pod && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types, true ) || $simple ) ) {
@@ -7820,7 +7839,7 @@ class PodsAPI {
 		}
 
 		if ( ! isset( $params->delete_all ) ) {
-			$params->delete_all = (boolean) $delete_all;
+			$params->delete_all = (bool) $delete_all;
 		}
 
 		$group = $this->load_group( $params, false );
@@ -8542,7 +8561,7 @@ class PodsAPI {
 		$include_internal = false;
 
 		if ( isset( $params['include_internal'] ) ) {
-			$include_internal = (boolean) $params['include_internal'];
+			$include_internal = (bool) $params['include_internal'];
 
 			unset( $params['include_internal'] );
 		}
@@ -8613,7 +8632,7 @@ class PodsAPI {
 		}
 
 		try {
-			return (boolean) $this->load_field( $load_params );
+			return (bool) $this->load_field( $load_params );
 		} catch ( Exception $exception ) {
 			pods_debug_log( $exception );
 
@@ -8889,7 +8908,7 @@ class PodsAPI {
 		$include_internal = false;
 
 		if ( isset( $params['include_internal'] ) ) {
-			$include_internal = (boolean) $params['include_internal'];
+			$include_internal = (bool) $params['include_internal'];
 
 			unset( $params['include_internal'] );
 		}
@@ -8977,7 +8996,7 @@ class PodsAPI {
 		}
 
 		try {
-			return (boolean) $this->load_group( $load_params );
+			return (bool) $this->load_group( $load_params );
 		} catch ( Exception $exception ) {
 			pods_debug_log( $exception );
 
@@ -9121,7 +9140,7 @@ class PodsAPI {
 		$include_internal = false;
 
 		if ( isset( $params['include_internal'] ) ) {
-			$include_internal = (boolean) $params['include_internal'];
+			$include_internal = (bool) $params['include_internal'];
 
 			unset( $params['include_internal'] );
 		}
@@ -11582,6 +11601,8 @@ class PodsAPI {
 	 * @param bool           $flush_rewrites          Whether to flush rewrites.
 	 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
 	 * @param bool           $static_only             Whether to flush only static caches.
+	 * @param bool           $flush_object_cache      Whether to fully flush object caches.
+	 * @param bool           $delete_transients       Whether to fully delete transients.
 	 *
 	 * @return void
 	 *
@@ -11589,9 +11610,11 @@ class PodsAPI {
 	 */
 	public function cache_flush_pods(
 		$pod = null,
-		$flush_rewrites = true,
-		$flush_groups_and_fields = true,
-		$static_only = false
+		bool $flush_rewrites = true,
+		bool $flush_groups_and_fields = true,
+		bool $static_only = false,
+		bool $flush_object_cache = false,
+		bool $delete_transients = false
 	) {
 
 		/**
@@ -11666,11 +11689,11 @@ class PodsAPI {
 		pods_init()->refresh_existing_content_types_cache( true );
 
 		if ( ! $static_only ) {
-			// Delete transients in the database
+			// Delete transients in the database.
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
 
-			// Delete Pods Options Cache in the database
+			// Delete Pods Options Cache in the database.
 			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
 			// Maybe use the test-based cache flushing to prevent major slowdowns.
@@ -11684,11 +11707,20 @@ class PodsAPI {
 				&& class_exists( \Pods_Unit_Tests\Pods_UnitTestCase::class )
 			) {
 				\Pods_Unit_Tests\Pods_UnitTestCase::flush_cache();
-			} else {
+			} else{
 				// Do normal cache clear.
 				pods_cache_clear( true );
 
-				wp_cache_flush();
+				// Maybe flush the full object cache.
+				if ( $flush_object_cache ) {
+					wp_cache_flush();
+				}
+
+				// Maybe delete all transients in the database.
+				if ( $delete_transients ) {
+					$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_%'" );
+					$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_%'" );
+				}
 			}
 
 			if ( $flush_rewrites ) {
@@ -11696,7 +11728,19 @@ class PodsAPI {
 			}
 		}
 
-		do_action( 'pods_cache_flushed' );
+		/**
+		 * Allow hooking into the end of the Pods cache flush process.
+		 *
+		 * @since unknown
+		 *
+		 * @param array|Pod|null $pod                     The pod object or null of flushing general cache.
+		 * @param bool           $flush_rewrites          Whether to flush rewrites.
+		 * @param bool           $flush_groups_and_fields Whether to flush cache for groups and fields.
+		 * @param bool           $static_only             Whether to flush only static caches.
+		 * @param bool           $flush_object_cache      Whether to fully flush object caches.
+		 * @param bool           $delete_transients       Whether to fully delete transients.
+		 */
+		do_action( 'pods_cache_flushed', $pod, $flush_rewrites, $flush_groups_and_fields, $static_only, $flush_object_cache, $delete_transients );
 	}
 
 	/**
@@ -11728,6 +11772,16 @@ class PodsAPI {
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 			pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
 		}
+
+		/**
+		 * Allow hooking into the end of the Pods cache flush for groups process.
+		 *
+		 * @since 3.3.2
+		 *
+		 * @param bool $flush_fields Whether to flush cache for fields.
+		 * @param bool $static_only  Whether to flush only static caches.
+		 */
+		do_action( 'pods_api_cache_flush_groups', $flush_fields, $static_only );
 	}
 
 	/**
@@ -11758,6 +11812,15 @@ class PodsAPI {
 
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Collection::class . '/find_objects' );
 		pods_static_cache_clear( true, \Pods\Whatsit\Storage\Post_Type::class . '/find_objects/any' );
+
+		/**
+		 * Allow hooking into the end of the Pods cache flush for fields process.
+		 *
+		 * @since 3.3.2
+		 *
+		 * @param bool $static_only Whether to flush only static caches.
+		 */
+		do_action( 'pods_api_cache_flush_fields', $static_only );
 	}
 
 	/**

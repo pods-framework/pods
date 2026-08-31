@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import AsyncCreatableSelect from 'react-select/async-creatable';
+import CreatableSelect from 'react-select/creatable';
 import {
 	DndContext,
 	closestCenter,
@@ -89,8 +90,87 @@ const FullSelect = ( {
 	isClearable,
 	isReadOnly,
 } ) => {
-	const useAsyncSelectComponent = isTaggable || ajaxData?.ajax;
+	const isAjax = Boolean( ajaxData?.ajax );
+	const useAsyncSelectComponent = isTaggable || isAjax;
 	const AsyncSelectComponent = isTaggable ? AsyncCreatableSelect : AsyncSelect;
+
+	// For AJAX-backed relationships we drive the option list ourselves so that
+	// scrolling can append additional pages. react-select's Async components hand
+	// loadOptions a single-use callback (see useAsync: it stores the pending
+	// request and ignores any callback whose request is no longer current), so an
+	// appended page can never be delivered through it.
+	const PaginatedSelectComponent = isTaggable ? CreatableSelect : Select;
+
+	const [ ajaxOptions, setAjaxOptions ] = useState( formattedOptions );
+	const [ ajaxIsLoading, setAjaxIsLoading ] = useState( false );
+	const [ ajaxHasMore, setAjaxHasMore ] = useState( true );
+	const ajaxQuery = useRef( '' );
+	const ajaxPage = useRef( 1 );
+	const ajaxRequestId = useRef( 0 );
+	const ajaxDebounce = useRef( null );
+
+	const fetchAjaxOptions = useCallback( ( inputValue, page ) => {
+		const requestId = ++ajaxRequestId.current;
+
+		setAjaxIsLoading( true );
+
+		loadAjaxOptions( ajaxData )( inputValue, page )
+			.then( ( results ) => {
+				if ( requestId !== ajaxRequestId.current ) {
+					return;
+				}
+
+				ajaxQuery.current = inputValue;
+				ajaxPage.current = page;
+
+				setAjaxOptions( ( previousOptions ) => (
+					1 === page ? results : [ ...previousOptions, ...results ]
+				) );
+				setAjaxHasMore( Boolean( results.hasMore ) );
+			} )
+			.catch( () => {
+				if ( requestId === ajaxRequestId.current ) {
+					setAjaxHasMore( false );
+				}
+			} )
+			.finally( () => {
+				if ( requestId === ajaxRequestId.current ) {
+					setAjaxIsLoading( false );
+				}
+			} );
+	}, [ ajaxData ] );
+
+	const handleAjaxInputChange = ( inputValue, { action } ) => {
+		if ( 'input-change' !== action ) {
+			return;
+		}
+
+		if ( ajaxDebounce.current ) {
+			clearTimeout( ajaxDebounce.current );
+		}
+
+		ajaxDebounce.current = setTimeout( () => fetchAjaxOptions( inputValue, 1 ), 300 );
+	};
+
+	const handleAjaxMenuOpen = () => {
+		if ( ! ajaxIsLoading && 0 === ajaxOptions.length ) {
+			fetchAjaxOptions( ajaxQuery.current, 1 );
+		}
+	};
+
+	const handleAjaxMenuScrollToBottom = () => {
+		if ( ajaxIsLoading || ! ajaxHasMore ) {
+			return;
+		}
+
+		fetchAjaxOptions( ajaxQuery.current, ajaxPage.current + 1 );
+	};
+
+	useEffect( () => () => {
+		if ( ajaxDebounce.current ) {
+			clearTimeout( ajaxDebounce.current );
+		}
+	}, [] );
 
 	const sensors = useSensors(
 		useSensor( PointerSensor, {
@@ -165,11 +245,33 @@ const FullSelect = ( {
 				items={ Array.isArray( value ) ? value.map( ( item ) => item.value ) : [] }
 				strategy={ horizontalListSortingStrategy }
 			>
-				{ useAsyncSelectComponent ? (
+				{ isAjax ? (
+					<PaginatedSelectComponent
+						controlShouldRenderValue={ shouldRenderValue }
+						options={ ajaxOptions }
+						isLoading={ ajaxIsLoading }
+						filterOption={ null }
+						onInputChange={ handleAjaxInputChange }
+						onMenuOpen={ handleAjaxMenuOpen }
+						onMenuScrollToBottom={ handleAjaxMenuScrollToBottom }
+						value={ value }
+						placeholder={ placeholder }
+						isMulti={ isMulti }
+						isClearable={ isClearable }
+						onChange={ addNewItem }
+						isDisabled={ isReadOnly }
+						components={ {
+							MultiValue: SortableMultiValue,
+						} }
+						menuPortalTarget={ document.body }
+						menuPosition="fixed"
+						styles={ selectStyles }
+						classNamePrefix="pods-dfv-pick-full-select"
+					/>
+				) : useAsyncSelectComponent ? (
 					<AsyncSelectComponent
 						controlShouldRenderValue={ shouldRenderValue }
 						defaultOptions={ formattedOptions }
-						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 						value={ value }
 						placeholder={ placeholder }
 						isMulti={ isMulti }

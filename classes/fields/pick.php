@@ -527,7 +527,7 @@ class PodsField_Pick extends PodsField {
 	 * @param string $label   Object label.
 	 * @param array  $options Object options.
 	 *
-	 * @return array|boolean Object array or false if unsuccessful
+	 * @return array|bool Object array or false if unsuccessful
 	 * @since 2.3.0
 	 */
 	public function register_related_object( $name, $label, $options = null ) {
@@ -560,7 +560,7 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Setup related objects.
 	 *
-	 * @param boolean $force Whether to force refresh of related objects.
+	 * @param bool $force Whether to force refresh of related objects.
 	 *
 	 * @return bool True when data has been loaded
 	 * @since 2.3.0
@@ -886,7 +886,7 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Return available related objects
 	 *
-	 * @param boolean $force Whether to force refresh of related objects.
+	 * @param bool $force Whether to force refresh of related objects.
 	 *
 	 * @return array Field selection array
 	 * @since 2.3.0
@@ -1283,7 +1283,7 @@ class PodsField_Pick extends PodsField {
 		/**
 		 * Filter on whether to allow modals to be used on the front of the site (in an non-admin area).
 		 *
-		 * @param boolean $show_on_front
+		 * @param bool $show_on_front
 		 * @param array   $config
 		 * @param object  $args
 		 *
@@ -1294,7 +1294,7 @@ class PodsField_Pick extends PodsField {
 		/**
 		 * Filter on whether to allow nested modals to be used (modals within modals).
 		 *
-		 * @param boolean $allow_nested_modals
+		 * @param bool $allow_nested_modals
 		 * @param array   $config
 		 * @param object  $args
 		 *
@@ -2278,7 +2278,7 @@ class PodsField_Pick extends PodsField {
 	 * @param array|null        $options Field options.
 	 * @param array|null        $pod     Pod data.
 	 * @param int|null          $id      Item ID.
-	 * @param boolean           $raw     Whether to return the raw list of keys (true) or convert to key=>value (false).
+	 * @param bool           $raw     Whether to return the raw list of keys (true) or convert to key=>value (false).
 	 *
 	 * @return mixed Corrected value
 	 */

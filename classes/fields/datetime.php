@@ -738,7 +738,7 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @param string  $format           Format string.
 	 * @param string  $date             Defaults to time() if empty.
-	 * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
+	 * @param bool $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
 	 * @return DateTime|null|int|false
 	 */
@@ -826,9 +826,9 @@ class PodsField_DateTime extends PodsField {
 	 * @param string       $value            Field value.
 	 * @param string       $new_format       New format string.
 	 * @param string|array $original_format  Original format string(s) (if known).
-	 * @param boolean      $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
+	 * @param bool      $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
-	 * @return string|int|boolean|DateTime
+	 * @return string|int|bool|DateTime
 	 */
 	public function convert_date( $value, $new_format, $original_format = '', $return_timestamp = false ) {
 

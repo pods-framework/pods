@@ -628,7 +628,7 @@ class PodsComponents {
 	 *
 	 * @param string $component The component name to activate.
 	 *
-	 * @return boolean Whether the component was activated.
+	 * @return bool Whether the component was activated.
 	 *
 	 * @since 2.7.0
 	 */
@@ -680,7 +680,7 @@ class PodsComponents {
 	 * Toggle a component on or off
 	 *
 	 * @param string  $component   The component name to toggle.
-	 * @param boolean $toggle_mode Force toggle on or off.
+	 * @param bool $toggle_mode Force toggle on or off.
 	 *
 	 * @return bool
 	 *

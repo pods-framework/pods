@@ -888,7 +888,7 @@ class PodsData {
 		/**
 		 * Filters whether the total_found should be calculated right away or not.
 		 *
-		 * @param boolean  $auto_calculate_total_found Whether to auto calculate total_found.
+		 * @param bool  $auto_calculate_total_found Whether to auto calculate total_found.
 		 * @param object   $params                     Select parameters.
 		 * @param PodsData $instance                   The current PodsData instance.
 		 *
@@ -2021,7 +2021,7 @@ class PodsData {
 	 *
 	 * @param string  $table         Table name.
 	 * @param string  $fields
-	 * @param boolean $if_not_exists Check if the table exists.
+	 * @param bool $if_not_exists Check if the table exists.
 	 *
 	 * @return array|bool|mixed|null|void
 	 *
@@ -2693,8 +2693,8 @@ class PodsData {
 	 * Gets all tables in the WP database, optionally exclude WP core
 	 * tables, and/or Pods table by settings the parameters to false.
 	 *
-	 * @param boolean $wp_core
-	 * @param boolean $pods_tables restrict Pods 2x tables.
+	 * @param bool $wp_core
+	 * @param bool $pods_tables restrict Pods 2x tables.
 	 *
 	 * @return array
 	 *

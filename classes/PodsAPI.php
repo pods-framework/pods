@@ -793,7 +793,7 @@ class PodsAPI {
 	 *
 	 * @param string  $object  The pod type to look for, possible values: post_type, user, comment, taxonomy
 	 * @param array   $pod     Array of Pod data
-	 * @param boolean $refresh Whether to force refresh the information
+	 * @param bool $refresh Whether to force refresh the information
 	 *
 	 * @return array Array of fields
 	 *
@@ -2621,7 +2621,7 @@ class PodsAPI {
 	 * @param array   $pod                    The pod configuration.
 	 * @param array   $fields                 The list of fields on the pod.
 	 * @param array   $old_info               The old information to reference.
-	 * @param boolean $overwrite_table_schema Whether to overwrite the table schema if it exists already.
+	 * @param bool $overwrite_table_schema Whether to overwrite the table schema if it exists already.
 	 *
 	 * @return bool|WP_Error True if the schema changes were handled, false or an error if it failed to create/update.
 	 *
@@ -8425,7 +8425,7 @@ class PodsAPI {
 	 *
 	 * @type int                       $id           The Pod ID.
 	 * @type string                    $name         The Pod name.
-	 * @type boolean                   $bypass_cache Bypass the cache when getting data.
+	 * @type bool                   $bypass_cache Bypass the cache when getting data.
 	 *                                               }
 	 *
 	 * @param bool                     $strict       Makes sure the pod exists, throws an error if it doesn't work.
@@ -8521,10 +8521,10 @@ class PodsAPI {
 	 * @type string|array $type         Pod type(s) to filter by.
 	 * @type string|array $id           ID(s) of Objects.
 	 * @type array        $args         Args(s) key=>value array to filter by.
-	 * @type boolean      $count        Return only a count of pods.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of pods.
+	 * @type bool      $names        Return only an array of name => label.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Pod[]|int List of pod objects or count.
@@ -8583,7 +8583,7 @@ class PodsAPI {
 	 * $params['name'] string The field name
 	 *
 	 * @param array   $params   An associative array of parameters
-	 * @param boolean $allow_id Whether to allow the ID when checking if the group exists.
+	 * @param bool $allow_id Whether to allow the ID when checking if the group exists.
 	 *
 	 * @return bool
 	 *
@@ -8631,10 +8631,10 @@ class PodsAPI {
 	 * @type string     $pod          The Pod name.
 	 * @type int        $id           The field ID.
 	 * @type string     $name         The field name.
-	 * @type boolean    $bypass_cache Bypass the cache when getting data.
+	 * @type bool    $bypass_cache Bypass the cache when getting data.
 	 *                                }
 	 *
-	 * @param boolean   $strict       Whether to require a field exist or not when loading the info.
+	 * @param bool   $strict       Whether to require a field exist or not when loading the info.
 	 *
 	 * @return Pods\Whatsit\Field|bool Field object or false if not found.
 	 *
@@ -8752,7 +8752,7 @@ class PodsAPI {
 	 * @type string  $pod               The Pod name.
 	 * @type array   $expand            The field name(s) to expand.
 	 * @type array   $types             The field type(s).
-	 * @type boolean $bypass_cache      Bypass the cache when getting data.
+	 * @type bool $bypass_cache      Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Field[] List of field objects.
@@ -8868,10 +8868,10 @@ class PodsAPI {
 	 * @type string|array $name         The field name(s).
 	 * @type string|array $type         The field type(s).
 	 * @type array        $args         Arg(s) key=>value array to filter by.
-	 * @type boolean      $count        Return only a count of fields.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of fields.
+	 * @type bool      $names        Return only an array of name => label.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Field[]|int List of field objects or count.
@@ -8944,10 +8944,10 @@ class PodsAPI {
 	 * @type string             $pod                 The Pod name.
 	 * @type int                $id                  The Group ID.
 	 * @type string             $name                The Group name.
-	 * @type boolean            $bypass_cache        Bypass the cache when getting data.
+	 * @type bool            $bypass_cache        Bypass the cache when getting data.
 	 *                                               }
 	 *
-	 * @param boolean           $allow_id            Whether to allow the ID when checking if the group exists.
+	 * @param bool           $allow_id            Whether to allow the ID when checking if the group exists.
 	 *
 	 * @return bool
 	 *
@@ -8995,7 +8995,7 @@ class PodsAPI {
 	 * @type string             $pod                 The Pod name.
 	 * @type int                $id                  The Group ID.
 	 * @type string             $name                The Group name.
-	 * @type boolean            $bypass_cache        Bypass the cache when getting data.
+	 * @type bool            $bypass_cache        Bypass the cache when getting data.
 	 *                                               }
 	 *
 	 * @param bool              $strict              Makes sure the pod exists, throws an error if it doesn't work.
@@ -9100,10 +9100,10 @@ class PodsAPI {
 	 * @type array        $name         The group names.
 	 * @type array        $type         The group types.
 	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of objects.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of objects.
+	 * @type bool      $names        Return only an array of name => label.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Group[]|int List of group objects or count.
@@ -12049,10 +12049,10 @@ class PodsAPI {
 	 * @type string   $object_type  The object type.
 	 * @type string   $id           The ID.
 	 * @type string   $name         The name.
-	 * @type boolean  $bypass_cache Bypass the cache when getting data.
+	 * @type bool  $bypass_cache Bypass the cache when getting data.
 	 *                              }
 	 *
-	 * @param boolean $strict       Whether to require a field exist or not when loading the info.
+	 * @param bool $strict       Whether to require a field exist or not when loading the info.
 	 *
 	 * @return Pods\Whatsit|false Object or false if not found.
 	 *
@@ -12114,12 +12114,12 @@ class PodsAPI {
 	 * @type string|array $name         The name(s).
 	 * @type string|array $type         The type(s).
 	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of fields.
-	 * @type boolean      $labels       Return only an array of name => label.
-	 * @type boolean      $names        Return only an array of name.
-	 * @type boolean      $names_ids    Return only an array of id => name.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of fields.
+	 * @type bool      $labels       Return only an array of name => label.
+	 * @type bool      $names        Return only an array of name.
+	 * @type bool      $names_ids    Return only an array of id => name.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit[]|int List of objects or count.

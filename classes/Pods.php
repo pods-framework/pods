@@ -284,7 +284,7 @@ class Pods implements Iterator {
 	/**
 	 * Get current Iterator row
 	 *
-	 * @return mixed|boolean
+	 * @return mixed|bool
 	 *
 	 * @since 2.3.4
 	 *
@@ -487,7 +487,7 @@ class Pods implements Iterator {
 	 * list of text such as "Rick, John, and Gary"
 	 *
 	 * @param string|array|object  $name   The field name, or an associative array of parameters.
-	 * @param boolean|array|object $single (optional) For tableless fields, to return an array or the first.
+	 * @param bool|array|object $single (optional) For tableless fields, to return an array or the first.
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
@@ -542,7 +542,7 @@ class Pods implements Iterator {
 	 * list of text such as "Rick, John, and Gary"
 	 *
 	 * @param string|array|object  $name   The field name, or an associative array of parameters.
-	 * @param boolean|array|object $single (optional) For tableless fields, to return an array or the first.
+	 * @param bool|array|object $single (optional) For tableless fields, to return an array or the first.
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
@@ -579,9 +579,9 @@ class Pods implements Iterator {
 	 * This function will return arrays for relationship and file fields.
 	 *
 	 * @param string|array|object  $name   The field name, or an associative array of parameters.
-	 * @param boolean|array|object $single For tableless fields, to return the whole array or the just the first item,
+	 * @param bool|array|object $single For tableless fields, to return the whole array or the just the first item,
 	 *                                     or an associative array of parameters.
-	 * @param boolean|array|object $raw    Whether to return the raw value, or to run through the field type's display
+	 * @param bool|array|object $raw    Whether to return the raw value, or to run through the field type's display
 	 *                                     method, or an associative array of parameters.
 	 *
 	 * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value

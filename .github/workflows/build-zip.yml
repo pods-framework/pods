@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Create zip
         run: |
           git archive --format=zip --worktree-attributes -9 -o ${{ github.event.repository.name }}.zip HEAD

@@ -53,7 +53,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function admin_assets() {
-		wp_enqueue_script( 'pods-file-saver', PODS_URL . '/components/Migrate-Packages/js/FileSaver.min.js', '', [], '2.0.4', true );
+		wp_enqueue_script( 'pods-file-saver', PODS_URL . '/components/Migrate-Packages/js/FileSaver.min.js', [], '2.0.4', true );
 		wp_enqueue_style( 'pods-wizard' );
 	}
 

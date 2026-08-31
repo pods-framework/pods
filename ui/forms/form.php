@@ -90,22 +90,12 @@ if ( ! isset( $thank_you_alt ) ) {
 	$thank_you_alt = $thank_you;
 }
 
-$uri_hash   = wp_create_nonce( 'pods_uri_' . pods_current_path() );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
-
-if ( is_user_logged_in() ) {
-	$uid = 'user_' . get_current_user_id();
-} else {
-	$uid = pods_session_id();
-}
-
-$item_id = $duplicate ? 0 : $pod->id();
-
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $item_id . '_' . $uri_hash . '_' . $field_hash );
+$uri_hash = pods_access_form_uri_hash();
+$item_id  = $duplicate ? 0 : $pod->id();
 
 $submit_result = null;
 
-if ( isset( $_POST['_pods_nonce'] ) ) {
+if ( pods_access_form_nonce_present_in_request( 'form' ) ) {
 	try {
 		$params = pods_unslash( (array) $_POST );
 
@@ -209,11 +199,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		PodsForm::output_field( 'action', 'pods_admin', 'hidden' );
 		PodsForm::output_field( 'method', 'process_form', 'hidden' );
 		PodsForm::output_field( 'do', $do, 'hidden' );
-		PodsForm::output_field( '_pods_nonce', $nonce, 'hidden' );
-		PodsForm::output_field( '_pods_pod', $pod->pod, 'hidden' );
-		PodsForm::output_field( '_pods_id', $item_id, 'hidden' );
-		PodsForm::output_field( '_pods_uri', $uri_hash, 'hidden' );
-		PodsForm::output_field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
+		pods_access_output_form_nonce_fields( $pod->pod, $item_id, $submittable_fields, pods_access_form_field_names( 'form' ), $uri_hash );
 		PodsForm::output_field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' );
 		PodsForm::output_field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
 

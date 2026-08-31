@@ -1371,7 +1371,15 @@ class PodsField_File extends PodsField {
 					$attachment['edit_link'] = get_edit_post_link( $attachment['ID'] );
 					$attachment['download']  = wp_get_attachment_url( $attachment['ID'] );
 
-					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->item_id );
+					/**
+					 * Allow filtering the attachment returned to JSON after the attachment has been uploaded through AJAX.
+					 *
+					 * @since 2.7.0
+					 *
+					 * @param array $attachment     The attachment post data including filename, thumbnail, link, edit_link, and download.
+					 * @param int   $parent_post_id The parent post ID this attachment was uploaded to if provided, otherwise zero.
+					 */
+					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $parent_post_id );
 
 					wp_send_json( $attachment );
 				}//end if

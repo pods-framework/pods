@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, james
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
 Requires at least: 6.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.0
 Stable tag: 3.4.0-a-2
 License: GPLv2 or later
@@ -182,9 +182,44 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 3.3.10 - June 8th, 2026 =
+= 3.3.10 - TBD =
 
 * Fixed: Resolved fatal error when calling the `Whatsit::count_groups()` method in some circumstances. (@markofapproval, @sc0ttkclark)
+
+= 3.3.9.2 - August 31st, 2026 =
+
+This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.
+
+Additional releases with these security fixes have been backported to each major version of Pods from Pods 2.7 and above to make it easy to update.
+
+* Security: Restricted display callbacks to an explicit allow list of safe functions, with optional customized additions requiring a dedicated prefix. Added detection and admin notices when disallowed display callbacks are used on a site. (Jakub Herman, @sc0ttkclark)
+* Security: Refactored form nonce handling to harden against submission misuse. (Jakub Herman, @sc0ttkclark)
+* Security: Hardened shortcode and block logic against output and query misuse. (Wordfence PRISM - Wordfence, @sc0ttkclark)
+* Security: Fixed post_status handling in the last security release so it only applies to user-provided inputs (not Pods internal logic). (@sc0ttkclark)
+* Security: Added anonymous form post handling back that had unintentionally been disabled in the last security release. (@sc0ttkclark)
+
+= 3.3.9.1 - August 14th, 2026 =
+
+This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.
+
+Additional releases with these security fixes have been backported to each major version of Pods from Pods 2.8 and above.
+
+* Security: Further restrictions on error handling and fallbacks. (Nhien Pham @nhienit - GalaxyOne, @thevietronin - GalaxyOne, @sc0ttkclark)
+* Security: General hardening improvements to how data queries are built and validated. (HaoNH @haoit, @onebitious, @sc0ttkclark)
+* Security: Additional restrictions on how certain values are processed when displayed. (@sc0ttkclark)
+* Security: Improved safety when handling previously stored data. (@sc0ttkclark)
+* Security: Removed a legacy request-handling path that is no longer needed. (HaoNH @haoit, @sc0ttkclark)
+* Security: Tightened access requirements for certain background requests. (HaoNH @haoit, @sc0ttkclark)
+* Security: Improved consistency and enforcement of access and validation checks. (Youness HFA from AGBS Pentest Team @YounesHfa, HaoNH @haoit, @onebitious, @sc0ttkclark)
+* Security: Hardening improvements to file and media handling. (@sc0ttkclark)
+* Security: Additional safeguards for file and template handling. (@sc0ttkclark)
+* Security: Improved handling of displayed content. (@sc0ttkclark)
+* Security: Added extra verification for admin forms and actions. (@sc0ttkclark)
+* Security: Additional validation for imported content. (@sc0ttkclark)
+* Security: Improved handling of content based on user permissions. (@sc0ttkclark)
+* Security: Updated bundled third-party JavaScript dependencies. (@sc0ttkclark)
+* Security: Added a filter to optionally restrict access to the REST API documentation endpoint, which remains public by default. (@sc0ttkclark)
+* Security: Additional automated test coverage for the changes in this release. (@sc0ttkclark)
 
 = 3.3.9 - May 20th, 2026 =
 

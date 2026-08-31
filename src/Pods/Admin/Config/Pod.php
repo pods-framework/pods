@@ -1453,6 +1453,25 @@ class Pod extends Base {
 					'default'    => '',
 					'depends-on' => [ 'menu_location' => 'top' ],
 				],
+				'capability_type'        => [
+					'label'              => __( 'User Capability', 'pods' ),
+					'help'               => __( 'Controls which capability gates access to this Settings Page in the admin menu.', 'pods' ),
+					'type'               => 'pick',
+					'default'            => 'default',
+					'data'               => [
+						'default' => __( 'Default (Pods admin)', 'pods' ),
+						'custom'  => __( 'Custom Capability', 'pods' ),
+					],
+					'pick_format_single' => 'dropdown',
+					'dependency'         => true,
+				],
+				'capability_type_custom' => [
+					'label'            => __( 'Custom User Capability', 'pods' ),
+					'help'             => __( 'Enter the exact capability name required to access this Settings Page (for example: manage_options).', 'pods' ),
+					'type'             => 'text',
+					'text_placeholder' => 'manage_options',
+					'depends-on'       => [ 'capability_type' => 'custom' ],
+				],
 			];
 		} elseif ( 'pod' === $pod_type ) {
 			$actions_enabled = [

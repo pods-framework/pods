@@ -69,18 +69,9 @@ foreach ( $submittable_fields as $k => $field ) {
 	unset( $submittable_fields[ $k ] );
 }
 
-$uri_hash   = wp_create_nonce( 'pods_uri_' . pods_current_path() );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
+$uri_hash = pods_access_form_uri_hash();
 
-if ( is_user_logged_in() ) {
-	$uid = 'user_' . get_current_user_id();
-} else {
-	$uid = pods_session_id();
-}
-
-$nonce = wp_create_nonce( 'pods_form_' . $pod_name . '_' . $uid . '_' . $id . '_' . $uri_hash . '_' . $field_hash );
-
-if ( isset( $_POST['_pods_nonce'] ) ) {
+if ( pods_access_form_nonce_present_in_request( 'form' ) ) {
 	try {
 		$id = $pod->api->process_form( $_POST, $pod, $submittable_fields, $thank_you );
 	} catch ( Exception $e ) {
@@ -117,11 +108,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 		<?php PodsForm::output_field( 'action', 'pods_admin', 'hidden' ); ?>
 		<?php PodsForm::output_field( 'method', 'process_form', 'hidden' ); ?>
 		<?php PodsForm::output_field( 'do', ( ! empty( $id ) ? 'save' : 'create' ), 'hidden' ); ?>
-		<?php PodsForm::output_field( '_pods_nonce', $nonce, 'hidden' ); ?>
-		<?php PodsForm::output_field( '_pods_pod', $pod_name, 'hidden' ); ?>
-		<?php PodsForm::output_field( '_pods_id', $id, 'hidden' ); ?>
-		<?php PodsForm::output_field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-		<?php PodsForm::output_field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
+		<?php pods_access_output_form_nonce_fields( $pod_name, $id, $submittable_fields, pods_access_form_field_names( 'form' ), $uri_hash ); ?>
 		<?php PodsForm::output_field( '_pods_form_key', ! empty( $form_key ) ? $form_key : '', 'hidden' ); ?>
 		<?php PodsForm::output_field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' ); ?>
 		<?php endif; ?>
@@ -219,7 +206,7 @@ pods_static_cache_set( $pod->pod . '-counter', $counter, 'pods-forms' );
 				if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
 					if ( 'undefined' === typeof ajaxurl ) {
-						window.ajaxurl = '<?php echo esc_url_raw( admin_url( 'admin-ajax.php' ) ); ?>';
+						window.ajaxurl = <?php echo json_encode( esc_url_raw( admin_url( 'admin-ajax.php' ) ) ); ?>;
 					}
 
 					jQuery( document ).Pods( 'validate' );

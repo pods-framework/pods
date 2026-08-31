@@ -14,7 +14,7 @@ jobs:
       shell: bash
       run: echo "PLUGIN_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
     - name: Checkout the code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@2.3.0
       id: deploy

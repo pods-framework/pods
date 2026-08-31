@@ -1257,7 +1257,7 @@ class PodsInit {
 				$capability_type = pods_v( 'capability_type', $post_type, 'post', true );
 
 				if ( 'custom' === $capability_type ) {
-					$capability_type = pods_v( 'capability_type_custom', $post_type, pods_v( 'name', $post_type, 'post', true ), true );
+					$capability_type = pods_v( 'capability_type_custom', $post_type, $post_type_name, true );
 				}
 
 				$show_in_menu = (bool) pods_v( 'show_in_menu', $post_type, true );

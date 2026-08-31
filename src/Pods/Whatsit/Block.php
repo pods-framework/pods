@@ -47,6 +47,7 @@ class Block extends Pod {
 			'description'      => $this->get_arg( 'description' ),
 			'renderType'       => $this->get_arg( 'renderType', $this->get_arg( 'render_type', 'js' ) ),
 			'category'         => $category,
+			'api_version'      => $this->get_arg( 'apiVersion', $this->get_arg( 'api_version', 3 ) ),
 			'icon'             => $this->get_arg( 'icon', 'align-right' ),
 			'keywords'         => wp_parse_list( $this->get_arg( 'keywords', 'pods' ) ),
 			'supports'         => $this->get_arg( 'supports', [] ),

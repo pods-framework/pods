@@ -975,13 +975,178 @@ class PodsField {
 
 		if ( $should_sanitize ) {
 			if ( is_string( $value ) ) {
-				$value = wp_kses_post( $value );
+				$value = $this->sanitize_output_string( $value );
 			} elseif ( is_array( $value ) || is_object( $value ) ) {
-				$value = wp_kses_post_deep( $value );
+				$value = $this->sanitize_output_array( $value );
 			}
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Sanitize a string field value before output.
+	 *
+	 * Code (Syntax Highlighting) fields commonly embed third-party scripts and
+	 * iframes (SimpleShop, Google Reviews, TikTok widgets, etc.). WordPress's
+	 * default {@see wp_kses_post()} allow-list drops external `<script src>`
+	 * and arbitrary `<iframe>` embeds, which broke such widgets starting in
+	 * Pods 3.1.x (issue #7263 and sibling #7319). For the `code` type we layer
+	 * those embeds back on top of the standard post allow-list; all other
+	 * field types keep the previous behaviour.
+	 *
+	 * @since 3.3.10
+	 *
+	 * @param string $value Raw field value.
+	 *
+	 * @return string Sanitized value.
+	 */
+	protected function sanitize_output_string( $value ) {
+		if ( 'code' === static::$type ) {
+			return $this->wp_kses_post_with_embeds( $value );
+		}
+
+		return wp_kses_post( $value );
+	}
+
+	/**
+	 * Recursively sanitize an array/object field value before output.
+	 *
+	 * @since 3.3.10
+	 *
+	 * @param array|object $value Raw field value.
+	 *
+	 * @return array|object Sanitized value.
+	 */
+	protected function sanitize_output_array( $value ) {
+		if ( 'code' === static::$type ) {
+			return $this->wp_kses_post_deep_with_embeds( $value );
+		}
+
+		return wp_kses_post_deep( $value );
+	}
+
+	/**
+	 * {@see wp_kses_post()} with extra allowance for external script and iframe embeds.
+	 *
+	 * @since 3.3.10
+	 *
+	 * @param string $value HTML to sanitize.
+	 *
+	 * @return string Sanitized HTML with embeds preserved.
+	 */
+	protected function wp_kses_post_with_embeds( $value ) {
+		return wp_kses( $value, $this->get_post_with_embeds_allowed_html() );
+	}
+
+	/**
+	 * Recursive form of {@see PodsField::wp_kses_post_with_embeds()}.
+	 *
+	 * @since 3.3.10
+	 *
+	 * @param array|object $value Value to sanitize recursively.
+	 *
+	 * @return array|object Sanitized value.
+	 */
+	protected function wp_kses_post_deep_with_embeds( $value ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->sanitize_output_array( $v );
+			}
+
+			return $value;
+		}
+
+		if ( is_object( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value->{$k} = $this->sanitize_output_array( $v );
+			}
+
+			return $value;
+		}
+
+		if ( is_string( $value ) ) {
+			return $this->wp_kses_post_with_embeds( $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Build the kses allow-list used for Code field output.
+	 *
+	 * Starts from {@see wp_kses_allowed_html()} for context `post` and adds
+	 * the attributes typical embed widgets produce. {@see wp_kses_allowed_html()}
+	 * already strips external script `src` and arbitrary iframe embeds, which
+	 * is what regressed in #7263.
+	 *
+	 * @since 3.3.10
+	 *
+	 * @return array<string, array<string, bool>>
+	 */
+	protected function get_post_with_embeds_allowed_html() {
+		$allowed = wp_kses_allowed_html( 'post' );
+
+		// External <script src="..."> embeds (SimpleShop, ads, analytics widgets, etc.).
+		//
+		// This is deliberately gated. wp_kses() filters tags and attributes but never
+		// the *text content* of an element, so allowing <script> unconditionally would
+		// let anyone able to edit this field store executable JavaScript that then runs
+		// for every visitor -- and code_sanitize_html is the very option an admin turns
+		// on to prevent that. Allowing it only for unfiltered_html keeps the capability
+		// boundary WordPress already uses for raw HTML.
+		//
+		// Note this is an output-time check, so it reflects the *viewer*: script-based
+		// embeds render for users holding unfiltered_html, while iframe-based embeds
+		// (YouTube, Vimeo, most third-party forms) keep working for everyone. Sites that
+		// genuinely need public script embeds can re-add them via the
+		// pods_code_field_sanitize_allowed_html filter below.
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			$allowed['script'] = [
+				'src'         => true,
+				'type'        => true,
+				'async'       => true,
+				'defer'       => true,
+				'integrity'   => true,
+				'crossorigin' => true,
+				'nonce'       => true,
+				'charset'     => true,
+				'data-*'      => true,
+			];
+		}
+
+		// Inline <iframe> embeds (YouTube, Vimeo, third-party forms). wp_kses_allowed_html
+		// already permits iframe; this widens the allowed attributes that embeds actually use.
+		$iframe_attrs = [
+			'src'             => true,
+			'width'           => true,
+			'height'          => true,
+			'frameborder'     => true,
+			'allow'           => true,
+			'allowfullscreen' => true,
+			'title'           => true,
+			'loading'         => true,
+			'referrerpolicy'  => true,
+			'sandbox'         => true,
+			'name'            => true,
+			'id'              => true,
+			'style'           => true,
+			'class'           => true,
+			'data-*'          => true,
+		];
+
+		$allowed['iframe'] = isset( $allowed['iframe'] ) && is_array( $allowed['iframe'] )
+			? array_merge( $allowed['iframe'], $iframe_attrs )
+			: $iframe_attrs;
+
+		/**
+		 * Filter the kses allow-list used for Code (Syntax Highlighting) field output.
+		 *
+		 * @since 3.3.10
+		 *
+		 * @param array<string, array<string, bool>> $allowed Allowed HTML tags and attributes.
+		 */
+		return apply_filters( 'pods_code_field_sanitize_allowed_html', $allowed );
 	}
 
 	/**

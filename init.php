@@ -20,7 +20,6 @@
  * Requires PHP:      7.2
  * GitHub Plugin URI: https://github.com/pods-framework/pods
  * Primary Branch:    main
- * Plugin ID:         did:plc:e3rm6t7cspgpzaf47kn3nnsl
  */
 
 /*

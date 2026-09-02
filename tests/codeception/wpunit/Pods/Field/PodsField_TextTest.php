@@ -68,6 +68,14 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers  PodsField_Text::options
+	 * @depends test_method_exists_options
+	 */
+	public function test_method_options_key_exists_text_min_length() {
+		$this->assertArrayHasKey( 'text_min_length', $this->field->options() );
+	}
+
+	/**
 	 * @covers PodsField_Text::schema
 	 */
 	public function test_method_exists_schema() {
@@ -203,6 +211,61 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 */
 	public function test_method_validate_empty_value() {
 		$this->assertTrue( $this->field->validate( '' ) );
+	}
+
+	/**
+	 * @covers  PodsField_Text::validate
+	 * @depends test_method_exists_validate
+	 * @uses    PodsField_Text::strip_html
+	 * @uses    PodsField_Text::get_min_length_error
+	 * @uses    ::pods_v
+	 * @uses    ::pods_mb_strlen
+	 * @uses    ::pods_mb_substr
+	 */
+	public function test_method_validate_min_length_below() {
+		$errors = $this->field->validate( 'ab', 'my_field', array( 'text_min_length' => 3 ) );
+
+		$this->assertIsArray( $errors );
+		$this->assertSame( array( 'My Field must be at least 3 characters long.' ), $errors );
+	}
+
+	/**
+	 * @covers  PodsField_Text::validate
+	 * @depends test_method_exists_validate
+	 * @uses    PodsField_Text::strip_html
+	 * @uses    PodsField_Text::get_min_length_error
+	 * @uses    ::pods_v
+	 * @uses    ::pods_mb_strlen
+	 * @uses    ::pods_mb_substr
+	 */
+	public function test_method_validate_min_length_met() {
+		$this->assertTrue( $this->field->validate( 'abc', 'my_field', array( 'text_min_length' => 3 ) ) );
+	}
+
+	/**
+	 * @covers  PodsField_Text::validate
+	 * @depends test_method_exists_validate
+	 * @uses    PodsField_Text::strip_html
+	 * @uses    PodsField_Text::get_min_length_error
+	 * @uses    ::pods_v
+	 * @uses    ::pods_mb_strlen
+	 * @uses    ::pods_mb_substr
+	 */
+	public function test_method_validate_min_length_not_enforced_on_empty_value() {
+		$this->assertTrue( $this->field->validate( '', 'my_field', array( 'text_min_length' => 3 ) ) );
+	}
+
+	/**
+	 * @covers  PodsField_Text::validate
+	 * @depends test_method_exists_validate
+	 * @uses    PodsField_Text::strip_html
+	 * @uses    PodsField_Text::get_min_length_error
+	 * @uses    ::pods_v
+	 * @uses    ::pods_mb_strlen
+	 * @uses    ::pods_mb_substr
+	 */
+	public function test_method_validate_min_length_default_disabled() {
+		$this->assertTrue( $this->field->validate( 'a' ) );
 	}
 
 	/**

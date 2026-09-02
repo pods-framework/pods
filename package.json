@@ -119,7 +119,7 @@
     "quill": "2.0.2",
     "react-datetime": "^3.1.1",
     "react-select": "^5.4.0",
-    "sanitize-html": "^2.12.1",
+    "sanitize-html": "^2.17.7",
     "wporg-replace-helper": "^1.0.0"
   },
   "//": "SECURITY OVERRIDES: the overrides below pin security-patched versions of transitive dev/build-only dependencies flagged by npm audit / Dependabot. None of these ship in the built plugin. The version-keyed entries 'minimatch@3.0.5' / 'minimatch@3.0.8' force ReDoS-patched minimatch 3.1.5 into 'replace' and 'markdownlint-cli', which pin exact 3.0.x -- a plain nested override is silently ignored by npm for exact-pinned transitive deps.",

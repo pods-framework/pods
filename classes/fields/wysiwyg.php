@@ -5,10 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
+use Pods\Data\Traits\Field_Validation;
+
 /**
  * @package Pods\Fields
  */
 class PodsField_WYSIWYG extends PodsField {
+
+	use Field_Validation;
 
 	/**
 	 * {@inheritdoc}
@@ -431,16 +435,10 @@ class PodsField_WYSIWYG extends PodsField {
 				}
 			}
 
-			$min_length = (int) pods_v( static::$type . '_min_length', $options, 0 );
+			$min_length_error = $this->get_min_length_error( $check, $name, $options );
 
-			if ( 0 < $min_length ) {
-				$len = pods_mb_strlen( (string) $check );
-
-				if ( 0 < $len && $len < $min_length ) {
-					$label    = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
-					// translators: %1$s is the field label, %2$d is the minimum number of characters.
-					$errors[] = sprintf( __( '%1$s must be at least %2$d characters long.', 'pods' ), $label, $min_length );
-				}
+			if ( null !== $min_length_error ) {
+				$errors[] = $min_length_error;
 			}
 		}
 

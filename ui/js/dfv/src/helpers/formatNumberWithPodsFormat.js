@@ -72,9 +72,9 @@ export const parseFloatWithPodsFormat = (
 	newValue,
 	format,
 ) => {
-	// Turn empty string to 0.
-	if ( '' === newValue ) {
-		return 0;
+	// Preserve intentionally empty values.
+	if ( '' === newValue || undefined === newValue || null === newValue ) {
+		return '';
 	}
 
 	// If we get a float value, we don't need to do anything.
@@ -99,9 +99,9 @@ export const formatNumberWithPodsFormat = (
 	decimalHandling = 'none',
 	decimals = 'auto',
 ) => {
-	// Skip empty strings or undefined.
+	// Preserve intentionally empty values.
 	if ( '' === newValue || undefined === newValue || null === newValue ) {
-		return '0';
+		return '';
 	}
 
 	const thousands = getThousandsSeparatorFromPodsFormat( format );

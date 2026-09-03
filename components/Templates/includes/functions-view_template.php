@@ -603,7 +603,7 @@ function frontier_do_subtemplate( $atts, $content ) {
  * @param Pod     $pod
  * @param string  $template
  * @param array   $data
- * @param boolean $skip_unknown If true then values not in $data will not be touched
+ * @param bool $skip_unknown If true then values not in $data will not be touched
  *
  * @return string
  * @since 2.7.0

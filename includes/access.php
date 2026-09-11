@@ -2907,7 +2907,7 @@ function pods_access_form_normalize_fields( $submitted_fields ) {
 function pods_access_form_field_hash( $submitted_fields ) {
 	$form = pods_access_form_normalize_fields( $submitted_fields );
 
-	return wp_create_nonce( 'pods_fields_' . $form );
+	return wp_hash( 'pods_fields_' . $form, 'nonce' );
 }
 
 /**

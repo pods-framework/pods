@@ -57,6 +57,101 @@ class AccessTest extends Pods_UnitTestCase {
 		parent::tearDown();
 	}
 
+	public function test_pods_access_form_normalize_fields_preserves_field_order() {
+		$this->assertSame( 'title,content', pods_access_form_normalize_fields( [ 'title', 'content' ] ) );
+		$this->assertSame( 'title,content', pods_access_form_normalize_fields( [
+			'title'   => [],
+			'content' => [],
+		] ) );
+		$this->assertSame( 'title,content', pods_access_form_normalize_fields( 'title,content' ) );
+	}
+
+	public function test_pods_access_form_field_hash_is_stable_and_bound_to_fields() {
+		$fields = 'title,content';
+
+		$this->assertSame(
+			wp_hash( 'pods_fields_' . $fields, 'nonce' ),
+			pods_access_form_field_hash( $fields )
+		);
+		$this->assertNotSame(
+			pods_access_form_field_hash( $fields ),
+			pods_access_form_field_hash( 'title,excerpt' )
+		);
+	}
+
+	public function test_pods_access_form_nonce_round_trip_uses_normalized_fields() {
+		wp_set_current_user( 1 );
+
+		$fields   = [ 'title', 'content' ];
+		$uri_hash = pods_access_form_uri_hash( '/nonce-test/' );
+		$nonce    = pods_access_create_form_nonce( $this->public_pod_name, 1, $fields, $uri_hash );
+
+		$this->assertTrue(
+			pods_access_verify_form_nonce(
+				$nonce,
+				$this->public_pod_name,
+				1,
+				pods_access_form_normalize_fields( $fields ),
+				$uri_hash
+			)
+		);
+	}
+
+	public function test_pods_access_form_nonce_action_stays_stable_across_nonce_ticks() {
+		// The field hash is embedded in the action, so it must not rotate with the nonce tick
+		// or wp_verify_nonce() can no longer accept the previous tick for the outer nonce.
+		$current_tick = wp_nonce_tick();
+
+		$action_one = pods_access_form_nonce_action( $this->public_pod_name, 1, [ 'title' ], 'uri', 'user_1' );
+		$action_two = pods_access_form_nonce_action( $this->public_pod_name, 1, [ 'title' ], 'uri', 'user_1' );
+
+		$this->assertSame( $action_one, $action_two );
+
+		add_filter( 'nonce_life', [ $this, 'filter_nonce_life_to_one_year' ] );
+
+		$action_next_tick = pods_access_form_nonce_action( $this->public_pod_name, 1, [ 'title' ], 'uri', 'user_1' );
+
+		remove_filter( 'nonce_life', [ $this, 'filter_nonce_life_to_one_year' ] );
+
+		$this->assertNotSame( $current_tick, wp_nonce_tick() );
+		$this->assertSame( $action_one, $action_next_tick );
+	}
+
+	public function filter_nonce_life_to_one_year() {
+		return YEAR_IN_SECONDS;
+	}
+
+	public function test_pods_access_form_nonce_round_trip_for_meta_group_field_names() {
+		wp_set_current_user( 1 );
+
+		$group_key          = 'extra_details';
+		$nonce_field_names  = pods_access_form_field_names( 'meta', $group_key );
+		$fields             = [ 'field_one', 'field_two' ];
+		$uri_hash           = pods_access_form_uri_hash( '/wp-admin/post.php' );
+
+		$html = pods_access_get_form_nonce_fields(
+			$this->public_pod_name,
+			123,
+			$fields,
+			$nonce_field_names,
+			$uri_hash
+		);
+
+		$this->assertStringContainsString( 'name="pods_meta_nonce_' . $group_key . '"', $html );
+		$this->assertStringContainsString( 'name="pods_meta_form_' . $group_key . '"', $html );
+
+		// Simulate the submitted request with the hidden values the metabox rendered.
+		$request = [
+			$nonce_field_names['nonce'] => pods_access_create_form_nonce( $this->public_pod_name, 123, $fields, $uri_hash ),
+			$nonce_field_names['pod']   => $this->public_pod_name,
+			$nonce_field_names['id']    => '123',
+			$nonce_field_names['uri']   => $uri_hash,
+			$nonce_field_names['form']  => pods_access_form_normalize_fields( $fields ),
+		];
+
+		$this->assertTrue( pods_access_verify_form_nonce_from_request( $nonce_field_names, $request ) );
+	}
+
 	public function test_pods_can_use_dynamic_feature_can_be_disabled() {
 		pods_update_setting( 'dynamic_features_allow', '0' );
 		pods_update_setting( 'dynamic_features_enabled', [

@@ -610,6 +610,49 @@ class PostTypeTest extends Pods_UnitTestCase {
 		], 1 ) );
 	}
 
+	public function test_pods_access_map_capabilities_keeps_core_meta_capabilities_for_page_capability_type() {
+		$post_type = 'test_page_caps';
+
+		register_post_type( $post_type, [
+			'public'          => true,
+			'capability_type' => 'page',
+			'map_meta_cap'    => false,
+		] );
+
+		$post_id = wp_insert_post( [
+			'post_title'  => 'Test page capability mapping',
+			'post_type'   => $post_type,
+			'post_status' => 'publish',
+		] );
+
+		$this->assertIsInt( $post_id );
+
+		// The canonical meta capability must be kept so map_meta_cap() resolves it safely.
+		$this->assertSame( 'read_post', pods_access_map_capabilities( [
+			'object_type' => 'post_type',
+			'object_name' => $post_type,
+			'item_id'     => $post_id,
+		], null, true )['read'] );
+
+		// Anonymous users do not have the mapped read_page capability.
+		$this->assertFalse( pods_user_can_access_object( [
+			'object_type' => 'post_type',
+			'object_name' => $post_type,
+			'item_id'     => $post_id,
+		], null, 'read' ) );
+
+		// Administrators have the mapped read_page capability.
+		wp_set_current_user( 1 );
+
+		$this->assertTrue( pods_user_can_access_object( [
+			'object_type' => 'post_type',
+			'object_name' => $post_type,
+			'item_id'     => $post_id,
+		], 1, 'read' ) );
+
+		_unregister_post_type( $post_type );
+	}
+
 	public function test_pods_is_type_public_returns_true_for_public_type() {
 		$this->assertTrue( pods_is_type_public(
 			[

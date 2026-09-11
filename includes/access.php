@@ -605,15 +605,17 @@ function pods_access_map_capabilities( array $args, ?int $user_id = null, bool $
 	}
 
 	// Check if there are any capabilities mapped for this type object.
+	$core_meta_capabilities = [ 'read_post', 'edit_post', 'delete_post' ];
+
 	foreach ( $capabilities as $access_type => $capability ) {
 		if ( $capability ) {
 			if ( is_array( $capability ) ) {
 				foreach ( $capability as $k => $cap ) {
-					if ( isset( $wp_object->cap->{$cap} ) ) {
+					if ( ! in_array( $cap, $core_meta_capabilities, true ) && isset( $wp_object->cap->{$cap} ) ) {
 						$capabilities[ $access_type ][ $k ] = $wp_object->cap->{$cap};
 					}
 				}
-			} elseif ( isset( $wp_object->cap->{$capability} ) ) {
+			} elseif ( ! in_array( $capability, $core_meta_capabilities, true ) && isset( $wp_object->cap->{$capability} ) ) {
 				$capabilities[ $access_type ] = $wp_object->cap->{$capability};
 			}
 		}

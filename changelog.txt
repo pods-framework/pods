@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases and changelogs for Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
 
+= Unreleased =
+
+* Bug: Item-level access checks no longer rewrite read_post, edit_post, or delete_post through the post type capability object, which prevents a PHP warning from map_meta_cap when a post type with a page capability type has meta capability mapping disabled. #7619 (@sc0ttkclark)
+
 = 3.3.9.2 - August 31st, 2026 =
 
 This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.

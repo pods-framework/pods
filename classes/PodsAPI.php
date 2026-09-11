@@ -9727,6 +9727,9 @@ class PodsAPI {
 
 			if ( ! in_array( $type, $tableless_field_types, true ) ) {
 				$exclude = '';
+
+				$check_value = pods_sanitize( $value );
+
 				$prepare = [
 					$field,
 					$check_value,
@@ -9738,8 +9741,6 @@ class PodsAPI {
 				}
 
 				$check = false;
-
-				$check_value = pods_sanitize( $value );
 
 				// @todo handle meta-based fields
 				// Trigger an error if not unique

@@ -2,6 +2,10 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases and changelogs for Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
 
+= Unreleased =
+
+* Bug: Fixed Unique field validation so the sanitized value is used in the uniqueness query. Unique fields on table storage pods now correctly block duplicate values and no longer trigger a PHP warning. #7623
+
 = 3.3.9.2 - August 31st, 2026 =
 
 This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.

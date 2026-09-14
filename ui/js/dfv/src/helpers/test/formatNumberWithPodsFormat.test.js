@@ -1,6 +1,7 @@
 /* global global */
 import {
 	formatNumberWithPodsFormat,
+	parseFloatWithPodsFormat,
 } from '../formatNumberWithPodsFormat.js';
 
 describe( 'formatNumberWithPodsFormat.js', () => {
@@ -94,15 +95,19 @@ describe( 'formatNumberWithPodsFormat.js', () => {
 	} );
 
 	it( 'handles non-string and non-numeric values', () => {
-		expect( formatNumberWithPodsFormat( undefined, 'i18n' ) ).toEqual( '0' );
-
-		expect( formatNumberWithPodsFormat( null, 'i18n' ) ).toEqual( '0' );
-
 		expect( formatNumberWithPodsFormat( 123, 'i18n' ) ).toEqual( '123' );
 
-		expect( formatNumberWithPodsFormat( '', 'i18n' ) ).toEqual( '0' );
-
 		expect( formatNumberWithPodsFormat( 'abc', 'i18n' ) ).toEqual( undefined );
+	} );
+
+	it( 'preserves intentionally empty values', () => {
+		expect( parseFloatWithPodsFormat( '', 'i18n' ) ).toEqual( '' );
+		expect( parseFloatWithPodsFormat( undefined, 'i18n' ) ).toEqual( '' );
+		expect( parseFloatWithPodsFormat( null, 'i18n' ) ).toEqual( '' );
+
+		expect( formatNumberWithPodsFormat( '', 'i18n' ) ).toEqual( '' );
+		expect( formatNumberWithPodsFormat( undefined, 'i18n' ) ).toEqual( '' );
+		expect( formatNumberWithPodsFormat( null, 'i18n' ) ).toEqual( '' );
 	} );
 
 	it( 'strips unneeded zero decimal values', () => {

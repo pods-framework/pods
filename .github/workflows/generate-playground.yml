@@ -1,8 +1,8 @@
-name: PR Preview (Playground)
+name: Generate Playground
 on:
-  workflow_run:
-    workflows: ["Auto Build"]
-    types: [completed]
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
   preview:

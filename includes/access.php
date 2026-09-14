@@ -3054,6 +3054,11 @@ function pods_access_verify_form_nonce_from_request( $nonce_field_names = null, 
 	$uri   = pods_v( $nonce_field_names['uri'], $source );
 	$form  = pods_v( $nonce_field_names['form'], $source );
 
+	/*
+	 * An empty field list is valid. Meta groups that only contain layout fields (heading, html)
+	 * have no submittable fields, and both the rendered nonce and this check hash that same
+	 * empty list, so the round trip still verifies.
+	 */
 	if (
 		! is_string( $nonce )
 		|| ! is_string( $pod )
@@ -3063,7 +3068,6 @@ function pods_access_verify_form_nonce_from_request( $nonce_field_names = null, 
 		|| '' === $nonce
 		|| '' === $pod
 		|| '' === $uri
-		|| '' === $form
 	) {
 		return false;
 	}

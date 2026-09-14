@@ -290,6 +290,79 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * A meta group that only contains layout fields (heading, html) has no submittable fields.
+	 * The rendered nonce and the save-side check both hash that empty list, so the save must
+	 * not die with "The form nonce is invalid".
+	 *
+	 * @covers PodsMeta::get_submittable_meta_field_names
+	 * @covers PodsMeta::verify_meta_form_nonce_or_die
+	 */
+	public function test_layout_only_group_nonce_round_trip() {
+		$api = pods_api();
+
+		$group_id = $api->save_group( [
+			'pod_id' => $this->pod_id,
+			'name'   => 'add_to_google_calendar',
+			'label'  => 'Add to Google Calendar',
+		] );
+
+		$api->save_field( [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $group_id,
+			'name'     => 'shortcode',
+			'label'    => 'Shortcode',
+			'type'     => 'html',
+		] );
+
+		// Ensure groups_get() reads the freshly saved group.
+		pods_static_cache_clear();
+
+		$meta = pods_meta();
+
+		$groups = $meta->groups_get( 'post_type', $this->pod_name );
+
+		$group = null;
+
+		foreach ( $groups as $candidate ) {
+			if ( isset( $candidate['name'] ) && 'add_to_google_calendar' === $candidate['name'] ) {
+				$group = $candidate;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $group, 'Expected to find the layout-only group.' );
+
+		$submittable = $this->reflectionMethodInvokeArgs(
+			$meta,
+			'get_submittable_meta_field_names',
+			[ [ $group ] ]
+		);
+
+		$this->assertSame( [], $submittable, 'Layout-only groups must have no submittable fields.' );
+
+		$group_key         = $this->reflectionMethodInvokeArgs( $meta, 'get_meta_nonce_group_key', [ $group ] );
+		$nonce_field_names = pods_access_form_field_names( 'meta', $group_key );
+
+		$uri_hash = pods_access_form_uri_hash( '/wp-admin/post.php' );
+		$nonce    = pods_access_create_form_nonce( $this->pod_name, 123, [], $uri_hash );
+
+		$_POST[ $nonce_field_names['nonce'] ] = $nonce;
+		$_POST[ $nonce_field_names['pod'] ]   = $this->pod_name;
+		$_POST[ $nonce_field_names['id'] ]    = '123';
+		$_POST[ $nonce_field_names['uri'] ]   = $uri_hash;
+		$_POST[ $nonce_field_names['form'] ]  = pods_access_form_normalize_fields( [] );
+
+		$this->assertTrue(
+			$this->reflectionMethodInvokeArgs(
+				$meta,
+				'verify_meta_form_nonce_or_die',
+				[ 'meta', $group_key ]
+			),
+			'The layout-only group nonce must verify without dying.'
+		);
+	}
+
+	/**
 	 * Track current hook info
 	 */
 	public function _track_hook() {

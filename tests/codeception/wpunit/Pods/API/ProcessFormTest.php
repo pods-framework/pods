@@ -216,8 +216,8 @@ class ProcessFormTest extends Pods_UnitTestCase {
 
 		$form_fields = implode( ',', $submittable_fields );
 
-		$uri_hash   = wp_create_nonce( 'pods_uri_' . $path );
-		$field_hash = wp_create_nonce( 'pods_fields_' . $form_fields );
+		$uri_hash   = pods_access_form_uri_hash( $path );
+		$field_hash = pods_access_form_field_hash( $form_fields );
 
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();

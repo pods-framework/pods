@@ -1,0 +1,17 @@
+name: PR Preview (Playground)
+on:
+  workflow_run:
+    workflows: ["Auto Build"]
+    types: [completed]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: WordPress/action-wp-playground-pr-preview@v3
+        with:
+          plugin-path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}

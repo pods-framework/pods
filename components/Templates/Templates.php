@@ -303,7 +303,7 @@ class Pods_Templates extends PodsComponent {
 			10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		];
 
-		if ( false === (boolean) $post_type->public ) {
+		if ( false === (bool) $post_type->public ) {
 			// translators: %s is the singular label.
 			$messages[ $post_type->name ][1] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
 			// translators: %s is the singular label.
@@ -621,7 +621,7 @@ class Pods_Templates extends PodsComponent {
 
 				$permission = pods_permission( $template );
 
-				$permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
+				$permission = (bool) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
 
 				if ( ! $permission ) {
 					if ( 1 === (int) pods_v( 'show_restrict_message', $options, 1 ) ) {

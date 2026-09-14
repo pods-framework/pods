@@ -70,6 +70,8 @@ export const SAVE_MESSAGE = createStatePath( `${ UI.path }.saveMessage` );
 
 export const GROUP_SAVE_STATUSES = createStatePath( `${ UI.path }.groupSaveStatuses` );
 export const GROUP_SAVE_MESSAGES = createStatePath( `${ UI.path }.groupSaveMessages` );
+export const GROUP_DUPLICATE_STATUSES = createStatePath( `${ UI.path }.groupDuplicateStatuses` );
+export const GROUP_DUPLICATE_MESSAGES = createStatePath( `${ UI.path }.groupDuplicateMessages` );
 export const GROUP_DELETE_STATUSES = createStatePath( `${ UI.path }.groupDeleteStatuses` );
 export const GROUP_DELETE_MESSAGES = createStatePath( `${ UI.path }.groupDeleteMessages` );
 

@@ -46,9 +46,11 @@ If you find an issue that you believe to be a *bug*, [let us know](https://githu
 
 If you have restrictions on your server or site, these are the minimum versions that Pods will be supported to run on. Running the following minimum versions does bring with it their own risks including security and exposure to additional bugs that may have been resolved by the recommended versions above. 
 
-* WordPress 6.3+
-* PHP 7.2+
-* MySQL 5.5+
+* WordPress 6.8+
+* PHP 8.0+
+* MySQL 5.7+
+
+It's recommended you use the latest stable version of each available to you.
 
 ## Contributions Welcome
 

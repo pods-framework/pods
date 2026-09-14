@@ -4222,6 +4222,7 @@
               "description": "",
               "weight": 0,
               "type": "pick",
+              "pick_format_single": "list",
               "required": "0",
               "pick_object": "user",
               "repeatable": "0",

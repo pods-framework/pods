@@ -31,7 +31,7 @@ if ( empty( $fields ) || ! is_array( $fields ) ) {
 if ( ! isset( $duplicate ) || $is_settings_pod ) {
 	$duplicate = false;
 } else {
-	$duplicate = (boolean) $duplicate;
+	$duplicate = (bool) $duplicate;
 }
 
 $groups = PodsInit::$meta->groups_get( $pod->pod_data['type'], $pod->pod_data['name'], $fields );

@@ -714,7 +714,7 @@ class Store {
 
 		// Filter objects by internal.
 		if ( isset( $args['internal'] ) ) {
-			$args['internal'] = (boolean) $args['internal'];
+			$args['internal'] = (bool) $args['internal'];
 
 			$objects = array_filter( $objects, static function( $object ) use ( $args ) {
 				$internal = false;
@@ -725,7 +725,7 @@ class Store {
 					$internal = $object['internal'];
 				}
 
-				return $args['internal'] === (boolean) $internal;
+				return $args['internal'] === (bool) $internal;
 			} );
 		}
 

@@ -250,7 +250,7 @@ class PodsUpgrade {
 		$method = str_replace( 'migrate_', '', $method );
 
 		if ( null !== $x ) {
-			$this->progress[ $method ][ $x ] = (boolean) $v;
+			$this->progress[ $method ][ $x ] = (bool) $v;
 		} else {
 			$this->progress[ $method ] = $v;
 		}
@@ -271,7 +271,7 @@ class PodsUpgrade {
 			if ( null === $x ) {
 				return $this->progress[ $method ];
 			} elseif ( isset( $this->progress[ $method ][ $x ] ) ) {
-				return (boolean) $this->progress[ $method ][ $x ];
+				return (bool) $this->progress[ $method ][ $x ];
 			}
 		}
 

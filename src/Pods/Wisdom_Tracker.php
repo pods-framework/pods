@@ -512,7 +512,7 @@ class Wisdom_Tracker {
 	 * Note that themes are opt in / plugins are opt out
 	 *
 	 * @since 1.1.0
-	 * @return Boolean
+	 * @return bool
 	 */
 	public function has_user_opted_out() {
 		// Different opt-out methods for plugins and themes
@@ -608,7 +608,7 @@ class Wisdom_Tracker {
 	 * Get whether it's time to display the notification
 	 *
 	 * @since 1.2.4
-	 * @return Boolean
+	 * @return bool
 	 */
 	public function get_is_notification_time() {
 		// @todo SKC customization: Contribute back to Wisdom project.

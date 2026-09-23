@@ -12,7 +12,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: WordPress/action-wp-playground-pr-preview@v3
+      - uses: WordPress/action-wp-playground-pr-preview@v4
         with:
           plugin-path: .
           github-token: ${{ secrets.GITHUB_TOKEN }}

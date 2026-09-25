@@ -1556,6 +1556,11 @@ class PodsInit {
 					$pods_taxonomies[ $taxonomy_name ]['required']     = (bool) pods_v( 'single_value_required', $taxonomy, false );
 				}
 
+				// Hide the default meta box on associated post types when configured.
+				if ( (boolean) pods_v( 'hide_meta_box', $taxonomy, false ) ) {
+					$pods_taxonomies[ $taxonomy_name ]['meta_box_cb'] = false;
+				}
+
 				// Post Types
 				$ct_post_types = [];
 				$_post_types   = $existing_post_types;

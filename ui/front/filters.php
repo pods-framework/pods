@@ -19,23 +19,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	foreach ( $fields as $name => $field ) {
 		if ( in_array( $field['type'], array( 'pick', 'taxonomy' ), true ) && 'pick-custom' !== $field['pick_object'] && ! empty( $field['pick_object'] ) ) {
-			$field['pick_format_type']             = 'single';
-			$field['pick_format_single']           = 'dropdown';
+			$filter_name = $pod->filter_var . '_' . $name;
+
+			/* translators: %s: The field label being filtered on. */
+			$filter_label = sprintf( __( 'Filter by %s', 'pods' ), $field['label'] );
+
+			$field['pick_format_type']   = 'single';
+			$field['pick_format_single'] = 'dropdown';
+
+			// The empty option is what clears an active filter, so it has to be present even
+			// when the underlying field is required and already has a value. Without
+			// _select_text_always_show, PodsField_Pick omits it in exactly that case and the
+			// filter can no longer be reset. _select_text keeps the option named after the
+			// field rather than falling back to a generic '-- Select One --'.
 			$field['pick_select_text']             = '-- ' . $field['label'] . ' --';
 			$field['pick_show_select_text']        = 1;
 			$field['pick_select_text_always_show'] = 1;
 
-			$filter = sanitize_text_field( pods_v( $pod->filter_var . '_' . $name, 'get', '' ) );
+			$filter = sanitize_text_field( pods_v( $filter_name, 'get', '' ) );
 
 			// @todo Support other field types.
 			$field['type'] = 'pick';
 
-			PodsForm::output_field( $pod->filter_var . '_' . $name, $filter, $field['type'], $field, $pod->pod, $pod->id() );
+			PodsForm::output_label( $filter_name, $filter_label, '', $field );
+			PodsForm::output_field( $filter_name, $filter, $field['type'], $field, $pod->pod, $pod->id() );
 		}
 	}
+
+	$search_id = 'pods-form-filters-search-' . sanitize_key( $pod->pod );
 	?>
 
-	<input type="text" class="pods-form-filters-search" name="<?php echo esc_attr( $pod->search_var ); ?>" value="<?php echo esc_attr( $search ); ?>" />
+	<label for="<?php echo esc_attr( $search_id ); ?>" class="pods-form-filters-label"><?php esc_html_e( 'Search', 'pods' ); ?></label>
+	<input type="text" id="<?php echo esc_attr( $search_id ); ?>" class="pods-form-filters-search" name="<?php echo esc_attr( $pod->search_var ); ?>" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search…', 'pods' ); ?>" aria-label="<?php esc_attr_e( 'Search', 'pods' ); ?>" />
 
 	<input type="submit" class="pods-form-filters-submit" value="<?php echo esc_attr( $label ); ?>" />
 </form>

@@ -6071,6 +6071,13 @@ class PodsAPI {
 		// Enforce integers / unique values for IDs
 		$value_ids = [];
 
+		// Item ID for custom upload directory tag context (e.g. {@ID}).
+		$item_id = 0;
+
+		if ( isset( $pieces['params'] ) && isset( $pieces['params']->id ) ) {
+			$item_id = (int) $pieces['params']->id;
+		}
+
 		// @todo Handle simple relationships eventually
 		foreach ( $values as $v ) {
 			if ( ! is_array( $v ) ) {
@@ -6084,7 +6091,7 @@ class PodsAPI {
 					// If file not found, add it
 					if ( empty( $v ) ) {
 						try {
-							$v = pods_attachment_import( $v );
+							$v = pods_attachment_import( $v, $item_id, false, false, $field, $pod );
 						} catch ( Throwable $throwable ) {
 							pods_debug_log( $throwable );
 

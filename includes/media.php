@@ -231,16 +231,36 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
  * @param int     $post_parent ID of post parent, default none.
  * @param boolean $featured    Whether to set it as the featured (post thumbnail) of the post parent.
  * @param boolean $strict      Whether to return errors upon failure.
+ * @param array   $field       Optional. The field configuration associated to the upload field.
+ * @param array   $pod         Optional. The pod configuration associated to the upload field.
  *
  * @return int Attachment ID.
  *
  * @since 2.3.0
  */
-function pods_attachment_import( $url, $post_parent = null, $featured = false, $strict = false ) {// Only allow http(s).
+function pods_attachment_import( $url, $post_parent = null, $featured = false, $strict = false, $field = null, $pod = null ) {
+	// Only allow http(s).
 	$scheme = wp_parse_url( $url, PHP_URL_SCHEME );
 
 	if ( ! in_array( $scheme, [ 'http', 'https' ], true ) ) {
 		return $strict ? (int) pods_error( __( 'Invalid file URL.', 'pods' ) ) : 0;
+	}
+
+	$is_custom_dir = false;
+
+	if ( $field ) {
+		$pod_name    = pods_v( 'name', $pod, false );
+		$context_pod = null;
+
+		if ( $pod_name ) {
+			$context_pod = pods_get_instance( $pod_name, $post_parent );
+
+			if ( ! $context_pod->exists() ) {
+				$context_pod = null;
+			}
+		}
+
+		$is_custom_dir = PodsField_File::use_custom_upload_dir( $field, $context_pod, [], $pod );
 	}
 
 	require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -250,10 +270,14 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 	$tmp = download_url( $url );
 
 	if ( is_wp_error( $tmp ) ) {
+		if ( $is_custom_dir ) {
+			PodsField_File::use_custom_upload_dir_teardown();
+		}
+
 		return $strict ? (int) pods_error( $tmp->get_error_message() ) : 0;
 	}
 
-	$file_array    = [
+	$file_array = [
 		'name'     => basename( wp_parse_url( $url, PHP_URL_PATH ) ),
 		'tmp_name' => $tmp,
 	];
@@ -263,7 +287,16 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
 	if ( is_wp_error( $attachment_id ) ) {
 		wp_delete_file( $tmp );
 
+		if ( $is_custom_dir ) {
+			PodsField_File::use_custom_upload_dir_teardown();
+		}
+
 		return $strict ? (int) pods_error( $attachment_id->get_error_message() ) : 0;
+	}
+
+	// End custom directory now that all attachment file sizes have been generated.
+	if ( $is_custom_dir ) {
+		PodsField_File::use_custom_upload_dir_teardown();
 	}
 
 	if ( 0 < $post_parent && $featured ) {

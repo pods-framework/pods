@@ -159,7 +159,7 @@ class Collection extends Storage {
 		 */
 		$limit = apply_filters( 'pods_whatsit_storage_post_type_find_limit', 300 );
 
-		if ( empty( $args['limit'] ) ) {
+		if ( empty( $args['limit'] ) && empty( $args['count'] ) ) {
 			$args['limit'] = $limit;
 		}
 

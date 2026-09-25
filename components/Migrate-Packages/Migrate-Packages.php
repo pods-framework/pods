@@ -362,6 +362,10 @@ class Pods_Migrate_Packages extends PodsComponent {
 			unset( $data['id'] );
 		}
 
+		if ( isset( $data['old_name'] ) ) {
+			unset( $data['old_name'] );
+		}
+
 		$pod_object = self::$api->load_pod( [ 'name' => $data['name'] ], false );
 
 		$pod = [
@@ -438,6 +442,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 			'pod_id',
 			'group',
 			'group_id',
+			'old_name',
 		];
 
 		foreach ( $objects as $key => $object ) {

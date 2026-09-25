@@ -1440,6 +1440,15 @@ class PodsForm {
 			if ( $default !== $default_value && 1 === (int) pods_v( 'default_evaluate_tags', $options, 1 ) ) {
 				$default = pods_evaluate_tags( $default );
 			}
+
+			// Shortcode expansion is a separate opt-in from magic tag evaluation, so it must not
+			// be nested within the magic tag check above -- a default containing only a shortcode
+			// still needs to be expanded. This intentionally runs before the
+			// default_value_parameter override below so that request-supplied values are never
+			// passed through do_shortcode().
+			if ( 1 === (int) pods_v( $type . '_allow_shortcode', $options, 0 ) ) {
+				$default = do_shortcode( $default );
+			}
 		}
 
 		$default_value_parameter = pods_v( 'default_value_parameter', $options );

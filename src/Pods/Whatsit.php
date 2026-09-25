@@ -1388,7 +1388,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$has_custom_args = ! empty( $args );
 
 		if ( null !== $this->_groups && ! $has_custom_args ) {
-			return $this->_groups;
+			return count( $this->_groups );
 		}
 
 		$filtered_args = [

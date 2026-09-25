@@ -690,7 +690,7 @@ class PodsComponents {
 
 		$toggled = null;
 
-		$toggle_mode = (boolean) pods_v( 'toggle', 'get', $toggle_mode );
+		$toggle_mode = (bool) pods_v( 'toggle', 'get', $toggle_mode );
 
 		if ( $toggle_mode ) {
 			$toggled = $this->activate_component( $component );
@@ -719,11 +719,11 @@ class PodsComponents {
 			}
 
 			if ( ! pods_developer() ) {
-				if ( true === (boolean) pods_v( 'DeveloperMode', $component_data, false ) ) {
+				if ( true === (bool) pods_v( 'DeveloperMode', $component_data, false ) ) {
 					continue;
 				}
 
-				if ( true === (boolean) pods_v( 'TablelessMode', $component_data, false ) ) {
+				if ( true === (bool) pods_v( 'TablelessMode', $component_data, false ) ) {
 					continue;
 				}
 			}

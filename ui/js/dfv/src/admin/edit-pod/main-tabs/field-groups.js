@@ -49,6 +49,7 @@ const FieldGroups = ( {
 	podSaveStatus,
 	groups,
 	saveGroup,
+	duplicateGroup,
 	deleteGroup,
 	removeGroupFromPod,
 	setGroups,
@@ -56,6 +57,7 @@ const FieldGroups = ( {
 	resetGroupSaveStatus,
 	groupSaveStatuses,
 	groupSaveMessages,
+	groupDuplicateStatuses,
 	groupDeleteStatuses,
 	editGroupPod,
 	allFields,
@@ -379,10 +381,12 @@ const FieldGroups = ( {
 									group={ group }
 									index={ index }
 									editGroupPod={ editGroupPod }
+									duplicateGroup={ duplicateGroup }
 									deleteGroup={ deleteGroup }
 									removeGroupFromPod={ () => removeGroupFromPod( group.id ) }
 									saveStatus={ groupSaveStatuses[ group.name ] }
 									saveMessage={ groupSaveMessages[ group.name ] }
+									duplicateStatus={ groupDuplicateStatuses[ group.name ] }
 									deleteStatus={ groupDeleteStatuses[ group.name ] }
 									saveGroup={ saveGroup }
 									resetGroupSaveStatus={ resetGroupSaveStatus }
@@ -437,6 +441,7 @@ FieldGroups.propTypes = {
 	podLabel: PropTypes.string.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
+	duplicateGroup: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
 	removeGroupFromPod: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
@@ -444,6 +449,7 @@ FieldGroups.propTypes = {
 	resetGroupSaveStatus: PropTypes.func.isRequired,
 	groupSaveStatuses: PropTypes.object.isRequired,
 	groupSaveMessages: PropTypes.object.isRequired,
+	groupDuplicateStatuses: PropTypes.object.isRequired,
 	groupDeleteStatuses: PropTypes.object.isRequired,
 	allFields: PropTypes.arrayOf(
 		FIELD_PROP_TYPE_SHAPE
@@ -467,6 +473,7 @@ export default compose( [
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
 			groupSaveStatuses: storeSelect.getGroupSaveStatuses(),
 			groupSaveMessages: storeSelect.getGroupSaveMessages(),
+			groupDuplicateStatuses: storeSelect.getGroupDuplicateStatuses(),
 			groupDeleteStatuses: storeSelect.getGroupDeleteStatuses(),
 			allFields: storeSelect.getFieldsFromAllGroups(),
 		};
@@ -478,6 +485,7 @@ export default compose( [
 
 		return {
 			saveGroup: storeDispatch.saveGroup,
+			duplicateGroup: storeDispatch.duplicateGroup, // groupID, name
 			deleteGroup: storeDispatch.deleteGroup, // groupID, name
 			removeGroupFromPod: storeDispatch.removeGroup, // groupID
 			setGroups: storeDispatch.setGroups, // groups

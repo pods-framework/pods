@@ -154,7 +154,7 @@ class PodsArray implements ArrayAccess {
 				$value = abs( $value );
 			}
 		} elseif ( 'boolean' === $type || 'bool' === $type ) {
-			$value = (boolean) $value;
+			$value = (bool) $value;
 		} elseif ( 'in_array' === $type && is_array( $default ) ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $k => $v ) {

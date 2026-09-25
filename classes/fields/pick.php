@@ -1110,7 +1110,7 @@ class PodsField_Pick extends PodsField {
 			$field_data = pods_static_cache_get( $field_options['name'] . '/' . $field_options['id'], __CLASS__ . '/field_data' ) ?: [];
 
 			if ( isset( $field_data['autocomplete'] ) ) {
-				$ajax = (boolean) $field_data['autocomplete'];
+				$ajax = (bool) $field_data['autocomplete'];
 			}
 		}
 
@@ -1838,7 +1838,7 @@ class PodsField_Pick extends PodsField {
 
 					$related_data[ 'remove_ids_' . $id ] = $remove_ids;
 
-					$related_required   = (boolean) pods_v( 'required', $related_field, 0 );
+					$related_required   = (bool) pods_v( 'required', $related_field, 0 );
 					$related_pick_limit = (int) pods_v( static::$type . '_limit', $related_field, 0 );
 
 					if ( 'single' === pods_v( static::$type . '_format_type', $related_field ) ) {

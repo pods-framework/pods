@@ -2,10 +2,10 @@
 Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, dan.stefan, Desertsnowman, mgibbs189, Shelob9, clubduece, curtismchale, mikedamage, jchristopher, pcfreak30
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields
-Requires at least: 6.3
+Requires at least: 6.8
 Tested up to: 7.1
-Requires PHP: 7.2
-Stable tag: 3.3.9.2
+Requires PHP: 8.0
+Stable tag: 3.4.0-a-3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,6 +182,10 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 3.3.10 - TBD =
+
+* Fixed: Resolved fatal error when calling the `Whatsit::count_groups()` method in some circumstances. (@markofapproval, @sc0ttkclark)
+
 = 3.3.9.2 - August 31st, 2026 =
 
 This is a major security hardening release covering multiple areas of the plugin. We recommend updating as soon as possible.
@@ -332,6 +336,9 @@ Additional releases with these security fixes have been backported to each major
 Our GitHub has the full list of all prior releases and changelogs for Pods: [https://github.com/pods-framework/pods/releases](https://github.com/pods-framework/pods/releases)
 
 == Upgrade Notice ==
+
+= 3.4 =
+This upgrade requires a minimum versions of PHP 8.0+, WordPress 6.8+, and MySQL 5.7+.
 
 = 3.1 =
 This upgrade is security focused.

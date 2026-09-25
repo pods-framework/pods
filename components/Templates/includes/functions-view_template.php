@@ -165,13 +165,13 @@ function frontier_if_block( $attributes, $code ) {
 		if ( ! $has_value_compare_attribute ) {
 			$template = $code[0];
 
-			// Maybe run any shortcode.
+			// Field exists and is not empty, use [IF] content
+			$template = $pod->do_magic_tags( $template );
+
+			// Maybe run other shortcodes after magic tags are evaluated.
 			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
 				$template = frontier_do_other_shortcodes( $template );
 			}
-
-			// Field exists and is not empty, use [IF] content
-			$template = $pod->do_magic_tags( $template );
 
 			return frontier_do_shortcode( $template );
 		}
@@ -289,13 +289,13 @@ function frontier_if_block( $attributes, $code ) {
 		if ( $pass ) {
 			$template = $code[0];
 
-			// Maybe run any shortcode.
+			// IF statement true, use [IF] content as template.
+			$template = $pod->do_magic_tags( $template );
+
+			// Maybe run other shortcodes after magic tags are evaluated.
 			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
 				$template = frontier_do_other_shortcodes( $template );
 			}
-
-			// IF statement true, use [IF] content as template.
-			$template = $pod->do_magic_tags( $template );
 
 			return frontier_do_shortcode( $template );
 		}
@@ -303,13 +303,13 @@ function frontier_if_block( $attributes, $code ) {
 		if ( isset( $code[1] ) ) {
 			$template = $code[1];
 
-			// Maybe run any shortcode.
+			// There is an [ELSE] tag
+			$template = $pod->do_magic_tags( $template );
+
+			// Maybe run other shortcodes after magic tags are evaluated.
 			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
 				$template = frontier_do_other_shortcodes( $template );
 			}
-
-			// There is an [ELSE] tag
-			$template = $pod->do_magic_tags( $template );
 
 			return frontier_do_shortcode( $template );
 		}
@@ -321,13 +321,13 @@ function frontier_if_block( $attributes, $code ) {
 	if ( isset( $code[1] ) ) {
 		$template = $code[1];
 
-		// Maybe run any shortcode.
+		// No value or field is empty and there is an [ELSE] tag. Use [ELSE].
+		$template = $pod->do_magic_tags( $template );
+
+		// Maybe run other shortcodes after magic tags are evaluated.
 		if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
 			$template = frontier_do_other_shortcodes( $template );
 		}
-
-		// No value or field is empty and there is an [ELSE] tag. Use [ELSE].
-		$template = $pod->do_magic_tags( $template );
 
 		return frontier_do_shortcode( $template );
 	}

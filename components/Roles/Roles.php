@@ -289,7 +289,7 @@ class Pods_Roles extends PodsComponent {
 		$capabilities = [];
 
 		foreach ( $params->capabilities as $capability => $x ) {
-			if ( empty( $capability ) || true !== (boolean) $x ) {
+			if ( empty( $capability ) || true !== (bool) $x ) {
 				continue;
 			}
 
@@ -354,7 +354,7 @@ class Pods_Roles extends PodsComponent {
 		$new_capabilities = [];
 
 		foreach ( $params->capabilities as $capability => $x ) {
-			if ( empty( $capability ) || true !== (boolean) $x ) {
+			if ( empty( $capability ) || true !== (bool) $x ) {
 				continue;
 			}
 

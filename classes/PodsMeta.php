@@ -1344,6 +1344,88 @@ class PodsMeta {
 	}
 
 	/**
+	 * Determine whether conditional logic hid a field on the submitted meta form.
+	 *
+	 * The browser checks conditional logic against the value it holds for each field on the form. A field
+	 * that was not submitted holds its stored value when conditional logic hid it, and holds nothing when
+	 * it was visible and empty, like an unchecked checkbox or a relationship with every item removed.
+	 *
+	 * @since TBD
+	 *
+	 * @param string     $field_name The field name.
+	 * @param array      $groups     The groups whose fields were on the form.
+	 * @param Pods|false $pod        The Pods object for the item being saved.
+	 * @param array      $hidden     The fields already checked, keyed by name.
+	 *
+	 * @return bool Whether conditional logic hid the field.
+	 */
+	private function is_meta_field_hidden_by_conditional_logic( $field_name, $groups, $pod, array &$hidden = [] ) {
+		if ( isset( $hidden[ $field_name ] ) ) {
+			return $hidden[ $field_name ];
+		}
+
+		// A field whose conditions lead back to itself is treated as visible.
+		$hidden[ $field_name ] = false;
+
+		$fields = [];
+
+		foreach ( $groups as $group ) {
+			if ( empty( $group['fields'] ) || ! is_array( $group['fields'] ) ) {
+				continue;
+			}
+
+			foreach ( $group['fields'] as $group_field ) {
+				$fields[ $group_field['name'] ] = $group_field;
+			}
+		}
+
+		if ( ! isset( $fields[ $field_name ] ) ) {
+			return false;
+		}
+
+		$field = pods_config_for_field( $fields[ $field_name ] );
+
+		if ( ! $field ) {
+			return false;
+		}
+
+		$conditional_logic = $field->get_conditional_logic();
+
+		if ( ! $conditional_logic ) {
+			return false;
+		}
+
+		$values = [];
+
+		foreach ( array_keys( $fields ) as $name ) {
+			$values[ $name ] = pods_v( 'pods_meta_' . $name, 'post' );
+
+			if ( null !== $values[ $name ] ) {
+				continue;
+			}
+
+			$values[ $name ] = '';
+
+			if ( $pod && $this->is_meta_field_hidden_by_conditional_logic( $name, $groups, $pod, $hidden ) ) {
+				pods_no_conflict_on( 'post' );
+
+				$values[ $name ] = $pod->field(
+					[
+						'name'    => $name,
+						'in_form' => true,
+					]
+				);
+
+				pods_no_conflict_off( 'post' );
+			}
+		}
+
+		$hidden[ $field_name ] = ! $conditional_logic->is_visible( $values );
+
+		return $hidden[ $field_name ];
+	}
+
+	/**
 	 * Get a stable nonce group key for a meta group.
 	 *
 	 * @since 3.3.9.2
@@ -1694,11 +1776,14 @@ class PodsMeta {
 					}
 
 					/*
-					 * Check if field wasn't submitted (likely hidden by conditional logic).
+					 * Check if field wasn't submitted because conditional logic hid it.
 					 * If save_value_when_hidden is enabled, skip this field to preserve existing DB value.
 					 */
 					if ( ! isset( $_POST[ 'pods_meta_' . $field_name ] ) ) {
-						if ( pods_v_bool( 'conditional_logic_save_value', $field ) ) {
+						if (
+							pods_v_bool( 'conditional_logic_save_value', $field )
+							&& $this->is_meta_field_hidden_by_conditional_logic( $field_name, $groups, $pod )
+						) {
 							continue;
 						}
 					}

@@ -124,6 +124,8 @@ class MetaTest extends Pods_UnitTestCase {
 
 		$GLOBALS['current_user'] = null;
 
+		$_POST = [];
+
 		pods_no_conflict_off( 'all' );
 		parent::tearDown();
 	}
@@ -222,6 +224,208 @@ class MetaTest extends Pods_UnitTestCase {
 		$this->assertArrayHasKey( 'pods_api_post_save_pod_item', self::$hooked );
 		$this->assertArrayNotHasKey( 'pods_api_post_create_pod_item', self::$hooked );
 		$this->assertArrayHasKey( 'pods_api_post_edit_pod_item', self::$hooked );
+	}
+
+	/**
+	 * @covers PodsMeta::save_post
+	 */
+	public function test_save_post_clears_visible_fields_that_save_value_when_hidden() {
+		list( $post_id ) = $this->create_conditional_post();
+
+		$this->submit_meta_form( $post_id, [
+			'show_extra'       => 1,
+			'note_unless_flag' => 'kept',
+		] );
+
+		$this->assertSame( '0', $this->get_table_value( $post_id, 'flag_on' ) );
+		$this->assertSame( [], get_post_meta( $post_id, 'related_on' ) );
+	}
+
+	/**
+	 * @covers PodsMeta::save_post
+	 */
+	public function test_save_post_keeps_hidden_fields_that_save_value_when_hidden() {
+		list( $post_id, $related_id ) = $this->create_conditional_post();
+
+		$this->submit_meta_form( $post_id, [] );
+
+		$this->assertSame( '0', $this->get_table_value( $post_id, 'show_extra' ) );
+		$this->assertSame( '1', $this->get_table_value( $post_id, 'flag_on' ) );
+		$this->assertSame( [ (string) $related_id ], get_post_meta( $post_id, 'related_on' ) );
+		$this->assertSame( 'kept', $this->get_table_value( $post_id, 'note_unless_flag' ) );
+	}
+
+	/**
+	 * @covers PodsMeta::save_post
+	 */
+	public function test_save_post_clears_field_without_conditional_logic_that_saves_value_when_hidden() {
+		list( $post_id ) = $this->create_conditional_post();
+
+		$this->submit_meta_form( $post_id, [
+			'show_extra'       => 1,
+			'note_unless_flag' => 'kept',
+		] );
+
+		$this->assertSame( '0', $this->get_table_value( $post_id, 'flag_no_logic' ) );
+	}
+
+	/**
+	 * Create a post whose conditional fields all have values, with "Save Value When Hidden" on for each of them.
+	 *
+	 * note_unless_flag depends on flag_on, which depends on show_extra.
+	 *
+	 * @return int[] The post ID and the related post ID.
+	 */
+	private function create_conditional_post() {
+		$conditional_logic = [
+			'action' => 'show',
+			'logic'  => 'any',
+			'rules'  => [
+				[
+					'field'   => 'show_extra',
+					'compare' => '=',
+					'value'   => '1',
+				],
+			],
+		];
+
+		$fields = [
+			[
+				'name' => 'show_extra',
+				'type' => 'boolean',
+			],
+			[
+				'name'                         => 'flag_on',
+				'type'                         => 'boolean',
+				'enable_conditional_logic'     => 1,
+				'conditional_logic'            => $conditional_logic,
+				'conditional_logic_save_value' => 1,
+			],
+			[
+				'name'                         => 'related_on',
+				'type'                         => 'pick',
+				'pick_object'                  => 'post_type',
+				'pick_val'                     => $this->pod_name,
+				'pick_format_type'             => 'multi',
+				'enable_conditional_logic'     => 1,
+				'conditional_logic'            => $conditional_logic,
+				'conditional_logic_save_value' => 1,
+			],
+			[
+				'name'                         => 'flag_no_logic',
+				'type'                         => 'boolean',
+				'enable_conditional_logic'     => 0,
+				'conditional_logic_save_value' => 1,
+			],
+			[
+				'name'                         => 'note_unless_flag',
+				'type'                         => 'text',
+				'enable_conditional_logic'     => 1,
+				'conditional_logic'            => [
+					'action' => 'show',
+					'logic'  => 'any',
+					'rules'  => [
+						[
+							'field'   => 'flag_on',
+							'compare' => '!=',
+							'value'   => '1',
+						],
+					],
+				],
+				'conditional_logic_save_value' => 1,
+			],
+		];
+
+		$api = pods_api();
+
+		foreach ( $fields as $field ) {
+			$field['pod_id'] = $this->pod_id;
+
+			$api->save_field( $field );
+		}
+
+		pods_no_conflict_on( 'post' );
+
+		$post_id = wp_insert_post( [
+			'post_title'  => 'Conditional',
+			'post_type'   => $this->pod_name,
+			'post_status' => 'publish',
+		] );
+
+		$related_id = wp_insert_post( [
+			'post_title'  => 'Related',
+			'post_type'   => $this->pod_name,
+			'post_status' => 'publish',
+		] );
+
+		pods_no_conflict_off( 'post' );
+
+		pods( $this->pod_name, $post_id )->save( [
+			'show_extra'       => 1,
+			'flag_on'          => 1,
+			'related_on'       => [ $related_id ],
+			'flag_no_logic'    => 1,
+			'note_unless_flag' => 'kept',
+		] );
+
+		$this->assertSame( '1', $this->get_table_value( $post_id, 'flag_on' ) );
+		$this->assertSame( [ (string) $related_id ], get_post_meta( $post_id, 'related_on' ) );
+		$this->assertSame( '1', $this->get_table_value( $post_id, 'flag_no_logic' ) );
+		$this->assertSame( 'kept', $this->get_table_value( $post_id, 'note_unless_flag' ) );
+
+		return [ $post_id, $related_id ];
+	}
+
+	/**
+	 * Get a field value as stored in the pod's table.
+	 *
+	 * @param int    $post_id    The post ID.
+	 * @param string $field_name The field name.
+	 *
+	 * @return string|null The stored value.
+	 */
+	private function get_table_value( $post_id, $field_name ) {
+		global $wpdb;
+
+		return $wpdb->get_var( $wpdb->prepare( "SELECT `{$field_name}` FROM `{$wpdb->prefix}pods_{$this->pod_name}` WHERE `id` = %d", $post_id ) );
+	}
+
+	/**
+	 * Update a post through the edit screen's meta form, submitting only the given field values.
+	 *
+	 * @param int   $post_id The post ID.
+	 * @param array $values  The field values the form submits.
+	 */
+	private function submit_meta_form( $post_id, array $values ) {
+		$_POST = [];
+
+		$uri_hash = pods_access_form_uri_hash();
+		$groups   = pods_meta()->groups_get( 'post_type', $this->pod_name, null, false, $post_id );
+
+		foreach ( $groups as $group ) {
+			$field_names = [];
+
+			foreach ( $group['fields'] as $field ) {
+				$field_names[] = $field['name'];
+			}
+
+			$nonce_field_names = pods_access_form_field_names( 'meta', $group['name'] );
+
+			$_POST[ $nonce_field_names['nonce'] ] = pods_access_create_form_nonce( $this->pod_name, $post_id, $field_names, $uri_hash );
+			$_POST[ $nonce_field_names['pod'] ]   = $this->pod_name;
+			$_POST[ $nonce_field_names['id'] ]    = (string) $post_id;
+			$_POST[ $nonce_field_names['uri'] ]   = $uri_hash;
+			$_POST[ $nonce_field_names['form'] ]  = implode( ',', $field_names );
+		}
+
+		foreach ( $values as $field_name => $value ) {
+			$_POST[ 'pods_meta_' . $field_name ] = $value;
+		}
+
+		wp_update_post( [
+			'ID'         => $post_id,
+			'post_title' => 'Conditional updated',
+		] );
 	}
 
 	/**

@@ -57,6 +57,14 @@ export const File = PodsDFVFieldLayout.extend( {
 		this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
 	},
 
+	onBeforeDestroy() {
+		if ( this.uploader && 'function' === typeof this.uploader.destroy ) {
+			this.uploader.destroy();
+		}
+
+		this.uploader = {};
+	},
+
 	/**
 	 * Fired by a remove:file:click trigger in any child view
 	 *
@@ -121,9 +129,12 @@ export const File = PodsDFVFieldLayout.extend( {
 		} );
 
 		if ( Uploader !== undefined ) {
+			// The button may not exist (yet), the uploader skips init then.
+			const browseButton = this.$( '.pods-dfv-list-add' ).get( 0 ) || null;
+
 			this.uploader = new Uploader( {
-				// We provide regular DOM element for the button
-				browseButton: this.getRegion( 'form' ).getEl( '.pods-dfv-list-add' ).get(),
+				browseButton,
+				browseContainer: this.getRegion( 'form' ).el,
 				uiRegion: this.getRegion( 'uiRegion' ),
 				fieldConfig,
 				fileCollection: this.collection,

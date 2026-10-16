@@ -305,7 +305,7 @@ class PodsField_Link extends PodsField_Website {
 	 * Init the editor needed for WP Link modal to work
 	 */
 	public function validate_link_modal() {
-		$init = (boolean) pods_static_cache_get( 'init', __METHOD__ );
+		$init = (bool) pods_static_cache_get( 'init', __METHOD__ );
 
 		if ( $init ) {
 			return;

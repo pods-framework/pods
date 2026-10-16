@@ -793,7 +793,7 @@ class PodsAPI {
 	 *
 	 * @param string  $object  The pod type to look for, possible values: post_type, user, comment, taxonomy
 	 * @param array   $pod     Array of Pod data
-	 * @param boolean $refresh Whether to force refresh the information
+	 * @param bool $refresh Whether to force refresh the information
 	 *
 	 * @return array Array of fields
 	 *
@@ -1808,7 +1808,7 @@ class PodsAPI {
 			$params->name = pods_clean_name( $params->name );
 		}
 
-		$params->overwrite = ! empty( $params->overwrite ) ? (boolean) $params->overwrite : false;
+		$params->overwrite = ! empty( $params->overwrite ) ? (bool) $params->overwrite : false;
 
 		$order_group_fields = null;
 
@@ -2621,7 +2621,7 @@ class PodsAPI {
 	 * @param array   $pod                    The pod configuration.
 	 * @param array   $fields                 The list of fields on the pod.
 	 * @param array   $old_info               The old information to reference.
-	 * @param boolean $overwrite_table_schema Whether to overwrite the table schema if it exists already.
+	 * @param bool $overwrite_table_schema Whether to overwrite the table schema if it exists already.
 	 *
 	 * @return bool|WP_Error True if the schema changes were handled, false or an error if it failed to create/update.
 	 *
@@ -3250,8 +3250,8 @@ class PodsAPI {
 		$params->pod_id = $pod['id'];
 		$params->pod    = $pod['name'];
 
-		$params->is_new    = isset( $params->is_new ) ? (boolean) $params->is_new : false;
-		$params->overwrite = isset( $params->overwrite ) ? (boolean) $params->overwrite : false;
+		$params->is_new    = isset( $params->is_new ) ? (bool) $params->is_new : false;
+		$params->overwrite = isset( $params->overwrite ) ? (bool) $params->overwrite : false;
 
 		$reserved_keywords = pods_reserved_keywords( 'wp-post' );
 
@@ -4268,13 +4268,13 @@ class PodsAPI {
 		$id_required = false;
 
 		if ( isset( $params->id_required ) ) {
-			$id_required = (boolean) $params->id_required;
+			$id_required = (bool) $params->id_required;
 
 			unset( $params->id_required );
 		}
 
-		$params->is_new    = isset( $params->is_new ) ? (boolean) $params->is_new : false;
-		$params->overwrite = isset( $params->overwrite ) ? (boolean) $params->overwrite : false;
+		$params->is_new    = isset( $params->is_new ) ? (bool) $params->is_new : false;
+		$params->overwrite = isset( $params->overwrite ) ? (bool) $params->overwrite : false;
 
 		if ( ! $pod && ( ! isset( $params->pod ) || empty( $params->pod ) ) && ( ! isset( $params->pod_id ) || empty( $params->pod_id ) ) ) {
 			return pods_error( __( 'Pod ID or name is required', 'pods' ), $this );
@@ -4938,7 +4938,7 @@ class PodsAPI {
 		}
 
 		if ( isset( $params->is_new_item ) ) {
-			$is_new_item = (boolean) $params->is_new_item;
+			$is_new_item = (bool) $params->is_new_item;
 		}
 
 		// Allow Helpers to bypass subsequent helpers in recursive save_pod_item calls
@@ -5448,7 +5448,7 @@ class PodsAPI {
 						|| in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true )
 					)
 				);
-				$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
+				$simple = (bool) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
 
 				$is_repeatable_field = (
 					(
@@ -7049,7 +7049,7 @@ class PodsAPI {
 		$params['fields']        = (array) pods_v( 'fields', $params, [], true );
 		$params['depth']         = (int) pods_v( 'depth', $params, 2, true );
 		$params['object_fields'] = (array) pods_v( 'object_fields', $pod->pod_data, [], true );
-		$params['flatten']       = (boolean) pods_v( 'flatten', $params, false, true );
+		$params['flatten']       = (bool) pods_v( 'flatten', $params, false, true );
 		$params['context']       = pods_v( 'context', $params, null, true );
 
 		if ( empty( $params['fields'] ) ) {
@@ -7526,7 +7526,7 @@ class PodsAPI {
 			$params->delete_all = $delete_all;
 		}
 
-		$params->delete_all = (boolean) $params->delete_all;
+		$params->delete_all = (bool) $params->delete_all;
 
 		// Reset content
 		if ( true === $params->delete_all ) {
@@ -7740,7 +7740,7 @@ class PodsAPI {
 		}
 
 		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
-		$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
+		$simple = (bool) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
 		// @todo Push this logic into pods_object_storage_delete_pod action.
 		if ( $table_operation && $pod && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types, true ) || $simple ) ) {
@@ -7820,7 +7820,7 @@ class PodsAPI {
 		}
 
 		if ( ! isset( $params->delete_all ) ) {
-			$params->delete_all = (boolean) $delete_all;
+			$params->delete_all = (bool) $delete_all;
 		}
 
 		$group = $this->load_group( $params, false );
@@ -8425,7 +8425,7 @@ class PodsAPI {
 	 *
 	 * @type int                       $id           The Pod ID.
 	 * @type string                    $name         The Pod name.
-	 * @type boolean                   $bypass_cache Bypass the cache when getting data.
+	 * @type bool                   $bypass_cache Bypass the cache when getting data.
 	 *                                               }
 	 *
 	 * @param bool                     $strict       Makes sure the pod exists, throws an error if it doesn't work.
@@ -8521,10 +8521,10 @@ class PodsAPI {
 	 * @type string|array $type         Pod type(s) to filter by.
 	 * @type string|array $id           ID(s) of Objects.
 	 * @type array        $args         Args(s) key=>value array to filter by.
-	 * @type boolean      $count        Return only a count of pods.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of pods.
+	 * @type bool      $names        Return only an array of name => label.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Pod[]|int List of pod objects or count.
@@ -8542,7 +8542,7 @@ class PodsAPI {
 		$include_internal = false;
 
 		if ( isset( $params['include_internal'] ) ) {
-			$include_internal = (boolean) $params['include_internal'];
+			$include_internal = (bool) $params['include_internal'];
 
 			unset( $params['include_internal'] );
 		}
@@ -8583,7 +8583,7 @@ class PodsAPI {
 	 * $params['name'] string The field name
 	 *
 	 * @param array   $params   An associative array of parameters
-	 * @param boolean $allow_id Whether to allow the ID when checking if the group exists.
+	 * @param bool $allow_id Whether to allow the ID when checking if the group exists.
 	 *
 	 * @return bool
 	 *
@@ -8613,7 +8613,7 @@ class PodsAPI {
 		}
 
 		try {
-			return (boolean) $this->load_field( $load_params );
+			return (bool) $this->load_field( $load_params );
 		} catch ( Exception $exception ) {
 			pods_debug_log( $exception );
 
@@ -8631,10 +8631,10 @@ class PodsAPI {
 	 * @type string     $pod          The Pod name.
 	 * @type int        $id           The field ID.
 	 * @type string     $name         The field name.
-	 * @type boolean    $bypass_cache Bypass the cache when getting data.
+	 * @type bool    $bypass_cache Bypass the cache when getting data.
 	 *                                }
 	 *
-	 * @param boolean   $strict       Whether to require a field exist or not when loading the info.
+	 * @param bool   $strict       Whether to require a field exist or not when loading the info.
 	 *
 	 * @return Pods\Whatsit\Field|bool Field object or false if not found.
 	 *
@@ -8752,7 +8752,7 @@ class PodsAPI {
 	 * @type string  $pod               The Pod name.
 	 * @type array   $expand            The field name(s) to expand.
 	 * @type array   $types             The field type(s).
-	 * @type boolean $bypass_cache      Bypass the cache when getting data.
+	 * @type bool $bypass_cache      Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Field[] List of field objects.
@@ -8868,10 +8868,10 @@ class PodsAPI {
 	 * @type string|array $name         The field name(s).
 	 * @type string|array $type         The field type(s).
 	 * @type array        $args         Arg(s) key=>value array to filter by.
-	 * @type boolean      $count        Return only a count of fields.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of fields.
+	 * @type bool      $names        Return only an array of name => label.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Field[]|int List of field objects or count.
@@ -8889,7 +8889,7 @@ class PodsAPI {
 		$include_internal = false;
 
 		if ( isset( $params['include_internal'] ) ) {
-			$include_internal = (boolean) $params['include_internal'];
+			$include_internal = (bool) $params['include_internal'];
 
 			unset( $params['include_internal'] );
 		}
@@ -8944,10 +8944,10 @@ class PodsAPI {
 	 * @type string             $pod                 The Pod name.
 	 * @type int                $id                  The Group ID.
 	 * @type string             $name                The Group name.
-	 * @type boolean            $bypass_cache        Bypass the cache when getting data.
+	 * @type bool            $bypass_cache        Bypass the cache when getting data.
 	 *                                               }
 	 *
-	 * @param boolean           $allow_id            Whether to allow the ID when checking if the group exists.
+	 * @param bool           $allow_id            Whether to allow the ID when checking if the group exists.
 	 *
 	 * @return bool
 	 *
@@ -8977,7 +8977,7 @@ class PodsAPI {
 		}
 
 		try {
-			return (boolean) $this->load_group( $load_params );
+			return (bool) $this->load_group( $load_params );
 		} catch ( Exception $exception ) {
 			pods_debug_log( $exception );
 
@@ -8995,7 +8995,7 @@ class PodsAPI {
 	 * @type string             $pod                 The Pod name.
 	 * @type int                $id                  The Group ID.
 	 * @type string             $name                The Group name.
-	 * @type boolean            $bypass_cache        Bypass the cache when getting data.
+	 * @type bool            $bypass_cache        Bypass the cache when getting data.
 	 *                                               }
 	 *
 	 * @param bool              $strict              Makes sure the pod exists, throws an error if it doesn't work.
@@ -9100,10 +9100,10 @@ class PodsAPI {
 	 * @type array        $name         The group names.
 	 * @type array        $type         The group types.
 	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of objects.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of objects.
+	 * @type bool      $names        Return only an array of name => label.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit\Group[]|int List of group objects or count.
@@ -9121,7 +9121,7 @@ class PodsAPI {
 		$include_internal = false;
 
 		if ( isset( $params['include_internal'] ) ) {
-			$include_internal = (boolean) $params['include_internal'];
+			$include_internal = (bool) $params['include_internal'];
 
 			unset( $params['include_internal'] );
 		}
@@ -12049,10 +12049,10 @@ class PodsAPI {
 	 * @type string   $object_type  The object type.
 	 * @type string   $id           The ID.
 	 * @type string   $name         The name.
-	 * @type boolean  $bypass_cache Bypass the cache when getting data.
+	 * @type bool  $bypass_cache Bypass the cache when getting data.
 	 *                              }
 	 *
-	 * @param boolean $strict       Whether to require a field exist or not when loading the info.
+	 * @param bool $strict       Whether to require a field exist or not when loading the info.
 	 *
 	 * @return Pods\Whatsit|false Object or false if not found.
 	 *
@@ -12114,12 +12114,12 @@ class PodsAPI {
 	 * @type string|array $name         The name(s).
 	 * @type string|array $type         The type(s).
 	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of fields.
-	 * @type boolean      $labels       Return only an array of name => label.
-	 * @type boolean      $names        Return only an array of name.
-	 * @type boolean      $names_ids    Return only an array of id => name.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 * @type bool      $count        Return only a count of fields.
+	 * @type bool      $labels       Return only an array of name => label.
+	 * @type bool      $names        Return only an array of name.
+	 * @type bool      $names_ids    Return only an array of id => name.
+	 * @type bool      $ids          Return only an array of ID => label.
+	 * @type bool      $bypass_cache Bypass the cache when getting data.
 	 *                                  }
 	 *
 	 * @return Pods\Whatsit[]|int List of objects or count.

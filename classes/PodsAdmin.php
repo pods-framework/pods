@@ -2231,7 +2231,7 @@ class PodsAdmin {
 	/**
 	 * Get the edit page of an object
 	 *
-	 * @param boolean $duplicate Whether the screen is for duplicating.
+	 * @param bool $duplicate Whether the screen is for duplicating.
 	 * @param PodsUI  $obj       PodsUI object.
 	 */
 	public function admin_setup_edit( $duplicate, $obj ) {

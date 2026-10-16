@@ -263,10 +263,27 @@ class PodsField_DateTime extends PodsField {
 
 		$is_empty = false;
 
-		$value = trim( $value );
+		$value = pods_trim( (string) $value );
 
-		if ( empty( $value ) || in_array( $value, [ '0000-00-00', '0000-00-00 00:00:00' ], true ) ) {
+		if ( empty( $value ) ) {
 			$is_empty = true;
+		}
+
+		$empty_values = [
+			'0000-00-00',
+			'0000-00-00 00:00:00',
+		];
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $v ) {
+				if ( ! empty( $v ) && ! in_array( (string) $v, $empty_values, true ) ) {
+					$is_empty = false;
+
+					break;
+				}
+			}
+		} elseif ( ! empty( $v ) && ! in_array( (string) $v, $empty_values, true ) ) {
+			$is_empty = false;
 		}
 
 		return $is_empty;
@@ -721,7 +738,7 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @param string  $format           Format string.
 	 * @param string  $date             Defaults to time() if empty.
-	 * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
+	 * @param bool $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
 	 * @return DateTime|null|int|false
 	 */
@@ -809,9 +826,9 @@ class PodsField_DateTime extends PodsField {
 	 * @param string       $value            Field value.
 	 * @param string       $new_format       New format string.
 	 * @param string|array $original_format  Original format string(s) (if known).
-	 * @param boolean      $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
+	 * @param bool      $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
-	 * @return string|int|boolean|DateTime
+	 * @return string|int|bool|DateTime
 	 */
 	public function convert_date( $value, $new_format, $original_format = '', $return_timestamp = false ) {
 

@@ -126,7 +126,7 @@ function pods_is_image_size( $size ) {
  * @param int              $default    Default image to show if image not found, can be field array, ID, or guid.
  *                                     Passing `-1` prevents default filter.
  * @param string|array     $attributes <img> Attributes array or string (passed to wp_get_attachment_image).
- * @param boolean          $force      Force generation of image (if custom size array provided).
+ * @param bool          $force      Force generation of image (if custom size array provided).
  *
  * @return string <img> HTML or empty if image not found.
  *
@@ -173,7 +173,7 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
  * @param string|array     $size    Image size to use.
  * @param int              $default Default image to show if image not found, can be field array, ID, or guid.
  *                                  Passing `-1` prevents default filter.
- * @param boolean          $force   Force generation of image (if custom size array provided).
+ * @param bool          $force   Force generation of image (if custom size array provided).
  *
  * @return string Image URL or empty if image not found.
  *
@@ -229,8 +229,8 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
  *
  * @param string  $url         URL to media for import.
  * @param int     $post_parent ID of post parent, default none.
- * @param boolean $featured    Whether to set it as the featured (post thumbnail) of the post parent.
- * @param boolean $strict      Whether to return errors upon failure.
+ * @param bool $featured    Whether to set it as the featured (post thumbnail) of the post parent.
+ * @param bool $strict      Whether to return errors upon failure.
  *
  * @return int Attachment ID.
  *
@@ -279,7 +279,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false, $
  * @param int          $attachment_id Attachment ID.
  * @param string|array $size          Size to be generated.
  *
- * @return boolean Image generation result.
+ * @return bool Image generation result.
  *
  * @since 2.7.23
  */
@@ -308,7 +308,7 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
  * @param int          $attachment_id Attachment ID.
  * @param string|array $size          Size to be generated.
  *
- * @return boolean Image generation result.
+ * @return bool Image generation result.
  *
  * @since 2.3.0
  */

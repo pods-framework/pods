@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * @var array       $fields
- * @var boolean     $fields_only
+ * @var bool     $fields_only
  * @var Pods        $pod
  * @var array       $params
  * @var string      $label

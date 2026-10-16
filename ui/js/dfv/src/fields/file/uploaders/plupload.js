@@ -19,10 +19,31 @@ export const Plupload = PodsFileUploader.extend( {
 	 */
 
 	initialize() {
-		// Set the browse button argument for plupload... it's required
-		this.fieldConfig.plupload_init.browse_button = this.browseButton[0];
+		const browseButton = this.browseButton;
 
-		this.plupload = new plupload.Uploader( this.fieldConfig.plupload_init );
+		// Plupload cannot init without a button in the document, skip it then.
+		if ( ! browseButton || ! document.contains( browseButton ) ) {
+			return;
+		}
+
+		// Plupload wants a button id, make sure the button has a unique one.
+		if ( ! browseButton.id ) {
+			browseButton.id = 'pods-plupload-' + this.cid;
+		}
+
+		const container = this.browseContainer || browseButton.parentNode;
+
+		// Keep the shim inside our own container so Plupload can find it.
+		if ( container && ! container.id ) {
+			container.id = browseButton.id + '-container';
+		}
+
+		const initOptions = Object.assign( {}, this.fieldConfig.plupload_init, {
+			browse_button: browseButton.id,
+			container: container && container.id ? container.id : undefined,
+		} );
+
+		this.plupload = new plupload.Uploader( initOptions );
 		this.plupload.init();
 
 		// Setup all callbacks: ( event_name, callback, context )
@@ -33,6 +54,14 @@ export const Plupload = PodsFileUploader.extend( {
 
 		this.pendingFiles = [];
 		this.pendingModels = [];
+	},
+
+	onBeforeDestroy() {
+		if ( this.plupload && 'function' === typeof this.plupload.destroy ) {
+			this.plupload.destroy();
+		}
+
+		this.plupload = null;
 	},
 
 	onFilesAdded( up, files ) {

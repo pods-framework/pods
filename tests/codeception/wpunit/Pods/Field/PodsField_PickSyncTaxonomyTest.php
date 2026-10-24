@@ -181,6 +181,23 @@ class PodsField_PickSyncTaxonomyTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * A post of another post type saved in the term's sister field does not get the term.
+	 *
+	 * @covers ::save
+	 */
+	public function test_save_does_not_sync_terms_of_other_post_type() {
+		$page_id = wp_insert_post( [
+			'post_title'  => 'Not A Tome',
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+
+		pods( $this->taxonomy, $this->term_id )->save( 'tomes', $page_id );
+
+		$this->assertEquals( [], $this->get_term_ids( $page_id ) );
+	}
+
+	/**
 	 * @param int $post_id The post ID.
 	 *
 	 * @return int[] The term IDs in the post's relationship field.

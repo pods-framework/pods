@@ -2100,6 +2100,11 @@ class PodsField_Pick extends PodsField {
 		foreach ( (array) $ids as $id ) {
 			$id = (int) $id;
 
+			// The relationship may hold IDs of other post types, which must not get this taxonomy's terms.
+			if ( get_post_type( $id ) !== $pod['name'] ) {
+				continue;
+			}
+
 			$term_ids_to_sync = $term_ids;
 
 			if ( null === $term_ids_to_sync ) {

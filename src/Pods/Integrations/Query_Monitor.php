@@ -54,6 +54,10 @@ class Query_Monitor extends Integration {
 	 * @since 3.2.7
 	 */
 	public static function enqueue_assets(): void {
+		if ( ! wp_style_is( 'query-monitor', 'registered' ) ) {
+			return;
+		}
+
 		wp_register_style( 'pods-query-monitor', PODS_URL . 'ui/styles/dist/pods-query-monitor.css', [ 'query-monitor' ], PODS_VERSION );
 		wp_enqueue_style( 'pods-query-monitor' );
 	}

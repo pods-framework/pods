@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GH_BOT_PUSH }}
       - name: Maybe use the version number from inputs
@@ -42,7 +42,7 @@ jobs:
           echo "CURRENT_VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
       - name: Maybe get the next version information
         if: ${{ steps.version-lookup.outputs.CURRENT_VERSION != null && steps.version-lookup.outputs.CURRENT_VERSION != '' }}
-        uses: reecetech/version-increment@2024.10.1
+        uses: reecetech/version-increment@2026.8.4
         id: version-increment
         with:
           scheme: semver

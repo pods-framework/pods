@@ -5,10 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
+use Pods\Data\Traits\Field_Validation;
+
 /**
  * @package Pods\Fields
  */
 class PodsField_WYSIWYG extends PodsField {
+
+	use Field_Validation;
 
 	/**
 	 * {@inheritdoc}
@@ -169,6 +173,12 @@ class PodsField_WYSIWYG extends PodsField {
 				'default' => '',
 				'type'    => 'text',
 				'help'    => __( 'Format: strong em a ul ol li b i', 'pods' ),
+			],
+			static::$type . '_min_length'        => [
+				'label'   => __( 'Minimum Length', 'pods' ),
+				'default' => 0,
+				'type'    => 'number',
+				'help'    => __( 'Set to 0 for no minimum', 'pods' ),
 			],
 		];
 
@@ -400,6 +410,43 @@ class PodsField_WYSIWYG extends PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
+		$errors = [];
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
+
+		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+		if ( is_array( $check ) ) {
+			$errors = array_merge( $errors, $check );
+		} else {
+			if ( '' !== $value && '' === $check ) {
+				if ( $this->is_required( $options ) ) {
+					$errors[] = __( 'This field is required.', 'pods' );
+				}
+			}
+
+			$min_length_error = $this->get_min_length_error( $check, $name, $options );
+
+			if ( null !== $min_length_error ) {
+				$errors[] = $min_length_error;
+			}
+		}
+
+		if ( ! empty( $errors ) ) {
+			return $errors;
+		}
+
+		return $validate;
 	}
 
 	/**

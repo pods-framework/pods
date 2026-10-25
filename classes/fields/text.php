@@ -5,10 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
+use Pods\Data\Traits\Field_Validation;
+
 /**
  * @package Pods\Fields
  */
 class PodsField_Text extends PodsField {
+
+	use Field_Validation;
 
 	/**
 	 * {@inheritdoc}
@@ -100,6 +104,12 @@ class PodsField_Text extends PodsField {
 				'default' => 255,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
+			],
+			static::$type . '_min_length'        => [
+				'label'   => __( 'Minimum Length', 'pods' ),
+				'default' => 0,
+				'type'    => 'number',
+				'help'    => __( 'Set to 0 for no minimum', 'pods' ),
 			],
 			static::$type . '_placeholder'       => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
@@ -199,6 +209,12 @@ class PodsField_Text extends PodsField {
 				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
+			}
+
+			$min_length_error = $this->get_min_length_error( $check, $name, $options );
+
+			if ( null !== $min_length_error ) {
+				$errors[] = $min_length_error;
 			}
 		}
 

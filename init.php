@@ -161,7 +161,7 @@ function pods_deactivate_pods_duplicate() {
 
 		deactivate_plugins( realpath( untrailingslashit( PODS_DIR ) . '/init.php' ) );
 
-		if ( ! headers_sent() && ( ! function_exists( 'pods_ui_manage' ) && ! file_exists( WP_CONTENT_DIR . 'plugins/pods-ui/pods-ui.php' ) ) ) {
+		if ( ! headers_sent() && ( ! function_exists( 'pods_ui_manage' ) && ! is_plugin_active( 'pods-ui/pods-ui.php' ) ) ) {
 			wp_safe_redirect( add_query_arg( [ 'refresh' => 1 ] ) );
 			die();
 		}
@@ -174,17 +174,23 @@ function pods_deactivate_pods_duplicate() {
  * @since 2.0.0
  */
 function pods_deactivate_pods_ui() {
-	if ( function_exists( 'pods_ui_manage' ) && file_exists( WP_CONTENT_DIR . 'plugins/pods-ui/pods-ui.php' ) ) {
-		if ( ! function_exists( 'deactivate_plugins' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
+	if ( ! function_exists( 'pods_ui_manage' ) ) {
+		return;
+	}
 
-		deactivate_plugins( realpath( WP_CONTENT_DIR . 'plugins/pods-ui/pods-ui.php' ) );
+	if ( ! function_exists( 'is_plugin_active' ) ) {
+		include_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
 
-		if ( ! headers_sent() ) {
-			wp_safe_redirect( add_query_arg( [ 'refresh' => 1 ] ) );
-			die();
-		}
+	if ( ! is_plugin_active( 'pods-ui/pods-ui.php' ) ) {
+		return;
+	}
+
+	deactivate_plugins( 'pods-ui/pods-ui.php' );
+
+	if ( ! headers_sent() ) {
+		wp_safe_redirect( add_query_arg( [ 'refresh' => 1 ] ) );
+		die();
 	}
 }
 

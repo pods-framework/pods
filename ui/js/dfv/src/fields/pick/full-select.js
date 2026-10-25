@@ -94,11 +94,11 @@ const FullSelect = ( {
 	const useAsyncSelectComponent = isTaggable || isAjax;
 	const AsyncSelectComponent = isTaggable ? AsyncCreatableSelect : AsyncSelect;
 
-	// For AJAX-backed relationships we drive the option list ourselves so that
-	// scrolling can append additional pages. react-select's Async components hand
-	// loadOptions a single-use callback (see useAsync: it stores the pending
-	// request and ignores any callback whose request is no longer current), so an
-	// appended page can never be delivered through it.
+	// AsyncSelect only calls loadOptions when the search text changes, and it
+	// replaces the whole option list with each result. It has no way to load a
+	// second page for the same search text. So for AJAX fields we keep the
+	// options in state and use a regular Select, which lets
+	// onMenuScrollToBottom add the next page to the end of the list.
 	const PaginatedSelectComponent = isTaggable ? CreatableSelect : Select;
 
 	const [ ajaxOptions, setAjaxOptions ] = useState( formattedOptions );
@@ -116,6 +116,7 @@ const FullSelect = ( {
 
 		loadAjaxOptions( ajaxData )( inputValue, page )
 			.then( ( results ) => {
+				// Skip old responses, so a slow request can not replace newer results.
 				if ( requestId !== ajaxRequestId.current ) {
 					return;
 				}

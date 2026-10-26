@@ -149,7 +149,7 @@
     "http-proxy-middleware": "^2.0.10",
     "immutable": "^5.1.8",
     "ip-address": "^10.3.1",
-    "launch-editor": "^2.14.1",
+    "launch-editor": "^2.14.2",
     "linkify-it": "^5.0.2",
     "lodash-es": "^4.18.0",
     "markdown-it": "^14.2.0",

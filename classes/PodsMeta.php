@@ -3001,6 +3001,24 @@ class PodsMeta {
 	}
 
 	/**
+	 * Cached lists of keys not covered per object type.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @var array<string,array>
+	 */
+	public static $keys_not_covered_cache = [];
+
+	/**
+	 * Cached regex patterns built from keys not covered per object type.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @var array<string,string>
+	 */
+	public static $keys_not_covered_regex_cache = [];
+
+	/**
 	 * Get list of keys not covered for an object type.
 	 *
 	 * @param string $type The object type.
@@ -3012,6 +3030,20 @@ class PodsMeta {
 			$type = 'post_type';
 		} elseif ( 'term' === $type ) {
 			$type = 'taxonomy';
+		}
+
+		global $wpdb;
+
+		$cache_key = $type;
+
+		// The user list includes keys per blog prefix, keep those cached per blog.
+		if ( 'user' === $type ) {
+			$cache_key .= ':' . $wpdb->get_blog_prefix();
+		}
+
+		// The filter may be hooked at any time, skip the cache while it is listening.
+		if ( ! has_filter( 'pods_meta_keys_not_covered' ) && isset( self::$keys_not_covered_cache[ $cache_key ] ) ) {
+			return self::$keys_not_covered_cache[ $cache_key ];
 		}
 
 		// These are the keys we want to exclude from any additional queries/checks on within Pods.
@@ -3122,8 +3154,6 @@ class PodsMeta {
 
 		// Add prefix-specific keys for user type.
 		if ( 'user' === $type ) {
-			global $wpdb;
-
 			$prefix = $wpdb->get_blog_prefix();
 
 			$keys = $keys_not_covered['user'];
@@ -3134,7 +3164,72 @@ class PodsMeta {
 			}
 		}
 
-		return isset( $keys_not_covered[ $type ] ) ? $keys_not_covered[ $type ] : [];
+		$type_keys = $keys_not_covered[ $type ] ?? [];
+
+		// Only cache while nothing is listening to the filter.
+		if ( ! has_filter( 'pods_meta_keys_not_covered' ) ) {
+			self::$keys_not_covered_cache[ $cache_key ]       = $type_keys;
+			self::$keys_not_covered_regex_cache[ $cache_key ] = self::build_keys_not_covered_regex( $type_keys );
+		}
+
+		return $type_keys;
+	}
+
+	/**
+	 * Build a regex pattern from the wildcard keys not covered for an object type.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param array $keys_not_covered The list of keys not covered for the object type.
+	 *
+	 * @return string The regex alternation of the wildcard keys, empty when none exist.
+	 */
+	public static function build_keys_not_covered_regex( array $keys_not_covered ) {
+		$regex_keys = array_filter(
+			array_keys( $keys_not_covered ),
+			static function ( $regex_key ) {
+				return '.*' === substr( $regex_key, - 2 );
+			}
+		);
+
+		if ( empty( $regex_keys ) ) {
+			return '';
+		}
+
+		return implode( '|', $regex_keys );
+	}
+
+	/**
+	 * Get the regex pattern for the wildcard keys not covered for an object type.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param string $type The object type.
+	 *
+	 * @return string The regex alternation of the wildcard keys, empty when none exist.
+	 */
+	public function get_keys_not_covered_regex( $type ) {
+		if ( 'post' === $type ) {
+			$type = 'post_type';
+		} elseif ( 'term' === $type ) {
+			$type = 'taxonomy';
+		}
+
+		global $wpdb;
+
+		$cache_key = $type;
+
+		// The user list includes keys per blog prefix, keep those cached per blog.
+		if ( 'user' === $type ) {
+			$cache_key .= ':' . $wpdb->get_blog_prefix();
+		}
+
+		// The filter may be hooked at any time, skip the cache while it is listening.
+		if ( ! has_filter( 'pods_meta_keys_not_covered' ) && isset( self::$keys_not_covered_regex_cache[ $cache_key ] ) ) {
+			return self::$keys_not_covered_regex_cache[ $cache_key ];
+		}
+
+		return self::build_keys_not_covered_regex( $this->get_keys_not_covered( $type ) );
 	}
 
 	/**
@@ -3282,17 +3377,15 @@ class PodsMeta {
 		$key_is_covered = ! isset( $keys_not_covered[ $key ] );
 
 		if ( $key_is_covered ) {
-			// Check regex matches.
-			$regex_keys = array_keys( $keys_not_covered );
+			// Check regex matches, build from the list in hand while filtered so the filter only runs once.
+			if ( has_filter( 'pods_meta_keys_not_covered' ) ) {
+				$regex_keys = self::build_keys_not_covered_regex( $keys_not_covered );
+			} else {
+				$regex_keys = $this->get_keys_not_covered_regex( $type );
+			}
 
-			$regex_keys = array_filter( $regex_keys, static function ( $regex_key ) {
-				return '.*' === substr( $regex_key, - 2 );
-			} );
-
-			if ( ! empty( $regex_keys ) ) {
-				$regex_keys = implode( '|', $regex_keys );
-
-				$key_is_covered = false === ( (bool) preg_match( '/^(' . $regex_keys . ')$/', $key ) );
+			if ( '' !== $regex_keys ) {
+				$key_is_covered = ! (bool) preg_match( '/^(' . $regex_keys . ')$/', $key );
 			}
 		}
 

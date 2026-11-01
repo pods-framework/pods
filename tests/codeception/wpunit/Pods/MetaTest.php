@@ -290,6 +290,145 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsMeta::get_keys_not_covered
+	 */
+	public function test_get_keys_not_covered_caches_per_type() {
+		PodsMeta::$keys_not_covered_cache       = [];
+		PodsMeta::$keys_not_covered_regex_cache = [];
+		remove_all_filters( 'pods_meta_keys_not_covered' );
+
+		$meta = pods_meta();
+
+		$uncached_post     = $meta->get_keys_not_covered( 'post' );
+		$uncached_user     = $meta->get_keys_not_covered( 'user' );
+		$uncached_settings = $meta->get_keys_not_covered( 'settings' );
+
+		$this->assertNotEmpty( $uncached_post );
+		$this->assertArrayHasKey( '_thumbnail_id', $uncached_post );
+		$this->assertArrayHasKey( '_elementor_.*', $uncached_post );
+
+		$this->assertNotEmpty( $uncached_user );
+		$this->assertArrayHasKey( 'rich_editing', $uncached_user );
+		$this->assertArrayHasKey( 'wp_rich_editing', $uncached_user );
+
+		$this->assertNotEmpty( $uncached_settings );
+
+		// The follow up calls must come back identical from the cache.
+		$this->assertSame( $uncached_post, $meta->get_keys_not_covered( 'post' ) );
+		$this->assertSame( $uncached_user, $meta->get_keys_not_covered( 'user' ) );
+		$this->assertSame( $uncached_settings, $meta->get_keys_not_covered( 'settings' ) );
+
+		$this->assertNotEmpty( PodsMeta::$keys_not_covered_cache );
+		$this->assertNotEmpty( PodsMeta::$keys_not_covered_regex_cache );
+
+		// Prove the follow up calls read from the cache.
+		PodsMeta::$keys_not_covered_cache['settings'] = [ 'sentinel_key' => true ];
+
+		$this->assertSame( [ 'sentinel_key' => true ], $meta->get_keys_not_covered( 'settings' ) );
+	}
+
+	/**
+	 * @covers PodsMeta::get_keys_not_covered_regex
+	 */
+	public function test_get_keys_not_covered_regex_builds_wildcard_alternation() {
+		PodsMeta::$keys_not_covered_cache       = [];
+		PodsMeta::$keys_not_covered_regex_cache = [];
+		remove_all_filters( 'pods_meta_keys_not_covered' );
+
+		$meta = pods_meta();
+
+		$regex = $meta->get_keys_not_covered_regex( 'post' );
+
+		$this->assertNotEmpty( $regex );
+		$this->assertStringContainsString( '_elementor_.*', $regex );
+		$this->assertStringContainsString( '_wp_.*', $regex );
+		$this->assertStringNotContainsString( '_thumbnail_id', $regex );
+
+		// The follow up calls must come back identical from the cache.
+		$this->assertSame( $regex, $meta->get_keys_not_covered_regex( 'post' ) );
+
+		PodsMeta::$keys_not_covered_regex_cache = [];
+
+		// A fresh build must match the cached pattern.
+		$this->assertSame( $regex, $meta->get_keys_not_covered_regex( 'post' ) );
+
+		// Prove the follow up calls read from the cache.
+		PodsMeta::$keys_not_covered_regex_cache['post_type'] = 'sentinel_.*';
+
+		$this->assertSame( 'sentinel_.*', $meta->get_keys_not_covered_regex( 'post' ) );
+	}
+
+	/**
+	 * @covers PodsMeta::is_key_covered
+	 */
+	public function test_is_key_covered() {
+		PodsMeta::$keys_not_covered_cache       = [];
+		PodsMeta::$keys_not_covered_regex_cache = [];
+		remove_all_filters( 'pods_meta_keys_not_covered' );
+
+		$meta = pods_meta();
+
+		// Literal keys not covered.
+		$this->assertFalse( $meta->is_key_covered( 'post', '_edit_lock' ) );
+		$this->assertFalse( $meta->is_key_covered( 'post', '_thumbnail_id' ) );
+
+		// Wildcard keys not covered.
+		$this->assertFalse( $meta->is_key_covered( 'post', '_elementor_data' ) );
+		$this->assertFalse( $meta->is_key_covered( 'post', '_wp_page_template' ) );
+
+		// Regular keys are covered.
+		$this->assertTrue( $meta->is_key_covered( 'post', 'my_custom_key' ) );
+		$this->assertTrue( $meta->is_key_covered( 'post', 'number1' ) );
+
+		// User keys, both literal and prefix-prefixed.
+		$this->assertFalse( $meta->is_key_covered( 'user', 'rich_editing' ) );
+		$this->assertFalse( $meta->is_key_covered( 'user', 'wp_capabilities' ) );
+		$this->assertTrue( $meta->is_key_covered( 'user', 'my_user_key' ) );
+	}
+
+	/**
+	 * @covers PodsMeta::is_key_covered
+	 */
+	public function test_is_key_covered_with_filter() {
+		PodsMeta::$keys_not_covered_cache       = [];
+		PodsMeta::$keys_not_covered_regex_cache = [];
+		remove_all_filters( 'pods_meta_keys_not_covered' );
+
+		$meta = pods_meta();
+
+		// Prime the cache before the filter is added.
+		$this->assertTrue( $meta->is_key_covered( 'post', 'my_plugin_key' ) );
+		$this->assertTrue( $meta->is_key_covered( 'post', 'my_plugin_wild_x' ) );
+
+		$filter_calls = 0;
+
+		add_filter( 'pods_meta_keys_not_covered', static function ( $keys_not_covered, $type ) use ( &$filter_calls ) {
+			$filter_calls ++;
+
+			$keys_not_covered[ $type ]['my_plugin_key']     = true;
+			$keys_not_covered[ $type ]['my_plugin_wild_.*'] = true;
+
+			return $keys_not_covered;
+		}, 10, 2 );
+
+		try {
+			// While the filter is listening, the cache is bypassed for literal and wildcard keys.
+			$this->assertFalse( $meta->is_key_covered( 'post', 'my_plugin_key' ) );
+			$this->assertFalse( $meta->is_key_covered( 'post', 'my_plugin_wild_x' ) );
+			$this->assertTrue( $meta->is_key_covered( 'post', 'number1' ) );
+
+			// The filter runs once per check.
+			$this->assertSame( 3, $filter_calls );
+		} finally {
+			remove_all_filters( 'pods_meta_keys_not_covered' );
+		}
+
+		// The filtered keys are covered again once the filter is removed.
+		$this->assertTrue( $meta->is_key_covered( 'post', 'my_plugin_key' ) );
+		$this->assertTrue( $meta->is_key_covered( 'post', 'my_plugin_wild_x' ) );
+	}
+
+	/**
 	 * Track current hook info
 	 */
 	public function _track_hook() {

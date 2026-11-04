@@ -1018,6 +1018,68 @@ class Conditional_LogicTest extends WPTestCase {
 		$this->assertFalse( $sut->numeric_comparison( [ '100' ], '>', 101 ) );
 	}
 
+	public function test_get_field_dependencies_returns_each_rule_field_once(): void {
+		$sut = $this->sut( 'show', 'any', [
+			[
+				'field'   => 'field_one',
+				'compare' => '=',
+				'value'   => '1',
+			],
+			[
+				'field'   => 'field_two',
+				'compare' => '=',
+				'value'   => '1',
+			],
+			[
+				'field'   => 'field_one',
+				'compare' => '!=',
+				'value'   => '2',
+			],
+			[
+				'compare' => '=',
+				'value'   => '1',
+			],
+		] );
+
+		$this->assertSame( [ 'field_one', 'field_two' ], $sut->get_field_dependencies() );
+	}
+
+	public function test_get_field_dependencies_without_rules(): void {
+		$this->assertSame( [], $this->sut( 'show', 'any', [] )->get_field_dependencies() );
+	}
+
+	public function test_get_field_dependencies_uses_logic_sets_instead_of_rules(): void {
+		$rule = static function ( string $field ): array {
+			return [
+				'field'   => $field,
+				'compare' => '=',
+				'value'   => '1',
+			];
+		};
+
+		$sut = new Conditional_Logic( 'show', 'any', [ $rule( 'ignored' ) ], [
+			$this->sut( 'show', 'all', [ $rule( 'field_one' ), $rule( 'field_two' ) ] ),
+			$this->sut( 'show', 'any', [ $rule( 'field_two' ), $rule( 'field_three' ) ] ),
+		] );
+
+		$this->assertSame( [ 'field_one', 'field_two', 'field_three' ], $sut->get_field_dependencies() );
+	}
+
+	public function test_get_field_dependencies_from_old_syntax(): void {
+		$sut = Conditional_Logic::maybe_setup_from_old_syntax( [
+			'depends-on'  => [
+				'pods_field_field_one' => '1',
+				'field_two'            => '1',
+			],
+			'excludes-on' => [
+				'field_two'   => '2',
+				'field_three' => '2',
+			],
+		] );
+
+		$this->assertSame( [ 'field_one', 'field_two', 'field_three' ], $sut->get_field_dependencies() );
+	}
+
 	private function sut( string $action, string $logic, array $rules ): Conditional_Logic {
 		return new Conditional_Logic( $action, $logic, $rules );
 	}

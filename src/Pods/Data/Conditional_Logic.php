@@ -412,6 +412,32 @@ class Conditional_Logic {
 	}
 
 	/**
+	 * Get the names of the fields that the conditional rules check.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return string[] The field names.
+	 */
+	public function get_field_dependencies(): array {
+		$field_names = [];
+
+		// The rules are ignored when there are logic sets, see validate_rules().
+		if ( $this->logic_sets ) {
+			foreach ( $this->logic_sets as $logic ) {
+				$field_names = array_merge( $field_names, $logic->get_field_dependencies() );
+			}
+		} else {
+			foreach ( $this->rules as $rule ) {
+				if ( ! empty( $rule['field'] ) ) {
+					$field_names[] = $rule['field'];
+				}
+			}
+		}
+
+		return array_values( array_unique( $field_names ) );
+	}
+
+	/**
 	 * Get the conditional logic data as an array.
 	 *
 	 * @since 3.0

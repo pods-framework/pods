@@ -1763,15 +1763,11 @@ class PodsField_Pick extends PodsField {
 	 */
 	private function strip_item_label_html( $label ) {
 
-		$label = (string) $label;
+		// Hide a "<" that cannot start a tag (e.g. "<1") so core strips only real tags.
+		$label = preg_replace( '/<(?![a-zA-Z\/!?])/', "\x01", (string) $label );
+		$label = wp_strip_all_tags( null === $label ? '' : $label );
 
-		$label = preg_replace( '#<(script|style)\b(?:\s+(?:[^"\'<>]|"[^"]*"|\'[^\']*\'))*>.*?</\1\s*>#is', '', $label );
-		$label = null === $label ? '' : $label;
-		$label = preg_replace( '#<!--.*?-->#s', '', $label );
-		$label = null === $label ? '' : $label;
-		$label = preg_replace( '#</?[a-zA-Z][a-zA-Z0-9\-:]*(?:\s+(?:[^"\'<>]|"[^"]*"|\'[^\']*\'))*/?>#', '', $label );
-
-		return null === $label ? '' : trim( $label );
+		return trim( str_replace( "\x01", '<', $label ) );
 
 	}
 

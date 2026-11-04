@@ -1742,13 +1742,32 @@ class PodsField_Pick extends PodsField {
 		$item = [
 			'id'        => null !== $item_id ? html_entity_decode( esc_html( $item_id ), ENT_COMPAT ) : '',
 			'icon'      => null !== $icon ? esc_attr( (string) $icon ) : '',
-			'name'      => null !== $item_title ? wp_strip_all_tags( html_entity_decode( $item_title, ENT_COMPAT ) ) : '',
+			'name'      => null !== $item_title ? $this->strip_item_label_html( html_entity_decode( $item_title, ENT_COMPAT ) ) : '',
 			'edit_link' => null !== $edit_link ? html_entity_decode( esc_url( $edit_link ), ENT_COMPAT ) : '',
 			'link'      => null !== $link ? html_entity_decode( esc_url( $link ), ENT_COMPAT ) : '',
 			'selected'  => $selected,
 		];
 
 		return $item;
+
+	}
+
+	/**
+	 * Remove HTML from an item label without removing literal comparison symbols.
+	 *
+	 * @since 3.3.9.3
+	 *
+	 * @param string $label Item label.
+	 *
+	 * @return string
+	 */
+	private function strip_item_label_html( $label ) {
+
+		// Hide a "<" that cannot start a tag (e.g. "<1") so core strips only real tags.
+		$label = preg_replace( '/<(?![a-zA-Z\/!?])/', "\x01", (string) $label );
+		$label = wp_strip_all_tags( null === $label ? '' : $label );
+
+		return trim( str_replace( "\x01", '<', $label ) );
 
 	}
 

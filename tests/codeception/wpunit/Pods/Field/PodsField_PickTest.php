@@ -114,4 +114,27 @@ class PodsField_PickTest extends Pods_UnitTestCase {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
+	/**
+	 * Relationship labels preserve literal comparison symbols.
+	 */
+	public function test_build_dfv_field_item_data_preserves_comparison_symbols() {
+		$args = (object) [
+			'options' => [
+				'pick_object' => 'custom-simple',
+			],
+			'value'   => [],
+		];
+
+		$this->assertSame( '<1', $this->field->build_dfv_field_item_data_recurse_item( 1, '<1', $args )['name'] );
+		$this->assertSame( '<1', $this->field->build_dfv_field_item_data_recurse_item( 2, '&lt;1', $args )['name'] );
+		$this->assertSame( ">10'000", $this->field->build_dfv_field_item_data_recurse_item( 3, ">10'000", $args )['name'] );
+		$this->assertSame( ">10'000", $this->field->build_dfv_field_item_data_recurse_item( 4, '&gt;10\'000', $args )['name'] );
+		$this->assertSame( 'Price <100 and >50', $this->field->build_dfv_field_item_data_recurse_item( 5, 'Price <100 and >50', $args )['name'] );
+		$this->assertSame( 'x < y', $this->field->build_dfv_field_item_data_recurse_item( 6, 'x < y', $args )['name'] );
+		$this->assertSame( 'Label', $this->field->build_dfv_field_item_data_recurse_item( 7, '<strong>Label</strong>', $args )['name'] );
+		$this->assertSame( '', $this->field->build_dfv_field_item_data_recurse_item( 8, '<script>alert(1)</script>', $args )['name'] );
+		$this->assertSame( '', $this->field->build_dfv_field_item_data_recurse_item( 9, '<script data-value=">">alert(1)</script>', $args )['name'] );
+		$this->assertSame( 'Label', $this->field->build_dfv_field_item_data_recurse_item( 10, " \nLabel\t", $args )['name'] );
+	}
+
 }

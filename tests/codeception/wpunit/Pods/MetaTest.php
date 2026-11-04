@@ -270,6 +270,142 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsMeta::save_post
+	 */
+	public function test_save_post_uses_stored_value_of_hidden_field_checked_by_two_fields() {
+		$post_id = $this->create_post_with_rules(
+			[ 'after_both', 'after_first', 'first' ],
+			[
+				'after_both'  => [
+					'logic' => 'all',
+					'rules' => [
+						[
+							'field'   => 'after_first',
+							'compare' => '!=',
+							'value'   => '1',
+						],
+						[
+							'field'   => 'first',
+							'compare' => '!=',
+							'value'   => '1',
+						],
+					],
+				],
+				'after_first' => [
+					'rules' => [
+						[
+							'field'   => 'first',
+							'compare' => '=',
+							'value'   => '1',
+						],
+					],
+				],
+				'first'       => [
+					'rules' => [
+						[
+							'field'   => 'base',
+							'compare' => '=',
+							'value'   => '1',
+						],
+					],
+				],
+			]
+		);
+
+		$this->submit_meta_form( $post_id, [] );
+
+		$this->assertSame( '1', $this->get_table_value( $post_id, 'first' ) );
+		$this->assertSame( '0', $this->get_table_value( $post_id, 'after_first' ) );
+		$this->assertSame( '1', $this->get_table_value( $post_id, 'after_both' ) );
+	}
+
+	/**
+	 * @covers PodsMeta::save_post
+	 */
+	public function test_save_post_treats_field_in_conditional_loop_as_visible() {
+		$post_id = $this->create_post_with_rules(
+			[ 'loop_one', 'loop_two' ],
+			[
+				'loop_one' => [
+					'rules' => [
+						[
+							'field'   => 'loop_two',
+							'compare' => '=',
+							'value'   => '1',
+						],
+					],
+				],
+				'loop_two' => [
+					'rules' => [
+						[
+							'field'   => 'loop_one',
+							'compare' => '=',
+							'value'   => '1',
+						],
+					],
+				],
+			]
+		);
+
+		$this->submit_meta_form( $post_id, [] );
+
+		$this->assertSame( '0', $this->get_table_value( $post_id, 'loop_one' ) );
+		$this->assertSame( '1', $this->get_table_value( $post_id, 'loop_two' ) );
+	}
+
+	/**
+	 * Create a post whose fields all hold 1, with "Save Value When Hidden" on for each field with conditional logic.
+	 *
+	 * @param string[] $field_names The conditional fields, in form order.
+	 * @param array    $logic       The conditional logic for each field, keyed by name.
+	 *
+	 * @return int The post ID.
+	 */
+	private function create_post_with_rules( array $field_names, array $logic ) {
+		$api    = pods_api();
+		$values = [ 'base' => 1 ];
+
+		$api->save_field( [
+			'pod_id' => $this->pod_id,
+			'name'   => 'base',
+			'type'   => 'boolean',
+		] );
+
+		foreach ( $field_names as $field_name ) {
+			$api->save_field( [
+				'pod_id'                       => $this->pod_id,
+				'name'                         => $field_name,
+				'type'                         => 'boolean',
+				'enable_conditional_logic'     => 1,
+				'conditional_logic'            => array_merge(
+					[
+						'action' => 'show',
+						'logic'  => 'any',
+					],
+					$logic[ $field_name ]
+				),
+				'conditional_logic_save_value' => 1,
+			] );
+
+			$values[ $field_name ] = 1;
+		}
+
+		pods_no_conflict_on( 'post' );
+
+		$post_id = wp_insert_post( [
+			'post_title'  => 'Conditional',
+			'post_type'   => $this->pod_name,
+			'post_status' => 'publish',
+		] );
+
+		pods_no_conflict_off( 'post' );
+
+		pods( $this->pod_name, $post_id )->save( $values );
+
+		return $post_id;
+	}
+
+	/**
 	 * Create a post whose conditional fields all have values, with "Save Value When Hidden" on for each of them.
 	 *
 	 * note_unless_flag depends on flag_on, which depends on show_extra.

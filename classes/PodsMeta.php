@@ -1344,29 +1344,15 @@ class PodsMeta {
 	}
 
 	/**
-	 * Determine whether conditional logic hid a field on the submitted meta form.
+	 * Get the fields from a list of meta groups, keyed by name.
 	 *
-	 * The browser checks conditional logic against the value it holds for each field on the form. A field
-	 * that was not submitted holds its stored value when conditional logic hid it, and holds nothing when
-	 * it was visible and empty, like an unchecked checkbox or a relationship with every item removed.
+	 * @since 3.4.0
 	 *
-	 * @since TBD
+	 * @param array $groups The groups whose fields were on the form.
 	 *
-	 * @param string     $field_name The field name.
-	 * @param array      $groups     The groups whose fields were on the form.
-	 * @param Pods|false $pod        The Pods object for the item being saved.
-	 * @param array      $hidden     The fields already checked, keyed by name.
-	 *
-	 * @return bool Whether conditional logic hid the field.
+	 * @return array The fields, keyed by name.
 	 */
-	private function is_meta_field_hidden_by_conditional_logic( $field_name, $groups, $pod, array &$hidden = [] ) {
-		if ( isset( $hidden[ $field_name ] ) ) {
-			return $hidden[ $field_name ];
-		}
-
-		// A field whose conditions lead back to itself is treated as visible.
-		$hidden[ $field_name ] = false;
-
+	private function get_meta_fields_by_name( $groups ) {
 		$fields = [];
 
 		foreach ( $groups as $group ) {
@@ -1378,6 +1364,33 @@ class PodsMeta {
 				$fields[ $group_field['name'] ] = $group_field;
 			}
 		}
+
+		return $fields;
+	}
+
+	/**
+	 * Determine whether conditional logic hid a field on the submitted meta form.
+	 *
+	 * The browser checks conditional logic against the value it holds for each field on the form. A field
+	 * that was not submitted holds its stored value when conditional logic hid it, and holds nothing when
+	 * it was visible and empty, like an unchecked checkbox or a relationship with every item removed.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param string     $field_name The field name.
+	 * @param array      $fields     The fields on the form, keyed by name.
+	 * @param Pods|false $pod        The Pods object for the item being saved.
+	 * @param array      $hidden     The fields already checked, keyed by name.
+	 *
+	 * @return bool Whether conditional logic hid the field.
+	 */
+	private function is_meta_field_hidden_by_conditional_logic( $field_name, array $fields, $pod, array &$hidden ) {
+		if ( isset( $hidden[ $field_name ] ) ) {
+			return $hidden[ $field_name ];
+		}
+
+		// A field whose conditions lead back to itself is treated as visible.
+		$hidden[ $field_name ] = false;
 
 		if ( ! isset( $fields[ $field_name ] ) ) {
 			return false;
@@ -1397,7 +1410,7 @@ class PodsMeta {
 
 		$values = [];
 
-		foreach ( array_keys( $fields ) as $name ) {
+		foreach ( $conditional_logic->get_field_dependencies() as $name ) {
 			$values[ $name ] = pods_v( 'pods_meta_' . $name, 'post' );
 
 			if ( null !== $values[ $name ] ) {
@@ -1406,7 +1419,7 @@ class PodsMeta {
 
 			$values[ $name ] = '';
 
-			if ( $pod && $this->is_meta_field_hidden_by_conditional_logic( $name, $groups, $pod, $hidden ) ) {
+			if ( $pod && $this->is_meta_field_hidden_by_conditional_logic( $name, $fields, $pod, $hidden ) ) {
 				pods_no_conflict_on( 'post' );
 
 				$values[ $name ] = $pod->field(
@@ -1745,6 +1758,8 @@ class PodsMeta {
 
 		if ( ! empty( $groups ) ) {
 			$layout_field_types = PodsForm::layout_field_types();
+			$fields_by_name     = $this->get_meta_fields_by_name( $groups );
+			$hidden_fields      = [];
 
 			foreach ( $groups as $group ) {
 				if ( empty( $group['fields'] ) ) {
@@ -1782,7 +1797,7 @@ class PodsMeta {
 					if ( ! isset( $_POST[ 'pods_meta_' . $field_name ] ) ) {
 						if (
 							pods_v_bool( 'conditional_logic_save_value', $field )
-							&& $this->is_meta_field_hidden_by_conditional_logic( $field_name, $groups, $pod )
+							&& $this->is_meta_field_hidden_by_conditional_logic( $field_name, $fields_by_name, $pod, $hidden_fields )
 						) {
 							continue;
 						}

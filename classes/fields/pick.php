@@ -2100,7 +2100,7 @@ class PodsField_Pick extends PodsField {
 		foreach ( (array) $ids as $id ) {
 			$id = (int) $id;
 
-			// The relationship may hold IDs of other post types, which must not get this taxonomy's terms.
+			// Verify post is managed by $pod object.
 			if ( get_post_type( $id ) !== $pod['name'] ) {
 				continue;
 			}

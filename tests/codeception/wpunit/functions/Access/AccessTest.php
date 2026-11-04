@@ -110,10 +110,11 @@ class AccessTest extends Pods_UnitTestCase {
 		add_filter( 'nonce_life', [ $this, 'filter_nonce_life_to_one_year' ] );
 
 		$action_next_tick = pods_access_form_nonce_action( $this->public_pod_name, 1, [ 'title' ], 'uri', 'user_1' );
+		$filtered_tick    = wp_nonce_tick();
 
 		remove_filter( 'nonce_life', [ $this, 'filter_nonce_life_to_one_year' ] );
 
-		$this->assertNotSame( $current_tick, wp_nonce_tick() );
+		$this->assertNotSame( $current_tick, $filtered_tick );
 		$this->assertSame( $action_one, $action_next_tick );
 	}
 
@@ -152,57 +153,21 @@ class AccessTest extends Pods_UnitTestCase {
 		$this->assertTrue( pods_access_verify_form_nonce_from_request( $nonce_field_names, $request ) );
 	}
 
-	public function test_pods_access_form_normalize_fields_returns_empty_string_for_empty_list() {
-		$this->assertSame( '', pods_access_form_normalize_fields( [] ) );
-	}
-
-	public function test_pods_access_form_nonce_round_trip_for_empty_field_list() {
+	public function test_pods_access_verify_form_nonce_from_request_rejects_empty_field_list() {
 		wp_set_current_user( 1 );
 
-		// Meta groups that only contain layout fields (heading, html) have no submittable fields.
-		$group_key         = 'add_to_google_calendar';
-		$nonce_field_names = pods_access_form_field_names( 'meta', $group_key );
+		$nonce_field_names = pods_access_form_field_names( 'meta', 'layout_only' );
 		$uri_hash          = pods_access_form_uri_hash( '/wp-admin/post.php' );
 
-		$html = pods_access_get_form_nonce_fields(
-			$this->public_pod_name,
-			123,
-			[],
-			$nonce_field_names,
-			$uri_hash
-		);
-
-		$this->assertStringContainsString( 'name="pods_meta_nonce_' . $group_key . '"', $html );
-		$this->assertStringContainsString( 'name="pods_meta_form_' . $group_key . '"', $html );
-
-		// Simulate the submitted request with the hidden values the metabox rendered.
 		$request = [
 			$nonce_field_names['nonce'] => pods_access_create_form_nonce( $this->public_pod_name, 123, [], $uri_hash ),
 			$nonce_field_names['pod']   => $this->public_pod_name,
 			$nonce_field_names['id']    => '123',
 			$nonce_field_names['uri']   => $uri_hash,
-			$nonce_field_names['form']  => pods_access_form_normalize_fields( [] ),
+			$nonce_field_names['form']  => '',
 		];
 
-		$this->assertTrue( pods_access_verify_form_nonce_from_request( $nonce_field_names, $request ) );
-
-		// A tampered nonce, pod, or uri must still be rejected.
-		$tampered                  = $request;
-		$tampered[ $nonce_field_names['nonce'] ] = 'this_nonce_is_invalid';
-		$this->assertFalse( pods_access_verify_form_nonce_from_request( $nonce_field_names, $tampered ) );
-
-		$tampered                = $request;
-		$tampered[ $nonce_field_names['pod'] ] = 'different_pod';
-		$this->assertFalse( pods_access_verify_form_nonce_from_request( $nonce_field_names, $tampered ) );
-
-		$tampered                = $request;
-		$tampered[ $nonce_field_names['uri'] ] = 'wrong_uri_hash';
-		$this->assertFalse( pods_access_verify_form_nonce_from_request( $nonce_field_names, $tampered ) );
-
-		// A request that strips the field list entirely must still be rejected.
-		$tampered = $request;
-		unset( $tampered[ $nonce_field_names['form'] ] );
-		$this->assertFalse( pods_access_verify_form_nonce_from_request( $nonce_field_names, $tampered ) );
+		$this->assertFalse( pods_access_verify_form_nonce_from_request( $nonce_field_names, $request ) );
 	}
 
 	public function test_pods_can_use_dynamic_feature_can_be_disabled() {

@@ -290,14 +290,13 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * A meta group that only contains layout fields (heading, html) has no submittable fields.
-	 * The rendered nonce and the save-side check both hash that empty list, so the save must
-	 * not die with "The form nonce is invalid".
+	 * A meta group that only contains layout fields (heading, html) has nothing to submit,
+	 * so no nonce is rendered for it and the save side skips it without dying.
 	 *
-	 * @covers PodsMeta::get_submittable_meta_field_names
+	 * @covers PodsMeta::maybe_output_meta_nonce_fields
 	 * @covers PodsMeta::verify_meta_form_nonce_or_die
 	 */
-	public function test_layout_only_group_nonce_round_trip() {
+	public function test_layout_only_group_renders_no_nonce() {
 		$api = pods_api();
 
 		$group_id = $api->save_group( [
@@ -319,11 +318,9 @@ class MetaTest extends Pods_UnitTestCase {
 
 		$meta = pods_meta();
 
-		$groups = $meta->groups_get( 'post_type', $this->pod_name );
-
 		$group = null;
 
-		foreach ( $groups as $candidate ) {
+		foreach ( $meta->groups_get( 'post_type', $this->pod_name ) as $candidate ) {
 			if ( isset( $candidate['name'] ) && 'add_to_google_calendar' === $candidate['name'] ) {
 				$group = $candidate;
 				break;
@@ -332,34 +329,40 @@ class MetaTest extends Pods_UnitTestCase {
 
 		$this->assertNotNull( $group, 'Expected to find the layout-only group.' );
 
-		$submittable = $this->reflectionMethodInvokeArgs(
-			$meta,
-			'get_submittable_meta_field_names',
-			[ [ $group ] ]
-		);
-
-		$this->assertSame( [], $submittable, 'Layout-only groups must have no submittable fields.' );
-
 		$group_key         = $this->reflectionMethodInvokeArgs( $meta, 'get_meta_nonce_group_key', [ $group ] );
 		$nonce_field_names = pods_access_form_field_names( 'meta', $group_key );
 
-		$uri_hash = pods_access_form_uri_hash( '/wp-admin/post.php' );
-		$nonce    = pods_access_create_form_nonce( $this->pod_name, 123, [], $uri_hash );
-
-		$_POST[ $nonce_field_names['nonce'] ] = $nonce;
-		$_POST[ $nonce_field_names['pod'] ]   = $this->pod_name;
-		$_POST[ $nonce_field_names['id'] ]    = '123';
-		$_POST[ $nonce_field_names['uri'] ]   = $uri_hash;
-		$_POST[ $nonce_field_names['form'] ]  = pods_access_form_normalize_fields( [] );
-
-		$this->assertTrue(
-			$this->reflectionMethodInvokeArgs(
-				$meta,
-				'verify_meta_form_nonce_or_die',
-				[ 'meta', $group_key ]
-			),
-			'The layout-only group nonce must verify without dying.'
+		$html = $this->reflectionMethodInvokeArgs(
+			$meta,
+			'maybe_output_meta_nonce_fields',
+			[ 'layout-only:' . $group_key, $this->pod_name, 123, [ $group ], true, $nonce_field_names ]
 		);
+
+		$this->assertSame( '', $html, 'Layout-only groups must not render a nonce.' );
+
+		// No nonce in the request means the save side skips the group instead of dying.
+		$this->assertFalse(
+			$this->reflectionMethodInvokeArgs( $meta, 'verify_meta_form_nonce_or_die', [ 'meta', $group_key ] )
+		);
+
+		// A group with a normal field still renders its nonce.
+		$normal_group = [
+			'name'   => 'normal_group',
+			'fields' => [
+				[
+					'name' => 'normal_field',
+					'type' => 'text',
+				],
+			],
+		];
+
+		$normal_html = $this->reflectionMethodInvokeArgs(
+			$meta,
+			'maybe_output_meta_nonce_fields',
+			[ 'layout-only:normal_group', $this->pod_name, 123, [ $normal_group ], true, pods_access_form_field_names( 'meta', 'normal_group' ) ]
+		);
+
+		$this->assertStringContainsString( 'name="pods_meta_nonce_normal_group"', $normal_html );
 	}
 
 	/**

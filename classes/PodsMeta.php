@@ -3019,6 +3019,32 @@ class PodsMeta {
 	public static $keys_not_covered_regex_cache = [];
 
 	/**
+	 * Get the cache key used for the keys not covered of an object type.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param string $type The object type.
+	 *
+	 * @return string The cache key, includes the blog prefix for the user type.
+	 */
+	public function get_keys_not_covered_cache_key( $type ) {
+		if ( 'post' === $type ) {
+			$type = 'post_type';
+		} elseif ( 'term' === $type ) {
+			$type = 'taxonomy';
+		}
+
+		// The user list includes keys per blog prefix, keep those cached per blog.
+		if ( 'user' === $type ) {
+			global $wpdb;
+
+			$type .= ':' . $wpdb->get_blog_prefix();
+		}
+
+		return $type;
+	}
+
+	/**
 	 * Get list of keys not covered for an object type.
 	 *
 	 * @param string $type The object type.
@@ -3034,12 +3060,7 @@ class PodsMeta {
 
 		global $wpdb;
 
-		$cache_key = $type;
-
-		// The user list includes keys per blog prefix, keep those cached per blog.
-		if ( 'user' === $type ) {
-			$cache_key .= ':' . $wpdb->get_blog_prefix();
-		}
+		$cache_key = $this->get_keys_not_covered_cache_key( $type );
 
 		// The filter may be hooked at any time, skip the cache while it is listening.
 		if ( ! has_filter( 'pods_meta_keys_not_covered' ) && isset( self::$keys_not_covered_cache[ $cache_key ] ) ) {
@@ -3209,20 +3230,7 @@ class PodsMeta {
 	 * @return string The regex alternation of the wildcard keys, empty when none exist.
 	 */
 	public function get_keys_not_covered_regex( $type ) {
-		if ( 'post' === $type ) {
-			$type = 'post_type';
-		} elseif ( 'term' === $type ) {
-			$type = 'taxonomy';
-		}
-
-		global $wpdb;
-
-		$cache_key = $type;
-
-		// The user list includes keys per blog prefix, keep those cached per blog.
-		if ( 'user' === $type ) {
-			$cache_key .= ':' . $wpdb->get_blog_prefix();
-		}
+		$cache_key = $this->get_keys_not_covered_cache_key( $type );
 
 		// The filter may be hooked at any time, skip the cache while it is listening.
 		if ( ! has_filter( 'pods_meta_keys_not_covered' ) && isset( self::$keys_not_covered_regex_cache[ $cache_key ] ) ) {

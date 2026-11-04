@@ -290,6 +290,21 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsMeta::get_keys_not_covered_cache_key
+	 */
+	public function test_get_keys_not_covered_cache_key_normalizes_type_and_scopes_user_by_blog() {
+		global $wpdb;
+
+		$meta = pods_meta();
+
+		$this->assertSame( 'post_type', $meta->get_keys_not_covered_cache_key( 'post' ) );
+		$this->assertSame( 'post_type', $meta->get_keys_not_covered_cache_key( 'post_type' ) );
+		$this->assertSame( 'taxonomy', $meta->get_keys_not_covered_cache_key( 'term' ) );
+		$this->assertSame( 'settings', $meta->get_keys_not_covered_cache_key( 'settings' ) );
+		$this->assertSame( 'user:' . $wpdb->get_blog_prefix(), $meta->get_keys_not_covered_cache_key( 'user' ) );
+	}
+
+	/**
 	 * @covers PodsMeta::get_keys_not_covered
 	 */
 	public function test_get_keys_not_covered_caches_per_type() {

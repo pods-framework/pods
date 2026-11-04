@@ -290,6 +290,82 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * A meta group that only contains layout fields (heading, html) has nothing to submit,
+	 * so no nonce is rendered for it and the save side skips it without dying.
+	 *
+	 * @covers PodsMeta::maybe_output_meta_nonce_fields
+	 * @covers PodsMeta::verify_meta_form_nonce_or_die
+	 */
+	public function test_layout_only_group_renders_no_nonce() {
+		$api = pods_api();
+
+		$group_id = $api->save_group( [
+			'pod_id' => $this->pod_id,
+			'name'   => 'add_to_google_calendar',
+			'label'  => 'Add to Google Calendar',
+		] );
+
+		$api->save_field( [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $group_id,
+			'name'     => 'shortcode',
+			'label'    => 'Shortcode',
+			'type'     => 'html',
+		] );
+
+		// Ensure groups_get() reads the freshly saved group.
+		pods_static_cache_clear();
+
+		$meta = pods_meta();
+
+		$group = null;
+
+		foreach ( $meta->groups_get( 'post_type', $this->pod_name ) as $candidate ) {
+			if ( isset( $candidate['name'] ) && 'add_to_google_calendar' === $candidate['name'] ) {
+				$group = $candidate;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $group, 'Expected to find the layout-only group.' );
+
+		$group_key         = $this->reflectionMethodInvokeArgs( $meta, 'get_meta_nonce_group_key', [ $group ] );
+		$nonce_field_names = pods_access_form_field_names( 'meta', $group_key );
+
+		$html = $this->reflectionMethodInvokeArgs(
+			$meta,
+			'maybe_output_meta_nonce_fields',
+			[ 'layout-only:' . $group_key, $this->pod_name, 123, [ $group ], true, $nonce_field_names ]
+		);
+
+		$this->assertSame( '', $html, 'Layout-only groups must not render a nonce.' );
+
+		// No nonce in the request means the save side skips the group instead of dying.
+		$this->assertFalse(
+			$this->reflectionMethodInvokeArgs( $meta, 'verify_meta_form_nonce_or_die', [ 'meta', $group_key ] )
+		);
+
+		// A group with a normal field still renders its nonce.
+		$normal_group = [
+			'name'   => 'normal_group',
+			'fields' => [
+				[
+					'name' => 'normal_field',
+					'type' => 'text',
+				],
+			],
+		];
+
+		$normal_html = $this->reflectionMethodInvokeArgs(
+			$meta,
+			'maybe_output_meta_nonce_fields',
+			[ 'layout-only:normal_group', $this->pod_name, 123, [ $normal_group ], true, pods_access_form_field_names( 'meta', 'normal_group' ) ]
+		);
+
+		$this->assertStringContainsString( 'name="pods_meta_nonce_normal_group"', $normal_html );
+	}
+
+	/**
 	 * Track current hook info
 	 */
 	public function _track_hook() {

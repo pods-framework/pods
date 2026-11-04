@@ -1415,13 +1415,22 @@ class PodsMeta {
 			return $return ? '' : null;
 		}
 
+		$fields = $this->get_submittable_meta_field_names( $groups );
+
+		// Groups with only layout fields (heading, html) have nothing to submit, so they get no nonce.
+		if ( empty( $fields ) ) {
+			if ( $return ) {
+				return '';
+			}
+
+			return null;
+		}
+
 		$nonced_contexts[ $context_key ] = true;
 
 		if ( null === $nonce_field_names ) {
 			$nonce_field_names = pods_access_form_field_names( 'meta' );
 		}
-
-		$fields = $this->get_submittable_meta_field_names( $groups );
 
 		$html = pods_access_get_form_nonce_fields(
 			$pod_name,

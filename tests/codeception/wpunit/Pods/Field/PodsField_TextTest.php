@@ -175,6 +175,33 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers  PodsField_Text::pre_save
+	 * @depends test_method_exists_pre_save
+	 * @uses    PodsField_Text::strip_html
+	 * @uses    PodsField_Text::trim_whitespace
+	 */
+	public function test_method_pre_save_trims_whitespace_by_default() {
+		$this->assertEquals( 'foo', $this->field->pre_save( '  foo  ' ) );
+		$this->assertEquals( 'foo', $this->field->pre_save( '  foo  ', null, null, array( 'text_trim' => 1 ) ) );
+	}
+
+	/**
+	 * @covers  PodsField_Text::pre_save
+	 * @depends test_method_exists_pre_save
+	 * @uses    PodsField_Text::strip_html
+	 * @uses    PodsField_Text::trim_whitespace
+	 */
+	public function test_method_pre_save_keeps_whitespace_when_trim_disabled() {
+		$options = array(
+			'text_trim'       => 0,
+			'text_allow_html' => 0,
+		);
+
+		$this->assertEquals( ' foo ', $this->field->pre_save( ' foo ', null, null, $options ) );
+		$this->assertEquals( '  foo', $this->field->pre_save( '  <em>foo</em>', null, null, $options ) );
+	}
+
+	/**
 	 * @covers PodsField_Text::validate
 	 */
 	public function test_method_exists_validate() {

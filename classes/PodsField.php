@@ -943,6 +943,15 @@ class PodsField {
 
 				return $this->maybe_sanitize_output( $value, $options );
 			}
+
+			$trim = pods_v( static::$type . '_trim', $options );
+
+			// wp_strip_all_tags() always trims, so keep the outer whitespace when trimming was turned off for this field.
+			if ( null !== $trim && 0 === (int) $trim ) {
+				$value = preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', (string) $value );
+
+				return strip_tags( $value ); // phpcs:ignore WordPressVIPMinimum.Functions.StripTags.StripTagsOneParameter -- Script and style tags were removed above.
+			}
 		}
 
 		return wp_strip_all_tags( $value );

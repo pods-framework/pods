@@ -4402,7 +4402,10 @@ class PodsMeta {
 			return $_null;
 		}
 
-		if ( in_array( $object['fields'][ $meta_key ]['type'], PodsForm::tableless_field_types() ) ) {
+		// Object fields and aliases (like "date") are not in the custom fields list.
+		$field_type = $object['fields'][ $meta_key ]['type'] ?? null;
+
+		if ( $field_type && in_array( $field_type, PodsForm::tableless_field_types(), true ) ) {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
 				self::$current_field_pod = pods_get_instance( $object['name'], $object_id );
 			} elseif ( self::$current_field_pod->id() != $object_id ) {
@@ -4683,8 +4686,11 @@ class PodsMeta {
 			return $_null;
 		}
 
+		// Object fields and aliases (like "date") are not in the custom fields list.
+		$field_type = $object['fields'][ $meta_key ]['type'] ?? null;
+
 		// @todo handle $delete_all (delete the field values from all pod items)
-		if ( ! empty( $meta_value ) && in_array( $object['fields'][ $meta_key ]['type'], PodsForm::tableless_field_types() ) ) {
+		if ( ! empty( $meta_value ) && $field_type && in_array( $field_type, PodsForm::tableless_field_types(), true ) ) {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
 				self::$current_field_pod = pods_get_instance( $object['name'], $object_id );
 			} elseif ( self::$current_field_pod->id() != $object_id ) {

@@ -290,6 +290,31 @@ class MetaTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsMeta::add_meta
+	 */
+	public function test_add_meta_with_object_field_alias() {
+		$post_id = $this->factory()->post->create( [ 'post_type' => $this->pod_name ] );
+
+		// "date" is an alias of the post_date object field, not a custom field.
+		$this->assertNotFalse( add_post_meta( $post_id, 'date', 'test-date' ) );
+
+		$this->assertEquals( 'test-date', get_post_meta( $post_id, 'date', true ) );
+	}
+
+	/**
+	 * @covers PodsMeta::delete_meta
+	 */
+	public function test_delete_meta_with_object_field_alias() {
+		$post_id = $this->factory()->post->create( [ 'post_type' => $this->pod_name ] );
+
+		add_post_meta( $post_id, 'date', 'test-date' );
+
+		$this->assertTrue( delete_post_meta( $post_id, 'date', 'test-date' ) );
+
+		$this->assertEquals( '', get_post_meta( $post_id, 'date', true ) );
+	}
+
+	/**
 	 * Track current hook info
 	 */
 	public function _track_hook() {

@@ -1494,7 +1494,8 @@ class Pod extends Base {
 				'use_submenu_fallback' => [
 					'label'             => __( 'Fallback Edit in Dashboard', 'pods' ),
 					'type'              => 'boolean',
-					'default'           => false,
+					// On by default, since PodsAdmin::admin_menu() uses the fallback menu for pods that never saved this option.
+					'default'           => true,
 					'boolean_yes_label' => __( 'Use the fallback generic "Pods" content menu so content can be managed', 'pods' ),
 					'depends-on'        => [
 						'show_in_menu' => false,
